@@ -1,0 +1,16 @@
+{
+  "name": "oc",
+  "version": "0.0.1",
+  "description": "An experimental framework to develop and distribute web components",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opentable/oc"
+  },
+  "author": "Matteo Figus",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/opentable/oc/issues"
+  },
+  "homepage": "https://github.com/opentable/oc"
+}
