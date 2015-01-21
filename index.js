@@ -1,3 +1,4 @@
 'use strict';
 
-module.exports = {};
+module.exports.Client = require('./client');
+module.exports.Registry = require('./registry');
