@@ -19,7 +19,7 @@ describe('cli : facade : publish', function(){
 
   var execute = function(){
     consoleMock.reset();
-    publishFacade({ componentPath: path.join(__dirname, '../fixtures/components/hello-world/') });
+    publishFacade({ componentPath: path.resolve('test/fixtures/components/hello-world/') });
     logs = consoleMock.get();    
   };
 
