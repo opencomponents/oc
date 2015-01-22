@@ -17,10 +17,11 @@ describe('cli : facade : publish', function(){
       publishFacade = new PublishFacade({ registry: registry, local: local, logger: consoleMock }),
       logs;
 
-  var execute = function(){
+  var execute = function(done){
     consoleMock.reset();
     publishFacade({ componentPath: path.resolve('test/fixtures/components/hello-world/') });
-    logs = consoleMock.get();    
+    logs = consoleMock.get();
+    setTimeout(_.isFunction(done) ? done : _.noop, 10);
   };
 
   afterEach(consoleMock.reset);
@@ -29,9 +30,9 @@ describe('cli : facade : publish', function(){
 
     describe('when api is not valid', function(){
 
-      beforeEach(function(){
+      beforeEach(function(done){
         sinon.stub(registry, 'get').yields('an error!');
-        execute();
+        execute(done);
       });
 
       afterEach(function(){
@@ -45,9 +46,9 @@ describe('cli : facade : publish', function(){
 
     describe('when api is valid', function(){
 
-      beforeEach(function(){
+      beforeEach(function(done){
         sinon.stub(registry, 'get').yields(null, ['http://www.api.com']);
-        execute();
+        execute(done);
       });
 
       afterEach(function(){
@@ -63,9 +64,9 @@ describe('cli : facade : publish', function(){
 
         describe('when a component is not valid', function(){
 
-          beforeEach(function(){
+          beforeEach(function(done){
             sinon.stub(local, 'package').yields('the component is not valid');
-            execute();
+            execute(done);
           });
 
           afterEach(function(){
@@ -101,18 +102,20 @@ describe('cli : facade : publish', function(){
 
             describe('when publishing', function(){
 
-              it('should show a message', function(){
+              it('should show a message', function(done){
                 sinon.stub(registry, 'putComponent').yields('blabla');
-                execute();
-                expect(logs[2]).to.include('Publishing -> ');
-                registry.putComponent.restore();
+                execute(function(){
+                  expect(logs[2]).to.include('Publishing -> ');
+                  registry.putComponent.restore();
+                  done();
+                });
               });
 
               describe('when error happens', function(){
 
-                beforeEach(function(){
+                beforeEach(function(done){
                   sinon.stub(registry, 'putComponent').yields('nope!');
-                  execute();
+                  execute(done);
                 });
 
                 afterEach(function(){
@@ -127,10 +130,10 @@ describe('cli : facade : publish', function(){
               describe('when it succeeds', function(){
 
                 var stub;
-                beforeEach(function(){
+                beforeEach(function(done){
                   sinon.stub(registry, 'putComponent').yields(null, 'yay');
                   stub = sinon.stub(local, 'cleanup');
-                  execute();
+                  execute(done);
                 });
 
                 afterEach(function(){
