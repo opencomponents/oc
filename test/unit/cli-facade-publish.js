@@ -96,8 +96,7 @@ describe('cli : facade : publish', function(){
           describe('when creating tar.gz archive', function(){
 
             beforeEach(function(){
-              sinon.stub(local, 'compress').yields(null);
-              execute();
+              sinon.stub(local, 'compress').yields(null); 
             });
 
             afterEach(function(){
@@ -105,6 +104,10 @@ describe('cli : facade : publish', function(){
             });
 
             it('should show a message', function(){
+              sinon.stub(registry, 'putComponent').yields('blabla');
+              execute();
+              registry.putComponent.restore();
+
               expect(logs[1]).to.include('Compressing -> ');
               expect(logs[1]).to.include('components/hello-world/package.tar.gz');
             });
@@ -115,7 +118,7 @@ describe('cli : facade : publish', function(){
                 sinon.stub(registry, 'putComponent').yields('blabla');
                 execute();
                 registry.putComponent.restore();
-                
+
                 expect(logs[2]).to.include('Publishing -> ');
               });
 
