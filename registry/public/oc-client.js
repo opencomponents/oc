@@ -7,6 +7,7 @@ var oc = oc || {};
   var headScripts = [],
       $ = typeof(jQuery) !== 'undefined' ? jQuery : undefined,
       JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js',
+      RETRY_INTERVAL = 5000,
       noop = function(){};
 
   var logger = {
@@ -136,7 +137,12 @@ var oc = oc || {};
               });
             });
           });
-          
+        },
+        error: function(){
+          logger.error('Failed to retrieve the component. Retrying in 5 seconds...');
+          setTimeout(function() {
+            oc.renderByHref(href, callback);
+          }, RETRY_INTERVAL);
         }
       });
     } else {
@@ -148,7 +154,7 @@ var oc = oc || {};
     var $unloadedComponents = $('oc-component[data-rendered!=true]');
 
     var renderUnloadedComponent = function($unloadedComponents, i){
-      logger.info('Unloaded component found. Retrying retreaving it...');
+      logger.info('Unloaded component found. Trying to retreave it...');
       oc.renderNestedComponent($($unloadedComponents[i]), function(){
         i++;
         if(i < $unloadedComponents.length){
@@ -188,7 +194,6 @@ var oc = oc || {};
           callback(newComponent);
         }
       });
-
     }
   };
 
