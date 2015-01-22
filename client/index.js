@@ -7,6 +7,7 @@ var Handlebars = require('./renderers/handlebars');
 var path = require('path');
 var querystring = require('querystring');
 var request = require('../utils/request');
+var strings = require('../resources/index');
 var url = require('url');
 var vm = require('vm');
 var _ = require('underscore');
@@ -98,6 +99,10 @@ var Client = function(conf){
     var self = this;
 
     request(href, { headers: { 'render-mode': 'pre-rendered' }}, function(err, apiResponse){
+
+        if(err){
+          return callback(strings.errors.client.serverSideRenderingFail, !!options.disableFailoverRendering ? '' : self.renderer.getUnrenderedComponent(href));
+        }
 
         apiResponse = JSON.parse(apiResponse);
 

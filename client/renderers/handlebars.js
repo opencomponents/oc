@@ -13,7 +13,7 @@ module.exports = function(){
   };
 
   this.getUnrenderedComponent = function(href){
-    return format('<oc-component href="{0}"></oc-component>', href);
+    return format('<oc-component href="{0}" data-rendered="false"></oc-component>', href);
   };
 
   this.getRenderedComponent = function(data){
