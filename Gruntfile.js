@@ -29,6 +29,9 @@ module.exports = function(grunt) {
   // build task
   grunt.registerTask('build', ['build-web-client']);
 
+  // Setup the precommit hook
+  grunt.registerTask('hooks', ['githooks:all']);
+
   // test
   grunt.registerTask('test', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance']);
 

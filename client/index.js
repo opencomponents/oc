@@ -2,6 +2,7 @@
 
 var Cache = require('nice-cache');
 var config = require('../conf');
+var format = require('../utils/format');
 var fs = require('fs-extra');
 var Handlebars = require('./renderers/handlebars');
 var path = require('path');
@@ -100,9 +101,19 @@ var Client = function(conf){
 
     request(href, { headers: { 'render-mode': 'pre-rendered' }}, function(err, apiResponse){
 
-        if(err){
-          return callback(strings.errors.client.serverSideRenderingFail, !!options.disableFailoverRendering ? '' : self.renderer.getUnrenderedComponent(href));
+      if(err){
+        var errorDescription = strings.errors.client.serverSideRenderingFail;
+
+        if(!!options.disableFailoverRendering){
+          return callback(errorDescription, '');
         }
+
+        fs.readFile(path.resolve(__dirname, '../registry/public/oc-client.min.js'), 'utf-8', function(err, clientJs){
+          var clientSideHtml = format('<script class="ocClientScript">{0}</script>{1}', clientJs, self.renderer.getUnrenderedComponent(href));
+          return callback(errorDescription, clientSideHtml);
+        });
+
+      } else {
 
         apiResponse = JSON.parse(apiResponse);
 
@@ -129,6 +140,7 @@ var Client = function(conf){
 
           self.renderTemplate(template, data, options, callback);
         });
+      }
     });
   };
 

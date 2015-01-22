@@ -76,6 +76,7 @@ describe('client', function(){
     describe('when client-side failover rendering enabled (default)', function(){
 
       var $component,
+          $clientScript,
           error;
 
       before(function(done){
@@ -84,8 +85,13 @@ describe('client', function(){
           error = err;
           var $ = cheerio.load(result);
           $component = $('oc-component');
+          $clientScript = $('script.ocClientScript');
           done();
         });
+      });
+
+      it('should include the client-side rendering script', function(){
+        expect($clientScript).to.have.length.above(0);
       });
 
       it('should return non rendered contents', function(){
