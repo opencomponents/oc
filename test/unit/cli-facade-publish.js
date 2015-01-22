@@ -57,6 +57,7 @@ describe('cli : facade : publish', function(){
         sinon.stub(local, 'package').yields('the component is not valid');
         execute();
         local.package.restore();
+
         expect(logs[0]).to.include('Packaging -> ');
         expect(logs[0]).to.include('components/hello-world/_package');
       });
@@ -81,19 +82,25 @@ describe('cli : facade : publish', function(){
 
         describe('when a component is valid', function(){
 
+          beforeEach(function(){
+            sinon.stub(local, 'package').yields(null, {
+              name: 'hello-world',
+              version: '1.0.0'
+            });
+          });
+
+          afterEach(function(){
+            local.package.restore();
+          });
+
           describe('when creating tar.gz archive', function(){
 
             beforeEach(function(){
-              sinon.stub(local, 'package').yields(null, {
-                name: 'hello-world',
-                version: '1.0.0'
-              });
               sinon.stub(local, 'compress').yields(null);
               execute();
             });
 
             afterEach(function(){
-              local.package.restore();
               local.compress.restore();
             });
 
@@ -107,8 +114,9 @@ describe('cli : facade : publish', function(){
               it('should show a message', function(){
                 sinon.stub(registry, 'putComponent').yields('blabla');
                 execute();
-                expect(logs[2]).to.include('Publishing -> ');
                 registry.putComponent.restore();
+                
+                expect(logs[2]).to.include('Publishing -> ');
               });
 
               describe('when error happens', function(){
