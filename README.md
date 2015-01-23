@@ -30,13 +30,13 @@ Build status: Linux: [![Build Status](https://secure.travis-ci.org/opentable/oc.
 
 The framework consists mainly on 4 parts.
 
-The `components` are small units of isomorphic code mainly consisting of html, javascript, css. Optionally they can contain some logic so that there is a server-side javascript node.js part that composes a model to be used to render the html view. When they are `rendered` they become pieces of pure html to be injected in any html page.
+The [`components`](#components) are small units of isomorphic code mainly consisting of html, javascript, css. Optionally they can contain some logic so that there is a server-side javascript node.js part that composes a model to be used to render the html view. When they are `rendered` they become pieces of pure html to be injected in any html page.
 
-The `library` is where the components are stored. When components depend on static resources, such as images, css files, etc., everything is stored, during the packaging and publishing, in the publicly-exposed part of the library that serves as cdn.
+The [`library`](#setup-a-library) is where the components are stored. When components depend on static resources, such as images, css files, etc., everything is stored, during the packaging and publishing, in the publicly-exposed part of the library that serves as cdn.
 
-The `registry` is a rest api that is used to consume, retrieve, and publish components. As they are immutable, the registry is the entity that directs the traffic between the library and the consumers.
+The [`registry`](#setup-a-registry) is a rest api that is used to consume, retrieve, and publish components. As they are immutable, the registry is the entity that directs the traffic between the library and the consumers.
 
-The `consumers` are websites or microsites (small independently deployable web sites all connected by a front-door service or any form of routing mechanism) that need to use components to render partial contents in their web pages.
+The [`consumers`](#consuming-components) are websites or microsites (small independently deployable web sites all connected by a front-door service or any form of routing mechanism) that need to use components to render partial contents in their web pages.
 
 The goal is to explore the possibility of having a system that would allow big corporations (that may involve hundreds of engineers on some projects) to have some tools that should facilitate code sharing, reduce dependencies, and to approach easily to new features and experiments.
 
@@ -46,7 +46,7 @@ The goal is to explore the possibility of having a system that would allow big c
 
 A component is a directory composed by
 * `package.json` - contains the component definition, dependencies, and more.
-* `view.html` - a template containing the markup. Currently we support `handlebars` but we plan to support `jade` too asap. It can contain some css under the `<style>` and cliend-side javascript under the `<script>` tag.
+* `view.html` - a template containing the markup. Currently we support `handlebars` but we plan to support `jade` too asap. It can contain some css under the `<style>` tag and cliend-side javascript under the `<script>` tag.
 * optionally, `server.js` - In case the component has some logic, including consuming services, this is the entity that will produce the view-model to compile the view.
 * optionally, some `static contents` such as images, js, and files that will be referenced in the html markup.
 * any other files that will be useful for the development such as tests, docs, etc.
@@ -54,7 +54,6 @@ A component is a directory composed by
 Components are immutable and semantic versioned.
 
 ### Creation
-
 First, you create a component in a folder:
 ```sh
 npm install oc -g
@@ -68,7 +67,7 @@ You may want to start a local test registry using a components' folder as a libr
 oc dev . 3030
 ```
 
-Then you want to create a blank html page to start playing with it and see how it looks:
+Then you may want to create a blank html page to start playing with it and see how it looks:
 ```html
 <html>
   <head>
@@ -155,12 +154,11 @@ A component needs to end up as a html fragment. You can render components just o
 
 You do not need node.js to do consume component on the server-side. The registry can provide you rendered component so that you can get server-side rendered components using any tech stack.
 
-Then, components are immutable and the registry allow consumers to get any version of the component. So, when you are the consumer too, you may choose to bind your site to the latest version of a component, if another team created a component you can consume just the latest patch, or minor version, etc.
+Then, components are immutable and the registry allow consumers to get any version of the component. So, when you create a component and you are the consumer too, you may choose to bind your site to the latest version of a component; if anyone else created a component and you want to be sure it does not break your stuff, you can connect your site to just the latest patch, or minor version, etc.
 
 ### Server-side rendering via rest API
 
 You can get rendered components via the registry rest api.
-
 ```sh
 curl http://my-components-registry.mydomain.com/hello-world
 
@@ -172,10 +170,9 @@ curl http://my-components-registry.mydomain.com/hello-world
   "renderMode": "rendered"
 }
 ```
-Just place the html result anywhere and it would just work.
+Just place the html result anywhere and it will just work.
 
 In case you would like to do the rendering yourself, try:
-
 ```sh
  curl http://my-components-registry.mydomain.com/hello-world/~1.0.5 -H render-mode:pre-rendered
 
@@ -223,6 +220,7 @@ http.createServer(function (req, res) {
   });
 }).listen(4000);
 ```
+Open `http://localhost:4000/` and enjoy!
 
 ### Client-side rendering
 
@@ -240,7 +238,7 @@ This is all you need:
 
 ### Server-side rendering with client-side failover
 
-When registry is slow or errors and you are doing server-side rendering, you may want to unblock the rendering and post-pone the rendering to make it happen on the client-side after the DOM is loaded. If your registry is publicly available and you use the node.js client, this is done automatically. Cool, isn't it?
+When registry is slow or errors and you are doing server-side rendering, you may want to unblock the rendering and postpone the rendering to make it happen on the client-side after the DOM is loaded. If your registry is publicly available and you use the node.js client, this is done automatically. Cool, isn't it?
 When on the client-side, once the dom is loaded, via javascript a retry rendering attempt will happen every 10 seconds until the component is rendered.
 
 If for some reasons you want to avoid client-side rendering, when using the node.js client, you can do:
