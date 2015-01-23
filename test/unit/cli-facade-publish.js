@@ -58,8 +58,12 @@ describe('cli : facade : publish', function(){
         execute();
         local.package.restore();
 
-        expect(logs[0]).to.include('Packaging -> ');
-        expect(logs[0]).to.include('components/hello-world/_package');
+        var message = logs[0],
+            re = new RegExp('\\' + path.sep, 'g'),
+            messageWithSlashesOnPath = message.replace(re, '/');
+
+        expect(messageWithSlashesOnPath).to.include('Packaging -> ');
+        expect(messageWithSlashesOnPath).to.include('components/hello-world/_package');
       });
 
       describe('when packaging', function(){
@@ -108,8 +112,12 @@ describe('cli : facade : publish', function(){
               execute();
               registry.putComponent.restore();
 
-              expect(logs[1]).to.include('Compressing -> ');
-              expect(logs[1]).to.include('components/hello-world/package.tar.gz');
+              var message = logs[1],
+                  re = new RegExp('\\' + path.sep, 'g'),
+                  messageWithSlashesOnPath = message.replace(re, '/');
+
+              expect(messageWithSlashesOnPath).to.include('Compressing -> ');
+              expect(messageWithSlashesOnPath).to.include('components/hello-world/package.tar.gz');
             });
 
             describe('when publishing', function(){
