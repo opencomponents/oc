@@ -3,6 +3,7 @@
 var colors = require('colors');
 var format = require('../../utils/format');
 var strings = require('../../resources/index');
+var validator = require('../../registry/domain/validator');
 
 module.exports = function(dependencies){
   
@@ -13,7 +14,7 @@ module.exports = function(dependencies){
     var componentName = opts.componentName,
         errors = strings.errors.cli;
 
-    if(componentName.trim() === ''){
+    if(!validator.validateComponentName(componentName)){
       return logger.log(format(errors.INIT_FAIL, errors.NAME_NOT_VALID).red);
     }
 

@@ -3,6 +3,8 @@
 module.exports = {
   errors: {
     registry: {
+      COMPONENT_NAME_NOT_VALID: 'The component\'s name contains invalid characters. Allowed are alphanumeric, _, -',
+      COMPONENT_NAME_NOT_VALID_CODE: 'name_not_valid',
       COMPONENT_NOT_FOUND: 'Component "{0}" not found on {1}',
       COMPONENT_VERSION_NOT_FOUND: 'Component "{0}" with version "{1}" not found on {2}',
       COMPONENT_VERSION_ALREADY_FOUND: 'Component "{0}" with version "{1}" can\'t be published to {2} because a component with the same name and version already exists',
@@ -26,7 +28,7 @@ module.exports = {
       COMPONENTS_NOT_FOUND: 'no components found in specified path',
       DEV_FAIL: 'An error happened when initialising the dev runner: {0}',
       INIT_FAIL: 'An error happened when initialising the component: {0}',
-      NAME_NOT_VALID: 'the name is not valid',
+      NAME_NOT_VALID: 'the name is not valid. Allowed characters are alphanumeric, _, -',
       PACKAGING_FAIL: 'An error happened when creating the package: {0}',
       PUBLISHING_FAIL: 'An error happened when publishing the component: {0}',
       REGISTRY_NOT_FOUND: 'oc registries not found. Run "oc registry add <registry href>"'

@@ -30,63 +30,8 @@ var validate = {
 };
 
 module.exports = {
-  registryConfiguration: function(conf){
-
-    var response = { isValid: true };
-
-    var returnError = function(message){
-      response.isValid = false;
-      response.message = message || 'registry configuration is not valid';
-      return response;
-    };
-    
-    if(!conf || !_.isObject(conf) || _.keys(conf).length === 0){
-      return returnError(strings.errors.registry.CONFIGURATION_EMPTY);
-    }
-
-    var prefix = conf.prefix;
-
-    if(!!prefix){
-      if(prefix.substr(0, 1) !== '/'){
-        return returnError(strings.errors.registry.CONFIGURATION_PREFIX_DOES_NOT_START_WITH_SLASH);
-      } 
-
-      if(prefix.substr(prefix.length - 1) !== '/'){
-        return returnError(strings.errors.registry.CONFIGURATION_PREFIX_DOES_NOT_END_WITH_SLASH);
-      }
-    }
-
-    return response;
-  },
-  validatePackage: function(input){
-    var response = {
-      isValid: true
-    };
-
-    var returnError = function(message){
-      response.isValid = false;
-      response.message = message || 'uploaded package is not valid';
-      return response;
-    };
-
-    if(!input || !_.isObject(input) || _.keys(input).length === 0){
-      return returnError('empty');
-    }
-
-    if(_.keys(input).length !== 1){
-      return returnError('not_valid');
-    }
-
-    var file = input[_.keys(input)[0]];
-
-    if(file.mimetype !== 'application/octet-stream' || !!file.truncated || file.extension !== 'gz' || file.path.indexOf('.tar.gz') < 0){
-      return returnError('not_valid');
-    }
-
-    return response;
-  },
-  validateVersion: function(version){
-    return { isValid: !!semver.valid(version) };
+  validateComponentName: function(componentName){
+    return !/[^a-zA-Z0-9\-\_]/.test(componentName);
   },
   validateComponentParameters: function(requestParameters, expectedParameters){
 
@@ -153,5 +98,63 @@ module.exports = {
     }());
 
     return result;
+  },
+  registryConfiguration: function(conf){
+
+    var response = { isValid: true };
+
+    var returnError = function(message){
+      response.isValid = false;
+      response.message = message || 'registry configuration is not valid';
+      return response;
+    };
+    
+    if(!conf || !_.isObject(conf) || _.keys(conf).length === 0){
+      return returnError(strings.errors.registry.CONFIGURATION_EMPTY);
+    }
+
+    var prefix = conf.prefix;
+
+    if(!!prefix){
+      if(prefix.substr(0, 1) !== '/'){
+        return returnError(strings.errors.registry.CONFIGURATION_PREFIX_DOES_NOT_START_WITH_SLASH);
+      } 
+
+      if(prefix.substr(prefix.length - 1) !== '/'){
+        return returnError(strings.errors.registry.CONFIGURATION_PREFIX_DOES_NOT_END_WITH_SLASH);
+      }
+    }
+
+    return response;
+  },
+  validatePackage: function(input){
+    var response = {
+      isValid: true
+    };
+
+    var returnError = function(message){
+      response.isValid = false;
+      response.message = message || 'uploaded package is not valid';
+      return response;
+    };
+
+    if(!input || !_.isObject(input) || _.keys(input).length === 0){
+      return returnError('empty');
+    }
+
+    if(_.keys(input).length !== 1){
+      return returnError('not_valid');
+    }
+
+    var file = input[_.keys(input)[0]];
+
+    if(file.mimetype !== 'application/octet-stream' || !!file.truncated || file.extension !== 'gz' || file.path.indexOf('.tar.gz') < 0){
+      return returnError('not_valid');
+    }
+
+    return response;
+  },
+  validateVersion: function(version){
+    return { isValid: !!semver.valid(version) };
   }
 };

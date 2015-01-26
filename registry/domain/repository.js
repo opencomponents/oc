@@ -6,6 +6,7 @@ var fs = require('fs-extra');
 var path = require('path');
 var S3 = require('./s3');
 var strings = require('../../resources');
+var validator = require('./validator');
 var versionHandler = require('./version-handler');
 var _ = require('underscore');
 
@@ -142,6 +143,13 @@ module.exports = function(conf){
         return callback({
           code: strings.errors.registry.LOCAL_PUBLISH_NOT_ALLOWED_CODE,
           msg: strings.errors.registry.LOCAL_PUBLISH_NOT_ALLOWED
+        });
+      }
+
+      if(!validator.validateComponentName(componentName)){
+        return callback({
+          code: strings.errors.registry.COMPONENT_NAME_NOT_VALID_CODE,
+          msg: strings.errors.regitry.COMPONENT_NAME_NOT_VALID
         });
       }
 

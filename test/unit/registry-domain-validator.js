@@ -316,6 +316,36 @@ describe('registry : domain : validator', function(){
     });
   });
 
+  describe('when validating component name for new candidate', function(){
+
+    var validate = function(a){ return validator.validateComponentName(a); };
+
+    describe('when name has spaces', function(){
+
+      var name = 'hello ha';
+      it('should not be valid', function(){
+        expect(validate(name)).to.be.false;
+      });
+    });
+
+    describe('when name has not allowed characters', function(){
+
+      var name = 'name@ha';
+      it('should not be valid', function(){
+        expect(validate(name)).to.be.false;
+      });
+    });
+
+    describe('when name has alphanumeric characters, _ or -', function(){
+
+      var name = 'hello-world_haha23';
+      it('should be valid', function(){
+        expect(validate(name)).to.be.true;
+      });
+    });
+
+  });
+
   describe('when validating component version for new candidate', function(){
 
     var existingVersions = ['1.0.0', '1.0.1', '2.0.0', '2.1.0'],

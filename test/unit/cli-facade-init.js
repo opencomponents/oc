@@ -28,7 +28,18 @@ describe('cli : facade : init', function(){
       });
 
       it('should show an error', function(){
-        expect(logs[0]).to.equal('An error happened when initialising the component: the name is not valid'.red);
+        expect(logs[0]).to.equal('An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -'.red);
+      });
+    });
+
+    describe('when the component has a non valid name', function(){
+
+      beforeEach(function(){
+        execute('hello-asd$qwe:11');
+      });
+
+      it('should show an error', function(){
+        expect(logs[0]).to.equal('An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -'.red);
       });
     });
 
