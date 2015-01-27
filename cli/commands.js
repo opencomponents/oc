@@ -63,13 +63,6 @@ module.exports = {
       }
     },
 
-    test: {
-      help: 'Tests components',
-      options: {
-        componentPath: { help: 'The path of the component to test' }
-      }
-    },
-
     unlink: {
       help: 'Unlinks a component from the current project',
       options: {
@@ -77,6 +70,11 @@ module.exports = {
           help: 'The name of the component to unlink. <oc info> to see the list of linked components'
         }
       }
+    },
+
+    version: {
+      help: 'Shows the cli version',
+      flag: true
     }
   }
 };

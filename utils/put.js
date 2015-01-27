@@ -9,7 +9,6 @@ var _ = require('underscore');
 module.exports = function(urlPath, files, callback) {
 
   var form = new FormData(),
-      httpProtocol = urlPath.indexOf('https') === 0 ? 'https' : 'http',
       body = '',
       callbackDone = false,
       options = _.extend(url.parse(urlPath), {
