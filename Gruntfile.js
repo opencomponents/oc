@@ -39,8 +39,7 @@ module.exports = function(grunt) {
   // custom tasks
   grunt.registerTask('build-web-client', 'Builds and minifies the web-client.js', function(){
 
-    var done = this.async(),
-        handlebars = fs.readFileSync(path.join(__dirname, 'components/oc-client/src/handlebars.1.3.0.js')).toString(),
+    var handlebars = fs.readFileSync(path.join(__dirname, 'components/oc-client/src/handlebars.1.3.0.js')).toString(),
         ocClient = fs.readFileSync(path.join(__dirname, 'components/oc-client/src/oc-client.js')).toString(),
         version = 'oc.clientVersion=\'' + taskObject.pkg.version + '\';',
         bundle = handlebars + '\n' + ocClient + '\n' + version,
@@ -56,7 +55,7 @@ module.exports = function(grunt) {
   grunt.registerTask('version', 'Does the version upgrade', function(versionType){
     taskObject.pkg.version = semver.inc(taskObject.pkg.version, versionType);
 
-    fs.writeFileSync('package.json', taskObject.pkg);
+    fs.writeJsonSync('package.json', taskObject.pkg);
 
 
 
