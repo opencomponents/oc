@@ -1,6 +1,7 @@
 'use strict';
 
 var AWS = require('aws-sdk');
+var packageInfo = require('../../package.json');
 var format = require('../../utils/format');
 var fs = require('fs-extra');
 var path = require('path');
@@ -30,8 +31,16 @@ module.exports = function(conf){
       repositorySource = conf.local ? 'local repository' : 's3 cdn';
 
   var local = {
-    getComponents: function(){
-      return fs.readdirSync(conf.path).filter(function(file){
+    getCompiledView: function(componentName, componentVersion){
+      if(componentName === 'oc-client'){
+        return fs.readFileSync(path.join(__dirname, '../../components/oc-client/_package/template.js')).toString();
+      }
+
+      return fs.readFileSync(path.join(conf.path, componentName + '/_package/template.js')).toString();
+    },
+    getComponents: function(){ 
+
+      var validComponents = fs.readdirSync(conf.path).filter(function(file){
         var isDir = file.indexOf('.') === -1,
             isValidComponent = isDir ? (fs.readdirSync(path.join(conf.path, file)).filter(function(file){
               return file === '_package';
@@ -39,21 +48,34 @@ module.exports = function(conf){
 
         return isValidComponent;
       });
+
+      validComponents.push('oc-client');
+      return validComponents;
     }, 
     getComponentVersions: function(componentName, callback){
+      if(componentName === 'oc-client'){
+        return callback(null, [fs.readJsonSync(path.join(__dirname, '../../package.json')).version]);
+      }
+
       if(!_.contains(local.getComponents(), componentName)){
         return callback(format(strings.errors.registry.COMPONENT_NOT_FOUND, componentName, repositorySource));
       }
 
       callback(null, [fs.readJsonSync(path.join(conf.path, componentName + '/package.json')).version]);
+    },
+    getDataProvider: function(componentName){
+      if(componentName === 'oc-client'){
+        return fs.readFileSync(path.join(__dirname, '../../components/oc-client/_package/server.js')).toString();
+      }
+
+      return fs.readFileSync(path.join(conf.path, componentName + '/_package/server.js')).toString();
     }
   };
 
   return {
     getCompiledView: function(componentName, componentVersion, callback){
-
       if(conf.local){
-        return callback(null, fs.readFileSync(path.join(conf.path, componentName + '/_package/template.js')).toString());
+        return callback(null, local.getCompiledView(componentName, componentVersion));
       }
 
       cdn.getFile(conf.s3.componentsDir + '/' + componentName + '/' + componentVersion + '/template.js', callback);
@@ -87,7 +109,14 @@ module.exports = function(conf){
     },
     getComponentInfo: function(componentName, componentVersion, callback){
       if(conf.local){
-        var componentInfo = fs.readJsonSync(path.join(conf.path, componentName + '/_package/package.json'));
+        var componentInfo;
+
+        if(componentName === 'oc-client'){
+          componentInfo = fs.readJsonSync(path.join(__dirname, '../../components/oc-client/_package/package.json'));
+        } else {
+          componentInfo = fs.readJsonSync(path.join(conf.path, componentName + '/_package/package.json'));
+        }
+
         if(componentInfo.version === componentVersion){
           return callback(null, componentInfo);
         } else {
@@ -128,12 +157,14 @@ module.exports = function(conf){
       cdn.listSubDirectories(conf.s3.componentsDir + '/' + componentName, callback);
     },
     getDataProvider: function(componentName, componentVersion, callback){
-
       if(conf.local){
-        return callback(null, fs.readFileSync(path.join(conf.path, componentName + '/_package/server.js')).toString());
+        return callback(null, local.getDataProvider(componentName));
       }
 
       cdn.getFile(conf.s3.componentsDir + '/' + componentName + '/' + componentVersion + '/server.js', callback);
+    },
+    getStaticClientPath: function(){
+      return 'https:' + conf.s3.path + conf.s3.componentsDir + '/oc-client/' + packageInfo.version + '/src/oc-client.min.js';
     },
     getStaticFilePath: function(componentName, componentVersion, filePath){
       return this.getComponentPath(componentName, componentVersion) + (conf.local ? 'static/' : '') + filePath;

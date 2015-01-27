@@ -3,6 +3,7 @@
 var acceptLanguageParser = require('accept-language-parser');
 var Client = require('../../client');
 var fs = require('fs-extra');
+var packageInfo = require('../../package.json');
 var path = require('path');
 var Repository = require('../domain/repository');
 var RequireWrapper = require('../domain/require-wrapper');
@@ -37,8 +38,8 @@ exports.index = function(req, res){
       components: _.map(components, function(component){
         return urlBuilder.component(component, res.conf.baseUrl);
       }),
-      clientAgent: url.resolve(res.conf.baseUrl, '../scripts/oc-client.min.js'),
-      type: res.conf.local ? 'oc-registry-local' : 'oc-registry'
+      type: res.conf.local ? 'oc-registry-local' : 'oc-registry',
+      ocVersion: packageInfo.version
     });
   });
 };
@@ -174,7 +175,19 @@ exports.component = function(req, res){
 
 exports.staticRedirector = function(req, res){
 
-  var filePath = path.join(res.conf.path, req.params.componentName) + '/_package/' + req.params[0];
+  var filePath;
+
+  if(req.route.path === '/oc-client/client.js'){
+    if(res.conf.local){
+      filePath = path.join(__dirname, '../../components/oc-client/_package/src/oc-client.min.js');
+    } else {
+      res.redirect(repository.getStaticClientPath());
+    }
+  } else if(req.params.componentName === 'oc-client'){
+    filePath = path.join(__dirname, '../../components/oc-client/_package/' + req.params[0]);
+  } else {
+    filePath = path.join(res.conf.path, req.params.componentName) + '/_package/' + req.params[0];
+  }
 
   if(!fs.existsSync(filePath)){
     return res.json(404, { err: 'file not found' });

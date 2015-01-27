@@ -108,7 +108,7 @@ var Client = function(conf){
           return callback(errorDescription, '');
         }
 
-        fs.readFile(path.resolve(__dirname, '../registry/public/oc-client.min.js'), 'utf-8', function(err, clientJs){
+        fs.readFile(path.resolve(__dirname, '../components/oc-client/src/oc-client.min.js'), 'utf-8', function(err, clientJs){
           var clientSideHtml = format('<script class="ocClientScript">{0}</script>{1}', clientJs, self.renderer.getUnrenderedComponent(href));
           return callback(errorDescription, clientSideHtml);
         });
