@@ -220,6 +220,8 @@ exports.publish = function(req, res){
           return res.json(403, { error: err.msg });
         } else if(err.code === 'already_exists'){
           return res.json(403, { error: err.msg });
+        } else if(err.code === 'name_not_valid'){
+          return res.json(409, { error: err.msg });
         } else {
           return res.json(500, { error: err.msg });
         }

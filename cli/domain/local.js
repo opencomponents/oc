@@ -8,6 +8,7 @@ var request = require('../../utils/request');
 var path = require('path');
 var Targz = require('tar.gz');
 var uglifyJs = require('uglify-js');
+var validator = require('../../registry/domain/validator');
 var _ = require('underscore');
 
 module.exports = function(){
@@ -72,6 +73,11 @@ module.exports = function(){
       return fs.readJson(config.configFile.src, callback);
     },
     init: function(componentName, callback){
+
+      if(!validator.validateComponentName(componentName)){
+        return callback('name not valid');
+      }
+
       try {
         var baseComponentDir = path.resolve(__dirname, '../base-component'),
             npmIgnorePath = path.resolve(__dirname, '../base-component/.npmignore');
@@ -140,8 +146,8 @@ module.exports = function(){
       var component = fs.readJsonSync(path.join(componentPath, 'package.json')),
           template = fs.readFileSync(path.join(componentPath, component.oc.files.template.src)).toString();
 
-      if(component.oc.files.client){
-        template += '\n<script>' + fs.readFileSync(path.join(componentPath, component.oc.files.client)) + '</script>';
+      if(!validator.validateComponentName(component.name)){
+        return callback('name not valid');
       }
 
       if(component.oc.files.template.type === 'handlebars'){
@@ -165,7 +171,7 @@ module.exports = function(){
       } else {
         return callback('template type not supported');
       }
-
+      
       if(!!component.oc.files.data){
         var dataPath = path.join(componentPath, component.oc.files.data);
 

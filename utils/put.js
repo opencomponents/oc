@@ -27,11 +27,12 @@ module.exports = function(urlPath, files, callback) {
 
   options.headers = form.getHeaders();
 
-  var req = require(httpProtocol).request(options);
+  form.submit(options, function(err, res){
 
-  form.pipe(req);
-
-  req.on('response', function(res){
+    if(!!err){
+      callbackDone = true;
+      return callback(err);
+    }
 
     res.on('data', function(chunk){
       body += chunk;
@@ -48,10 +49,5 @@ module.exports = function(urlPath, files, callback) {
         }
       }
     });
-  }).on('error', function(e){
-    if(!callbackDone){
-      callbackDone = true;
-      callback(e);
-    }
   });
 };

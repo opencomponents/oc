@@ -49,16 +49,19 @@ module.exports = function(dependencies){
           return logger.log(format(strings.errors.cli.PACKAGING_FAIL, err).red);
         }
 
-        var registryRoute = format('{0}/{1}/{2}', registryLocations[0], component.name, component.version);
+        var registryUrl = registryLocations[0],
+            registryLength = registryUrl.length,
+            registryNormalised = registryUrl.slice(registryLength - 1) === '/' ? registryUrl.slice(0, registryLength - 1) : registryUrl,
+            componentRoute = format('{0}/{1}/{2}', registryNormalised, component.name, component.version);
 
-        logger.log(format(strings.messages.cli.PUBLISHING.yellow, registryRoute.green));
+        logger.log(format(strings.messages.cli.PUBLISHING.yellow, componentRoute.green));
 
-        registry.putComponent(registryRoute, compressedPackagePath, function(err, res){
+        registry.putComponent(componentRoute, compressedPackagePath, function(err, res){
 
           if(!!err){
             logger.log(format(strings.errors.cli.PUBLISHING_FAIL, err).red);
           } else {
-            logger.log('Component published -> '.yellow + registryRoute.green);
+            logger.log('Component published -> '.yellow + componentRoute.green);
             local.cleanup(compressedPackagePath, process.exit);
           }
         });

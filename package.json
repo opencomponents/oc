@@ -26,6 +26,7 @@
     "grunt-contrib-jshint": "0.10.0",
     "grunt-githooks": "0.3.1",
     "grunt-mocha-test": "0.6.2",
+    "injectr": "^0.5.1",
     "load-grunt-tasks": "0.6.0",
     "sinon": "1.12.1"
   },

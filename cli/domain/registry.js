@@ -11,6 +11,11 @@ module.exports = function(){
 
   return _.extend(this, {
     add: function(registry, callback){
+
+      if(registry.slice(registry.length - 1) !== '/'){
+        registry += '/';
+      }
+
       request(registry, function(err, res){
         if(err || !res){
           return callback('oc registry not available', null);
@@ -100,7 +105,7 @@ module.exports = function(){
 
       });
     },
-    putComponent: function(href, packagePath, callback){
+    putComponent: function(href, packagePath, callback){ 
       put(href, packagePath, function(err, res){
 
         if(err){
