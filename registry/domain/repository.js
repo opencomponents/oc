@@ -153,7 +153,7 @@ module.exports = function(conf){
         });
       }
 
-      this.getComponentVersions(componentName, function(err, componentVersions){ console.log(arguments);
+      this.getComponentVersions(componentName, function(err, componentVersions){
         
         if(!versionHandler.validateNewVersion(componentVersion, componentVersions)){
           return callback({
