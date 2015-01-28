@@ -175,13 +175,14 @@ exports.component = function(req, res){
 
 exports.staticRedirector = function(req, res){
 
-  var filePath;
+  var filePath,
+      clientPath = (!!res.conf.prefix ? res.conf.prefix : '/') + 'oc-client/client.js';
 
-  if(req.route.path === '/oc-client/client.js'){
+  if(req.route.path === clientPath){
     if(res.conf.local){
       filePath = path.join(__dirname, '../../components/oc-client/_package/src/oc-client.min.js');
     } else {
-      res.redirect(repository.getStaticClientPath());
+      return res.redirect(repository.getStaticClientPath());
     }
   } else if(req.params.componentName === 'oc-client'){
     filePath = path.join(__dirname, '../../components/oc-client/_package/' + req.params[0]);
