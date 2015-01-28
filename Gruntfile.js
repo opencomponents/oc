@@ -37,7 +37,7 @@ module.exports = function(grunt) {
   grunt.registerTask('test', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance']);
 
   // custom tasks
-  grunt.registerTask('build-web-client', 'Builds and minifies the web-client.js', function(done){
+  grunt.registerTask('build-web-client', 'Builds and minifies the web-client.js', function(){
 
     var done = this.async(),
         handlebars = fs.readFileSync(path.join(__dirname, 'components/oc-client/src/handlebars.1.3.0.js')).toString(),
