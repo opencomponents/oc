@@ -79,8 +79,8 @@ module.exports = function(){
       }
 
       try {
-        var baseComponentDir = path.resolve(__dirname, '../base-component'),
-            npmIgnorePath = path.resolve(__dirname, '../base-component/.npmignore');
+        var baseComponentDir = path.resolve(__dirname, '../../components/base-component'),
+            npmIgnorePath = path.resolve(__dirname, '../../components/base-component/.npmignore');
 
         fs.ensureDirSync(componentName);
         fs.copySync(baseComponentDir, componentName);
