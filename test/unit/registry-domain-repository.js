@@ -40,7 +40,7 @@ describe('registry : domain : repository', function(){
       });
 
       it('should list the components', function(){
-        expect(components).to.eql(['hello-world']);
+        expect(components).to.eql(['hello-world', 'oc-client']);
       });
     });
 

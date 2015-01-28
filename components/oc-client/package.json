@@ -1,7 +1,7 @@
 {
-  "name": "ComponentName",
+  "name": "oc-client",
   "description": "",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "dependencies": {},
   "repository": "",
   "oc": {
@@ -11,7 +11,10 @@
       "template": {
         "src": "template.html",
         "type": "handlebars"
-      }
+      },
+      "static": [
+        "src"
+      ]
     }
   }
 }

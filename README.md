@@ -70,13 +70,11 @@ oc dev . 3030
 Then you may want to create a blank html page to start playing with it and see how it looks:
 ```html
 <html>
-  <head>
-    <script src="http://localhost:3030/scripts/oc-client.min.js"></script>
-  </head>
   <body>
     <oc-component href="http://localhost:3030/hello-world">
       Optionally, some failover text here
     </oc-component>
+    <script src="http://localhost:3030/oc-client/client.js" />
   </body>
 </html>
 ```
@@ -229,8 +227,8 @@ This is all you need:
 <html>
   <head></head>
   <body>
-    <script src="http://my-components-registry.mydomain.com/scripts/oc-client.min.js"></script>
     <oc-component href="http://my-components-registry.mydomain.com/hello-world/1.X.X"></oc-component>
+    <script src="http://my-components-registry.mydomain.com/oc-client/client.js" />
   </body>
 </html>
 ```

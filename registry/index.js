@@ -68,7 +68,6 @@ module.exports = function(options){
 
     app.use(express.json());
     app.use(express.urlencoded());
-    app.use('/scripts', express.static(path.join(__dirname, 'public')));
     app.use(app.router);
 
     // development only
@@ -82,6 +81,8 @@ module.exports = function(options){
       hasPrefix = true;
       app.get('/', function(req, res){ res.redirect(options.prefix); });
     }
+
+    app.get(options.prefix + 'oc-client/client.js', routes.staticRedirector);
 
     if(options.local){
       app.get(options.prefix + ':componentName/:componentVersion/static/*', routes.staticRedirector);
