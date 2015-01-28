@@ -1,0 +1,25 @@
+{
+  "name": "oc-client",
+  "description": "",
+  "version": "0.0.9",
+  "dependencies": {},
+  "repository": "",
+  "oc": {
+    "parameters": {},
+    "files": {
+      "template": {
+        "type": "handlebars",
+        "hashKey": "389d92b88e4fc9bed8f0d8329a8a9b488ef3def1",
+        "src": "template.js"
+      },
+      "static": [
+        "src"
+      ],
+      "dataProvider": {
+        "type": "node.js",
+        "haskey": "5650391178d095f6097963605cef19b5a77353cd",
+        "src": "server.js"
+      }
+    }
+  }
+}
