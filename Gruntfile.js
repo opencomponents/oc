@@ -37,9 +37,10 @@ module.exports = function(grunt) {
   grunt.registerTask('test', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance']);
 
   // custom tasks
-  grunt.registerTask('build-web-client', 'Builds and minifies the web-client.js', function(){
+  grunt.registerTask('build-web-client', 'Builds and minifies the web-client.js', function(done){
 
-    var handlebars = fs.readFileSync(path.join(__dirname, 'components/oc-client/src/handlebars.1.3.0.js')).toString(),
+    var done = this.async(),
+        handlebars = fs.readFileSync(path.join(__dirname, 'components/oc-client/src/handlebars.1.3.0.js')).toString(),
         ocClient = fs.readFileSync(path.join(__dirname, 'components/oc-client/src/oc-client.js')).toString(),
         version = 'oc.clientVersion=\'' + taskObject.pkg.version + '\';',
         bundle = handlebars + '\n' + ocClient + '\n' + version,
@@ -49,15 +50,24 @@ module.exports = function(grunt) {
 
     fs.writeJsonSync(path.join(__dirname, 'components/oc-client/package.json'), ocClientPackageInfo);
     fs.writeFileSync(path.join(__dirname, 'components/oc-client/src/oc-client.min.js'), uglifyJs.minify(bundle, {fromString: true}).code);
+
+    var Local = require('./cli/domain/local'),
+        local = new Local();
+
+    local.package(path.join(__dirname, 'components/oc-client'), function(err, res){
+      grunt.log[!!err ? 'error' : 'ok'](!!err ? err : 'Client has been built and packaged');
+      done();
+    });
   });
 
   // used for version patching
   grunt.registerTask('version', 'Does the version upgrade', function(versionType){
+    
     taskObject.pkg.version = semver.inc(taskObject.pkg.version, versionType);
 
+    grunt.log.ok('Package version upgrading to: ' + taskObject.pkg.version);
+
     fs.writeJsonSync('package.json', taskObject.pkg);
-
-
 
     grunt.task.run([
       'test',
