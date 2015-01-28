@@ -46,7 +46,7 @@ module.exports = function(options){
       res.conf = options;
 
       if(!!options.dependencies){
-        res.injectedDendencies = options.dependencies;
+        res.injectedDependencies = options.dependencies;
       }
 
       next();

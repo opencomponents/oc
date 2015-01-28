@@ -64,12 +64,12 @@ module.exports = function(dependencies){
         logger.log('Starting dev registry on localhost:' + port);
 
         var dependencies = {};
-/*
+
         _.forEach(local.getLocalNpmModules(componentsDir), function(npmModule){
-          dependencies[npmModule] = require(npmModule);
+          dependencies[npmModule] = require(path.resolve('node_modules/', npmModule));
         });
-*/
-        var registry = new oc.Registry(conf, { dependencies: dependencies });
+
+        var registry = new oc.Registry(_.extend(conf, { dependencies: dependencies }));
 
         registry.start(function(err, app){
 
