@@ -5,10 +5,11 @@ var oc = oc || {};
 (function(Handlebars, $document, debug){
 
   // Polifills
-  if (!Array.isArray) {
-  Array.isArray = function(arg) {
-    return Object.prototype.toString.call(arg) === '[object Array]';
-  };
+  if(!Array.isArray){
+    Array.isArray = function(arg){
+      return Object.prototype.toString.call(arg) === '[object Array]';
+    };
+  }
 
   // The code
   var headScripts = [],
