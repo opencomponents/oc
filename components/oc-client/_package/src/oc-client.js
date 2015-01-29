@@ -154,7 +154,7 @@ var oc = oc || {};
     var $unloadedComponents = $('oc-component[data-rendered!=true]');
 
     var renderUnloadedComponent = function($unloadedComponents, i){
-      logger.info('Unloaded component found. Trying to retreave it...');
+      logger.info('Unloaded component found. Trying to retrieve it...');
       oc.renderNestedComponent($($unloadedComponents[i]), function(){
         i++;
         if(i < $unloadedComponents.length){
