@@ -4,6 +4,14 @@ var oc = oc || {};
 
 (function(Handlebars, $document, debug){
 
+  // Polifills
+  if(!Array.isArray){
+    Array.isArray = function(arg){
+      return Object.prototype.toString.call(arg) === '[object Array]';
+    };
+  }
+
+  // The code
   var headScripts = [],
       $ = typeof(jQuery) !== 'undefined' ? jQuery : undefined,
       JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js',
@@ -30,6 +38,7 @@ var oc = oc || {};
     return -1;
   };
 
+  // a minimal vanilla require.js
   var _require = function(hrefs, callback){
 
     if(!Array.isArray(hrefs)){
