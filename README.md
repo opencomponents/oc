@@ -86,7 +86,7 @@ That's it. As soon as you make changes on the component, you will be able to ref
 You will need an online registry connected to a library to do that. The only requisite is that a component with the same name and version cannot be already existing on that registry.
 ```sh
 # you have to do the registry config first, just once
-oc api add http://my-components-registry.mydomain.com
+oc registry add http://my-components-registry.mydomain.com
 
 # then, ship it
 oc publish hello-world/
