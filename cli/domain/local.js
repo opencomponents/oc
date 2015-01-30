@@ -5,7 +5,6 @@ var format = require('../../utils/format');
 var fs = require('fs-extra');
 var hashBuilder = require('../../utils/hash-builder');
 var request = require('../../utils/request');
-var originalPackage = require('../../package.json');
 var path = require('path');
 var Targz = require('tar.gz');
 var uglifyJs = require('uglify-js');
@@ -145,13 +144,14 @@ module.exports = function(){
       fs.mkdirSync(publishPath);
 
       var component = fs.readJsonSync(path.join(componentPath, 'package.json')),
+          ocInfo = fs.readJsonSync(path.join(__dirname, '../../package.json')),
           template = fs.readFileSync(path.join(componentPath, component.oc.files.template.src)).toString();
 
       if(!validator.validateComponentName(component.name)){
         return callback('name not valid');
       }
 
-      component.oc.version = originalPackage.version;
+      component.oc.version = ocInfo.version;
 
       if(component.oc.files.template.type === 'handlebars'){
 
