@@ -35,7 +35,7 @@
     "accept-language-parser": "1.0.2",
     "aws-sdk": "2.0.0-rc13",
     "cli-table": "0.3.1",
-    "colors": "0.6.2",
+    "colors": "1.0.3",
     "express": "3.18.3",
     "form-data": "0.1.4",
     "fs-extra": "0.12.0",
