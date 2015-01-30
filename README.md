@@ -260,3 +260,4 @@ MIT
 # Contributors
 
 * [@matteofigus](https://github.com/matteofigus)
+* [@federicomaffei](https://github.com/federicomaffei)

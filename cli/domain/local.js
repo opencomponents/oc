@@ -5,6 +5,7 @@ var format = require('../../utils/format');
 var fs = require('fs-extra');
 var hashBuilder = require('../../utils/hash-builder');
 var request = require('../../utils/request');
+var originalPackage = require('../../package.json');
 var path = require('path');
 var Targz = require('tar.gz');
 var uglifyJs = require('uglify-js');
@@ -150,6 +151,8 @@ module.exports = function(){
         return callback('name not valid');
       }
 
+      component.oc.version = originalPackage.version;
+
       if(component.oc.files.template.type === 'handlebars'){
 
         var handlebars = require('handlebars'),
@@ -206,6 +209,6 @@ module.exports = function(){
       }
       
       fs.writeJson(config.configFile.src, localConfig, callback);
-    },
+    }
   });
 };
