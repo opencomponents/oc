@@ -142,7 +142,7 @@ module.exports = function(){
       }
 
       fs.mkdirSync(publishPath);
-
+      
       var component = fs.readJsonSync(path.join(componentPath, 'package.json')),
           ocInfo = fs.readJsonSync(path.join(__dirname, '../../package.json')),
           template = fs.readFileSync(path.join(componentPath, component.oc.files.template.src)).toString();
