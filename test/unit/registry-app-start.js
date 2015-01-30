@@ -7,7 +7,7 @@ var sinon = require('sinon');
 var getAppStart = function(mockedRepository, options, callback){
   var appStart = injectr('../../registry/app-start.js', {
         './domain/repository': mockedRepository
-      }, { console: console, __dirname: '.'});
+      }, { console: { log: sinon.stub() }, __dirname: '.'});
       
   return appStart(options, callback);
 };
