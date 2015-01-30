@@ -1,5 +1,6 @@
 'use strict';
 
+var appStart = require('./app-start');
 var config = require('../conf');
 var express = require('express');
 var format = require('../utils/format');
@@ -112,14 +113,21 @@ module.exports = function(options){
       callback = _.noop;
     }
 
-    server = http.createServer(self.app);
+    appStart(options, function(err, res){
 
-    server.listen(self.app.get('port'), function(){
-      callback(null, self.app);
-    });
+      if(!!err){
+        return callback(err.msg);
+      }
 
-    server.on('error', function(e){
-      callback(e);
+      server = http.createServer(self.app);
+
+      server.listen(self.app.get('port'), function(){
+        callback(null, self.app);
+      });
+
+      server.on('error', function(e){
+        callback(e);
+      });
     });
   };
 
