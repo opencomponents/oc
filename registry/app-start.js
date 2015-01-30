@@ -1,3 +1,5 @@
+'use strict';
+
 var colors = require('colors');
 var format = require('../utils/format');
 var packageInfo = require('../package.json');
@@ -8,7 +10,7 @@ var _ = require('underscore');
 module.exports = function(options, callback){
 
   if(options.local){
-    callback(null, 'ok');
+    return callback(null, 'ok');
   }
 
   console.log(format('Connecting to library: https:{0}'.yellow, options.s3.path + options.s3.componentsDir));
