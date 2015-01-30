@@ -23,9 +23,15 @@ module.exports = function(options, callback){
     if(!!err){
       console.log('Component not found. Publishing it...'.yellow);
 
-      var componentPath = path.resolve(__dirname, '../components/oc-client/');
+      var componentPath = path.resolve(__dirname, '../components/oc-client/_package');
       
-      repository.publishComponent(componentPath, 'oc-client', packageInfo.version, callback);
+      repository.publishComponent(componentPath, 'oc-client', packageInfo.version, function(err, res){
+        if(!err){
+          console.log('Component published.'.green);
+        }
+        
+        callback(err, res);
+      });
     } else {
       console.log('Component is available on library.'.green);
       callback(null, 'ok');

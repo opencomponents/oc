@@ -1,6 +1,7 @@
 'use strict';
 
 var appStart = require('./app-start');
+var colors = require('colors');
 var config = require('../conf');
 var express = require('express');
 var format = require('../utils/format');
@@ -122,6 +123,7 @@ module.exports = function(options){
       server = http.createServer(self.app);
 
       server.listen(self.app.get('port'), function(){
+        console.log(format('Registry started at {0}'.green, options.baseUrl));
         callback(null, self.app);
       });
 
