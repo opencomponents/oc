@@ -29,8 +29,8 @@ describe('cli : domain : local', function(){
         }
       }
     };
-    readJsonSyncStub.withArgs('package.json').returns(mockComponent);
-    readJsonSyncStub.withArgs('../../package.json').returns({
+    readJsonSyncStub.onCall(0).returns(mockComponent);
+    readJsonSyncStub.onCall(1).returns({
       version: '1.2.3'
     });
     readFileSyncStub.returns('');
