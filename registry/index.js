@@ -71,6 +71,7 @@ module.exports = function(options){
     app.use(express.json());
     app.use(express.urlencoded());
     app.use(app.router);
+    app.set('json spaces', 0);
 
     // development only
     if('development' === app.get('env')){
