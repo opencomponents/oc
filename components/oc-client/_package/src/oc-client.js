@@ -4,7 +4,20 @@ var oc = oc || {};
 
 (function(Handlebars, $document, debug){
 
-  // Polifills
+  // Constants
+  var JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js',
+      RETRY_INTERVAL = 5000,
+      OC_TAG = 'oc-component',
+      MESSAGES_ERRORS_HREF_MISSING = 'Href parameter missing',
+      MESSAGES_ERRORS_LOADING_COMPONENT = 'Error loading {0} component',
+      MESSAGES_ERRORS_RENDERING = 'Error rendering component: {0}, error: {1}',
+      MESSAGES_ERRORS_RETRIEVING = 'Failed to retrieve the component. Retrying in {0} seconds...'.replace('{0}', RETRY_INTERVAL/1000),
+      MESSAGES_ERRORS_VIEW_ENGINE_NOT_SUPPORTED = 'Error loading component: view engine {0} not supported'
+      MESSAGES_LOADING_COMPONENT = 'Loading...',
+      MESSAGES_RENDERED = 'Component \'{0}\' correctly rendered',
+      MESSAGES_RETRIEVING = 'Unrendered component found. Trying to retrieve it...';
+
+  // Polyfills
   if(!Array.isArray){
     Array.isArray = function(arg){
       return Object.prototype.toString.call(arg) === '[object Array]';
@@ -14,8 +27,6 @@ var oc = oc || {};
   // The code
   var headScripts = [],
       $ = typeof(jQuery) !== 'undefined' ? jQuery : undefined,
-      JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js',
-      RETRY_INTERVAL = 5000,
       noop = function(){};
 
   var logger = {
@@ -89,33 +100,26 @@ var oc = oc || {};
     callback();
   };
 
-  oc.render = function(component, model, callback){
-    if(!oc.components[component]){
-      callback('Error loading ' + component + ' component', null);
+  oc.render = function(compiledView, model, callback){
+    if(!oc.components[compiledView.key]){
+      callback(MESSAGES_ERRORS_LOADING_COMPONENT.replace('{0}', compiledView.key));
     } else {
-      var linkedComponent = Handlebars.template(oc.components[component], []),
-          compiledComponent = linkedComponent(model);
-      
+      var compiledComponent = '';
+
+      if(compiledView.type === 'handlebars'){
+        var linkedComponent = Handlebars.template(oc.components[compiledView.key], []);
+        compiledComponent = linkedComponent(model);
+      } else if(compiledView.type === 'jade'){
+        compiledComponent = oc.components[compiledView.key](model);
+      } else {
+        return callback(MESSAGES_ERRORS_VIEW_ENGINE_NOT_SUPPORTED.replace('{0}', compiledView.type));
+      }
       callback(null, compiledComponent);
     }
   };
 
-  oc.resolveNestedComponents = function(html, components){
-    if(components){
-      for(var componentName in components){
-        if(components.hasOwnProperty(componentName)){
-          var nestedComponentSnippet = '@component(\'' + componentName + '\')';
-          while(html.indexOf(nestedComponentSnippet) >= 0){
-            html = html.replace(nestedComponentSnippet, '<oc-component href="' + components[componentName].href + '"></oc-component>');
-          }
-        }
-      }
-    }
-    return html;
-  };
-
   oc.renderNestedComponent = function($component, callback){
-    $component.html('<div class="loading">LOADING...</div>');
+    $component.html('<div class="oc-loading">' + MESSAGES_LOADING_COMPONENT + '</div>');
 
     oc.renderByHref($component.attr('href'), function(err, data){
       if(err || !data || !data.html){
@@ -133,12 +137,11 @@ var oc = oc || {};
         headers: { 'render-mode': 'pre-rendered' }, 
         success: function(apiResponse){
           _require(apiResponse.template.src, function(){
-            oc.render(apiResponse.template.key, apiResponse.data, function(err, html){
-              if(err){
-                return callback('Error rendering component: ' + apiResponse.href + ', error: ' + err, null);
+            oc.render(apiResponse.template, apiResponse.data, function(err, html){
+              if(err){ 
+                return callback(MESSAGES_ERRORS_RENDERING.replace('{0}', apiResponse.href).replace('{1}', err));
               }
-              html = oc.resolveNestedComponents(html, apiResponse.components);
-              logger.info('Component \'' + apiResponse.template.src + '\' correctly loaded.');
+              logger.info(MESSAGES_RENDERED.replace('{0}', apiResponse.template.src));
               callback(null, {
                 html: html, 
                 key: apiResponse.template.key,
@@ -148,22 +151,22 @@ var oc = oc || {};
           });
         },
         error: function(){
-          logger.error('Failed to retrieve the component. Retrying in 5 seconds...');
+          logger.error(MESSAGES_ERRORS_RETRIEVING);
           setTimeout(function() {
             oc.renderByHref(href, callback);
           }, RETRY_INTERVAL);
         }
       });
     } else {
-      return callback('Failed to retrieve the component. Href parameter missing.', null);
+      return callback(MESSAGES_ERRORS_RENDERING.replace('{1}', MESSAGES_ERRORS_HREF_MISSING));
     }
   };
 
   oc.renderUnloadedComponents = oc.refresh = function(){
-    var $unloadedComponents = $('oc-component[data-rendered!=true]');
+    var $unloadedComponents = $(OC_TAG + '[data-rendered!=true]');
 
     var renderUnloadedComponent = function($unloadedComponents, i){
-      logger.info('Unloaded component found. Trying to retrieve it...');
+      logger.info(MESSAGES_RETRIEVING);
       oc.renderNestedComponent($($unloadedComponents[i]), function(){
         i++;
         if(i < $unloadedComponents.length){
@@ -195,13 +198,15 @@ var oc = oc || {};
   };
 
   oc.load = function(placeholder, href, callback){
+    if(typeof(callback) !== 'function'){
+      callback = noop;
+    }
+
     if($(placeholder)){
-      $(placeholder).html('<oc-component href="' + href + '" />');
-      var newComponent = $('oc-component', placeholder);
+      $(placeholder).html('<' + OC_TAG + ' href="' + href + '" />');
+      var newComponent = $(OC_TAG, placeholder);
       oc.renderNestedComponent(newComponent, function(){
-        if(typeof callback === 'function'){
-          callback(newComponent);
-        }
+        callback(newComponent);
       });
     }
   };

@@ -118,7 +118,7 @@ exports.component = function(req, res){
       } else {
         repository.getCompiledView(component.name, component.version, function(err, templateText){
 
-          var context = {};
+          var context = { jade: require('jade/runtime.js')};
 
           vm.runInNewContext(templateText, context);
 
@@ -127,7 +127,8 @@ exports.component = function(req, res){
               options = {
                 href: componentHref,
                 key: key,
-                version: component.version
+                version: component.version,
+                templateType: component.oc.files.template.type
               };
 
           client.renderTemplate(template, data, options, function(err, html){

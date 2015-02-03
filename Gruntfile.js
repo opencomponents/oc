@@ -1,5 +1,6 @@
 'use strict';
 
+var format = require('./utils/format');
 var fs = require('fs-extra');
 var path = require('path');
 var semver = require('semver');
@@ -40,10 +41,10 @@ module.exports = function(grunt) {
   grunt.registerTask('build-web-client', 'Builds and minifies the web-client.js', function(){
 
     var done = this.async(),
-        handlebars = fs.readFileSync(path.join(__dirname, 'components/oc-client/src/handlebars.1.3.0.js')).toString(),
+        handlebarsRuntime = fs.readFileSync(path.join(__dirname, 'node_modules/handlebars/dist/handlebars.runtime.min.js')).toString(),
+        jadeRuntime = fs.readFileSync(path.join(__dirname, 'node_modules/jade/runtime.js')).toString(),
         ocClient = fs.readFileSync(path.join(__dirname, 'components/oc-client/src/oc-client.js')).toString(),
-        version = 'oc.clientVersion=\'' + taskObject.pkg.version + '\';',
-        bundle = handlebars + '\n' + ocClient + '\n' + version,
+        bundle = format('{0};{1};{2};oc.clientVersion=\'{3};\'', jadeRuntime, handlebarsRuntime, ocClient, taskObject.pkg.version),
         ocClientPackageInfo = require('./components/oc-client/package.json');
 
     ocClientPackageInfo.version = taskObject.pkg.version;

@@ -46,7 +46,7 @@ The goal is to explore the possibility of having a system that allows big corpor
 
 A component is a directory composed by
 * `package.json` - contains the component definition, dependencies, and more.
-* `view.html` - a template containing the markup. Currently we support `handlebars` but we plan to support `jade` too, asap. It can contain some css under the `<style>` tag and cliend-side javascript under the `<script>` tag.
+* `view.html` - a template containing the markup. Currently we support `handlebars` and `jade`. It can contain some css under the `<style>` tag and cliend-side javascript under the `<script>` tag.
 * optionally, `server.js` - If the component has some logic, including consuming services, this is the entity that will produce the view-model to compile the view.
 * optionally, some `static contents` such as images, js, and files that will be referenced in the html markup.
 * any other files that will be useful for the development such as tests, docs, etc.

@@ -3,7 +3,9 @@
 var config = require('../../conf');
 var format = require('../../utils/format');
 var fs = require('fs-extra');
+var handlebars = require('handlebars');
 var hashBuilder = require('../../utils/hash-builder');
+var jade = require('jade');
 var request = require('../../utils/request');
 var path = require('path');
 var Targz = require('tar.gz');
@@ -16,11 +18,7 @@ module.exports = function(){
   var targz = new Targz();
 
   var javaScriptizeTemplate = function(functionName, data){
-    var jsNameSpace = 'oc';
-
-    return 'var ' + jsNameSpace + ' = ' + jsNameSpace + ' || {}; ' +
-           jsNameSpace + '.components = ' + jsNameSpace + '.components || {}; ' +
-           jsNameSpace + '.components[\'' + functionName + '\'] = ' + data.toString();
+    return format('var {0}={0}||{};{0}.components={0}.components||{};{0}.components[\'{1}\']={2}', 'oc', functionName, data.toString());
   };
 
   return _.extend(this, {
@@ -135,7 +133,11 @@ module.exports = function(){
     package: function(componentPath, callback){
 
       var files = fs.readdirSync(componentPath),
-          publishPath = path.join(componentPath, '_package');
+          publishPath = path.join(componentPath, '_package'),
+          preCompiledView,
+          compiledView,
+          hashView,
+          minifiedCompiledView;
 
       if(_.contains(files, '_package')){
         fs.removeSync(publishPath);
@@ -153,27 +155,29 @@ module.exports = function(){
 
       component.oc.version = ocInfo.version;
 
-      if(component.oc.files.template.type === 'handlebars'){
-
-        var handlebars = require('handlebars'),
-            preCompiled = handlebars.precompile(template),
-            hash = hashBuilder.fromString(preCompiled.toString()),
-            templateJs = javaScriptizeTemplate(hash, preCompiled),
-            minifiedTemplateJs = uglifyJs.minify(templateJs, {fromString: true}).code;
-
-        fs.writeFileSync(path.join(publishPath, 'template.js'), minifiedTemplateJs);
-
-        component.oc.files.template = {
-          type: 'handlebars',
-          hashKey: hash,
-          src: 'template.js'
-        };
-
-        delete component.oc.files.client;
-
+      if(component.oc.files.template.type === 'jade'){
+        preCompiledView = jade.compileClient(template, { 
+          compileDebug: false,
+          name: 't'
+        }).toString().replace('function t(locals) {', 'function(locals){');
+      } else if(component.oc.files.template.type === 'handlebars'){
+        preCompiledView = handlebars.precompile(template);
       } else {
         return callback('template type not supported');
       }
+
+      hashView = hashBuilder.fromString(preCompiledView.toString());
+      compiledView = javaScriptizeTemplate(hashView, preCompiledView);
+      minifiedCompiledView = uglifyJs.minify(compiledView, {fromString: true}).code;
+      fs.writeFileSync(path.join(publishPath, 'template.js'), minifiedCompiledView);
+
+      component.oc.files.template = {
+        type: component.oc.files.template.type,
+        hashKey: hashView,
+        src: 'template.js'
+      };
+
+      delete component.oc.files.client;
       
       if(!!component.oc.files.data){
         var dataPath = path.join(componentPath, component.oc.files.data);
