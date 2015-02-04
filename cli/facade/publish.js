@@ -19,6 +19,20 @@ module.exports = function(dependencies){
         packageDir = path.resolve(componentPath, '_package'),
         compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
 
+    var getCredentials = function(callback){
+
+      logger.log(strings.messages.cli.ENTER_USERNAME.yellow);
+
+      read({}, function(err, username){
+
+        logger.log(strings.messages.cli.ENTER_PASSWORD.yellow);
+        
+        read({ silent: true }, function(err, password){
+          callback(null, { username: username, password: password});
+        });
+      });
+    };
+
     var packageAndCompress = function(callback){
       
       logger.log(format(strings.messages.cli.PACKAGING.yellow, packageDir.green));
@@ -50,28 +64,24 @@ module.exports = function(dependencies){
 
           if(err === 'Unauthorized'){
             if(!!options.username || !!options.password){
-              return logger.log('Invalid credentials'.red);
+              return logger.log(format(strings.errors.cli.PUBLISHING_FAIL, strings.errors.cli.INVALID_CREDENTIALS).red);
             }
-            
-            logger.log('Registry requires credentials. Enter your username: '.yellow);
 
-            read({}, function(err, username){
+            logger.log(strings.messages.cli.REGISTRY_CREDENTIALS_REQUIRED.yellow);
 
-              logger.log('Enter your password: '.yellow);
-              
-              read({ silent: true }, function(err, password){
-                putComponentToRegistry(_.extend(options, {
-                  username: username,
-                  password: password
-                }));
-              });
+            getCredentials(function(err, credentials){
+              putComponentToRegistry(_.extend(options, {
+                username: credentials.username,
+                password: credentials.password
+              }));
             });
+
           } else {
             logger.log(format(strings.errors.cli.PUBLISHING_FAIL, err).red);
           }
         } else {
-          logger.log('Component published -> '.yellow + options.route.green);
-          local.cleanup(compressedPackagePath, process.exit);
+          logger.log(format(strings.messages.cli.PUBLISHED, options.route.green).yellow);
+          local.cleanup(options.path, process.exit);
         }
       });
     };

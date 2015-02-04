@@ -161,7 +161,7 @@ describe('cli : facade : publish', function(){
                 });
 
                 it('should show a message', function(){
-                  expect(logs[3]).to.include('Component published -> ');
+                  expect(logs[3]).to.include('Published -> ');
                   expect(logs[3]).to.include('http://www.api.com/hello-world/1.0.0');
                 });
 
