@@ -105,15 +105,20 @@ module.exports = function(){
 
       });
     },
-    putComponent: function(href, packagePath, callback){ 
-      put(href, packagePath, function(err, res){
+    putComponent: function(options, callback){ 
+      var headers = {};
 
-        if(err){
+      if(!!options.username && !!options.password){
+        headers = { 'Authorization': 'Basic ' + new Buffer(options.username + ':' + options.password).toString('base64') };
+      }
+
+      put(options.route, options.path, headers, function(err, res){
+
+        if(!!err){
           if(!_.isObject(err)){
             try {
               err = JSON.parse(err);
-            } catch(er) {
-              err = er;
+            } catch(er){
             }
           }
 

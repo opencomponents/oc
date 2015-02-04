@@ -21,13 +21,17 @@ module.exports = {
       MANDATORY_PARAMETER_MISSING_CODE: 'missing',
 
       PARAMETER_WRONG_FORMAT: 'Parameters are not correctly formatted: {0}',
-      PARAMETER_WRONG_FORMAT_CODE: 'wrong type'
+      PARAMETER_WRONG_FORMAT_CODE: 'wrong type',
+
+      PUBLISH_AUTH_CREDENTIALS_MISSING: 'Basic auth requires username and password',
+      PUBLISH_AUTH_NOT_SUPPORTED: 'Auth not supported'
     },
     cli: {
       COMPONENTS_LINKED_NOT_FOUND: 'No components linked in the project',
       COMPONENTS_NOT_FOUND: 'no components found in specified path',
       DEV_FAIL: 'An error happened when initialising the dev runner: {0}',
       INIT_FAIL: 'An error happened when initialising the component: {0}',
+      INVALID_CREDENTIALS: 'Invalid credentials',
       NAME_NOT_VALID: 'the name is not valid. Allowed characters are alphanumeric, _, -',
       PACKAGING_FAIL: 'An error happened when creating the package: {0}',
       PUBLISHING_FAIL: 'An error happened when publishing the component: {0}',
@@ -53,9 +57,13 @@ module.exports = {
       COMPONENTS_LINKED_LIST: 'Components linked in project:',
       COMPONENTS_LIST: 'Components available in oc registry: {0}',
       COMPRESSING: 'Compressing -> {0}',
+      ENTER_PASSWORD: 'Enter password:',
+      ENTER_USERNAME: 'Enter username:',
       PACKAGING: 'Packaging -> {0}',
+      PUBLISHED: 'Published -> {0}',
       PUBLISHING: 'Publishing -> {0}',
       REGISTRY_ADDED: 'oc registry added',
+      REGISTRY_CREDENTIALS_REQUIRED: 'Registry requires credentials.',
       REGISTRY_LIST: 'oc linked registries:',
       REGISTRY_REMOVED: 'oc registry deleted'
     }

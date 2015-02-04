@@ -6,14 +6,17 @@ var path = require('path');
 var url = require('url');
 var _ = require('underscore');
 
-module.exports = function(urlPath, files, callback) {
+module.exports = function(urlPath, files, headers, callback) {
+
+  if(_.isFunction(headers)){
+    callback = headers;
+    headers = {};
+  }
 
   var form = new FormData(),
       body = '',
       callbackDone = false,
-      options = _.extend(url.parse(urlPath), {
-        method: 'PUT'
-      });
+      options = _.extend(url.parse(urlPath), { method: 'PUT' });
 
   if(!_.isArray(files)){
     files = [files];
@@ -24,7 +27,7 @@ module.exports = function(urlPath, files, callback) {
     form.append(fileName, fs.createReadStream(file));
   });
 
-  options.headers = form.getHeaders();
+  options.headers = _.extend(headers, form.getHeaders());
 
   form.submit(options, function(err, res){
 

@@ -49,6 +49,47 @@ describe('registry : domain : validator', function(){
         expect(validate(conf).message).to.equal('Registry configuration is not valid: prefix should end with "/"');
       });
     });
+
+    describe('when publishAuth not specified', function(){
+
+      var conf = { publishAuth: null };
+
+      it('should be valid', function(){
+        expect(validate(conf).isValid).to.be.true;
+      });
+    });
+
+    describe('when publishAuth specified and not supported', function(){
+
+      var conf = { publishAuth: { type: 'oauth' }};
+
+      it('should not be valid', function(){
+        expect(validate(conf).isValid).to.be.false;
+        expect(validate(conf).message).to.equal('Auth not supported');
+      });
+    });
+
+    describe('when publishAuth specified and basic', function(){
+
+      describe('when username and password specified', function(){
+
+        var conf = { publishAuth: { type: 'basic', username: 'a', password: 'b' }};
+
+        it('should be valid', function(){
+          expect(validate(conf).isValid).to.be.true;
+        });
+      });
+
+      describe('when username and password not specified', function(){
+
+        var conf = { publishAuth: { type: 'basic', a: '' }};
+
+        it('should not be valid', function(){
+          expect(validate(conf).isValid).to.be.false;
+          expect(validate(conf).message).to.equal('Basic auth requires username and password');
+        });
+      });
+    });
   });
 
   describe('when validating component request by parameter', function(){
