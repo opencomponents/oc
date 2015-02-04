@@ -3,6 +3,7 @@
 var colors = require('colors');
 var format = require('../../utils/format');
 var path = require('path');
+var read = require('read');
 var strings = require('../../resources/index');
 var _ = require('underscore');
 
@@ -39,6 +40,42 @@ module.exports = function(dependencies){
       });
     };
 
+    var putComponentToRegistry = function(options){
+
+      logger.log(format(strings.messages.cli.PUBLISHING.yellow, options.route.green));
+
+      registry.putComponent(options, function(err, res){
+
+        if(!!err){
+
+          if(err === 'Unauthorized'){
+            if(!!options.username || !!options.password){
+              return logger.log('Invalid credentials'.red);
+            }
+            
+            logger.log('Registry requires credentials. Enter your username: '.yellow);
+
+            read({}, function(err, username){
+
+              logger.log('Enter your password: '.yellow);
+              
+              read({ silent: true }, function(err, password){
+                putComponentToRegistry(_.extend(options, {
+                  username: username,
+                  password: password
+                }));
+              });
+            });
+          } else {
+            logger.log(format(strings.errors.cli.PUBLISHING_FAIL, err).red);
+          }
+        } else {
+          logger.log('Component published -> '.yellow + options.route.green);
+          local.cleanup(compressedPackagePath, process.exit);
+        }
+      });
+    };
+
     registry.get(function(err, registryLocations){
       if(err){
         return logger.log(err.red);
@@ -54,17 +91,7 @@ module.exports = function(dependencies){
             registryNormalised = registryUrl.slice(registryLength - 1) === '/' ? registryUrl.slice(0, registryLength - 1) : registryUrl,
             componentRoute = format('{0}/{1}/{2}', registryNormalised, component.name, component.version);
 
-        logger.log(format(strings.messages.cli.PUBLISHING.yellow, componentRoute.green));
-
-        registry.putComponent(componentRoute, compressedPackagePath, function(err, res){
-
-          if(!!err){
-            logger.log(format(strings.errors.cli.PUBLISHING_FAIL, err).red);
-          } else {
-            logger.log('Component published -> '.yellow + componentRoute.green);
-            local.cleanup(compressedPackagePath, process.exit);
-          }
-        });
+        putComponentToRegistry({ route: componentRoute, path: compressedPackagePath});
       });
     });
   };

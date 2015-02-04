@@ -21,7 +21,10 @@ module.exports = {
       MANDATORY_PARAMETER_MISSING_CODE: 'missing',
 
       PARAMETER_WRONG_FORMAT: 'Parameters are not correctly formatted: {0}',
-      PARAMETER_WRONG_FORMAT_CODE: 'wrong type'
+      PARAMETER_WRONG_FORMAT_CODE: 'wrong type',
+
+      PUBLISH_AUTH_CREDENTIALS_MISSING: 'Basic auth requires username and password',
+      PUBLISH_AUTH_NOT_SUPPORTED: 'Auth not supported'
     },
     cli: {
       COMPONENTS_LINKED_NOT_FOUND: 'No components linked in the project',

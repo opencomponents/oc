@@ -125,6 +125,18 @@ module.exports = {
       }
     }
 
+    var publishAuth = conf.publishAuth;
+
+    if(!!publishAuth){
+      if(publishAuth.type !== 'basic'){
+        return returnError(strings.errors.registry.PUBLISH_AUTH_NOT_SUPPORTED);
+      } else {
+        if(!publishAuth.username || !publishAuth.password){
+          return returnError(strings.errors.registry.PUBLISH_AUTH_CREDENTIALS_MISSING);
+        }
+      }
+    }
+
     return response;
   },
   validatePackage: function(input){

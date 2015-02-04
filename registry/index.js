@@ -63,6 +63,12 @@ module.exports = function(options){
         }
       }));
     }
+
+    if(!options.publishAuth){
+      options.beforePublish = function(req, res, next){ next(); };
+    } else {
+      options.beforePublish = express.basicAuth(options.publishAuth.username, options.publishAuth.password);
+    }
     
     if(withLogging){
       app.use(express.logger('dev'));
@@ -103,7 +109,7 @@ module.exports = function(options){
     app.get(options.prefix + ':componentName', routes.component);
 
     if(!options.local){
-      app.put(options.prefix + ':componentName/:componentVersion', routes.publish);
+      app.put(options.prefix + ':componentName/:componentVersion', options.beforePublish, routes.publish);
     }
 
     self.app = app;
