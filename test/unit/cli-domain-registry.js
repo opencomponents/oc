@@ -7,8 +7,9 @@ var sinon = require('sinon');
 var getRegistry = function(dependencies){
   var Registry = injectr('../../cli/domain/registry.js', {
         '../../utils/request': dependencies.request,
-        'fs-extra': dependencies.fs
-      });
+        'fs-extra': dependencies.fs,
+        '../../utils/put': dependencies.put
+      }, { Buffer: Buffer });
       
   return new Registry();
 };
@@ -47,6 +48,50 @@ describe('cli : domain : registry', function(){
         expect(fsStub.writeJson.getCall(0).args[1]).to.eql({
           registries: ['http://some-api.com/asd/']
         });
+      });
+    });
+  });
+
+  describe('when publishing to registry', function(){
+
+    describe('when no credentials used', function(){
+
+      var args, putSpy;
+      beforeEach(function(){
+        putSpy = sinon.spy();
+        var registry = getRegistry({ put: putSpy });
+        registry.putComponent({ route: 'http://registry.com/component/1.0.0', path: '/blabla/path' }, function(){});
+        args = putSpy.args[0];
+      });
+
+      it('should do the request without headers', function(){
+        expect(putSpy.called).to.be.true;
+        expect(args[0]).to.eql('http://registry.com/component/1.0.0');
+        expect(args[1]).to.eql('/blabla/path');
+        expect(args[2]).to.eql({});
+      });
+    });
+
+    describe('when credentials used', function(){
+
+      var args, putSpy;
+      beforeEach(function(){
+        putSpy = sinon.spy();
+        var registry = getRegistry({ put: putSpy });
+        registry.putComponent({ 
+          route: 'http://registry.com/component/1.0.0', 
+          path: '/blabla/path',
+          username: 'johndoe',
+          password: 'aPassw0rd'
+        }, function(){});
+        args = putSpy.args[0];
+      });
+
+      it('should do the request with authorization header', function(){
+        expect(putSpy.called).to.be.true;
+        expect(args[0]).to.eql('http://registry.com/component/1.0.0');
+        expect(args[1]).to.eql('/blabla/path');
+        expect(args[2]).to.eql({ 'Authorization': 'Basic am9obmRvZTphUGFzc3cwcmQ=' });
       });
     });
   });
