@@ -57,7 +57,7 @@ module.exports = {
       COMPONENTS_LINKED_LIST: 'Components linked in project:',
       COMPONENTS_LIST: 'Components available in oc registry: {0}',
       COMPRESSING: 'Compressing -> {0}',
-      ENTER_PASSWORD: 'Enter password',
+      ENTER_PASSWORD: 'Enter password:',
       ENTER_USERNAME: 'Enter username:',
       PACKAGING: 'Packaging -> {0}',
       PUBLISHED: 'Published -> {0}',
