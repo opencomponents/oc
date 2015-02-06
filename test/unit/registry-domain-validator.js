@@ -30,63 +30,197 @@ describe('registry : domain : validator', function(){
       });
     });
 
-    describe('when prefix does not start with /', function(){
+    describe('prefix', function(){
+      describe('when prefix does not start with /', function(){
 
-      var conf = { prefix: 'hello/' };
+        var conf = { prefix: 'hello/' };
 
-      it('should not be valid', function(){
-        expect(validate(conf).isValid).to.be.false;
-        expect(validate(conf).message).to.equal('Registry configuration is not valid: prefix should start with "/"');
+        it('should not be valid', function(){
+          expect(validate(conf).isValid).to.be.false;
+          expect(validate(conf).message).to.equal('Registry configuration is not valid: prefix should start with "/"');
+        });
+      });
+
+      describe('when prefix does not end with /', function(){
+
+        var conf = { prefix: '/hello' };
+
+        it('should not be valid', function(){
+          expect(validate(conf).isValid).to.be.false;
+          expect(validate(conf).message).to.equal('Registry configuration is not valid: prefix should end with "/"');
+        });
       });
     });
 
-    describe('when prefix does not end with /', function(){
+    describe('publishAuth', function(){
+      describe('when not specified', function(){
 
-      var conf = { prefix: '/hello' };
-
-      it('should not be valid', function(){
-        expect(validate(conf).isValid).to.be.false;
-        expect(validate(conf).message).to.equal('Registry configuration is not valid: prefix should end with "/"');
-      });
-    });
-
-    describe('when publishAuth not specified', function(){
-
-      var conf = { publishAuth: null };
-
-      it('should be valid', function(){
-        expect(validate(conf).isValid).to.be.true;
-      });
-    });
-
-    describe('when publishAuth specified and not supported', function(){
-
-      var conf = { publishAuth: { type: 'oauth' }};
-
-      it('should not be valid', function(){
-        expect(validate(conf).isValid).to.be.false;
-        expect(validate(conf).message).to.equal('Auth not supported');
-      });
-    });
-
-    describe('when publishAuth specified and basic', function(){
-
-      describe('when username and password specified', function(){
-
-        var conf = { publishAuth: { type: 'basic', username: 'a', password: 'b' }};
+        var conf = { publishAuth: null };
 
         it('should be valid', function(){
           expect(validate(conf).isValid).to.be.true;
         });
       });
 
-      describe('when username and password not specified', function(){
+      describe('when specified and not supported', function(){
 
-        var conf = { publishAuth: { type: 'basic', a: '' }};
+        var conf = { publishAuth: { type: 'oauth' }};
 
         it('should not be valid', function(){
           expect(validate(conf).isValid).to.be.false;
-          expect(validate(conf).message).to.equal('Basic auth requires username and password');
+          expect(validate(conf).message).to.equal('Registry configuration is not valid: auth not supported');
+        });
+      });
+
+      describe('when specified and basic', function(){
+
+        describe('when username and password specified', function(){
+
+          var conf = { publishAuth: { type: 'basic', username: 'a', password: 'b' }};
+
+          it('should be valid', function(){
+            expect(validate(conf).isValid).to.be.true;
+          });
+        });
+
+        describe('when username and password not specified', function(){
+
+          var conf = { publishAuth: { type: 'basic', a: '' }};
+
+          it('should not be valid', function(){
+            expect(validate(conf).isValid).to.be.false;
+            expect(validate(conf).message).to.equal('Registry configuration is not valid: basic auth requires username and password');
+          });
+        });
+      });
+    });
+
+    describe('dependencies', function(){
+      describe('when not specified', function(){
+
+        var conf = { dependencies: null };
+
+        it('should be valid', function(){
+          expect(validate(conf).isValid).to.be.true;
+        });
+      });
+
+      describe('when specified', function(){
+
+        describe('when it is an object', function(){
+
+          var conf = { dependencies: { hello: 'world' }};
+
+          it('should be valid', function(){
+            expect(validate(conf).isValid).to.be.true;
+          });
+        });
+
+        describe('when it is not an object', function(){
+
+          var conf = { dependencies: ['hello']};
+
+          it('should not be valid', function(){
+            expect(validate(conf).isValid).to.be.false;
+            expect(validate(conf).message).to.equal('Registry configuration is not valid: dependencies must be an object');
+          });
+        });
+      });
+    });
+
+    describe('routes', function(){
+      describe('when not specified', function(){
+
+        var conf = { routes: null };
+
+        it('should be valid', function(){
+          expect(validate(conf).isValid).to.be.true;
+        });
+      });
+
+      describe('when specified', function(){
+
+        describe('when not an array', function(){
+
+          var conf = { routes: {thisis: 'anobject' }};
+
+          it('should not be valid', function(){
+            expect(validate(conf).isValid).to.be.false;
+            expect(validate(conf).message).to.be.eql('Registry configuration is not valid: routes must be an array');
+          });
+        });
+
+        describe('when route does not contain route', function(){
+
+          var conf = { routes: [{ method: 'get', handler: function(){}}]};
+
+          it('should not be valid', function(){
+            expect(validate(conf).isValid).to.be.false;
+            expect(validate(conf).message).to.be.eql('Registry configuration is not valid: each route should contain route, method and handler');
+          });
+        });
+
+        describe('when route does not contain handler', function(){
+
+          var conf = { routes: [{ method: 'get', route: '/hello'}]};
+
+          it('should not be valid', function(){
+            expect(validate(conf).isValid).to.be.false;
+            expect(validate(conf).message).to.be.eql('Registry configuration is not valid: each route should contain route, method and handler');
+          });
+        });
+
+        describe('when route does not contain method', function(){
+
+          var conf = { routes: [{ route: '/hello', handler: function(){}}]};
+
+          it('should not be valid', function(){
+            expect(validate(conf).isValid).to.be.false;
+            expect(validate(conf).message).to.be.eql('Registry configuration is not valid: each route should contain route, method and handler');
+          });
+        });
+
+        describe('when route contains handler that is not a function', function(){
+
+          var conf = { routes: [{ route: '/hello', method: 'get', handler: 'hello' }]};
+
+          it('should not be valid', function(){
+            expect(validate(conf).isValid).to.be.false;
+            expect(validate(conf).message).to.be.eql('Registry configuration is not valid: handler should be a function');
+          });
+        });
+      });
+    });
+
+    describe('onRequest', function(){
+      describe('when not specified', function(){
+
+        var conf = { onRequest: null };
+
+        it('should be valid', function(){
+          expect(validate(conf).isValid).to.be.true;
+        });
+      });
+
+      describe('when specified', function(){
+
+        describe('when it is not a function', function(){
+
+          var conf = { onRequest: true };
+
+          it('should not be valid', function(){
+            expect(validate(conf).isValid).to.be.false;
+            expect(validate(conf).message).to.be.eql('Registry configuration is not valid: onRequest must be a function');
+          });
+        });
+
+        describe('when it is a function', function(){
+
+          var conf = { onRequest: function(){}};
+
+          it('should be valid', function(){
+            expect(validate(conf).isValid).to.be.true;
+          });
         });
       });
     });
