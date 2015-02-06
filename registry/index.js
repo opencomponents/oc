@@ -118,7 +118,7 @@ module.exports = function(options){
 
     if(!!options.routes){
       _.forEach(options.routes, function(route){
-        app[route.verb.toLowerCase()](route.route, route.handler);
+        app[route.method.toLowerCase()](route.route, route.handler);
       });
     }
 
