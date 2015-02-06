@@ -8,6 +8,7 @@ var format = require('../utils/format');
 var http = require('http');
 var multer  = require('multer');
 var path = require('path');
+var RequestInterceptor = require('./request-interceptor');
 var validator = require('./domain/validator');
 var _ = require('underscore');
 
@@ -76,10 +77,15 @@ module.exports = function(options){
 
     app.use(express.json());
     app.use(express.urlencoded());
-    app.use(app.router);
     app.set('json spaces', 0);
 
-    // development only
+    if(!!options.onRequest){
+      var interceptor = new RequestInterceptor(options.onRequest);
+      app.use(interceptor);
+    }
+    
+    app.use(app.router);
+
     if('development' === app.get('env')){
       app.use(express.errorHandler());
     }
@@ -95,6 +101,8 @@ module.exports = function(options){
 
     if(options.local){
       app.get(options.prefix + ':componentName/:componentVersion/static/*', routes.staticRedirector);
+    } else {
+      app.put(options.prefix + ':componentName/:componentVersion', options.beforePublish, routes.publish);
     }
 
     app.get(options.prefix, routes.index);
@@ -108,8 +116,10 @@ module.exports = function(options){
     app.get(options.prefix + ':componentName/:componentVersion', routes.component);
     app.get(options.prefix + ':componentName', routes.component);
 
-    if(!options.local){
-      app.put(options.prefix + ':componentName/:componentVersion', options.beforePublish, routes.publish);
+    if(!!options.routes){
+      _.forEach(options.routes, function(route){
+        app[route.verb.toLowerCase()](route.route, route.handler);
+      });
     }
 
     self.app = app;

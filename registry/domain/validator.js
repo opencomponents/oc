@@ -129,12 +129,40 @@ module.exports = {
 
     if(!!publishAuth){
       if(publishAuth.type !== 'basic'){
-        return returnError(strings.errors.registry.PUBLISH_AUTH_NOT_SUPPORTED);
+        return returnError(strings.errors.registry.CONFIGURATION_PUBLISH_AUTH_NOT_SUPPORTED);
       } else {
         if(!publishAuth.username || !publishAuth.password){
-          return returnError(strings.errors.registry.PUBLISH_AUTH_CREDENTIALS_MISSING);
+          return returnError(strings.errors.registry.CONFIGURATION_PUBLISH_AUTH_CREDENTIALS_MISSING);
         }
       }
+    }
+
+    var dependencies = conf.dependencies;
+
+    if(!!dependencies && (!_.isObject(dependencies)) || _.isArray(dependencies)){
+      return returnError(strings.errors.registry.CONFIGURATION_DEPENDENCIES_MUST_BE_OBJECT);
+    }
+
+    var routes = conf.routes;
+
+    if(!!routes && !_.isArray(routes)){
+      return returnError(strings.errors.registry.CONFIGURATION_ROUTES_MUST_BE_ARRAY);
+    } else {
+      _.forEach(routes, function(route){
+        if(!route.route || !route.handler || !route.method){
+          return returnError(strings.errors.registry.CONFIGURATION_ROUTES_NOT_VALID);
+        }
+
+        if(!_.isFunction(route.handler)){
+          return returnError(strings.errors.registry.CONFIGURATION_ROUTES_HANDLER_MUST_BE_FUNCTION);
+        }
+      });
+    }
+
+    var onRequest = conf.onRequest;
+
+    if(!!onRequest && !_.isFunction(onRequest)){
+      return returnError(strings.errors.registry.CONFIGURTATION_ONREQUEST_MUST_BE_FUNCTION);
     }
 
     return response;

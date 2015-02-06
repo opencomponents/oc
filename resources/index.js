@@ -10,10 +10,16 @@ module.exports = {
       COMPONENT_VERSION_ALREADY_FOUND: 'Component "{0}" with version "{1}" can\'t be published to {2} because a component with the same name and version already exists',
       COMPONENT_VERSION_ALREADY_FOUND_CODE: 'already_exists',
        
+      CONFIGURATION_DEPENDENCIES_MUST_BE_OBJECT: 'Registry configuration is not valid: dependencies must be an object',
       CONFIGURATION_EMPTY: 'Registry configuration is empty',
+      CONFIGURTATION_ONREQUEST_MUST_BE_FUNCTION: 'Registry configuration is not valid: onRequest must be a function',
+      CONFIGURATION_PUBLISH_AUTH_CREDENTIALS_MISSING: 'Registry configuration is not valid: basic auth requires username and password',
+      CONFIGURATION_PUBLISH_AUTH_NOT_SUPPORTED: 'Registry configuration is not valid: auth not supported',
       CONFIGURATION_PREFIX_DOES_NOT_END_WITH_SLASH: 'Registry configuration is not valid: prefix should end with "/"',
       CONFIGURATION_PREFIX_DOES_NOT_START_WITH_SLASH: 'Registry configuration is not valid: prefix should start with "/"',
-
+      CONFIGURATION_ROUTES_HANDLER_MUST_BE_FUNCTION: 'Registry configuration is not valid: handler should be a function',
+      CONFIGURATION_ROUTES_NOT_VALID: 'Registry configuration is not valid: each route should contain route, method and handler',
+      CONFIGURATION_ROUTES_MUST_BE_ARRAY: 'Registry configuration is not valid: routes must be an array',
       LOCAL_PUBLISH_NOT_ALLOWED: 'Components can\'t be published to local repository',
       LOCAL_PUBLISH_NOT_ALLOWED_CODE: 'not_allowed',
 
@@ -21,10 +27,7 @@ module.exports = {
       MANDATORY_PARAMETER_MISSING_CODE: 'missing',
 
       PARAMETER_WRONG_FORMAT: 'Parameters are not correctly formatted: {0}',
-      PARAMETER_WRONG_FORMAT_CODE: 'wrong type',
-
-      PUBLISH_AUTH_CREDENTIALS_MISSING: 'Basic auth requires username and password',
-      PUBLISH_AUTH_NOT_SUPPORTED: 'Auth not supported'
+      PARAMETER_WRONG_FORMAT_CODE: 'wrong type'
     },
     cli: {
       COMPONENTS_LINKED_NOT_FOUND: 'No components linked in the project',
