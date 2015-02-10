@@ -50,7 +50,7 @@ var oc = oc || {};
   };
 
   // a minimal vanilla require.js
-  var _require = function(hrefs, callback){
+  var _require = function(hrefs, callback){ console.log(arguments);
 
     if(!Array.isArray(hrefs)){
       hrefs = [hrefs];
@@ -211,13 +211,17 @@ var oc = oc || {};
     }
   };
 
-  if(!$){
-    _require(JQUERY_URL, function(){
-      $ = jQuery;
-      oc.renderUnloadedComponents();
-    });
-  } else {
-    oc.renderUnloadedComponents();
-  }
+  var ensureJqueryIsLoaded = function(callback){ console.log('j')
+    if(!$){
+      _require(JQUERY_URL, function(){
+        $ = jQuery;
+        callback();
+      });
+    } else {
+      callback();
+    }
+  };
+
+  ensureJqueryIsLoaded(oc.renderUnloadedComponents);
 
 })(Handlebars, document, true); // jshint ignore:line
