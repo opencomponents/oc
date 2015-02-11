@@ -2,7 +2,7 @@
 
 var oc = oc || {};
 
-(function(Handlebars, $document, debug){
+(function(Handlebars, $document, $window, debug){
 
   // Constants
   var HTML5SHIV_URL = 'https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js',
@@ -220,7 +220,7 @@ var oc = oc || {};
       _require([JQUERY_URL], function(){
         $ = jQuery;
 
-        var nav = navigator.userAgent,
+        var nav = $window.navigator.userAgent,
             is8 = !!(nav.match(/MSIE 8/)),
             is9 = !!(nav.match(/MSIE 9/));
 
@@ -237,4 +237,4 @@ var oc = oc || {};
 
   ensureJqueryIsLoaded(oc.renderUnloadedComponents);
 
-})(Handlebars, document, true); // jshint ignore:line
+})(Handlebars, document, window, true); // jshint ignore:line
