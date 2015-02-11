@@ -25,3 +25,4 @@ node_modules
 .DS_Store
 
 components/oc.json
+components/base-component/_package

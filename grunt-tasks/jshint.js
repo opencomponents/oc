@@ -8,6 +8,7 @@ module.exports = {
         'components/oc-client/src/handlebars.1.3.0.js', 
         'components/oc-client/src/oc-client.min.js', 
         'components/oc-client/_package/**/*', 
+        'components/base-component/_package/**/*', 
         'test/fixtures']
     },
     all: ['.']

@@ -2,10 +2,12 @@
 
 var oc = oc || {};
 
-(function(Handlebars, $document, debug){
+(function(Handlebars, $document, $window, debug){
 
   // Constants
-  var JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js',
+  var HTML5SHIV_URL = 'https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js',
+      IE89_AJAX_POLYFILL_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxtransport-xdomainrequest/1.0.3/jquery.xdomainrequest.min.js',
+      JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.js',
       RETRY_INTERVAL = 5000,
       OC_TAG = 'oc-component',
       MESSAGES_ERRORS_HREF_MISSING = 'Href parameter missing',
@@ -16,13 +18,6 @@ var oc = oc || {};
       MESSAGES_LOADING_COMPONENT = 'Loading...',
       MESSAGES_RENDERED = 'Component \'{0}\' correctly rendered',
       MESSAGES_RETRIEVING = 'Unrendered component found. Trying to retrieve it...';
-
-  // Polyfills
-  if(!Array.isArray){
-    Array.isArray = function(arg){
-      return Object.prototype.toString.call(arg) === '[object Array]';
-    };
-  }
 
   // The code
   var headScripts = [],
@@ -51,10 +46,6 @@ var oc = oc || {};
 
   // a minimal vanilla require.js
   var _require = function(hrefs, callback){
-
-    if(!Array.isArray(hrefs)){
-      hrefs = [hrefs];
-    }
 
     var callbacks = hrefs.length,
         $head = $document.getElementsByTagName('head')[0];
@@ -92,11 +83,14 @@ var oc = oc || {};
 
     $component.html(data.html);
     $component.attr('id', newId);
-    $component.attr('data-hash', data.key);
     $component.attr('data-rendered', true);
     $component.attr('data-version', data.version);
-    
-    oc.setEventListeners($component);
+
+    if(!!data.key){
+      $component.attr('data-hash', data.key);
+      oc.setEventListeners($component);
+    }
+
     callback();
   };
 
@@ -135,20 +129,30 @@ var oc = oc || {};
       $.ajax({
         url: href,
         headers: { 'render-mode': 'pre-rendered' }, 
+        crossDomain: true,
+        async: true,
         success: function(apiResponse){
-          _require(apiResponse.template.src, function(){
-            oc.render(apiResponse.template, apiResponse.data, function(err, html){
-              if(err){ 
-                return callback(MESSAGES_ERRORS_RENDERING.replace('{0}', apiResponse.href).replace('{1}', err));
-              }
-              logger.info(MESSAGES_RENDERED.replace('{0}', apiResponse.template.src));
-              callback(null, {
-                html: html, 
-                key: apiResponse.template.key,
-                version: apiResponse.version
+          if(apiResponse.renderMode === 'pre-rendered'){
+            _require([apiResponse.template.src], function(){
+              oc.render(apiResponse.template, apiResponse.data, function(err, html){
+                if(err){ 
+                  return callback(MESSAGES_ERRORS_RENDERING.replace('{0}', apiResponse.href).replace('{1}', err));
+                }
+                logger.info(MESSAGES_RENDERED.replace('{0}', apiResponse.template.src));
+                callback(null, {
+                  html: html, 
+                  key: apiResponse.template.key,
+                  version: apiResponse.version
+                });
               });
             });
-          });
+          } else if(apiResponse.renderMode === 'rendered'){
+            logger.info(MESSAGES_RENDERED.replace('{0}', apiResponse.href));
+            callback(null, {
+              html: $(apiResponse.html).html(), 
+              version: apiResponse.version
+            });            
+          }
         },
         error: function(){
           logger.error(MESSAGES_ERRORS_RETRIEVING);
@@ -211,13 +215,26 @@ var oc = oc || {};
     }
   };
 
-  if(!$){
-    _require(JQUERY_URL, function(){
-      $ = jQuery;
-      oc.renderUnloadedComponents();
-    });
-  } else {
-    oc.renderUnloadedComponents();
-  }
+  var ensureJqueryIsLoaded = function(callback){
+    if(!$){
+      _require([JQUERY_URL], function(){
+        $ = jQuery;
 
-})(Handlebars, document, true); // jshint ignore:line
+        var nav = $window.navigator.userAgent,
+            is8 = !!(nav.match(/MSIE 8/)),
+            is9 = !!(nav.match(/MSIE 9/));
+
+        if(is8 || is9){
+          _require([IE89_AJAX_POLYFILL_URL, HTML5SHIV_URL], callback);
+        } else {
+          callback();
+        }
+      });
+    } else {
+      callback();
+    }
+  };
+
+  ensureJqueryIsLoaded(oc.renderUnloadedComponents);
+
+})(Handlebars, document, window, true); // jshint ignore:line
