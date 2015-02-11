@@ -5,7 +5,9 @@ var oc = oc || {};
 (function(Handlebars, $document, debug){
 
   // Constants
-  var JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js',
+  var HTML5SHIV_URL = 'https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js',
+      IE89_AJAX_POLYFILL_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxtransport-xdomainrequest/1.0.3/jquery.xdomainrequest.min.js',
+      JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.js',
       RETRY_INTERVAL = 5000,
       OC_TAG = 'oc-component',
       MESSAGES_ERRORS_HREF_MISSING = 'Href parameter missing',
@@ -16,13 +18,6 @@ var oc = oc || {};
       MESSAGES_LOADING_COMPONENT = 'Loading...',
       MESSAGES_RENDERED = 'Component \'{0}\' correctly rendered',
       MESSAGES_RETRIEVING = 'Unrendered component found. Trying to retrieve it...';
-
-  // Polyfills
-  if(!Array.isArray){
-    Array.isArray = function(arg){
-      return Object.prototype.toString.call(arg) === '[object Array]';
-    };
-  }
 
   // The code
   var headScripts = [],
@@ -51,10 +46,6 @@ var oc = oc || {};
 
   // a minimal vanilla require.js
   var _require = function(hrefs, callback){
-
-    if(!Array.isArray(hrefs)){
-      hrefs = [hrefs];
-    }
 
     var callbacks = hrefs.length,
         $head = $document.getElementsByTagName('head')[0];
@@ -92,11 +83,14 @@ var oc = oc || {};
 
     $component.html(data.html);
     $component.attr('id', newId);
-    $component.attr('data-hash', data.key);
     $component.attr('data-rendered', true);
     $component.attr('data-version', data.version);
-    
-    oc.setEventListeners($component);
+
+    if(!!data.key){
+      $component.attr('data-hash', data.key);
+      oc.setEventListeners($component);
+    }
+
     callback();
   };
 
@@ -135,20 +129,30 @@ var oc = oc || {};
       $.ajax({
         url: href,
         headers: { 'render-mode': 'pre-rendered' }, 
+        crossDomain: true,
+        async: true,
         success: function(apiResponse){
-          _require(apiResponse.template.src, function(){
-            oc.render(apiResponse.template, apiResponse.data, function(err, html){
-              if(err){ 
-                return callback(MESSAGES_ERRORS_RENDERING.replace('{0}', apiResponse.href).replace('{1}', err));
-              }
-              logger.info(MESSAGES_RENDERED.replace('{0}', apiResponse.template.src));
-              callback(null, {
-                html: html, 
-                key: apiResponse.template.key,
-                version: apiResponse.version
+          if(apiResponse.renderMode === 'pre-rendered'){
+            _require([apiResponse.template.src], function(){
+              oc.render(apiResponse.template, apiResponse.data, function(err, html){
+                if(err){ 
+                  return callback(MESSAGES_ERRORS_RENDERING.replace('{0}', apiResponse.href).replace('{1}', err));
+                }
+                logger.info(MESSAGES_RENDERED.replace('{0}', apiResponse.template.src));
+                callback(null, {
+                  html: html, 
+                  key: apiResponse.template.key,
+                  version: apiResponse.version
+                });
               });
             });
-          });
+          } else if(apiResponse.renderMode === 'rendered'){
+            logger.info(MESSAGES_RENDERED.replace('{0}', apiResponse.href));
+            callback(null, {
+              html: $(apiResponse.html).html(), 
+              version: apiResponse.version
+            });            
+          }
         },
         error: function(){
           logger.error(MESSAGES_ERRORS_RETRIEVING);
@@ -213,110 +217,18 @@ var oc = oc || {};
 
   var ensureJqueryIsLoaded = function(callback){
     if(!$){
-      _require(JQUERY_URL, function(){
+      _require([JQUERY_URL], function(){
         $ = jQuery;
 
-        if(true){
-          //Ajax IE8 polyfills
+        var nav = navigator.userAgent,
+            is8 = !!(nav.match(/MSIE 8/)),
+            is9 = !!(nav.match(/MSIE 9/));
 
-          // Only continue if we're on IE8/IE9 with jQuery 1.5+ (contains the ajaxTransport function)
-          if ($.support.cors || !$.ajaxTransport || !window.XDomainRequest) {
-            return;
-          }
-
-          var httpRegEx = /^https?:\/\//i;
-          var getOrPostRegEx = /^get|post$/i;
-          var sameSchemeRegEx = new RegExp('^'+location.protocol, 'i');
-
-          // ajaxTransport exists in jQuery 1.5+
-          $.ajaxTransport('* text html xml json', function(options, userOptions, jqXHR) {
-            
-            // Only continue if the request is: asynchronous, uses GET or POST method, has HTTP or HTTPS protocol, and has the same scheme as the calling page
-            if (!options.crossDomain || !options.async || !getOrPostRegEx.test(options.type) || !httpRegEx.test(options.url) || !sameSchemeRegEx.test(options.url)) {
-              return;
-            }
-
-            var xdr = null;
-
-            return {
-              send: function(headers, complete) {
-                var postData = '';
-                var userType = (userOptions.dataType || '').toLowerCase();
-
-                xdr = new XDomainRequest();
-                if (/^\d+$/.test(userOptions.timeout)) {
-                  xdr.timeout = userOptions.timeout;
-                }
-
-                xdr.ontimeout = function() {
-                  complete(500, 'timeout');
-                };
-
-                xdr.onload = function() {
-                  var allResponseHeaders = 'Content-Length: ' + xdr.responseText.length + '\r\nContent-Type: ' + xdr.contentType;
-                  var status = {
-                    code: 200,
-                    message: 'success'
-                  };
-                  var responses = {
-                    text: xdr.responseText
-                  };
-                  try {
-                    if (userType === 'html' || /text\/html/i.test(xdr.contentType)) {
-                      responses.html = xdr.responseText;
-                    } else if (userType === 'json' || (userType !== 'text' && /\/json/i.test(xdr.contentType))) {
-                      try {
-                        responses.json = $.parseJSON(xdr.responseText);
-                      } catch(e) {
-                        status.code = 500;
-                        status.message = 'parseerror';
-                        //throw 'Invalid JSON: ' + xdr.responseText;
-                      }
-                    } else if (userType === 'xml' || (userType !== 'text' && /\/xml/i.test(xdr.contentType))) {
-                      var doc = new ActiveXObject('Microsoft.XMLDOM');
-                      doc.async = false;
-                      try {
-                        doc.loadXML(xdr.responseText);
-                      } catch(e) {
-                        doc = undefined;
-                      }
-                      if (!doc || !doc.documentElement || doc.getElementsByTagName('parsererror').length) {
-                        status.code = 500;
-                        status.message = 'parseerror';
-                        throw 'Invalid XML: ' + xdr.responseText;
-                      }
-                      responses.xml = doc;
-                    }
-                  } catch(parseMessage) {
-                    throw parseMessage;
-                  } finally {
-                    complete(status.code, status.message, responses, allResponseHeaders);
-                  }
-                };
-
-                // set an empty handler for 'onprogress' so requests don't get aborted
-                xdr.onprogress = function(){};
-                xdr.onerror = function() {
-                  complete(500, 'error', {
-                    text: xdr.responseText
-                  });
-                };
-
-                if (userOptions.data) {
-                  postData = ($.type(userOptions.data) === 'string') ? userOptions.data : $.param(userOptions.data);
-                }
-                xdr.open(options.type, options.url);
-                xdr.send(postData);
-              },
-              abort: function() {
-                if (xdr) {
-                  xdr.abort();
-                }
-              }
-            };
-          });
+        if(is8 || is9){
+          _require([IE89_AJAX_POLYFILL_URL, HTML5SHIV_URL], callback);
+        } else {
+          callback();
         }
-        callback();
       });
     } else {
       callback();
