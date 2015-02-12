@@ -19,10 +19,11 @@ module.exports = function(options){
   var hasPrefix = false,
       self = this,
       server,
-      withLogging = !_.has(options, 'verbosity') || options.verbosity > 0;
+      withLogging = !_.has(options, 'verbosity') || options.verbosity > 0,
+      validationResult = validator.registryConfiguration(options);
 
-  if(!validator.registryConfiguration(options).isValid){
-    return { err: 'conf is not valid'};
+  if(!validationResult.isValid){
+    throw validationResult.message;
   }
 
   this.close = function(callback){
