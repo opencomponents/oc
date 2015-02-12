@@ -521,6 +521,34 @@ describe('registry : domain : validator', function(){
 
   });
 
+  describe('when validating template type for new candidate', function(){
+    var validate = function(a){ return validator.validateTemplateType(a); };
+
+    describe('when type is not handlebars or jade', function(){
+
+      var type = 'othertype';
+      it('should not be valid', function(){
+        expect(validate(type)).to.be.false;
+      });
+    });
+
+    describe('when type is handlebars', function(){
+
+      var type = 'handlebars';
+      it('should be valid', function(){
+        expect(validate(type)).to.be.true;
+      });
+    });
+
+    describe('when type is jade', function(){
+
+      var type = 'jade';
+      it('should be valid', function(){
+        expect(validate(type)).to.be.true;
+      });
+    });
+  });
+
   describe('when validating component version for new candidate', function(){
 
     var existingVersions = ['1.0.0', '1.0.1', '2.0.0', '2.1.0'],
