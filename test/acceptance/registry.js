@@ -28,6 +28,18 @@ describe('registry', function(){
     registry.close(done);
   });
 
+  describe('when initialized with invalid configuration', function(){
+
+      it('should throw an error', function(done){
+          var f = function throwsWithNoArgs() {
+              var args = {};
+              var wrongRegistry = new oc.Registry(args);
+          };
+          expect(f).to.throw('Registry configuration is empty');
+          done();
+      });
+  });
+
   describe('GET /', function(){
 
     var url = 'http://localhost:3030',
