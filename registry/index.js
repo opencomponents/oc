@@ -44,8 +44,8 @@ module.exports = function(options){
     app.use(function (req, res, next) {
       res.removeHeader('X-Powered-By');
       res.header('Access-Control-Allow-Credentials', 'true');
-      res.header('Access-Control-Allow-Origin', req.headers.origin);
-      res.header('Access-Control-Allow-Headers', 'X-Requested-With, render-mode');
+      res.header('Access-Control-Allow-Origin', '*');
+      res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, render-mode');
       res.header('Access-Control-Allow-Methods', 'GET, PUT');
       res.conf = options;
 
