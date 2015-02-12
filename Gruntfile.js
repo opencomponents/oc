@@ -44,7 +44,7 @@ module.exports = function(grunt) {
         handlebarsRuntime = fs.readFileSync(path.join(__dirname, 'node_modules/handlebars/dist/handlebars.runtime.min.js')).toString(),
         jadeRuntime = fs.readFileSync(path.join(__dirname, 'node_modules/jade/runtime.js')).toString(),
         ocClient = fs.readFileSync(path.join(__dirname, 'components/oc-client/src/oc-client.js')).toString(),
-        bundle = format('{0};{1};{2};oc.clientVersion=\'{3};\'', jadeRuntime, handlebarsRuntime, ocClient, taskObject.pkg.version),
+        bundle = format('{0}\n;\n{1}\n;\n{2}\n;\noc.clientVersion=\'{3}\';', jadeRuntime, handlebarsRuntime, ocClient, taskObject.pkg.version),
         ocClientPackageInfo = require('./components/oc-client/package.json');
 
     ocClientPackageInfo.version = taskObject.pkg.version;
