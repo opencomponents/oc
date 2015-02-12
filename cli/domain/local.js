@@ -73,23 +73,17 @@ module.exports = function(){
     init: function(componentName, templateType, callback){
 
       if(!validator.validateComponentName(componentName)){
-        return callback('name not valid');
+          return callback('name not valid');
       }
 
       if(!validator.validateTemplateType(templateType)){
-        return callback('template type not valid');
+          return callback('template type not valid');
       }
 
       try {
-        var baseComponentDir;
-        if(templateType === 'jade') {
-          baseComponentDir = path.resolve(__dirname, '../../components/base-component-jade');
-        }
-        else {
-          baseComponentDir = path.resolve(__dirname, '../../components/base-component');
-        }
+        var baseComponentDir = path.resolve(__dirname, '../../components/base-component-' + templateType);
 
-        var npmIgnorePath = path.resolve(__dirname, '../../components/base-component/.npmignore');
+        var npmIgnorePath = path.resolve(__dirname, '../../components/base-component-' + templateType + '/.npmignore');
 
         fs.ensureDirSync(componentName);
         fs.copySync(baseComponentDir, componentName);
