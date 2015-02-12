@@ -132,10 +132,6 @@ var configuration = {
 
 var registry = new oc.Registry(configuration);
 
-if(registry.err){
-  return console.log(registry.err);
-}
-
 registry.start(function(err, app){
   if(err){
     console.log('Registry not started: ', err);
