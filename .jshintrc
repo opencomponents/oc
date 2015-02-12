@@ -13,7 +13,7 @@
     "newcap"        : false,    // true: Require capitalization of all constructor functions e.g. `new F()`
     "noarg"         : true,     // true: Prohibit use of `arguments.caller` and `arguments.callee`
     "noempty"       : true,     // true: Prohibit use of empty blocks
-    "nonew"         : false,     // true: Prohibit use of constructors for side-effects (without assignment)
+    "nonew"         : true,     // true: Prohibit use of constructors for side-effects (without assignment)
     "plusplus"      : false,    // true: Prohibit use of `++` & `--`
     "quotmark"      : "single",     // Quotation mark consistency:
     "undef"         : true,     // true: Require all non-global variables to be declared (prevents global leaks)

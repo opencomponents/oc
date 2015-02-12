@@ -33,7 +33,7 @@ describe('registry', function(){
       it('should throw an error', function(done){
           var f = function throwsWithNoArgs() {
               var args = {};
-              new oc.Registry(args);
+              var wrongRegistry = new oc.Registry(args);
           };
           expect(f).to.throw('Registry configuration is empty');
           done();
