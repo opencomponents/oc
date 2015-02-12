@@ -74,7 +74,7 @@ Then you may want to create a blank html page to start playing with it and see h
     <oc-component href="http://localhost:3030/hello-world">
       Optionally, some failover text here
     </oc-component>
-    <script src="http://localhost:3030/oc-client/client.js" />
+    <script src="http://localhost:3030/oc-client/client.js"></script>
   </body>
 </html>
 ```

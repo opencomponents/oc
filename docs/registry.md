@@ -74,22 +74,22 @@ Optional parameters:
   * `verbosity`: `string`, sets the cache's verbosity
   * `refreshInterval`: `number`, sets the number of seconds before each cached value is refreshed from the library
 * `dependencies`: `object`, sets the additional library requirements, e.g.:
-```js
+  ```js
 options.dependencies = {
-    underscore: require('underscore'),
-    request: require('request')
+  underscore: require('underscore'),
+  request: require('request')
 };
 ```
 * `env`: `object`, sets the registry environment
   * `name`: `string`, sets the environment name
 * `onRequest`: `function`, sets the callback function which is called every time the API is called. The argument data stores all the request information, e.g:
-```js
+  ```js
 options.onRequest = function(data){
   console.log(data.method);
 }
 ```
 * `port`: `number`, default `3000`, sets the port where to start the registry
-* `prefix`: `string`, ??
+* `prefix`: `string`, sets the path prefix ??
 * `publishAuth`: `object`, sets the authentication type when publishing a component to the registry
   * `type`: `string`, sets the authentication type
   * `username`: `string`, sets the user name
@@ -122,6 +122,6 @@ options.routes = [{
   * `bucket`: `string`, sets S3 bucket
   * `region`: `string`, sets S3 region
   * `path`: `string`, sets path to the S3 bucket
-  * `componentsDir`: `string`, sets the name of components directory
+  * `componentsDir`: `string`, sets the name of components' directory
 * `tempDir`: `string`, default `./temp/`, sets the directory where the components' packages are temporarily stored during the publishing phase
 * `verbosity`: `number`, default `0`, sets the `console.log` verbosity during the execution
