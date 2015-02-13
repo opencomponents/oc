@@ -1,0 +1,17 @@
+{
+  "name": "valid-component",
+  "description": "",
+  "version": "1.0.0",
+  "dependencies": {},
+  "repository": "",
+  "oc": {
+    "parameters": {},
+    "files": {
+      "data": "server.js",
+      "template": {
+        "src": "template.html",
+        "type": "handlebars"
+      }
+    }
+  }
+}
