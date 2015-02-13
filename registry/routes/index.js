@@ -99,6 +99,7 @@ exports.component = function(req, res){
 
       var response = {
         href: componentHref,
+        type: res.conf.local ? 'oc-component-local' : 'oc-component',
         version: component.version,
         requestVersion: requestedComponent.version
       };
@@ -111,8 +112,6 @@ exports.component = function(req, res){
             type: component.oc.files.template.type,
             key: component.oc.files.template.hashKey
           },
-          components: component.oc.dependencies,
-          type: res.conf.local ? 'oc-component-local' : 'oc-component',
           renderMode: 'pre-rendered'
         }));        
       } else {
