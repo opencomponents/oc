@@ -73,17 +73,18 @@ module.exports = function(){
     init: function(componentName, templateType, callback){
 
       if(!validator.validateComponentName(componentName)){
-          return callback('name not valid');
+        return callback('name not valid');
       }
 
       if(!validator.validateTemplateType(templateType)){
-          return callback('template type not valid');
+        return callback('template type not valid');
       }
 
       try {
-        var baseComponentDir = path.resolve(__dirname, '../../components/base-component-' + templateType);
 
-        var npmIgnorePath = path.resolve(__dirname, '../../components/base-component-' + templateType + '/.npmignore');
+        var pathDir = '../../components/base-component-' + templateType,
+            baseComponentDir = path.resolve(__dirname, pathDir),
+            npmIgnorePath = path.resolve(__dirname, pathDir + '/.npmignore');
 
         fs.ensureDirSync(componentName);
         fs.copySync(baseComponentDir, componentName);
