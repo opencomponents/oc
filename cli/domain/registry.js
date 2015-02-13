@@ -39,7 +39,10 @@ module.exports = function(){
             res.registries = [];
           }
 
-          res.registries.push(registry);
+          if(!_.contains(res.registries, registry)){
+            res.registries.push(registry);
+          }
+
           fs.writeJson(config.configFile.src, res, callback);
         });
       });
