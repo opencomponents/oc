@@ -34,10 +34,10 @@ module.exports = function(){
         var components = fs.readdirSync(componentsDir).filter(function(file){
 
           var filePath = path.resolve(componentsDir, file),
-              isDir = fs.lstatSync(filePath).isDirectory();
+            isDir = fs.lstatSync(filePath).isDirectory();
 
           return isDir ? (fs.readdirSync(filePath).filter(function(file){
-           return file === 'package.json';
+            return file === 'package.json';
           }).length === 1) : false;
         });
 
@@ -62,7 +62,7 @@ module.exports = function(){
       return fs.readdirSync(nodeFolder).filter(function(file){
 
         var filePath = path.resolve(nodeFolder, file),
-            isDir = fs.lstatSync(filePath).isDirectory();
+          isDir = fs.lstatSync(filePath).isDirectory();
 
         return isDir;
       });
@@ -70,24 +70,29 @@ module.exports = function(){
     info: function(callback){
       return fs.readJson(config.configFile.src, callback);
     },
-    init: function(componentName, callback){
+    init: function(componentName, templateType, callback){
 
       if(!validator.validateComponentName(componentName)){
-        return callback('name not valid');
+          return callback('name not valid');
+      }
+
+      if(!validator.validateTemplateType(templateType)){
+          return callback('template type not valid');
       }
 
       try {
-        var baseComponentDir = path.resolve(__dirname, '../../components/base-component'),
-            npmIgnorePath = path.resolve(__dirname, '../../components/base-component/.npmignore');
+        var baseComponentDir = path.resolve(__dirname, '../../components/base-component-' + templateType);
+
+        var npmIgnorePath = path.resolve(__dirname, '../../components/base-component-' + templateType + '/.npmignore');
 
         fs.ensureDirSync(componentName);
         fs.copySync(baseComponentDir, componentName);
         fs.copySync(npmIgnorePath, componentName + '/.gitignore');
-        
+
         var componentPath = path.resolve(componentName, 'package.json'),
-            component = _.extend(fs.readJsonSync(componentPath), {
-              name: componentName
-            });
+          component = _.extend(fs.readJsonSync(componentPath), {
+            name: componentName
+          });
 
         fs.outputJsonSync(componentPath, component);
 
@@ -133,21 +138,21 @@ module.exports = function(){
     package: function(componentPath, callback){
 
       var files = fs.readdirSync(componentPath),
-          publishPath = path.join(componentPath, '_package'),
-          preCompiledView,
-          compiledView,
-          hashView,
-          minifiedCompiledView;
+        publishPath = path.join(componentPath, '_package'),
+        preCompiledView,
+        compiledView,
+        hashView,
+        minifiedCompiledView;
 
       if(_.contains(files, '_package')){
         fs.removeSync(publishPath);
       }
 
       fs.mkdirSync(publishPath);
-      
+
       var component = fs.readJsonSync(path.join(componentPath, 'package.json')),
-          ocInfo = fs.readJsonSync(path.join(__dirname, '../../package.json')),
-          template = fs.readFileSync(path.join(componentPath, component.oc.files.template.src)).toString();
+        ocInfo = fs.readJsonSync(path.join(__dirname, '../../package.json')),
+        template = fs.readFileSync(path.join(componentPath, component.oc.files.template.src)).toString();
 
       if(!validator.validateComponentName(component.name)){
         return callback('name not valid');
@@ -156,7 +161,7 @@ module.exports = function(){
       component.oc.version = ocInfo.version;
 
       if(component.oc.files.template.type === 'jade'){
-        preCompiledView = jade.compileClient(template, { 
+        preCompiledView = jade.compileClient(template, {
           compileDebug: false,
           name: 't'
         }).toString().replace('function t(locals) {', 'function(locals){');
@@ -178,7 +183,7 @@ module.exports = function(){
       };
 
       delete component.oc.files.client;
-      
+
       if(!!component.oc.files.data){
         var dataPath = path.join(componentPath, component.oc.files.data);
 
@@ -207,11 +212,11 @@ module.exports = function(){
     },
     unlink: function(componentName, callback){
       var localConfig = fs.readJsonSync(config.configFile.src) || {};
-      
+
       if(!!localConfig.components[componentName]){
         delete localConfig.components[componentName];
       }
-      
+
       fs.writeJson(config.configFile.src, localConfig, callback);
     }
   });

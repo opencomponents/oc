@@ -11,12 +11,17 @@ module.exports = function(dependencies){
 
   return function(opts){
     var componentName = opts.componentName,
+        templateType = opts.templateType,
         errors = strings.errors.cli;
 
-    local.init(componentName, function(err, res){
+    local.init(componentName, templateType, function(err, res){
       if(err){
         if(err === 'name not valid'){
           err = errors.NAME_NOT_VALID;
+        }
+
+        if(err === 'template type not valid'){
+          err = errors.TEMPLATE_TYPE_NOT_VALID;
         }
 
         logger.log(format(errors.INIT_FAIL.red, err));

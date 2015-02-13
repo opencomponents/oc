@@ -25,4 +25,5 @@ node_modules
 .DS_Store
 
 components/oc.json
-components/base-component/_package
+components/base-component-handlebars/_package
+components/base-component-jade/_package

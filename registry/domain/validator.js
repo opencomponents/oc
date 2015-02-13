@@ -33,6 +33,9 @@ module.exports = {
   validateComponentName: function(componentName){
     return !/[^a-zA-Z0-9\-\_]/.test(componentName);
   },
+  validateTemplateType: function(templateType){
+    return _.contains(['handlebars', 'jade'], templateType);
+  },
   validateComponentParameters: function(requestParameters, expectedParameters){
 
     var result = { isValid: true, errors: {} },
