@@ -28,7 +28,7 @@ describe('registry', function(){
     registry.close(done);
   });
 
-  describe('when initialized with invalid configuration', function(){
+  describe('when initialised with invalid configuration', function(){
 
       it('should throw an error', function(done){
           var f = function throwsWithNoArgs() {
