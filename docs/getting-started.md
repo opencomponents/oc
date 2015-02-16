@@ -86,7 +86,7 @@ The basic package file `package.json` looks as follows:
 
 Template represents the view of the component. Currently we support `handlebars` and `jade`. It can contain css under the `<style>` tag and cliend-side javascript under the `<script>` tag.
 
-By default initialisation produces empty template file.
+Initialisation produces empty template file.
 
 ### Basic server
 
@@ -99,3 +99,39 @@ module.exports.data = function(req, callback){
   callback(null, {});
 };
 ```
+
+## Editing, debugging, testing
+
+You may want to start a local test registry using a components' folder as a library with a watcher. This will allow to consume and debug it:
+
+```sh
+oc dev . 3030
+```
+
+Then you may want to create a blank html page to start playing with it and see how it looks:
+
+```html
+<html>
+  <body>
+    <oc-component href="http://localhost:3030/hello-world">
+      Optionally, some failover text here
+    </oc-component>
+    <script src="http://localhost:3030/oc-client/client.js"></script>
+  </body>
+</html>
+```
+
+That's it. As soon as you make changes on the component, you will be able to refresh this page and see how it looks.
+
+## Publishing to a registry
+
+You will need an online registry connected to a library to do that. The only requisite is that a component with the same name and version cannot be already existing on that registry.
+```sh
+# you have to do the registry config first, just once
+oc registry add http://my-components-registry.mydomain.com
+
+# then, ship it
+oc publish hello-world/
+```
+
+Now, it should be there at `http://my-components-registry.mydomain.com/hello-world`.
