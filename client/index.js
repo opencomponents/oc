@@ -156,10 +156,10 @@ var Client = function(conf){
       return format('<oc-component href="{0}" data-rendered="false"></oc-component>', href);
     }
 
-    return format('<script class="ocComponent">function($d,$w,oc){var href=\'href="{0}"\';' + 
-                  '$d.write((!!$w.navigator.userAgent.match(/MSIE 8/))?\'<div data-oc-component="true" \'+href+\'>' +
-                  '</div>\':\'<oc-component \'+href+\'></oc-component>\');oc.renderUnloadedComponents();}' +
-                  '(document,window,oc);</script>', href);
+    return format('<script class="ocComponent">(function($d,$w,oc){var href=\'href="{0}"\';' + 
+                  '$d.write((!!$w.navigator.userAgent.match(/MSIE 8/))?(\'<div data-oc-component="true" \'+href+\'>' +
+                  '</div>\'):(\'<oc-component \'+href+\'></oc-component>\'));if(oc) oc.renderUnloadedComponents();}' +
+                  '(document,window,((typeof(oc)===\'undefined\')?undefined:oc)));</script>', href);
   };
 
   this.getRenderedComponent = function(data){
