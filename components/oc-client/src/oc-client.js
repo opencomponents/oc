@@ -8,6 +8,7 @@ var oc = oc || {};
   var IE89_AJAX_POLYFILL_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxtransport-xdomainrequest/1.0.3/jquery.xdomainrequest.min.js',
       JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.js',
       RETRY_INTERVAL = 5000,
+      POLLING_INTERVAL = 500,
       OC_TAG = 'oc-component',
       MESSAGES_ERRORS_HREF_MISSING = 'Href parameter missing',
       MESSAGES_ERRORS_LOADING_COMPONENT = 'Error loading {0} component',
@@ -56,6 +57,7 @@ var oc = oc || {};
     $component.html(data.html);
     $component.attr('id', newId);
     $component.attr('data-rendered', true);
+    $component.attr('data-rendering', false);
     $component.attr('data-version', data.version);
 
     if(!!data.key){
@@ -125,16 +127,27 @@ var oc = oc || {};
   };
 
   oc.renderNestedComponent = function($component, callback){
-    oc.ready(function(){
-      $component.html('<div class="oc-loading">' + MESSAGES_LOADING_COMPONENT + '</div>');
+    oc.ready(function(){ 
+      var dataRendering = $component.attr('data-rendering'),
+          dataRendered = $component.attr('data-rendered'),
+          isRendering = typeof(dataRendering) === 'boolean' ? dataRendering : (dataRendering === 'true'),
+          isRendered = typeof(dataRendered) === 'boolean' ? dataRendered : (dataRendered === 'true');
 
-      oc.renderByHref($component.attr('href'), function(err, data){
-        if(err || !data || !data.html){
-          return logger.error(err);
-        }
+      if(!isRendering && !isRendered){
+        logger.info(MESSAGES_RETRIEVING);
+        $component.attr('data-rendering', true);
+        $component.html('<div class="oc-loading">' + MESSAGES_LOADING_COMPONENT + '</div>');
 
-        processHtml($component, data, callback);
-      });
+        oc.renderByHref($component.attr('href'), function(err, data){
+          if(err || !data || !data.html){
+            return logger.error(err);
+          }
+
+          processHtml($component, data, callback);
+        });
+      } else {
+        setTimeout(callback, POLLING_INTERVAL);
+      }
     });
   };
 
@@ -165,8 +178,8 @@ var oc = oc || {};
               logger.info(MESSAGES_RENDERED.replace('{0}', apiResponse.href));
 
               var innerHtmlPlusEnding = apiResponse.html.slice(apiResponse.html.indexOf('>') + 1),
-                  innerHtml = innerHtmlPlusEnding.slice(0, innerHtmlPlusEnding.indexOf('<'));
-
+                  innerHtml = innerHtmlPlusEnding.slice(0, innerHtmlPlusEnding.lastIndexOf('<'));
+                  
               callback(null, {
                 html: innerHtml, 
                 version: apiResponse.version
@@ -192,7 +205,6 @@ var oc = oc || {};
           $unloadedComponents = $(selector + '[data-rendered!=true]');
 
       var renderUnloadedComponent = function($unloadedComponents, i){
-        logger.info(MESSAGES_RETRIEVING);
         oc.renderNestedComponent($($unloadedComponents[i]), function(){
           i++;
           if(i < $unloadedComponents.length){
