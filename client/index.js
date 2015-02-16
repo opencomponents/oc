@@ -114,7 +114,7 @@ var Client = function(conf){
         }
 
         fs.readFile(path.resolve(__dirname, '../components/oc-client/src/oc-client.min.js'), 'utf-8', function(err, clientJs){
-          var clientSideHtml = format('<script class="ocClientScript">{0}</script>{1}', clientJs, self.getUnrenderedComponent(href));
+          var clientSideHtml = format('<script class="ocClientScript">{0}</script>{1}', clientJs, self.getUnrenderedComponent(href, options));
           return callback(errorDescription, clientSideHtml);
         });
 
@@ -126,7 +126,7 @@ var Client = function(conf){
             local = isLocal(apiResponse);
 
         if(options.render === 'client'){
-          return callback(null, self.getUnrenderedComponent(href));
+          return callback(null, self.getUnrenderedComponent(href, options));
         }
 
         self.getStaticTemplate(apiResponse.template.src, !local, function(templateText){
@@ -150,8 +150,16 @@ var Client = function(conf){
     });
   };
 
-  this.getUnrenderedComponent = function(href){
-    return format('<oc-component href="{0}" data-rendered="false"></oc-component>', href);
+  this.getUnrenderedComponent = function(href, options){
+
+    if(!options || !options.ie8){
+      return format('<oc-component href="{0}" data-rendered="false"></oc-component>', href);
+    }
+
+    return format('<script class="ocComponent">(function($d,$w,oc){var href=\'href="{0}"\';' + 
+                  '$d.write((!!$w.navigator.userAgent.match(/MSIE 8/))?(\'<div data-oc-component="true" \'+href+\'>' +
+                  '</div>\'):(\'<oc-component \'+href+\'></oc-component>\'));if(oc) oc.renderUnloadedComponents();}' +
+                  '(document,window,((typeof(oc)===\'undefined\')?undefined:oc)));</script>', href);
   };
 
   this.getRenderedComponent = function(data){

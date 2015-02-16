@@ -28,9 +28,6 @@ module.exports = function(grunt) {
   // default task
   grunt.registerTask('default', ['test', 'build']);
 
-  // build task
-  grunt.registerTask('build', ['build-web-client']);
-
   // Setup the precommit hook
   grunt.registerTask('hooks', ['githooks:all']);
 
@@ -38,13 +35,14 @@ module.exports = function(grunt) {
   grunt.registerTask('test', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance']);
 
   // custom tasks
-  grunt.registerTask('build-web-client', 'Builds and minifies the web-client.js', function(){
+  grunt.registerTask('build', 'Builds and minifies the oc-client component', function(){
 
     var done = this.async(),
         handlebarsRuntime = fs.readFileSync(path.join(__dirname, 'node_modules/handlebars/dist/handlebars.runtime.min.js')).toString(),
         jadeRuntime = fs.readFileSync(path.join(__dirname, 'node_modules/jade/runtime.js')).toString(),
+        headLoad = fs.readFileSync(path.join(__dirname, 'components/oc-client/src/head.load.js')).toString(),
         ocClient = fs.readFileSync(path.join(__dirname, 'components/oc-client/src/oc-client.js')).toString(),
-        bundle = format('{0}\n;\n{1}\n;\n{2}\n;\noc.clientVersion=\'{3}\';', jadeRuntime, handlebarsRuntime, ocClient, taskObject.pkg.version),
+        bundle = format('{0}\n;\n{1}\n;\n{2}\n;\n{3}\n;\noc.clientVersion=\'{4}\';', jadeRuntime, handlebarsRuntime, headLoad, ocClient, taskObject.pkg.version),
         ocClientPackageInfo = require('./components/oc-client/package.json');
 
     ocClientPackageInfo.version = taskObject.pkg.version;
