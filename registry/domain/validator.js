@@ -1,6 +1,6 @@
 'use strict';
 
-var format = require('../../utils/format');
+var format = require('stringformat');
 var semver = require('semver');
 var strings = require('../../resources');
 var _ = require('underscore');

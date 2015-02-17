@@ -1,7 +1,7 @@
 'use strict';
 
 var Cache = require('nice-cache');
-var format = require('../../utils/format');
+var format = require('stringformat');
 var fs = require('fs-extra');
 var nodeDir = require('node-dir');
 var giveMe = require('give-me');

@@ -2,7 +2,7 @@
 
 var Cache = require('nice-cache');
 var config = require('../conf');
-var format = require('../utils/format');
+var format = require('stringformat');
 var fs = require('fs-extra');
 var Handlebars = require('./renderers/handlebars');
 var Jade = require('./renderers/jade');

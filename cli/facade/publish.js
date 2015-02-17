@@ -1,7 +1,7 @@
 'use strict';
 
 var colors = require('colors');
-var format = require('../../utils/format');
+var format = require('stringformat');
 var path = require('path');
 var read = require('read');
 var strings = require('../../resources/index');

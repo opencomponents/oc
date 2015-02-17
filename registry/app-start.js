@@ -1,7 +1,7 @@
 'use strict';
 
 var colors = require('colors/safe');
-var format = require('../utils/format');
+var format = require('stringformat');
 var packageInfo = require('../package.json');
 var path = require('path');
 var Repository = require('./domain/repository');

@@ -2,7 +2,7 @@
 
 var AWS = require('aws-sdk');
 var packageInfo = require('../../package.json');
-var format = require('../../utils/format');
+var format = require('stringformat');
 var fs = require('fs-extra');
 var path = require('path');
 var S3 = require('./s3');

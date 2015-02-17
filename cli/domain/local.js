@@ -1,7 +1,7 @@
 'use strict';
 
 var config = require('../../conf');
-var format = require('../../utils/format');
+var format = require('stringformat');
 var fs = require('fs-extra');
 var handlebars = require('handlebars');
 var hashBuilder = require('../../utils/hash-builder');
