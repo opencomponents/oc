@@ -100,7 +100,7 @@ describe('client', function(){
       });
 
       it('should contain the component url', function(){
-        expect($component.attr('href')).to.eql('http://localhost:1234/hello-world/~1.0.0');
+        expect($component.attr('href')).to.eql('http://localhost:1234/hello-world/~1.0.0/');
       });
 
       it('should contain the error details', function(){
