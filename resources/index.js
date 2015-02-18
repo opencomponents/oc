@@ -41,9 +41,6 @@ module.exports = {
       PUBLISHING_FAIL: 'An error happened when publishing the component: {0}',
       REGISTRY_NOT_FOUND: 'oc registries not found. Run "oc registry add <registry href>"'
     },
-    client: {
-      serverSideRenderingFail: 'Server-side rendering failed',
-    },
     generic: 'An error occurred: {0}',
     s3: {
       DIR_NOT_FOUND: 'Directory "{0}" not found',

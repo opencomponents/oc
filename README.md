@@ -3,7 +3,7 @@ oc
 
 An experimental framework to serve as proof of concept for a robust, resilient, and distributed web components' delivery system.
 
-Node version: **0.10.0** required
+Node version: **0.10.35** required
 
 Build status: Linux: [![Build Status](https://secure.travis-ci.org/opentable/oc.png?branch=master)](http://travis-ci.org/opentable/oc) | Windows: [![Build status](https://ci.appveyor.com/api/projects/status/8cklgw4hymutqrsg?svg=true)](https://ci.appveyor.com/project/matteofigus/oc)
 
@@ -194,7 +194,7 @@ In this case you can get the compiled view + the data, and you can do the render
 First install the node.js client in your project, setup the api binding, and then link a component:
 ```sh
 npm install oc -g
-npm install oc --save
+npm install oc-client --save
 oc registry add http://my-components-registry.mydomain.com/
 oc link hello-world 1.0.X
 ```
@@ -202,9 +202,9 @@ oc link hello-world 1.0.X
 Then, this is what you would do with a simple node.js http app:
 ```js
 var http = require('http'),
-    oc = require('oc');
+    Client = require('oc-client');
 
-var client = new oc.Client();
+var client = new Client();
 
 http.createServer(function (req, res) {
   client.renderComponent('hello-world', function(err, html){
