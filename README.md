@@ -194,7 +194,7 @@ In this case you can get the compiled view + the data, and you can do the render
 First install the node.js client in your project, setup the api binding, and then link a component:
 ```sh
 npm install oc -g
-npm install oc --save
+npm install oc-client --save
 oc registry add http://my-components-registry.mydomain.com/
 oc link hello-world 1.0.X
 ```
@@ -202,9 +202,9 @@ oc link hello-world 1.0.X
 Then, this is what you would do with a simple node.js http app:
 ```js
 var http = require('http'),
-    oc = require('oc');
+    Client = require('oc-client');
 
-var client = new oc.Client();
+var client = new Client();
 
 http.createServer(function (req, res) {
   client.renderComponent('hello-world', function(err, html){
