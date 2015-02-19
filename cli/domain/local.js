@@ -62,9 +62,10 @@ module.exports = function(){
       return fs.readdirSync(nodeFolder).filter(function(file){
 
         var filePath = path.resolve(nodeFolder, file),
-          isDir = fs.lstatSync(filePath).isDirectory();
+            isBin = file === '.bin',
+            isDir = fs.lstatSync(filePath).isDirectory();
 
-        return isDir;
+        return isDir && !isBin;
       });
     },
     info: function(callback){
