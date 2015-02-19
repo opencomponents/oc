@@ -152,7 +152,8 @@ exports.component = function(req, res){
           require: new RequireWrapper(res.injectedDependencies), 
           module: { 
             exports: {}
-          }
+          },
+          console: res.conf.local ? console : { log: _.noop }
         };
 
         vm.runInNewContext(dataProcessorJs, context);
