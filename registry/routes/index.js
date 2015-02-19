@@ -155,6 +155,10 @@ exports.component = function(req, res){
           }
         };
 
+        if(res.conf.local){
+          context.console = console
+        };
+
         vm.runInNewContext(dataProcessorJs, context);
 
         var processData = context.module.exports.data;
