@@ -103,7 +103,11 @@ module.exports = function(s3, conf){
               url = dirOutput + relativeFile;
           
           return [file, url, relativeFile === '/server.js'];
-        }), function(callbacks){
+        }), function(errors, callbacks){
+
+          if(errors){
+            return callback(_.compact(errors));
+          }
 
           var cachedKeysToRefresh = [];
 
@@ -139,8 +143,8 @@ module.exports = function(s3, conf){
           ACL: isPrivate ? 'authenticated-read' : 'public-read',
           ServerSideEncryption: 'AES256',
           Expires: getNextYear()
-      }, function (res) {
-          callback(null, res);
+      }, function (err, res) {
+          callback(err, res);
       });
     }
   };

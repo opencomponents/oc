@@ -8,14 +8,16 @@ describe('cli : domain : local', function(){
 
   describe('when packaging', function(){
 
-    var readJsonSyncStub = sinon.stub();
-    var readFileSyncStub = sinon.stub();
+    var readJsonSyncStub = sinon.stub(),
+        readFileSyncStub = sinon.stub(),
+        existsSyncStub = sinon.stub();
 
     var fsMock = {
       readdirSync: sinon.spy(),
       mkdirSync: sinon.spy(),
       readJsonSync: readJsonSyncStub,
-      readFileSync: readFileSyncStub
+      readFileSync: readFileSyncStub,
+      existsSync: existsSyncStub
     };
 
     var mockComponent = {
@@ -29,10 +31,13 @@ describe('cli : domain : local', function(){
         }
       }
     };
+
+    existsSyncStub.returns(true);
     readJsonSyncStub.onCall(0).returns(mockComponent);
     readJsonSyncStub.onCall(1).returns({
       version: '1.2.3'
     });
+
     readFileSyncStub.returns('');
     var Local = injectr('../../cli/domain/local.js', { 'fs-extra' : fsMock }, { __dirname: '' });
 

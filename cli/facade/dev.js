@@ -27,13 +27,27 @@ module.exports = function(dependencies){
         logger.log('Packaging components...'.yellow);
         giveMe.all(local.package, _.map(componentsDirs, function(dir){
           return [dir];
-        }), function(callbacks){
-          logger.log('complete'.green);
-          if(typeof(callback) === 'function'){
-            callback();
-          }
+        }), function(errors, results){
+          if(!!errors){
+            _.forEach(errors, function(error, i){
+              if(!!error){
+                logger.log(format('An error happened when packaging {0}: {1}', componentsDirs[i], error.red));
+              }
+            });
+            logger.log('retrying in 10 seconds...'.yellow);
+            setTimeout(function() {
+              packaging = false;
+              packageComponents(componentsDirs);
+            }, 10000);
+          } else {
 
-          packaging = false;
+            logger.log('complete'.green);
+            if(typeof(callback) === 'function'){
+              callback();
+            }
+
+            packaging = false;
+          }
         });
       }
     };

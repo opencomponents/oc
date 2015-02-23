@@ -152,13 +152,26 @@ module.exports = function(){
 
       fs.mkdirSync(publishPath);
 
-      var component = fs.readJsonSync(path.join(componentPath, 'package.json')),
-        ocInfo = fs.readJsonSync(path.join(__dirname, '../../package.json')),
-        template = fs.readFileSync(path.join(componentPath, component.oc.files.template.src)).toString();
+      var componentPackagePath = path.join(componentPath, 'package.json'),
+          ocPackagePath = path.join(__dirname, '../../package.json');
 
-      if(!validator.validateComponentName(component.name)){
+      if(!fs.existsSync(componentPackagePath)){
+        return callback('component does not contain package.json');
+      } else if(!fs.existsSync(ocPackagePath)){
+        return callback('error resolving oc internal dependencies');
+      }
+
+      var component = fs.readJsonSync(componentPackagePath),
+          viewPath = path.join(componentPath, component.oc.files.template.src);
+
+      if(!fs.existsSync(viewPath)){
+        return callback(format('file {0} not found', component.oc.files.template.src));
+      } else if(!validator.validateComponentName(component.name)){
         return callback('name not valid');
       }
+
+      var ocInfo = fs.readJsonSync(ocPackagePath),
+          template = fs.readFileSync(viewPath).toString();
 
       component.oc.version = ocInfo.version;
 
