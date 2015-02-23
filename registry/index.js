@@ -53,7 +53,7 @@ module.exports = function(options){
         baseUrlFunc = options.baseUrl;
       }
 
-      if(!_.isNull(baseUrlFunc)){
+      if(!_.isUndefined(baseUrlFunc)){
         options.baseUrl = baseUrlFunc({
           host: req.headers.host,
           secure: req.secure
