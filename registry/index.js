@@ -20,7 +20,8 @@ module.exports = function(options){
       self = this,
       server,
       withLogging = !_.has(options, 'verbosity') || options.verbosity > 0,
-      validationResult = validator.registryConfiguration(options);
+      validationResult = validator.registryConfiguration(options),
+      baseUrlFunc;
 
   if(!validationResult.isValid){
     throw validationResult.message;
@@ -47,6 +48,18 @@ module.exports = function(options){
       res.header('Access-Control-Allow-Origin', '*');
       res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, render-mode');
       res.header('Access-Control-Allow-Methods', 'GET, PUT');
+
+      if(_.isFunction(options.baseUrl)){
+        baseUrlFunc = options.baseUrl;
+      }
+
+      if(!_.isNull(baseUrlFunc)){
+        options.baseUrl = baseUrlFunc({
+          host: req.headers.host,
+          secure: req.secure
+        });
+      }
+
       res.conf = options;
 
       if(!!options.dependencies){
@@ -142,7 +155,7 @@ module.exports = function(options){
 
       server.listen(self.app.get('port'), function(){
         if(withLogging){
-          console.log(format('Registry started at {0}'.green, options.baseUrl));
+          console.log(format('Registry started at port {0}'.green, self.app.get('port')));
         }
         callback(null, self.app);
       });
