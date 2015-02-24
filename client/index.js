@@ -125,7 +125,7 @@ var Client = function(conf){
 
     var self = this;
 
-    request(href, { 'render-mode': 'pre-rendered' }, function(err, apiResponse){
+    request(href, { 'Accept': 'application/vnd.oc.prerendered+json' }, function(err, apiResponse){
 
       if(err){
         var errorDescription = settings.messages.serverSideRenderingFail;

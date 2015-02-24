@@ -167,7 +167,7 @@ Just place the html result anywhere and it will just work.
 
 In case you would like to do the rendering yourself, try:
 ```sh
- curl http://my-components-registry.mydomain.com/hello-world/~1.0.5 -H render-mode:pre-rendered
+ curl http://my-components-registry.mydomain.com/hello-world/~1.0.5 -H Accept:application/vnd.oc.prerendered+json
 
 {
   "href": "https://my-components-registry.mydomain.com/hello-world/~1.0.5",
