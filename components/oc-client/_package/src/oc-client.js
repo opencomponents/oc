@@ -157,7 +157,7 @@ var oc = oc || {};
         $.ajax({
           url: href,
           headers: { 'Accept': 'application/vnd.oc.prerendered+json' }, 
-          contentType: 'application/json',
+          contentType: 'text/plain',
           crossDomain: true,
           async: true,
           success: function(apiResponse){
