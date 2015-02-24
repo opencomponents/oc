@@ -103,8 +103,8 @@ exports.component = function(req, res){
         version: component.version,
         requestVersion: requestedComponent.version
       };
-
-      if(req.headers['render-mode'] === 'pre-rendered'){
+      
+      if(req.headers.accept === 'application/vnd.oc.prerendered+json'){
         res.json(200, _.extend(response, {
           data: data,
           template: {

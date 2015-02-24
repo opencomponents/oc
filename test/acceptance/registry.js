@@ -63,7 +63,7 @@ describe('registry', function(){
 
   describe('GET /hello-world', function(){
 
-    describe('when render-mode header not specified', function(){
+    describe('when Accept header not specified', function(){
 
       var url = 'http://localhost:3030/hello-world',
           result;
@@ -88,13 +88,13 @@ describe('registry', function(){
       });
     });
 
-    describe('when render-mode header set to pre-rendered', function(){
+    describe('when Accept header set to application/vnd.oc.prerendered+json', function(){
 
       var url = 'http://localhost:3030/hello-world',
           result;
 
       before(function(done){
-        request(url, { headers: {'render-mode': 'pre-rendered'}}, function(err, res){
+        request(url, { headers: {'Accept': 'application/vnd.oc.prerendered+json'}}, function(err, res){
           result = JSON.parse(res);
           done();
         });

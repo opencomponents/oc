@@ -156,7 +156,7 @@ var oc = oc || {};
       if(href !== ''){
         $.ajax({
           url: href,
-          headers: { 'render-mode': 'pre-rendered' }, 
+          headers: { 'Accept': 'application/vnd.oc.prerendered+json' }, 
           contentType: 'application/json',
           crossDomain: true,
           async: true,
