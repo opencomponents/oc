@@ -157,6 +157,7 @@ var oc = oc || {};
         $.ajax({
           url: href,
           headers: { 'render-mode': 'pre-rendered' }, 
+          contentType: 'application/json',
           crossDomain: true,
           async: true,
           success: function(apiResponse){
