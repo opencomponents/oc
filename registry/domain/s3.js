@@ -134,17 +134,30 @@ module.exports = function(s3, conf){
     },
     putFile: function(filePath, fileName, isPrivate, callback){
 
-      var fileContent = fs.readFileSync(filePath);
+      var fileContent = fs.readFileSync(filePath),
+          obj = {
+            Bucket: s3.bucket,
+            Key: fileName,
+            Body: fileContent,
+            ACL: isPrivate ? 'authenticated-read' : 'public-read',
+            ServerSideEncryption: 'AES256',
+            Expires: getNextYear()
+          };
+          
+      if(fileName.slice(-3).toLowerCase() === '.js'){
+        obj.ContentType = 'application/javascript';
+      } else if(fileName.slice(-4).toLowerCase() === '.css'){
+        obj.ContentType = 'text/css';
+      } else if(fileName.slice(-4).toLowerCase() === '.jpg'){
+        obj.ContentType = 'image/jpeg';
+      } else if(fileName.slice(-4).toLowerCase() === '.gif'){
+        obj.ContentType = 'image/gif';
+      } else if(fileName.slice(-4).toLowerCase() === '.png'){
+        obj.ContentType = 'image/png';
+      }
 
-      s3.client.putObject({
-          Bucket: s3.bucket,
-          Key: fileName,
-          Body: fileContent,
-          ACL: isPrivate ? 'authenticated-read' : 'public-read',
-          ServerSideEncryption: 'AES256',
-          Expires: getNextYear()
-      }, function (err, res) {
-          callback(err, res);
+      s3.client.putObject(obj, function (err, res) {
+         callback(err, res);
       });
     }
   };
