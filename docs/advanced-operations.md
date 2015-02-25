@@ -128,7 +128,7 @@ It is an array of names of files. During packaging the component all the files f
 
 ### Add image in the view template
 
-We can add image to the component view template using `img` tag which `src` attribute is bound to `img` viewModel property.
+We can add image to the component view template using `img` tag in which `src` attribute is bound to `img` viewModel property.
 ```html
 <img src={{img}}>
 ```
