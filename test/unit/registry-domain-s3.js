@@ -2,7 +2,6 @@
 
 var expect = require('chai').expect;
 var injectr = require('injectr');
-var path = require('path');
 var sinon = require('sinon');
 
 describe('registry : domain : s3', function(){
@@ -16,7 +15,7 @@ describe('registry : domain : s3', function(){
 
   var S3 = injectr('../../registry/domain/s3.js', {
     'fs-extra': fsMock
-  }, { console: console });
+  });
 
   var initialise = function(){
     getObjectStub = sinon.stub();
@@ -29,7 +28,7 @@ describe('registry : domain : s3', function(){
         listObjects: listObjectsStub,
         putObject: putObjectStub
       },
-      bucket: path.resolve('test/fixtures/s3-test-buckets/empty'),
+      bucket: 'test-bucket',
       path: '//s3.amazonaws.com/test-bucket/'
     }, { cache: { refreshInterval: 60 }});    
   };
