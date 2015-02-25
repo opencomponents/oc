@@ -1,28 +1,41 @@
 'use strict';
 
-var AWSMock = require('../mocks/aws-s3-mock');
 var path = require('path');
 var expect = require('chai').expect;
+var sinon = require('sinon');
 
 describe('registry : domain : s3', function(){
 
-  var S3 = require('../../registry/domain/s3');
+  var S3 = require('../../registry/domain/s3'),
+      s3,
+      listObjectsStub,
+      getObjectStub;
+
+  var initialise = function(){
+    getObjectStub = sinon.stub();
+    listObjectsStub = sinon.stub();
+
+    s3 = new S3({ 
+      client: {
+        getObject: getObjectStub,
+        listObjects: listObjectsStub
+      },
+      bucket: path.resolve('test/fixtures/s3-test-buckets/empty'),
+      path: '//s3.amazonaws.com/test-bucket/'
+    }, { cache: { refreshInterval: 60 }});    
+  };
 
   describe('when bucket is empty', function(){
-
-    var s3;
-    before(function(){
-      s3 = new S3({
-        client: new AWSMock.S3(),
-        bucket: path.resolve('test/fixtures/s3-test-buckets/empty'),
-        path: '//s3.amazonaws.com/test-bucket/'
-      }, { cache: { refreshInterval: 60 } });
-    });
 
     describe('when trying to access a path that doesn\'t exist', function(){
 
       var error, response;
       before(function(done){
+        initialise();
+        listObjectsStub.yields(null, {
+          CommonPrefixes: []
+        });
+
         s3.listSubDirectories('hello', function(err, res){
           error = err;
           response = res;
@@ -40,19 +53,18 @@ describe('registry : domain : s3', function(){
 
   describe('when bucket contains files and directories', function(){
 
-    var s3;
-    before(function(){
-      s3 = new S3({
-        client: new AWSMock.S3(),
-        bucket: path.resolve('test/fixtures/s3-test-buckets/test'),
-        path: '//s3.amazonaws.com/test-bucket/'
-      }, { cache: { refreshInterval: 60 } });
-    });
-
     describe('when getting a list of directories', function(){
 
       var error, response;
       before(function(done){
+        initialise();
+        listObjectsStub.yields(null, {
+          CommonPrefixes: [{
+            Prefix: 'components/hello-world/'
+          },{
+            Prefix: 'components/image/'
+          }]
+        });
         s3.listSubDirectories('components', function(err, res){
           error = err;
           response = res;
@@ -73,6 +85,14 @@ describe('registry : domain : s3', function(){
 
       var error, response;
       before(function(done){
+        initialise();
+        listObjectsStub.yields(null, {
+          CommonPrefixes: [{
+            Prefix: 'components/image/1.0.0/'
+          }, {
+            Prefix: 'components/image/1.0.1/'
+          }]
+        });
         s3.listSubDirectories('components/image', function(err, res){
           error = err;
           response = res;
@@ -95,7 +115,11 @@ describe('registry : domain : s3', function(){
 
         var error, response;
         before(function(done){
-          s3.getFile('components/image/1.0.1/package.json', function(err, res){
+          initialise();
+          getObjectStub.yields(null, {
+            Body: 'Hello!'
+          });
+          s3.getFile('components/image/1.0.1/src/hello.txt', function(err, res){
             error = err;
             response = res;
             done();
@@ -108,22 +132,7 @@ describe('registry : domain : s3', function(){
 
         it('should respond with the file content', function(){
           expect(response).not.to.be.empty;
-          expect(JSON.parse(response)).to.eql({
-            name: 'image',
-            description: '',
-            version: '1.0.1',
-            repository: '',
-            oc: {
-              parameters: {},
-              files: {
-                template: {
-                  type: 'handlebars',
-                  hashKey: '18e2619ff1d06451883f21656affd4c6f02b1ed1',
-                  src: 'template.js'
-                }
-              }
-            }
-          });
+          expect(response).to.eql('Hello!');
         });
       });
 
@@ -131,6 +140,10 @@ describe('registry : domain : s3', function(){
 
         var error, response;
         before(function(done){
+          initialise();
+          getObjectStub.yields({
+            code: 'NoSuchKey'
+          });
           s3.getFile('components/image/1.0.1/random-file.json', function(err, res){
             error = err;
             response = res;
