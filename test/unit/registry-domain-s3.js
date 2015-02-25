@@ -1,24 +1,33 @@
 'use strict';
 
-var path = require('path');
 var expect = require('chai').expect;
+var injectr = require('injectr');
+var path = require('path');
 var sinon = require('sinon');
 
 describe('registry : domain : s3', function(){
 
-  var S3 = require('../../registry/domain/s3'),
-      s3,
-      listObjectsStub,
-      getObjectStub;
+  var s3, listObjectsStub, getObjectStub, putObjectStub, 
+      fsMock = {
+        readFileSync: sinon.stub()
+      };
+
+  fsMock.readFileSync.returns('file content!');
+
+  var S3 = injectr('../../registry/domain/s3.js', {
+    'fs-extra': fsMock
+  }, { console: console });
 
   var initialise = function(){
     getObjectStub = sinon.stub();
     listObjectsStub = sinon.stub();
+    putObjectStub = sinon.stub();
 
     s3 = new S3({ 
       client: {
         getObject: getObjectStub,
-        listObjects: listObjectsStub
+        listObjects: listObjectsStub,
+        putObject: putObjectStub
       },
       bucket: path.resolve('test/fixtures/s3-test-buckets/empty'),
       path: '//s3.amazonaws.com/test-bucket/'
@@ -159,4 +168,104 @@ describe('registry : domain : s3', function(){
       });
     });
   });
+
+  describe('when publishing file', function(){
+
+    var error, response;
+    var initialiseStubs = function(fileName, isPrivate, callback){
+      initialise();
+      putObjectStub.yields(null, 'ok');
+      s3.putFile('/path/to/', fileName, isPrivate, function(err, res){
+        error = err;
+        response = res;
+        callback();
+      });      
+    };
+
+    describe('when putting private file', function(){
+
+      before(function(done){
+        initialiseStubs('hello.txt', true, done);
+      });
+
+      it('should be saved using authenticated-read ACL', function(){
+        var params = putObjectStub.args;
+        expect(params[0][0].ACL).to.equal('authenticated-read');
+      });
+    });
+
+    describe('when putting public file', function(){
+
+      before(function(done){
+        initialiseStubs('hello.txt', false, done);
+      });
+
+      it('should be saved using public-read ACL', function(){
+        var params = putObjectStub.args;
+        expect(params[0][0].ACL).to.equal('public-read');
+      });
+    });
+
+    describe('when putting js file', function(){
+
+      before(function(done){
+        initialiseStubs('hello.js', false, done);
+      });
+
+      it('should be saved using application/javascript fileType', function(){
+        var params = putObjectStub.args;
+        expect(params[0][0].ContentType).to.equal('application/javascript');
+      });
+    });
+
+    describe('when putting css file', function(){
+
+      before(function(done){
+        initialiseStubs('hello.css', false, done);
+      });
+
+      it('should be saved using text/css fileType', function(){
+        var params = putObjectStub.args;
+        expect(params[0][0].ContentType).to.equal('text/css');
+      });
+    });
+
+    describe('when putting jpg file', function(){
+
+      before(function(done){
+        initialiseStubs('hello.jpg', false, done);
+      });
+
+      it('should be saved using image/jpeg fileType', function(){
+        var params = putObjectStub.args;
+        expect(params[0][0].ContentType).to.equal('image/jpeg');
+      });
+    });
+
+    describe('when putting gif file', function(){
+
+      before(function(done){
+        initialiseStubs('hello.gif', false, done);
+      });
+
+      it('should be saved using image/gif fileType', function(){
+        var params = putObjectStub.args;
+        expect(params[0][0].ContentType).to.equal('image/gif');
+      });
+    });
+
+    describe('when putting png file', function(){
+
+      before(function(done){
+        initialiseStubs('hello.png', false, done);
+      });
+
+      it('should be saved using image/png fileType', function(){
+        var params = putObjectStub.args;
+        expect(params[0][0].ContentType).to.equal('image/png');
+      });
+    });
+
+  });
+
 });
