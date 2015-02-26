@@ -84,21 +84,20 @@ Req represents request and consists of following fields:
     "name": "local"
   },
   "params": {
-    "param1": "test",
     "name": "Johnny"
   },
   "staticPath": "http://localhost:3030/hello-world/1.0.0/static/"
 }
 ```
-* `acceptLanguage`: `array of objects`, TODO,
-  * `code`: `string`, TODO
-  * `region`: `string`, TODO
-  * `quality`: `number`, TODO
-* `baseUrl`: `string`, TODO
-* `env`: `object`, TODO
-  * `name`: `string`, TODO
-* `params`: `object`, TODO
-* `staticPath`: `string`, TODO
+* `acceptLanguage`: `array of objects`, represents parsed `accept-language` part of the request header,
+  * `code`: `string`, represents language abbreviation
+  * `region`: `string`, represents country code
+  * `quality`: `number`, represents an estimate of the user's preference for the language
+* `baseUrl`: `string`, represents Url to the registry where the component is stored
+* `env`: `object`, represents the registry environment
+  * `name`: `string`, represents the name of the environment
+* `params`: `object`, represents parameters extracted from the query string (in this case there is one parameter named `name` with `Johnny` as a value)
+* `staticPath`: `string`, represents the path to static resources i.e. images, styles, javascript files.
 
 ## Add static resource to the component
 
