@@ -1,7 +1,9 @@
 'use strict';
 
 var acceptLanguageParser = require('accept-language-parser');
+var Cache = require('nice-cache');
 var Client = require('../../client');
+var format = require('stringformat');
 var fs = require('fs-extra');
 var packageInfo = require('../../package.json');
 var path = require('path');
@@ -18,12 +20,14 @@ var _ = require('underscore');
 
 var repository, 
     targz,
-    client;
+    client,
+    cache;
 
 exports.init = function(conf){
   repository = new Repository(conf);
   targz = new Targz();
   client = new Client(conf);
+  cache = new Cache();
 };
 
 exports.index = function(req, res){
@@ -115,61 +119,76 @@ exports.component = function(req, res){
           renderMode: 'pre-rendered'
         }));        
       } else {
-        repository.getCompiledView(component.name, component.version, function(err, templateText){
 
-          var context = { jade: require('jade/runtime.js')};
+        var cacheKey = format('{0}/{1}/template.js', component.name, component.version),
+            cached = cache.get('file-contents', cacheKey),
+            key = component.oc.files.template.hashKey,
+            options = {
+              href: componentHref,
+              key: key,
+              version: component.version,
+              templateType: component.oc.files.template.type
+            };
 
-          vm.runInNewContext(templateText, context);
-
-          var key = component.oc.files.template.hashKey,
-              template = context.oc.components[key],
-              options = {
-                href: componentHref,
-                key: key,
-                version: component.version,
-                templateType: component.oc.files.template.type
-              };
-
+        var returnResult = function(template){
           client.renderTemplate(template, data, options, function(err, html){
             res.json(200, _.extend(response, { 
               html: html, 
               renderMode: 'rendered'
             }));
           });
-        });
+        };
+
+        if(!!cached && !res.conf.local){
+          returnResult(cached);
+        } else {
+          repository.getCompiledView(component.name, component.version, function(err, templateText){
+            var context = { jade: require('jade/runtime.js')};
+            vm.runInNewContext(templateText, context);
+            var template = context.oc.components[key];
+            cache.set('file-contents', cacheKey, template);
+            returnResult(template);
+          });
+        }
       }
     };
 
     if(!component.oc.files.dataProvider){
       returnComponent(null, {});
     } else {
-      repository.getDataProvider(component.name, component.version, function(err, dataProcessorJs){
-        if(err){
-          return res.json(502, { error: 'component resolving error'});
-        }
 
-        var context = { 
-          require: new RequireWrapper(res.injectedDependencies), 
-          module: { 
-            exports: {}
-          },
-          console: res.conf.local ? console : { log: _.noop }
-        };
+      var cacheKey = format('{0}/{1}/server.js', component.name, component.version),
+          cached = cache.get('file-contents', cacheKey),
+          reqObj = { 
+            acceptLanguage: acceptLanguageParser.parse(req.headers['accept-language']),
+            baseUrl: conf.baseUrl,
+            env: conf.env,
+            params: params,
+            staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', '')
+          };
 
-        vm.runInNewContext(dataProcessorJs, context);
+      if(!!cached && !res.conf.local){
+        cached(reqObj, returnComponent);
+      } else {
+        repository.getDataProvider(component.name, component.version, function(err, dataProcessorJs){
+          if(err){
+            return res.json(502, { error: 'component resolving error'});
+          }
 
-        var processData = context.module.exports.data;
+          var context = { 
+            require: new RequireWrapper(res.injectedDependencies), 
+            module: { 
+              exports: {}
+            },
+            console: res.conf.local ? console : { log: _.noop }
+          };
 
-        var reqObj = { 
-          acceptLanguage: acceptLanguageParser.parse(req.headers['accept-language']),
-          baseUrl: conf.baseUrl,
-          env: conf.env,
-          params: params,
-          staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', '')
-        };
-
-        processData(reqObj, returnComponent);
-      });
+          vm.runInNewContext(dataProcessorJs, context);
+          var processData = context.module.exports.data;
+          cache.set('file-contents', cacheKey, processData);        
+          processData(reqObj, returnComponent);
+        });
+      }
     }
   });
 };
