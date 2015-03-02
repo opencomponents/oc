@@ -34,7 +34,8 @@ exports.index = function(req, res){
 
   repository.getComponents(function(err, components){
     if(err){
-      return res.json(404, { error: 'cdn not available'});
+      res.errorDetails = 'cdn not available';
+      return res.json(404, { error: res.errorDetails });
     }
 
     res.json(200, {
@@ -53,6 +54,7 @@ exports.componentInfo = function(req, res){
   repository.getComponent(req.params.componentName, req.params.componentVersion, function(err, component){
 
     if(err){
+      res.errorDetails = err;
       return res.json(404, { err: err });
     }
 
@@ -77,6 +79,7 @@ exports.component = function(req, res){
 
     // check route exist for component and version
     if(err){
+      res.errorDetails = err;
       return res.json(404, { err: err });
     }
 
@@ -87,12 +90,14 @@ exports.component = function(req, res){
     var result = validator.validateComponentParameters(params, component.oc.parameters);
 
     if(!result.isValid){
-      return res.json(400, { error: result.errors.message });
+      res.errorDetails = result.errors.message;
+      return res.json(400, { error: res.errorDetails });
     }
 
     var returnComponent = function(err, data){
       if(err){
-        return res.json(502, { error: 'component data resolving error' });
+        res.errorDetails = 'component data resolving error';
+        return res.json(502, { error: res.errorDetails });
       }
 
       var componentHref = urlBuilder.component({
@@ -172,7 +177,8 @@ exports.component = function(req, res){
       } else {
         repository.getDataProvider(component.name, component.version, function(err, dataProcessorJs){
           if(err){
-            return res.json(502, { error: 'component resolving error'});
+            res.errorDetails = 'component resolving error';
+            return res.json(502, { error: res.errorDetails });
           }
 
           var context = { 
@@ -211,7 +217,8 @@ exports.staticRedirector = function(req, res){
   }
 
   if(!fs.existsSync(filePath)){
-    return res.json(404, { err: 'file not found' });
+    res.errorDetails = format('File {0} not found', filePath);
+    return res.json(404, { err: res.errorDetails });
   }
 
   var fileStream = fs.createReadStream(filePath);
@@ -224,15 +231,18 @@ exports.staticRedirector = function(req, res){
 exports.publish = function(req, res){
 
   if(!req.params.componentName || !req.params.componentVersion){
-    return res.json(409, { error: 'malformed request'});
+    res.errorDetails = 'malformed request';
+    return res.json(409, { error: res.errorDetails });
   }
 
   if(!validator.validateVersion(req.params.componentVersion).isValid){
-    return res.json(409, { error: 'not a valid version' });
+    res.errorDetails = 'not a valid version';
+    return res.json(409, { error: res.errorDetails });
   }
   
   if(!validator.validatePackage(req.files).isValid){
-    return res.json(409, { error: 'package is not valid' });
+    res.errorDetails = 'package is not valid';
+    return res.json(409, { error: res.errorDetails });
   }
 
   var files = req.files,
@@ -244,6 +254,7 @@ exports.publish = function(req, res){
   targz.extract(packagePath, packageUntarOutput, function(err){
 
     if(!!err){
+      res.errorDetails = format('Package file is not valid: {0}', err);
       return res.json(500, { error: 'package file is not valid', details: err });
     }
 
@@ -251,12 +262,16 @@ exports.publish = function(req, res){
       
       if(err){
         if(err.code === 'not_allowed'){
+          res.errorDetails = format('Publish not allowed: {0}', err.msg);
           return res.json(403, { error: err.msg });
         } else if(err.code === 'already_exists'){
+          res.errorDetails = format('Component already exists: {0}', err.msg);
           return res.json(403, { error: err.msg });
         } else if(err.code === 'name_not_valid'){
+          res.errorDetails = format('Component name not valid: {0}', err.msg);
           return res.json(409, { error: err.msg });
         } else {
+          res.errorDetails = format('Publish failed: {0}', err.msg);
           return res.json(500, { error: err.msg });
         }
       }
