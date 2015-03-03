@@ -6,49 +6,71 @@ var sinon = require('sinon');
 
 describe('registry : domain : s3', function(){
 
-  var s3, listObjectsStub, getObjectStub, putObjectStub, 
-      fsMock = {
-        readFileSync: sinon.stub()
-      };
-
-  fsMock.readFileSync.returns('file content!');
-
+  var s3, 
+      mockedS3Client,
+      error, 
+      response;
+    
   var S3 = injectr('../../registry/domain/s3.js', {
-    'fs-extra': fsMock
+    'fs-extra': {
+      readFileSync: sinon.stub().returns('file content!')
+    },
+    'aws-sdk': {
+      config: {
+        update: sinon.stub()
+      },
+      S3: function(){
+        return mockedS3Client;
+      }
+    }
   });
 
   var initialise = function(){
-    getObjectStub = sinon.stub();
-    listObjectsStub = sinon.stub();
-    putObjectStub = sinon.stub();
+    mockedS3Client = {
+      getObject: sinon.stub(),
+      listObjects: sinon.stub(),
+      putObject: sinon.stub()
+    };
 
     s3 = new S3({ 
-      client: {
-        getObject: getObjectStub,
-        listObjects: listObjectsStub,
-        putObject: putObjectStub
-      },
-      bucket: 'test-bucket',
-      path: '//s3.amazonaws.com/test-bucket/'
-    }, { cache: { refreshInterval: 60 }});    
+      cache: { refreshInterval: 60 }, 
+      s3: {
+        bucket: 'test-bucket',
+        path: '//s3.amazonaws.com/test-bucket/'
+      }
+    });
+  };
+
+  var execute = function(method, path, callback){
+    error = response = undefined;
+    s3[method](path, function(err, res){
+      error = err;
+      response = res;
+      callback();
+    });
+  };
+  
+  var initialiseAndExecutePut = function(fileName, isPrivate, callback){
+    initialise();
+    mockedS3Client.putObject.yields(null, 'ok');
+    s3.putFile('/path/to/', fileName, isPrivate, function(err, res){
+      error = err;
+      response = res;
+      callback();
+    });      
   };
 
   describe('when bucket is empty', function(){
 
     describe('when trying to access a path that doesn\'t exist', function(){
 
-      var error, response;
       before(function(done){
         initialise();
-        listObjectsStub.yields(null, {
+        mockedS3Client.listObjects.yields(null, {
           CommonPrefixes: []
         });
 
-        s3.listSubDirectories('hello', function(err, res){
-          error = err;
-          response = res;
-          done();
-        });
+        execute('listSubDirectories', 'hello', done);
       });
 
       it('should respond with an error', function(){
@@ -63,21 +85,17 @@ describe('registry : domain : s3', function(){
 
     describe('when getting a list of directories', function(){
 
-      var error, response;
       before(function(done){
         initialise();
-        listObjectsStub.yields(null, {
+        mockedS3Client.listObjects.yields(null, {
           CommonPrefixes: [{
             Prefix: 'components/hello-world/'
           },{
             Prefix: 'components/image/'
           }]
         });
-        s3.listSubDirectories('components', function(err, res){
-          error = err;
-          response = res;
-          done();
-        });
+
+        execute('listSubDirectories', 'components', done);
       });
 
       it('should respond without an error', function(){
@@ -91,21 +109,17 @@ describe('registry : domain : s3', function(){
 
     describe('when getting a list of subdirectories', function(){
 
-      var error, response;
       before(function(done){
         initialise();
-        listObjectsStub.yields(null, {
+        mockedS3Client.listObjects.yields(null, {
           CommonPrefixes: [{
             Prefix: 'components/image/1.0.0/'
           }, {
             Prefix: 'components/image/1.0.1/'
           }]
         });
-        s3.listSubDirectories('components/image', function(err, res){
-          error = err;
-          response = res;
-          done();
-        });
+
+        execute('listSubDirectories', 'components/image', done);
       });
 
       it('should respond without an error', function(){
@@ -121,17 +135,10 @@ describe('registry : domain : s3', function(){
 
       describe('when the file exists', function(){
 
-        var error, response;
         before(function(done){
           initialise();
-          getObjectStub.yields(null, {
-            Body: 'Hello!'
-          });
-          s3.getFile('components/image/1.0.1/src/hello.txt', function(err, res){
-            error = err;
-            response = res;
-            done();
-          });
+          mockedS3Client.getObject.yields(null, { Body: 'Hello!' });
+          execute('getFile', 'components/image/1.0.1/src/hello.txt', done);
         });
 
         it('should respond without an error', function(){
@@ -146,17 +153,10 @@ describe('registry : domain : s3', function(){
 
       describe('when the file does not exists', function(){
 
-        var error, response;
         before(function(done){
           initialise();
-          getObjectStub.yields({
-            code: 'NoSuchKey'
-          });
-          s3.getFile('components/image/1.0.1/random-file.json', function(err, res){
-            error = err;
-            response = res;
-            done();
-          });
+          mockedS3Client.getObject.yields({ code: 'NoSuchKey' });
+          execute('getFile', 'components/image/1.0.1/random-file.json', done);
         });
 
         it('should respond with a proper error', function(){
@@ -170,25 +170,14 @@ describe('registry : domain : s3', function(){
 
   describe('when publishing file', function(){
 
-    var error, response;
-    var initialiseStubs = function(fileName, isPrivate, callback){
-      initialise();
-      putObjectStub.yields(null, 'ok');
-      s3.putFile('/path/to/', fileName, isPrivate, function(err, res){
-        error = err;
-        response = res;
-        callback();
-      });      
-    };
-
     describe('when putting private file', function(){
 
       before(function(done){
-        initialiseStubs('hello.txt', true, done);
+        initialiseAndExecutePut('hello.txt', true, done);
       });
 
       it('should be saved using authenticated-read ACL', function(){
-        var params = putObjectStub.args;
+        var params = mockedS3Client.putObject.args;
         expect(params[0][0].ACL).to.equal('authenticated-read');
       });
     });
@@ -196,11 +185,11 @@ describe('registry : domain : s3', function(){
     describe('when putting public file', function(){
 
       before(function(done){
-        initialiseStubs('hello.txt', false, done);
+        initialiseAndExecutePut('hello.txt', false, done);
       });
 
       it('should be saved using public-read ACL', function(){
-        var params = putObjectStub.args;
+        var params = mockedS3Client.putObject.args;
         expect(params[0][0].ACL).to.equal('public-read');
       });
     });
@@ -208,11 +197,11 @@ describe('registry : domain : s3', function(){
     describe('when putting js file', function(){
 
       before(function(done){
-        initialiseStubs('hello.js', false, done);
+        initialiseAndExecutePut('hello.js', false, done);
       });
 
       it('should be saved using application/javascript fileType', function(){
-        var params = putObjectStub.args;
+        var params = mockedS3Client.putObject.args;
         expect(params[0][0].ContentType).to.equal('application/javascript');
       });
     });
@@ -220,11 +209,11 @@ describe('registry : domain : s3', function(){
     describe('when putting css file', function(){
 
       before(function(done){
-        initialiseStubs('hello.css', false, done);
+        initialiseAndExecutePut('hello.css', false, done);
       });
 
       it('should be saved using text/css fileType', function(){
-        var params = putObjectStub.args;
+        var params = mockedS3Client.putObject.args;
         expect(params[0][0].ContentType).to.equal('text/css');
       });
     });
@@ -232,11 +221,11 @@ describe('registry : domain : s3', function(){
     describe('when putting jpg file', function(){
 
       before(function(done){
-        initialiseStubs('hello.jpg', false, done);
+        initialiseAndExecutePut('hello.jpg', false, done);
       });
 
       it('should be saved using image/jpeg fileType', function(){
-        var params = putObjectStub.args;
+        var params = mockedS3Client.putObject.args;
         expect(params[0][0].ContentType).to.equal('image/jpeg');
       });
     });
@@ -244,11 +233,11 @@ describe('registry : domain : s3', function(){
     describe('when putting gif file', function(){
 
       before(function(done){
-        initialiseStubs('hello.gif', false, done);
+        initialiseAndExecutePut('hello.gif', false, done);
       });
 
       it('should be saved using image/gif fileType', function(){
-        var params = putObjectStub.args;
+        var params = mockedS3Client.putObject.args;
         expect(params[0][0].ContentType).to.equal('image/gif');
       });
     });
@@ -256,15 +245,13 @@ describe('registry : domain : s3', function(){
     describe('when putting png file', function(){
 
       before(function(done){
-        initialiseStubs('hello.png', false, done);
+        initialiseAndExecutePut('hello.png', false, done);
       });
 
       it('should be saved using image/png fileType', function(){
-        var params = putObjectStub.args;
+        var params = mockedS3Client.putObject.args;
         expect(params[0][0].ContentType).to.equal('image/png');
       });
     });
-
   });
-
 });

@@ -1,16 +1,27 @@
 'use strict';
 
+var AWS = require('aws-sdk');
 var Cache = require('nice-cache');
 var format = require('stringformat');
 var fs = require('fs-extra');
+var getMimeType = require('../../utils/get-mime-type');
 var nodeDir = require('node-dir');
 var giveMe = require('give-me');
+var path = require('path');
 var strings = require('../../resources');
 var _ = require('underscore');
 
-module.exports = function(s3, conf){
+module.exports = function(conf){
 
-  var cache = new Cache(conf.cache);
+  AWS.config.update({
+    accessKeyId: conf.s3.key,
+    secretAccessKey: conf.s3.secret,
+    region: conf.s3.region
+  });
+
+  var cache = new Cache(conf.cache),
+      client = new AWS.S3(),
+      bucket = conf.s3.bucket;
 
   var getNextYear = function(){
     return new Date((new Date()).setYear((new Date()).getFullYear() + 1));
@@ -27,8 +38,8 @@ module.exports = function(s3, conf){
       }
 
       var getFromAws = function(callback){
-        s3.client.listObjects({
-          Bucket: s3.bucket,
+        client.listObjects({
+          Bucket: bucket,
           Prefix: normalisedPath,
           Delimiter: '/'
         }, function (err, data) {
@@ -65,8 +76,8 @@ module.exports = function(s3, conf){
       }
 
       var getFromAws = function(callback){
-        s3.client.getObject({
-          Bucket: s3.bucket,
+        client.getObject({
+          Bucket: bucket,
           Key: filePath
         }, function (err, data){
           if (err) { 
@@ -89,7 +100,7 @@ module.exports = function(s3, conf){
 
     },
     getUrl: function(componentName, version, fileName){
-      return s3.path + componentName + '/' + version + '/' + fileName;
+      return conf.s3.path + componentName + '/' + version + '/' + fileName;
     },
     putDir: function(dirInput, dirOutput, callback){
 
@@ -135,28 +146,21 @@ module.exports = function(s3, conf){
     putFile: function(filePath, fileName, isPrivate, callback){
 
       var fileContent = fs.readFileSync(filePath),
+          mimeType = getMimeType(path.extname(fileName)),
           obj = {
-            Bucket: s3.bucket,
+            Bucket: bucket,
             Key: fileName,
             Body: fileContent,
             ACL: isPrivate ? 'authenticated-read' : 'public-read',
             ServerSideEncryption: 'AES256',
             Expires: getNextYear()
           };
-          
-      if(fileName.slice(-3).toLowerCase() === '.js'){
-        obj.ContentType = 'application/javascript';
-      } else if(fileName.slice(-4).toLowerCase() === '.css'){
-        obj.ContentType = 'text/css';
-      } else if(fileName.slice(-4).toLowerCase() === '.jpg'){
-        obj.ContentType = 'image/jpeg';
-      } else if(fileName.slice(-4).toLowerCase() === '.gif'){
-        obj.ContentType = 'image/gif';
-      } else if(fileName.slice(-4).toLowerCase() === '.png'){
-        obj.ContentType = 'image/png';
+
+      if(mimeType){
+        obj.ContentType = mimeType;
       }
 
-      s3.client.putObject(obj, function (err, res) {
+      client.putObject(obj, function (err, res) {
          callback(err, res);
       });
     }

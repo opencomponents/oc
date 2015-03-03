@@ -1,6 +1,5 @@
 'use strict';
 
-var config = require('../../conf');
 var format = require('stringformat');
 var fs = require('fs-extra');
 var handlebars = require('handlebars');
@@ -8,6 +7,7 @@ var hashBuilder = require('../../utils/hash-builder');
 var jade = require('jade');
 var request = require('../../utils/request');
 var path = require('path');
+var settings = require('../../resources/settings');
 var Targz = require('tar.gz');
 var uglifyJs = require('uglify-js');
 var validator = require('../../registry/domain/validator');
@@ -69,7 +69,7 @@ module.exports = function(){
       });
     },
     info: function(callback){
-      return fs.readJson(config.configFile.src, callback);
+      return fs.readJson(settings.configFile.src, callback);
     },
     init: function(componentName, templateType, callback){
 
@@ -105,7 +105,7 @@ module.exports = function(){
     },
     link: function(componentName, componentVersion, callback){
 
-      var localConfig = fs.readJsonSync(config.configFile.src);
+      var localConfig = fs.readJsonSync(settings.configFile.src);
 
       if(!localConfig || !localConfig.registries || localConfig.registries.length === 0){
         return callback('Registry configuration not found. Add a registry reference to the project first');
@@ -134,7 +134,7 @@ module.exports = function(){
         }
 
         localConfig.components[componentName] = componentVersion;
-        fs.writeJson(config.configFile.src, localConfig, callback);
+        fs.writeJson(settings.configFile.src, localConfig, callback);
       });
     },
     package: function(componentPath, callback){
@@ -226,13 +226,13 @@ module.exports = function(){
       callback(null, component);
     },
     unlink: function(componentName, callback){
-      var localConfig = fs.readJsonSync(config.configFile.src) || {};
+      var localConfig = fs.readJsonSync(settings.configFile.src) || {};
 
       if(!!localConfig.components[componentName]){
         delete localConfig.components[componentName];
       }
 
-      fs.writeJson(config.configFile.src, localConfig, callback);
+      fs.writeJson(settings.configFile.src, localConfig, callback);
     }
   });
 };
