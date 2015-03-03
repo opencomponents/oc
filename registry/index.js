@@ -40,7 +40,7 @@ module.exports = function(options){
     routes.init(options);
 
     var app = express();
-    // all environments
+    
     app.set('port', process.env.PORT || options.port);
     app.use(function (req, res, next) {
       res.removeHeader('X-Powered-By');
@@ -114,7 +114,7 @@ module.exports = function(options){
     app.get(options.prefix + 'oc-client/client.js', routes.staticRedirector);
 
     if(options.local){
-      app.get(options.prefix + ':componentName/:componentVersion/static/*', routes.staticRedirector);
+      app.get(format('{0}:componentName/:componentVersion/{1}*', options.prefix, settings.registry.localStaticRedirectorPath), routes.staticRedirector);
     } else {
       app.put(options.prefix + ':componentName/:componentVersion', options.beforePublish, routes.publish);
     }

@@ -5,6 +5,7 @@ var fs = require('fs-extra');
 var packageInfo = require('../../package.json');
 var path = require('path');
 var S3 = require('./s3');
+var settings = require('../../resources/settings');
 var strings = require('../../resources');
 var validator = require('./validator');
 var versionHandler = require('./version-handler');
@@ -63,7 +64,8 @@ module.exports = function(conf){
         return callback(null, local.getCompiledView(componentName, componentVersion));
       }
 
-      cdn.getFile(conf.s3.componentsDir + '/' + componentName + '/' + componentVersion + '/template.js', callback);
+      var viewPath = format('{0}/{1}/{2}/template.js', conf.s3.componentsDir, componentName, componentVersion);
+      cdn.getFile(viewPath, callback);
     },
     getComponent: function(componentName, componentVersion, callback){
 
@@ -75,9 +77,15 @@ module.exports = function(conf){
       }
 
       this.getComponentVersions(componentName, function(err, availableVersions){
+        
         if(err){
           return callback(err);
         }
+
+        if(availableVersions.length === 0){
+          return callback(format(strings.errors.registry.COMPONENT_NOT_FOUND, componentName, repositorySource));
+        }
+
         var version = versionHandler.getAvailableVersion(componentVersion, availableVersions);
 
         if(!version){
@@ -109,7 +117,9 @@ module.exports = function(conf){
         }
       }
 
-      cdn.getFile(conf.s3.componentsDir + '/' + componentName + '/' + componentVersion + '/package.json', function(err, component){
+      var packagePath = format('{0}/{1}/{2}/package.json', conf.s3.componentsDir, componentName, componentVersion);
+      
+      cdn.getFile(packagePath, function(err, component){
         var parsed;
 
         try {
@@ -122,11 +132,8 @@ module.exports = function(conf){
       });
     },
     getComponentPath: function(componentName, componentVersion){
-      if(conf.local){
-        return conf.baseUrl + componentName + '/' + componentVersion + '/';
-      }
-
-      return 'https:' + conf.s3.path + conf.s3.componentsDir + '/' + componentName + '/' + componentVersion + '/';
+      var prefix = conf.local ? conf.baseUrl : ('https:' + conf.s3.path + conf.s3.componentsDir + '/');
+      return format('{0}{1}/{2}/', prefix, componentName, componentVersion);
     },
     getComponents: function(callback){
       if(conf.local){
@@ -152,7 +159,7 @@ module.exports = function(conf){
       return 'https:' + conf.s3.path + conf.s3.componentsDir + '/oc-client/' + packageInfo.version + '/src/oc-client.min.js';
     },
     getStaticFilePath: function(componentName, componentVersion, filePath){
-      return this.getComponentPath(componentName, componentVersion) + (conf.local ? 'static/' : '') + filePath;
+      return this.getComponentPath(componentName, componentVersion) + (conf.local ? settings.registry.localStaticRedirectorPath : '') + filePath;
     },
     publishComponent: function(componentDir, componentName, componentVersion, callback){
       if(conf.local){
@@ -165,7 +172,14 @@ module.exports = function(conf){
       if(!validator.validateComponentName(componentName)){
         return callback({
           code: strings.errors.registry.COMPONENT_NAME_NOT_VALID_CODE,
-          msg: strings.errors.regitry.COMPONENT_NAME_NOT_VALID
+          msg: strings.errors.registry.COMPONENT_NAME_NOT_VALID
+        });
+      }
+
+      if(!validator.validateVersion(componentVersion)){
+        return callback({
+          code: strings.errors.registry.COMPONENT_VERSION_NOT_VALID_CODE,
+          msg: format(strings.errors.registry.COMPONENT_VERSION_NOT_VALID, componentVersion)
         });
       }
 

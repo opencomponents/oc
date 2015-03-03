@@ -9,6 +9,8 @@ module.exports = {
       COMPONENT_VERSION_NOT_FOUND: 'Component "{0}" with version "{1}" not found on {2}',
       COMPONENT_VERSION_ALREADY_FOUND: 'Component "{0}" with version "{1}" can\'t be published to {2} because a component with the same name and version already exists',
       COMPONENT_VERSION_ALREADY_FOUND_CODE: 'already_exists',
+      COMPONENT_VERSION_NOT_VALID: 'Version "{0}" is not a valid semantic version.',
+      COMPONENT_VERSION_NOT_VALID_CODE: 'version_not_valid',
        
       CONFIGURATION_DEPENDENCIES_MUST_BE_OBJECT: 'Registry configuration is not valid: dependencies must be an object',
       CONFIGURATION_EMPTY: 'Registry configuration is empty',
