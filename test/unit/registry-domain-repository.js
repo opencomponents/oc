@@ -5,9 +5,9 @@ var expect = require('chai').expect;
 
 describe('registry : domain : repository', function(){
 
-  var Repository = require('../../registry/domain/repository');
-
   describe('when on local configuration', function(){
+
+    var Repository = require('../../registry/domain/repository');
 
     var localConfiguration = {
       local: true,

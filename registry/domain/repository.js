@@ -1,9 +1,8 @@
 'use strict';
 
-var AWS = require('aws-sdk');
-var packageInfo = require('../../package.json');
 var format = require('stringformat');
 var fs = require('fs-extra');
+var packageInfo = require('../../package.json');
 var path = require('path');
 var S3 = require('./s3');
 var strings = require('../../resources');
@@ -13,21 +12,7 @@ var _ = require('underscore');
 
 module.exports = function(conf){
 
-  var getS3Client = function(){
-    AWS.config.update({
-      accessKeyId: conf.s3.key,
-      secretAccessKey: conf.s3.secret,
-      region: conf.s3.region
-    });
-
-    return new S3({
-      client: new AWS.S3(),
-      bucket: conf.s3.bucket,
-      path: conf.s3.path
-    }, conf);
-  };
-
-  var cdn = !conf.local && getS3Client(),
+  var cdn = !conf.local && new S3(conf),
       repositorySource = conf.local ? 'local repository' : 's3 cdn';
 
   var local = {

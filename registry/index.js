@@ -2,13 +2,13 @@
 
 var appStart = require('./app-start');
 var colors = require('colors');
-var config = require('../conf');
 var express = require('express');
 var format = require('stringformat');
 var http = require('http');
 var multer  = require('multer');
 var path = require('path');
 var RequestInterceptor = require('./request-interceptor');
+var settings = require('../resources/settings');
 var validator = require('./domain/validator');
 var _ = require('underscore');
 
@@ -71,7 +71,7 @@ module.exports = function(options){
     
     if(!options.local){
       app.use(multer({ 
-        dest: options.tempDir || config.registry.defaultTempPath,
+        dest: options.tempDir || settings.registry.defaultTempPath,
         fieldSize: 10,
         rename: function(fieldname, filename){
           return format('{0}-{1}.tar', filename.replace('.tar', '').replace(/\W+/g, '-').toLowerCase(), Date.now());
@@ -125,8 +125,8 @@ module.exports = function(options){
       app.get(options.prefix.substr(0, options.prefix.length - 1), routes.index);
     }
 
-    app.get(format('{0}{1}{2}', options.prefix, ':componentName/:componentVersion', config.registry.componentInfoPath), routes.componentInfo);
-    app.get(format('{0}{1}{2}', options.prefix, ':componentName', config.registry.componentInfoPath), routes.componentInfo);
+    app.get(format('{0}{1}{2}', options.prefix, ':componentName/:componentVersion', settings.registry.componentInfoPath), routes.componentInfo);
+    app.get(format('{0}{1}{2}', options.prefix, ':componentName', settings.registry.componentInfoPath), routes.componentInfo);
     app.get(options.prefix + ':componentName/:componentVersion', routes.component);
     app.get(options.prefix + ':componentName', routes.component);
 
