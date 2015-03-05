@@ -1,13 +1,11 @@
 'use strict';
 
+var ComponentsCache = require('./components-cache');
 var format = require('stringformat');
 var fs = require('fs-extra');
-var getUnixUTCTimestamp = require('../../utils/get-unix-utc-timestamp');
-var giveMe = require('give-me');
 var packageInfo = require('../../package.json');
 var path = require('path');
 var S3 = require('./s3');
-var semver = require('semver');
 var settings = require('../../resources/settings');
 var strings = require('../../resources');
 var validator = require('./validator');
@@ -17,8 +15,9 @@ var _ = require('underscore');
 module.exports = function(conf){
 
   var cdn = !conf.local && new S3(conf),
-      repositorySource = conf.local ? 'local repository' : 's3 cdn';
-
+      repositorySource = conf.local ? 'local repository' : 's3 cdn',
+      componentsCache = new ComponentsCache(conf, cdn);
+  
   var local = {
     getCompiledView: function(componentName, componentVersion){
       if(componentName === 'oc-client'){
@@ -142,50 +141,9 @@ module.exports = function(conf){
       if(conf.local){
         return callback(null, local.getComponents());
       }
-      cdn.listSubDirectories(conf.s3.componentsDir, callback);
-    },
-    getComponentsInfoFromDirectories: function(callback){
-      if(conf.local){
-        return callback('not available on local configuration');
-      }
 
-      var componentsInfo = {},
-          self = this;
-
-      self.getComponents(function(err, components){
-        if(err || components.length === 0){
-          return callback(err, components);
-        }
-
-        giveMe.all(self.getComponentVersions, _.map(components, function(component){
-          return [component];
-        }), function(errors, versions){
-
-          if(errors){
-            return callback(errors);
-          }
-
-          _.forEach(components, function(component, i){
-            componentsInfo[component] = versions[i];
-          });
-
-          callback(null, {
-            lastEdit: getUnixUTCTimestamp(),
-            components: componentsInfo
-          });
-        });
-      });
-    },
-    getComponentsInfoFromJson: function(callback){
-      if(conf.local){
-        return callback('not available on local configuration');
-      }
-      cdn.getFile(conf.s3.componentsDir + '/components.json', function(err, res){
-        if(err){
-          return callback(err);
-        }
-
-        callback(err, JSON.parse(res));
+      componentsCache.get(function(err, res){
+        callback(err, !!res ? _.keys(res.components) : null);
       });
     },
     getComponentVersions: function(componentName, callback){
@@ -193,12 +151,8 @@ module.exports = function(conf){
         return local.getComponentVersions(componentName, callback);
       }
 
-      cdn.listSubDirectories(conf.s3.componentsDir + '/' + componentName, function(err, versions){
-        if(err){
-          return callback(err);
-        }
-
-        callback(null, versions.sort(semver.compare));
+      componentsCache.get(function(err, res){
+        callback(err, (!!res && !!_.has(res.components, componentName)) ? res.components[componentName] : []);
       });
     },
     getDataProvider: function(componentName, componentVersion, callback){
@@ -213,6 +167,13 @@ module.exports = function(conf){
     },
     getStaticFilePath: function(componentName, componentVersion, filePath){
       return this.getComponentPath(componentName, componentVersion) + (conf.local ? settings.registry.localStaticRedirectorPath : '') + filePath;
+    },
+    init: function(callback){
+      if(conf.local){
+        return callback(null, 'ok');
+      }
+
+      componentsCache.load(callback);
     },
     publishComponent: function(componentDir, componentName, componentVersion, callback){
       if(conf.local){

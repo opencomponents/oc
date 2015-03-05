@@ -7,12 +7,12 @@ var format = require('stringformat');
 var http = require('http');
 var multer  = require('multer');
 var path = require('path');
+var Repository = require('./domain/repository');
 var RequestInterceptor = require('./request-interceptor');
+var routes = require('./routes');
 var settings = require('../resources/settings');
 var validator = require('./domain/validator');
 var _ = require('underscore');
-
-var routes = require('./routes');
 
 module.exports = function(options){
 
@@ -21,7 +21,8 @@ module.exports = function(options){
       server,
       withLogging = !_.has(options, 'verbosity') || options.verbosity > 0,
       validationResult = validator.registryConfiguration(options),
-      baseUrlFunc;
+      baseUrlFunc,
+      repository;
 
   if(!validationResult.isValid){
     throw validationResult.message;
@@ -35,9 +36,10 @@ module.exports = function(options){
     }
   };
 
-  this.init = function(){
+  this.init = function(callback){
 
-    routes.init(options);
+    repository = new Repository(options);
+    routes.init(options, repository);
 
     var app = express();
     
@@ -145,23 +147,25 @@ module.exports = function(options){
       callback = _.noop;
     }
 
-    appStart(options, function(err, res){
+    repository.init(function(){
+      appStart(repository, options, function(err, res){
 
-      if(!!err){
-        return callback(err.msg);
-      }
-
-      server = http.createServer(self.app);
-
-      server.listen(self.app.get('port'), function(){
-        if(withLogging){
-          console.log(format('Registry started at port {0}'.green, self.app.get('port')));
+        if(!!err){
+          return callback(err.msg);
         }
-        callback(null, self.app);
-      });
 
-      server.on('error', function(e){
-        callback(e);
+        server = http.createServer(self.app);
+
+        server.listen(self.app.get('port'), function(){
+          if(withLogging){
+            console.log(format('Registry started at port {0}'.green, self.app.get('port')));
+          }
+          callback(null, self.app);
+        });
+
+        server.on('error', function(e){
+          callback(e);
+        });
       });
     });
   };

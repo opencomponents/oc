@@ -5,8 +5,8 @@ var Cache = require('nice-cache');
 var format = require('stringformat');
 var fs = require('fs-extra');
 var getMimeType = require('../../utils/get-mime-type');
-var nodeDir = require('node-dir');
 var giveMe = require('give-me');
+var nodeDir = require('node-dir');
 var path = require('path');
 var strings = require('../../resources');
 var _ = require('underscore');
@@ -19,8 +19,12 @@ module.exports = function(conf){
     region: conf.s3.region
   });
 
-  var cache = new Cache(conf.cache),
-      client = new AWS.S3(),
+  var cache = new Cache({
+    verbose: !!conf.verbosity,
+    refreshInterval: conf.refreshInterval
+  });
+
+  var client = new AWS.S3(),
       bucket = conf.s3.bucket;
 
   var getNextYear = function(){
@@ -30,48 +34,39 @@ module.exports = function(conf){
   return {
     listSubDirectories: function(dir, callback){
 
-      var normalisedPath = dir.lastIndexOf('/') === (dir.length - 1) && dir.length > 0 ? dir : dir + '/',
-          cached = cache.get('s3-dir', normalisedPath);
+      var normalisedPath = dir.lastIndexOf('/') === (dir.length - 1) && dir.length > 0 ? dir : dir + '/';
 
-      if(!!cached){
-        return callback(null, cached);
-      }
-
-      var getFromAws = function(callback){
-        client.listObjects({
-          Bucket: bucket,
-          Prefix: normalisedPath,
-          Delimiter: '/'
-        }, function (err, data) {
-          if (err) { return callback(err); }
-
-          if(data.CommonPrefixes.length === 0){
-            return callback({ 
-              code: strings.errors.s3.DIR_NOT_FOUND_CODE,
-              msg: format(strings.errors.s3.DIR_NOT_FOUND, dir)
-            });
-          }
-
-          var result = _.map(data.CommonPrefixes, function(commonPrefix){
-            return commonPrefix.Prefix.substr(normalisedPath.length, commonPrefix.Prefix.length - normalisedPath.length - 1);
-          });
-
-          callback(null, result);
-        });
-      };
-
-      getFromAws(function(err, result){
+      client.listObjects({
+        Bucket: bucket,
+        Prefix: normalisedPath,
+        Delimiter: '/'
+      }, function (err, data) {
         if (err) { return callback(err); }
-        cache.set('s3-dir', normalisedPath, result);
-        cache.sub('s3-dir', normalisedPath, getFromAws);
+
+        if(data.CommonPrefixes.length === 0){
+          return callback({ 
+            code: strings.errors.s3.DIR_NOT_FOUND_CODE,
+            msg: format(strings.errors.s3.DIR_NOT_FOUND, dir)
+          });
+        }
+
+        var result = _.map(data.CommonPrefixes, function(commonPrefix){
+          return commonPrefix.Prefix.substr(normalisedPath.length, commonPrefix.Prefix.length - normalisedPath.length - 1);
+        });
+
         callback(null, result);
       });
     },
-    getFile: function(filePath, callback){
+    getFile: function(filePath, force, callback){
+
+      if(_.isFunction(force)){
+        callback = force;
+        force = false;
+      }
 
       var cached = cache.get('s3-file', filePath);
 
-      if(!!cached){
+      if(!!cached && !force){
         return callback(null, cached);
       }
 
@@ -120,26 +115,7 @@ module.exports = function(conf){
             return callback(_.compact(errors));
           }
 
-          var cachedKeysToRefresh = [];
-
-          _.forEach(dirOutput.split('/'), function(dirSegment, i){
-            var cacheKey = dirOutput.split('/').slice(0, i + 1).join('/') + '/',
-                cachedValue = cache.get('s3-dir', cacheKey);
-
-            if(!!cachedValue){
-              cachedKeysToRefresh.push(cacheKey);
-            }
-          });
-
-          if(cachedKeysToRefresh.length === 0){
-            return callback(null, 'ok');
-          } else {
-            giveMe.all(cache.refresh, _.map(cachedKeysToRefresh, function(cachedKeyToRefresh){
-              return ['s3-dir', cachedKeyToRefresh];
-            }), function(errors, results){
-              callback(errors, results);
-            });
-          }
+          callback(null, 'ok');
         });
       });
     },

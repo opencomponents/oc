@@ -17,15 +17,21 @@ describe('registry : domain : repository', function(){
 
   describe('when on cdn configuration', function(){
 
+    var componentsCacheMock = {
+      get: sinon.stub()
+    };
+
     var s3Mock = {
       getFile: sinon.stub(),
-      listSubDirectories: sinon.stub(),
       putDir: sinon.stub()
     };
 
     var Repository = injectr('../../registry/domain/repository.js', {
       './s3': function(conf){
         return s3Mock;
+      },
+      './components-cache': function(){
+        return componentsCacheMock;
       }
     });
 
@@ -46,21 +52,24 @@ describe('registry : domain : repository', function(){
       }
     };
 
+    var componentsCacheBaseResponse = {
+      components: {
+        'hello-world': ['1.0.0'],
+        'oc-client': ['1.0.0']
+      }
+    };
+
     var repository = new Repository(cdnConfiguration);
 
     describe('when getting the list of available components', function(){
 
       before(function(done){
-        s3Mock.listSubDirectories.yields(null, ['hello-world', 'oc-client']);
+        componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
         repository.getComponents(saveResult(done));
       });
 
       it('should respond without an error', function(){
         expect(response.error).to.be.null;
-      });
-
-      it('should get the components from the configuration components folder', function(){
-        expect(s3Mock.listSubDirectories.args[0][0]).to.eql('components');
       });
 
       it('should list the components', function(){
@@ -72,7 +81,7 @@ describe('registry : domain : repository', function(){
 
       describe('when the component does not exist', function(){
         before(function(done){
-          s3Mock.listSubDirectories.yields(null, []);
+          componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
           repository.getComponent('form-component', '1.0.0', saveResult(done));
         });
 
@@ -84,7 +93,7 @@ describe('registry : domain : repository', function(){
 
       describe('when the component exists but version does not', function(){
         before(function(done){
-          s3Mock.listSubDirectories.yields(null, ['1.0.0']);
+          componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
           repository.getComponent('hello-world', '2.0.0', saveResult(done));
         });
 
@@ -98,7 +107,7 @@ describe('registry : domain : repository', function(){
     describe('when getting an existing component', function(){
 
       before(function(done){
-        s3Mock.listSubDirectories.yields(null, ['1.0.0']);
+        componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
         s3Mock.getFile.yields(null, '{\"name\":\"hello-world\",\"version\":\"1.0.0\"}');
         repository.getComponent('hello-world', '1.0.0', saveResult(done));
       });
@@ -163,12 +172,12 @@ describe('registry : domain : repository', function(){
         describe('when component with same name and version is already in library', function(){
 
           before(function(done){
-            s3Mock.listSubDirectories.yields(null, ['1.0.0', '1.0.1']);
-            repository.publishComponent('', 'hello-world', '1.0.1', saveResult(done));
+            componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
+            repository.publishComponent('', 'hello-world', '1.0.0', saveResult(done));
           });
 
           it('should respond with an error', function(){
-            var message = 'Component "hello-world" with version "1.0.1" can\'t be ' +
+            var message = 'Component "hello-world" with version "1.0.0" can\'t be ' +
                           'published to s3 cdn because a component with the same ' +
                           'name and version already exists';
 
@@ -181,7 +190,7 @@ describe('registry : domain : repository', function(){
         describe('when component with same name and version does is not in library', function(){
 
           before(function(done){
-            s3Mock.listSubDirectories.yields(null, ['1.0.0']);
+            componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
             s3Mock.putDir.yields(null, 'done');
             repository.publishComponent('/path/to/component', 'hello-world', '1.0.1', saveResult(done));
           });

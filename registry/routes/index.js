@@ -23,11 +23,14 @@ var repository,
     client,
     cache;
 
-exports.init = function(conf){
-  repository = new Repository(conf);
+exports.init = function(conf, _repository){
   targz = new Targz();
   client = new Client(conf);
-  cache = new Cache();
+  cache = new Cache({
+    verbose: !!conf.verbosity,
+    refreshInterval: conf.refreshInterval
+  });
+  repository = _repository;
 };
 
 exports.index = function(req, res){
