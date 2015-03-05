@@ -2,9 +2,12 @@
 
 var format = require('stringformat');
 var fs = require('fs-extra');
+var getUnixUTCTimestamp = require('../../utils/get-unix-utc-timestamp');
+var giveMe = require('give-me');
 var packageInfo = require('../../package.json');
 var path = require('path');
 var S3 = require('./s3');
+var semver = require('semver');
 var settings = require('../../resources/settings');
 var strings = require('../../resources');
 var validator = require('./validator');
@@ -141,12 +144,62 @@ module.exports = function(conf){
       }
       cdn.listSubDirectories(conf.s3.componentsDir, callback);
     },
+    getComponentsInfoFromDirectories: function(callback){
+      if(conf.local){
+        return callback('not available on local configuration');
+      }
+
+      var componentsInfo = {},
+          self = this;
+
+      self.getComponents(function(err, components){
+        if(err || components.length === 0){
+          return callback(err, components);
+        }
+
+        giveMe.all(self.getComponentVersions, _.map(components, function(component){
+          return [component];
+        }), function(errors, versions){
+
+          if(errors){
+            return callback(errors);
+          }
+
+          _.forEach(components, function(component, i){
+            componentsInfo[component] = versions[i];
+          });
+
+          callback(null, {
+            lastEdit: getUnixUTCTimestamp(),
+            components: componentsInfo
+          });
+        });
+      });
+    },
+    getComponentsInfoFromJson: function(callback){
+      if(conf.local){
+        return callback('not available on local configuration');
+      }
+      cdn.getFile(conf.s3.componentsDir + '/components.json', function(err, res){
+        if(err){
+          return callback(err);
+        }
+
+        callback(err, JSON.parse(res));
+      });
+    },
     getComponentVersions: function(componentName, callback){
       if(conf.local){
         return local.getComponentVersions(componentName, callback);
       }
 
-      cdn.listSubDirectories(conf.s3.componentsDir + '/' + componentName, callback);
+      cdn.listSubDirectories(conf.s3.componentsDir + '/' + componentName, function(err, versions){
+        if(err){
+          return callback(err);
+        }
+
+        callback(null, versions.sort(semver.compare));
+      });
     },
     getDataProvider: function(componentName, componentVersion, callback){
       if(conf.local){
@@ -194,6 +247,9 @@ module.exports = function(conf){
 
         cdn.putDir(componentDir, conf.s3.componentsDir + '/' + componentName + '/' + componentVersion, callback);
       });
+    },
+    saveComponentsInfo: function(componentsInfo, callback){
+      cdn.putFileContent(JSON.stringify(componentsInfo), conf.s3.componentsDir + '/components.json', true, callback);
     }
   };
 };

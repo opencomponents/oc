@@ -143,10 +143,9 @@ module.exports = function(conf){
         });
       });
     },
-    putFile: function(filePath, fileName, isPrivate, callback){
+    putFileContent: function(fileContent, fileName, isPrivate, callback){
 
-      var fileContent = fs.readFileSync(filePath),
-          mimeType = getMimeType(path.extname(fileName)),
+      var mimeType = getMimeType(path.extname(fileName)),
           obj = {
             Bucket: bucket,
             Key: fileName,
@@ -163,6 +162,10 @@ module.exports = function(conf){
       client.putObject(obj, function (err, res) {
          callback(err, res);
       });
+    },
+    putFile: function(filePath, fileName, isPrivate, callback){
+      var fileContent = fs.readFileSync(filePath);
+      return this.putFileContent(fileContent, fileName, isPrivate, callback);
     }
   };
 };
