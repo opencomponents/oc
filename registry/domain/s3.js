@@ -5,6 +5,7 @@ var Cache = require('nice-cache');
 var format = require('stringformat');
 var fs = require('fs-extra');
 var getMimeType = require('../../utils/get-mime-type');
+var getNextYear = require('../../utils/get-next-year');
 var giveMe = require('give-me');
 var nodeDir = require('node-dir');
 var path = require('path');
@@ -19,17 +20,12 @@ module.exports = function(conf){
     region: conf.s3.region
   });
 
-  var cache = new Cache({
-    verbose: !!conf.verbosity,
-    refreshInterval: conf.refreshInterval
-  });
-
   var client = new AWS.S3(),
-      bucket = conf.s3.bucket;
-
-  var getNextYear = function(){
-    return new Date((new Date()).setYear((new Date()).getFullYear() + 1));
-  };
+      bucket = conf.s3.bucket,
+      cache = new Cache({
+        verbose: !!conf.verbosity,
+        refreshInterval: conf.refreshInterval
+      });
 
   return {
     listSubDirectories: function(dir, callback){
@@ -41,7 +37,7 @@ module.exports = function(conf){
         Prefix: normalisedPath,
         Delimiter: '/'
       }, function (err, data) {
-        if (err) { return callback(err); }
+        if(err){ return callback(err); }
 
         if(data.CommonPrefixes.length === 0){
           return callback({ 
@@ -74,8 +70,8 @@ module.exports = function(conf){
         client.getObject({
           Bucket: bucket,
           Key: filePath
-        }, function (err, data){
-          if (err) { 
+        }, function(err, data){
+          if(err){ 
             return callback(err.code === 'NoSuchKey' ? {
               code: strings.errors.s3.FILE_NOT_FOUND_CODE,
               msg: format(strings.errors.s3.FILE_NOT_FOUND, filePath)
@@ -87,7 +83,7 @@ module.exports = function(conf){
       };
 
       getFromAws(function(err, result){
-        if (err) { return callback(err); }
+        if(err){ return callback(err); }
         cache.set('s3-file', filePath, result);
         cache.sub('s3-file', filePath, getFromAws);
         callback(null, result);

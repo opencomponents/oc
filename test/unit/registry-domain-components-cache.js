@@ -34,7 +34,7 @@ describe('registry : domain : components-cache', function(){
       }
     }, { 
       setInterval: setIntervalStub,
-      clearInterval: clearIntervalStub, console: console, process: process
+      clearInterval: clearIntervalStub
     });
 
     componentsCache = new ComponentsCache(baseOptions, mockedCdn);
