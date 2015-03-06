@@ -52,7 +52,7 @@ module.exports = function(conf, cdn){
   };
 
   var getFromJson = function(cb){
-    cdn.getFile(conf.s3.componentsDir + '/components.json', function(err, res){
+    cdn.getFile(conf.s3.componentsDir + '/components.json', true, function(err, res){
       if(err){ return cb(err); }
       cb(err, JSON.parse(res));
     });
@@ -91,15 +91,16 @@ module.exports = function(conf, cdn){
       callback(null, cachedComponentsList);
     },
     load: function(callback){
-      getFromJson(function(err, components){
-
-        if(!!err){
-          getAndSaveFromDirectories(function(err, components){
-            if(!!err){ return callback(err); }
-            cacheDataAndStartRefresh(components, callback);
+      giveMe.all([getFromJson, getFromDirectories], function(errors, components){
+        if(!!errors && !!errors[1]){ 
+          return callback(errors[1]); 
+        } else if((!!errors && !!errors[0]) || !_.isEqual(components[0].components, components[1].components)){ 
+          saveData(components[1], function(saveErr, saveResult){
+            if(!!saveErr){ return callback(saveErr); }
+            cacheDataAndStartRefresh(components[1], callback);
           });
         } else {
-          cacheDataAndStartRefresh(components, callback);
+          cacheDataAndStartRefresh(components[0], callback);
         }
       });
     },

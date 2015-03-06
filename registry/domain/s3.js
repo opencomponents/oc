@@ -122,7 +122,7 @@ module.exports = function(conf){
     putFile: function(filePath, fileName, isPrivate, callback){
       var self = this;
       
-      fs.readFile(filePath, function(err, fileContent){ console.log(self);
+      fs.readFile(filePath, function(err, fileContent){
         if(!!err){ return callback(err); }
         self.putFileContent(fileContent, fileName, isPrivate, callback);
       });

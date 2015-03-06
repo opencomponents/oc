@@ -18,7 +18,8 @@ describe('registry : domain : repository', function(){
   describe('when on cdn configuration', function(){
 
     var componentsCacheMock = {
-      get: sinon.stub()
+      get: sinon.stub(),
+      refresh: sinon.stub()
     };
 
     var s3Mock = {
@@ -187,10 +188,14 @@ describe('registry : domain : repository', function(){
           });
         });
 
-        describe('when component with same name and version does is not in library', function(){
+        describe('when component with same name and version is not in library', function(){
 
           before(function(done){
+            componentsCacheMock.get = sinon.stub();
             componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
+            componentsCacheMock.refresh = sinon.stub();
+            componentsCacheMock.refresh.yields(null, 'yay');
+            s3Mock.putDir = sinon.stub();
             s3Mock.putDir.yields(null, 'done');
             repository.publishComponent('/path/to/component', 'hello-world', '1.0.1', saveResult(done));
           });

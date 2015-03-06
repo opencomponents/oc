@@ -34,7 +34,7 @@ describe('registry : domain : components-cache', function(){
       }
     }, { 
       setInterval: setIntervalStub,
-      clearInterval: clearIntervalStub
+      clearInterval: clearIntervalStub, console: console, process: process
     });
 
     componentsCache = new ComponentsCache(baseOptions, mockedCdn);
@@ -49,25 +49,108 @@ describe('registry : domain : components-cache', function(){
 
   describe('when loading components and versions', function(){
 
-    describe('when library contains components.json', function(){
+    describe('when library does not contain components.json', function(){
 
-      describe('when intialising the cache', function(){
+      describe('when initialising the cache', function(){
 
         before(function(done){
-          setInterval = sinon.stub();
           mockedCdn.getFile = sinon.stub();
-          mockedCdn.getFile.yields(null, baseResponse);
+          mockedCdn.getFile.yields('not_found');
+          mockedCdn.listSubDirectories = sinon.stub();
+          mockedCdn.listSubDirectories.onCall(0).yields(null, ['hello-world']);
+          mockedCdn.listSubDirectories.onCall(1).yields(null, ['1.0.0', '1.0.2']);
+          mockedCdn.putFileContent = sinon.stub();
+          mockedCdn.putFileContent.yields(null, 'ok');
+          setInterval = sinon.stub();
           initialise();
           componentsCache.load(saveCallbackResult(done));
         });
 
         it('should request it to cdn', function(){
-          expect(mockedCdn.getFile.called).to.be.true;
+          expect(mockedCdn.getFile.calledOnce).to.be.true;
+          expect(mockedCdn.listSubDirectories.calledTwice).to.be.true;
         });
 
-        it('should use it as a source of truth', function(done){
-          expect(mockedCdn.listSubDirectories.called).to.be.false;
+        it('should then save the components.json file to cdn', function(){
+          expect(mockedCdn.putFileContent.called).to.be.true;
+          expect(mockedCdn.putFileContent.args[0][2]).to.be.true;
+          expect(JSON.parse(mockedCdn.putFileContent.args[0][0])).to.eql({
+            lastEdit: 12345678,
+            components: {
+              'hello-world': ['1.0.0', '1.0.2']
+            }
+          });
+        });
 
+        it('should start the refresh loop', function(){
+          expect(setIntervalStub.called).to.be.true;
+          expect(setIntervalStub.args[0][1]).to.equal(5000);
+        });
+      });
+    });
+
+    describe('when library contains outdated components.json', function(){
+
+      describe('when initialising the cache', function(){
+
+        before(function(done){
+          mockedCdn.getFile = sinon.stub();
+          mockedCdn.getFile.yields(null, baseResponse);
+          mockedCdn.listSubDirectories = sinon.stub();
+          mockedCdn.listSubDirectories.onCall(0).yields(null, ['hello-world']);
+          mockedCdn.listSubDirectories.onCall(1).yields(null, ['1.0.0', '1.0.2', '2.0.0']);
+          mockedCdn.putFileContent = sinon.stub();
+          mockedCdn.putFileContent.yields(null, 'ok');
+          setInterval = sinon.stub();
+          initialise();
+          componentsCache.load(saveCallbackResult(done));
+        });
+
+        it('should request it to cdn', function(){
+          expect(mockedCdn.getFile.calledOnce).to.be.true;
+          expect(mockedCdn.listSubDirectories.calledTwice).to.be.true;
+        });
+
+        it('should then save the components.json file to cdn', function(){
+          expect(mockedCdn.putFileContent.called).to.be.true;
+          expect(mockedCdn.putFileContent.args[0][2]).to.be.true;
+          expect(JSON.parse(mockedCdn.putFileContent.args[0][0])).to.eql({
+            lastEdit: 12345678,
+            components: {
+              'hello-world': ['1.0.0', '1.0.2', '2.0.0']
+            }
+          });
+        });
+
+        it('should start the refresh loop', function(){
+          expect(setIntervalStub.called).to.be.true;
+          expect(setIntervalStub.args[0][1]).to.equal(5000);
+        });
+      });
+    });
+
+    describe('when library contains updated components.json', function(){
+
+      describe('when initialising the cache', function(){
+
+        before(function(done){
+          setInterval = sinon.stub();
+          mockedCdn.getFile = sinon.stub();
+          mockedCdn.getFile.yields(null, baseResponse);
+          mockedCdn.listSubDirectories = sinon.stub();
+          mockedCdn.listSubDirectories.onCall(0).yields(null, ['hello-world']);
+          mockedCdn.listSubDirectories.onCall(1).yields(null, ['1.0.0', '1.0.2']);
+          initialise();
+          componentsCache.load(saveCallbackResult(done));
+        });
+
+        it('should request it to cdn', function(){
+          expect(mockedCdn.getFile.calledOnce).to.be.true;
+          expect(mockedCdn.listSubDirectories.calledTwice).to.be.true;
+        });
+
+
+        it('should use it as a source of truth', function(done){
           componentsCache.get(function(err, res){
             expect(res).to.eql({
               lastEdit: 12345678,
@@ -99,9 +182,11 @@ describe('registry : domain : components-cache', function(){
           mockedCdn.getFile = sinon.stub();
           mockedCdn.getFile.yields(null, baseResponse);
           mockedCdn.listSubDirectories = sinon.stub();
-          mockedCdn.listSubDirectories.onCall(0).yields(null, ['hello-world', 'new-component']);
-          mockedCdn.listSubDirectories.onCall(1).yields(null, ['1.0.0', '1.0.2', '2.0.0']);
-          mockedCdn.listSubDirectories.onCall(2).yields(null, ['1.0.0']);
+          mockedCdn.listSubDirectories.onCall(0).yields(null, ['hello-world']);
+          mockedCdn.listSubDirectories.onCall(1).yields(null, ['1.0.0', '1.0.2']);
+          mockedCdn.listSubDirectories.onCall(2).yields(null, ['hello-world', 'new-component']);
+          mockedCdn.listSubDirectories.onCall(3).yields(null, ['1.0.0', '1.0.2', '2.0.0']);
+          mockedCdn.listSubDirectories.onCall(4).yields(null, ['1.0.0']);
           mockedCdn.putFileContent = sinon.stub();
           mockedCdn.putFileContent.yields(null, 'ok');
           initialise();
@@ -116,7 +201,7 @@ describe('registry : domain : components-cache', function(){
         });
 
         it('should do list requests to cdn', function(){
-          expect(mockedCdn.listSubDirectories.args.length).to.equal(3);
+          expect(mockedCdn.listSubDirectories.args.length).to.equal(5);
         });
 
         it('should do write request to cdn', function(){
@@ -132,47 +217,6 @@ describe('registry : domain : components-cache', function(){
           });
         });
 
-      });
-
-    });
-
-    describe('when library does not contain components.json', function(){
-
-      before(function(done){
-        mockedCdn.getFile = sinon.stub();
-        mockedCdn.getFile.yields('not_found');
-        mockedCdn.listSubDirectories = sinon.stub();
-        mockedCdn.listSubDirectories.onCall(0).yields(null, ['hello-world']);
-        mockedCdn.listSubDirectories.onCall(1).yields(null, ['1.0.0', '1.0.2']);
-        mockedCdn.putFileContent = sinon.stub();
-        mockedCdn.putFileContent.yields(null, 'ok');
-        setInterval = sinon.stub();
-        initialise();
-        componentsCache.load(saveCallbackResult(done));
-      });
-
-      it('should first request component.json it to cdn', function(){
-        expect(mockedCdn.getFile.called).to.be.true;
-      });
-
-      it('should then request directories lists to cdn', function(){
-        expect(mockedCdn.listSubDirectories.args.length).to.equal(2);
-      });
-
-      it('should then save the components.json file to cdn', function(){
-        expect(mockedCdn.putFileContent.called).to.be.true;
-        expect(mockedCdn.putFileContent.args[0][2]).to.be.true;
-        expect(JSON.parse(mockedCdn.putFileContent.args[0][0])).to.eql({
-          lastEdit: 12345678,
-          components: {
-            'hello-world': ['1.0.0', '1.0.2']
-          }
-        });
-      });
-
-      it('should start the refresh loop', function(){
-        expect(setIntervalStub.called).to.be.true;
-        expect(setIntervalStub.args[0][1]).to.equal(5000);
       });
     });
   });
