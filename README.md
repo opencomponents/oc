@@ -118,7 +118,8 @@ var configuration = {
   baseUrl: 'https://my-components-registry.mydomain.com/',
   port: 3000,
   tempDir: './temp/',
-  cache: { verbose: false, refreshInterval: 600 },
+  refreshInterval: 600,
+  pollingInterval: 5,
   s3: {
     key: 'your-s3-key',
     secret: 'your-s3-secret',
@@ -160,6 +161,7 @@ curl http://my-components-registry.mydomain.com/hello-world
   "version": "1.0.13",
   "requestVersion": "",
   "html": "<oc-component href=\"https://my-components-registry.mydomain.com/hello-world\" data-hash=\"cad2a9671257d5033d2abfd739b1660993021d02\" id=\"2890594349\" data-rendered=\"true\" data-version=\"1.0.13\">Hello John doe!</oc-component>",
+  "type": "oc-component",
   "renderMode": "rendered"
 }
 ```
