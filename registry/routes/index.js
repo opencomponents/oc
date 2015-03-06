@@ -238,11 +238,6 @@ exports.publish = function(req, res){
     return res.json(409, { error: res.errorDetails });
   }
 
-  if(!validator.validateVersion(req.params.componentVersion).isValid){
-    res.errorDetails = 'not a valid version';
-    return res.json(409, { error: res.errorDetails });
-  }
-  
   if(!validator.validatePackage(req.files).isValid){
     res.errorDetails = 'package is not valid';
     return res.json(409, { error: res.errorDetails });
@@ -272,6 +267,9 @@ exports.publish = function(req, res){
           return res.json(403, { error: err.msg });
         } else if(err.code === 'name_not_valid'){
           res.errorDetails = format('Component name not valid: {0}', err.msg);
+          return res.json(409, { error: err.msg });
+        } else if(err.code === 'version_not_valid'){
+          res.errorDetails = format('Component version not valid: {0}', err.msg);
           return res.json(409, { error: err.msg });
         } else {
           res.errorDetails = format('Publish failed: {0}', err.msg);

@@ -104,7 +104,7 @@ module.exports = function(conf){
       nodeDir.paths(dirInput, function(err, paths) {
         var files = paths.files;
 
-        giveMe.all(self.putFile, _.map(files, function(file){
+        giveMe.all(_.bind(self.putFile, self), _.map(files, function(file){
           var relativeFile = file.substr(dirInput.length),
               url = dirOutput + relativeFile;
           
@@ -117,6 +117,14 @@ module.exports = function(conf){
 
           callback(null, 'ok');
         });
+      });
+    },
+    putFile: function(filePath, fileName, isPrivate, callback){
+      var self = this;
+      
+      fs.readFile(filePath, function(err, fileContent){ console.log(self);
+        if(!!err){ return callback(err); }
+        self.putFileContent(fileContent, fileName, isPrivate, callback);
       });
     },
     putFileContent: function(fileContent, fileName, isPrivate, callback){
@@ -138,10 +146,6 @@ module.exports = function(conf){
       client.putObject(obj, function (err, res) {
          callback(err, res);
       });
-    },
-    putFile: function(filePath, fileName, isPrivate, callback){
-      var fileContent = fs.readFileSync(filePath);
-      return this.putFileContent(fileContent, fileName, isPrivate, callback);
     }
   };
 };

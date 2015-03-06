@@ -206,7 +206,10 @@ module.exports = function(conf){
           });
         }
 
-        cdn.putDir(componentDir, conf.s3.componentsDir + '/' + componentName + '/' + componentVersion, callback);
+        cdn.putDir(componentDir, conf.s3.componentsDir + '/' + componentName + '/' + componentVersion, function(err, res){
+          if(!!err){ return callback(err); }
+          componentsCache.refresh(callback);
+        });
       });
     },
     saveComponentsInfo: function(componentsInfo, callback){

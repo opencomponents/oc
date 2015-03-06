@@ -7,7 +7,8 @@ var _ = require('underscore');
 
 module.exports = function(conf, cdn){
 
-  var cachedComponentsList;
+  var cachedComponentsList,
+      refreshLoop;
 
   var cacheDataAndStartRefresh = function(data, cb){
     cachedComponentsList = data;
@@ -15,10 +16,13 @@ module.exports = function(conf, cdn){
     cb(null, data);
   };
 
-  var getAndSaveFromDirectories = function(cb){
+  var getAndSaveFromDirectories = function(cb){ 
     getFromDirectories(function(err, components){
       if(!!err){ return cb(err); }
-      saveData(components, cb); 
+      saveData(components, function(err, res){
+        if(!!err){ return cb(err); }
+        cb(err, components);
+      }); 
     });
   };
 
@@ -33,7 +37,7 @@ module.exports = function(conf, cdn){
         return [component];
       }), function(errors, versions){
 
-        if(errors){ return cb(errors); }
+        if(!!errors){ return cb(errors); }
 
         _.forEach(components, function(component, i){
           componentsInfo[component] = versions[i];
@@ -62,7 +66,7 @@ module.exports = function(conf, cdn){
   };
 
   var refreshCachedData = function(){
-    setInterval(function(){
+    refreshLoop = setInterval(function(){
       getFromJson(function(err, data){
         if(!err){
           updateCachedData(data);
@@ -97,6 +101,13 @@ module.exports = function(conf, cdn){
         } else {
           cacheDataAndStartRefresh(components, callback);
         }
+      });
+    },
+    refresh: function(callback){
+      clearInterval(refreshLoop);
+      getAndSaveFromDirectories(function(err, components){
+        if(!!err){ return callback(err); }
+        cacheDataAndStartRefresh(components, callback);
       });
     }
   };
