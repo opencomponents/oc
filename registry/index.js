@@ -9,7 +9,7 @@ var multer  = require('multer');
 var path = require('path');
 var Repository = require('./domain/repository');
 var RequestInterceptor = require('./request-interceptor');
-var routes = require('./routes');
+var Router = require('./router');
 var settings = require('../resources/settings');
 var validator = require('./domain/validator');
 var _ = require('underscore');
@@ -37,11 +37,10 @@ module.exports = function(options){
   };
 
   this.init = function(callback){
-
     repository = new Repository(options);
-    routes.init(options, repository);
 
-    var app = express();
+    var router = new Router(options, repository),
+        app = express();
     
     app.set('port', process.env.PORT || options.port);
     app.use(function (req, res, next) {
@@ -113,24 +112,24 @@ module.exports = function(options){
       app.get('/', function(req, res){ res.redirect(options.prefix); });
     }
 
-    app.get(options.prefix + 'oc-client/client.js', routes.staticRedirector);
+    app.get(options.prefix + 'oc-client/client.js', router.staticRedirector);
 
     if(options.local){
-      app.get(format('{0}:componentName/:componentVersion/{1}*', options.prefix, settings.registry.localStaticRedirectorPath), routes.staticRedirector);
+      app.get(format('{0}:componentName/:componentVersion/{1}*', options.prefix, settings.registry.localStaticRedirectorPath), router.staticRedirector);
     } else {
-      app.put(options.prefix + ':componentName/:componentVersion', options.beforePublish, routes.publish);
+      app.put(options.prefix + ':componentName/:componentVersion', options.beforePublish, router.publish);
     }
 
-    app.get(options.prefix, routes.index);
+    app.get(options.prefix, router.listComponents);
 
     if(hasPrefix){
-      app.get(options.prefix.substr(0, options.prefix.length - 1), routes.index);
+      app.get(options.prefix.substr(0, options.prefix.length - 1), router.listComponents);
     }
 
-    app.get(format('{0}{1}{2}', options.prefix, ':componentName/:componentVersion', settings.registry.componentInfoPath), routes.componentInfo);
-    app.get(format('{0}{1}{2}', options.prefix, ':componentName', settings.registry.componentInfoPath), routes.componentInfo);
-    app.get(options.prefix + ':componentName/:componentVersion', routes.component);
-    app.get(options.prefix + ':componentName', routes.component);
+    app.get(format('{0}:componentName/:componentVersion{1}', options.prefix, settings.registry.componentInfoPath), router.listComponents);
+    app.get(format('{0}:componentName{1}', options.prefix, settings.registry.componentInfoPath), router.componentInfo);
+    app.get(options.prefix + ':componentName/:componentVersion', router.component);
+    app.get(options.prefix + ':componentName', router.component);
 
     if(!!options.routes){
       _.forEach(options.routes, function(route){
