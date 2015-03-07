@@ -13,7 +13,7 @@ describe('registry : domain : s3', function(){
     
   var S3 = injectr('../../registry/domain/s3.js', {
     'fs-extra': {
-      readFileSync: sinon.stub().returns('file content!')
+      readFile: sinon.stub().yields(null, 'file content!')
     },
     'aws-sdk': {
       config: {

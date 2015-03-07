@@ -198,6 +198,6 @@ module.exports = {
     return response;
   },
   validateVersion: function(version){
-    return { isValid: !!semver.valid(version) };
+    return !!semver.valid(version);
   }
 };

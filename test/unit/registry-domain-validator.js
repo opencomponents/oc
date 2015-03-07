@@ -552,17 +552,17 @@ describe('registry : domain : validator', function(){
   describe('when validating component version for new candidate', function(){
 
     var existingVersions = ['1.0.0', '1.0.1', '2.0.0', '2.1.0'],
-        validate = function(a,b){ return validator.validateVersion(a, b); };
+        isValid = function(a,b){ return validator.validateVersion(a, b); };
   
     describe('when version already exists', function(){
       it('should not be valid', function(){
-        expect(validate('this.is.not.valid', existingVersions).isValid).not.to.be.true;
+        expect(isValid('this.is.not.valid', existingVersions)).not.to.be.true;
       });
     });
 
     describe('when version does not exist', function(){
       it('should be valid', function(){
-        expect(validate('1.2.33', existingVersions).isValid).to.be.true;
+        expect(isValid('1.2.33', existingVersions)).to.be.true;
       });
     });
   });

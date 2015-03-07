@@ -5,8 +5,9 @@ var Cache = require('nice-cache');
 var format = require('stringformat');
 var fs = require('fs-extra');
 var getMimeType = require('../../utils/get-mime-type');
-var nodeDir = require('node-dir');
+var getNextYear = require('../../utils/get-next-year');
 var giveMe = require('give-me');
+var nodeDir = require('node-dir');
 var path = require('path');
 var strings = require('../../resources');
 var _ = require('underscore');
@@ -19,59 +20,49 @@ module.exports = function(conf){
     region: conf.s3.region
   });
 
-  var cache = new Cache(conf.cache),
-      client = new AWS.S3(),
-      bucket = conf.s3.bucket;
-
-  var getNextYear = function(){
-    return new Date((new Date()).setYear((new Date()).getFullYear() + 1));
-  };
+  var client = new AWS.S3(),
+      bucket = conf.s3.bucket,
+      cache = new Cache({
+        verbose: !!conf.verbosity,
+        refreshInterval: conf.refreshInterval
+      });
 
   return {
     listSubDirectories: function(dir, callback){
 
-      var normalisedPath = dir.lastIndexOf('/') === (dir.length - 1) && dir.length > 0 ? dir : dir + '/',
-          cached = cache.get('s3-dir', normalisedPath);
+      var normalisedPath = dir.lastIndexOf('/') === (dir.length - 1) && dir.length > 0 ? dir : dir + '/';
 
-      if(!!cached){
-        return callback(null, cached);
-      }
+      client.listObjects({
+        Bucket: bucket,
+        Prefix: normalisedPath,
+        Delimiter: '/'
+      }, function (err, data) {
+        if(err){ return callback(err); }
 
-      var getFromAws = function(callback){
-        client.listObjects({
-          Bucket: bucket,
-          Prefix: normalisedPath,
-          Delimiter: '/'
-        }, function (err, data) {
-          if (err) { return callback(err); }
-
-          if(data.CommonPrefixes.length === 0){
-            return callback({ 
-              code: strings.errors.s3.DIR_NOT_FOUND_CODE,
-              msg: format(strings.errors.s3.DIR_NOT_FOUND, dir)
-            });
-          }
-
-          var result = _.map(data.CommonPrefixes, function(commonPrefix){
-            return commonPrefix.Prefix.substr(normalisedPath.length, commonPrefix.Prefix.length - normalisedPath.length - 1);
+        if(data.CommonPrefixes.length === 0){
+          return callback({ 
+            code: strings.errors.s3.DIR_NOT_FOUND_CODE,
+            msg: format(strings.errors.s3.DIR_NOT_FOUND, dir)
           });
+        }
 
-          callback(null, result);
+        var result = _.map(data.CommonPrefixes, function(commonPrefix){
+          return commonPrefix.Prefix.substr(normalisedPath.length, commonPrefix.Prefix.length - normalisedPath.length - 1);
         });
-      };
 
-      getFromAws(function(err, result){
-        if (err) { return callback(err); }
-        cache.set('s3-dir', normalisedPath, result);
-        cache.sub('s3-dir', normalisedPath, getFromAws);
         callback(null, result);
       });
     },
-    getFile: function(filePath, callback){
+    getFile: function(filePath, force, callback){
+
+      if(_.isFunction(force)){
+        callback = force;
+        force = false;
+      }
 
       var cached = cache.get('s3-file', filePath);
 
-      if(!!cached){
+      if(!!cached && !force){
         return callback(null, cached);
       }
 
@@ -79,8 +70,8 @@ module.exports = function(conf){
         client.getObject({
           Bucket: bucket,
           Key: filePath
-        }, function (err, data){
-          if (err) { 
+        }, function(err, data){
+          if(err){ 
             return callback(err.code === 'NoSuchKey' ? {
               code: strings.errors.s3.FILE_NOT_FOUND_CODE,
               msg: format(strings.errors.s3.FILE_NOT_FOUND, filePath)
@@ -92,7 +83,7 @@ module.exports = function(conf){
       };
 
       getFromAws(function(err, result){
-        if (err) { return callback(err); }
+        if(err){ return callback(err); }
         cache.set('s3-file', filePath, result);
         cache.sub('s3-file', filePath, getFromAws);
         callback(null, result);
@@ -109,7 +100,7 @@ module.exports = function(conf){
       nodeDir.paths(dirInput, function(err, paths) {
         var files = paths.files;
 
-        giveMe.all(self.putFile, _.map(files, function(file){
+        giveMe.all(_.bind(self.putFile, self), _.map(files, function(file){
           var relativeFile = file.substr(dirInput.length),
               url = dirOutput + relativeFile;
           
@@ -120,33 +111,21 @@ module.exports = function(conf){
             return callback(_.compact(errors));
           }
 
-          var cachedKeysToRefresh = [];
-
-          _.forEach(dirOutput.split('/'), function(dirSegment, i){
-            var cacheKey = dirOutput.split('/').slice(0, i + 1).join('/') + '/',
-                cachedValue = cache.get('s3-dir', cacheKey);
-
-            if(!!cachedValue){
-              cachedKeysToRefresh.push(cacheKey);
-            }
-          });
-
-          if(cachedKeysToRefresh.length === 0){
-            return callback(null, 'ok');
-          } else {
-            giveMe.all(cache.refresh, _.map(cachedKeysToRefresh, function(cachedKeyToRefresh){
-              return ['s3-dir', cachedKeyToRefresh];
-            }), function(errors, results){
-              callback(errors, results);
-            });
-          }
+          callback(null, 'ok');
         });
       });
     },
     putFile: function(filePath, fileName, isPrivate, callback){
+      var self = this;
+      
+      fs.readFile(filePath, function(err, fileContent){
+        if(!!err){ return callback(err); }
+        self.putFileContent(fileContent, fileName, isPrivate, callback);
+      });
+    },
+    putFileContent: function(fileContent, fileName, isPrivate, callback){
 
-      var fileContent = fs.readFileSync(filePath),
-          mimeType = getMimeType(path.extname(fileName)),
+      var mimeType = getMimeType(path.extname(fileName)),
           obj = {
             Bucket: bucket,
             Key: fileName,
