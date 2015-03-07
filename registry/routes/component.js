@@ -136,7 +136,7 @@ module.exports = function(conf, repository){
             }
 
             var context = { 
-              require: new RequireWrapper(res.injectedDependencies), 
+              require: new RequireWrapper(res.conf.dependencies), 
               module: { 
                 exports: {}
               },

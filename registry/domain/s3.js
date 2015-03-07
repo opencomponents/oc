@@ -60,12 +60,6 @@ module.exports = function(conf){
         force = false;
       }
 
-      var cached = cache.get('s3-file', filePath);
-
-      if(!!cached && !force){
-        return callback(null, cached);
-      }
-
       var getFromAws = function(callback){
         client.getObject({
           Bucket: bucket,
@@ -81,6 +75,16 @@ module.exports = function(conf){
           callback(null, data.Body.toString());
         });
       };
+
+      if(force){
+        return getFromAws(callback);
+      }
+
+      var cached = cache.get('s3-file', filePath);
+
+      if(!!cached){
+        return callback(null, cached);
+      }
 
       getFromAws(function(err, result){
         if(err){ return callback(err); }

@@ -16,6 +16,5 @@ module.exports = function(repository){
         requestVersion: req.params.componentVersion || ''
       }));
     });
-
   };
 };
