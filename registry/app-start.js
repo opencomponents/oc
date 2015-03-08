@@ -4,7 +4,6 @@ var colors = require('colors/safe');
 var format = require('stringformat');
 var packageInfo = require('../package.json');
 var path = require('path');
-var Repository = require('./domain/repository');
 var _ = require('underscore');
 
 

@@ -1,29 +1,31 @@
 'use strict';
 
 var appStart = require('./app-start');
+var baseUrlHandler = require('./middleware/base-url-handler');
 var colors = require('colors');
+var cors = require('./middleware/cors');
 var express = require('express');
+var fileUploads = require('./middleware/file-uploads');
 var format = require('stringformat');
 var http = require('http');
-var multer  = require('multer');
-var path = require('path');
+var sanitiseOptions = require('./domain/options-sanitiser');
 var Repository = require('./domain/repository');
-var RequestInterceptor = require('./request-interceptor');
-var routes = require('./routes');
+var requestInterceptor = require('./middleware/request-interceptor');
+var Router = require('./router');
 var settings = require('../resources/settings');
 var validator = require('./domain/validator');
 var _ = require('underscore');
 
 module.exports = function(options){
 
-  var hasPrefix = false,
-      self = this,
+  var self = this,
       server,
       withLogging = !_.has(options, 'verbosity') || options.verbosity > 0,
       validationResult = validator.registryConfiguration(options),
-      baseUrlFunc,
       repository;
 
+  options = sanitiseOptions(options);
+  
   if(!validationResult.isValid){
     throw validationResult.message;
   }
@@ -37,100 +39,58 @@ module.exports = function(options){
   };
 
   this.init = function(callback){
+    var app = express();
 
     repository = new Repository(options);
-    routes.init(options, repository);
-
-    var app = express();
     
+    // middleware
     app.set('port', process.env.PORT || options.port);
-    app.use(function (req, res, next) {
-      res.removeHeader('X-Powered-By');
-      res.header('Access-Control-Allow-Credentials', 'true');
-      res.header('Access-Control-Allow-Origin', '*');
-      res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-      res.header('Access-Control-Allow-Methods', 'GET, OPTIONS, PUT');
+    app.set('json spaces', 0);
 
-      if(_.isFunction(options.baseUrl)){
-        baseUrlFunc = options.baseUrl;
-      }
-
-      if(!_.isUndefined(baseUrlFunc)){
-        options.baseUrl = baseUrlFunc({
-          host: req.headers.host,
-          secure: req.secure
-        });
-      }
-
+    app.use(function(req, res, next){
       res.conf = options;
-
-      if(!!options.dependencies){
-        res.injectedDependencies = options.dependencies;
-      }
-
       next();
     });
-    
-    if(!options.local){
-      app.use(multer({ 
-        dest: options.tempDir || settings.registry.defaultTempPath,
-        fieldSize: 10,
-        rename: function(fieldname, filename){
-          return format('{0}-{1}.tar', filename.replace('.tar', '').replace(/\W+/g, '-').toLowerCase(), Date.now());
-        }
-      }));
-    }
-
-    if(!options.publishAuth){
-      options.beforePublish = function(req, res, next){ next(); };
-    } else {
-      options.beforePublish = express.basicAuth(options.publishAuth.username, options.publishAuth.password);
-    }
-    
-    if(withLogging){
-      app.use(express.logger('dev'));
-    }
 
     app.use(express.json());
     app.use(express.urlencoded());
-    app.set('json spaces', 0);
+    app.use(cors);
+    app.use(fileUploads);
+    app.use(baseUrlHandler);
+    app.use(requestInterceptor);   
 
-    if(!!options.onRequest){
-      var interceptor = new RequestInterceptor(options.onRequest);
-      app.use(interceptor);
+    if(withLogging){
+      app.use(express.logger('dev'));
     }
-    
-    app.use(app.router);
 
     if('development' === app.get('env')){
       app.use(express.errorHandler());
     }
 
-    if(!options.prefix){
-      options.prefix = '/';
-    } else {
-      hasPrefix = true;
-      app.get('/', function(req, res){ res.redirect(options.prefix); });
-    }
+    // routes
+    app.use(app.router);
+    var router = new Router(options, repository);
 
-    app.get(options.prefix + 'oc-client/client.js', routes.staticRedirector);
+    if(options.prefix !== '/'){
+      app.get('/', function(req, res){ res.redirect(options.prefix); });
+      app.get(options.prefix.substr(0, options.prefix.length - 1), router.listComponents);
+    }
+        
+    app.get(options.prefix + 'oc-client/client.js', router.staticRedirector);
 
     if(options.local){
-      app.get(format('{0}:componentName/:componentVersion/{1}*', options.prefix, settings.registry.localStaticRedirectorPath), routes.staticRedirector);
+      app.get(format('{0}:componentName/:componentVersion/{1}*', options.prefix, settings.registry.localStaticRedirectorPath), router.staticRedirector);
     } else {
-      app.put(options.prefix + ':componentName/:componentVersion', options.beforePublish, routes.publish);
+      app.put(options.prefix + ':componentName/:componentVersion', options.beforePublish, router.publish);
     }
 
-    app.get(options.prefix, routes.index);
+    app.get(options.prefix, router.listComponents);
 
-    if(hasPrefix){
-      app.get(options.prefix.substr(0, options.prefix.length - 1), routes.index);
-    }
+    app.get(format('{0}:componentName/:componentVersion{1}', options.prefix, settings.registry.componentInfoPath), router.componentInfo);
+    app.get(format('{0}:componentName{1}', options.prefix, settings.registry.componentInfoPath), router.componentInfo);
 
-    app.get(format('{0}{1}{2}', options.prefix, ':componentName/:componentVersion', settings.registry.componentInfoPath), routes.componentInfo);
-    app.get(format('{0}{1}{2}', options.prefix, ':componentName', settings.registry.componentInfoPath), routes.componentInfo);
-    app.get(options.prefix + ':componentName/:componentVersion', routes.component);
-    app.get(options.prefix + ':componentName', routes.component);
+    app.get(options.prefix + ':componentName/:componentVersion', router.component);
+    app.get(options.prefix + ':componentName', router.component);
 
     if(!!options.routes){
       _.forEach(options.routes, function(route){
