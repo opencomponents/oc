@@ -6,7 +6,7 @@ var multer = require('multer');
 module.exports = function(req, res, next){
 
   if(res.conf.local){
-    next();
+    return next();
   }
 
   return multer({ 
