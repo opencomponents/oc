@@ -69,6 +69,10 @@ describe('registry : domain : repository', function(){
         repository.getComponents(saveResult(done));
       });
 
+      it('should fetch the list from the cache', function(){
+        expect(componentsCacheMock.get.called).to.be.true;
+      });
+
       it('should respond without an error', function(){
         expect(response.error).to.be.null;
       });
@@ -115,6 +119,10 @@ describe('registry : domain : repository', function(){
 
       it('should respond without an error', function(){
         expect(response.error).to.be.null;
+      });
+
+      it('should fetch the versions\' list from the cache', function(){
+        expect(componentsCacheMock.get.called).to.be.true;
       });
 
       it('should fetch the component info from the correct package.json file', function(){
@@ -198,6 +206,10 @@ describe('registry : domain : repository', function(){
             s3Mock.putDir = sinon.stub();
             s3Mock.putDir.yields(null, 'done');
             repository.publishComponent('/path/to/component', 'hello-world', '1.0.1', saveResult(done));
+          });
+
+          it('should refresh cached components list', function(){
+            expect(componentsCacheMock.refresh.called).to.be.true;
           });
 
           it('should store the component in the correct directory', function(){

@@ -22,6 +22,11 @@
     "url": "https://github.com/opentable/oc/issues"
   },
   "homepage": "https://github.com/opentable/oc",
+  "keywords": [
+    "open components",
+    "components",
+    "oc"
+  ],
   "devDependencies": {
     "chai": "1.10.0",
     "cheerio": "0.18.0",
