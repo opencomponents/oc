@@ -4,13 +4,13 @@ var appStart = require('./app-start');
 var baseUrlHandler = require('./middleware/base-url-handler');
 var colors = require('colors');
 var cors = require('./middleware/cors');
+var EventsHandler = require('./events-handler');
 var express = require('express');
 var fileUploads = require('./middleware/file-uploads');
 var format = require('stringformat');
 var http = require('http');
 var sanitiseOptions = require('./domain/options-sanitiser');
 var Repository = require('./domain/repository');
-var requestInterceptor = require('./middleware/request-interceptor');
 var Router = require('./router');
 var settings = require('../resources/settings');
 var validator = require('./domain/validator');
@@ -18,17 +18,20 @@ var _ = require('underscore');
 
 module.exports = function(options){
 
-  var self = this,
+  var eventsHandler = new EventsHandler(),
+      repository,
+      self = this,
       server,
       withLogging = !_.has(options, 'verbosity') || options.verbosity > 0,
-      validationResult = validator.registryConfiguration(options),
-      repository;
+      validationResult = validator.registryConfiguration(options);
 
   options = sanitiseOptions(options);
   
   if(!validationResult.isValid){
     throw validationResult.message;
   }
+
+  this.on = eventsHandler.on;
 
   this.close = function(callback){
     if(!!server){
@@ -57,7 +60,6 @@ module.exports = function(options){
     app.use(cors);
     app.use(fileUploads);
     app.use(baseUrlHandler);
-    app.use(requestInterceptor);   
 
     if(withLogging){
       app.use(express.logger('dev'));
@@ -66,6 +68,18 @@ module.exports = function(options){
     if('development' === app.get('env')){
       app.use(express.errorHandler());
     }
+
+    self.app = app;
+  };
+
+  this.start = function(callback){
+
+    if(!_.isFunction(callback)){
+      callback = _.noop;
+    }
+
+    var app = this.app;
+    eventsHandler.bindEvents(app);
 
     // routes
     app.use(app.router);
@@ -96,15 +110,6 @@ module.exports = function(options){
       _.forEach(options.routes, function(route){
         app[route.method.toLowerCase()](route.route, route.handler);
       });
-    }
-
-    self.app = app;
-  };
-
-  this.start = function(callback){
-
-    if(!_.isFunction(callback)){
-      callback = _.noop;
     }
 
     repository.init(function(){

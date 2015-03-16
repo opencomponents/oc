@@ -191,39 +191,6 @@ describe('registry : domain : validator', function(){
         });
       });
     });
-
-    describe('onRequest', function(){
-      describe('when not specified', function(){
-
-        var conf = { onRequest: null };
-
-        it('should be valid', function(){
-          expect(validate(conf).isValid).to.be.true;
-        });
-      });
-
-      describe('when specified', function(){
-
-        describe('when it is not a function', function(){
-
-          var conf = { onRequest: true };
-
-          it('should not be valid', function(){
-            expect(validate(conf).isValid).to.be.false;
-            expect(validate(conf).message).to.be.eql('Registry configuration is not valid: onRequest must be a function');
-          });
-        });
-
-        describe('when it is a function', function(){
-
-          var conf = { onRequest: function(){}};
-
-          it('should be valid', function(){
-            expect(validate(conf).isValid).to.be.true;
-          });
-        });
-      });
-    });
   });
 
   describe('when validating component request by parameter', function(){
