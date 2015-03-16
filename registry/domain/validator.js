@@ -162,12 +162,6 @@ module.exports = {
       });
     }
 
-    var onRequest = conf.onRequest;
-
-    if(!!onRequest && !_.isFunction(onRequest)){
-      return returnError(strings.errors.registry.CONFIGURTATION_ONREQUEST_MUST_BE_FUNCTION);
-    }
-
     return response;
   },
   validatePackage: function(input){

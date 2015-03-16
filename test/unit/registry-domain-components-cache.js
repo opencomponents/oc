@@ -16,6 +16,7 @@ describe('registry : domain : components-cache', function(){
   var setIntervalStub,
       clearIntervalStub,
       componentsCache,
+      eventsHandlerStub,
       baseOptions = { pollingInterval: 5, s3: { componentsDir: 'component'}},
       response,
       baseResponse = JSON.stringify({
@@ -28,6 +29,7 @@ describe('registry : domain : components-cache', function(){
   var initialise = function(){
     clearIntervalStub = sinon.stub();
     setIntervalStub = sinon.stub();
+    eventsHandlerStub = { fire: sinon.stub() };
     var ComponentsCache = injctr('../../registry/domain/components-cache.js', {
       '../../utils/get-unix-utc-timestamp': function(){
         return 12345678;
@@ -61,7 +63,7 @@ describe('registry : domain : components-cache', function(){
         mockedCdn.putFileContent.yields(null, 'ok');
         setInterval = sinon.stub();
         initialise();
-        componentsCache.load(saveCallbackResult(done));
+        componentsCache.load(eventsHandlerStub, saveCallbackResult(done));
       });
 
       it('should try fetching the components.json', function(){
@@ -105,7 +107,7 @@ describe('registry : domain : components-cache', function(){
         mockedCdn.putFileContent.yields(null, 'ok');
         setInterval = sinon.stub();
         initialise();
-        componentsCache.load(saveCallbackResult(done));
+        componentsCache.load(eventsHandlerStub, saveCallbackResult(done));
       });
 
       it('should fetch the components.json', function(){
@@ -148,7 +150,7 @@ describe('registry : domain : components-cache', function(){
         mockedCdn.listSubDirectories.onCall(1).yields(null, ['1.0.0', '1.0.2']);
         mockedCdn.putFileContent = sinon.stub();
         initialise();
-        componentsCache.load(saveCallbackResult(done));
+        componentsCache.load(eventsHandlerStub, saveCallbackResult(done));
       });
 
       it('should fetch the components.json', function(){
@@ -204,7 +206,7 @@ describe('registry : domain : components-cache', function(){
         mockedCdn.putFileContent = sinon.stub();
         mockedCdn.putFileContent.yields(null, 'ok');
         initialise();
-        componentsCache.load(function(err, res){
+        componentsCache.load(eventsHandlerStub, function(err, res){
           componentsCache.refresh(saveCallbackResult(done));
         });
       });
