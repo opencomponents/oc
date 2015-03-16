@@ -8,7 +8,8 @@ var _ = require('underscore');
 module.exports = function(conf, cdn){
 
   var cachedComponentsList,
-      refreshLoop;
+      refreshLoop,
+      _eventsHandler;
 
   var cacheDataAndStartRefresh = function(data, cb){
     cachedComponentsList = data;
@@ -80,6 +81,7 @@ module.exports = function(conf, cdn){
   };
 
   var updateCachedData = function(newData){
+    _eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
     if(newData.lastEdit > cachedComponentsList.lastEdit){
       cachedComponentsList = newData;
     }
@@ -90,7 +92,9 @@ module.exports = function(conf, cdn){
       if(!cachedComponentsList){ return callback('components_cache_empty'); }
       callback(null, cachedComponentsList);
     },
-    load: function(callback){
+    load: function(eventsHandler, callback){
+      _eventsHandler = eventsHandler;
+
       giveMe.all([getFromJson, getFromDirectories], function(errors, components){
         if(!!errors && !!errors[1]){ 
           return callback(errors[1]); 

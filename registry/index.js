@@ -112,7 +112,7 @@ module.exports = function(options){
       });
     }
 
-    repository.init(function(){
+    repository.init(eventsHandler, function(){
       appStart(repository, options, function(err, res){
 
         if(!!err){

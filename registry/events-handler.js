@@ -22,6 +22,13 @@ module.exports = function(){
         }
       });
     },
+    fire: function(eventName, eventData){
+      if(!!subscriptions[eventName]){
+        _.forEach(subscriptions[eventName], function(callback){
+          callback(eventData);
+        });
+      }
+    },
     on: function(eventName, callback){
 
       if(!_.isFunction(callback)){
