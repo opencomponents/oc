@@ -79,7 +79,7 @@ module.exports = function(options){
     }
 
     var app = this.app;
-    eventsHandler.bindEvents(app);
+    eventsHandler.bindExpressMiddleware(app);
 
     // routes
     app.use(app.router);

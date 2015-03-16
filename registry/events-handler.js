@@ -9,7 +9,7 @@ module.exports = function(){
   var subscriptions = {};
 
   return {
-    bindEvents: function(app){
+    bindExpressMiddleware: function(app){
       var eventsHandlers = {
         request: function(handlers){
           app.use(new RequestInterceptor(handlers));

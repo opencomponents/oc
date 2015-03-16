@@ -24,7 +24,7 @@ describe('registry : events-handler', function(){
       };
 
       before(function(){
-        eventsHandler.bindEvents(appStub);
+        eventsHandler.bindExpressMiddleware(appStub);
       });
 
       it('should bind the express middleware to the request interceptor', function(){
@@ -66,7 +66,7 @@ describe('registry : events-handler', function(){
       };
 
       before(function(){
-        eventsHandler.bindEvents(appStub);
+        eventsHandler.bindExpressMiddleware(appStub);
       });
 
       it('should not bind the express middleware to the request interceptor', function(){
