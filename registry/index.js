@@ -122,6 +122,7 @@ module.exports = function(options){
         server = http.createServer(self.app);
 
         server.listen(self.app.get('port'), function(){
+          eventsHandler.fire('start', {});
           if(withLogging){
             console.log(format('Registry started at port {0}'.green, self.app.get('port')));
           }
