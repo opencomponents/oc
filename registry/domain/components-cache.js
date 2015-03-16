@@ -12,6 +12,7 @@ module.exports = function(conf, cdn){
       _eventsHandler;
 
   var cacheDataAndStartRefresh = function(data, cb){
+    _eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
     cachedComponentsList = data;
     refreshCachedData();
     cb(null, data);
