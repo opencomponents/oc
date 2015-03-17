@@ -32,7 +32,7 @@ module.exports = function(grunt) {
   grunt.registerTask('hooks', ['githooks:all']);
 
   // test
-  grunt.registerTask('test', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance']);
+  grunt.registerTask('test', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance', 'karma:test']);
 
   // custom tasks
   grunt.registerTask('build', 'Builds and minifies the oc-client component', function(){
