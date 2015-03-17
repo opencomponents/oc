@@ -1,0 +1,17 @@
+{
+  "name": "no-container",
+  "description": "",
+  "version": "1.0.0",
+  "repository": "",
+  "oc": {
+    "container": false,
+    "parameters": {},
+    "files": {
+      "template": {
+        "type": "handlebars",
+        "hashKey": "18e2619ff1d06451883f21656affd4c6f02b1ed1",
+        "src": "template.js"
+      }
+    }
+  }
+}

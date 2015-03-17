@@ -86,7 +86,8 @@ module.exports = function(conf, repository){
                 href: componentHref,
                 key: key,
                 version: component.version,
-                templateType: component.oc.files.template.type
+                templateType: component.oc.files.template.type,
+                container: (component.oc.container === false) ? false : true
               };
 
           var returnResult = function(template){

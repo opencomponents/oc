@@ -162,7 +162,8 @@ var Client = function(conf){
                 href: href,
                 key: key,
                 version: apiResponse.version,
-                templateType: apiResponse.template.type
+                templateType: apiResponse.template.type,
+                container: (apiResponse.container === false) ? false : true
               };
 
           self.renderTemplate(template, data, options, callback);
@@ -184,6 +185,11 @@ var Client = function(conf){
   };
 
   this.getRenderedComponent = function(data){
+
+    if(!data.container){
+      return data.html;
+    }
+
     var random = Math.floor(Math.random()*9999999999);
 
     return format('<oc-component href="{0}" data-hash="{1}" id="{2}" data-rendered="true" data-version="{3}">{4}</oc-component>', 
