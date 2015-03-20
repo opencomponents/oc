@@ -32,7 +32,7 @@ module.exports = function(grunt) {
   grunt.registerTask('hooks', ['githooks:all']);
 
   // test
-  grunt.registerTask('sauce', ['karma:sauce-linux', 'karma:sauce-osx', 'karma:windows']);
+  grunt.registerTask('sauce', ['karma:sauce-linux', 'karma:sauce-osx', 'karma:sauce-windows']);
   grunt.registerTask('test-local', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance', 'karma:local']);
   grunt.registerTask('test', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance', 'sauce']);
   grunt.registerTask('test-windows', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance']);
