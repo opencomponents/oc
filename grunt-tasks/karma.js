@@ -1,14 +1,17 @@
 'use strict';
 
 module.exports = {
-    options: {
-        configFile: 'test/karma.conf.js'
-    },
     dev: {
+        configFile: 'test/configuration/karma-local.js',
         singleRun: false,
         autoWatch: true
     },
-    test: {
+    sauce: {
+        configFile: 'test/configuration/karma-sauce.js',
+        singleRun: true
+    },
+    local: {
+        configFile: 'test/configuration/karma-local.js',
         singleRun: true
     }
 };

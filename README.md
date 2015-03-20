@@ -5,9 +5,11 @@ An experimental framework to serve as proof of concept for a robust, resilient, 
 
 Node version: **0.10.35** required
 
+[![NPM](https://nodei.co/npm/oc.png?downloads=true)](https://npmjs.org/package/oc)
+
 Build status: Linux: [![Build Status](https://secure.travis-ci.org/opentable/oc.png?branch=master)](http://travis-ci.org/opentable/oc) | Windows: [![Build status](https://ci.appveyor.com/api/projects/status/8cklgw4hymutqrsg?svg=true)](https://ci.appveyor.com/project/matteofigus/oc)
 
-[![NPM](https://nodei.co/npm/oc.png?downloads=true)](https://npmjs.org/package/oc)
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/matteofigus.svg)](https://saucelabs.com/u/matteofigus)
 
 #Index
 
