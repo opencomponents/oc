@@ -76,7 +76,7 @@ module.exports = function(grunt) {
     fs.writeJsonSync('package.json', taskObject.pkg);
 
     grunt.task.run([
-      'test',
+      'test-local',
       'build'
     ]);
   });
