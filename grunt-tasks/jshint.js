@@ -12,7 +12,8 @@ module.exports = {
             'components/base-component-handlebars/_package/**/*',
             'components/base-components-jade/_package/**/*',
             'test/fixtures',
-            'test/front-end'
+            'test/front-end',
+            'test/configuration'
         ]
     },
     all: ['.']
