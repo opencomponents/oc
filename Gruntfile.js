@@ -32,7 +32,10 @@ module.exports = function(grunt) {
   grunt.registerTask('hooks', ['githooks:all']);
 
   // test
-  grunt.registerTask('test', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance']);
+  grunt.registerTask('sauce', ['karma:sauce-linux', 'karma:sauce-osx', 'karma:sauce-windows']);
+  grunt.registerTask('test-local', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance', 'karma:local']);
+  grunt.registerTask('test', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance', 'sauce']);
+  grunt.registerTask('test-windows', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance']);
 
   // custom tasks
   grunt.registerTask('build', 'Builds and minifies the oc-client component', function(){
@@ -73,7 +76,7 @@ module.exports = function(grunt) {
     fs.writeJsonSync('package.json', taskObject.pkg);
 
     grunt.task.run([
-      'test',
+      'test-local',
       'build'
     ]);
   });
