@@ -1,13 +1,13 @@
 'use strict';
 
-var config = require('../../conf');
-var format = require('../../utils/format');
+var format = require('stringformat');
 var fs = require('fs-extra');
 var handlebars = require('handlebars');
 var hashBuilder = require('../../utils/hash-builder');
 var jade = require('jade');
 var request = require('../../utils/request');
 var path = require('path');
+var settings = require('../../resources/settings');
 var Targz = require('tar.gz');
 var uglifyJs = require('uglify-js');
 var validator = require('../../registry/domain/validator');
@@ -34,10 +34,10 @@ module.exports = function(){
         var components = fs.readdirSync(componentsDir).filter(function(file){
 
           var filePath = path.resolve(componentsDir, file),
-              isDir = fs.lstatSync(filePath).isDirectory();
+            isDir = fs.lstatSync(filePath).isDirectory();
 
           return isDir ? (fs.readdirSync(filePath).filter(function(file){
-           return file === 'package.json';
+            return file === 'package.json';
           }).length === 1) : false;
         });
 
@@ -62,32 +62,39 @@ module.exports = function(){
       return fs.readdirSync(nodeFolder).filter(function(file){
 
         var filePath = path.resolve(nodeFolder, file),
+            isBin = file === '.bin',
             isDir = fs.lstatSync(filePath).isDirectory();
 
-        return isDir;
+        return isDir && !isBin;
       });
     },
     info: function(callback){
-      return fs.readJson(config.configFile.src, callback);
+      return fs.readJson(settings.configFile.src, callback);
     },
-    init: function(componentName, callback){
+    init: function(componentName, templateType, callback){
 
       if(!validator.validateComponentName(componentName)){
         return callback('name not valid');
       }
 
+      if(!validator.validateTemplateType(templateType)){
+        return callback('template type not valid');
+      }
+
       try {
-        var baseComponentDir = path.resolve(__dirname, '../../components/base-component'),
-            npmIgnorePath = path.resolve(__dirname, '../../components/base-component/.npmignore');
+
+        var pathDir = '../../components/base-component-' + templateType,
+            baseComponentDir = path.resolve(__dirname, pathDir),
+            npmIgnorePath = path.resolve(__dirname, pathDir + '/.npmignore');
 
         fs.ensureDirSync(componentName);
         fs.copySync(baseComponentDir, componentName);
         fs.copySync(npmIgnorePath, componentName + '/.gitignore');
-        
+
         var componentPath = path.resolve(componentName, 'package.json'),
-            component = _.extend(fs.readJsonSync(componentPath), {
-              name: componentName
-            });
+          component = _.extend(fs.readJsonSync(componentPath), {
+            name: componentName
+          });
 
         fs.outputJsonSync(componentPath, component);
 
@@ -98,7 +105,7 @@ module.exports = function(){
     },
     link: function(componentName, componentVersion, callback){
 
-      var localConfig = fs.readJsonSync(config.configFile.src);
+      var localConfig = fs.readJsonSync(settings.configFile.src);
 
       if(!localConfig || !localConfig.registries || localConfig.registries.length === 0){
         return callback('Registry configuration not found. Add a registry reference to the project first');
@@ -127,36 +134,49 @@ module.exports = function(){
         }
 
         localConfig.components[componentName] = componentVersion;
-        fs.writeJson(config.configFile.src, localConfig, callback);
+        fs.writeJson(settings.configFile.src, localConfig, callback);
       });
     },
     package: function(componentPath, callback){
 
       var files = fs.readdirSync(componentPath),
-          publishPath = path.join(componentPath, '_package'),
-          preCompiledView,
-          compiledView,
-          hashView,
-          minifiedCompiledView;
+        publishPath = path.join(componentPath, '_package'),
+        preCompiledView,
+        compiledView,
+        hashView,
+        minifiedCompiledView;
 
       if(_.contains(files, '_package')){
         fs.removeSync(publishPath);
       }
 
       fs.mkdirSync(publishPath);
-      
-      var component = fs.readJsonSync(path.join(componentPath, 'package.json')),
-          ocInfo = fs.readJsonSync(path.join(__dirname, '../../package.json')),
-          template = fs.readFileSync(path.join(componentPath, component.oc.files.template.src)).toString();
 
-      if(!validator.validateComponentName(component.name)){
+      var componentPackagePath = path.join(componentPath, 'package.json'),
+          ocPackagePath = path.join(__dirname, '../../package.json');
+
+      if(!fs.existsSync(componentPackagePath)){
+        return callback('component does not contain package.json');
+      } else if(!fs.existsSync(ocPackagePath)){
+        return callback('error resolving oc internal dependencies');
+      }
+
+      var component = fs.readJsonSync(componentPackagePath),
+          viewPath = path.join(componentPath, component.oc.files.template.src);
+
+      if(!fs.existsSync(viewPath)){
+        return callback(format('file {0} not found', component.oc.files.template.src));
+      } else if(!validator.validateComponentName(component.name)){
         return callback('name not valid');
       }
+
+      var ocInfo = fs.readJsonSync(ocPackagePath),
+          template = fs.readFileSync(viewPath).toString();
 
       component.oc.version = ocInfo.version;
 
       if(component.oc.files.template.type === 'jade'){
-        preCompiledView = jade.compileClient(template, { 
+        preCompiledView = jade.compileClient(template, {
           compileDebug: false,
           name: 't'
         }).toString().replace('function t(locals) {', 'function(locals){');
@@ -178,7 +198,7 @@ module.exports = function(){
       };
 
       delete component.oc.files.client;
-      
+
       if(!!component.oc.files.data){
         var dataPath = path.join(componentPath, component.oc.files.data);
 
@@ -206,13 +226,13 @@ module.exports = function(){
       callback(null, component);
     },
     unlink: function(componentName, callback){
-      var localConfig = fs.readJsonSync(config.configFile.src) || {};
-      
+      var localConfig = fs.readJsonSync(settings.configFile.src) || {};
+
       if(!!localConfig.components[componentName]){
         delete localConfig.components[componentName];
       }
-      
-      fs.writeJson(config.configFile.src, localConfig, callback);
+
+      fs.writeJson(settings.configFile.src, localConfig, callback);
     }
   });
 };

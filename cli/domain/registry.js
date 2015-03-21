@@ -1,10 +1,10 @@
 'use strict';
 
-var config = require('../../conf');
 var fs = require('fs-extra');
 var giveMe = require('give-me');
 var put = require('../../utils/put');
 var request = require('../../utils/request');
+var settings = require('../../resources/settings');
 var _ = require('underscore');
 
 module.exports = function(){
@@ -30,7 +30,7 @@ module.exports = function(){
           return callback('not a valid oc registry', null);
         }
 
-        fs.readJson(config.configFile.src, function(err, res){
+        fs.readJson(settings.configFile.src, function(err, res){
           if(err){
             res = {};
           }
@@ -39,13 +39,16 @@ module.exports = function(){
             res.registries = [];
           }
 
-          res.registries.push(registry);
-          fs.writeJson(config.configFile.src, res, callback);
+          if(!_.contains(res.registries, registry)){
+            res.registries.push(registry);
+          }
+
+          fs.writeJson(settings.configFile.src, res, callback);
         });
       });
     },
     get: function(callback){
-      fs.readJson(config.configFile.src, function(err, res){
+      fs.readJson(settings.configFile.src, function(err, res){
         if(err || !res.registries || res.registries.length === 0){
           return callback('No oc registries');
         }
@@ -54,7 +57,7 @@ module.exports = function(){
       });
     },
     getApiComponentByHref: function(href, callback){
-      request(href + config.registry.componentInfoPath, function(err, res){
+      request(href + settings.registry.componentInfoPath, function(err, res){
 
         if(err){
           return callback(err, null);
@@ -83,7 +86,7 @@ module.exports = function(){
         }
 
         var infoRoutes = _.map(components, function(component){
-          return [component + config.registry.componentInfoPath];
+          return [component + settings.registry.componentInfoPath];
         });
 
         giveMe.all(request, infoRoutes, function(callbacks){
@@ -135,7 +138,7 @@ module.exports = function(){
       });
     },
     remove: function(registry, callback){
-      fs.readJson(config.configFile.src, function(err, res){
+      fs.readJson(settings.configFile.src, function(err, res){
         if(err){
           res = {};
         }
@@ -145,7 +148,7 @@ module.exports = function(){
         }
 
         res.registries = _.without(res.registries, registry);
-        fs.writeJson(config.configFile.src, res, callback);
+        fs.writeJson(settings.configFile.src, res, callback);
       });
     }
   });

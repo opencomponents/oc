@@ -191,39 +191,6 @@ describe('registry : domain : validator', function(){
         });
       });
     });
-
-    describe('onRequest', function(){
-      describe('when not specified', function(){
-
-        var conf = { onRequest: null };
-
-        it('should be valid', function(){
-          expect(validate(conf).isValid).to.be.true;
-        });
-      });
-
-      describe('when specified', function(){
-
-        describe('when it is not a function', function(){
-
-          var conf = { onRequest: true };
-
-          it('should not be valid', function(){
-            expect(validate(conf).isValid).to.be.false;
-            expect(validate(conf).message).to.be.eql('Registry configuration is not valid: onRequest must be a function');
-          });
-        });
-
-        describe('when it is a function', function(){
-
-          var conf = { onRequest: function(){}};
-
-          it('should be valid', function(){
-            expect(validate(conf).isValid).to.be.true;
-          });
-        });
-      });
-    });
   });
 
   describe('when validating component request by parameter', function(){
@@ -521,20 +488,48 @@ describe('registry : domain : validator', function(){
 
   });
 
+  describe('when validating template type for new candidate', function(){
+    var validate = function(a){ return validator.validateTemplateType(a); };
+
+    describe('when type is not handlebars or jade', function(){
+
+      var type = 'othertype';
+      it('should not be valid', function(){
+        expect(validate(type)).to.be.false;
+      });
+    });
+
+    describe('when type is handlebars', function(){
+
+      var type = 'handlebars';
+      it('should be valid', function(){
+        expect(validate(type)).to.be.true;
+      });
+    });
+
+    describe('when type is jade', function(){
+
+      var type = 'jade';
+      it('should be valid', function(){
+        expect(validate(type)).to.be.true;
+      });
+    });
+  });
+
   describe('when validating component version for new candidate', function(){
 
     var existingVersions = ['1.0.0', '1.0.1', '2.0.0', '2.1.0'],
-        validate = function(a,b){ return validator.validateVersion(a, b); };
+        isValid = function(a,b){ return validator.validateVersion(a, b); };
   
     describe('when version already exists', function(){
       it('should not be valid', function(){
-        expect(validate('this.is.not.valid', existingVersions).isValid).not.to.be.true;
+        expect(isValid('this.is.not.valid', existingVersions)).not.to.be.true;
       });
     });
 
     describe('when version does not exist', function(){
       it('should be valid', function(){
-        expect(validate('1.2.33', existingVersions).isValid).to.be.true;
+        expect(isValid('1.2.33', existingVersions)).to.be.true;
       });
     });
   });

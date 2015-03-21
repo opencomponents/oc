@@ -9,10 +9,12 @@ module.exports = {
       COMPONENT_VERSION_NOT_FOUND: 'Component "{0}" with version "{1}" not found on {2}',
       COMPONENT_VERSION_ALREADY_FOUND: 'Component "{0}" with version "{1}" can\'t be published to {2} because a component with the same name and version already exists',
       COMPONENT_VERSION_ALREADY_FOUND_CODE: 'already_exists',
+      COMPONENT_VERSION_NOT_VALID: 'Version "{0}" is not a valid semantic version.',
+      COMPONENT_VERSION_NOT_VALID_CODE: 'version_not_valid',
        
       CONFIGURATION_DEPENDENCIES_MUST_BE_OBJECT: 'Registry configuration is not valid: dependencies must be an object',
       CONFIGURATION_EMPTY: 'Registry configuration is empty',
-      CONFIGURTATION_ONREQUEST_MUST_BE_FUNCTION: 'Registry configuration is not valid: onRequest must be a function',
+      CONFIGURTATION_ONREQUEST_MUST_BE_FUNCTION: 'Registry configuration is not valid: registry.on\'s callback must be a function',
       CONFIGURATION_PUBLISH_AUTH_CREDENTIALS_MISSING: 'Registry configuration is not valid: basic auth requires username and password',
       CONFIGURATION_PUBLISH_AUTH_NOT_SUPPORTED: 'Registry configuration is not valid: auth not supported',
       CONFIGURATION_PREFIX_DOES_NOT_END_WITH_SLASH: 'Registry configuration is not valid: prefix should end with "/"',
@@ -36,12 +38,10 @@ module.exports = {
       INIT_FAIL: 'An error happened when initialising the component: {0}',
       INVALID_CREDENTIALS: 'Invalid credentials',
       NAME_NOT_VALID: 'the name is not valid. Allowed characters are alphanumeric, _, -',
+      TEMPLATE_TYPE_NOT_VALID: 'the template is not valid. Allowed values are handlebars and jade',
       PACKAGING_FAIL: 'An error happened when creating the package: {0}',
       PUBLISHING_FAIL: 'An error happened when publishing the component: {0}',
       REGISTRY_NOT_FOUND: 'oc registries not found. Run "oc registry add <registry href>"'
-    },
-    client: {
-      serverSideRenderingFail: 'Server-side rendering failed',
     },
     generic: 'An error occurred: {0}',
     s3: {

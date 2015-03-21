@@ -99,8 +99,43 @@ describe('client', function(){
         expect($component.data('rendered')).to.eql(false);
       });
 
-      it('should contain the component version', function(){
-        expect($component.attr('href')).to.eql('http://localhost:1234/hello-world/~1.0.0');
+      it('should contain the component url', function(){
+        expect($component.attr('href')).to.eql('http://localhost:1234/hello-world/~1.0.0/');
+      });
+
+      it('should contain the error details', function(){
+        expect(error).to.eql('Server-side rendering failed');
+      });
+    });
+
+    describe('when client-side failover rendering enabled with ie8=true', function(){
+
+      var $componentScript,
+          $clientScript,
+          error,
+          options = { ie8: true };
+
+      before(function(done){
+        clientOfflineRegistry.renderComponent('hello-world', options, function(err, html){
+          result = html;
+          error = err;
+          var $ = cheerio.load(result);
+          $componentScript = $('script.ocComponent');
+          $clientScript = $('script.ocClientScript');
+          done();
+        });
+      });
+
+      it('should include the client-side rendering script', function(){
+        expect($clientScript).to.have.length.above(0);
+      });
+
+      it('should include the non rendered scripted component', function(){
+        expect($componentScript).to.have.length.above(0);
+      });
+
+      it('should contain the component url', function(){
+        expect($componentScript.toString()).to.contain('http://localhost:1234/hello-world/~1.0.0');
       });
 
       it('should contain the error details', function(){

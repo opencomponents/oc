@@ -4,7 +4,6 @@
   "version": "1.0.0",
   "repository": "",
   "oc": {
-    "parameters": {},
     "files": {
       "template": {
         "src": "template.html",

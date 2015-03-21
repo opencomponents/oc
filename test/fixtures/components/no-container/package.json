@@ -1,13 +1,11 @@
 {
-  "name": "ComponentName",
+  "name": "no-container",
   "description": "",
   "version": "1.0.0",
-  "dependencies": {},
   "repository": "",
   "oc": {
-    "parameters": {},
+    "container": false,
     "files": {
-      "data": "server.js",
       "template": {
         "src": "template.html",
         "type": "handlebars"

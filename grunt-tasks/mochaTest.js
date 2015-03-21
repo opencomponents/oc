@@ -1,4 +1,6 @@
-var task = {
+'use strict';
+
+module.exports = {
     options: {
         reporter: '<%= grunt.option("mocha") || "spec" %>'
     },
@@ -9,5 +11,3 @@ var task = {
         src: ['test/unit/**/*.js']
     }
 };
-
-module.exports = task;

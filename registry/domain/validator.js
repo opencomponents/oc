@@ -1,6 +1,6 @@
 'use strict';
 
-var format = require('../../utils/format');
+var format = require('stringformat');
 var semver = require('semver');
 var strings = require('../../resources');
 var _ = require('underscore');
@@ -32,6 +32,9 @@ var validate = {
 module.exports = {
   validateComponentName: function(componentName){
     return !/[^a-zA-Z0-9\-\_]/.test(componentName);
+  },
+  validateTemplateType: function(templateType){
+    return _.contains(['handlebars', 'jade'], templateType);
   },
   validateComponentParameters: function(requestParameters, expectedParameters){
 
@@ -159,12 +162,6 @@ module.exports = {
       });
     }
 
-    var onRequest = conf.onRequest;
-
-    if(!!onRequest && !_.isFunction(onRequest)){
-      return returnError(strings.errors.registry.CONFIGURTATION_ONREQUEST_MUST_BE_FUNCTION);
-    }
-
     return response;
   },
   validatePackage: function(input){
@@ -195,6 +192,6 @@ module.exports = {
     return response;
   },
   validateVersion: function(version){
-    return { isValid: !!semver.valid(version) };
+    return !!semver.valid(version);
   }
 };

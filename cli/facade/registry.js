@@ -1,7 +1,7 @@
 'use strict';
 
 var colors = require('colors');
-var format = require('../../utils/format');
+var format = require('stringformat');
 var strings = require('../../resources/index');
 var _ = require('underscore');
 

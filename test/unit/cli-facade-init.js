@@ -13,9 +13,9 @@ describe('cli : facade : init', function(){
       initFacade = new InitFacade({ local: local, logger: consoleMock }),
       logs;
 
-  var execute = function(componentName){
+  var execute = function(componentName, templateType){
     consoleMock.reset();
-    initFacade({ componentName: componentName });
+    initFacade({ componentName: componentName, templateType: templateType });
     logs = consoleMock.get();
   };
 
@@ -35,7 +35,7 @@ describe('cli : facade : init', function(){
     describe('when the component has a non valid name', function(){
 
       beforeEach(function(){
-        execute('hello-asd$qwe:11');
+        execute('hello-asd$qwe:11', 'handlebars');
       });
 
       it('should show an error', function(){
@@ -43,11 +43,21 @@ describe('cli : facade : init', function(){
       });
     });
 
+    describe('when the template is of a non valid type', function(){
+        beforeEach(function(){
+            execute('valid-component', 'invalid-type');
+        });
+
+        it('should show an error', function(){
+            expect(logs[0]).to.equal('An error happened when initialising the component: the template is not valid. Allowed values are handlebars and jade'.red);
+        });
+    });
+
     describe('when an error happens', function(){
 
       beforeEach(function(){
         sinon.stub(local, 'init').yields('nope!');
-        execute('the-best-component');
+        execute('the-best-component', 'handlebars');
       });
 
       afterEach(function(){
@@ -63,7 +73,7 @@ describe('cli : facade : init', function(){
 
       beforeEach(function(){
         sinon.stub(local, 'init').yields(null, 'yes man');
-        execute('the-best-component');
+        execute('the-best-component', 'jade');
       });
 
       afterEach(function(){

@@ -28,6 +28,18 @@ describe('registry', function(){
     registry.close(done);
   });
 
+  describe('when initialised with not valid configuration', function(){
+
+      it('should throw an error', function(done){
+          var f = function throwsWithNoArgs() {
+              var args = {};
+              var wrongRegistry = new oc.Registry(args);
+          };
+          expect(f).to.throw('Registry configuration is empty');
+          done();
+      });
+  });
+
   describe('GET /', function(){
 
     var url = 'http://localhost:3030',
@@ -45,13 +57,17 @@ describe('registry', function(){
     });
 
     it('should list the components', function(){
-      expect(result.components).to.eql(['http://localhost:3030/hello-world', 'http://localhost:3030/oc-client']);
+      expect(result.components).to.eql([
+        'http://localhost:3030/hello-world', 
+        'http://localhost:3030/no-container', 
+        'http://localhost:3030/oc-client'
+      ]);
     });
   });
 
   describe('GET /hello-world', function(){
 
-    describe('when render-mode header not specified', function(){
+    describe('when Accept header not specified', function(){
 
       var url = 'http://localhost:3030/hello-world',
           result;
@@ -69,6 +85,7 @@ describe('registry', function(){
 
       it('should respond with the rendered template', function(){
         expect(result.html).to.exist;
+        expect(result.html).to.match(/<oc-component (.*?)>Hello world!<\/oc-component>/g);
       });
 
       it('should respond with proper render type', function(){
@@ -76,13 +93,13 @@ describe('registry', function(){
       });
     });
 
-    describe('when render-mode header set to pre-rendered', function(){
+    describe('when Accept header set to application/vnd.oc.prerendered+json', function(){
 
       var url = 'http://localhost:3030/hello-world',
           result;
 
       before(function(done){
-        request(url, { headers: {'render-mode': 'pre-rendered'}}, function(err, res){
+        request(url, { headers: {'Accept': 'application/vnd.oc.prerendered+json'}}, function(err, res){
           result = JSON.parse(res);
           done();
         });
@@ -98,6 +115,35 @@ describe('registry', function(){
 
       it('should respond with proper render type', function(){
         expect(result.renderMode).to.equal('pre-rendered');
+      });
+    });
+  });
+
+  describe('GET /no-container', function(){
+
+    describe('when Accept header not specified', function(){
+
+      var url = 'http://localhost:3030/no-container',
+          result;
+
+      before(function(done){
+        request(url, function(err, res){
+          result = JSON.parse(res);
+          done();
+        });
+      });
+
+      it('should respond with the correct href', function(){
+        expect(result.href).to.eql('http://localhost:3030/no-container');
+      });
+
+      it('should respond with the rendered template without the outer container', function(){
+        expect(result.html).to.exist;
+        expect(result.html).to.eql('Hello world!');
+      });
+
+      it('should respond with proper render type', function(){
+        expect(result.renderMode).to.equal('rendered');
       });
     });
   });
