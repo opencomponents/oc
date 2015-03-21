@@ -15,12 +15,13 @@ environment:
 # Get the stable version of node
 install:
   - ps: Install-Product node $env:nodejs_version
+  - npm install -g npm@2
+  - node --version
+  - npm --version
   - npm install
   - npm install -g grunt-cli
 
 build: off
 
 test_script:
-  - node --version
-  - npm --version
-  - cmd: npm test
+  - cmd: grunt test-windows
