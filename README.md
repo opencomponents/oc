@@ -252,8 +252,9 @@ registry.start(function(err, app){
     process.exit(1);
   }
 });
-
 ```
+
+For the registry configuration's documentation, look at [this page](docs/registry.md).
 
 # License
 

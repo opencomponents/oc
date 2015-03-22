@@ -22,12 +22,13 @@ This is the `index.js` content:
 ```js
 var oc = require('oc');
 
-var options = {
+var configuration = {
   verbosity: 0,
   baseUrl: 'https://my-components-registry.mydomain.com/',
   port: 3000,
   tempDir: './temp/',
-  cache: { verbose: false, refreshInterval: 600 },
+  refreshInterval: 600,
+  pollingInterval: 5,
   s3: {
     key: 'your-s3-key',
     secret: 'your-s3-secret',
@@ -39,75 +40,63 @@ var options = {
   env: { name: 'production' }
 };
 
-var registry = new oc.Registry(options);
-
-if(registry.err){
-  return console.log(registry.err);
-}
+var registry = new oc.Registry(configuration);
 
 registry.start(function(err, app){
-  // Registry started!
+  if(err){
+    console.log('Registry not started: ', err);
+    process.exit(1);
+  }
 });
 ```
 
 ## API
 
-### var registry = new oc.Registry(options);
-Creates an instance of the registry. [Options](#registry-options) is an object that contains the registry configuration parameters.
-
-### registry.err
-Stores the error information in case of unsuccessful attempt to create an instance of the registry.
+### var registry = new oc.Registry(configuration);
+Creates an instance of the registry. [Configuration](#registry-configuration) is an object that contains the registry configuration parameters.
 
 ### registry.start(callback)
 
 Starts the registry.
 
-### Registry options
+### registry.on(eventName, callback);
+
+Regulates [events subscriptions](#registry-events).
+
+### Registry configuration
 
 Required parameters:
 
-* `baseUrl`: `string`, sets the URL which will be used to compose the components' URLs
+|Parameter|Type|Description|
+|-|-|-|
+|`baseUrl`|`string`|sets the URL which will be used to compose the components' URLs|
+|`dependencies`|`object`|sets the dependencies available for components logic, for example: `{ underscore: require('underscore'), request: require('request') }`|
+|`env`|`object`|sets the registry environment|
+|`env.name`|`string`|sets the environment name|
+|`pollingInterval`|`number` (seconds)|When the components' list cache will be refreshed. This is required for distributing the components on each registry instance. Given the polling mechanism is quite efficient, this number should be very low. Suggested is around 5-10 seconds.|
+|`port`|`number`|default `3000`, sets the port where to start the registry|
+|`prefix`|`string`|sets the href prefix, for example: `/v2/`|
+|`publishAuth`|`object`|sets the authentication parameters for publishing a component to the registry. When `undefined`, no authorisation is required.
+|`publishAuth.type`|`string`|The authorisation type. Only `basic` is supported at the moment.|
+|`publishAuth.username`|`string`|sets the user name|
+|`publishAuth.password`|`string`|sets the user password|
+|`refreshInterval`|`number` (seconds)|When the components' data cache will be refreshed. Given the data is immutable, this should be high and just for robustness.|
+|`routes`|`array of objects`|sets additional actions via URL mapping to specific action handlers|
+|`routes[index].route`|`string`|sets URL pattern|
+|`routes[index].method`|`string`|sets verb|
+|`routes[index].handler`|`function`|sets function handler for routed action [Look at the example](#routes-example)|
+|`s3`|`object`|sets the Amazon S3 credentials|
+|`s3.key`|`string`|sets S3 access key|
+|`s3.secret`|`string`|sets S3 secret
+|`s3.bucket`|`string`|sets S3 bucket
+|`s3.region`|`string`|sets S3 region
+|`s3.path`|`string`|sets path for the static resources. Can be the s3 url, or, when using cloudfront, it can be `//cloudfront-id.cloudfront.net/`.
+|`s3.componentsDir`|`string`|the path where the data will be saved inside the bucket|
+|`tempDir`|`string`|default `./temp/`, sets the directory where the components' packages are temporarily stored during the publishing phase inside the registry box|
+|`verbosity`|`number`|default `0`, sets the `console.log` verbosity during the execution|
 
-Optional parameters:
-
-* `cache`: `object`, default sets the configuration for the library cache.
-  * `verbosity`: `string`, sets the cache's verbosity
-  * `refreshInterval`: `number`, sets the number of seconds before each cached value is refreshed from the library
-* `dependencies`: `object`, sets the additional library requirements, e.g.:
-  ```js
-options.dependencies = {
-  underscore: require('underscore'),
-  request: require('request')
-};
-```
-* `env`: `object`, sets the registry environment
-  * `name`: `string`, sets the environment name
-* `onRequest`: `function`, sets the callback function which is called every time the API is called. The argument data stores all the request information, e.g:
-  ```js
-options.onRequest = function(data){
-  console.log(data.method);
-}
-```
-* `port`: `number`, default `3000`, sets the port where to start the registry
-* `prefix`: `string`, sets the path prefix ??
-* `publishAuth`: `object`, sets the authentication type when publishing a component to the registry
-  * `type`: `string`, sets the authentication type
-  * `username`: `string`, sets the user name
-  * `password`: `string`, sets the user password
-
-  ```js
-options.publishAuth = {
-  type: 'exampleType',
-  username: 'exampleUsername'
-  password: 'examplePassword'
-}
-```
-* `routes`: `array of objects`, sets additional actions via URL mapping to specific action handlers
-  * `route`: `string`, sets URL pattern
-  * `method`: `string`, sets method type
-  * `handler`: `function`, sets function handler for routed action
-
-  ```js
+#### Routes example
+```js
 options.routes = [{
   route: '/example-route',
   method: 'get',
@@ -116,12 +105,11 @@ options.routes = [{
   }
 }];
 ```
-* `s3`: `object`, sets the Amazon S3 credentials
-  * `key`: `string`, sets S3 access key
-  * `secret`: `string`, sets S3 secret
-  * `bucket`: `string`, sets S3 bucket
-  * `region`: `string`, sets S3 region
-  * `path`: `string`, sets path to the S3 bucket
-  * `componentsDir`: `string`, sets the name of components' directory
-* `tempDir`: `string`, default `./temp/`, sets the directory where the components' packages are temporarily stored during the publishing phase
-* `verbosity`: `number`, default `0`, sets the `console.log` verbosity during the execution
+
+### Registry events
+
+|Event name|CallbackDataType|Description|
+|-|-|-|
+|`cache-poll`|`object`|Fired when the components list is refreshed. The callback data contains the last edit unix utc timestamp.|
+|`request`|`object`|Fired every time the registry receives a request. The callback data contains some request and response details.|
+|`start`|`undefined`|Fired when the registry starts|

@@ -22,7 +22,7 @@ The next step is to initialise a component:
 oc init hello-world
 ```
 
-The above command will create the `hello-world` [directory](#component-structure-details).
+The above command will create the `hello-world` [directory](#component-structure).
 
 It is also possible to set [template](#template) type during the initialisation as an additional init parameter:
 
