@@ -68,7 +68,7 @@ Regulates [events subscriptions](#registry-events).
 Required parameters:
 
 |Parameter|Type|Description|
-|-|-|-|
+|---------|------|-------|
 |`baseUrl`|`string`|sets the URL which will be used to compose the components' URLs|
 |`dependencies`|`object`|sets the dependencies available for components logic, for example: `{ underscore: require('underscore'), request: require('request') }`|
 |`env`|`object`|sets the registry environment|
@@ -108,8 +108,8 @@ options.routes = [{
 
 ### Registry events
 
-|Event name|CallbackDataType|Description|
-|-|-|-|
+|Event name|Callback Data Type|Description|
+|---------|------|-------|
 |`cache-poll`|`object`|Fired when the components list is refreshed. The callback data contains the last edit unix utc timestamp.|
 |`request`|`object`|Fired every time the registry receives a request. The callback data contains some request and response details.|
 |`start`|`undefined`|Fired when the registry starts|
