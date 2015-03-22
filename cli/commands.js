@@ -47,6 +47,19 @@ module.exports = {
 
     ls: { help: 'Shows the list of the available components for a linked oc registry' },
 
+    preview: {
+      help: 'Runs a test page consuming a component',
+      options: {
+        componentHref: {
+          help: 'The name of the component to preview'
+        },
+        port: {
+          help: 'The port where to start the server. Default 3000',
+          required: false
+        }
+      }
+    },
+
     publish: {
       help: 'Publish a component',
       options: {
