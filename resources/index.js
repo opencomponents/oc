@@ -32,6 +32,7 @@ module.exports = {
       PARAMETER_WRONG_FORMAT_CODE: 'wrong type'
     },
     cli: {
+      COMPONENT_HREF_NOT_FOUND: 'The specified path is not a valid component\'s url',
       COMPONENTS_LINKED_NOT_FOUND: 'No components linked in the project',
       COMPONENTS_NOT_FOUND: 'no components found in specified path',
       DEV_FAIL: 'An error happened when initialising the dev runner: {0}',
@@ -63,6 +64,7 @@ module.exports = {
       ENTER_PASSWORD: 'Enter password:',
       ENTER_USERNAME: 'Enter username:',
       PACKAGING: 'Packaging -> {0}',
+      PREVIEW_STARTED_AT_URL: 'Component\'s preview started at url: {0}',
       PUBLISHED: 'Published -> {0}',
       PUBLISHING: 'Publishing -> {0}',
       REGISTRY_ADDED: 'oc registry added',
