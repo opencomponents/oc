@@ -1,4 +1,5 @@
-# Getting started
+Getting started
+===============
 
 1. [Component creation](#component-creation)
   * [Component structure](#component-structure)
@@ -8,7 +9,7 @@
 1. [Editing, debugging, testing](#editing-debugging-testing)
 1. [Publishing to a registry](#publishing-to-a-registry)
 
-## Component creation
+# Component creation
 
 To create a component you need to install oc with a command:
 
@@ -32,7 +33,7 @@ oc init hello-world jade
 
 By default this parameter is set to `handlebars`.
 
-### Component structure
+## Component structure
 
 The basic component directory is composed by three files:
 
@@ -83,13 +84,13 @@ The basic package file `package.json` looks as follows:
 |`oc.files.template.type`|`string`|the template engine's type, by default `handlebars`|
 |`oc.static`|`array of strings`|An array of directories that contain static resources referenced from the component's markup|
 
-### Template
+## Template
 
 Template represents the view of the component. Currently we support `handlebars` and `jade`. It can contain css under the `<style>` tag and cliend-side javascript under the `<script>` tag.
 
 Initialisation produces empty template file.
 
-### Basic server
+## Basic server
 
 Server is the entity that produces the view-model to compile the view. It is necessary when component template has logic, including consuming services. The basic version of `server.js` looks as follows:
 
@@ -101,11 +102,11 @@ module.exports.data = function(req, callback){
 };
 ```
 
-### Advanced Operations
+## Advanced Operations
 
 Look at [here](advanced-operations.md).
 
-## Editing, debugging, testing
+# Editing, debugging, testing
 
 You may want to start a local test registry using a components' folder as a library with a watcher. This will allow to consume and debug it:
 
@@ -133,7 +134,7 @@ oc preview http://localhost:3030/hello-world 3031
 
 That's it. As soon as you make changes on the component, you will be able to refresh this page and see how it looks.
 
-## Publishing to a registry
+# Publishing to a registry
 
 You will need an online registry connected to a library to do that. The only requisite is that a component with the same name and version cannot be already existing on that registry.
 ```sh

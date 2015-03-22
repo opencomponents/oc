@@ -1,4 +1,5 @@
-# Advanced operations
+Advanced operations
+===================
 
 1. [Add some logic](#add-some-logic)
 1. [req properties](#req-properties)
@@ -10,7 +11,7 @@
   1. [Local development](#local-development)
   1. [Publishing](#publishing)
 
-## Add some logic
+# Add some logic
 
 We can create components which provide static content. In that case our view could look like this:
 
@@ -57,7 +58,7 @@ To consume the component passing the `name` parameter we need to modify the refe
   <oc-component href="http://localhost:3030/hello-world?name=James"></oc-component>
 ```
 
-## req properties
+# req properties
 
 Req represents request and consists of the following fields:
 
@@ -93,11 +94,11 @@ Req represents request and consists of the following fields:
 |`params`|`object`|represents parameters extracted from the query string.|
 |`staticPath`|`string`|represents the path to static resources i.e. images, styles, javascript files. This is particularly useful when we want to [reference static resources to the view](#add-static-resource-to-the-component).|
 
-## Add static resource to the component
+# Add static resource to the component
 
 In this example an image (`static/static_resource.png`) will be our static resource.
 
-### Prepare package file
+## Prepare package file
 First step is to prepare `package.json` file. It is necessary to add `static` property in `oc.files` object:
 ```js
 {
@@ -119,14 +120,14 @@ First step is to prepare `package.json` file. It is necessary to add `static` pr
 ```
 It is an array of names of directories. The `static`'s directory content will be included inside the package.
 
-### Add image in the view template
+## Add image in the view template
 
 We can add image to the component view template using `img` tag in which `src` attribute is bound to `img` viewModel property.
 ```html
 <img src="{{path}}/static_resource.png" />
 ```
 
-### Update server file
+## Update server file
 To provide `img` parameter in our viewModel we need to update `server.js`. The important thing is we need to use `req.staticPath` to provide url to the static resources:
 ```js
 module.exports.data = function(req, callback){
@@ -136,11 +137,11 @@ module.exports.data = function(req, callback){
 };
 ```
 
-## Node.js dependencies on the server.js
+# Node.js dependencies on the server.js
 
 By default, `require` is not allowed on a `server.js`. This helps to keep components' logic clean and small. However, you can consume dependencies if the registry's owner agrees on making them available.
 
-### Local development
+## Local development
 
 When in a directory of components, install the dependency using npm and then start the watcher:
 ```sh
@@ -153,6 +154,6 @@ oc dev . 3030
 ```
 Now it will be possible to `require('underscore')` inside a `server.js`.
 
-### Publishing
+## Publishing
 
 When a dependency is used, during publishing, the registry may deny a component to be published if the dependency is not been [vetted by the registry's owner](registry.md#registry-configuration).

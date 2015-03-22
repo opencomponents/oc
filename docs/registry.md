@@ -1,14 +1,17 @@
-# Registry configuration
+Setting up a registry
+=====================
 
 1. [Introduction](#introduction)
 1. [Setup](#setup)
 1. [API](#api)
+1. [Registry configuration](#registry-configuration)
+1. [Registry events](#registry-events)
 
-## Introduction
+# Introduction
 
 The registry is a REST api that serves the components. You can have multiple registries connected to a library, but you can't have multiple libraries connected to a registry.
 
-## Setup
+# Setup
 
 First, create a dir and install oc:
 ```sh
@@ -50,20 +53,20 @@ registry.start(function(err, app){
 });
 ```
 
-## API
+# API
 
-### var registry = new oc.Registry(configuration);
+## var registry = new oc.Registry(configuration);
 Creates an instance of the registry. [Configuration](#registry-configuration) is an object that contains the registry configuration parameters.
 
-### registry.start(callback)
+## registry.start(callback)
 
 Starts the registry.
 
-### registry.on(eventName, callback);
+## registry.on(eventName, callback);
 
 Regulates [events subscriptions](#registry-events).
 
-### Registry configuration
+# Registry configuration
 
 Required parameters:
 
@@ -95,7 +98,7 @@ Required parameters:
 |`tempDir`|`string`|default `./temp/`, sets the directory where the components' packages are temporarily stored during the publishing phase inside the registry box|
 |`verbosity`|`number`|default `0`, sets the `console.log` verbosity during the execution|
 
-#### Routes example
+## Routes example
 ```js
 options.routes = [{
   route: '/example-route',
@@ -106,7 +109,7 @@ options.routes = [{
 }];
 ```
 
-### Registry events
+# Registry events
 
 |Event name|Callback Data Type|Description|
 |---------|------|-------|
