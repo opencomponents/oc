@@ -56,6 +56,7 @@ A component is a directory composed by
 After publishing, components are immutable and semantic versioned.
 
 [Getting started with components](docs/getting-started.md)
+
 [Advanced operations](docs/advanced-operations.md)
 
 ## Creation

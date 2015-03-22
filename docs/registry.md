@@ -68,8 +68,6 @@ Regulates [events subscriptions](#registry-events).
 
 # Registry configuration
 
-Required parameters:
-
 |Parameter|Type|Description|
 |---------|------|-------|
 |`baseUrl`|`string`|sets the URL which will be used to compose the components' URLs|
