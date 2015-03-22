@@ -75,11 +75,13 @@ The basic package file `package.json` looks as follows:
 |`description`|`string`|the component's description, by default an empty string|
 |`version`|`string`|the component's version, by default `1.0.0`|
 |`oc`|`object`|the data involved with the component|
+|`oc.container`|`boolean`|forces the component to be server-side rendered without being wrapped inside the `<oc-component />` tag.|
 |`oc.files`|`object`|non-static component files|
 |`oc.files.data`|`string`|the model provider's filename, by default `server.js`|
 |`oc.files.template`|`object`|represents the data involved with template - view, template engine|
 |`oc.files.template.src`|`string`|the view's filename, by default template.html|
 |`oc.files.template.type`|`string`|the template engine's type, by default `handlebars`|
+|`oc.static`|`array of strings`|An array of directories that contain static resources referenced from the component's markup|
 
 ### Template
 
@@ -98,6 +100,10 @@ module.exports.data = function(req, callback){
   callback(null, {});
 };
 ```
+
+### Advanced Operations
+
+Look at [here](advanced-operations.md).
 
 ## Editing, debugging, testing
 

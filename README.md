@@ -95,9 +95,9 @@ Now, it should be available at `http://my-components-registry.mydomain.com/hello
 
 From a consumer's perspective, a component is an html fragment. You can render components just on the client-side, just on the server-side, or use the client-side rendering just as failover strategy for when the server-side rendering fails because the registry is not responding quickly or is down.
 
-You do not need node.js to consume components on the server-side. The registry can provide you rendered components so that you can get server-side rendered components using any tech stack.
+You don't need node.js to consume components on the server-side. The registry can provide you rendered components so that you can consume them using any tech stack.
 
-Then, components are immutable and the registry allows consumers to get any version of the component: the latest patch, or minor version, etc.
+When published, components are immutable and semantic versioned. The registry allows consumers to get any version of the component: the latest patch, or minor version, etc.
 
 ## Server-side rendering via rest API
 
