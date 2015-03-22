@@ -58,7 +58,6 @@ The basic package file `package.json` looks as follows:
   "name": "hello-world",
   "description": "description of my hello-world component",
   "version": "1.0.0",
-  "repository": "",
   "oc": {
     "files": {
       "data": "server.js",
@@ -70,17 +69,17 @@ The basic package file `package.json` looks as follows:
   }
 }
 ```
-
-* `name`: `string`, represents the name of the component, by default the name of initialised component
-* `description`: `string`, represents the description of the component, by default an empty string
-* `version`: `string`, represents the version of the component, by default `1.0.0`
-* `repository`: `string`, TODO, by default an empty string
-* `oc`: `object`, represents the data involved with the component
-  * `files`: `object`, represents non-static component files
-    * `data`: `string`, represents the filename of the model provider, by default `server.js`
-    * `template`: `object`, represents the data involved with template - view, template engine
-      * `src`: `string`, represents the filename of the view, by default template.html
-      * `type`: `string`, represents the type of a template engine, by default `handlebars`
+|Parameter|Type|Description|
+|---------|------|-------|
+|`name`|`string`|the component's name, by default the name of initialised component|
+|`description`|`string`|the component's description, by default an empty string|
+|`version`|`string`|the component's version, by default `1.0.0`|
+|`oc`|`object`|the data involved with the component|
+|`oc.files`|`object`|non-static component files|
+|`oc.files.data`|`string`|the model provider's filename, by default `server.js`|
+|`oc.files.template`|`object`|represents the data involved with template - view, template engine|
+|`oc.files.template.src`|`string`|the view's filename, by default template.html|
+|`oc.files.template.type`|`string`|the template engine's type, by default `handlebars`|
 
 ### Template
 
@@ -119,6 +118,11 @@ Then you may want to create a blank html page to start playing with it and see h
     <script src="http://localhost:3030/oc-client/client.js"></script>
   </body>
 </html>
+```
+
+Or, just use the preview function:
+```sh
+oc preview http://localhost:3030/hello-world 3031
 ```
 
 That's it. As soon as you make changes on the component, you will be able to refresh this page and see how it looks.

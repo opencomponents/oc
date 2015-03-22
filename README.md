@@ -55,6 +55,8 @@ A component is a directory composed by
 
 After publishing, components are immutable and semantic versioned.
 
+[Getting started with components](docs/getting-started.md)
+
 ## Creation
 To create a folder containing the component:
 ```sh
@@ -69,16 +71,9 @@ To start a local test registry using a components' folder as a library with a wa
 oc dev . 3030
 ```
 
-To consume the component create a blank html page to start playing with it and see how it looks:
-```html
-<html>
-  <body>
-    <oc-component href="http://localhost:3030/hello-world">
-      Optionally, some failover text here
-    </oc-component>
-    <script src="http://localhost:3030/oc-client/client.js"></script>
-  </body>
-</html>
+To see how the component looks like when consuming it:
+```sh
+oc preview http://localhost:3030/hello-world 3031
 ```
 
 As soon as you make changes on the component, you will be able to refresh this page and see how it looks.
