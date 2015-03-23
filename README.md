@@ -1,9 +1,9 @@
 oc
 =============
 
-OpenComponents is an experimental framework to develop and deploy robust and distributed html components.
+OpenComponents is a framework to develop and deploy robust and distributed html components.
 
-The goal is to explore the possibility of having a system that allows big corporations (that may involve hundreds of engineers on a number of projects) to have tools to facilitate code sharing, reduce dependencies, and easily approach new features and experiments.
+The goal is to own a system that allows big corporations (that may involve hundreds of engineers on a number of projects) to have tools to facilitate code sharing, reduce dependencies, and easily approach new features and experiments.
 
 [![NPM](https://nodei.co/npm/oc.png?downloads=true)](https://npmjs.org/package/oc)
 
@@ -263,6 +263,8 @@ For the registry configuration's documentation, look at [this page](docs/registr
 MIT
 
 # Contributors
+
+If you wish to contribute, feel free to open or comment to issues, or [get in touch via twitter](https://twitter.com/OpenTableTechUK)
 
 Maintainer:
 * [@matteofigus](https://github.com/matteofigus)
