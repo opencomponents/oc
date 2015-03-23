@@ -33,7 +33,16 @@ module.exports = function(conf, cdn){
         self = this;
 
     cdn.listSubDirectories(conf.s3.componentsDir, function(err, components){
-      if(err){ return cb(err); }
+      if(err){
+        if(err.code === 'dir_not_found'){
+          return cb(null, {
+            lastEdit: getUnixUTCTimestamp(),
+            components: []
+          });
+        }
+        
+        return cb(err); 
+      }
 
       giveMe.all(getVersionsForComponent, _.map(components, function(component){
         return [component];
