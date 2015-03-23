@@ -178,11 +178,15 @@ var oc = oc || {};
             } else if(apiResponse.renderMode === 'rendered'){
               logger.info(MESSAGES_RENDERED.replace('{0}', apiResponse.href));
 
-              var innerHtmlPlusEnding = apiResponse.html.slice(apiResponse.html.indexOf('>') + 1),
-                  innerHtml = innerHtmlPlusEnding.slice(0, innerHtmlPlusEnding.lastIndexOf('<'));
+              if(apiResponse.html.indexOf('<' + OC_TAG) === 0){
+
+                var innerHtmlPlusEnding = apiResponse.html.slice(apiResponse.html.indexOf('>') + 1),
+                    innerHtml = innerHtmlPlusEnding.slice(0, innerHtmlPlusEnding.lastIndexOf('<'));
+                apiResponse.html = innerHtml;
+              }
                   
               callback(null, {
-                html: innerHtml, 
+                html: apiResponse.html, 
                 version: apiResponse.version
               });            
             }

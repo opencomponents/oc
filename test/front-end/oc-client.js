@@ -1,9 +1,207 @@
 'use strict';
 
+var preRenderedResponse = {
+  href: 'http://my-registry.com/v3/a-component/1.2.X/?name=John',
+  type: 'oc-component',
+  version: '1.2.123',
+  requestVersion: '1.2.X',
+  data: {},
+  template: {
+    src: 'https://my-cdn.com/components/a-component/1.2.123/template.js',
+    type: 'handlebars',
+    key: '18e2619ff1d06451883f21656affd4c6f02b1ed1'
+  },
+  renderMode: 'pre-rendered'
+};
+
+var renderedResponse = {
+  href: 'http://my-registry.com/v3/a-component/1.2.X/?name=John',
+  type: 'oc-component',
+  version: '1.2.123',
+  requestVersion: '1.2.X',
+  html: '<oc-component href="http://my-registry.com/v3/a-component/1.2.X/?name=John" data-hash="389d92b88e4fc9bed8f0d8329a8a9b488ef3def1" id="4709139819" data-rendered="true" data-version="1.2.123">Hello, world!!!</oc-component>',
+  renderMode: 'rendered'
+};
+
+var renderedNoContainerResponse = {
+  href: 'http://my-registry.com/v3/a-component/1.2.X/?name=John',
+  type: 'oc-component',
+  version: '1.2.123',
+  requestVersion: '1.2.X',
+  html: 'Hello, world!!',
+  renderMode: 'rendered'
+};
+
+var compiledViewContent = 'oc.components=oc.components||{},oc.components["18e2619ff1d06451883f21656affd4c6f02b1ed1"]=function(o,e,c,n,f){return this.compilerInfo=[4,">= 1.0.0"],c=this.merge(c,o.helpers),f=f||{},"Hello world!"};';
+
+var fakeServer;
+var initialise = function(routes){
+
+  fakeServer = sinon.fakeServer.create();
+  sinon.stub(head, 'load').yields();
+  sinon.stub(console, 'log');
+
+  for(var i = 0; i < routes.length; i++){
+    fakeServer.respondWith(routes[i].method, routes[i].endpoint, [routes[i].status, routes[i].headers, JSON.stringify(routes[i].response)]);  
+  }
+  return sinon.spy();
+};
+
+var execute = function(codeToEval){
+  eval(codeToEval);
+  fakeServer.respond();
+};
+
+var cleanup = function(){
+  fakeServer.restore();
+  head.load.restore();
+  console.log.restore();
+  delete oc.components;
+}
+
 describe('oc-client plugin', function(){
+  
   describe('when loaded', function(){
+    
     it('should expose the oc namespace', function(){
       expect(window.oc).toEqual(jasmine.any(Object));
+    });
+
+    describe('when rendering component by href', function(){
+
+      describe('before doing the rendering', function(){
+
+        var callback;
+        beforeEach(function(){
+          var route = 'http://my-registry.com/v3/a-component/1.2.X/?name=John';
+          callback = initialise([{
+            method: 'GET',
+            endpoint: route,
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+            response: preRenderedResponse
+          }]);
+
+          oc.renderByHref(route, callback);
+
+          execute(compiledViewContent);
+        });
+
+        afterEach(cleanup);
+
+        it('should make a call to the registry', function(){
+          expect(callback.called).toBe(true);
+        });
+
+        it('should make a request to the registry with proper headers', function(){
+          expect(fakeServer.requests[0].requestHeaders['Content-Type']).toEqual('text/plain');
+          expect(fakeServer.requests[0].requestHeaders['Accept']).toEqual('application/vnd.oc.prerendered+json');
+        });
+
+      });
+
+      describe('when the registry responds with pre-rendered component', function(){
+
+        var callback;
+        beforeEach(function(){
+          var route = 'http://my-registry.com/v3/a-component/1.2.X/?name=John';
+          callback = initialise([{
+            method: 'GET',
+            endpoint: route,
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+            response: preRenderedResponse
+          }]);
+
+          oc.renderByHref(route, callback);
+
+          execute(compiledViewContent);
+        });
+
+        afterEach(cleanup);
+
+        it('should respond without an error', function(){
+          expect(callback.args[0][0]).toBe(null);
+        });
+
+        it('should respond with the rendered html', function(){
+          expect(callback.args[0][1].html).toEqual('Hello world!');
+        });
+
+        it('should respond with the correct version', function(){
+          expect(callback.args[0][1].version).toEqual('1.2.123');
+        });
+
+        it('should respond with the correct hash key', function(){
+          expect(callback.args[0][1].key).toEqual('18e2619ff1d06451883f21656affd4c6f02b1ed1');
+        });
+      });
+
+      describe('when the registry responds with rendered component with container', function(){
+
+        var callback;
+        beforeEach(function(){
+          var route = 'http://my-registry.com/v3/a-component/1.2.X/?name=John';
+          callback = initialise([{
+            method: 'GET',
+            endpoint: route,
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+            response: renderedResponse
+          }]);
+
+          oc.renderByHref(route, callback);
+
+          execute(compiledViewContent);
+        });
+
+        afterEach(cleanup);
+
+        it('should respond without an error', function(){
+          expect(callback.args[0][0]).toBe(null);
+        });
+
+        it('should respond with the rendered html', function(){
+          expect(callback.args[0][1].html).toEqual('Hello, world!!!');
+        });
+
+        it('should respond with the correct version', function(){
+          expect(callback.args[0][1].version).toEqual('1.2.123');
+        });
+      });
+
+      describe('when the registry responds with rendered component without container', function(){
+
+        var callback;
+        beforeEach(function(){
+          var route = 'http://my-registry.com/v3/a-component/1.2.X/?name=John';
+          callback = initialise([{
+            method: 'GET',
+            endpoint: route,
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+            response: renderedNoContainerResponse
+          }]);
+
+          oc.renderByHref(route, callback);
+
+          execute(compiledViewContent);
+        });
+
+        afterEach(cleanup);
+
+        it('should respond without an error', function(){
+          expect(callback.args[0][0]).toBe(null);
+        });
+
+        it('should respond with the rendered html', function(){
+          expect(callback.args[0][1].html).toEqual('Hello, world!!');
+        });
+
+        it('should respond with the correct version', function(){
+          expect(callback.args[0][1].version).toEqual('1.2.123');
+        });
+      });
     });
   });
 });

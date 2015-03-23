@@ -44,7 +44,7 @@
     "karma-sinon": "1.0.4",
     "load-grunt-tasks": "0.6.0",
     "mocha": "1.18.2",
-    "sinon": "1.12.1"
+    "sinon": "1.14.1"
   },
   "dependencies": {
     "accept-language-parser": "1.0.2",
