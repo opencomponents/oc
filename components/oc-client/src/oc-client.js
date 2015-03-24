@@ -95,7 +95,7 @@ var oc = oc || {};
         }
       };
 
-      if(!$){ console.log('$');
+      if(!$){
         head.load(JQUERY_URL, function(){
           $ = jQuery;
           requirePolyfills(done);
