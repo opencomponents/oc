@@ -79,7 +79,7 @@ var oc = oc || {};
       initialising = true;
 
       var requirePolyfills = function(cb){
-        if(is8 || is9){
+        if((is8 || is9) && !$.IE_POLYFILL_LOADED){
           head.load(IE89_AJAX_POLYFILL_URL, cb);
         } else {
           cb();
@@ -95,7 +95,7 @@ var oc = oc || {};
         }
       };
 
-      if(!$){
+      if(!$){ console.log('$');
         head.load(JQUERY_URL, function(){
           $ = jQuery;
           requirePolyfills(done);
