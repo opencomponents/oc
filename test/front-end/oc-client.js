@@ -32,32 +32,32 @@ var renderedNoContainerResponse = {
   renderMode: 'rendered'
 };
 
-var compiledViewContent = 'oc.components=oc.components||{},oc.components["18e2619ff1d06451883f21656affd4c6f02b1ed1"]=function(o,e,c,n,f){return this.compilerInfo=[4,">= 1.0.0"],c=this.merge(c,o.helpers),f=f||{},"Hello world!"};';
+var route = 'http://my-registry.com/v3/a-component/1.2.X/?name=John',
+    compiledViewContent = 'oc.components=oc.components||{},oc.components["18e2619ff1d06451883f21656affd4c6f02b1ed1"]=function(o,e,c,n,f){return this.compilerInfo=[4,">= 1.0.0"],c=this.merge(c,o.helpers),f=f||{},"Hello world!"};';
 
-var fakeServer;
-var initialise = function(routes){
+var originalAjax = jQuery.ajax;
 
-  fakeServer = sinon.fakeServer.create();
-  sinon.stub(head, 'load').yields();
+var initialise = function(response, fail){
+  var spy = sinon.spy();
+
+  jQuery.ajax = $.ajax = function(params){
+    var method = (typeof(fail) === 'boolean' && fail) ? 'error' : 'success';
+
+    spy(params);
+    params[method](response);
+  };
+
+  sinon.stub(head, 'load').yields(null, 'ok');
   sinon.stub(console, 'log');
-
-  for(var i = 0; i < routes.length; i++){
-    fakeServer.respondWith(routes[i].method, routes[i].endpoint, [routes[i].status, routes[i].headers, JSON.stringify(routes[i].response)]);  
-  }
-  return sinon.spy();
-};
-
-var execute = function(codeToEval){
-  eval(codeToEval);
-  fakeServer.respond();
+  return spy;
 };
 
 var cleanup = function(){
-  fakeServer.restore();
   head.load.restore();
   console.log.restore();
+  jQuery.ajax = $.ajax = originalAjax;
   delete oc.components;
-}
+};
 
 describe('oc-client plugin', function(){
   
@@ -71,51 +71,34 @@ describe('oc-client plugin', function(){
 
       describe('before doing the rendering', function(){
 
-        var callback;
+        var callback, ajaxMock;
         beforeEach(function(){
-          var route = 'http://my-registry.com/v3/a-component/1.2.X/?name=John';
-          callback = initialise([{
-            method: 'GET',
-            endpoint: route,
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-            response: preRenderedResponse
-          }]);
-
+          callback = sinon.spy();
+          ajaxMock = initialise(preRenderedResponse);
+          eval(compiledViewContent);
           oc.renderByHref(route, callback);
-
-          execute(compiledViewContent);
         });
 
         afterEach(cleanup);
 
         it('should make a call to the registry', function(){
-          expect(callback.called).toBe(true);
+          expect(ajaxMock.called).toBe(true);
         });
 
         it('should make a request to the registry with proper headers', function(){
-          expect(fakeServer.requests[0].requestHeaders['Content-Type']).toEqual('text/plain');
-          expect(fakeServer.requests[0].requestHeaders['Accept']).toEqual('application/vnd.oc.prerendered+json');
+          expect(ajaxMock.args[0][0].contentType).toEqual('text/plain');
+          expect(ajaxMock.args[0][0].headers['Accept']).toEqual('application/vnd.oc.prerendered+json');
         });
-
       });
 
       describe('when the registry responds with pre-rendered component', function(){
 
         var callback;
         beforeEach(function(){
-          var route = 'http://my-registry.com/v3/a-component/1.2.X/?name=John';
-          callback = initialise([{
-            method: 'GET',
-            endpoint: route,
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-            response: preRenderedResponse
-          }]);
-
+          callback = sinon.spy();
+          initialise(preRenderedResponse);
+          eval(compiledViewContent);
           oc.renderByHref(route, callback);
-
-          execute(compiledViewContent);
         });
 
         afterEach(cleanup);
@@ -141,18 +124,10 @@ describe('oc-client plugin', function(){
 
         var callback;
         beforeEach(function(){
-          var route = 'http://my-registry.com/v3/a-component/1.2.X/?name=John';
-          callback = initialise([{
-            method: 'GET',
-            endpoint: route,
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-            response: renderedResponse
-          }]);
-
+          callback = sinon.spy();
+          initialise(renderedResponse);
+          eval(compiledViewContent);
           oc.renderByHref(route, callback);
-
-          execute(compiledViewContent);
         });
 
         afterEach(cleanup);
@@ -174,18 +149,10 @@ describe('oc-client plugin', function(){
 
         var callback;
         beforeEach(function(){
-          var route = 'http://my-registry.com/v3/a-component/1.2.X/?name=John';
-          callback = initialise([{
-            method: 'GET',
-            endpoint: route,
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-            response: renderedNoContainerResponse
-          }]);
-
+          callback = sinon.spy();
+          initialise(renderedNoContainerResponse);
+          eval(compiledViewContent);
           oc.renderByHref(route, callback);
-
-          execute(compiledViewContent);
         });
 
         afterEach(cleanup);
