@@ -81,23 +81,23 @@ module.exports = {
     autoWatch: true
   },
   'sauce-linux': {
-    customLaunchers: customLaunchers,
+    customLaunchers: _.pick(customLaunchers, 'chrome', 'ff', 'android'),
     browsers: ['chrome', 'ff', 'android']
   },
   'sauce-windows': {
-    customLaunchers: customLaunchers,
+    customLaunchers: _.pick(customLaunchers, 'ie11', 'ie10', 'ie9', 'ie8'),
     browsers: ['ie11', 'ie10', 'ie9', 'ie8']
   },
   'sauce-ie8': {
-    customLaunchers: customLaunchers,
+    customLaunchers: _.pick(customLaunchers, 'ie8'),
     browsers: ['ie8']
   },  
   'sauce-ie9': {
-    customLaunchers: customLaunchers,
+    customLaunchers: _.pick(customLaunchers, 'ie9'),
     browsers: ['ie9']
   },  
   'sauce-osx': {
-    customLaunchers: customLaunchers,
+    customLaunchers: _.pick(customLaunchers, 'safari', 'iphone', 'ipad'),
     browsers: ['safari', 'iphone', 'ipad']
   },
   local: {
