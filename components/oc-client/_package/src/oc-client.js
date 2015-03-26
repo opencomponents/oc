@@ -2,33 +2,38 @@
 
 var oc = oc || {};
 
-(function(Handlebars, head, $document, $window, debug){
+(function(head, $document, $window, debug){
+
+  oc.conf = oc.conf || {};
+  oc.cmd = oc.cmd || [];
 
   // Constants
-  var IE89_AJAX_POLYFILL_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxtransport-xdomainrequest/1.0.3/jquery.xdomainrequest.min.js',
-      JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.js',
-      RETRY_INTERVAL = 5000,
-      POLLING_INTERVAL = 500,
-      OC_TAG = 'oc-component',
+  var CDNJS_BASEURL = 'https://cdnjs.cloudflare.com/ajax/libs/',
+      IE89_AJAX_POLYFILL_URL = CDNJS_BASEURL + 'jquery-ajaxtransport-xdomainrequest/1.0.3/jquery.xdomainrequest.min.js',
+      HANDLEBARS_URL = CDNJS_BASEURL + 'handlebars.js/3.0.1/handlebars.runtime.js',
+      JADE_URL = CDNJS_BASEURL + 'jade/1.9.2/runtime.min.js',
+      JQUERY_URL = CDNJS_BASEURL + 'jquery/1.11.2/jquery.min.js',
+      RETRY_INTERVAL = oc.conf.retryInterval || 5000,
+      POLLING_INTERVAL = oc.conf.pollingInterval || 500,
+      OC_TAG = oc.conf.tag || 'oc-component',
       MESSAGES_ERRORS_HREF_MISSING = 'Href parameter missing',
-      MESSAGES_ERRORS_LOADING_COMPONENT = 'Error loading {0} component',
+      MESSAGES_ERRORS_LOADING_COMPILED_VIEW = 'Error getting compiled view: {0}',
       MESSAGES_ERRORS_RENDERING = 'Error rendering component: {0}, error: {1}',
       MESSAGES_ERRORS_RETRIEVING = 'Failed to retrieve the component. Retrying in {0} seconds...'.replace('{0}', RETRY_INTERVAL/1000),
-      MESSAGES_ERRORS_VIEW_ENGINE_NOT_SUPPORTED = 'Error loading component: view engine {0} not supported',
+      MESSAGES_ERRORS_VIEW_ENGINE_NOT_SUPPORTED = 'Error loading component: view engine "{0}" not supported',
       MESSAGES_LOADING_COMPONENT = 'Loading...',
       MESSAGES_RENDERED = 'Component \'{0}\' correctly rendered',
       MESSAGES_RETRIEVING = 'Unrendered component found. Trying to retrieve it...';
 
   // The code
   var headScripts = [],
-      $ = typeof(jQuery) !== 'undefined' ? jQuery : undefined,
+      $,
       noop = function(){},
       nav = $window.navigator.userAgent,
       is8 = !!(nav.match(/MSIE 8/)),
       is9 = !!(nav.match(/MSIE 9/)),
       initialised = false,
-      initialising = false,
-      readySubscribers = [];
+      initialising = false;
 
   var logger = {
     error: function(msg){
@@ -41,14 +46,61 @@ var oc = oc || {};
     }
   };
 
-  var _indexOf = function(arr, val){
-    for(var i = 0; i < arr.length; i++){
-      if(arr[i] === val){
-        return i;
-      }
+  // A minimal require.js-ish that uses head.js
+  oc.require = function(nameSpace, url, callback){
+    if(typeof(url) === 'function'){
+      callback = url;
+      url = nameSpace;
+      nameSpace = undefined;
     }
-    return -1;
+
+    if(typeof(nameSpace) === 'string'){
+      nameSpace = [nameSpace];
+    }
+
+    var needsToBeLoaded = function(){
+      var base = $window;
+
+      if(typeof(nameSpace) === 'undefined'){
+        return true;
+      }
+
+      for(var i = 0; i < nameSpace.length; i++){
+        base = base[nameSpace[i]];
+        if(!base){
+          return true;
+        }
+      }
+
+      return false;
+    };
+
+    var getObj = function(){
+      var base = $window;
+
+      if(typeof(nameSpace) === 'undefined'){
+        return undefined;
+      }
+
+      for(var i = 0; i < nameSpace.length; i++){
+        base = base[nameSpace[i]];
+        if(!base){
+          return undefined;
+        }
+      }
+
+      return base;
+    };
+
+    if(needsToBeLoaded()){
+      head.load(url, function(){
+        callback(getObj());
+      });
+    } else {
+      callback(getObj());
+    }
   };
+
 
   var processHtml = function($component, data, callback){
 
@@ -62,7 +114,6 @@ var oc = oc || {};
 
     if(!!data.key){
       $component.attr('data-hash', data.key);
-      oc.setEventListeners($component);
     }
 
     callback();
@@ -73,14 +124,14 @@ var oc = oc || {};
     if(initialised){
       return callback();
     } else if(initialising) {
-      readySubscribers.push(callback);
+      oc.cmd.push(callback);
     } else {
 
       initialising = true;
 
       var requirePolyfills = function(cb){
         if((is8 || is9) && !$.IE_POLYFILL_LOADED){
-          head.load(IE89_AJAX_POLYFILL_URL, cb);
+          oc.require(IE89_AJAX_POLYFILL_URL, cb);
         } else {
           cb();
         }
@@ -90,38 +141,39 @@ var oc = oc || {};
         initialised = true;
         initialising = false;
         callback();
-        for(var i = 0; i < readySubscribers.length; i++){
-          readySubscribers[i]();
+        for(var i = 0; i < oc.cmd.length; i++){
+          oc.cmd[i](oc);
         }
       };
 
-      if(!$){
-        head.load(JQUERY_URL, function(){
-          $ = jQuery;
-          requirePolyfills(done);
-        });
-      } else {
+      oc.require('jQuery', JQUERY_URL, function(jQuery){
+        $ = jQuery;
         requirePolyfills(done);
-      }
+      });
     }
   };
 
-  oc.render = function(compiledView, model, callback){
+  oc.render = function(compiledViewInfo, model, callback){
     oc.ready(function(){
-      if(!oc.components[compiledView.key]){
-        callback(MESSAGES_ERRORS_LOADING_COMPONENT.replace('{0}', compiledView.key));
+      if(!!compiledViewInfo.type.match(/jade|handlebars/g)){
+        oc.require(['oc', 'components', compiledViewInfo.key], compiledViewInfo.src, function(compiledView){
+          if(!compiledView){
+            callback(MESSAGES_ERRORS_LOADING_COMPILED_VIEW.replace('{0}', compiledViewInfo.src));
+          } else {
+            if(compiledViewInfo.type === 'handlebars'){
+              oc.require('Handlebars', HANDLEBARS_URL, function(Handlebars){
+                var linkedComponent = Handlebars.template(compiledView, []);
+                callback(null, linkedComponent(model));
+              });
+            } else if(compiledViewInfo.type === 'jade'){
+              oc.require('jade', JADE_URL, function(jade){
+                callback(null, compiledView(model));
+              });
+            }
+          }
+        });
       } else {
-        var compiledComponent = '';
-
-        if(compiledView.type === 'handlebars'){
-          var linkedComponent = Handlebars.template(oc.components[compiledView.key], []);
-          compiledComponent = linkedComponent(model);
-        } else if(compiledView.type === 'jade'){
-          compiledComponent = oc.components[compiledView.key](model);
-        } else {
-          return callback(MESSAGES_ERRORS_VIEW_ENGINE_NOT_SUPPORTED.replace('{0}', compiledView.type));
-        }
-        callback(null, compiledComponent);
+        callback(MESSAGES_ERRORS_VIEW_ENGINE_NOT_SUPPORTED.replace('{0}', compiledViewInfo.type));
       }
     });
   };
@@ -162,17 +214,15 @@ var oc = oc || {};
           async: true,
           success: function(apiResponse){
             if(apiResponse.renderMode === 'pre-rendered'){
-              head.load([apiResponse.template.src], function(){
-                oc.render(apiResponse.template, apiResponse.data, function(err, html){
-                  if(err){ 
-                    return callback(MESSAGES_ERRORS_RENDERING.replace('{0}', apiResponse.href).replace('{1}', err));
-                  }
-                  logger.info(MESSAGES_RENDERED.replace('{0}', apiResponse.template.src));
-                  callback(null, {
-                    html: html, 
-                    key: apiResponse.template.key,
-                    version: apiResponse.version
-                  });
+              oc.render(apiResponse.template, apiResponse.data, function(err, html){
+                if(err){ 
+                  return callback(MESSAGES_ERRORS_RENDERING.replace('{0}', apiResponse.href).replace('{1}', err));
+                }
+                logger.info(MESSAGES_RENDERED.replace('{0}', apiResponse.template.src));
+                callback(null, {
+                  html: html, 
+                  key: apiResponse.template.key,
+                  version: apiResponse.version
                 });
               });
             } else if(apiResponse.renderMode === 'rendered'){
@@ -226,23 +276,6 @@ var oc = oc || {};
     });
   };
 
-  oc.setEventListeners = function(component){
-    oc.ready(function(){
-      component.off('reRender');
-      component.on('reRender', function(event, href){
-        var self = $(event.target);
-        if(!!href && href !== ''){
-          self.attr('href', href);
-        }
-        self.attr('data-hash', '');
-        self.attr('data-rendered', false);
-        oc.renderUnloadedComponents();
-        return false;
-      });
-      component.trigger('loaded');
-    });
-  };
-
   oc.load = function(placeholder, href, callback){
     oc.ready(function(){
       if(typeof(callback) !== 'function'){
@@ -261,4 +294,4 @@ var oc = oc || {};
 
   oc.ready(oc.renderUnloadedComponents);
 
-})(Handlebars, head, document, window, true); // jshint ignore:line
+})(head, document, window, false); // jshint ignore:line

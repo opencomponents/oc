@@ -59,7 +59,7 @@ var cleanup = function(){
   delete oc.components;
 };
 
-describe('oc-client plugin', function(){
+describe('oc-client : renderByHref', function(){
   
   describe('when loaded', function(){
     
