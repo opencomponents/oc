@@ -3,76 +3,70 @@
 var _ = require('underscore');
 
 var customLaunchers = {
-  linux: {
-    'SL_Chrome_Linux': {
-      base: 'SauceLabs',
-      browserName: 'chrome',
-      platform: 'Linux',
-      version: '41'
-    },
-    'SL_Firefox_Linux': {
-      base: 'SauceLabs',
-      browserName: 'firefox',
-      platform: 'Linux',
-      version: '36'
-    },
-    'SL_Android_Linux': {
-      base: 'SauceLabs',
-      browserName: 'android',
-      platform: 'Linux',
-      version: '4.4',
-      deviceName: 'Android Emulator',
-      'device-orientation': 'portrait'
-    }
+  'chrome': {
+    base: 'SauceLabs',
+    browserName: 'chrome',
+    platform: 'Linux',
+    version: '41'
   },
-  windows: {
-    'SL_IE11_Windows_8.1': {
-      base: 'SauceLabs',
-      browserName: 'internet explorer',
-      platform: 'Windows 8.1',
-      version: '11'
-    },
-    'SL_IE10_Windows_8': {
-      base: 'SauceLabs',
-      browserName: 'internet explorer',
-      platform: 'Windows 8',
-      version: '10'
-    },
-    'SL_IE9_Windows_7': {
-      base: 'SauceLabs',
-      browserName: 'internet explorer',
-      platform: 'Windows 7',
-      version: '9'
-    },
-    'SL_IE8_Windows_7': {
-      base: 'SauceLabs',
-      browserName: 'internet explorer',
-      platform: 'Windows XP',
-      version: '8'
-    }
+  'ff': {
+    base: 'SauceLabs',
+    browserName: 'firefox',
+    platform: 'Linux',
+    version: '36'
   },
-  osx: {
-    'SL_Safari_Yosemite': {
-      base: 'SauceLabs',
-      browserName: 'safari',
-      platform: 'OS X 10.10',
-      version: '8'
-    },
-    'SL_Ipad': {
-      base: 'SauceLabs',
-      browserName: 'ipad',
-      platform: 'OS X 10.10',
-      version: '8',
-      'device-orientation': 'portrait'
-    },
-    'SL_Iphone': {
-      base: 'SauceLabs',
-      browserName: 'iphone',
-      deviceName: 'iPhone Simulator',
-      platform: 'OS X 10.10',
-      version: '8',
-      'device-orientation': 'portrait'
-    }
+  'android': {
+    base: 'SauceLabs',
+    browserName: 'android',
+    platform: 'Linux',
+    version: '4.4',
+    deviceName: 'Android Emulator',
+    'device-orientation': 'portrait'
+  },
+  'ie11': {
+    base: 'SauceLabs',
+    browserName: 'internet explorer',
+    platform: 'Windows 8.1',
+    version: '11'
+  },
+  'ie10': {
+    base: 'SauceLabs',
+    browserName: 'internet explorer',
+    platform: 'Windows 8',
+    version: '10'
+  },
+  'ie9': {
+    base: 'SauceLabs',
+    browserName: 'internet explorer',
+    platform: 'Windows 7',
+    version: '9'
+  },
+  'ie8': {
+    base: 'SauceLabs',
+    browserName: 'internet explorer',
+    platform: 'Windows XP',
+    version: '8'
+  },
+  'safari': {
+    base: 'SauceLabs',
+    browserName: 'safari',
+    platform: 'OS X 10.10',
+    version: '8'
+  },
+  'ipad': {
+    base: 'SauceLabs',
+    browserName: 'ipad',
+    platform: 'OS X 10.10',
+    version: '8',
+    'device-orientation': 'portrait'
+  },
+  'iphone': {
+    base: 'SauceLabs',
+    browserName: 'iphone',
+    deviceName: 'iPhone Simulator',
+    platform: 'OS X 10.10',
+    version: '8',
+    'device-orientation': 'portrait'
   } 
 };
 
@@ -87,16 +81,24 @@ module.exports = {
     autoWatch: true
   },
   'sauce-linux': {
-    customLaunchers: customLaunchers.linux,
-    browsers: _.keys(customLaunchers.linux)
+    customLaunchers: _.pick(customLaunchers, 'chrome', 'ff', 'android'),
+    browsers: ['chrome', 'ff', 'android']
   },
   'sauce-windows': {
-    customLaunchers: customLaunchers.windows,
-    browsers: _.keys(customLaunchers.windows)
+    customLaunchers: _.pick(customLaunchers, 'ie11', 'ie10', 'ie9', 'ie8'),
+    browsers: ['ie11', 'ie10', 'ie9', 'ie8']
   },
+  'sauce-ie8': {
+    customLaunchers: _.pick(customLaunchers, 'ie8'),
+    browsers: ['ie8']
+  },  
+  'sauce-ie9': {
+    customLaunchers: _.pick(customLaunchers, 'ie9'),
+    browsers: ['ie9']
+  },  
   'sauce-osx': {
-    customLaunchers: customLaunchers.osx,
-    browsers: _.keys(customLaunchers.osx)
+    customLaunchers: _.pick(customLaunchers, 'safari', 'iphone', 'ipad'),
+    browsers: ['safari', 'iphone', 'ipad']
   },
   local: {
     configFile: 'test/configuration/karma-local.js',

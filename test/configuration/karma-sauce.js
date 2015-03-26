@@ -6,6 +6,7 @@ module.exports = function(config) {
     frameworks: ['jasmine', 'sinon'],
     files: [
       'jquery-1.11.2.js',
+      'jQuery.XDomainRequest.js',
       '../../components/oc-client/src/head.load.js',
       '../../node_modules/handlebars/dist/handlebars.runtime.min.js',
       '../../node_modules/jade/runtime.js',
