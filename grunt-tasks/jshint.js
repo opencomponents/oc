@@ -10,7 +10,7 @@ module.exports = {
             'components/oc-client/src/oc-client.min.js', 
             'components/oc-client/_package/**/*', 
             'components/base-component-handlebars/_package/**/*',
-            'components/base-components-jade/_package/**/*',
+            'components/base-component-jade/_package/**/*',
             'test/fixtures',
             'test/front-end',
             'test/configuration'
