@@ -2,7 +2,6 @@
 
 var querystring = require('querystring');
 var request = require('../../utils/request');
-var semver = require('semver');
 var url = require('url');
 
 var removeFinalSlashes = function(s){
