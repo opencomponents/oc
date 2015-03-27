@@ -8,7 +8,7 @@ module.exports = function(config) {
       'jquery-1.11.2.js',
       'jQuery.XDomainRequest.js',
       '../../components/oc-client/src/head.load.js',
-      '../../node_modules/handlebars/dist/handlebars.runtime.min.js',
+      '../../node_modules/handlebars/dist/handlebars.runtime.js',
       '../../node_modules/jade/runtime.js',
       '../../components/oc-client/src/oc-client.js',
 

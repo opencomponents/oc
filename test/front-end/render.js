@@ -1,6 +1,6 @@
 'use strict';
 
-var handlebarsCompiledView = 'oc.components=oc.components||{},oc.components["18e2619ff1d06451883f21656affd4c6f02b1ed1"]=function(o,e,c,n,f){return this.compilerInfo=[4,">= 1.0.0"],c=this.merge(c,o.helpers),f=f||{},"Hello world!"};';
+var handlebarsCompiledView = 'oc.components=oc.components||{},oc.components["46ee85c314b371cac60471cef5b2e2e6c443dccf"]={compiler:[6,">= 2.0.0-beta.1"],main:function(){return"Hello world!"},useData:!0};';
 var jadeCompiledView = 'oc.components=oc.components||{},oc.components["09227309bca0b1ec1866c547ebb76c74921e85d2"]=function(n){var e,o=[],c=n||{};return function(n){o.push("<span>hello "+jade.escape(null==(e=n)?"":e)+"</span>")}.call(this,"name"in c?c.name:"undefined"!=typeof name?name:void 0),o.join("")};';
 
 describe('oc-client : render', function(){
@@ -14,7 +14,7 @@ describe('oc-client : render', function(){
       oc.render({
         src: 'https://my-cdn.com/components/a-component/1.2.123/template.js',
         type: 'handlebars',
-        key: '18e2619ff1d06451883f21656affd4c6f02b1ed1'
+        key: '46ee85c314b371cac60471cef5b2e2e6c443dccf'
       }, {}, callback);
     });
 
@@ -51,7 +51,7 @@ describe('oc-client : render', function(){
         oc.render({
           src: 'https://my-cdn.com/components/a-component/1.2.123/template.js', 
           type: 'handlebars', 
-          key: '18e2619ff1d06451883f21656affd4c6f02b1ed1'
+          key: '46ee85c314b371cac60471cef5b2e2e6c443dccf'
         }, {}, callback);
       });
 
@@ -82,7 +82,7 @@ describe('oc-client : render', function(){
         oc.render({
           src: 'https://my-cdn.com/components/a-component/1.2.123/template.js', 
           type: 'handlebars', 
-          key: '18e2619ff1d06451883f21656affd4c6f02b1ed1'
+          key: '46ee85c314b371cac60471cef5b2e2e6c443dccf'
         }, {}, callback);
       });
 

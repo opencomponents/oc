@@ -163,7 +163,7 @@ describe('client', function(){
     });
 
     it('should contain the hashed view\'s key', function(){
-      expect($component.data('hash')).to.eql('18e2619ff1d06451883f21656affd4c6f02b1ed1');
+      expect($component.data('hash')).to.eql('46ee85c314b371cac60471cef5b2e2e6c443dccf');
     });
 
     it('should return expected html', function(){

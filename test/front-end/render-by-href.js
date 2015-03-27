@@ -9,7 +9,7 @@ var preRenderedResponse = {
   template: {
     src: 'https://my-cdn.com/components/a-component/1.2.123/template.js',
     type: 'handlebars',
-    key: '18e2619ff1d06451883f21656affd4c6f02b1ed1'
+    key: '46ee85c314b371cac60471cef5b2e2e6c443dccf'
   },
   renderMode: 'pre-rendered'
 };
@@ -19,7 +19,7 @@ var renderedResponse = {
   type: 'oc-component',
   version: '1.2.123',
   requestVersion: '1.2.X',
-  html: '<oc-component href="http://my-registry.com/v3/a-component/1.2.X/?name=John" data-hash="389d92b88e4fc9bed8f0d8329a8a9b488ef3def1" id="4709139819" data-rendered="true" data-version="1.2.123">Hello, world!!!</oc-component>',
+  html: '<oc-component href="http://my-registry.com/v3/a-component/1.2.X/?name=John" data-hash="46ee85c314b371cac60471cef5b2e2e6c443dccf" id="4709139819" data-rendered="true" data-version="1.2.123">Hello, world!!!</oc-component>',
   renderMode: 'rendered'
 };
 
@@ -33,7 +33,7 @@ var renderedNoContainerResponse = {
 };
 
 var route = 'http://my-registry.com/v3/a-component/1.2.X/?name=John',
-    compiledViewContent = 'oc.components=oc.components||{},oc.components["18e2619ff1d06451883f21656affd4c6f02b1ed1"]=function(o,e,c,n,f){return this.compilerInfo=[4,">= 1.0.0"],c=this.merge(c,o.helpers),f=f||{},"Hello world!"};';
+    compiledViewContent = 'oc.components=oc.components||{},oc.components["46ee85c314b371cac60471cef5b2e2e6c443dccf"]={compiler:[6,">= 2.0.0-beta.1"],main:function(){return"Hello world!"},useData:!0};';
 
 var originalAjax = jQuery.ajax;
 
@@ -116,7 +116,7 @@ describe('oc-client : renderByHref', function(){
         });
 
         it('should respond with the correct hash key', function(){
-          expect(callback.args[0][1].key).toEqual('18e2619ff1d06451883f21656affd4c6f02b1ed1');
+          expect(callback.args[0][1].key).toEqual('46ee85c314b371cac60471cef5b2e2e6c443dccf');
         });
       });
 

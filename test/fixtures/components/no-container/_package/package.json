@@ -5,13 +5,13 @@
   "repository": "",
   "oc": {
     "container": false,
-    "parameters": {},
     "files": {
       "template": {
         "type": "handlebars",
-        "hashKey": "18e2619ff1d06451883f21656affd4c6f02b1ed1",
+        "hashKey": "46ee85c314b371cac60471cef5b2e2e6c443dccf",
         "src": "template.js"
       }
-    }
+    },
+    "version": "0.13.0"
   }
 }
