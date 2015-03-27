@@ -1,7 +1,7 @@
 {
   "name": "oc-client",
   "description": "",
-  "version": "0.13.0",
+  "version": "0.13.1",
   "dependencies": {},
   "repository": "",
   "oc": {
@@ -9,7 +9,7 @@
     "files": {
       "template": {
         "type": "handlebars",
-        "hashKey": "389d92b88e4fc9bed8f0d8329a8a9b488ef3def1",
+        "hashKey": "bb774de6a2b7280c2b66103bd36d7e708a1b7541",
         "src": "template.js"
       },
       "static": [
@@ -21,6 +21,6 @@
         "src": "server.js"
       }
     },
-    "version": "0.13.0"
+    "version": "0.13.1"
   }
 }
