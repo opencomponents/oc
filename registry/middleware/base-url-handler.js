@@ -4,10 +4,10 @@ var _ = require('underscore');
 
 module.exports = function(req, res, next){
 
-  var baseUrlFunc = _.isFunction(res.conf.baseUrl) ? res.conf.baseUrl : undefined;
+  res.conf.baseUrlFunc = res.conf.baseUrlFunc || (_.isFunction(res.conf.baseUrl) ? res.conf.baseUrl : undefined);
 
-  if(!_.isUndefined(baseUrlFunc)){
-    res.conf.baseUrl = baseUrlFunc({
+  if(!_.isUndefined(res.conf.baseUrlFunc)){
+    res.conf.baseUrl = res.conf.baseUrlFunc({
       host: req.headers.host,
       secure: req.secure
     });
