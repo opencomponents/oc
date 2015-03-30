@@ -86,6 +86,11 @@ module.exports = function(conf, cdn){
     }, conf.pollingInterval * 1000);
   };
 
+  var returnError = function(errorCode, errorMessage, callback){
+    _eventsHandler.fire('error', { code: errorCode, message: errorMessage });
+    return callback(errorCode);
+  };
+
   var saveData = function(data, callback){
     cdn.putFileContent(JSON.stringify(data), conf.s3.componentsDir + '/components.json', true, callback);
   };
@@ -99,18 +104,20 @@ module.exports = function(conf, cdn){
 
   return {
     get: function(callback){
-      if(!cachedComponentsList){ return callback('components_cache_empty'); }
+      if(!cachedComponentsList){ return returnError('components_cache_empty', 'The component\'s cache was empty', callback); }
       callback(null, cachedComponentsList);
     },
     load: function(eventsHandler, callback){
       _eventsHandler = eventsHandler;
 
       giveMe.all([getFromJson, getFromDirectories], function(errors, components){
-        if(!!errors && !!errors[1]){ 
-          return callback(errors[1]); 
+        if(!!errors && !!errors[1]){
+          return returnError('components_list_get', errors[1], callback);
         } else if((!!errors && !!errors[0]) || !_.isEqual(components[0].components, components[1].components)){ 
           saveData(components[1], function(saveErr, saveResult){
-            if(!!saveErr){ return callback(saveErr); }
+            if(!!saveErr){
+              return returnError('components_list_save', saveErr, callback);
+            }
             cacheDataAndStartRefresh(components[1], callback);
           });
         } else {
@@ -121,7 +128,7 @@ module.exports = function(conf, cdn){
     refresh: function(callback){
       clearInterval(refreshLoop);
       getAndSaveFromDirectories(function(err, components){
-        if(!!err){ return callback(err); }
+        if(!!err){ return returnError('components_cache_refresh', err, callback); }
         cacheDataAndStartRefresh(components, callback);
       });
     }

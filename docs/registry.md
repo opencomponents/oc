@@ -112,5 +112,6 @@ options.routes = [{
 |Event name|Callback Data Type|Description|
 |---------|------|-------|
 |`cache-poll`|`object`|Fired when the components list is refreshed. The callback data contains the last edit unix utc timestamp.|
+|`error`|`object`|Fired when an internal operation errors.|
 |`request`|`object`|Fired every time the registry receives a request. The callback data contains some request and response details.|
 |`start`|`undefined`|Fired when the registry starts|
