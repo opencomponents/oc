@@ -6,9 +6,10 @@ var path = require('path');
 var read = require('read');
 var strings = require('../../resources/index');
 var _ = require('underscore');
+var async = require('async');
 
 module.exports = function(dependencies){
-  
+
   var registry = dependencies.registry,
       local = dependencies.local,
       logger = dependencies.logger;
@@ -26,7 +27,7 @@ module.exports = function(dependencies){
       read({}, function(err, username){
 
         logger.log(strings.messages.cli.ENTER_PASSWORD.yellow);
-        
+
         read({ silent: true }, function(err, password){
           callback(null, { username: username, password: password});
         });
@@ -34,9 +35,9 @@ module.exports = function(dependencies){
     };
 
     var packageAndCompress = function(callback){
-      
+
       logger.log(format(strings.messages.cli.PACKAGING.yellow, packageDir.green));
-      
+
       local.package(componentPath, function(err, component){
         if(err){
           return callback(err);
@@ -54,7 +55,7 @@ module.exports = function(dependencies){
       });
     };
 
-    var putComponentToRegistry = function(options){
+    var putComponentToRegistry = function(options, callback){
 
       logger.log(format(strings.messages.cli.PUBLISHING.yellow, options.route.green));
 
@@ -64,24 +65,26 @@ module.exports = function(dependencies){
 
           if(err === 'Unauthorized'){
             if(!!options.username || !!options.password){
-              return logger.log(format(strings.errors.cli.PUBLISHING_FAIL, strings.errors.cli.INVALID_CREDENTIALS).red);
+              logger.log(format(strings.errors.cli.PUBLISHING_FAIL, strings.errors.cli.INVALID_CREDENTIALS).red);
+              return callback(err);
             }
 
             logger.log(strings.messages.cli.REGISTRY_CREDENTIALS_REQUIRED.yellow);
 
-            getCredentials(function(err, credentials){
+            return getCredentials(function(err, credentials){
               putComponentToRegistry(_.extend(options, {
                 username: credentials.username,
                 password: credentials.password
-              }));
+              }), callback);
             });
 
           } else {
             logger.log(format(strings.errors.cli.PUBLISHING_FAIL, err).red);
+            return callback();
           }
         } else {
           logger.log(format(strings.messages.cli.PUBLISHED, options.route.green).yellow);
-          local.cleanup(options.path, process.exit);
+          return local.cleanup(options.path, callback);
         }
       });
     };
@@ -96,12 +99,14 @@ module.exports = function(dependencies){
           return logger.log(format(strings.errors.cli.PACKAGING_FAIL, err).red);
         }
 
-        var registryUrl = registryLocations[0],
-            registryLength = registryUrl.length,
-            registryNormalised = registryUrl.slice(registryLength - 1) === '/' ? registryUrl.slice(0, registryLength - 1) : registryUrl,
-            componentRoute = format('{0}/{1}/{2}', registryNormalised, component.name, component.version);
+        async.eachSeries(registryLocations, function(l, done){
+          var registryUrl = l,
+              registryLength = registryUrl.length,
+              registryNormalised = registryUrl.slice(registryLength - 1) === '/' ? registryUrl.slice(0, registryLength - 1) : registryUrl,
+              componentRoute = format('{0}/{1}/{2}', registryNormalised, component.name, component.version);
 
-        putComponentToRegistry({ route: componentRoute, path: compressedPackagePath});
+          putComponentToRegistry({ route: componentRoute, path: compressedPackagePath}, done);
+        }, function(err){});
       });
     });
   };
