@@ -2,7 +2,7 @@
 
 var oc = oc || {};
 
-(function(head, $document, $window, debug){
+(function(head, $document, $window){
 
   oc.conf = oc.conf || {};
   oc.cmd = oc.cmd || [];
@@ -26,7 +26,8 @@ var oc = oc || {};
       MESSAGES_RETRIEVING = 'Unrendered component found. Trying to retrieve it...';
 
   // The code
-  var headScripts = [],
+  var debug = oc.conf.debug || false,
+      headScripts = [],
       $,
       noop = function(){},
       nav = $window.navigator.userAgent,
@@ -40,9 +41,7 @@ var oc = oc || {};
       return console.log(msg);
     },
     info: function(msg){
-      if(debug){
-        return console.log(msg);
-      }
+      return !!debug ? console.log(msg) : false;
     }
   };
 
@@ -117,6 +116,46 @@ var oc = oc || {};
     }
 
     callback();
+  };
+
+  oc.build = function(options){
+
+    if(!options.baseUrl){
+      throw 'baseUrl parameter is required';
+    } 
+
+    if(!options.name){
+      throw 'name parameter is required';
+    }
+    
+    var withFinalSlash = function(s){
+      s = s || '';
+
+      if(s.slice(-1) !== '/'){
+        s += '/';
+      }
+
+      return s;
+    };
+    
+    var href = withFinalSlash(options.baseUrl) + withFinalSlash(options.name);
+
+    if(!!options.version){
+      href += withFinalSlash(options.version);
+    }
+
+    if(!!options.parameters){
+      href += '?';
+      for(var parameter in options.parameters){
+        if(options.parameters.hasOwnProperty(parameter)){
+          href += parameter + '=' + options.parameters[parameter] + '&';
+        }
+      }
+      href = href.slice(0, -1);
+    }
+
+    return '<' + OC_TAG + ' href="' + href + '"></' + OC_TAG + '>';
+
   };
 
   oc.ready = function(callback){
@@ -294,4 +333,4 @@ var oc = oc || {};
 
   oc.ready(oc.renderUnloadedComponents);
 
-})(head, document, window, false); // jshint ignore:line
+})(head, document, window); // jshint ignore:line
