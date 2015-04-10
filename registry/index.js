@@ -112,7 +112,7 @@ module.exports = function(options){
       });
     }
 
-    repository.init(eventsHandler, function(){
+    repository.init(eventsHandler, function(err, componentsInfo){
       appStart(repository, options, function(err, res){
 
         if(!!err){
@@ -125,6 +125,14 @@ module.exports = function(options){
           eventsHandler.fire('start', {});
           if(withLogging){
             console.log(format('Registry started at port {0}'.green, self.app.get('port')));
+            if(_.isObject(componentsInfo)){
+              var componentsNumber = _.keys(componentsInfo.components).length;
+              var componentsReleases = _.reduce(componentsInfo.components, function(memo, component){
+                return (parseInt(memo, 10) + component.length);
+              });
+
+              console.log(format('Registry serving {0} components for a total of {1} releases.', componentsNumber, componentsReleases).green)
+            }
           }
           callback(null, self.app);
         });
