@@ -131,7 +131,7 @@ module.exports = function(options){
                 return (parseInt(memo, 10) + component.length);
               });
 
-              console.log(format('Registry serving {0} components for a total of {1} releases.', componentsNumber, componentsReleases).green)
+              console.log(format('Registry serving {0} components for a total of {1} releases.', componentsNumber, componentsReleases).green);
             }
           }
           callback(null, self.app);
