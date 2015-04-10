@@ -1,6 +1,6 @@
 {
   "name": "oc-client",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Node.js oc client",
   "main": "index.js",
   "repository": {
