@@ -2,6 +2,7 @@
 
 var expect = require('chai').expect;
 var injectr = require('injectr');
+var path = require('path');
 var sinon = require('sinon');
 
 describe('registry : domain : s3', function(){
@@ -22,10 +23,22 @@ describe('registry : domain : s3', function(){
       S3: function(){
         return mockedS3Client;
       }
+    },
+    'node-dir': {
+      paths: function(input, cb){
+        var sep = path.sep;
+        cb(null, {
+          files: [
+            '/absolute-path-to-dir' + sep + 'package.json',
+            '/absolute-path-to-dir' + sep + 'server.js',
+            '/absolute-path-to-dir' + sep + 'template.js'
+          ]
+        });
+      }
     }
   });
 
-  var initialise = function(){
+  var initialise = function(isWin){
     mockedS3Client = {
       getObject: sinon.stub(),
       listObjects: sinon.stub(),
@@ -54,6 +67,16 @@ describe('registry : domain : s3', function(){
     initialise();
     mockedS3Client.putObject.yields(null, 'ok');
     s3.putFile('/path/to/', fileName, isPrivate, function(err, res){
+      error = err;
+      response = res;
+      callback();
+    });      
+  };
+  
+  var initialiseAndExecutePutDir = function(callback){
+    initialise();
+    mockedS3Client.putObject.yields(null, 'ok');
+    s3.putDir('/absolute-path-to-dir', 'components/componentName/1.0.0', function(err, res){
       error = err;
       response = res;
       callback();
@@ -165,6 +188,23 @@ describe('registry : domain : s3', function(){
           expect(error.msg).to.equal('File "components/image/1.0.1/random-file.json" not found');
         });
       });
+    });
+  });
+
+  describe('when publishing directory', function(){
+
+    before(function(done){
+      initialiseAndExecutePutDir(done);
+    });
+
+    it('should save all the files', function(){
+      expect(mockedS3Client.putObject.args.length).to.equal(3);
+    });
+
+    it('should save the files using unix-styled path for s3 output locations', function(){
+      expect(mockedS3Client.putObject.args[0][0].Key).to.eql('components/componentName/1.0.0/package.json');
+      expect(mockedS3Client.putObject.args[1][0].Key).to.eql('components/componentName/1.0.0/server.js');
+      expect(mockedS3Client.putObject.args[2][0].Key).to.eql('components/componentName/1.0.0/template.js');
     });
   });
 
