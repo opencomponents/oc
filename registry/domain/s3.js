@@ -106,7 +106,7 @@ module.exports = function(conf){
 
         giveMe.all(_.bind(self.putFile, self), _.map(files, function(file){
           var relativeFile = file.substr(dirInput.length),
-              url = dirOutput + relativeFile;
+              url = (dirOutput + relativeFile).replace(/\\/, '/');
           
           return [file, url, relativeFile === '/server.js'];
         }), function(errors, callbacks){
