@@ -22,9 +22,18 @@ module.exports = function(config) {
 
     sauceLabs: {
       testName: 'oc front-end tests',
-      build: process.env.TRAVIS_BUILD_NUMBER || 'local'
+      build: 'local',
+      startConnect: true
     },
     captureTimeout: 120000,
     singleRun: false
   });
+
+  if (process.env.TRAVIS)
+  {
+    //config.logLevel = config.LOG_DEBUG;
+    config.transports = ['xhr-polling'];
+    config.sauceLabs.build = 'TRAVIS #' + process.env.TRAVIS_BUILD_NUMBER + ' (' + process.env.TRAVIS_BUILD_ID + ')';
+    config.sauceLabs.tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
+  }
 };
