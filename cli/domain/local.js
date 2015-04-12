@@ -1,10 +1,13 @@
 'use strict';
 
+var CleanCss = require('clean-css');
 var format = require('stringformat');
 var fs = require('fs-extra');
+var giveMe = require('give-me');
 var handlebars = require('handlebars');
 var hashBuilder = require('../../utils/hash-builder');
 var jade = require('jade');
+var nodeDir = require('node-dir');
 var request = require('../../utils/request');
 var path = require('path');
 var settings = require('../../resources/settings');
@@ -137,7 +140,12 @@ module.exports = function(){
         fs.writeJson(settings.configFile.src, localConfig, callback);
       });
     },
-    package: function(componentPath, callback){
+    package: function(componentPath, minify, callback){
+
+      if(_.isFunction(minify)){
+        callback = minify;
+        minify = true;
+      }
 
       var files = fs.readdirSync(componentPath),
         publishPath = path.join(componentPath, '_package'),
@@ -212,18 +220,59 @@ module.exports = function(){
         delete component.oc.files.data;
       }
 
-      if(component.oc.files.static){
-        if(!_.isArray(component.oc.files.static)){
-          component.oc.files.static = [component.oc.files.static];
-        }
+      if(!component.oc.files.static){
+        component.oc.files.static = [];
+      }
 
-        _.forEach(component.oc.files.static, function(staticComponent){
-          fs.copySync(path.join(componentPath, staticComponent), path.join(publishPath, staticComponent));
-        });
+      if(!_.isArray(component.oc.files.static)){
+        component.oc.files.static = [component.oc.files.static];
       }
 
       fs.writeJsonSync(path.join(publishPath, 'package.json'), component);
-      callback(null, component);
+
+      var copyDir = function(staticComponent, staticPath, cb){
+        if(!fs.existsSync(staticPath)){
+          return cb('"' + staticPath + '" not found');
+        } else if(!fs.lstatSync(staticPath).isDirectory()){
+          return cb('"' + staticPath + '" must be a directory');
+        } else {
+          nodeDir.paths(staticPath, function(err, res){
+            fs.ensureDirSync(path.join(publishPath, staticComponent));
+            _.forEach(res.files, function(filePath){
+              var fileName = path.basename(filePath),
+                  fileExt = path.extname(filePath),
+                  fileDestination = path.join(publishPath, staticComponent, fileName),
+                  fileContent, 
+                  minifiedContent;
+
+              if(minify && fileExt === '.js' && component.oc.minify !== false){
+                fileContent = fs.readFileSync(filePath).toString();
+                minifiedContent = uglifyJs.minify(fileContent, {fromString: true}).code;
+
+                fs.writeFileSync(fileDestination, minifiedContent);
+              } else if(minify && fileExt === '.css' && component.oc.minify !== false){
+                fileContent = fs.readFileSync(filePath).toString(),
+                minifiedContent = new CleanCss().minify(fileContent).styles;
+
+                fs.writeFileSync(fileDestination, minifiedContent);
+              } else {
+                fs.copySync(filePath, fileDestination);
+              }
+            });
+            cb(null, 'ok');
+          });
+        }
+      };
+
+      giveMe.sequence(copyDir, _.map(component.oc.files.static, function(staticComponent){
+        return [staticComponent, path.join(componentPath, staticComponent)];
+      }), function(errors, dirs){
+        if(errors){
+          return callback(_.compact(errors)[0]);
+        } else {
+          callback(null, component);
+        }
+      });
     },
     unlink: function(componentName, callback){
       var localConfig = fs.readJsonSync(settings.configFile.src) || {};
