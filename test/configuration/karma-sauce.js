@@ -33,10 +33,10 @@ module.exports = function(config) {
   {
     //config.captureTimeout = 0;
     config.logLevel = config.LOG_DEBUG;
-    //config.transports = ['websocket'];
+    config.transports: ['xhr-polling'],
     config.sauceLabs.build = 'TRAVIS #' + process.env.TRAVIS_BUILD_NUMBER + ' (' + process.env.TRAVIS_BUILD_ID + ')';
     config.sauceLabs.startConnect = true;
-    config.sauceLabs.recordScreenshots = true;
-    //config.sauceLabs.tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
+    //config.sauceLabs.recordScreenshots = true;
+    config.sauceLabs.tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
   }
 };

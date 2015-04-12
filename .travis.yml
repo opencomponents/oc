@@ -3,6 +3,8 @@ node_js:
 - '0.10'
 before_script:
 - npm install -g grunt-cli
+notifications:
+  email: false
 env:
   global:
   - secure: OUooygPgokU2pa5FmVKb5tEQ+NjrUS7vr2al2MYqQDi7VOViOkKiP+1TMKDaPEo3+H3BQlsRd/HxItSCucg5Wy+45pMsTnYgR0Lsp2zmcuHmY67EPOM3B6bdCyPtB5VokrpO3O+uBTtMPAKS/sQq62gKV5Xq/K1t5CQ31EgfCd4=
