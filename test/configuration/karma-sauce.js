@@ -31,12 +31,9 @@ module.exports = function(config) {
 
   if (process.env.TRAVIS)
   {
-    //config.captureTimeout = 0;
-    config.logLevel = config.LOG_DEBUG;
+    //config.logLevel = config.LOG_DEBUG;
     config.transports = ['xhr-polling'];
     config.sauceLabs.build = 'TRAVIS #' + process.env.TRAVIS_BUILD_NUMBER + ' (' + process.env.TRAVIS_BUILD_ID + ')';
-    config.sauceLabs.startConnect = true;
-    //config.sauceLabs.recordScreenshots = true;
     config.sauceLabs.tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
   }
 };
