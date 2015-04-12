@@ -82,7 +82,8 @@ The basic package file `package.json` looks as follows:
 |`oc.files.template`|`object`|represents the data involved with template - view, template engine|
 |`oc.files.template.src`|`string`|the view's filename, by default template.html|
 |`oc.files.template.type`|`string`|the template engine's type, by default `handlebars`|
-|`oc.static`|`array of strings`|An array of directories that contain static resources referenced from the component's markup|
+|`oc.files.static`|`array of strings`|An array of directories that contain static resources referenced from the component's markup|
+|`oc.minify`|`boolean`|Default `true`, will minify static css and js files during publishing|
 
 ## Template
 

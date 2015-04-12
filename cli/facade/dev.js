@@ -26,7 +26,7 @@ module.exports = function(dependencies){
         packaging = true;
         logger.log('Packaging components...'.yellow);
         giveMe.all(local.package, _.map(componentsDirs, function(dir){
-          return [dir];
+          return [dir, false];
         }), function(errors, results){
           if(!!errors){
             _.forEach(errors, function(error, i){
