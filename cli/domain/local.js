@@ -264,10 +264,14 @@ module.exports = function(){
         }
       };
 
+      if(component.oc.files.static.length === 0){
+        return callback(null, component);
+      }
+
       giveMe.sequence(copyDir, _.map(component.oc.files.static, function(staticComponent){
         return [staticComponent, path.join(componentPath, staticComponent)];
       }), function(errors, dirs){
-        if(errors){
+        if(errors && errors.length > 0){
           return callback(_.compact(errors)[0]);
         } else {
           callback(null, component);
