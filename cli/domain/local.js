@@ -276,7 +276,7 @@ module.exports = function(){
 
       delete component.oc.files.client;
       component.oc.version = ocInfo.version;
-      
+
       if(!!component.oc.files.data){
         var dataPath = path.join(componentPath, component.oc.files.data),
             serverContent = fs.readFileSync(dataPath).toString(),
@@ -284,7 +284,10 @@ module.exports = function(){
 
         try {
           wrappedRequires = getLocalDependencies(componentPath, serverContent);
-        } catch(e){
+        } catch(e){ 
+          if(e instanceof SyntaxError){
+            return callback('Error while parsing json');
+          }
           return callback(e);
         }
 
