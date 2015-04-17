@@ -1,7 +1,7 @@
 {
   "name": "oc-client",
   "description": "",
-  "version": "0.14.1",
+  "version": "0.14.2",
   "dependencies": {},
   "repository": "",
   "oc": {
@@ -17,10 +17,10 @@
       ],
       "dataProvider": {
         "type": "node.js",
-        "haskey": "5650391178d095f6097963605cef19b5a77353cd",
+        "haskey": "ffb0e43eaf72f55fa13dc1e7262019c14c3dfc81",
         "src": "server.js"
       }
     },
-    "version": "0.14.1"
+    "version": "0.14.2"
   }
 }
