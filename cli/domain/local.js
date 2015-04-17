@@ -79,7 +79,7 @@ module.exports = function(){
     };
 
     _.forEach(localRequires, function(required){
-      if(_.first(required) === '/' || '.'){
+      if(_.first(required) === '/' || _.first(required) === '.'){
         var requiredPath = path.resolve(componentPath, required),
             ext = path.extname(requiredPath).toLowerCase();
 
