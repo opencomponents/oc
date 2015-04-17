@@ -17,7 +17,9 @@ describe('cli : domain : local', function(){
       mkdirSync: sinon.spy(),
       readJsonSync: readJsonSyncStub,
       readFileSync: readFileSyncStub,
-      existsSync: existsSyncStub
+      existsSync: existsSyncStub,
+      writeFileSync: sinon.spy(),
+      writeJsonSync: sinon.spy()
     };
 
     var mockComponent = {
@@ -25,7 +27,7 @@ describe('cli : domain : local', function(){
       oc: {
         files: {
           template: {
-            type: 'wrongtype',
+            type: 'jade',
             src: ''
           }
         }
