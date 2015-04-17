@@ -4,50 +4,189 @@ var expect = require('chai').expect;
 var injectr = require('injectr');
 var sinon = require('sinon');
 
+var initialise = function(){
+
+  var fsMock = {
+    readdirSync: sinon.spy(),
+    mkdirSync: sinon.spy(),
+    readJsonSync: sinon.stub(),
+    readFileSync: sinon.stub(),
+    existsSync: sinon.stub(),
+    writeFileSync: sinon.spy(),
+    writeJsonSync: sinon.spy()
+  };
+
+  var Local = injectr('../../cli/domain/local.js', { 
+    'fs-extra': fsMock,
+    'uglify-js': {
+      minify: function(code){
+        return {
+          code: code
+        };
+      }
+    }
+  }, { __dirname: '' });
+
+  var local = new Local();
+
+  return { local: local, fs: fsMock };
+};
+
+var executePackaging = function(local, callback){
+  return local.package('.', callback);
+};
+
 describe('cli : domain : local', function(){
 
   describe('when packaging', function(){
 
-    var readJsonSyncStub = sinon.stub(),
-        readFileSyncStub = sinon.stub(),
-        existsSyncStub = sinon.stub();
+    describe('when component is logic-less', function(){
 
-    var fsMock = {
-      readdirSync: sinon.spy(),
-      mkdirSync: sinon.spy(),
-      readJsonSync: readJsonSyncStub,
-      readFileSync: readFileSyncStub,
-      existsSync: existsSyncStub,
-      writeFileSync: sinon.spy(),
-      writeJsonSync: sinon.spy()
-    };
+      var component;
+      beforeEach(function(done){         
 
-    var mockComponent = {
-      name: 'helloworld',
-      oc: {
-        files: {
-          template: {
-            type: 'jade',
-            src: ''
+        var data = initialise();
+
+        component = {
+          name: 'helloworld',
+          oc: {
+            files: {
+              template: {
+                type: 'jade',
+                src: ''
+              }
+            }
           }
-        }
-      }
-    };
+        };
 
-    existsSyncStub.returns(true);
-    readJsonSyncStub.onCall(0).returns(mockComponent);
-    readJsonSyncStub.onCall(1).returns({
-      version: '1.2.3'
+        data.fs.existsSync.returns(true);
+        data.fs.readFileSync.returns('');
+        data.fs.readJsonSync.onCall(0).returns(component);
+        data.fs.readJsonSync.onCall(1).returns({ version: '1.2.3' });
+
+        executePackaging(data.local, done);
+      });
+
+      it('should add version to package.json file', function(){
+        expect(component.oc.version).to.eql('1.2.3');
+      });
     });
 
-    readFileSyncStub.returns('');
-    var Local = injectr('../../cli/domain/local.js', { 'fs-extra' : fsMock }, { __dirname: '' });
+    describe('when component has a server.js logic', function(){
 
-    it('should add version to package.json file', function(done){
-      var local = new Local();
-      local.package('.', function(err, res){
-        expect(mockComponent.oc.version).to.eql('1.2.3');
-        done();
+      describe('when component does not require any json', function(){
+
+        var data,
+            serverjs = 'module.exports.data=function(req,cb){return cb(null, {name:\'John\'}); };';
+        
+        beforeEach(function(done){
+          
+          data = initialise();
+          var component = {
+            name: 'component01',
+            oc: {
+              files: {
+                template: {
+                  type: 'jade',
+                  src: 'template.jade'
+                },
+                data: 'server.js'
+              }
+            }
+          };
+
+          data.fs.existsSync.returns(true);
+          data.fs.readJsonSync.onCall(0).returns(component);
+          data.fs.readJsonSync.onCall(1).returns({});
+          data.fs.readFileSync.onCall(0).returns('div #{name}');
+          data.fs.readFileSync.onCall(1).returns(serverjs);
+
+          executePackaging(data.local, done);
+        });
+
+        it('should save compiled and minified view-model handler', function(){
+          expect(data.fs.writeFileSync.args[1][1]).to.equal(serverjs);
+        });
+      });
+
+      describe('when component requires a json', function(){
+
+        var data, 
+            requiredJson = '{"hello":"world"}',
+            serverjs = 'var data=require(\'./someJson\');module.exports.data=function(req,cb){return cb(null,data); };';
+
+        beforeEach(function(done){
+          data = initialise();
+
+          var component = {
+            name: 'component01',
+            oc: {
+              files: {
+                template: {
+                  type: 'jade',
+                  src: 'template.jade'
+                },
+                data: 'server.js'
+              }
+            }
+          };
+
+          data.fs.existsSync.returns(true);
+          data.fs.readJsonSync.onCall(0).returns(component);
+          data.fs.readJsonSync.onCall(1).returns({});
+          data.fs.readFileSync.onCall(0).returns('div #{name}');
+          data.fs.readFileSync.onCall(1).returns(serverjs);
+          data.fs.readFileSync.onCall(2).returns(requiredJson);
+
+          executePackaging(data.local, done);
+        });
+
+        it('should save compiled and minified view-model handler incapsulating json content', function(){
+          var written = data.fs.writeFileSync.args[1][1];
+
+          expect(written).to.contain(serverjs);
+          expect(written).to.contain(requiredJson);
+        });
+      });
+
+      describe('when component requires a js file', function(){
+
+        var data, 
+            requiredJson = '{"hello":"world"}',
+            serverjs = 'var data=require(\'./hi.js\');module.exports.data=function(req,cb){return cb(null,data); };',
+            error;
+
+        beforeEach(function(done){
+          data = initialise();
+
+          var component = {
+            name: 'component01',
+            oc: {
+              files: {
+                template: {
+                  type: 'jade',
+                  src: 'template.jade'
+                },
+                data: 'server.js'
+              }
+            }
+          };
+
+          data.fs.existsSync.returns(true);
+          data.fs.readJsonSync.onCall(0).returns(component);
+          data.fs.readJsonSync.onCall(1).returns({});
+          data.fs.readFileSync.onCall(0).returns('div #{name}');
+          data.fs.readFileSync.onCall(1).returns(serverjs);
+
+          executePackaging(data.local, function(err, res){
+            error = err;
+            done();
+          });
+        });
+
+        it('should not package component and respond with error', function(){
+          expect(error).to.equal('Requiring local js files is not allowed. Keep it small.');
+        });
       });
     });
   });
