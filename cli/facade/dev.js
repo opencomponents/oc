@@ -31,7 +31,8 @@ module.exports = function(dependencies){
           if(!!errors){
             _.forEach(errors, function(error, i){
               if(!!error){
-                logger.log(format('An error happened when packaging {0}: {1}', componentsDirs[i], error.red));
+                var errorDescription = (error instanceof SyntaxError) ? error.message : error;
+                logger.log(format('An error happened when packaging {0}: {1}', componentsDirs[i], errorDescription.red));
               }
             });
             logger.log('retrying in 10 seconds...'.yellow);
