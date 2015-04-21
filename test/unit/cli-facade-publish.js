@@ -46,7 +46,7 @@ describe('cli : facade : publish', function(){
     describe('when api is valid', function(){
 
       beforeEach(function(){
-        sinon.stub(registry, 'get').yields(null, ['http://www.api.com']);
+        sinon.stub(registry, 'get').yields(null, ['http://www.api.com', 'http://www.api2.com']);
       });
 
       afterEach(function(){
@@ -100,7 +100,7 @@ describe('cli : facade : publish', function(){
           describe('when creating tar.gz archive', function(){
 
             beforeEach(function(){
-              sinon.stub(local, 'compress').yields(null); 
+              sinon.stub(local, 'compress').yields(null);
             });
 
             afterEach(function(){
@@ -128,6 +128,15 @@ describe('cli : facade : publish', function(){
                 registry.putComponent.restore();
 
                 expect(logs[2]).to.include('Publishing -> ');
+              });
+
+              it('should publish to all registries', function(){
+                sinon.stub(registry, 'putComponent').yields('blabla');
+                execute();
+                registry.putComponent.restore();
+
+                expect(logs[2]).to.include('http://www.api.com');
+                expect(logs[4]).to.include('http://www.api2.com');
               });
 
               describe('when error happens', function(){
