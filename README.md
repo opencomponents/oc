@@ -270,5 +270,6 @@ Maintainer:
 * [@matteofigus](https://github.com/matteofigus)
 
 Contributors:
+* [@andyroyle](https://github.com/andyroyle)
 * [@federicomaffei](https://github.com/federicomaffei)
 * [@jankowiakmaria](https://github.com/jankowiakmaria)

@@ -1,7 +1,7 @@
 'use strict';
 
+var async = require('async');
 var colors = require('colors');
-var giveMe = require('give-me');
 var strings = require('../../resources/index');
 var Table = require('cli-table');
 var _ = require('underscore');
@@ -30,7 +30,11 @@ module.exports = function(dependencies){
           return [res.registries[0] + '/' + componentName + '/' + componentVersion]; 
         });
 
-        giveMe.all(registry.getApiComponentByHref, componentUrls, function(callbacks){
+        async.map(componentUrls, function(componentUrl, cb){
+          registry.getApiComponentByHref(componentUrl, function(errInfo, resInfo){
+            cb(null, [errInfo, resInfo]);
+          });
+        }, function(poo, callbacks){
 
           var rows = [],
               margin = 2,

@@ -1,8 +1,8 @@
 'use strict';
 
+var async = require('async');
 var colors = require('colors');
 var format = require('stringformat');
-var giveMe = require('give-me');
 var path = require('path');
 var oc = require('../../index');
 var strings = require('../../resources/index');
@@ -25,25 +25,26 @@ module.exports = function(dependencies){
       if(!packaging){
         packaging = true;
         logger.log('Packaging components...'.yellow);
-        giveMe.all(local.package, _.map(componentsDirs, function(dir){
-          return [dir, false];
-        }), function(errors, results){
+        
+        async.each(componentsDirs, function(dir, cb){
+          local.package(dir, false, cb);
+        }, function(errors){
           if(!!errors){
             _.forEach(errors, function(error, i){
               if(!!error){
                 var errorDescription = (error instanceof SyntaxError) ? error.message : error;
-                logger.log(format('An error happened when packaging {0}: {1}', componentsDirs[i], errorDescription.red));
+                logger.log(format('An error happened while packaging {0}: {1}', componentsDirs[i], errorDescription.red));
               }
             });
             logger.log('retrying in 10 seconds...'.yellow);
-            setTimeout(function() {
+            setTimeout(function(){
               packaging = false;
               packageComponents(componentsDirs);
             }, 10000);
           } else {
 
             logger.log('complete'.green);
-            if(typeof(callback) === 'function'){
+            if(_.isFunction(callback)){
               callback();
             }
 

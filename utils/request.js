@@ -29,7 +29,7 @@ module.exports = function(urlPath, options, callback){
 
         if(response.statusCode === 404){
           callback('not found', null);
-        } else { 
+        } else {
           callback(null, body);
         }
       }

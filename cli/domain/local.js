@@ -1,9 +1,9 @@
 'use strict';
 
+var async = require('async');
 var CleanCss = require('clean-css');
 var format = require('stringformat');
 var fs = require('fs-extra');
-var giveMe = require('give-me');
 var handlebars = require('handlebars');
 var hashBuilder = require('../../utils/hash-builder');
 var jade = require('jade');
@@ -350,15 +350,14 @@ module.exports = function(){
       if(component.oc.files.static.length === 0){
         return callback(null, component);
       }
-
-      giveMe.sequence(copyDir, _.map(component.oc.files.static, function(staticComponent){
-        return [staticComponent, path.join(componentPath, staticComponent)];
-      }), function(errors, dirs){
-        if(errors && errors.length > 0){
-          return callback(_.compact(errors)[0]);
-        } else {
-          callback(null, component);
+      async.eachSeries(component.oc.files.static, function(staticDir, cb){
+        copyDir(staticDir, path.join(componentPath, staticDir), cb);
+      }, function(errors){
+        if(errors){
+          return callback(errors);
         }
+
+        callback(null, component);
       });
     },
     unlink: function(componentName, callback){
