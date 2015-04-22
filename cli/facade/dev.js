@@ -10,7 +10,7 @@ var watch = require('watch');
 var _ = require('underscore');
 
 module.exports = function(dependencies){
-  
+
   var local = dependencies.local,
       logger = dependencies.logger;
 
@@ -27,7 +27,7 @@ module.exports = function(dependencies){
       if(!packaging){
         packaging = true;
         logger.log('Packaging components...'.yellow);
-        
+
         async.eachSeries(componentsDirs, function(dir, cb){
           local.package(dir, false, function(err){
             if(!err){
@@ -108,7 +108,7 @@ module.exports = function(dependencies){
             watch.watchTree(path.resolve(componentsDir), {
               ignoreUnreadableDir: true,
               ignoreDotFiles: false
-            }, function(fileName, currentStat, previousStat){ 
+            }, function(fileName, currentStat, previousStat){
               if(!!currentStat || !!previousStat){
                 if(/node_modules|package.tar.gz|_package/gi.test(fileName) === false){
                   logger.log('Changes detected on file: '.yellow + fileName);

@@ -42,11 +42,11 @@ module.exports = function(){
     var hashView = hashBuilder.fromString(preCompiledView.toString()),
         compiledView = javaScriptizeTemplate(hashView, preCompiledView);
 
-    return { 
-      hash: hashView, 
-      view: uglifyJs.minify(compiledView, {fromString: true}).code 
+    return {
+      hash: hashView,
+      view: uglifyJs.minify(compiledView, {fromString: true}).code
     };
-  };        
+  };
 
   var getLocalDependencies = function(componentPath, serverContent){
 
@@ -101,6 +101,17 @@ module.exports = function(){
     }
 
     return uglifyJs.minify(serverContent, {fromString: true}).code;
+  };
+
+  var missingDependencies = function(requires, component){
+    var missing = [];
+    _.forEach(requires, function(dep){
+      if(!component.dependencies[dep]){
+        missing.push(dep);
+      }
+    });
+
+    return missing;
   };
 
   return _.extend(this, {
@@ -281,11 +292,16 @@ module.exports = function(){
 
         try {
           wrappedRequires = getLocalDependencies(componentPath, serverContent);
-        } catch(e){ 
+        } catch(e){
           if(e instanceof SyntaxError){
             return callback('Error while parsing json');
           }
           return callback(e);
+        }
+
+        var missingDeps = missingDependencies(wrappedRequires.modules, component);
+        if(missingDeps.length > 0){
+          return callback('Missing dependencies from package.json => ' + JSON.stringify(missingDeps));
         }
 
         var sandBoxedJs = getSandBoxedJs(wrappedRequires.files, serverContent);
@@ -297,7 +313,6 @@ module.exports = function(){
           src: 'server.js'
         };
 
-        component.oc.dependencies = wrappedRequires.modules;
         delete component.oc.files.data;
       }
 
@@ -323,7 +338,7 @@ module.exports = function(){
               var fileName = path.basename(filePath),
                   fileExt = path.extname(filePath),
                   fileDestination = path.join(publishPath, staticComponent, fileName),
-                  fileContent, 
+                  fileContent,
                   minifiedContent;
 
               if(minify && fileExt === '.js' && component.oc.minify !== false){
