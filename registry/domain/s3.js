@@ -1,12 +1,12 @@
 'use strict';
 
+var async = require('async');
 var AWS = require('aws-sdk');
 var Cache = require('nice-cache');
 var format = require('stringformat');
 var fs = require('fs-extra');
 var getMimeType = require('../../utils/get-mime-type');
 var getNextYear = require('../../utils/get-next-year');
-var giveMe = require('give-me');
 var nodeDir = require('node-dir');
 var path = require('path');
 var strings = require('../../resources');
@@ -104,13 +104,12 @@ module.exports = function(conf){
       nodeDir.paths(dirInput, function(err, paths) {
         var files = paths.files;
 
-        giveMe.all(_.bind(self.putFile, self), _.map(files, function(file){
+        async.each(files, function(file, cb){
           var relativeFile = file.substr(dirInput.length),
               url = (dirOutput + relativeFile).replace(/\\/, '/');
-          
-          return [file, url, relativeFile === '/server.js'];
-        }), function(errors, callbacks){
 
+          self.putFile(file, url, relativeFile === '/server.js', cb);
+        }, function(errors){
           if(errors){
             return callback(_.compact(errors));
           }

@@ -2,7 +2,6 @@
 
 var colors = require('colors');
 var format = require('stringformat');
-var giveMe = require('give-me');
 var strings = require('../../resources/index');
 var Table = require('cli-table');
 var _ = require('underscore');

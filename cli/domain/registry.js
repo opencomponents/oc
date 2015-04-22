@@ -1,7 +1,7 @@
 'use strict';
 
+var async = require('async');
 var fs = require('fs-extra');
-var giveMe = require('give-me');
 var put = require('../../utils/put');
 var request = require('../../utils/request');
 var settings = require('../../resources/settings');
@@ -85,27 +85,13 @@ module.exports = function(){
           return callback('no components found in oc registry', null);
         }
 
-        var infoRoutes = _.map(components, function(component){
-          return [component + settings.registry.componentInfoPath];
-        });
-
-        giveMe.all(request, infoRoutes, function(callbacks){
-
-          var errors = _.compact(_.map(callbacks, function(callbackItem){
-            return callbackItem[0];
-          }));
-
-          if(errors && errors.length === 0){
-            errors = null;
-          }
-
-          callback(errors, _.map(callbacks, function(callbackItem, i){
-            return _.extend(JSON.parse(callbackItem[1]), {
-              href: components[i]
-            });
-          }));
-        });
-
+        async.map(components, function(component, cb){
+          request(component + settings.registry.componentInfoPath, function(err, res){
+            cb(err, _.extend(JSON.parse(res), {
+              href: component
+            }));
+          });
+        }, callback);
       });
     },
     putComponent: function(options, callback){ 

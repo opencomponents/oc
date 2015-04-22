@@ -1,7 +1,7 @@
 'use strict';
 
+var async = require('async');
 var getUnixUTCTimestamp = require('../../utils/get-unix-utc-timestamp');
-var giveMe = require('give-me');
 var semver = require('semver');
 var _ = require('underscore');
 
@@ -44,6 +44,19 @@ module.exports = function(conf, cdn){
         return cb(err); 
       }
 
+      async.map(components, getVersionsForComponent, function(errors, versions){
+        if(!!errors){ return cb(errors); }
+
+        _.forEach(components, function(component, i){
+          componentsInfo[component] = versions[i];
+        });
+
+        cb(null, {
+          lastEdit: getUnixUTCTimestamp(),
+          components: componentsInfo
+        });
+      });
+/*
       giveMe.all(getVersionsForComponent, _.map(components, function(component){
         return [component];
       }), function(errors, versions){
@@ -58,7 +71,7 @@ module.exports = function(conf, cdn){
           lastEdit: getUnixUTCTimestamp(),
           components: componentsInfo
         });
-      });
+      });*/
     });
   };
 
@@ -110,19 +123,21 @@ module.exports = function(conf, cdn){
     load: function(eventsHandler, callback){
       _eventsHandler = eventsHandler;
 
-      giveMe.all([getFromJson, getFromDirectories], function(errors, components){
-        if(!!errors && !!errors[1]){
-          return returnError('components_list_get', errors[1], callback);
-        } else if((!!errors && !!errors[0]) || !_.isEqual(components[0].components, components[1].components)){ 
-          saveData(components[1], function(saveErr, saveResult){
-            if(!!saveErr){
-              return returnError('components_list_save', saveErr, callback);
-            }
-            cacheDataAndStartRefresh(components[1], callback);
-          });
-        } else {
-          cacheDataAndStartRefresh(components[0], callback);
-        }
+      getFromJson(function(jsonErr, jsonComponents){
+        getFromDirectories(function(dirErr, dirComponents){
+          if(!!dirErr){
+            return returnError('components_list_get', dirErr, callback);
+          } else if(jsonErr || !_.isEqual(dirComponents.components, jsonComponents.components)){
+            saveData(dirComponents, function(saveErr, saveResult){
+              if(!!saveErr){
+                return returnError('components_list_save', saveErr, callback);
+              }
+              cacheDataAndStartRefresh(dirComponents, callback);
+            });
+          } else {
+            cacheDataAndStartRefresh(jsonComponents, callback);
+          }
+        });
       });
     },
     refresh: function(callback){

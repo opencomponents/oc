@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "accept-language-parser": "1.0.2",
-    "async": "^0.9.0",
+    "async": "0.9.0",
     "aws-sdk": "2.1.20",
     "clean-css": "3.1.9",
     "cli-table": "0.3.1",
@@ -56,7 +56,6 @@
     "express": "3.18.3",
     "form-data": "0.1.4",
     "fs-extra": "0.12.0",
-    "give-me": "0.1.0",
     "handlebars": "3.0.1",
     "jade": "1.9.1",
     "multer": "0.1.4",
