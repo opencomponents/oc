@@ -56,22 +56,6 @@ module.exports = function(conf, cdn){
           components: componentsInfo
         });
       });
-/*
-      giveMe.all(getVersionsForComponent, _.map(components, function(component){
-        return [component];
-      }), function(errors, versions){
-
-        if(!!errors){ return cb(errors); }
-
-        _.forEach(components, function(component, i){
-          componentsInfo[component] = versions[i];
-        });
-
-        cb(null, {
-          lastEdit: getUnixUTCTimestamp(),
-          components: componentsInfo
-        });
-      });*/
     });
   };
 
