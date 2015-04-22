@@ -82,7 +82,11 @@ module.exports = function(dependencies){
         var dependencies = {};
 
         _.forEach(local.getLocalNpmModules(componentsDir), function(npmModule){
-          dependencies[npmModule] = require(path.resolve('node_modules/', npmModule));
+          try {
+            dependencies[npmModule] = require(path.resolve('node_modules/', npmModule));
+          } catch (exception) {
+            logger.log('Error loading module: ' + npmModule + ' => ' + exception);
+          }
         });
 
         var registry = new oc.Registry(_.extend(conf, { dependencies: dependencies }));
