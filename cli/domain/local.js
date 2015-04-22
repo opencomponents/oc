@@ -297,6 +297,7 @@ module.exports = function(){
           src: 'server.js'
         };
 
+        component.oc.dependencies = wrappedRequires.modules;
         delete component.oc.files.data;
       }
 
