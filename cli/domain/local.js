@@ -50,50 +50,47 @@ module.exports = function(){
 
   var getLocalDependencies = function(componentPath, serverContent){
 
-    var localRequires = [],
-        wrappedRequires = {};
-    
-    var requireRecorder = function(name){
-      if(!_.contains(localRequires, name)){
-        localRequires.push(name);
+    var requires = {
+          files: {},
+          modules: []
+        };
+
+    var detective = require('detective');
+    var localRequires = detective(serverContent);
+
+    var tryEncapsulating = function(required){
+      var requiredPath = path.resolve(componentPath, required),
+          ext = path.extname(requiredPath).toLowerCase();
+
+      if(ext === ''){
+        requiredPath += '.json';
       }
+
+      if(ext !== '.json' && ext !== ''){
+        throw 'Requiring local js files is not allowed. Keep it small.';
+      }
+
+      if(!fs.existsSync(requiredPath)){
+        throw requiredPath + ' not found. Only json files are require-able.';
+      }
+
+      var content = fs.readFileSync(requiredPath).toString();
+      return JSON.parse(content);
     };
 
-    var context = { 
-      require: requireRecorder, 
-      module: { exports: {} },
-      console: { log: _.noop }
-    };
-
-    vm.runInNewContext(serverContent, context);
-
-    var tryEncapsulating = function(requireAlias, filePath){
-      if(!wrappedRequires[requireAlias]){
-        if(fs.existsSync(filePath)){
-          var content = fs.readFileSync(filePath).toString();
-          wrappedRequires[requireAlias] = JSON.parse(content);
-        } else {
-          throw filePath + ' not found. Only json files are require-able.';
-        }
-      }
+    var isLocalFile = function(f){
+      return _.first(f) === '/' || _.first(f) === '.';
     };
 
     _.forEach(localRequires, function(required){
-      if(_.first(required) === '/' || _.first(required) === '.'){
-        var requiredPath = path.resolve(componentPath, required),
-            ext = path.extname(requiredPath).toLowerCase();
-
-        if(ext === '.json'){
-          tryEncapsulating(required, requiredPath);
-        } else if(ext === ''){
-          tryEncapsulating(required, requiredPath + '.json');
-        } else {
-          throw 'Requiring local js files is not allowed. Keep it small.';
-        }
+      if(isLocalFile(required)) {
+        requires.files[required] = tryEncapsulating(required);
+      } else {
+        requires.modules.push(required);
       }
     });
 
-    return wrappedRequires;
+    return requires;
   };
 
   var getSandBoxedJs = function(wrappedRequires, serverContent){
@@ -291,7 +288,7 @@ module.exports = function(){
           return callback(e);
         }
 
-        var sandBoxedJs = getSandBoxedJs(wrappedRequires, serverContent);
+        var sandBoxedJs = getSandBoxedJs(wrappedRequires.files, serverContent);
         fs.writeFileSync(path.join(publishPath, 'server.js'), sandBoxedJs);
 
         component.oc.files.dataProvider = {

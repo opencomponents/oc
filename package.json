@@ -53,6 +53,7 @@
     "clean-css": "3.1.9",
     "cli-table": "0.3.1",
     "colors": "1.0.3",
+    "detective": "^4.0.0",
     "express": "3.18.3",
     "form-data": "0.1.4",
     "fs-extra": "0.12.0",
