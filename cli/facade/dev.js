@@ -22,20 +22,23 @@ module.exports = function(dependencies){
         errors = strings.errors.cli;
 
     var packageComponents = function(componentsDirs, callback){
+      var i = 0;
+
       if(!packaging){
         packaging = true;
         logger.log('Packaging components...'.yellow);
         
-        async.each(componentsDirs, function(dir, cb){
-          local.package(dir, false, cb);
-        }, function(errors){
-          if(!!errors){
-            _.forEach(errors, function(error, i){
-              if(!!error){
-                var errorDescription = (error instanceof SyntaxError) ? error.message : error;
-                logger.log(format('An error happened while packaging {0}: {1}', componentsDirs[i], errorDescription.red));
-              }
-            });
+        async.eachSeries(componentsDirs, function(dir, cb){
+          local.package(dir, false, function(err){
+            if(!err){
+              i++;
+            }
+            cb(err); 
+          });
+        }, function(error){
+          if(!!error){
+            var errorDescription = (error instanceof SyntaxError) ? error.message : error;
+            logger.log(format('An error happened while packaging {0}: {1}', componentsDirs[i], errorDescription.red));
             logger.log('retrying in 10 seconds...'.yellow);
             setTimeout(function(){
               packaging = false;
