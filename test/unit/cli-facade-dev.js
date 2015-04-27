@@ -10,6 +10,7 @@ describe('cli : facade : dev', function(){
   var DevFacade = require('../../cli/facade/dev'),
       Local = require('../../cli/domain/local'),
       local = new Local(),
+      npm = require('npm'),
       devFacade = new DevFacade({ local: local, logger: consoleMock }),
       logs;
 
@@ -24,11 +25,13 @@ describe('cli : facade : dev', function(){
     describe('when the directory is not found', function(){
 
       beforeEach(function(){
+        sinon.stub(npm, 'load').yields(undefined);
         sinon.stub(local, 'getComponentsByDir').yields('path is not valid!');
         execute();
       });
 
       afterEach(function(){
+        npm.load.restore();
         local.getComponentsByDir.restore();
       });
 
@@ -40,11 +43,13 @@ describe('cli : facade : dev', function(){
     describe('when the directory does not contain any valid component', function(){
 
       beforeEach(function(){
+        sinon.stub(npm, 'load').yields(undefined);
         sinon.stub(local, 'getComponentsByDir').yields(null, []);
         execute();
       });
 
       afterEach(function(){
+        npm.load.restore();
         local.getComponentsByDir.restore();
       });
 

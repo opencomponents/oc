@@ -17,6 +17,10 @@ module.exports = function(dependencies){
 
     return function(opts){
       npm.load({}, function(npmEr){
+        if(npmEr){
+          throw npmEr;
+        }
+
       var componentsDir = opts.dirName,
           port = opts.port || 3000,
           packaging = false,
@@ -64,10 +68,10 @@ module.exports = function(dependencies){
         } catch(er){
           logger.log(format('An error happened: {0}'.red, er));
         }
-      }
+      };
 
       var packageComponents = function(componentsDirs, callback){
-      var i = 0;
+        var i = 0;
 
         if(!packaging){
           packaging = true;
@@ -78,12 +82,12 @@ module.exports = function(dependencies){
             if(!err){
               i++;
             }
-            cb(err); 
+            cb(err);
           });
         }, function(error){
           if(!!error){
             var errorDescription = (error instanceof SyntaxError) ? error.message : error;
-            logger.log(format('An error happened while packaging {0}: {1}', componentsDirs[i], errorDescription.red));
+              logger.log(format('An error happened while packaging {0}: {1}', componentsDirs[i], errorDescription.red));
               logger.log('retrying in 10 seconds...'.yellow);
               setTimeout(function(){
                 packaging = false;
