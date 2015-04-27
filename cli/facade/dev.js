@@ -36,6 +36,36 @@ module.exports = function(dependencies){
         return deps;
       };
 
+      var installMissingDeps = function(missing, cb){
+        logger.log(('Trying to install missing modules: ' + JSON.stringify(missing)).yellow);
+        logger.log('If you aren\'t connected to the internet, or npm isn\'t configured then this step will fail');
+        npm.commands.install(missing, function(err, data){
+          if(err){
+            logger.log(err.toString().red);
+            throw err;
+          }
+          cb();
+        });
+      };
+
+      var watchForChanges = function(components){
+        try {
+          watch.watchTree(path.resolve(componentsDir), {
+            ignoreUnreadableDir: true,
+            ignoreDotFiles: false
+          }, function(fileName, currentStat, previousStat){
+            if(!!currentStat || !!previousStat){
+              if(/node_modules|package.tar.gz|_package/gi.test(fileName) === false){
+                logger.log('Changes detected on file: '.yellow + fileName);
+                packageComponents(components);
+              }
+            }
+          });
+        } catch(er){
+          logger.log(format('An error happened: {0}'.red, er));
+        }
+      }
+
       var packageComponents = function(componentsDirs, callback){
       var i = 0;
 
@@ -98,25 +128,21 @@ module.exports = function(dependencies){
           logger.log('Starting dev registry on localhost:' + port);
 
           var dependencies = getDepsFromComponents(components);
-          async.each(Object.keys(dependencies), function(npmModule, done){
+          var missing = [];
+          async.eachSeries(Object.keys(dependencies), function(npmModule, done){
             try {
               dependencies[npmModule] = require(path.resolve('node_modules/', npmModule));
-              return done();
             } catch (exception) {
               logger.log(('Error loading module: ' + npmModule + ' => ' + exception).red);
-              logger.log(('Trying to install missing module: ' + npmModule).yellow);
-              logger.log('If you aren\'t connected to the internet, or npm isn\'t configured then this step will fail');
-              npm.commands.install([npmModule, '--save'], function(err, data){
-                if(err){
-                  logger.log(err.toString().red);
-                }
-
-                return done(err);
-              });
+              missing.push(npmModule);
             }
+            return done();
           }, function(err){
-            if(err){
-              throw err;
+
+            if(missing.length > 0){
+              installMissingDeps(missing, function(){
+                packageComponents(components);
+              });
             }
 
             var registry = new oc.Registry(_.extend(conf, { dependencies: dependencies }));
@@ -131,24 +157,9 @@ module.exports = function(dependencies){
                 }
               }
 
-              try {
-                watch.watchTree(path.resolve(componentsDir), {
-                  ignoreUnreadableDir: true,
-                  ignoreDotFiles: false
-                }, function(fileName, currentStat, previousStat){
-                  if(!!currentStat || !!previousStat){
-                    if(/node_modules|package.tar.gz|_package/gi.test(fileName) === false){
-                      logger.log('Changes detected on file: '.yellow + fileName);
-                      packageComponents(components);
-                    }
-                  }
-                });
-              } catch(er){
-                logger.log(format('An error happened: {0}'.red, er));
-              }
+              watchForChanges(components);
             });
           });
-
         });
       });
     });
