@@ -63,6 +63,7 @@
     "nice-cache": "0.0.5",
     "node-dir": "0.1.5",
     "nomnom": "1.8.1",
+    "npm": "^2.8.4",
     "opn": "1.0.1",
     "performance-now": "0.2.0",
     "read": "1.0.5",
