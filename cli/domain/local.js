@@ -2,6 +2,7 @@
 
 var async = require('async');
 var CleanCss = require('clean-css');
+var detective = require('detective');
 var format = require('stringformat');
 var fs = require('fs-extra');
 var handlebars = require('handlebars');
@@ -14,7 +15,6 @@ var settings = require('../../resources/settings');
 var Targz = require('tar.gz');
 var uglifyJs = require('uglify-js');
 var validator = require('../../registry/domain/validator');
-var vm = require('vm');
 var _ = require('underscore');
 
 module.exports = function(){
@@ -51,11 +51,10 @@ module.exports = function(){
   var getLocalDependencies = function(componentPath, serverContent){
 
     var requires = {
-          files: {},
-          modules: []
-        };
+      files: {},
+      modules: []
+    };
 
-    var detective = require('detective');
     var localRequires = detective(serverContent);
 
     var tryEncapsulating = function(required){
@@ -64,9 +63,7 @@ module.exports = function(){
 
       if(ext === ''){
         requiredPath += '.json';
-      }
-
-      if(ext !== '.json' && ext !== ''){
+      } else if(ext !== '.json'){
         throw 'Requiring local js files is not allowed. Keep it small.';
       }
 
@@ -104,14 +101,9 @@ module.exports = function(){
   };
 
   var missingDependencies = function(requires, component){
-    var missing = [];
-    _.forEach(requires, function(dep){
-      if(!component.dependencies[dep]){
-        missing.push(dep);
-      }
+    return _.filter(requires, function(dep){ 
+      return !_.contains(_.keys(component.dependencies), dep);
     });
-
-    return missing;
   };
 
   return _.extend(this, {
@@ -127,7 +119,7 @@ module.exports = function(){
         var components = fs.readdirSync(componentsDir).filter(function(file){
 
           var filePath = path.resolve(componentsDir, file),
-            isDir = fs.lstatSync(filePath).isDirectory();
+              isDir = fs.lstatSync(filePath).isDirectory();
 
           return isDir ? (fs.readdirSync(filePath).filter(function(file){
             return file === 'package.json';

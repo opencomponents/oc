@@ -3,23 +3,23 @@
 var async = require('async');
 var colors = require('colors');
 var format = require('stringformat');
-var path = require('path');
+var fs = require('fs-extra');
+var npm = require('npm');
 var oc = require('../../index');
+var path = require('path');
 var strings = require('../../resources/index');
 var watch = require('watch');
 var _ = require('underscore');
-var fs = require('fs-extra');
-var npm = require('npm');
 
 module.exports = function(dependencies){
-    var local = dependencies.local,
-        logger = dependencies.logger;
+  var local = dependencies.local,
+      logger = dependencies.logger;
 
-    return function(opts){
-      npm.load({}, function(npmEr){
-        if(npmEr){
-          throw npmEr;
-        }
+  return function(opts){
+    npm.load({}, function(npmEr){
+      if(npmEr){
+        throw npmEr;
+      }
 
       var componentsDir = opts.dirName,
           port = opts.port || 3000,
@@ -30,7 +30,7 @@ module.exports = function(dependencies){
         var deps = {};
         _.forEach(components, function(c){
           var pkg = fs.readJsonSync(path.join(c, 'package.json'));
-          _.forEach(Object.keys(pkg.dependencies), function(d){
+          _.forEach(_.keys(pkg.dependencies), function(d){
             if(!deps[d]){
               deps[d] = {};
             }
@@ -94,7 +94,6 @@ module.exports = function(dependencies){
                 packageComponents(componentsDirs);
               }, 10000);
             } else {
-
               logger.log('complete'.green);
               if(_.isFunction(callback)){
                 callback();
@@ -119,21 +118,20 @@ module.exports = function(dependencies){
         }
 
         packageComponents(components, function(){
+          logger.log('Starting dev registry on localhost:' + port);
+          
           var conf = {
             local: true,
             path: path.resolve(componentsDir),
             port: port,
             baseUrl: format('http://localhost:{0}/', port),
-            env: {
-              name: 'local'
-            }
+            env: { name: 'local' }
           };
 
-          logger.log('Starting dev registry on localhost:' + port);
+          var dependencies = getDepsFromComponents(components),
+              missing = [];
 
-          var dependencies = getDepsFromComponents(components);
-          var missing = [];
-          async.eachSeries(Object.keys(dependencies), function(npmModule, done){
+          async.eachSeries(_.keys(dependencies), function(npmModule, done){
             try {
               dependencies[npmModule] = require(path.resolve('node_modules/', npmModule));
             } catch (exception) {
