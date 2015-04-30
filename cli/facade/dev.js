@@ -17,9 +17,7 @@ module.exports = function(dependencies){
 
   return function(opts){
     npm.load({}, function(npmEr){
-      if(npmEr){
-        throw npmEr;
-      }
+      if(npmEr){ throw npmEr; }
 
       var componentsDir = opts.dirName,
           port = opts.port || 3000,
@@ -147,34 +145,31 @@ module.exports = function(dependencies){
           return logger.log(format(errors.DEV_FAIL, errors.COMPONENTS_NOT_FOUND).red);
         }
 
-        packageComponents(components, function(){
-          loadDependencies(components, function(dependencies){
-            packageComponents(components, function(){
+        loadDependencies(components, function(dependencies){
+          packageComponents(components, function(){
+            logger.log('Starting dev registry on localhost:' + port);
+            
+            var conf = {
+              local: true,
+              path: path.resolve(componentsDir),
+              port: port,
+              baseUrl: format('http://localhost:{0}/', port),
+              env: { name: 'local' }
+            };
+            
+            var registry = new oc.Registry(_.extend(conf, { dependencies: dependencies }));
 
-              logger.log('Starting dev registry on localhost:' + port);
-              
-              var conf = {
-                local: true,
-                path: path.resolve(componentsDir),
-                port: port,
-                baseUrl: format('http://localhost:{0}/', port),
-                env: { name: 'local' }
-              };
-              
-              var registry = new oc.Registry(_.extend(conf, { dependencies: dependencies }));
+            registry.start(function(err, app){
 
-              registry.start(function(err, app){
-
-                if(err){
-                  if(err.code === 'EADDRINUSE'){
-                    return logger.log(format('The port {0} is already in use. Specify the optional port parameter to use another port.', port).red);
-                  } else {
-                    logger.log(err.red);
-                  }
+              if(err){
+                if(err.code === 'EADDRINUSE'){
+                  return logger.log(format('The port {0} is already in use. Specify the optional port parameter to use another port.', port).red);
+                } else {
+                  logger.log(err.red);
                 }
+              }
 
-                watchForChanges(components);
-              });
+              watchForChanges(components);
             });
           });
         });
