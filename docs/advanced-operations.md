@@ -143,16 +143,17 @@ By default, `require` is not allowed on a `server.js`. This helps to keep compon
 
 ## Local development
 
-When in a directory of components, install the dependency using npm and then start the watcher:
-```sh
-ls
-# my-component another-component
-npm install --prefix . underscore
-ls
-# my-component another-component node_modules
-oc dev . 3030
+When in a directory of components, list the dependency in the component's `package.json` and then start the watcher:
+```js
+...
+{
+  "dependencies": {
+    "underscore": ""
+  }
+}
+...
 ```
-Now it will be possible to `require('underscore')` inside a `server.js`.
+As soon as the watcher starts the dependency will be installed and it will be possible to `require('underscore')` inside a `server.js`.
 
 ## Publishing
 
