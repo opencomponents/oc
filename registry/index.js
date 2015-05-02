@@ -54,6 +54,26 @@ module.exports = function(options){
       res.conf = options;
       next();
     });
+    
+    app.use(express.logger(function(tokens, req, res){
+
+      var data = {
+        duration: tokens['response-time'](req, res)*1000,
+        headers: req.headers,
+        method: req.method,
+        path: req.path,
+        relativeUrl: req.originalUrl,
+        query: req.query,
+        url: req.protocol + '://' + req.get('host') + req.originalUrl,
+        statusCode: res.statusCode
+      };
+
+      if(!!res.errorDetails){
+        data.errorDetails = res.errorDetails;
+      }
+
+      eventsHandler.fire('request', data);
+    }));
 
     app.use(express.json());
     app.use(express.urlencoded());
@@ -79,7 +99,6 @@ module.exports = function(options){
     }
 
     var app = this.app;
-    eventsHandler.bindExpressMiddleware(app);
 
     // routes
     app.use(app.router);
@@ -111,6 +130,8 @@ module.exports = function(options){
         app[route.method.toLowerCase()](route.route, route.handler);
       });
     }
+
+    app.set('etag', 'strong');
 
     repository.init(eventsHandler, function(err, componentsInfo){
       appStart(repository, options, function(err, res){
