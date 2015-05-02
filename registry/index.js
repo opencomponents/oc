@@ -65,8 +65,8 @@ module.exports = function(options){
       app.use(express.logger('dev'));
     }
 
-    if('development' === app.get('env')){
-      app.use(express.errorHandler());
+    if(options.local){
+      app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
     }
 
     self.app = app;
@@ -138,6 +138,7 @@ module.exports = function(options){
         });
 
         server.on('error', function(e){
+          eventsHandler.fire('error', { code: 'EXPRESS_ERROR', message: e });
           callback(e);
         });
       });
