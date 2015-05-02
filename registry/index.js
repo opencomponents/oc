@@ -11,6 +11,7 @@ var format = require('stringformat');
 var http = require('http');
 var sanitiseOptions = require('./domain/options-sanitiser');
 var Repository = require('./domain/repository');
+var requestHandler = require('./middleware/request-handler');
 var Router = require('./router');
 var settings = require('../resources/settings');
 var validator = require('./domain/validator');
@@ -55,26 +56,7 @@ module.exports = function(options){
       next();
     });
     
-    app.use(express.logger(function(tokens, req, res){
-
-      var data = {
-        duration: tokens['response-time'](req, res)*1000,
-        headers: req.headers,
-        method: req.method,
-        path: req.path,
-        relativeUrl: req.originalUrl,
-        query: req.query,
-        url: req.protocol + '://' + req.get('host') + req.originalUrl,
-        statusCode: res.statusCode
-      };
-
-      if(!!res.errorDetails){
-        data.errorDetails = res.errorDetails;
-      }
-
-      eventsHandler.fire('request', data);
-    }));
-
+    app.use(requestHandler(eventsHandler));
     app.use(express.json());
     app.use(express.urlencoded());
     app.use(cors);
