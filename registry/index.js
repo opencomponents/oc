@@ -11,6 +11,7 @@ var format = require('stringformat');
 var http = require('http');
 var sanitiseOptions = require('./domain/options-sanitiser');
 var Repository = require('./domain/repository');
+var requestHandler = require('./middleware/request-handler');
 var Router = require('./router');
 var settings = require('../resources/settings');
 var validator = require('./domain/validator');
@@ -54,7 +55,8 @@ module.exports = function(options){
       res.conf = options;
       next();
     });
-
+    
+    app.use(requestHandler(eventsHandler));
     app.use(express.json());
     app.use(express.urlencoded());
     app.use(cors);
@@ -79,7 +81,6 @@ module.exports = function(options){
     }
 
     var app = this.app;
-    eventsHandler.bindExpressMiddleware(app);
 
     // routes
     app.use(app.router);
@@ -111,6 +112,8 @@ module.exports = function(options){
         app[route.method.toLowerCase()](route.route, route.handler);
       });
     }
+
+    app.set('etag', 'strong');
 
     repository.init(eventsHandler, function(err, componentsInfo){
       appStart(repository, options, function(err, res){
