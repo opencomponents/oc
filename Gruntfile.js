@@ -28,9 +28,6 @@ module.exports = function(grunt) {
   // default task
   grunt.registerTask('default', ['test', 'build']);
 
-  // Setup the precommit hook
-  grunt.registerTask('hooks', ['githooks:all']);
-
   // test
   grunt.registerTask('sauce', ['karma:sauce-linux', 'karma:sauce-osx', 'karma:sauce-windows']);
   grunt.registerTask('test-local', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance', 'karma:local']);
