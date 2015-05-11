@@ -1,5 +1,5 @@
 'use strict';
 
-module.exports.data = function(req, callback){
-  callback(null, { staticPath: req.staticPath });
+module.exports.data = function(context, callback){
+  callback(null, { staticPath: context.staticPath });
 };
