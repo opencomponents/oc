@@ -263,7 +263,9 @@ module.exports = function(){
       try {
         compiled = compileView(template, component.oc.files.template.type);
       } catch(e){
-        return callback(e);
+        return callback({
+          message: format('{0} compilation failed - {1}', component.oc.files.template.src, e.toString())
+        });
       }
 
       fs.writeFileSync(path.join(publishPath, 'template.js'), compiled.view);

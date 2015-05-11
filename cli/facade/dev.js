@@ -84,7 +84,7 @@ module.exports = function(dependencies){
             });
           }, function(error){
             if(!!error){
-              var errorDescription = (error instanceof SyntaxError) ? error.message : error;
+              var errorDescription = ((error instanceof SyntaxError) || !!error.message) ? error.message : error;
               logger.log(format('An error happened while packaging {0}: {1}', componentsDirs[i], errorDescription.red));
               logger.log('retrying in 10 seconds...'.yellow);
               setTimeout(function(){
