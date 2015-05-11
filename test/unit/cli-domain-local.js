@@ -78,7 +78,7 @@ describe('cli : domain : local', function(){
       describe('when component does not require any json', function(){
 
         var data,
-            serverjs = 'module.exports.data=function(req,cb){return cb(null, {name:\'John\'}); };';
+            serverjs = 'module.exports.data=function(context,cb){return cb(null, {name:\'John\'}); };';
 
         beforeEach(function(done){
 
@@ -115,7 +115,7 @@ describe('cli : domain : local', function(){
 
         var data,
             requiredJson = '{"hello":"world"}',
-            serverjs = 'var data=require(\'./someJson\');module.exports.data=function(req,cb){return cb(null,data); };';
+            serverjs = 'var data=require(\'./someJson\');module.exports.data=function(context,cb){return cb(null,data); };';
 
         beforeEach(function(done){
           data = initialise();
@@ -156,7 +156,7 @@ describe('cli : domain : local', function(){
 
         var data,
             error,
-            serverjs = 'var data=require(\'request\');module.exports.data=function(req,cb){return cb(null,data); };';
+            serverjs = 'var data=require(\'request\');module.exports.data=function(context,cb){return cb(null,data); };';
 
         beforeEach(function(done){
           data = initialise();
@@ -196,7 +196,7 @@ describe('cli : domain : local', function(){
 
         var data,
             requiredJson = '{"hello":"world"}',
-            serverjs = 'var data=require(\'./hi.js\');module.exports.data=function(req,cb){return cb(null,data); };',
+            serverjs = 'var data=require(\'./hi.js\');module.exports.data=function(context,cb){return cb(null,data); };',
             error;
 
         beforeEach(function(done){
