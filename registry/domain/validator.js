@@ -142,8 +142,8 @@ module.exports = {
 
     var dependencies = conf.dependencies;
 
-    if(!!dependencies && (!_.isObject(dependencies)) || _.isArray(dependencies)){
-      return returnError(strings.errors.registry.CONFIGURATION_DEPENDENCIES_MUST_BE_OBJECT);
+    if(!!dependencies && !_.isArray(dependencies)){
+      return returnError(strings.errors.registry.CONFIGURATION_DEPENDENCIES_MUST_BE_ARRAY);
     }
 
     var routes = conf.routes;

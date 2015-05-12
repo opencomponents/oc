@@ -25,12 +25,12 @@ module.exports = function(dependencies){
           errors = strings.errors.cli;
 
       var getDepsFromComponents = function(components){
-        var deps = {};
+        var deps = [];
         _.forEach(components, function(c){
           var pkg = fs.readJsonSync(path.join(c, 'package.json'));
           _.forEach(_.keys(pkg.dependencies), function(d){
-            if(!deps[d]){
-              deps[d] = {};
+            if(!_.contains(deps, d)){
+              deps.push(d);
             }
           });
         });
@@ -108,7 +108,7 @@ module.exports = function(dependencies){
         var dependencies = getDepsFromComponents(components),
             missing = [];
 
-        async.eachSeries(_.keys(dependencies), function(npmModule, done){
+        async.eachSeries(dependencies, function(npmModule, done){
           var pathToModule = path.resolve('node_modules/', npmModule);
 
           try {
@@ -116,7 +116,7 @@ module.exports = function(dependencies){
               delete require.cache[pathToModule];
             }
 
-            dependencies[npmModule] = require(pathToModule);
+            var required = require(pathToModule);
           } catch (exception) {
             logger.log(('Error loading module: ' + npmModule + ' => ' + exception).red);
             missing.push(npmModule);
@@ -151,13 +151,15 @@ module.exports = function(dependencies){
             
             var conf = {
               local: true,
+              verbosity: 1,
               path: path.resolve(componentsDir),
               port: port,
               baseUrl: format('http://localhost:{0}/', port),
-              env: { name: 'local' }
+              env: { name: 'local' },
+              dependencies: dependencies
             };
             
-            var registry = new oc.Registry(_.extend(conf, { dependencies: dependencies }));
+            var registry = new oc.Registry(conf);
 
             registry.start(function(err, app){
 

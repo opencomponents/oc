@@ -12,7 +12,7 @@ module.exports = {
       COMPONENT_VERSION_NOT_VALID: 'Version "{0}" is not a valid semantic version.',
       COMPONENT_VERSION_NOT_VALID_CODE: 'version_not_valid',
        
-      CONFIGURATION_DEPENDENCIES_MUST_BE_OBJECT: 'Registry configuration is not valid: dependencies must be an object',
+      CONFIGURATION_DEPENDENCIES_MUST_BE_ARRAY: 'Registry configuration is not valid: dependencies must be an array',
       CONFIGURATION_EMPTY: 'Registry configuration is empty',
       CONFIGURATION_ONREQUEST_MUST_BE_FUNCTION: 'Registry configuration is not valid: registry.on\'s callback must be a function',
       CONFIGURATION_PUBLISH_AUTH_CREDENTIALS_MISSING: 'Registry configuration is not valid: basic auth requires username and password',

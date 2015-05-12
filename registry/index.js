@@ -26,12 +26,11 @@ module.exports = function(options){
       withLogging = !_.has(options, 'verbosity') || options.verbosity > 0,
       validationResult = validator.registryConfiguration(options);
 
-  options = sanitiseOptions(options);
-  
   if(!validationResult.isValid){
     throw validationResult.message;
   }
 
+  options = sanitiseOptions(options);
   this.on = eventsHandler.on;
 
   this.close = function(callback){
