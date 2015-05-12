@@ -7,7 +7,7 @@ var format = require('stringformat');
 var RequireWrapper = require('../domain/require-wrapper');
 var sanitiser = require('../domain/sanitiser');
 var urlBuilder = require('../domain/url-builder');
-var validator = require('../domain/validator');
+var validator = require('../domain/validators');
 var vm = require('vm');
 var _ = require('underscore');
 

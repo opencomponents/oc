@@ -14,7 +14,7 @@ var Repository = require('./domain/repository');
 var requestHandler = require('./middleware/request-handler');
 var Router = require('./router');
 var settings = require('../resources/settings');
-var validator = require('./domain/validator');
+var validator = require('./domain/validators');
 var _ = require('underscore');
 
 module.exports = function(options){
