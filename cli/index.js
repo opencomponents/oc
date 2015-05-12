@@ -8,7 +8,12 @@ var _ = require('underscore');
 
 var dependencies = {
   local: new Local(),
-  logger: console,
+  logger: {
+    log: console.log,
+    logNoNewLine: function(msg){
+      return process.stdout.write(msg.toString());
+    }
+  },
   registry: new Registry()
 };
 

@@ -4,7 +4,7 @@ var format = require('stringformat');
 var path = require('path');
 var RequireWrapper = require('../domain/require-wrapper');
 var Targz = require('tar.gz');
-var validator = require('../domain/validator');
+var validator = require('../domain/validators');
 var _ = require('underscore');
 
 module.exports = function(repository){
