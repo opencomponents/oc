@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 
 describe('registry : domain : validator', function(){
 
-  var validator = require('../../registry/domain/validator');
+  var validator = require('../../registry/domain/validators');
 
   describe('when validating registry configuration', function(){
 
@@ -483,6 +483,14 @@ describe('registry : domain : validator', function(){
       var name = 'hello-world_haha23';
       it('should be valid', function(){
         expect(validate(name)).to.be.true;
+      });
+    });
+
+    describe('when name is reserved', function(){
+
+      var name = '_package';
+      it('should not be valid', function(){
+        expect(validate(name)).to.be.false;
       });
     });
 
