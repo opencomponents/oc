@@ -4,6 +4,7 @@ var cli = require('nomnom');
 var commands = require('./commands');
 var Local = require('./domain/local');
 var Registry = require('./domain/registry');
+var strings = require('../resources');
 var _ = require('underscore');
 
 var dependencies = {
@@ -42,4 +43,4 @@ _.forEach(commands, function(commandsConfiguration, commandsConfigurationName){
   });
 });
 
-cli.parse();
+cli.help(strings.messages.cli.HELP_HINT).parse();

@@ -63,6 +63,7 @@ module.exports = {
       COMPRESSING: 'Compressing -> {0}',
       ENTER_PASSWORD: 'Enter password:',
       ENTER_USERNAME: 'Enter username:',
+      HELP_HINT: 'Hint: Run -h with any command to show the help',
       PACKAGING: 'Packaging -> {0}',
       PREVIEW_STARTED_AT_URL: 'Component\'s preview started at url: {0}',
       PUBLISHED: 'Published -> {0}',
