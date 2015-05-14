@@ -13,9 +13,9 @@ describe('cli : facade : ls', function(){
       lsFacade = new LsFacade({ registry: registry, logger: consoleMock }),
       logs;
 
-  var execute = function(){
+  var execute = function(opts){
     consoleMock.reset();
-    lsFacade();
+    lsFacade(opts);
     logs = consoleMock.get();
   };
 
@@ -32,6 +32,24 @@ describe('cli : facade : ls', function(){
 
     it('should show an error', function(){
       expect(logs[0]).to.equal('oc registries not found. Run "oc registry add <registry href>"'.red);
+    });
+  });
+
+  describe('when registry is passed on command line', function(){
+    
+    beforeEach(function(){
+      sinon.stub(registry, 'get').yields(null, []);
+      sinon.stub(registry, 'getRegistryComponentsByRegistry').yields(null, []);
+      execute({registry: 'http://www.registry.com'});
+    }); 
+
+    afterEach(function(){
+      registry.getRegistryComponentsByRegistry.restore();      
+      registry.get.restore();
+    });
+
+    it('should use the supplied registry', function(){
+      expect(registry.get.called).to.equal(false);
     });
   });
 
