@@ -13,6 +13,7 @@ module.exports = {
       COMPONENT_VERSION_NOT_VALID_CODE: 'version_not_valid',
        
       CONFIGURATION_DEPENDENCIES_MUST_BE_ARRAY: 'Registry configuration is not valid: dependencies must be an array',
+      CONFIGURATION_A_DEPENDENCY_NOT_FOUND: 'Registry configuration is not valid: a dependency is not valid.',
       CONFIGURATION_EMPTY: 'Registry configuration is empty',
       CONFIGURATION_ONREQUEST_MUST_BE_FUNCTION: 'Registry configuration is not valid: registry.on\'s callback must be a function',
       CONFIGURATION_PUBLISH_AUTH_CREDENTIALS_MISSING: 'Registry configuration is not valid: basic auth requires username and password',
@@ -25,11 +26,15 @@ module.exports = {
       LOCAL_PUBLISH_NOT_ALLOWED: 'Components can\'t be published to local repository',
       LOCAL_PUBLISH_NOT_ALLOWED_CODE: 'not_allowed',
 
+      GENERIC_ERROR: 'error!',
+      GENERIC_NOT_FOUND: 'not found!',
+
       MANDATORY_PARAMETER_MISSING: 'Expected mandatory parameters are missing: {0}',
       MANDATORY_PARAMETER_MISSING_CODE: 'missing',
 
       PARAMETER_WRONG_FORMAT: 'Parameters are not correctly formatted: {0}',
-      PARAMETER_WRONG_FORMAT_CODE: 'wrong type'
+      PARAMETER_WRONG_FORMAT_CODE: 'wrong type',
+      PLUGIN_NOT_VALID: 'Plugin {0} is not valid'
     },
     cli: {
       COMPONENT_HREF_NOT_FOUND: 'The specified path is not a valid component\'s url',
@@ -72,6 +77,9 @@ module.exports = {
       REGISTRY_CREDENTIALS_REQUIRED: 'Registry requires credentials.',
       REGISTRY_LIST: 'oc linked registries:',
       REGISTRY_REMOVED: 'oc registry deleted'
+    },
+    registry: {
+      RESOLVING_DEPENDENCIES: 'Resolving dependencies...'
     }
   }
 };

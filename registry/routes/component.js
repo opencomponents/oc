@@ -124,6 +124,7 @@ module.exports = function(conf, repository){
               baseUrl: conf.baseUrl,
               env: conf.env,
               params: params,
+              plugins: conf.plugins,
               staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', '')
             };
 
