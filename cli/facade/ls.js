@@ -11,7 +11,7 @@ module.exports = function(dependencies){
   var registry = dependencies.registry,
       logger = dependencies.logger;
 
-  function printComponents(err, components) {
+  var printComponents = function (err, components) {
 
     if(err){
       return logger.log(err.red);
@@ -51,7 +51,7 @@ module.exports = function(dependencies){
 
     logger.log(table.toString());
 
-  }
+  };
 
   return function(opts){
 
