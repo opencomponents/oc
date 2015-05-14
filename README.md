@@ -1,4 +1,4 @@
-oc
+![oc](https://raw.github.com/opentable/oc/master/logo.png)
 =============
 
 OpenComponents is a framework to develop and deploy robust and distributed html components.
