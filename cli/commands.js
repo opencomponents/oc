@@ -45,7 +45,14 @@ module.exports = {
       }
     },
 
-    ls: { help: 'Shows the list of the available components for a linked oc registry' },
+    ls: { help: 'Shows the list of the available components for a linked oc registry',
+      options: {
+        registry: {
+          help: 'Specify registry to query',
+          required: false
+        }
+      }
+    },
 
     preview: {
       help: 'Runs a test page consuming a component',
