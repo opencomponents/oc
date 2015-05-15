@@ -137,6 +137,10 @@ module.exports = function(conf, repository){
               return res.json(502, { error: res.errorDetails });
             }
 
+            console.log(res.conf.plugins);
+            console.log(res.conf.local);
+            console.log(component.oc.plugins);
+
             var context = { 
               require: new RequireWrapper(res.conf.dependencies), 
               module: { 
