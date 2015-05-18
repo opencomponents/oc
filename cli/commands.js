@@ -2,7 +2,7 @@
 
 module.exports = {
   oc: {
-    
+
     dev: {
       help: 'Runs a local oc test registry in order to develop and test components',
       options: {
@@ -93,6 +93,6 @@ module.exports = {
     version: {
       help: 'Shows the cli version',
       flag: true
-    },
+    }
   }
 };
