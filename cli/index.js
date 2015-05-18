@@ -15,8 +15,8 @@ var dependencies = {
 
 var complete = omelette('oc <action>');
 
-complete.on('action', function(){
-  this.reply(['dev', 'info', 'init', 'link', 'ls', 'preview', 'publish', 'registry', 'unlink', 'version']);
+complete.on('action', function(fragment, word, line){
+  this.reply(Object.getOwnPropertyNames(commands.oc).sort());
 });
 
 complete.init();
@@ -25,7 +25,7 @@ var setup = function(){
   complete.setupShellInitFile();
 };
 
-cli.option('setupCompletion', {
+cli.option('completion', {
   hidden: true,
   callback: setup,
   flag: true
