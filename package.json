@@ -7,8 +7,7 @@
     "oc": "./oc-cli.js"
   },
   "scripts": {
-    "test": "grunt test",
-    "postinstall": "oc --completion"
+    "test": "grunt test"
   },
   "engines": {
     "node": ">=0.10.35"
