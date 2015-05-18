@@ -3,6 +3,7 @@
 var cli = require('nomnom');
 var commands = require('./commands');
 var Local = require('./domain/local');
+var omelette = require('omelette');
 var Registry = require('./domain/registry');
 var _ = require('underscore');
 
@@ -12,10 +13,28 @@ var dependencies = {
   registry: new Registry()
 };
 
+var complete = omelette('oc <action>');
+
+complete.on('action', function(){
+  this.reply(['dev', 'info', 'init', 'link', 'ls', 'preview', 'publish', 'registry', 'unlink', 'version']);
+});
+
+complete.init();
+
+var setup = function(){
+  complete.setupShellInitFile();
+};
+
+cli.option('setupCompletion', {
+  hidden: true,
+  callback: setup,
+  flag: true
+});
+
 _.forEach(commands, function(commandsConfiguration, commandsConfigurationName){
-  
+
   cli.script(commandsConfigurationName);
-  
+
   _.forEach(commandsConfiguration, function(command, commandName){
 
     var facade = require('./facade/' + commandName)(dependencies),

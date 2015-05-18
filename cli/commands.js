@@ -93,6 +93,6 @@ module.exports = {
     version: {
       help: 'Shows the cli version',
       flag: true
-    }
+    },
   }
 };
