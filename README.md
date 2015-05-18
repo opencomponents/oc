@@ -27,7 +27,7 @@ Front-end tests:
   * [Client-side rendering](#client-side-rendering)
   * [Server-side rendering with client-side failover](#server-side-rendering-with-client-side-failover)
 1. [Install the cli](#install-the-cli)
-1. [Configure auto-complete](#configure-auto-complete)
+1. [Configure autocomplete](#configure-autocomplete)
 1. [Setup a library](#setup-a-library)
 1. [Setup a registry](#setup-a-registry)
 
