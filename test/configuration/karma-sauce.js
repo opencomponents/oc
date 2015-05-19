@@ -26,7 +26,8 @@ module.exports = function(config) {
       startConnect: true
     },
     captureTimeout: 120000,
-    singleRun: false
+    singleRun: false,
+    browserNoActivity: 120000
   });
 
   if (process.env.TRAVIS)
