@@ -10,6 +10,10 @@ module.exports = {
     logs.push(message);
     return message;
   },
+  logNoNewLine: function(message){
+    logs.push(message);
+    return message;
+  },
   reset: function(){
     logs = [];
   }

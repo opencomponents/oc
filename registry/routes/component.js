@@ -7,7 +7,7 @@ var format = require('stringformat');
 var RequireWrapper = require('../domain/require-wrapper');
 var sanitiser = require('../domain/sanitiser');
 var urlBuilder = require('../domain/url-builder');
-var validator = require('../domain/validator');
+var validator = require('../domain/validators');
 var vm = require('vm');
 var _ = require('underscore');
 
@@ -119,7 +119,7 @@ module.exports = function(conf, repository){
 
         var cacheKey = format('{0}/{1}/server.js', component.name, component.version),
             cached = cache.get('file-contents', cacheKey),
-            reqObj = { 
+            contextObj = { 
               acceptLanguage: acceptLanguageParser.parse(req.headers['accept-language']),
               baseUrl: conf.baseUrl,
               env: conf.env,
@@ -128,7 +128,7 @@ module.exports = function(conf, repository){
             };
 
         if(!!cached && !res.conf.local){
-          cached(reqObj, returnComponent);
+          cached(contextObj, returnComponent);
         } else {
           repository.getDataProvider(component.name, component.version, function(err, dataProcessorJs){
             if(err){
@@ -147,7 +147,7 @@ module.exports = function(conf, repository){
             vm.runInNewContext(dataProcessorJs, context);
             var processData = context.module.exports.data;
             cache.set('file-contents', cacheKey, processData);        
-            processData(reqObj, returnComponent);
+            processData(contextObj, returnComponent);
           });
         }
       }

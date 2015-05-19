@@ -2,7 +2,7 @@ Advanced operations
 ===================
 
 1. [Add some logic](#add-some-logic)
-1. [req properties](#req-properties)
+1. [Context properties](#context-properties)
 1. [Add static resource to the component](#add-static-resource-to-the-component)
   1. [Prepare package file](#prepare-package-file)
   1. [Add image in the view template](#add-image-in-the-view-template)
@@ -32,7 +32,7 @@ In the given example, we want to pass name parameter to our view. To achieve thi
 ```js
 'use strict';
 
-module.exports.data = function(req, callback){
+module.exports.data = function(context, callback){
   callback(null, {
     name: "John"
   });
@@ -42,13 +42,13 @@ The `first parameter` is used in case we want to fire an error and avoid the ren
 
 The `second parameter` of the `callback` function is a view-model (JSON object) which is used by the view.
 
-However, for more complicated operations we may need query parameters from component request. In this case we can use `params` property from [req](#req-properties) object (first parameter of our server function).
+However, for more complicated operations we may need query parameters from component request. In this case we can use `params` property from [context](#context-properties) object (first parameter of our server function).
 
-In our example we want to extract `name` parameter from the `req` object:
+In our example we want to extract `name` parameter from the `context` object:
 ```js
-module.exports.data = function(req, callback){
+module.exports.data = function(context, callback){
   callback(null, {
-    name: req.params.name || 'John'
+    name: context.params.name || 'John'
   });
 };
 ```
@@ -58,9 +58,9 @@ To consume the component passing the `name` parameter we need to modify the refe
   <oc-component href="http://localhost:3030/hello-world?name=James"></oc-component>
 ```
 
-# req properties
+# context properties
 
-Req represents request and consists of the following fields:
+Context aggregates request data, and the registry's context. It consists of the following fields:
 
 ```js
 {
@@ -128,11 +128,11 @@ We can add image to the component view template using `img` tag in which `src` a
 ```
 
 ## Update server file
-To provide `img` parameter in our viewModel we need to update `server.js`. The important thing is we need to use `req.staticPath` to provide url to the static resources:
+To provide `img` parameter in our viewModel we need to update `server.js`. The important thing is we need to use `context.staticPath` to provide url to the static resources:
 ```js
-module.exports.data = function(req, callback){
+module.exports.data = function(context, callback){
   callback(null, {
-    path: req.staticPath
+    path: context.staticPath
   });
 };
 ```
@@ -143,16 +143,17 @@ By default, `require` is not allowed on a `server.js`. This helps to keep compon
 
 ## Local development
 
-When in a directory of components, install the dependency using npm and then start the watcher:
-```sh
-ls
-# my-component another-component
-npm install --prefix . underscore
-ls
-# my-component another-component node_modules
-oc dev . 3030
+When in a directory of components, list the dependency in the component's `package.json` and then start the watcher:
+```js
+...
+{
+  "dependencies": {
+    "underscore": ""
+  }
+}
+...
 ```
-Now it will be possible to `require('underscore')` inside a `server.js`.
+As soon as the watcher starts the dependency will be installed and it will be possible to `require('underscore')` inside a `server.js`.
 
 ## Publishing
 

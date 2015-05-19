@@ -14,7 +14,7 @@ module.exports = {
        
       CONFIGURATION_DEPENDENCIES_MUST_BE_OBJECT: 'Registry configuration is not valid: dependencies must be an object',
       CONFIGURATION_EMPTY: 'Registry configuration is empty',
-      CONFIGURTATION_ONREQUEST_MUST_BE_FUNCTION: 'Registry configuration is not valid: registry.on\'s callback must be a function',
+      CONFIGURATION_ONREQUEST_MUST_BE_FUNCTION: 'Registry configuration is not valid: registry.on\'s callback must be a function',
       CONFIGURATION_PUBLISH_AUTH_CREDENTIALS_MISSING: 'Registry configuration is not valid: basic auth requires username and password',
       CONFIGURATION_PUBLISH_AUTH_NOT_SUPPORTED: 'Registry configuration is not valid: auth not supported',
       CONFIGURATION_PREFIX_DOES_NOT_END_WITH_SLASH: 'Registry configuration is not valid: prefix should end with "/"',
@@ -63,6 +63,7 @@ module.exports = {
       COMPRESSING: 'Compressing -> {0}',
       ENTER_PASSWORD: 'Enter password:',
       ENTER_USERNAME: 'Enter username:',
+      HELP_HINT: 'Hint: Run -h with any command to show the help',
       PACKAGING: 'Packaging -> {0}',
       PREVIEW_STARTED_AT_URL: 'Component\'s preview started at url: {0}',
       PUBLISHED: 'Published -> {0}',

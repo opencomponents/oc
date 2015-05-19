@@ -2,16 +2,19 @@
 
 var expect = require('chai').expect;
 var injectr = require('injectr');
+var path = require('path');
 var sinon = require('sinon');
+var _ = require('underscore');
 
 var initialise = function(){
 
   var fsMock = {
-    readdirSync: sinon.spy(),
-    mkdirSync: sinon.spy(),
-    readJsonSync: sinon.stub(),
-    readFileSync: sinon.stub(),
     existsSync: sinon.stub(),
+    lstatSync: sinon.stub(),
+    mkdirSync: sinon.spy(),
+    readdirSync: sinon.stub(),
+    readFileSync: sinon.stub(),
+    readJsonSync: sinon.stub(),
     writeFileSync: sinon.spy(),
     writeJsonSync: sinon.spy()
   };
@@ -23,6 +26,13 @@ var initialise = function(){
         return {
           code: code
         };
+      }
+    },
+    path: {
+      extname: path.extname,
+      join: path.join,
+      resolve: function(){
+        return _.toArray(arguments).join('/');
       }
     }
   }, { __dirname: '' });
@@ -36,11 +46,15 @@ var executePackaging = function(local, callback){
   return local.package('.', callback);
 };
 
+var executeComponentsListingByDir = function(local, callback){
+  return local.getComponentsByDir('.', callback);
+};
+
 describe('cli : domain : local', function(){
 
   describe('when packaging', function(){
 
-    describe('when component is logic-less', function(){
+    describe('when component is valid', function(){
 
       var component;
       beforeEach(function(done){
@@ -71,6 +85,10 @@ describe('cli : domain : local', function(){
       it('should add version to package.json file', function(){
         expect(component.oc.version).to.eql('1.2.3');
       });
+
+      it('should mark the package.json as a packaged', function(){
+        expect(component.oc.packaged).to.eql(true);
+      });
     });
 
     describe('when component has a server.js logic', function(){
@@ -78,7 +96,7 @@ describe('cli : domain : local', function(){
       describe('when component does not require any json', function(){
 
         var data,
-            serverjs = 'module.exports.data=function(req,cb){return cb(null, {name:\'John\'}); };';
+            serverjs = 'module.exports.data=function(context,cb){return cb(null, {name:\'John\'}); };';
 
         beforeEach(function(done){
 
@@ -115,7 +133,7 @@ describe('cli : domain : local', function(){
 
         var data,
             requiredJson = '{"hello":"world"}',
-            serverjs = 'var data=require(\'./someJson\');module.exports.data=function(req,cb){return cb(null,data); };';
+            serverjs = 'var data=require(\'./someJson\');module.exports.data=function(context,cb){return cb(null,data); };';
 
         beforeEach(function(done){
           data = initialise();
@@ -156,7 +174,7 @@ describe('cli : domain : local', function(){
 
         var data,
             error,
-            serverjs = 'var data=require(\'request\');module.exports.data=function(req,cb){return cb(null,data); };';
+            serverjs = 'var data=require(\'request\');module.exports.data=function(context,cb){return cb(null,data); };';
 
         beforeEach(function(done){
           data = initialise();
@@ -196,7 +214,7 @@ describe('cli : domain : local', function(){
 
         var data,
             requiredJson = '{"hello":"world"}',
-            serverjs = 'var data=require(\'./hi.js\');module.exports.data=function(req,cb){return cb(null,data); };',
+            serverjs = 'var data=require(\'./hi.js\');module.exports.data=function(context,cb){return cb(null,data); };',
             error;
 
         beforeEach(function(done){
@@ -232,6 +250,45 @@ describe('cli : domain : local', function(){
           expect(error).to.equal('Requiring local js files is not allowed. Keep it small.');
         });
       });
+    });
+  });
+
+  describe('when getting components from dir', function(){
+
+    var error, result;
+    beforeEach(function(done){
+
+      var data = initialise();
+
+      data.fs.readdirSync.onCall(0).returns([
+        'a-component',
+        'a-not-component-dir',
+        'a-file.json',
+        '_package'
+      ]);
+
+      data.fs.lstatSync.onCall(0).returns({ isDirectory: function(){ return true; }});
+      data.fs.existsSync.onCall(0).returns(true);
+      data.fs.readJsonSync.onCall(0).returns({ oc: {}});
+
+      data.fs.lstatSync.onCall(1).returns({ isDirectory: function(){ return true; }});
+      data.fs.existsSync.onCall(1).returns(false);
+
+      data.fs.lstatSync.onCall(2).returns({ isDirectory: function(){ return false; }});
+
+      data.fs.lstatSync.onCall(3).returns({ isDirectory: function(){ return true; }});
+      data.fs.existsSync.onCall(2).returns(true);
+      data.fs.readJsonSync.onCall(1).returns({ oc: { packaged: true }});
+
+      executeComponentsListingByDir(data.local, function(err, res){
+        error = err;
+        result = res;
+        done();
+      });
+    });
+
+    it('should add version to package.json file', function(){
+      expect(result).to.eql(['./a-component']);
     });
   });
 });

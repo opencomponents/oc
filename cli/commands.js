@@ -25,7 +25,7 @@ module.exports = {
           help: 'The name of the component to create'
         },
         templateType: {
-          help: 'The type of the template of the component',
+          help: 'The component\' template type. Options are jade or handlebars (default).',
           required: false,
           default: 'handlebars'
         }
@@ -45,7 +45,14 @@ module.exports = {
       }
     },
 
-    ls: { help: 'Shows the list of the available components for a linked oc registry' },
+    ls: { help: 'Shows the list of the available components for a linked oc registry',
+      options: {
+        registry: {
+          help: 'Specify registry to query',
+          required: false
+        }
+      }
+    },
 
     preview: {
       help: 'Runs a test page consuming a component',

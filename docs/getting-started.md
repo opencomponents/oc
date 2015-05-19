@@ -98,7 +98,7 @@ Server is the entity that produces the view-model to compile the view. It is nec
 ```js
 'use strict';
 
-module.exports.data = function(req, callback){
+module.exports.data = function(context, callback){
   callback(null, {});
 };
 ```

@@ -1,4 +1,4 @@
-oc
+![oc](https://raw.github.com/opentable/oc/master/logo.png)
 =============
 
 OpenComponents is a framework to develop and deploy robust and distributed html components.
@@ -290,3 +290,4 @@ Contributors:
 * [@andyroyle](https://github.com/andyroyle)
 * [@federicomaffei](https://github.com/federicomaffei)
 * [@jankowiakmaria](https://github.com/jankowiakmaria)
+* [@tpgmartin](https://github.com/tpgmartin)

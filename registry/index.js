@@ -11,9 +11,10 @@ var format = require('stringformat');
 var http = require('http');
 var sanitiseOptions = require('./domain/options-sanitiser');
 var Repository = require('./domain/repository');
+var requestHandler = require('./middleware/request-handler');
 var Router = require('./router');
 var settings = require('../resources/settings');
-var validator = require('./domain/validator');
+var validator = require('./domain/validators');
 var _ = require('underscore');
 
 module.exports = function(options){
@@ -54,7 +55,8 @@ module.exports = function(options){
       res.conf = options;
       next();
     });
-
+    
+    app.use(requestHandler(eventsHandler));
     app.use(express.json());
     app.use(express.urlencoded());
     app.use(cors);
@@ -65,8 +67,8 @@ module.exports = function(options){
       app.use(express.logger('dev'));
     }
 
-    if('development' === app.get('env')){
-      app.use(express.errorHandler());
+    if(options.local){
+      app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
     }
 
     self.app = app;
@@ -79,7 +81,6 @@ module.exports = function(options){
     }
 
     var app = this.app;
-    eventsHandler.bindExpressMiddleware(app);
 
     // routes
     app.use(app.router);
@@ -112,6 +113,8 @@ module.exports = function(options){
       });
     }
 
+    app.set('etag', 'strong');
+
     repository.init(eventsHandler, function(err, componentsInfo){
       appStart(repository, options, function(err, res){
 
@@ -138,6 +141,7 @@ module.exports = function(options){
         });
 
         server.on('error', function(e){
+          eventsHandler.fire('error', { code: 'EXPRESS_ERROR', message: e });
           callback(e);
         });
       });

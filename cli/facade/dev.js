@@ -73,7 +73,7 @@ module.exports = function(dependencies){
 
         if(!packaging){
           packaging = true;
-          logger.log('Packaging components...'.yellow);
+          logger.logNoNewLine('Packaging components...'.yellow);
 
           async.eachSeries(componentsDirs, function(dir, cb){
             local.package(dir, false, function(err){
@@ -84,16 +84,16 @@ module.exports = function(dependencies){
             });
           }, function(error){
             if(!!error){
-              var errorDescription = (error instanceof SyntaxError) ? error.message : error;
-              logger.log(format('An error happened while packaging {0}: {1}', componentsDirs[i], errorDescription.red));
-              logger.log('retrying in 10 seconds...'.yellow);
+              var errorDescription = ((error instanceof SyntaxError) || !!error.message) ? error.message : error;
+              logger.log(format('an error happened while packaging {0}: {1}', componentsDirs[i], errorDescription.red));
+              logger.log('Retrying in 10 seconds...'.yellow);
               setTimeout(function(){
                 packaging = false;
                 packageComponents(componentsDirs);
               }, 10000);
             } else {
               packaging = false;
-              logger.log('complete'.green);
+              logger.log('OK'.green);
               if(_.isFunction(callback)){
                 callback();
               }
@@ -103,7 +103,7 @@ module.exports = function(dependencies){
       };
 
       var loadDependencies = function(components, cb){
-        logger.log('Ensuring dependencies are loaded'.yellow);
+        logger.logNoNewLine('Ensuring dependencies are loaded...'.yellow);
 
         var dependencies = getDepsFromComponents(components),
             missing = [];
@@ -131,12 +131,13 @@ module.exports = function(dependencies){
               });
             });
           } else {
+            logger.log('OK'.green);
             cb(dependencies);
           }
         });
       };
 
-      logger.log('Looking for components...'.yellow);
+      logger.logNoNewLine('Looking for components...'.yellow);
       local.getComponentsByDir(componentsDir, function(err, components){
 
         if(err){
@@ -145,9 +146,14 @@ module.exports = function(dependencies){
           return logger.log(format(errors.DEV_FAIL, errors.COMPONENTS_NOT_FOUND).red);
         }
 
+        logger.log('OK'.green);
+        _.forEach(components, function(component){
+          logger.log('>> '.green + component);
+        });
+
         loadDependencies(components, function(dependencies){
           packageComponents(components, function(){
-            logger.log('Starting dev registry on localhost:' + port);
+            logger.logNoNewLine(format('Starting dev registry on localhost:{0}...', port).yellow);
             
             var conf = {
               local: true,

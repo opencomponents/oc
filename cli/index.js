@@ -5,11 +5,17 @@ var commands = require('./commands');
 var Local = require('./domain/local');
 var omelette = require('omelette');
 var Registry = require('./domain/registry');
+var strings = require('../resources');
 var _ = require('underscore');
 
 var dependencies = {
   local: new Local(),
-  logger: console,
+  logger: {
+    log: console.log,
+    logNoNewLine: function(msg){
+      return process.stdout.write(msg.toString());
+    }
+  },
   registry: new Registry()
 };
 
@@ -56,4 +62,4 @@ _.forEach(commands, function(commandsConfiguration, commandsConfigurationName){
   });
 });
 
-cli.parse();
+cli.help(strings.messages.cli.HELP_HINT).parse();

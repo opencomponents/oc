@@ -8,7 +8,7 @@ var path = require('path');
 var S3 = require('./s3');
 var settings = require('../../resources/settings');
 var strings = require('../../resources');
-var validator = require('./validator');
+var validator = require('./validators');
 var versionHandler = require('./version-handler');
 var _ = require('underscore');
 

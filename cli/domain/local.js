@@ -14,7 +14,7 @@ var path = require('path');
 var settings = require('../../resources/settings');
 var Targz = require('tar.gz');
 var uglifyJs = require('uglify-js');
-var validator = require('../../registry/domain/validator');
+var validator = require('../../registry/domain/validators');
 var _ = require('underscore');
 
 module.exports = function(){
@@ -119,11 +119,20 @@ module.exports = function(){
         var components = fs.readdirSync(componentsDir).filter(function(file){
 
           var filePath = path.resolve(componentsDir, file),
-              isDir = fs.lstatSync(filePath).isDirectory();
+              isDir = fs.lstatSync(filePath).isDirectory(),
+              packagePath = path.join(filePath, 'package.json');
 
-          return isDir ? (fs.readdirSync(filePath).filter(function(file){
-            return file === 'package.json';
-          }).length === 1) : false;
+          if(!isDir || !fs.existsSync(packagePath)){
+            return false;
+          }
+
+          var content = fs.readJsonSync(packagePath);
+
+          if(!content.oc || !!content.oc.packaged){
+            return false;
+          }
+
+          return true;
         });
 
         var fullPathComponents = _.map(components, function(component){
@@ -263,7 +272,9 @@ module.exports = function(){
       try {
         compiled = compileView(template, component.oc.files.template.type);
       } catch(e){
-        return callback(e);
+        return callback({
+          message: format('{0} compilation failed - {1}', component.oc.files.template.src, e.toString())
+        });
       }
 
       fs.writeFileSync(path.join(publishPath, 'template.js'), compiled.view);
@@ -276,6 +287,7 @@ module.exports = function(){
 
       delete component.oc.files.client;
       component.oc.version = ocInfo.version;
+      component.oc.packaged = true;
 
       if(!!component.oc.files.data){
         var dataPath = path.join(componentPath, component.oc.files.data),
