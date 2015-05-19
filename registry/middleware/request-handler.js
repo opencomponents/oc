@@ -20,6 +20,10 @@ module.exports = function(eventsHandler){
       data.errorDetails = res.errorDetails;
     }
 
+    if(!!res.errorCode){
+      data.errorCode = res.errorCode;
+    }
+
     eventsHandler.fire('request', data);
   });
 };

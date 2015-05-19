@@ -25,7 +25,7 @@ module.exports = function(options){
       self = this,
       server,
       withLogging = !_.has(options, 'verbosity') || options.verbosity > 0,
-      validationResult = validator.registryConfiguration(options),
+      validationResult = validator.validateRegistryConfiguration(options),
       plugins = [];
 
   if(!validationResult.isValid){

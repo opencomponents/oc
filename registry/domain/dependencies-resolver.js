@@ -24,7 +24,7 @@ module.exports = function(options){
     } else {
       try {
         depObj[dependency] = require(dependencyPath);
-        logger.log((dependency + ' => ').yellow + fs.readJsonSync(packagePath).version.green);
+        logger.log('├── '.green + dependency + '@' + fs.readJsonSync(packagePath).version);
       } catch(e){
         logger.log((dependency + ' => ').yellow + strings.errors.registry.GENERIC_ERROR.red);
         throw e;

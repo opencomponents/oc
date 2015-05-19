@@ -3,6 +3,7 @@
 var async = require('async');
 var colors = require('colors');
 var format = require('stringformat');
+var fs = require('fs-extra');
 var getComponentsDependencies = require('../utils/get-components-deps');
 var npmInstaller = require('../utils/npm-installer');
 var oc = require('../../index');
@@ -115,6 +116,33 @@ module.exports = function(dependencies){
       });
     };
 
+    var loadPluginMocks = function(){
+      var mockedPlugins = [],
+          ocJsonPath = path.resolve('oc.json');
+
+      if(fs.existsSync(ocJsonPath)){
+        var content = fs.readJsonSync(ocJsonPath);
+
+        if(!!content.pluginMocks && !!content.pluginMocks.static){
+          _.forEach(content.pluginMocks.static, function(mockedValue, pluginName){
+            mockedPlugins.push({
+              name: pluginName,
+              register: {
+                register: function(options, next){
+                  return next();
+                },
+                execute: function(){
+                  return mockedValue;
+                }
+              }
+            });
+          });
+        }
+      }
+
+      return mockedPlugins;
+    };
+
     logger.logNoNewLine('Looking for components...'.yellow);
     local.getComponentsByDir(componentsDir, function(err, components){
 
@@ -126,12 +154,11 @@ module.exports = function(dependencies){
 
       logger.log('OK'.green);
       _.forEach(components, function(component){
-        logger.log('>> '.green + component);
+        logger.log('├── '.green + component);
       });
 
       loadDependencies(components, function(dependencies){
         packageComponents(components, function(){
-          logger.logNoNewLine(format('Starting dev registry on localhost:{0}...', port).yellow);
           
           var conf = {
             local: true,
@@ -143,8 +170,32 @@ module.exports = function(dependencies){
             dependencies: dependencies
           };
           
-          var registry = new oc.Registry(conf);
+          var registry = new oc.Registry(conf),
+              mockedPlugins = loadPluginMocks();
 
+          try {
+            if(!_.isEmpty(mockedPlugins)){
+              logger.log('Registering mocked plugins...'.yellow);
+              for(var i = 0; i < mockedPlugins.length; i++){
+                logger.log('├── '.green + mockedPlugins[i].name + ' () => ' + mockedPlugins[i].register.execute());
+                registry.register(mockedPlugins[i]);
+              }            
+            }
+          } catch(er){
+            return console.log(er.red);
+          }
+
+          registry.on('request', function(data){
+            if(data.errorCode === 'PLUGIN_MISSING_FROM_REGISTRY'){
+              logger.log(format('Looks like you are trying to use a plugin in the dev mode ({0}).', data.errorDetails).red);
+              logger.log('You need to mock it doing '.red + 'oc mock plugin <pluginName> "some value"'.blue);
+            } else if(data.errorCode === 'PLUGIN_MISSING_FROM_COMPONENT'){
+              logger.log(format('Looks like you are trying to use a plugin you haven\'t registered ({0}).', data.errorDetails).red);
+              logger.log('You need to register it editing your component\'s package.json'.red);
+            }
+          });
+
+          logger.logNoNewLine(format('Starting dev registry on http://localhost:{0}...', port).yellow);
           registry.start(function(err, app){
 
             if(err){

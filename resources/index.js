@@ -69,6 +69,7 @@ module.exports = {
       ENTER_PASSWORD: 'Enter password:',
       ENTER_USERNAME: 'Enter username:',
       HELP_HINT: 'Hint: Run -h with any command to show the help',
+      MOCKED_PLUGIN: 'Mock for plugin has been registered: {0} () => {1}',
       PACKAGING: 'Packaging -> {0}',
       PREVIEW_STARTED_AT_URL: 'Component\'s preview started at url: {0}',
       PUBLISHED: 'Published -> {0}',

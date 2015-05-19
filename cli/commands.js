@@ -45,11 +45,28 @@ module.exports = {
       }
     },
 
-    ls: { help: 'Shows the list of the available components for a linked oc registry',
+    ls: { 
+      help: 'Shows the list of the available components for a linked oc registry',
       options: {
         registry: {
           help: 'Specify registry to query',
           required: false
+        }
+      }
+    },
+
+    mock: {
+      help: 'Allows to mock configuration in order to facilitate local development',
+      options: {
+        targetType: {
+          help: 'The type of item to mock',
+          choices: ['plugin']
+        },
+        targetName: {
+          help: 'The item to mock'
+        },
+        targetValue: {
+          help: 'The mocked value'
         }
       }
     },

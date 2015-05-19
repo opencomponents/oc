@@ -3,6 +3,7 @@
 var acceptLanguageParser = require('accept-language-parser');
 var Cache = require('nice-cache');
 var Client = require('../../client');
+var detective = require('../domain/plugins-detective');
 var format = require('stringformat');
 var RequireWrapper = require('../domain/require-wrapper');
 var sanitiser = require('../domain/sanitiser');
@@ -37,14 +38,26 @@ module.exports = function(conf, repository){
         return res.json(404, { err: err });
       }
 
-      // sanitise params
-      var params = sanitiser.sanitiseComponentParameters(requestedComponent.parameters, component.oc.parameters);
+      // check component requirements are satisfied by registry      
+      var pluginsCompatibility = validator.validatePluginsRequirements(component.oc.plugins, conf.plugins);
 
-      // check params
-      var result = validator.validateComponentParameters(params, component.oc.parameters);
+      if(!pluginsCompatibility.isValid){
+        res.errorDetails = 'registry does not implement plugins: ' + pluginsCompatibility.missing.join(', ');
+        res.errorCode = 'PLUGIN_MISSING_FROM_REGISTRY';
 
-      if(!result.isValid){
-        res.errorDetails = result.errors.message;
+        return res.json(501, {
+          code: res.errorCode,
+          error: res.errorDetails, 
+          missingPlugins: pluginsCompatibility.missing
+        });
+      }
+
+      // sanitise and check params
+      var params = sanitiser.sanitiseComponentParameters(requestedComponent.parameters, component.oc.parameters),
+          validationResult = validator.validateComponentParameters(params, component.oc.parameters);
+
+      if(!validationResult.isValid){
+        res.errorDetails = validationResult.errors.message;
         return res.json(400, { error: res.errorDetails });
       }
 
@@ -132,14 +145,11 @@ module.exports = function(conf, repository){
           cached(contextObj, returnComponent);
         } else {
           repository.getDataProvider(component.name, component.version, function(err, dataProcessorJs){
+
             if(err){
               res.errorDetails = 'component resolving error';
               return res.json(502, { error: res.errorDetails });
             }
-
-            console.log(res.conf.plugins);
-            console.log(res.conf.local);
-            console.log(component.oc.plugins);
 
             var context = { 
               require: new RequireWrapper(res.conf.dependencies), 
@@ -151,8 +161,24 @@ module.exports = function(conf, repository){
 
             vm.runInNewContext(dataProcessorJs, context);
             var processData = context.module.exports.data;
-            cache.set('file-contents', cacheKey, processData);        
-            processData(contextObj, returnComponent);
+            cache.set('file-contents', cacheKey, processData);
+            try {
+              processData(contextObj, returnComponent);
+            } catch(err){
+              var referencedPlugins = detective.parse(dataProcessorJs);
+
+              if(!_.isEmpty(referencedPlugins)){
+                res.errorDetails = 'Component is trying to use un-registered plugins: ' + referencedPlugins.join(' ,');
+                res.errorCode = 'PLUGIN_MISSING_FROM_COMPONENT';
+                
+                return res.json(501, {
+                  code: res.errorCode,
+                  error: res.errorDetails, 
+                  missingPlugins: referencedPlugins
+                });
+              }
+              returnComponent(err);
+            }
           });
         }
       }
