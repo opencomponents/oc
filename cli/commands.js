@@ -2,7 +2,7 @@
 
 module.exports = {
   oc: {
-    
+
     dev: {
       help: 'Runs a local oc test registry in order to develop and test components',
       options: {

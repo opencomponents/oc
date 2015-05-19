@@ -26,9 +26,9 @@ Front-end tests:
   * [Server-side rendering with node.js](#server-side-rendering-with-nodejs)
   * [Client-side rendering](#client-side-rendering)
   * [Server-side rendering with client-side failover](#server-side-rendering-with-client-side-failover)
+1. [Install the cli](#install-the-cli)
 1. [Setup a library](#setup-a-library)
 1. [Setup a registry](#setup-a-registry)
-
 
 # Introduction
 OpenComponents involves two parts:
