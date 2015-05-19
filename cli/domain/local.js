@@ -232,7 +232,7 @@ module.exports = function(){
         fs.writeJson(settings.configFile.src, localConfig, callback);
       });
     },
-    mock: function(params, callback){
+    mock: function(params){
       
       var cleanupValue = function(mockedValue){
         if(mockedValue.length < 2){
@@ -267,7 +267,7 @@ module.exports = function(){
 
       localConfig.mocks[mockType].static[params.targetName] = cleanupValue(params.targetValue);
 
-      fs.writeJson(settings.configFile.src, localConfig, callback);
+      return fs.writeJsonSync(settings.configFile.src, localConfig);
     },
     package: function(componentPath, minify, callback){
 

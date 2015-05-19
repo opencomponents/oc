@@ -123,8 +123,8 @@ module.exports = function(dependencies){
       if(fs.existsSync(ocJsonPath)){
         var content = fs.readJsonSync(ocJsonPath);
 
-        if(!!content.pluginMocks && !!content.pluginMocks.static){
-          _.forEach(content.pluginMocks.static, function(mockedValue, pluginName){
+        if(!!content.mocks && !!content.mocks.plugins && !!content.mocks.plugins.static){
+          _.forEach(content.mocks.plugins.static, function(mockedValue, pluginName){
             mockedPlugins.push({
               name: pluginName,
               register: {

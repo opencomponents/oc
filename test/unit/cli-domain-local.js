@@ -16,7 +16,7 @@ var initialise = function(){
     readFileSync: sinon.stub(),
     readJsonSync: sinon.stub(),
     writeFileSync: sinon.spy(),
-    writeJsonSync: sinon.spy()
+    writeJsonSync: sinon.stub()
   };
 
   var Local = injectr('../../cli/domain/local.js', {
@@ -44,6 +44,14 @@ var initialise = function(){
 
 var executePackaging = function(local, callback){
   return local.package('.', callback);
+};
+
+var executeMocking = function(local, type, name, value){
+  return local.mock({
+    targetType: type,
+    targetName: name,
+    targetValue: value
+  });
 };
 
 var executeComponentsListingByDir = function(local, callback){
@@ -289,6 +297,33 @@ describe('cli : domain : local', function(){
 
     it('should add version to package.json file', function(){
       expect(result).to.eql(['./a-component']);
+    });
+  });
+
+  describe('when mocking a plugin', function(){
+
+    var data;
+    beforeEach(function(){
+      data = initialise();
+      
+      data.fs.readJsonSync.returns({ something: 'hello' });
+      data.fs.writeJsonSync.returns('ok');
+
+      executeMocking(data.local, 'plugin', 'getValue', 'value');
+    });
+
+    it('should add mock to oc.json', function(){
+      expect(data.fs.writeJsonSync.called).to.be.true;
+      expect(data.fs.writeJsonSync.args[0][1]).to.eql({
+        something: 'hello',
+        mocks: {
+          plugins: {
+            static: {
+              getValue: 'value'
+            }
+          }
+        }
+      });
     });
   });
 });
