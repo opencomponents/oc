@@ -1,9 +1,9 @@
 'use strict';
 
+var autocomplete = require('./autocomplete');
 var cli = require('nomnom');
 var commands = require('./commands');
 var Local = require('./domain/local');
-var omelette = require('omelette');
 var Registry = require('./domain/registry');
 var strings = require('../resources');
 var _ = require('underscore');
@@ -19,21 +19,11 @@ var dependencies = {
   registry: new Registry()
 };
 
-var complete = omelette('oc <action>');
-
-complete.on('action', function(fragment, word, line){
-  this.reply(_.keys(commands.oc).sort());
-});
-
-complete.init();
-
-var setup = function(){
-  complete.setupShellInitFile();
-};
+autocomplete.init(_.keys(commands.oc));
 
 cli.option('completion', {
   hidden: true,
-  callback: setup,
+  callback: autocomplete.setup,
   flag: true
 });
 
