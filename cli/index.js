@@ -22,7 +22,7 @@ var dependencies = {
 var complete = omelette('oc <action>');
 
 complete.on('action', function(fragment, word, line){
-  this.reply(Object.getOwnPropertyNames(commands.oc).sort());
+  this.reply(_.keys(commands.oc).sort());
 });
 
 complete.init();
