@@ -1,5 +1,6 @@
 'use strict';
 
+var autocomplete = require('./autocomplete');
 var cli = require('nomnom');
 var commands = require('./commands');
 var Local = require('./domain/local');
@@ -18,10 +19,18 @@ var dependencies = {
   registry: new Registry()
 };
 
+autocomplete.init(_.keys(commands.oc));
+
+cli.option('completion', {
+  hidden: true,
+  callback: autocomplete.setup,
+  flag: true
+});
+
 _.forEach(commands, function(commandsConfiguration, commandsConfigurationName){
-  
+
   cli.script(commandsConfigurationName);
-  
+
   _.forEach(commandsConfiguration, function(command, commandName){
 
     var facade = require('./facade/' + commandName)(dependencies),

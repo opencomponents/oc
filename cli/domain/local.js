@@ -25,11 +25,12 @@ module.exports = function(){
     return format('var {0}={0}||{};{0}.components={0}.components||{};{0}.components[\'{1}\']={2}', 'oc', functionName, data.toString());
   };
 
-  var compileView = function(template, type){
+  var compileView = function(template, type, fileName, baseDir){
     var preCompiledView;
 
     if(type === 'jade'){
       preCompiledView = jade.compileClient(template, {
+        filename: path.resolve('./' + baseDir + '/' + fileName),
         compileDebug: false,
         name: 't'
       }).toString().replace('function t(locals) {', 'function(locals){');
@@ -307,7 +308,7 @@ module.exports = function(){
           compiled;
 
       try {
-        compiled = compileView(template, component.oc.files.template.type);
+        compiled = compileView(template, component.oc.files.template.type, component.oc.files.template.src, component.name);
       } catch(e){
         return callback({
           message: format('{0} compilation failed - {1}', component.oc.files.template.src, e.toString())
