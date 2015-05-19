@@ -27,7 +27,8 @@ module.exports = function(config) {
     },
     captureTimeout: 120000,
     singleRun: false,
-    browserNoActivity: 120000
+    browserNoActivityTimeout: 120000,
+    browserDisconnectTolerance: 5
   });
 
   if (process.env.TRAVIS)
