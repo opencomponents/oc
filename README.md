@@ -27,7 +27,6 @@ Front-end tests:
   * [Client-side rendering](#client-side-rendering)
   * [Server-side rendering with client-side failover](#server-side-rendering-with-client-side-failover)
 1. [Install the cli](#install-the-cli)
-1. [Configure autocomplete](#configure-autocomplete)
 1. [Setup a library](#setup-a-library)
 1. [Setup a registry](#setup-a-registry)
 
@@ -209,22 +208,6 @@ npm install oc -g
 # to see available commands:
 oc
 ```
-
-# Configure autocomplete
-Autocomplete is supported for Mac and Linux.
-
-To enable it in **zsh**, you should type:
-```sh
-echo '. <(oc --completion)' >> .zshrc
-```
-
-To enable it in **bash**, you should write:
-```sh
-oc --completion >> ~/oc.completion.sh
-echo 'source ~/oc.completion.sh' >> .bash_profile
-```
-
-After enabling autocomplete you should reload the shell.
 
 # Setup a library
 
