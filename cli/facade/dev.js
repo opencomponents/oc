@@ -24,8 +24,8 @@ module.exports = function(dependencies){
         errors = strings.errors.cli;
 
     var installMissingDeps = function(missing, cb){
-      logger.log(('Trying to install missing modules: ' + JSON.stringify(missing)).yellow);
-      logger.log('If you aren\'t connected to the internet, or npm isn\'t configured then this step will fail'.yellow);
+      logger.log(format(strings.messages.cli.INSTALLING_DEPS, JSON.stringify(missing)).yellow);
+      logger.log(strings.messages.cli.INSTALLING_ALERT.yellow);
         
       npmInstaller(missing, componentsDir, function(err, result){
         if(!!err){
@@ -39,9 +39,9 @@ module.exports = function(dependencies){
     var watchForChanges = function(components){
       watch(components, componentsDir, function(err, changedFile){
         if(!!err){
-          logger.log(format('An error happened: {0}'.red, err));
+          logger.log(format(strings.errors.generic.red, err));
         } else {
-          logger.log('Changes detected on file: '.yellow + changedFile);
+          logger.log(format(strings.messages.cli.CHANGES_DETECTED).yellow);
           packageComponents(components);
         }
       });
@@ -54,7 +54,7 @@ module.exports = function(dependencies){
 
       if(!packaging){
         packaging = true;
-        logger.logNoNewLine('Packaging components...'.yellow);
+        logger.logNoNewLine(strings.messages.cli.PACKAGING_COMPONENTS.yellow);
 
         async.eachSeries(componentsDirs, function(dir, cb){
           local.package(dir, false, function(err){
@@ -67,7 +67,7 @@ module.exports = function(dependencies){
           if(!!error){
             var errorDescription = ((error instanceof SyntaxError) || !!error.message) ? error.message : error;
             logger.log(format('an error happened while packaging {0}: {1}', componentsDirs[i], errorDescription.red));
-            logger.log('Retrying in 10 seconds...'.yellow);
+            logger.log(strings.messages.cli.RETRYING_10_SECONDS.yellow);
             setTimeout(function(){
               packaging = false;
               packageComponents(componentsDirs);
@@ -82,7 +82,7 @@ module.exports = function(dependencies){
     };
 
     var loadDependencies = function(components, cb){
-      logger.logNoNewLine('Ensuring dependencies are loaded...'.yellow);
+      logger.logNoNewLine(strings.messages.cli.CHECKING_DEPENDENCIES.yellow);
 
       var dependencies = getComponentsDependencies(components),
           missing = [];
@@ -97,7 +97,7 @@ module.exports = function(dependencies){
 
           var required = require(pathToModule);
         } catch (exception) {
-          logger.log(('Error loading module: ' + npmModule + ' => ' + exception).red);
+          logger.log(format(strings.errors.cli.DEPENDENCY_NOT_RESOLVED, npmModule, exception).red);
           missing.push(npmModule);
         }
 

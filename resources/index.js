@@ -40,6 +40,7 @@ module.exports = {
       COMPONENT_HREF_NOT_FOUND: 'The specified path is not a valid component\'s url',
       COMPONENTS_LINKED_NOT_FOUND: 'No components linked in the project',
       COMPONENTS_NOT_FOUND: 'no components found in specified path',
+      DEPENDENCY_NOT_RESOLVED: 'Error loading module: {0} => {1}',
       DEV_FAIL: 'An error happened when initialising the dev runner: {0}',
       INIT_FAIL: 'An error happened when initialising the component: {0}',
       INVALID_CREDENTIALS: 'Invalid credentials',
@@ -60,6 +61,8 @@ module.exports = {
   },
   messages: {
     cli: {
+      CHANGES_DETECTED: 'Changes detected on file: {0}',
+      CHECKING_DEPENDENCIES: 'Ensuring dependencies are loaded...',
       COMPONENT_INITED: 'Component "{0}" created',
       COMPONENT_LINKED: 'oc Component linked',
       COMPONENT_UNLINKED: 'oc Component unlinked',
@@ -69,15 +72,19 @@ module.exports = {
       ENTER_PASSWORD: 'Enter password:',
       ENTER_USERNAME: 'Enter username:',
       HELP_HINT: 'Hint: Run -h with any command to show the help',
+      INSTALLING_DEPS: 'Trying to install missing modules: {0}',
+      INSTALLING_ALERT: 'If you aren\'t connected to the internet, or npm isn\'t configured then this step will fail',
       MOCKED_PLUGIN: 'Mock for plugin has been registered: {0} () => {1}',
       PACKAGING: 'Packaging -> {0}',
+      PACKAGING_COMPONENTS: 'Packaging components...',
       PREVIEW_STARTED_AT_URL: 'Component\'s preview started at url: {0}',
       PUBLISHED: 'Published -> {0}',
       PUBLISHING: 'Publishing -> {0}',
       REGISTRY_ADDED: 'oc registry added',
       REGISTRY_CREDENTIALS_REQUIRED: 'Registry requires credentials.',
       REGISTRY_LIST: 'oc linked registries:',
-      REGISTRY_REMOVED: 'oc registry deleted'
+      REGISTRY_REMOVED: 'oc registry deleted',
+      RETRYING_10_SECONDS: 'Retrying in 10 seconds...'
     },
     registry: {
       RESOLVING_DEPENDENCIES: 'Resolving dependencies...'
