@@ -25,9 +25,9 @@ module.exports = function(config) {
       build: 'local',
       startConnect: true
     },
-    captureTimeout: 120000,
+    captureTimeout: 180000,
     singleRun: false,
-    browserNoActivityTimeout: 120000,
+    browserNoActivityTimeout: 180000,
     browserDisconnectTolerance: 5
   });
 
