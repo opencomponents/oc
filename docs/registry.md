@@ -6,6 +6,7 @@ Setting up a registry
 1. [API](#api)
 1. [Registry configuration](#registry-configuration)
 1. [Registry events](#registry-events)
+1. [Plugins](#plugins)
 
 # Introduction
 
@@ -66,12 +67,27 @@ Starts the registry.
 
 Regulates [events subscriptions](#registry-events).
 
+## registry.register(plugin [, callback]);
+
+Register a [plugin](#plugins).
+The plugin parameter has to be a [valid plugin](#plugins).
+
+```js
+registry.register({
+  name: 'doSomething',
+  register: require('my-oc-plugin'),
+  options: {
+    configuration: 'value'
+  }
+});
+```
+
 # Registry configuration
 
 |Parameter|Type|Description|
 |---------|------|-------|
 |`baseUrl`|`string`|sets the URL which will be used to compose the components' URLs|
-|`dependencies`|`object`|sets the dependencies available for components logic, for example: `{ underscore: require('underscore'), request: require('request') }`|
+|`dependencies`|`array`|the npm modules available for components logic|
 |`env`|`object`|sets the registry environment|
 |`env.name`|`string`|sets the environment name|
 |`pollingInterval`|`number` (seconds)|When the components' list cache will be refreshed. This is required for distributing the components on each registry instance. Given the polling mechanism is quite efficient, this number should be very low. Suggested is around 5-10 seconds.|
@@ -115,3 +131,51 @@ options.routes = [{
 |`error`|`object`|Fired when an internal operation errors.|
 |`request`|`object`|Fired every time the registry receives a request. The callback data contains some request and response details.|
 |`start`|`undefined`|Fired when the registry starts|
+
+
+# Plugins
+
+Plugins are a way to extend registry's context allowing components to inherit custom functionalities.
+
+
+This is a plugin example:
+```js
+// ./registry/oc-plugins/hobknob.js
+var connection,
+    client = require('./hobknob-client');
+
+module.exports.register = function(connectionString, next){
+  client.connect(connectionString, function(err, conn){
+    connection = conn;
+    next();
+  });
+};
+
+module.exports.execute = function(featureName){
+  return connection.get(featureName);
+};
+```
+
+This is how to register it in a registry:
+```js
+// ./registry/init.js
+...
+var registry = new oc.Registry(configuration);
+
+registry.register({
+  name: 'getFeatureSwitch', 
+  register: require('./oc-plugins/hobknob'),
+  options: connectionString
+});
+...
+```
+
+This is how to use a plugin from a component:
+```js
+// ./my-component/server.js
+module.exports.data = function(context, callback){
+  callback(null, {
+    variable: context.plugins.getFeatureSwitch('AbTestHomePage')
+  });
+};
+```

@@ -75,6 +75,7 @@ The basic package file `package.json` looks as follows:
 |`name`|`string`|the component's name, by default the name of initialised component|
 |`description`|`string`|the component's description, by default an empty string|
 |`version`|`string`|the component's version, by default `1.0.0`|
+|`dependencies`|`object`|the npm modules the component requires|
 |`oc`|`object`|the data involved with the component|
 |`oc.container`|`boolean`|forces the component to be server-side rendered without being wrapped inside the `<oc-component />` tag.|
 |`oc.files`|`object`|non-static component files|
@@ -84,6 +85,7 @@ The basic package file `package.json` looks as follows:
 |`oc.files.template.type`|`string`|the template engine's type, by default `handlebars`|
 |`oc.files.static`|`array of strings`|An array of directories that contain static resources referenced from the component's markup|
 |`oc.minify`|`boolean`|Default `true`, will minify static css and js files during publishing|
+|`oc.plugins`|`array of strings`|the [plugins](registry.md#plugins) the component requires|
 
 ## Template
 
