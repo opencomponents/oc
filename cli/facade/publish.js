@@ -96,7 +96,7 @@ module.exports = function(dependencies){
 
       packageAndCompress(function(err, component){
         if(err){
-          return logger.log(format(strings.errors.cli.PACKAGING_FAIL, err).red);
+          return logger.log(format(strings.errors.cli.PACKAGE_CREATION_FAIL, err).red);
         }
 
         async.eachSeries(registryLocations, function(l, done){

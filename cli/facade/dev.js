@@ -3,13 +3,14 @@
 var async = require('async');
 var colors = require('colors');
 var format = require('stringformat');
-var fs = require('fs-extra');
-var getComponentsDependencies = require('../utils/get-components-deps');
-var npmInstaller = require('../utils/npm-installer');
+var getComponentsDependencies = require('../domain/get-components-deps');
+var getMissingDeps = require('../domain/get-missing-deps');
+var getMockedPlugins = require('../domain/get-mocked-plugins');
+var npmInstaller = require('../domain/npm-installer');
 var oc = require('../../index');
 var path = require('path');
 var strings = require('../../resources/index');
-var watch = require('../utils/watch');
+var watch = require('../domain/watch');
 var _ = require('underscore');
 
 module.exports = function(dependencies){
@@ -24,9 +25,9 @@ module.exports = function(dependencies){
         errors = strings.errors.cli;
 
     var installMissingDeps = function(missing, cb){
-      logger.log(format(strings.messages.cli.INSTALLING_DEPS, JSON.stringify(missing)).yellow);
-      logger.log(strings.messages.cli.INSTALLING_ALERT.yellow);
-        
+      if(_.isEmpty(missing)){ return cb(); }
+
+      logger.log(format(strings.messages.cli.INSTALLING_DEPS, missing.join(', ')).yellow);
       npmInstaller(missing, componentsDir, function(err, result){
         if(!!err){
           logger.log(err.toString().red);
@@ -36,13 +37,13 @@ module.exports = function(dependencies){
       });
     };
 
-    var watchForChanges = function(components){
+    var watchForChanges = function(components, callback){
       watch(components, componentsDir, function(err, changedFile){
         if(!!err){
           logger.log(format(strings.errors.generic.red, err));
         } else {
-          logger.log(format(strings.messages.cli.CHANGES_DETECTED).yellow);
-          packageComponents(components);
+          logger.log(format(strings.messages.cli.CHANGES_DETECTED, changedFile).yellow);
+          callback(components);
         }
       });
     };
@@ -58,15 +59,13 @@ module.exports = function(dependencies){
 
         async.eachSeries(componentsDirs, function(dir, cb){
           local.package(dir, false, function(err){
-            if(!err){
-              i++;
-            }
+            if(!err){ i++; }
             cb(err);
           });
         }, function(error){
           if(!!error){
             var errorDescription = ((error instanceof SyntaxError) || !!error.message) ? error.message : error;
-            logger.log(format('an error happened while packaging {0}: {1}', componentsDirs[i], errorDescription.red));
+            logger.log(format(strings.errors.cli.PACKAGING_FAIL, componentsDirs[i], errorDescription.red));
             logger.log(strings.messages.cli.RETRYING_10_SECONDS.yellow);
             setTimeout(function(){
               packaging = false;
@@ -85,70 +84,49 @@ module.exports = function(dependencies){
       logger.logNoNewLine(strings.messages.cli.CHECKING_DEPENDENCIES.yellow);
 
       var dependencies = getComponentsDependencies(components),
-          missing = [];
+          missing = getMissingDeps(dependencies, components);
 
-      async.eachSeries(dependencies, function(npmModule, done){
-        var pathToModule = path.resolve('node_modules/', npmModule);
+      if(_.isEmpty(missing)){
+        logger.log('OK'.green);
+        return cb(dependencies);
+      }
 
-        try {
-          if(!!require.cache[pathToModule]){
-            delete require.cache[pathToModule];
-          }
+      logger.log('FAIL'.red);
+      installMissingDeps(missing, function(){
+        loadDependencies(components, cb);
+      });
+    };
 
-          var required = require(pathToModule);
-        } catch (exception) {
-          logger.log(format(strings.errors.cli.DEPENDENCY_NOT_RESOLVED, npmModule, exception).red);
-          missing.push(npmModule);
+    var registerPlugins = function(registry){
+      var mockedPlugins = getMockedPlugins();
+
+      try {
+        if(!_.isEmpty(mockedPlugins)){
+          logger.log(strings.messages.cli.REGISTERING_MOCKED_PLUGINS.yellow);
+          for(var i = 0; i < mockedPlugins.length; i++){
+            logger.log('├── '.green + mockedPlugins[i].name + ' () => ' + mockedPlugins[i].register.execute());
+            registry.register(mockedPlugins[i]);
+          }            
         }
+      } catch(er){
+        return logger.log(er.red);
+      }
 
-        return done();
-      }, function(err){
-        if(missing.length > 0){
-          installMissingDeps(missing, function(){
-            loadDependencies(components, function(loadedDependencies){
-              cb(loadedDependencies);
-            });
-          });
-        } else {
-          logger.log('OK'.green);
-          cb(dependencies);
+      registry.on('request', function(data){
+        if(data.errorCode === 'PLUGIN_MISSING_FROM_REGISTRY'){
+          logger.log(format(strings.errors.cli.PLUGIN_MISSING_FROM_REGISTRY, data.errorDetails, strings.commands.cli.MOCK_PLUGIN.blue).red);
+        } else if(data.errorCode === 'PLUGIN_MISSING_FROM_COMPONENT'){
+          logger.log(format(strings.errors.cli.PLUGIN_MISSING_FROM_COMPONENT, data.errorDetails).red);
         }
       });
     };
 
-    var loadPluginMocks = function(){
-      var mockedPlugins = [],
-          ocJsonPath = path.resolve('oc.json');
-
-      if(fs.existsSync(ocJsonPath)){
-        var content = fs.readJsonSync(ocJsonPath);
-
-        if(!!content.mocks && !!content.mocks.plugins && !!content.mocks.plugins.static){
-          _.forEach(content.mocks.plugins.static, function(mockedValue, pluginName){
-            mockedPlugins.push({
-              name: pluginName,
-              register: {
-                register: function(options, next){
-                  return next();
-                },
-                execute: function(){
-                  return mockedValue;
-                }
-              }
-            });
-          });
-        }
-      }
-
-      return mockedPlugins;
-    };
-
-    logger.logNoNewLine('Looking for components...'.yellow);
+    logger.logNoNewLine(strings.messages.cli.SCANNING_COMPONENTS.yellow);
     local.getComponentsByDir(componentsDir, function(err, components){
 
       if(err){
         return logger.log(err.red);
-      } else if(components.length === 0){
+      } else if(_.isEmpty(components)){
         return logger.log(format(errors.DEV_FAIL, errors.COMPONENTS_NOT_FOUND).red);
       }
 
@@ -160,7 +138,7 @@ module.exports = function(dependencies){
       loadDependencies(components, function(dependencies){
         packageComponents(components, function(){
           
-          var conf = {
+          var registry = new oc.Registry({
             local: true,
             verbosity: 1,
             path: path.resolve(componentsDir),
@@ -168,45 +146,22 @@ module.exports = function(dependencies){
             baseUrl: format('http://localhost:{0}/', port),
             env: { name: 'local' },
             dependencies: dependencies
-          };
-          
-          var registry = new oc.Registry(conf),
-              mockedPlugins = loadPluginMocks();
-
-          try {
-            if(!_.isEmpty(mockedPlugins)){
-              logger.log('Registering mocked plugins...'.yellow);
-              for(var i = 0; i < mockedPlugins.length; i++){
-                logger.log('├── '.green + mockedPlugins[i].name + ' () => ' + mockedPlugins[i].register.execute());
-                registry.register(mockedPlugins[i]);
-              }            
-            }
-          } catch(er){
-            return console.log(er.red);
-          }
-
-          registry.on('request', function(data){
-            if(data.errorCode === 'PLUGIN_MISSING_FROM_REGISTRY'){
-              logger.log(format('Looks like you are trying to use a plugin in the dev mode ({0}).', data.errorDetails).red);
-              logger.log('You need to mock it doing '.red + 'oc mock plugin <pluginName> "some value"'.blue);
-            } else if(data.errorCode === 'PLUGIN_MISSING_FROM_COMPONENT'){
-              logger.log(format('Looks like you are trying to use a plugin you haven\'t registered ({0}).', data.errorDetails).red);
-              logger.log('You need to register it editing your component\'s package.json'.red);
-            }
           });
 
-          logger.logNoNewLine(format('Starting dev registry on http://localhost:{0}...', port).yellow);
+          registerPlugins(registry);
+
+          logger.logNoNewLine(format(strings.messages.cli.REGISTRY_STARTING, port).yellow);
           registry.start(function(err, app){
 
             if(err){
               if(err.code === 'EADDRINUSE'){
-                return logger.log(format('The port {0} is already in use. Specify the optional port parameter to use another port.', port).red);
+                return logger.log(format(strings.errors.cli.PORT_IS_BUSY, port).red);
               } else {
                 logger.log(err.red);
               }
             }
 
-            watchForChanges(components);
+            watchForChanges(components, packageComponents);
           });
         });
       });

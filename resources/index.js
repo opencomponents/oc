@@ -1,6 +1,11 @@
 'use strict';
 
 module.exports = {
+  commands: {
+    cli: {
+      MOCK_PLUGIN: 'oc mock plugin <pluginName> "some value"'
+    }
+  },
   errors: {
     registry: {
       COMPONENT_NAME_NOT_VALID: 'The component\'s name contains invalid characters. Allowed are alphanumeric, _, -',
@@ -40,15 +45,19 @@ module.exports = {
       COMPONENT_HREF_NOT_FOUND: 'The specified path is not a valid component\'s url',
       COMPONENTS_LINKED_NOT_FOUND: 'No components linked in the project',
       COMPONENTS_NOT_FOUND: 'no components found in specified path',
-      DEPENDENCY_NOT_RESOLVED: 'Error loading module: {0} => {1}',
       DEV_FAIL: 'An error happened when initialising the dev runner: {0}',
       INIT_FAIL: 'An error happened when initialising the component: {0}',
       INVALID_CREDENTIALS: 'Invalid credentials',
       NAME_NOT_VALID: 'the name is not valid. Allowed characters are alphanumeric, _, -',
-      TEMPLATE_TYPE_NOT_VALID: 'the template is not valid. Allowed values are handlebars and jade',
-      PACKAGING_FAIL: 'An error happened when creating the package: {0}',
+      PACKAGE_CREATION_FAIL: 'An error happened when creating the package: {0}',
+      PACKAGING_FAIL: 'an error happened while packaging {0}: {1}',
+      PLUGIN_MISSING_FROM_REGISTRY: 'Looks like you are trying to use a plugin in the dev mode ({0}).\nYou need to mock it doing {1}',
+      PLUGIN_MISSING_FROM_COMPONENT: 'Looks like you are trying to use a plugin you haven\'t registered ({0}).' +
+        '\nYou need to register it editing your component\'s package.json',
+      PORT_IS_BUSY: 'The port {0} is already in use. Specify the optional port parameter to use another port.',
       PUBLISHING_FAIL: 'An error happened when publishing the component: {0}',
-      REGISTRY_NOT_FOUND: 'oc registries not found. Run "oc registry add <registry href>"'
+      REGISTRY_NOT_FOUND: 'oc registries not found. Run "oc registry add <registry href>"',
+      TEMPLATE_TYPE_NOT_VALID: 'the template is not valid. Allowed values are handlebars and jade'
     },
     generic: 'An error occurred: {0}',
     s3: {
@@ -72,19 +81,21 @@ module.exports = {
       ENTER_PASSWORD: 'Enter password:',
       ENTER_USERNAME: 'Enter username:',
       HELP_HINT: 'Hint: Run -h with any command to show the help',
-      INSTALLING_DEPS: 'Trying to install missing modules: {0}',
-      INSTALLING_ALERT: 'If you aren\'t connected to the internet, or npm isn\'t configured then this step will fail',
+      INSTALLING_DEPS: 'Trying to install missing modules: {0}\nIf you aren\'t connected to the internet, or npm isn\'t configured then this step will fail',
       MOCKED_PLUGIN: 'Mock for plugin has been registered: {0} () => {1}',
       PACKAGING: 'Packaging -> {0}',
       PACKAGING_COMPONENTS: 'Packaging components...',
       PREVIEW_STARTED_AT_URL: 'Component\'s preview started at url: {0}',
       PUBLISHED: 'Published -> {0}',
       PUBLISHING: 'Publishing -> {0}',
+      REGISTERING_MOCKED_PLUGINS: 'Registering mocked plugins...',
       REGISTRY_ADDED: 'oc registry added',
       REGISTRY_CREDENTIALS_REQUIRED: 'Registry requires credentials.',
       REGISTRY_LIST: 'oc linked registries:',
       REGISTRY_REMOVED: 'oc registry deleted',
-      RETRYING_10_SECONDS: 'Retrying in 10 seconds...'
+      REGISTRY_STARTING: 'Starting dev registry on http://localhost:{0}...',
+      RETRYING_10_SECONDS: 'Retrying in 10 seconds...',
+      SCANNING_COMPONENTS: 'Looking for components...'
     },
     registry: {
       RESOLVING_DEPENDENCIES: 'Resolving dependencies...'
