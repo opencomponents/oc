@@ -1,6 +1,8 @@
 ![oc](https://raw.github.com/opentable/oc/master/logo.png)
 =============
 
+[![Join the chat at https://gitter.im/opentable/oc](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/opentable/oc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 OpenComponents is a framework to develop and deploy robust and distributed html components.
 
 The goal is to own a system that allows big corporations (that may involve hundreds of engineers on a number of projects) to have tools to facilitate code sharing, reduce dependencies, and easily approach new features and experiments.
