@@ -1,5 +1,6 @@
 'use strict';
 
+var strings = require('../../resources');
 var _ = require('underscore');
 
 module.exports = function(injectedDependencies){
@@ -7,7 +8,10 @@ module.exports = function(injectedDependencies){
     if(!!injectedDependencies && _.has(injectedDependencies, moduleName)){
       return injectedDependencies[moduleName];
     } else {
-      return undefined;
+      throw {
+        code: strings.errors.registry.DEPENDENCY_NOT_FOUND_CODE,
+        missing: [moduleName]
+      };
     }
   };
 };

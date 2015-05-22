@@ -7,6 +7,7 @@ var detective = require('../domain/plugins-detective');
 var format = require('stringformat');
 var RequireWrapper = require('../domain/require-wrapper');
 var sanitiser = require('../domain/sanitiser');
+var strings = require('../../resources');
 var urlBuilder = require('../domain/url-builder');
 var validator = require('../domain/validators');
 var vm = require('vm');
@@ -63,7 +64,7 @@ module.exports = function(conf, repository){
 
       var returnComponent = function(err, data){
         if(err){
-          res.errorDetails = 'component data resolving error';
+          res.errorDetails = 'component execution error';
           return res.json(502, { error: res.errorDetails });
         }
 
@@ -159,16 +160,27 @@ module.exports = function(conf, repository){
               console: res.conf.local ? console : { log: _.noop }
             };
 
-            vm.runInNewContext(dataProcessorJs, context);
-            var processData = context.module.exports.data;
-            cache.set('file-contents', cacheKey, processData);
-            try {
+            try {              
+              vm.runInNewContext(dataProcessorJs, context);
+              var processData = context.module.exports.data;
+              cache.set('file-contents', cacheKey, processData);
               processData(contextObj, returnComponent);
             } catch(err){
+              if(err.code === 'DEPENDENCY_MISSING_FROM_REGISTRY'){
+                res.errorDetails = format(strings.errors.registry.DEPENDENCY_NOT_FOUND, err.missing.join(', '));
+                res.errorCode = err.code;
+
+                return res.json(501, {
+                  code: res.errorCode,
+                  error: res.errorDetails,
+                  missingDependencies: err.missing
+                });
+              }
+
               var referencedPlugins = detective.parse(dataProcessorJs);
 
               if(!_.isEmpty(referencedPlugins)){
-                res.errorDetails = 'Component is trying to use un-registered plugins: ' + referencedPlugins.join(' ,');
+                res.errorDetails = format(strings.errors.registry.PLUGIN_NOT_FOUND, referencedPlugins.join(' ,'));
                 res.errorCode = 'PLUGIN_MISSING_FROM_COMPONENT';
                 
                 return res.json(501, {
@@ -177,6 +189,7 @@ module.exports = function(conf, repository){
                   missingPlugins: referencedPlugins
                 });
               }
+
               returnComponent(err);
             }
           });

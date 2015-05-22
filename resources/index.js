@@ -28,6 +28,8 @@ module.exports = {
       CONFIGURATION_ROUTES_HANDLER_MUST_BE_FUNCTION: 'Registry configuration is not valid: handler should be a function',
       CONFIGURATION_ROUTES_NOT_VALID: 'Registry configuration is not valid: each route should contain route, method and handler',
       CONFIGURATION_ROUTES_MUST_BE_ARRAY: 'Registry configuration is not valid: routes must be an array',
+      DEPENDENCY_NOT_FOUND: 'Component is trying to use unavailable dependencies: {0}',
+      DEPENDENCY_NOT_FOUND_CODE: 'DEPENDENCY_MISSING_FROM_REGISTRY',
       LOCAL_PUBLISH_NOT_ALLOWED: 'Components can\'t be published to local repository',
       LOCAL_PUBLISH_NOT_ALLOWED_CODE: 'not_allowed',
 
@@ -39,6 +41,7 @@ module.exports = {
 
       PARAMETER_WRONG_FORMAT: 'Parameters are not correctly formatted: {0}',
       PARAMETER_WRONG_FORMAT_CODE: 'wrong type',
+      PLUGIN_NOT_FOUND: 'Component is trying to use un-registered plugins: {0}',
       PLUGIN_NOT_VALID: 'Plugin {0} is not valid'
     },
     cli: {
