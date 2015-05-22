@@ -10,12 +10,12 @@ describe('cli : facade : mock', function(){
   var MockFacade = require('../../cli/facade/mock'),
       Local = require('../../cli/domain/local'),
       local = new Local(),
-      linkFacade = new MockFacade({ local: local, logger: consoleMock }),
+      mockFacade = new MockFacade({ local: local, logger: consoleMock }),
       logs;
 
   var execute = function(){
     consoleMock.reset();
-    linkFacade({ targetType: 'plugin', targetName: 'getValue', targetValue: 'value' });
+    mockFacade({ targetType: 'plugin', targetName: 'getValue', targetValue: 'value' });
     logs = consoleMock.get();
   };
 
@@ -24,7 +24,7 @@ describe('cli : facade : mock', function(){
     describe('when it succeeds', function(){
 
       beforeEach(function(){
-        sinon.stub(local, 'mock').returns('ok');
+        sinon.stub(local, 'mock').yields(null, 'ok');
         execute();
       });
       

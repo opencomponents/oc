@@ -14,8 +14,10 @@ var initialise = function(){
     mkdirSync: sinon.spy(),
     readdirSync: sinon.stub(),
     readFileSync: sinon.stub(),
+    readJson: sinon.stub(),
     readJsonSync: sinon.stub(),
     writeFileSync: sinon.spy(),
+    writeJson: sinon.stub(),
     writeJsonSync: sinon.stub()
   };
 
@@ -46,12 +48,12 @@ var executePackaging = function(local, callback){
   return local.package('.', callback);
 };
 
-var executeMocking = function(local, type, name, value){
+var executeMocking = function(local, type, name, value, cb){
   return local.mock({
     targetType: type,
     targetName: name,
     targetValue: value
-  });
+  }, cb);
 };
 
 var executeComponentsListingByDir = function(local, callback){
@@ -303,18 +305,18 @@ describe('cli : domain : local', function(){
   describe('when mocking a plugin', function(){
 
     var data;
-    beforeEach(function(){
+    beforeEach(function(done){
       data = initialise();
       
-      data.fs.readJsonSync.returns({ something: 'hello' });
-      data.fs.writeJsonSync.returns('ok');
+      data.fs.readJson.yields(null, { something: 'hello' });
+      data.fs.writeJson.yields(null, 'ok');
 
-      executeMocking(data.local, 'plugin', 'getValue', 'value');
+      executeMocking(data.local, 'plugin', 'getValue', 'value', done);
     });
 
     it('should add mock to oc.json', function(){
-      expect(data.fs.writeJsonSync.called).to.be.true;
-      expect(data.fs.writeJsonSync.args[0][1]).to.eql({
+      expect(data.fs.writeJson.called).to.be.true;
+      expect(data.fs.writeJson.args[0][1]).to.eql({
         something: 'hello',
         mocks: {
           plugins: {

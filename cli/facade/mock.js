@@ -10,7 +10,8 @@ module.exports = function(dependencies){
       logger = dependencies.logger;
 
   return function(opts){
-    local.mock(opts);
-    logger.log(format(strings.messages.cli.MOCKED_PLUGIN, opts.targetName, opts.targetValue).green);
+    local.mock(opts, function(err, res){
+      return logger.log(format(strings.messages.cli.MOCKED_PLUGIN, opts.targetName, opts.targetValue).green);
+    });
   };
 };

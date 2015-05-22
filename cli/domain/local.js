@@ -200,74 +200,62 @@ module.exports = function(){
     },
     link: function(componentName, componentVersion, callback){
 
-      var localConfig = fs.readJsonSync(settings.configFile.src);
-
-      if(!localConfig || !localConfig.registries || localConfig.registries.length === 0){
-        return callback('Registry configuration not found. Add a registry reference to the project first');
-      }
-
-      localConfig.components = localConfig.components || {};
-
-      if(!!localConfig.components[componentName]){
-        return callback('Component already linked in the project');
-      }
-
-      var componentHref = format('{0}/{1}/{2}', localConfig.registries[0], componentName, componentVersion);
-
-      request(componentHref, function(err, res){
-        if(err || !res){
-          return callback('Component not available');
+      fs.readJson(settings.configFile.src, function(err, localConfig){
+        if(!localConfig || !localConfig.registries || localConfig.registries.length === 0){
+          return callback('Registry configuration not found. Add a registry reference to the project first');
         }
 
-        try {
-          var apiResponse = JSON.parse(res);
-          if(apiResponse.type !== 'oc-component'){
+        localConfig.components = localConfig.components || {};
+
+        if(!!localConfig.components[componentName]){
+          return callback('Component already linked in the project');
+        }
+
+        var componentHref = format('{0}/{1}/{2}', localConfig.registries[0], componentName, componentVersion);
+
+        request(componentHref, function(err, res){
+          if(err || !res){
+            return callback('Component not available');
+          }
+
+          try {
+            var apiResponse = JSON.parse(res);
+            if(apiResponse.type !== 'oc-component'){
+              return callback('not a valid oc Component');
+            }
+          } catch(e){
             return callback('not a valid oc Component');
           }
-        } catch(e){
-          return callback('not a valid oc Component');
-        }
 
-        localConfig.components[componentName] = componentVersion;
-        fs.writeJson(settings.configFile.src, localConfig, callback);
+          localConfig.components[componentName] = componentVersion;
+          fs.writeJson(settings.configFile.src, localConfig, callback);
+        });      
       });
     },
-    mock: function(params){
-      
-      var cleanupValue = function(mockedValue){
-        if(mockedValue.length < 2){
-          return mockedValue;
+    mock: function(params, callback){
+
+      fs.readJson(settings.configFile.src, function(err, localConfig){
+
+        localConfig = localConfig || {};
+
+        var mockType = params.targetType + 's';
+
+        if(!localConfig.mocks){
+          localConfig.mocks = {};
         }
 
-        var first = mockedValue.slice(0, 1),
-            last = mockedValue.slice(-1);
-
-        if((first === '\'' && last === '\'') ||
-           (first === '"' && last === '"')){
-          return mockedValue.slice(1, -1);
+        if(!localConfig.mocks[mockType]){
+          localConfig.mocks[mockType] = {};
         }
 
-        return mockedValue;
-      };
+        if(!localConfig.mocks[mockType].static){
+          localConfig.mocks[mockType].static = {};
+        }
 
-      var localConfig = fs.readJsonSync(settings.configFile.src) || {},
-          mockType = params.targetType + 's';
+        localConfig.mocks[mockType].static[params.targetName] = params.targetValue;
 
-      if(!localConfig.mocks){
-        localConfig.mocks = {};
-      }
-
-      if(!localConfig.mocks[mockType]){
-        localConfig.mocks[mockType] = {};
-      }
-
-      if(!localConfig.mocks[mockType].static){
-        localConfig.mocks[mockType].static = {};
-      }
-
-      localConfig.mocks[mockType].static[params.targetName] = cleanupValue(params.targetValue);
-
-      return fs.writeJsonSync(settings.configFile.src, localConfig);
+        return fs.writeJson(settings.configFile.src, localConfig, callback);
+      });
     },
     package: function(componentPath, minify, callback){
 
@@ -416,13 +404,16 @@ module.exports = function(){
       });
     },
     unlink: function(componentName, callback){
-      var localConfig = fs.readJsonSync(settings.configFile.src) || {};
+      fs.readJson(settings.configFile.src, function(err, localConfig){
 
-      if(!!localConfig.components[componentName]){
-        delete localConfig.components[componentName];
-      }
+        localConfig = localConfig || {};
 
-      fs.writeJson(settings.configFile.src, localConfig, callback);
+        if(!!localConfig.components[componentName]){
+          delete localConfig.components[componentName];
+        }
+
+        fs.writeJson(settings.configFile.src, localConfig, callback);
+      });
     }
   });
 };
