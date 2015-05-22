@@ -3,9 +3,11 @@
 var acceptLanguageParser = require('accept-language-parser');
 var Cache = require('nice-cache');
 var Client = require('../../client');
+var detective = require('../domain/plugins-detective');
 var format = require('stringformat');
 var RequireWrapper = require('../domain/require-wrapper');
 var sanitiser = require('../domain/sanitiser');
+var strings = require('../../resources');
 var urlBuilder = require('../domain/url-builder');
 var validator = require('../domain/validators');
 var vm = require('vm');
@@ -37,20 +39,32 @@ module.exports = function(conf, repository){
         return res.json(404, { err: err });
       }
 
-      // sanitise params
-      var params = sanitiser.sanitiseComponentParameters(requestedComponent.parameters, component.oc.parameters);
+      // check component requirements are satisfied by registry      
+      var pluginsCompatibility = validator.validatePluginsRequirements(component.oc.plugins, conf.plugins);
 
-      // check params
-      var result = validator.validateComponentParameters(params, component.oc.parameters);
+      if(!pluginsCompatibility.isValid){
+        res.errorDetails = 'registry does not implement plugins: ' + pluginsCompatibility.missing.join(', ');
+        res.errorCode = 'PLUGIN_MISSING_FROM_REGISTRY';
 
-      if(!result.isValid){
-        res.errorDetails = result.errors.message;
+        return res.json(501, {
+          code: res.errorCode,
+          error: res.errorDetails, 
+          missingPlugins: pluginsCompatibility.missing
+        });
+      }
+
+      // sanitise and check params
+      var params = sanitiser.sanitiseComponentParameters(requestedComponent.parameters, component.oc.parameters),
+          validationResult = validator.validateComponentParameters(params, component.oc.parameters);
+
+      if(!validationResult.isValid){
+        res.errorDetails = validationResult.errors.message;
         return res.json(400, { error: res.errorDetails });
       }
 
       var returnComponent = function(err, data){
         if(err){
-          res.errorDetails = 'component data resolving error';
+          res.errorDetails = 'component execution error';
           return res.json(502, { error: res.errorDetails });
         }
 
@@ -124,6 +138,7 @@ module.exports = function(conf, repository){
               baseUrl: conf.baseUrl,
               env: conf.env,
               params: params,
+              plugins: conf.plugins,
               staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', '')
             };
 
@@ -131,6 +146,7 @@ module.exports = function(conf, repository){
           cached(contextObj, returnComponent);
         } else {
           repository.getDataProvider(component.name, component.version, function(err, dataProcessorJs){
+
             if(err){
               res.errorDetails = 'component resolving error';
               return res.json(502, { error: res.errorDetails });
@@ -144,10 +160,38 @@ module.exports = function(conf, repository){
               console: res.conf.local ? console : { log: _.noop }
             };
 
-            vm.runInNewContext(dataProcessorJs, context);
-            var processData = context.module.exports.data;
-            cache.set('file-contents', cacheKey, processData);        
-            processData(contextObj, returnComponent);
+            try {              
+              vm.runInNewContext(dataProcessorJs, context);
+              var processData = context.module.exports.data;
+              cache.set('file-contents', cacheKey, processData);
+              processData(contextObj, returnComponent);
+            } catch(err){
+              if(err.code === 'DEPENDENCY_MISSING_FROM_REGISTRY'){
+                res.errorDetails = format(strings.errors.registry.DEPENDENCY_NOT_FOUND, err.missing.join(', '));
+                res.errorCode = err.code;
+
+                return res.json(501, {
+                  code: res.errorCode,
+                  error: res.errorDetails,
+                  missingDependencies: err.missing
+                });
+              }
+
+              var referencedPlugins = detective.parse(dataProcessorJs);
+
+              if(!_.isEmpty(referencedPlugins)){
+                res.errorDetails = format(strings.errors.registry.PLUGIN_NOT_FOUND, referencedPlugins.join(' ,'));
+                res.errorCode = 'PLUGIN_MISSING_FROM_COMPONENT';
+                
+                return res.json(501, {
+                  code: res.errorCode,
+                  error: res.errorDetails, 
+                  missingPlugins: referencedPlugins
+                });
+              }
+
+              returnComponent(err);
+            }
           });
         }
       }

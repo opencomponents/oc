@@ -9,6 +9,7 @@ var express = require('express');
 var fileUploads = require('./middleware/file-uploads');
 var format = require('stringformat');
 var http = require('http');
+var pluginsInitialiser = require('./domain/plugins-initialiser');
 var sanitiseOptions = require('./domain/options-sanitiser');
 var Repository = require('./domain/repository');
 var requestHandler = require('./middleware/request-handler');
@@ -24,14 +25,14 @@ module.exports = function(options){
       self = this,
       server,
       withLogging = !_.has(options, 'verbosity') || options.verbosity > 0,
-      validationResult = validator.registryConfiguration(options);
+      validationResult = validator.validateRegistryConfiguration(options),
+      plugins = [];
 
-  options = sanitiseOptions(options);
-  
   if(!validationResult.isValid){
     throw validationResult.message;
   }
 
+  options = sanitiseOptions(options);
   this.on = eventsHandler.on;
 
   this.close = function(callback){
@@ -72,6 +73,10 @@ module.exports = function(options){
     }
 
     self.app = app;
+  };
+
+  this.register = function(plugin, cb){
+    plugins.push(_.extend(plugin, { callback: cb }));
   };
 
   this.start = function(callback){
@@ -115,34 +120,37 @@ module.exports = function(options){
 
     app.set('etag', 'strong');
 
-    repository.init(eventsHandler, function(err, componentsInfo){
-      appStart(repository, options, function(err, res){
+    pluginsInitialiser.init(plugins, function(err, plugins){
+      if(!!err){ return callback(err.msg); }
+      options.plugins = plugins;
 
-        if(!!err){
-          return callback(err.msg);
-        }
+      repository.init(eventsHandler, function(err, componentsInfo){
+        appStart(repository, options, function(err, res){
 
-        server = http.createServer(self.app);
+          if(!!err){ return callback(err.msg); }
 
-        server.listen(self.app.get('port'), function(){
-          eventsHandler.fire('start', {});
-          if(withLogging){
-            console.log(format('Registry started at port {0}'.green, self.app.get('port')));
-            if(_.isObject(componentsInfo)){
-              var componentsNumber = _.keys(componentsInfo.components).length;
-              var componentsReleases = _.reduce(componentsInfo.components, function(memo, component){
-                return (parseInt(memo, 10) + component.length);
-              });
+          server = http.createServer(self.app);
 
-              console.log(format('Registry serving {0} components for a total of {1} releases.', componentsNumber, componentsReleases).green);
+          server.listen(self.app.get('port'), function(){
+            eventsHandler.fire('start', {});
+            if(withLogging){
+              console.log(format('Registry started at port {0}'.green, self.app.get('port')));
+              if(_.isObject(componentsInfo)){
+                var componentsNumber = _.keys(componentsInfo.components).length;
+                var componentsReleases = _.reduce(componentsInfo.components, function(memo, component){
+                  return (parseInt(memo, 10) + component.length);
+                });
+
+                console.log(format('Registry serving {0} components for a total of {1} releases.', componentsNumber, componentsReleases).green);
+              }
             }
-          }
-          callback(null, self.app);
-        });
+            callback(null, self.app);
+          });
 
-        server.on('error', function(e){
-          eventsHandler.fire('error', { code: 'EXPRESS_ERROR', message: e });
-          callback(e);
+          server.on('error', function(e){
+            eventsHandler.fire('error', { code: 'EXPRESS_ERROR', message: e });
+            callback(e);
+          });
         });
       });
     });

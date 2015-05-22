@@ -49,7 +49,10 @@ describe('registry : domain : require-wrapper', function(){
       it('should correctly throw an error', function(){
         expect(function(){
           return vm.runInNewContext(script, context);
-        }).to.throw('Cannot call method \'someFunction\' of undefined');
+        }).to.throw({
+          code: 'DEPENDENCY_MISSING_FROM_REGISTRY',
+          missing: ['someModule']
+        });
       });
     });
   });

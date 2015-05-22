@@ -57,7 +57,7 @@ describe('registry : domain : url-parser', function(){
       expect(parsed.componentName).to.equal('component-name');
     });
 
-    it('version should be blank', function(){
+    it('version should be ~1.0.0', function(){
       expect(parsed.version).to.equal('~1.0.0');
     });
 
@@ -84,7 +84,7 @@ describe('registry : domain : url-parser', function(){
       expect(parsed.componentName).to.equal('12345');
     });
 
-    it('version should be blank', function(){
+    it('version should be ~1.0.0', function(){
       expect(parsed.version).to.equal('~1.0.0');
     });
 

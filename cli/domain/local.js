@@ -232,6 +232,43 @@ module.exports = function(){
         fs.writeJson(settings.configFile.src, localConfig, callback);
       });
     },
+    mock: function(params){
+      
+      var cleanupValue = function(mockedValue){
+        if(mockedValue.length < 2){
+          return mockedValue;
+        }
+
+        var first = mockedValue.slice(0, 1),
+            last = mockedValue.slice(-1);
+
+        if((first === '\'' && last === '\'') ||
+           (first === '"' && last === '"')){
+          return mockedValue.slice(1, -1);
+        }
+
+        return mockedValue;
+      };
+
+      var localConfig = fs.readJsonSync(settings.configFile.src) || {},
+          mockType = params.targetType + 's';
+
+      if(!localConfig.mocks){
+        localConfig.mocks = {};
+      }
+
+      if(!localConfig.mocks[mockType]){
+        localConfig.mocks[mockType] = {};
+      }
+
+      if(!localConfig.mocks[mockType].static){
+        localConfig.mocks[mockType].static = {};
+      }
+
+      localConfig.mocks[mockType].static[params.targetName] = cleanupValue(params.targetValue);
+
+      return fs.writeJsonSync(settings.configFile.src, localConfig);
+    },
     package: function(componentPath, minify, callback){
 
       if(_.isFunction(minify)){

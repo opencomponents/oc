@@ -8,7 +8,7 @@ describe('registry : domain : validator', function(){
 
   describe('when validating registry configuration', function(){
 
-    var validate = function(a){ return validator.registryConfiguration(a); };
+    var validate = function(a){ return validator.validateRegistryConfiguration(a); };
 
     describe('when configuration null', function(){
 
@@ -107,22 +107,22 @@ describe('registry : domain : validator', function(){
 
       describe('when specified', function(){
 
-        describe('when it is an object', function(){
+        describe('when it is an array', function(){
 
-          var conf = { dependencies: { hello: 'world' }};
+          var conf = { dependencies: ['hello']};
 
           it('should be valid', function(){
             expect(validate(conf).isValid).to.be.true;
           });
         });
 
-        describe('when it is not an object', function(){
+        describe('when it is not an array', function(){
 
-          var conf = { dependencies: ['hello']};
+          var conf = { dependencies: { hello: 'world' }};
 
           it('should not be valid', function(){
             expect(validate(conf).isValid).to.be.false;
-            expect(validate(conf).message).to.equal('Registry configuration is not valid: dependencies must be an object');
+            expect(validate(conf).message).to.equal('Registry configuration is not valid: dependencies must be an array');
           });
         });
       });
@@ -600,6 +600,53 @@ describe('registry : domain : validator', function(){
 
       it('should be valid', function(){
         expect(validate({ theFile: _package }).isValid).to.be.true;
+      });
+    });
+  });
+
+  describe('when validating component plugin requirements', function(){
+
+    var validate = validator.validatePluginsRequirements;
+
+    describe('when component does not require any plugin', function(){
+
+      var requirements = null, 
+          supportedPlugins = {
+            log: function(){}
+          };
+
+      it('should be valid', function(){
+        expect(validate(requirements, supportedPlugins).isValid).to.be.true;
+      });
+    });
+
+    describe('when component requires plugin', function(){
+
+      var requirements = ['getToggle'];
+      describe('when registry does not support plugin', function(){
+        var supportedPlugins = {
+          log: function(){}
+        };
+
+        var validationResult = validate(requirements, supportedPlugins);
+
+        it('should not be valid', function(){
+          expect(validationResult.isValid).to.be.false;
+        });
+
+        it('should list missing dependencies', function(){
+          expect(validationResult.missing).to.eql(['getToggle']);
+        });
+      });
+
+      describe('when registry supports plugin', function(){
+        var supportedPlugins = {
+          getToggle: function(){ return true; }
+        };
+
+        it('should be valid', function(){
+          expect(validate(requirements, supportedPlugins).isValid).to.be.true;
+        });
       });
     });
   });

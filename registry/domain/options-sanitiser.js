@@ -1,5 +1,6 @@
 'use strict';
 
+var dependenciesResolver = require('./dependencies-resolver');
 var express = require('express');
 var settings = require('../../resources/settings');
 var _ = require('underscore');
@@ -19,6 +20,10 @@ module.exports = function(input){
 
   if(!options.tempDir){
     options.tempDir = settings.registry.defaultTempPath;
+  }
+
+  if(!!options.dependencies){
+    options.dependencies = dependenciesResolver(options);
   }
 
   return options;

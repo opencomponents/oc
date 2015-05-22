@@ -92,6 +92,7 @@ Context aggregates request data, and the registry's context. It consists of the 
 |`baseUrl`|`string`|represents Url to the registry where the components are stored. This is particularly useful when we want to nest components that are hosted in the same registry.|
 |`env`|`object`|represents the registry environment variables. The registry's admin [can share here arbitrary data](registry.md#registry-configuration).|
 |`params`|`object`|represents parameters extracted from the query string.|
+|`plugins`|`array of functions`|[custom functionalities that extend the registry](registry.md#plugins). Note: if a component needs a plugin, [it needs to be declared in the component's package.json](getting-started.md#structure-of-the-package)|
 |`staticPath`|`string`|represents the path to static resources i.e. images, styles, javascript files. This is particularly useful when we want to [reference static resources to the view](#add-static-resource-to-the-component).|
 
 # Add static resource to the component
