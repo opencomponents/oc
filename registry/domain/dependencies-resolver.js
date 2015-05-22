@@ -19,7 +19,7 @@ module.exports = function(options){
         packagePath = path.resolve(dependencyPath, 'package.json');
 
     if(!fs.existsSync(packagePath)){
-      logger.log((dependency + ' => ').yellow + strings.errors.registry.GENERIC_NOT_FOUND.red);console.log(dependency);
+      logger.log((dependency + ' => ').yellow + strings.errors.registry.GENERIC_NOT_FOUND.red);
       throw strings.errors.registry.CONFIGURATION_A_DEPENDENCY_NOT_FOUND;
     } else {
       try {
