@@ -12,14 +12,14 @@ module.exports = function(options){
       depObj = {};
 
   logger.log(strings.messages.registry.RESOLVING_DEPENDENCIES.yellow);
-  
+
   _.forEach(options.dependencies, function(dependency){
-    var dependenciesBasePath = !!options.local ? path.resolve('node_modules') : process.mainModule.paths[0],
+    var dependenciesBasePath = path.resolve('.', 'node_modules'),
         dependencyPath = path.resolve(dependenciesBasePath, dependency),
         packagePath = path.resolve(dependencyPath, 'package.json');
 
     if(!fs.existsSync(packagePath)){
-      logger.log((dependency + ' => ').yellow + strings.errors.registry.GENERIC_NOT_FOUND.red);
+      logger.log((dependency + ' => ').yellow + strings.errors.registry.GENERIC_NOT_FOUND.red);console.log(dependency);
       throw strings.errors.registry.CONFIGURATION_A_DEPENDENCY_NOT_FOUND;
     } else {
       try {
