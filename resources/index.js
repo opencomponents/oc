@@ -44,7 +44,8 @@ module.exports = {
       PARAMETER_WRONG_FORMAT_CODE: 'wrong type',
       PLUGIN_NOT_FOUND: 'Component is trying to use un-registered plugins: {0}',
       PLUGIN_NOT_IMPLEMENTED: 'registry does not implement plugins: {0}',
-      PLUGIN_NOT_VALID: 'Plugin {0} is not valid'
+      PLUGIN_NOT_VALID: 'Plugin {0} is not valid',
+      RESOLVING_ERROR: 'component resolving error'
     },
     cli: {
       COMPONENT_HREF_NOT_FOUND: 'The specified path is not a valid component\'s url',
