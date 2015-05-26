@@ -43,7 +43,7 @@ module.exports = function(conf, repository){
       var pluginsCompatibility = validator.validatePluginsRequirements(component.oc.plugins, conf.plugins);
 
       if(!pluginsCompatibility.isValid){
-        res.errorDetails = 'registry does not implement plugins: ' + pluginsCompatibility.missing.join(', ');
+        res.errorDetails = format(strings.errors.registry.PLUGIN_NOT_IMPLEMENTED, pluginsCompatibility.missing.join(', '));
         res.errorCode = 'PLUGIN_MISSING_FROM_REGISTRY';
 
         return res.json(501, {
@@ -64,8 +64,8 @@ module.exports = function(conf, repository){
 
       var returnComponent = function(err, data){
         if(err){
-          res.errorDetails = 'component execution error';
-          return res.json(502, { error: res.errorDetails });
+          res.errorDetails = strings.errors.registry.COMPONENT_EXECUTION_ERROR;
+          return res.json(500, { error: res.errorDetails });
         }
 
         var componentHref = urlBuilder.component({
@@ -148,7 +148,7 @@ module.exports = function(conf, repository){
           repository.getDataProvider(component.name, component.version, function(err, dataProcessorJs){
 
             if(err){
-              res.errorDetails = 'component resolving error';
+              res.errorDetails = strings.errors.registry.RESOLVING_ERROR;
               return res.json(502, { error: res.errorDetails });
             }
 
@@ -177,16 +177,18 @@ module.exports = function(conf, repository){
                 });
               }
 
-              var referencedPlugins = detective.parse(dataProcessorJs);
+              var usedPlugins = detective.parse(dataProcessorJs),
+                  unRegisteredPlugins = _.difference(usedPlugins, _.keys(res.conf.plugins));
 
-              if(!_.isEmpty(referencedPlugins)){
-                res.errorDetails = format(strings.errors.registry.PLUGIN_NOT_FOUND, referencedPlugins.join(' ,'));
+              if(!_.isEmpty(unRegisteredPlugins)){
+
+                res.errorDetails = format(strings.errors.registry.PLUGIN_NOT_FOUND, unRegisteredPlugins.join(' ,'));
                 res.errorCode = 'PLUGIN_MISSING_FROM_COMPONENT';
                 
                 return res.json(501, {
                   code: res.errorCode,
                   error: res.errorDetails, 
-                  missingPlugins: referencedPlugins
+                  missingPlugins: unRegisteredPlugins
                 });
               }
 

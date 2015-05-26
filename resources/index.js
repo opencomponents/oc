@@ -8,6 +8,7 @@ module.exports = {
   },
   errors: {
     registry: {
+      COMPONENT_EXECUTION_ERROR: 'component execution error',
       COMPONENT_NAME_NOT_VALID: 'The component\'s name contains invalid characters. Allowed are alphanumeric, _, -',
       COMPONENT_NAME_NOT_VALID_CODE: 'name_not_valid',
       COMPONENT_NOT_FOUND: 'Component "{0}" not found on {1}',
@@ -42,6 +43,7 @@ module.exports = {
       PARAMETER_WRONG_FORMAT: 'Parameters are not correctly formatted: {0}',
       PARAMETER_WRONG_FORMAT_CODE: 'wrong type',
       PLUGIN_NOT_FOUND: 'Component is trying to use un-registered plugins: {0}',
+      PLUGIN_NOT_IMPLEMENTED: 'registry does not implement plugins: {0}',
       PLUGIN_NOT_VALID: 'Plugin {0} is not valid'
     },
     cli: {
