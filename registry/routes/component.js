@@ -63,7 +63,7 @@ module.exports = function(conf, repository){
       }
 
       var returnComponent = function(err, data){
-        if(!!err){ console.log(err);
+        if(!!err){
           res.errorDetails = strings.errors.registry.COMPONENT_EXECUTION_ERROR;
           return res.json(500, { error: res.errorDetails, details: err });
         }

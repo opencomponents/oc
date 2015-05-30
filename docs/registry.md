@@ -103,12 +103,13 @@ registry.register({
 |`routes[index].method`|`string`|sets verb|
 |`routes[index].handler`|`function`|sets function handler for routed action [Look at the example](#routes-example)|
 |`s3`|`object`|sets the Amazon S3 credentials|
-|`s3.key`|`string`|sets S3 access key|
-|`s3.secret`|`string`|sets S3 secret
-|`s3.bucket`|`string`|sets S3 bucket
-|`s3.region`|`string`|sets S3 region
-|`s3.path`|`string`|sets path for the static resources. Can be the s3 url, or, when using cloudfront, it can be `//cloudfront-id.cloudfront.net/`.
+|`s3.bucket`|`string`|sets S3 bucket|
 |`s3.componentsDir`|`string`|the path where the data will be saved inside the bucket|
+|`s3.key`|`string`|sets S3 access key|
+|`s3.path`|`string`|sets the path that will be used for composing static resources' urls. Can be the s3 url, or, when using cloudfront, it can be `//cloudfront-id.cloudfront.net/`. Signature should not include the protocol|
+|`s3.region`|`string`|sets S3 region|
+|`s3.secret`|`string`|sets S3 secret|
+|`s3.timeout`|`number` (milliseconds)|default `10000`, optionally sets the timeout for s3 requests.|
 |`tempDir`|`string`|default `./temp/`, sets the directory where the components' packages are temporarily stored during the publishing phase inside the registry box|
 |`verbosity`|`number`|default `0`, sets the `console.log` verbosity during the execution|
 
