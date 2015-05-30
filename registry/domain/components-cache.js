@@ -61,8 +61,17 @@ module.exports = function(conf, cdn){
 
   var getFromJson = function(cb){
     cdn.getFile(conf.s3.componentsDir + '/components.json', true, function(err, res){
-      if(err){ return cb(err); }
-      cb(err, JSON.parse(res));
+      var result; 
+      
+      if(!err){
+        try {
+          result = JSON.parse(res);
+        } catch(e){
+          return cb(e);
+        }
+      }
+
+      cb(err, result);
     });
   };
 
@@ -76,7 +85,9 @@ module.exports = function(conf, cdn){
   var refreshCachedData = function(){
     refreshLoop = setInterval(function(){
       getFromJson(function(err, data){
-        if(!err){
+        if(err){
+          _eventsHandler.fire('error', { code: 'components_list_get', message: err });
+        } else {
           updateCachedData(data);
         }
       });

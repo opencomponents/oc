@@ -63,9 +63,9 @@ module.exports = function(conf, repository){
       }
 
       var returnComponent = function(err, data){
-        if(err){
+        if(!!err){ console.log(err);
           res.errorDetails = strings.errors.registry.COMPONENT_EXECUTION_ERROR;
-          return res.json(500, { error: res.errorDetails });
+          return res.json(500, { error: res.errorDetails, details: err });
         }
 
         var componentHref = urlBuilder.component({
