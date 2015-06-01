@@ -35,7 +35,7 @@ describe('registry : routes : component', function(){
               },
               dataProvider: {
                 type: 'node.js',
-                haskey: 'dd5fea649b80425ff9f6f4d18d6699fe2d210df5',
+                hashKey: 'dd5fea649b80425ff9f6f4d18d6699fe2d210df5',
                 src: 'server.js'
               }
             },
@@ -91,7 +91,7 @@ describe('registry : routes : component', function(){
                 },
                 dataProvider: {
                   type: 'node.js',
-                  haskey: '6b28f479ae521755c9a4a9ecdd6e552b1e70892d',
+                  hashKey: '6b28f479ae521755c9a4a9ecdd6e552b1e70892d',
                   src: 'server.js'
                 }
               }
@@ -147,7 +147,7 @@ describe('registry : routes : component', function(){
                 },
                 dataProvider: {
                   type: 'node.js',
-                  haskey: '6b28f479ae521755c9a4a9ecdd6e552b1e70892d',
+                  hashKey: '6b28f479ae521755c9a4a9ecdd6e552b1e70892d',
                   src: 'server.js'
                 }
               },
@@ -238,7 +238,7 @@ describe('registry : routes : component', function(){
                 },
                 dataProvider: {
                   type: 'node.js',
-                  haskey: '6a448d319fd64f46c6cdbad675f9eef09dde2d1b',
+                  hashKey: '6a448d319fd64f46c6cdbad675f9eef09dde2d1b',
                   src: 'server.js'
                 }
               }
@@ -297,7 +297,7 @@ describe('registry : routes : component', function(){
                 },
                 dataProvider: {
                   type: 'node.js',
-                  haskey: '6a448d319fd64f46c6cdbad675f9eef09dde2d1b',
+                  hashKey: '6a448d319fd64f46c6cdbad675f9eef09dde2d1b',
                   src: 'server.js'
                 }
               }

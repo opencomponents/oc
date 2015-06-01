@@ -339,7 +339,7 @@ module.exports = function(){
 
         component.oc.files.dataProvider = {
           type: 'node.js',
-          haskey: hashBuilder.fromString(sandBoxedJs),
+          hashKey: hashBuilder.fromString(sandBoxedJs),
           src: 'server.js'
         };
 
