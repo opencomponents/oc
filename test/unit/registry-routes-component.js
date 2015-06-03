@@ -72,6 +72,64 @@ describe('registry : routes : component', function(){
     });
   });
 
+  describe('when getting a component with server.js asynchronous execution errors', function(){
+
+    var code, response;
+    before(function(done){
+      initialise({
+        component: {
+          name: 'async-error-component',
+          version: '1.0.0',
+          oc: {
+            container: false,
+            files: {
+              template: {
+                type: 'jade',
+                hashKey: '8c1fbd954f2b0d8cd5cf11c885fed4805225749f',
+                src: 'template.js'
+              },
+              dataProvider: {
+                type: 'node.js',
+                haskey: 'f59f3942504fee8a5850cdd806172c24964bcf37',
+                src: 'server.js'
+              }
+            }
+          }
+        },
+        data: '"use strict";module.exports.data=function(t,e){setTimeout(function(){e(null,{a:thisDoesnotExist()})},1e3)};',
+        view: 'var oc=oc||{};oc.components=oc.components||{},oc.components["8c1fbd954f2b0d8cd5cf11c885fed4805225749f"]' +
+              '=function(){var o=[];return o.push("<div>hello</div>"),o.join("")};'
+      });
+
+      componentRoute = new ComponentRoute({}, mockedRepository);
+
+      var resJson = function(calledCode, calledResponse){
+        code = calledCode;
+        response = calledResponse;
+        done();
+      };
+
+      componentRoute({
+        headers: {},
+        params: { componentName: 'async-error-component' }
+      }, {
+        conf: {
+          baseUrl: 'http://components.com/',
+          plugins: {}
+        },
+        json: resJson
+      });
+    });
+
+    it('should return 500 status code', function(){
+      expect(code).to.be.equal(500);
+    });
+
+    it('should respond with error message for component execution error', function(){
+      expect(response.error).to.equal('component execution error');
+    });
+  });
+
   describe('when getting a component that implements a plugin', function(){
 
     describe('when plugin not declared in package.json', function(){

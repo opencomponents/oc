@@ -3,6 +3,7 @@
 var acceptLanguageParser = require('accept-language-parser');
 var Cache = require('nice-cache');
 var Client = require('../../client');
+var Domain = require('domain');
 var detective = require('../domain/plugins-detective');
 var format = require('stringformat');
 var RequireWrapper = require('../domain/require-wrapper');
@@ -157,15 +158,13 @@ module.exports = function(conf, repository){
               module: { 
                 exports: {}
               },
-              console: res.conf.local ? console : { log: _.noop }
+              console: res.conf.local ? console : { log: _.noop },
+              setTimeout: setTimeout
             };
 
-            try {              
-              vm.runInNewContext(dataProcessorJs, context);
-              var processData = context.module.exports.data;
-              cache.set('file-contents', cacheKey, processData);
-              processData(contextObj, returnComponent);
-            } catch(err){
+
+            var handleError = function(err){
+
               if(err.code === 'DEPENDENCY_MISSING_FROM_REGISTRY'){
                 res.errorDetails = format(strings.errors.registry.DEPENDENCY_NOT_FOUND, err.missing.join(', '));
                 res.errorCode = err.code;
@@ -193,6 +192,22 @@ module.exports = function(conf, repository){
               }
 
               returnComponent(err);
+            };
+
+            try {              
+              vm.runInNewContext(dataProcessorJs, context);
+
+              var processData = context.module.exports.data,
+                  domain = Domain.create();
+              
+              cache.set('file-contents', cacheKey, processData);
+              domain.on('error', handleError);
+
+              domain.run(function(){
+                processData(contextObj, returnComponent);
+              });
+            } catch(err){
+              handleError(err);
             }
           });
         }
