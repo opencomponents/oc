@@ -17,7 +17,7 @@
       ],
       "dataProvider": {
         "type": "node.js",
-        "haskey": "ffb0e43eaf72f55fa13dc1e7262019c14c3dfc81",
+        "hashKey": "ffb0e43eaf72f55fa13dc1e7262019c14c3dfc81",
         "src": "server.js"
       }
     },

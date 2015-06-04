@@ -99,19 +99,23 @@ describe('cli : domain : local', function(){
       it('should mark the package.json as a packaged', function(){
         expect(component.oc.packaged).to.eql(true);
       });
+
+      it('should save hash for template in package.json', function(){
+        expect(component.oc.files.template.hashKey).not.be.empty;
+      });
     });
 
     describe('when component has a server.js logic', function(){
 
       describe('when component does not require any json', function(){
 
-        var data,
+        var data, component,
             serverjs = 'module.exports.data=function(context,cb){return cb(null, {name:\'John\'}); };';
 
         beforeEach(function(done){
 
           data = initialise();
-          var component = {
+          component = {
             name: 'component01',
             oc: {
               files: {
@@ -136,6 +140,10 @@ describe('cli : domain : local', function(){
 
         it('should save compiled and minified view-model handler', function(){
           expect(data.fs.writeFileSync.args[1][1]).to.equal(serverjs);
+        });
+
+        it('should save hash for server in package.json', function(){
+          expect(component.oc.files.dataProvider.hashKey).not.be.empty;
         });
       });
 
