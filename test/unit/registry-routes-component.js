@@ -90,7 +90,7 @@ describe('registry : routes : component', function(){
               },
               dataProvider: {
                 type: 'node.js',
-                haskey: 'f59f3942504fee8a5850cdd806172c24964bcf37',
+                hashKey: 'f59f3942504fee8a5850cdd806172c24964bcf37',
                 src: 'server.js'
               }
             }
