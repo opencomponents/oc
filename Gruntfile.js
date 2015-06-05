@@ -1,5 +1,6 @@
 'use strict';
 
+var command = require('./cli/commands');
 var format = require('stringformat');
 var fs = require('fs-extra');
 var path = require('path');
@@ -60,6 +61,26 @@ module.exports = function(grunt) {
       done();
     });
   });
+
+  grunt.registerTask('write-doc', 'Automatically updates the cli-template.md file', function(){
+      var done = this.async();
+      //fs.writeFileSync('./docs/cli.md', '');
+      var commandList = '';
+      //var detailedCommandList = '';
+
+      fs.readFile('./docs/cli-template.md', 'utf8', function(err, data) {
+          if (err) {
+              return console.log(err);
+          }
+          Object.keys(command.oc).forEach(function (prop) {
+              commandList = commandList + prop + ' - ' + command.oc[prop].help + '\n';
+              //detailedCommandList = detailedCommandList + '##' + prop + '\n' + '```sh' + 'Usage: oc ' + prop
+          });
+          var newFileData = data.replace('[commands-shortlist]', commandList);
+          fs.writeFileSync('./docs/cli.md', newFileData);
+      });
+  });
+
 
   // used for version patching
   grunt.registerTask('version', 'Does the version upgrade', function(versionType){

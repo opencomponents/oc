@@ -37,16 +37,31 @@ you should get the list of available commands:
 Usage: oc <command>
 
 command
-  dev          Runs a local oc test registry in order to develop and test components
-  info         Shows installed components on the current project
-  init         Creates a new empty component in the current folder
-  link         Links a component in the current project
-  ls           Shows the list of the available components for a linked oc registry
-  preview      Runs a test page consuming a component
-  publish      Publish a component
-  registry     Shows, adds, removes oc registries to the current project
-  unlink       Unlinks a component from the current project
-  version      Shows the cli version
+dev - Runs a local oc test registry in order to develop and test components
+info - Shows installed components on the current project
+init - Creates a new empty component in the current folder
+link - Links a component in the current project
+ls - Shows the list of the available components for a linked oc registry
+mock - Allows to mock configuration in order to facilitate local development
+preview - Runs a test page consuming a component
+publish - Publish a component
+registry - Shows, adds, removes oc registries to the current project
+unlink - Unlinks a component from the current project
+version - Shows the cli version
+
 
 Hint: Run -h with any command to show the help
 ```
+[command-detailed]
+
+##dev
+
+```sh
+Usage: oc dev <dirName> [port] [options]
+
+dirName     The name of the directory to watch, where the components are stored
+port        The port where to start a local oc instance. Default 3000
+
+Options: Runs a local oc test registry in order to develop and test components
+```
+
