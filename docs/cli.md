@@ -52,16 +52,128 @@ version - Shows the cli version
 
 Hint: Run -h with any command to show the help
 ```
-[command-detailed]
 
 ##dev
 
 ```sh
-Usage: oc dev <dirName> [port] [options]
+Usage: oc dev
 
-dirName     The name of the directory to watch, where the components are stored
-port        The port where to start a local oc instance. Default 3000
+Parameters: 
 
-Options: Runs a local oc test registry in order to develop and test components
+Description: Runs a local oc test registry in order to develop and test components
+```
+
+##info
+
+```sh
+Usage: oc info
+
+Parameters: 
+
+Description: Shows installed components on the current project
+```
+
+##init
+
+```sh
+Usage: oc init
+
+Parameters: 
+
+Description: Creates a new empty component in the current folder
+```
+
+##link
+
+```sh
+Usage: oc link
+
+Parameters: 
+
+Description: Links a component in the current project
+```
+
+##ls
+
+```sh
+Usage: oc ls
+
+Parameters: 
+
+Description: Shows the list of the available components for a linked oc registry
+```
+
+##mock
+
+```sh
+Usage: oc mock
+
+Parameters: 
+
+Description: Allows to mock configuration in order to facilitate local development
+```
+
+##preview
+
+```sh
+Usage: oc preview
+
+Parameters: 
+
+Description: Runs a test page consuming a component
+```
+
+##publish
+
+```sh
+Usage: oc publish
+
+Parameters: 
+
+Description: Publish a component
+```
+
+##registry
+
+```sh
+Usage: oc registry
+
+Parameters: 
+
+Description: Shows, adds, removes oc registries to the current project
+```
+
+##unlink
+
+```sh
+Usage: oc unlink
+
+Parameters: 
+
+Description: Unlinks a component from the current project
+```
+
+##version
+
+```sh
+Usage: oc version
+
+Parameters: 
+
+Description: Shows the cli version
+```
+
+
+##dev
+
+```sh
+Usage: oc dev <dirName> [port]
+
+Parameters: 
+
+	dirName     The name of the directory to watch, where the components are stored
+	port        The port where to start a local oc instance. Default 3000
+
+Description: Runs a local oc test registry in order to develop and test components
 ```
 

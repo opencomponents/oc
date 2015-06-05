@@ -62,11 +62,10 @@ module.exports = function(grunt) {
     });
   });
 
-  grunt.registerTask('write-doc', 'Automatically updates the cli-template.md file', function(){
+  grunt.registerTask('write-doc', 'Automatically updates the cli.md file', function(){
       var done = this.async();
-      //fs.writeFileSync('./docs/cli.md', '');
       var commandList = '';
-      //var detailedCommandList = '';
+      var detailedCommandList = '';
 
       fs.readFile('./docs/cli-template.md', 'utf8', function(err, data) {
           if (err) {
@@ -74,10 +73,11 @@ module.exports = function(grunt) {
           }
           Object.keys(command.oc).forEach(function (prop) {
               commandList = commandList + prop + ' - ' + command.oc[prop].help + '\n';
-              //detailedCommandList = detailedCommandList + '##' + prop + '\n' + '```sh' + 'Usage: oc ' + prop
+              detailedCommandList = detailedCommandList + '\n##' + prop + '\n\n```sh\nUsage: oc ' + prop + '\n\nParameters: ' + '\n\nDescription: ' + command.oc[prop].help + '\n```\n';
           });
-          var newFileData = data.replace('[commands-shortlist]', commandList);
+          var newFileData = data.replace('[commands-shortlist]', commandList).replace('[command-detailed]', detailedCommandList);
           fs.writeFileSync('./docs/cli.md', newFileData);
+          done();
       });
   });
 
