@@ -41,7 +41,7 @@ module.exports = function(repository){
         });
       } else {
         res.json(200, {
-          href: 'res.conf.baseUrl',
+          href: res.conf.baseUrl,
           components: _.map(components, function(component){
             return urlBuilder.component(component, res.conf.baseUrl);
           }),
