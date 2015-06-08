@@ -312,9 +312,16 @@ describe('registry : domain : validator', function(){
             }
           };
 
+          var validComponentParameters = {
+            zero: {
+              type: 'number',
+              mandatory: false,
+              example: 2
+            }
+          };
+
           it('should not be valid when provided in a non valid form', function(){
             var requestParameters = { age: 'This is not a number' };
-
             var validateResult = validate(requestParameters, componentParameters);
 
             expect(validateResult.isValid).to.be.false;
@@ -324,6 +331,12 @@ describe('registry : domain : validator', function(){
             expect(validateResult.errors.message).to.equal('Expected mandatory parameters are missing: name; Parameters are not correctly formatted: age');
           });
 
+          it('should be valid when 0', function(){
+            var requestParameters = { zero: 0 };
+            var validateResult = validate(requestParameters, validComponentParameters);
+
+            expect(validateResult.isValid).to.be.true;
+          });
         });
 
         describe('when non mandatory boolean provided', function(){

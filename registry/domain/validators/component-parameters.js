@@ -10,7 +10,7 @@ var validate = {
   },
 
   numberParameter: function(numberParameter){
-    return !!numberParameter && _.isNumber(numberParameter);
+    return _.isNumber(numberParameter);
   },
 
   parameter: function(parameter, expectedType){
