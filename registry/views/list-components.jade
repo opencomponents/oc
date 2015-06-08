@@ -1,0 +1,30 @@
+mixin parseObject(obj)
+  ul
+    each val, key in obj
+      if (typeof val === 'string')
+        li #{key}: #{val}
+      else if (typeof val === 'object')
+        mixin parseObject(val)
+
+h1 List Component
+
+h2 Href
+p= href
+
+h2 Components
+each component in components
+  +parseObject(component)
+
+p= components[0].repository
+
+h2 Type
+p= type
+
+h2 OC Version
+p= ocVersion
+
+style.
+    body {
+        width: 1024px;
+        margin: 0 auto;
+    }

@@ -17,6 +17,7 @@ var Router = require('./router');
 var settings = require('../resources/settings');
 var validator = require('./domain/validators');
 var _ = require('underscore');
+var path = require('path');
 
 module.exports = function(options){
 
@@ -63,6 +64,8 @@ module.exports = function(options){
     app.use(cors);
     app.use(fileUploads);
     app.use(baseUrlHandler);
+    app.set('views', path.join(__dirname, 'views'));
+    app.set('view engine', 'jade');
 
     if(withLogging){
       app.use(express.logger('dev'));
