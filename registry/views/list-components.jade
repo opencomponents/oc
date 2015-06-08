@@ -1,9 +1,10 @@
 mixin parseObject(obj)
   ul
     each val, key in obj
-      if (typeof val === 'string')
+      if (typeof val !== 'object')
         li #{key}: #{val}
-      else if (typeof val === 'object')
+      else
+        li #{key}:
         mixin parseObject(val)
 
 h1 List Component
@@ -15,8 +16,6 @@ h2 Components
 each component in components
   +parseObject(component)
 
-p= components[0].repository
-
 h2 Type
 p= type
 
@@ -27,4 +26,13 @@ style.
     body {
         width: 1024px;
         margin: 0 auto;
+        font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial;
+    }
+
+    ul {
+        list-style-type: none;
+    }
+
+    h1, h2 {
+        color: darkred;
     }
