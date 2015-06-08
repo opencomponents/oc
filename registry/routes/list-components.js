@@ -16,7 +16,7 @@ module.exports = function(repository){
 
       var componentInfo = [];
 
-      if (req.headers.accept.indexOf('text/html') > -1) {
+      if (req.headers.accept && req.headers.accept.indexOf('text/html') > -1) {
 
         async.each(components, function(component, callback){
           return repository.getComponent(component, function (err, result) {
