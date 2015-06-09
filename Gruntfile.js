@@ -1,6 +1,6 @@
 'use strict';
 
-var command = require('./cli/commands');
+var commands = require('./cli/commands');
 var format = require('stringformat');
 var fs = require('fs-extra');
 var path = require('path');
@@ -71,12 +71,12 @@ module.exports = function(grunt) {
           if (err) {
               return console.log(err);
           }
-          Object.keys(command.oc).forEach(function(prop) {
-              commandList = commandList + prop + ' - ' + command.oc[prop].help + '\n';
-              detailedCommandList = detailedCommandList + '\n##' + prop + '\n\n```sh\nUsage: oc ' + prop;
-              if(command.oc[prop].options) {
-                  Object.keys(command.oc[prop].options).forEach(function(option) {
-                      if(command.oc[prop].options[option].required === false) {
+          Object.keys(commands.oc).forEach(function(command) {
+              commandList = commandList + command + ' - ' + commands.oc[command].help + '\n';
+              detailedCommandList = detailedCommandList + '\n##' + command + '\n\n```sh\nUsage: oc ' + command;
+              if(commands.oc[command].options) {
+                  Object.keys(commands.oc[command].options).forEach(function(option) {
+                      if(commands.oc[command].options[option].required === false) {
                           detailedCommandList = detailedCommandList + ' [' + option + ']';
                       }
                       else {
@@ -85,14 +85,14 @@ module.exports = function(grunt) {
                   });
               }
               detailedCommandList = detailedCommandList + '\n\nParameters:\n';
-              if(command.oc[prop].options) {
-                  Object.keys(command.oc[prop].options).forEach(function(option) {
-                      detailedCommandList = detailedCommandList + '\n' + '    ' + option + '    ' + command.oc[prop].options[option].help;
+              if(commands.oc[command].options) {
+                  Object.keys(commands.oc[command].options).forEach(function(option) {
+                      detailedCommandList = detailedCommandList + '\n' + '    ' + option + '    ' + commands.oc[command].options[option].help;
                   });
               }
-              detailedCommandList = detailedCommandList + '\n\nDescription: ' + command.oc[prop].help + '\n```\n';
+              detailedCommandList = detailedCommandList + '\n\nDescription: ' + commands.oc[command].help + '\n```\n';
           });
-          var newFileData = data.replace('[commands-shortlist]', commandList).replace('[command-detailed]', detailedCommandList);
+          var newFileData = data.replace('[commands-shortlist]', commandList).replace('[commands-detailed]', detailedCommandList);
           fs.writeFileSync('./docs/cli.md', newFileData);
           done();
       });
