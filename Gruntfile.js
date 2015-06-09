@@ -71,16 +71,32 @@ module.exports = function(grunt) {
           if (err) {
               return console.log(err);
           }
-          Object.keys(command.oc).forEach(function (prop) {
+          Object.keys(command.oc).forEach(function(prop) {
               commandList = commandList + prop + ' - ' + command.oc[prop].help + '\n';
-              detailedCommandList = detailedCommandList + '\n##' + prop + '\n\n```sh\nUsage: oc ' + prop + '\n\nParameters: ' + '\n\nDescription: ' + command.oc[prop].help + '\n```\n';
+              detailedCommandList = detailedCommandList + '\n##' + prop + '\n\n```sh\nUsage: oc ' + prop;
+              if(command.oc[prop].options) {
+                  Object.keys(command.oc[prop].options).forEach(function(option) {
+                      if(command.oc[prop].options[option].required === false) {
+                          detailedCommandList = detailedCommandList + ' [' + option + ']';
+                      }
+                      else {
+                          detailedCommandList = detailedCommandList + ' <' + option + '>';
+                      }
+                  });
+              }
+              detailedCommandList = detailedCommandList + '\n\nParameters:\n';
+              if(command.oc[prop].options) {
+                  Object.keys(command.oc[prop].options).forEach(function(option) {
+                      detailedCommandList = detailedCommandList + '\n' + '    ' + option + '    ' + command.oc[prop].options[option].help;
+                  });
+              }
+              detailedCommandList = detailedCommandList + '\n\nDescription: ' + command.oc[prop].help + '\n```\n';
           });
           var newFileData = data.replace('[commands-shortlist]', commandList).replace('[command-detailed]', detailedCommandList);
           fs.writeFileSync('./docs/cli.md', newFileData);
           done();
       });
   });
-
 
   // used for version patching
   grunt.registerTask('version', 'Does the version upgrade', function(versionType){
