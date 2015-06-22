@@ -25,7 +25,7 @@ module.exports = {
           help: 'The name of the component to create'
         },
         templateType: {
-          help: 'The component\' template type. Options are jade or handlebars (default).',
+          help: 'The component\'s template type. Options are jade or handlebars (default).',
           required: false,
           default: 'handlebars'
         }

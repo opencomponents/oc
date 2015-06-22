@@ -1,6 +1,6 @@
 'use strict';
 
-var commands = require('./cli/commands');
+var commandsParser = require('./grunt-tasks/support/cli-commands-parser');
 var format = require('stringformat');
 var fs = require('fs-extra');
 var path = require('path');
@@ -63,39 +63,12 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('write-doc', 'Automatically updates the cli.md file', function(){
-      var done = this.async();
-      var commandList = '';
-      var detailedCommandList = '';
-
-      fs.readFile('./docs/cli-template.md', 'utf8', function(err, data) {
-          if (err) {
-              return console.log(err);
-          }
-          Object.keys(commands.oc).forEach(function(command) {
-              commandList = commandList + command + ' - ' + commands.oc[command].help + '\n';
-              detailedCommandList = detailedCommandList + '\n##' + command + '\n\n```sh\nUsage: oc ' + command;
-              if(commands.oc[command].options) {
-                  Object.keys(commands.oc[command].options).forEach(function(option) {
-                      if(commands.oc[command].options[option].required === false) {
-                          detailedCommandList = detailedCommandList + ' [' + option + ']';
-                      }
-                      else {
-                          detailedCommandList = detailedCommandList + ' <' + option + '>';
-                      }
-                  });
-              }
-              detailedCommandList = detailedCommandList + '\n\nParameters:\n';
-              if(commands.oc[command].options) {
-                  Object.keys(commands.oc[command].options).forEach(function(option) {
-                      detailedCommandList = detailedCommandList + '\n' + '    ' + option + '    ' + commands.oc[command].options[option].help;
-                  });
-              }
-              detailedCommandList = detailedCommandList + '\n\nDescription: ' + commands.oc[command].help + '\n```\n';
-          });
-          var newFileData = data.replace('[commands-shortlist]', commandList).replace('[commands-detailed]', detailedCommandList);
-          fs.writeFileSync('./docs/cli.md', newFileData);
-          done();
-      });
+    
+    var parsed = commandsParser.parse(),
+        data = fs.readFileSync('./grunt-tasks/support/cli-template.md', 'utf8'),
+        newFileData = data.replace('[commands-shortlist]', parsed.commandList).replace('[commands-detailed]', parsed.detailedCommandList);
+      
+    fs.writeFileSync('./docs/cli.md', newFileData);
   });
 
   // used for version patching
@@ -109,6 +82,7 @@ module.exports = function(grunt) {
 
     grunt.task.run([
       'test-local',
+      'write-doc',
       'build'
     ]);
   });

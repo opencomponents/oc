@@ -41,18 +41,5 @@ command
 
 Hint: Run -h with any command to show the help
 ```
-[command-detailed]
 
-##dev
-
-```sh
-Usage: oc dev <dirName> [port]
-
-Parameters: 
-
-	dirName     The name of the directory to watch, where the components are stored
-	port        The port where to start a local oc instance. Default 3000
-
-Description: Runs a local oc test registry in order to develop and test components
-```
-
+[commands-detailed]
