@@ -183,6 +183,8 @@ This is all you need:
 </html>
 ```
 
+For more information about client-side operations, look at [this page](docs/browser-client.md).
+
 ## Server-side rendering with client-side failover
 
 When the registry is slow or returns errors while doing server-side rendering, you may want to unblock the server-side rendering and postpone it to make it happen on the client-side after the DOM is loaded. If your registry is publicly available and you use the node.js client, this is done automatically.
