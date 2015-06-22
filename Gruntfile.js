@@ -62,7 +62,7 @@ module.exports = function(grunt) {
     });
   });
 
-  grunt.registerTask('write-doc', 'Automatically updates the cli.md file', function(){
+  grunt.registerTask('generate-cli-doc', 'Automatically updates the cli.md file', function(){
     
     var parsed = commandsParser.parse(),
         data = fs.readFileSync('./grunt-tasks/support/cli-template.md', 'utf8'),
@@ -82,7 +82,7 @@ module.exports = function(grunt) {
 
     grunt.task.run([
       'test-local',
-      'write-doc',
+      'generate-cli-doc',
       'build'
     ]);
   });

@@ -66,7 +66,7 @@ oc dev <dirName> [port]
 Parameters:
 
 |Name|Description|
-|-|-|
+|----|-----------|
 |dirName|The name of the directory to watch, where the components are stored|
 |port|The port where to start a local oc instance. Default 3000|
 
@@ -90,7 +90,7 @@ oc init <componentName> [templateType]
 Parameters:
 
 |Name|Description|
-|-|-|
+|----|-----------|
 |componentName|The name of the component to create|
 |templateType|The component's template type. Options are jade or handlebars (default).|
 
@@ -106,7 +106,7 @@ oc link <componentName> [componentVersion]
 Parameters:
 
 |Name|Description|
-|-|-|
+|----|-----------|
 |componentName|The name of the component to link. <oc ls> to see the list of available components|
 |componentVersion|The specific version of the component to link. Default is the latest|
 
@@ -122,7 +122,7 @@ oc ls [registry]
 Parameters:
 
 |Name|Description|
-|-|-|
+|----|-----------|
 |registry|Specify registry to query|
 
 ##mock
@@ -137,7 +137,7 @@ oc mock <targetType> <targetName> <targetValue>
 Parameters:
 
 |Name|Description|
-|-|-|
+|----|-----------|
 |targetType|The type of item to mock|
 |targetName|The item to mock|
 |targetValue|The mocked value|
@@ -154,7 +154,7 @@ oc preview <componentHref> [port]
 Parameters:
 
 |Name|Description|
-|-|-|
+|----|-----------|
 |componentHref|The name of the component to preview|
 |port|The port where to start the server. Default 3000|
 
@@ -170,7 +170,7 @@ oc publish <componentPath>
 Parameters:
 
 |Name|Description|
-|-|-|
+|----|-----------|
 |componentPath|The path of the component to publish|
 
 ##registry
@@ -185,7 +185,7 @@ oc registry <command> [parameter]
 Parameters:
 
 |Name|Description|
-|-|-|
+|----|-----------|
 |command|Action: add, ls, or remove|
 |parameter|Parameter to perform the action|
 
@@ -201,7 +201,7 @@ oc unlink <componentName>
 Parameters:
 
 |Name|Description|
-|-|-|
+|----|-----------|
 |componentName|The name of the component to unlink. <oc info> to see the list of linked components|
 
 ##version
