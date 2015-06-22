@@ -3,7 +3,7 @@ The browser client
 
 When using the oc library, oc exposes a set of functionalities on the `window.oc` namespace.
 
-### oc.build(options)
+### oc.build (options)
 
 It will build an oc-component tag for provided parameters:
 
@@ -28,17 +28,17 @@ var html = oc.build{
 };
 
 // html => <oc-component href="https://my-registry.com/components/my-component/~2.3.4/?age=23&hello=world"></oc-component>
-```§
+```
 
-### oc.renderNestedComponent($el, callback);
+### oc.renderNestedComponent ($el, callback);
 
 Given a jQuery selected $el <oc-component> element, renders it and then executes the callback function.
 
-### oc.renderUnloadedComponents()
+### oc.renderUnloadedComponents ()
 
-Scans the DOM looking for unrendered components and does the rendering. It may be a little bit expensive, so in case you know where the component is, use [renderNestedComponent](#oc-rendernestedcomponents) instead.
+Scans the DOM looking for unrendered components and does the rendering. It may be a little bit expensive, so in case you know where the component is, use [renderNestedComponent](#ocrendernestedcomponents) instead.
 
-### oc.require([namespace], url, callback)
+### oc.require ([namespace], url, callback)
 
 A minimal require.js functionality. Loads a file inside the head, and then fires the callback. If it is a `.css` extension it will loaded as `<link>`, if it has a `.js` extension it will be loaded as `<script>`.
 When the namespace is provided, the load will happen only if `window[namespace]` is `undefined`. This is particularly useful in case we want to use a javascript dependency and we want to load it only if the container does not exposes it on the global scope.
