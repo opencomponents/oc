@@ -7,8 +7,8 @@ When using the oc library, oc exposes a set of functionalities on the `window.oc
 
 It will build an oc-component tag for provided parameters:
 
-|parameter|type|description|
-|-|-|-|
+|Parameter|type|description|
+|---------|----|-----------|
 |`baseUrl`|`string`|The base url of the registry|
 |`name`|`string`|The component's name|
 |`parameters`|`array of objects` (optional)|The component's parameters|
@@ -36,7 +36,7 @@ Given a jQuery selected $el <oc-component> element, renders it and then executes
 
 ### oc.renderUnloadedComponents ()
 
-Scans the DOM looking for unrendered components and does the rendering. It may be a little bit expensive, so in case you know where the component is, use [renderNestedComponent](#ocrendernestedcomponents) instead.
+Scans the DOM looking for unrendered components and does the rendering. It may be a little bit expensive, so in case you know where the component is, use [renderNestedComponent](#ocrendernestedcomponent-el-callback) instead.
 
 ### oc.require ([namespace], url, callback)
 
