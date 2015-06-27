@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 var injectr = require('injectr');
 var path = require('path');
 var sinon = require('sinon');
-console.log(__BASE);
+
 describe('registry : domain : repository', function(){
 
   var response;
@@ -224,7 +224,7 @@ describe('registry : domain : repository', function(){
 
   describe('when on local configuration', function(){
 
-    var Repository = require(__BASE + '/registry/domain/repository');
+    var Repository = require('../../registry/domain/repository');
 
     var localConfiguration = {
       local: true,

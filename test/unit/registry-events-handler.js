@@ -5,7 +5,7 @@ var sinon = require('sinon');
 
 describe('registry : events-handler', function(){
 
-  var EventsHandler = require(__BASE + '/registry/events-handler');
+  var EventsHandler = require('../../registry/events-handler');
 
   describe('when subscribing a request event using a not valid handler', function(){
 

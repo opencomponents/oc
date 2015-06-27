@@ -7,9 +7,9 @@ var consoleMock = require('../mocks/console');
 
 describe('cli : facade : unlink', function(){
 
-  var Local = require(__BASE + '/cli/domain/local'),
+  var Local = require('../../cli/domain/local'),
       local = new Local(),
-      UnlinkFacade = require(__BASE + '/cli/facade/unlink'),
+      UnlinkFacade = require('../../cli/facade/unlink'),
       unlinkFacade = new UnlinkFacade({ local:local, logger: consoleMock }),
       logs;
 

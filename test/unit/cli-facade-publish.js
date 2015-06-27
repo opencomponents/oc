@@ -8,12 +8,12 @@ var _ = require('underscore');
 
 describe('cli : facade : publish', function(){
 
-  var Registry = require(__BASE + '/cli/domain/registry'),
+  var Registry = require('../../cli/domain/registry'),
       registry = new Registry(),
-      consoleMock = require(__BASE + '/test/mocks/console'),
-      Local = require(__BASE + '/cli/domain/local'),
+      consoleMock = require('../../test/mocks/console'),
+      Local = require('../../cli/domain/local'),
       local = new Local(),
-      PublishFacade = require(__BASE + '/cli/facade/publish'),
+      PublishFacade = require('../../cli/facade/publish'),
       publishFacade = new PublishFacade({ registry: registry, local: local, logger: consoleMock }),
       logs;
 

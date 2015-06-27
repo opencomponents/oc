@@ -5,7 +5,7 @@ var sinon = require('sinon');
 
 describe('registry : routes : component', function(){
 
-  var ComponentRoute = require(__BASE + '/registry/routes/component'),
+  var ComponentRoute = require('../../registry/routes/component'),
       mockedRepository, resJsonStub, componentRoute;
 
   var initialise = function(params){

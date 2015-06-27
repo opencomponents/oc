@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 
 describe('utils : hash-builder', function(){
 
-  var hashBuilder = require(__BASE + '/utils/hash-builder');
+  var hashBuilder = require('../../utils/hash-builder');
 
   it('should build an hash from a string', function(){
     var hash = hashBuilder.fromString('<div>this is a component</div>');

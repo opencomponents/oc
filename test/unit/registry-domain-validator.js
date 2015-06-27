@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 
 describe('registry : domain : validator', function(){
 
-  var validator = require(__BASE + '/registry/domain/validators');
+  var validator = require('../../registry/domain/validators');
 
   describe('when validating registry configuration', function(){
 

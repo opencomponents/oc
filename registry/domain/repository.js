@@ -24,9 +24,8 @@ module.exports = function(conf){
   var local = {
     getCompiledView: function(componentName, componentVersion){
       if(componentName === 'oc-client'){
-        return fs.readFileSync(path.join(__dirname, '../../components/oc-client/_package/template.js')).toString();
+        return require(__BASE + 'components/oc-client/_package/template.js').toString();
       }
-
       return fs.readFileSync(path.join(conf.path, componentName + '/_package/template.js')).toString();
     },
     getComponents: function(){
@@ -45,7 +44,7 @@ module.exports = function(conf){
     },
     getComponentVersions: function(componentName, callback){
       if(componentName === 'oc-client'){
-        return callback(null, [fs.readJsonSync(path.join(__dirname, '../../package.json')).version]);
+        return callback(null, [require(__BASE + '/package.json').version]);
       }
 
       if(!_.contains(local.getComponents(), componentName)){

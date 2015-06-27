@@ -3,13 +3,13 @@
 var colors = require('colors');
 var expect = require('chai').expect;
 var sinon = require('sinon');
-var consoleMock = require(__BASE + '/test/mocks/console');
+var consoleMock = require('../../test/mocks/console');
 
 describe('cli : facade : registry', function(){
 
-  var Registry = require(__BASE + '/cli/domain/registry'),
+  var Registry = require('../../cli/domain/registry'),
       registry = new Registry(),
-      RegistryFacade = require(__BASE + '/cli/facade/registry'),
+      RegistryFacade = require('../../cli/facade/registry'),
       registryFacade = new RegistryFacade({ registry: registry, logger: consoleMock }),
       logs;
 
