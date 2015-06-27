@@ -3,9 +3,8 @@
 var colors = require('colors');
 var fs = require('fs-extra');
 var path = require('path');
-var strings = require('../../resources');
 var _ = require('underscore');
-
+var strings = require(__BASE + '/resources');
 
 module.exports = function(options){
   var logger = !!options.verbosity ? console : { log: _.noop },

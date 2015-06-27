@@ -1,6 +1,6 @@
 'use strict';
 
-var commands = require('../../cli/commands');
+var commands = require(__BASE + '/cli/commands');
 var _ = require('underscore');
 
 module.exports = {
@@ -23,7 +23,7 @@ module.exports = {
       }
 
       detailedCommandList += '\n```\n';
-      
+
       if(!!command.options){
         detailedCommandList += '\n\nParameters:\n\n|Name|Description|\n|----|-----------|\n';
         _.forEach(command.options, function(option, optionName){

@@ -1,15 +1,15 @@
 'use strict';
 
 var colors = require('colors');
-var consoleMock = require('../mocks/console');
 var expect = require('chai').expect;
 var sinon = require('sinon');
+var consoleMock = require('../mocks/console');
 
 describe('cli : facade : unlink', function(){
 
-  var Local = require('../../cli/domain/local'),
-      local = new Local(),  
-      UnlinkFacade = require('../../cli/facade/unlink'),
+  var Local = require(__BASE + '/cli/domain/local'),
+      local = new Local(),
+      UnlinkFacade = require(__BASE + '/cli/facade/unlink'),
       unlinkFacade = new UnlinkFacade({ local:local, logger: consoleMock }),
       logs;
 
@@ -32,7 +32,7 @@ describe('cli : facade : unlink', function(){
       it('should show the error', function(){
         expect(logs[0]).to.equal('an error!'.red);
       });
-    }); 
+    });
 
     describe('when it succeeds', function(){
 

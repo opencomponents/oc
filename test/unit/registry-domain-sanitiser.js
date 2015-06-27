@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 
 describe('registry : domain : sanitiser', function(){
 
-  var sanitiser = require('../../registry/domain/sanitiser');
+  var sanitiser = require(__BASE + '/registry/domain/sanitiser');
 
   describe('when sanitising component\'s request parameters', function(){
 
@@ -13,7 +13,7 @@ describe('registry : domain : sanitiser', function(){
     describe('when component have boolean parameter', function(){
 
       it('should convert string to boolean when true', function(){
-        
+
         var componentParameters = {
           isTrue: {
             type: 'boolean',
@@ -29,7 +29,7 @@ describe('registry : domain : sanitiser', function(){
       });
 
       it('should convert string to boolean when true', function(){
-        
+
         var componentParameters = {
           isTrue: {
             type: 'boolean',

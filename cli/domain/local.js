@@ -6,16 +6,16 @@ var detective = require('detective');
 var format = require('stringformat');
 var fs = require('fs-extra');
 var handlebars = require('handlebars');
-var hashBuilder = require('../../utils/hash-builder');
 var jade = require('jade');
 var nodeDir = require('node-dir');
-var request = require('../../utils/request');
 var path = require('path');
-var settings = require('../../resources/settings');
 var Targz = require('tar.gz');
 var uglifyJs = require('uglify-js');
-var validator = require('../../registry/domain/validators');
 var _ = require('underscore');
+var hashBuilder = require(__BASE + '/utils/hash-builder');
+var request = require(__BASE + '/utils/request');
+var settings = require(__BASE + '/resources/settings');
+var validator = require(__BASE + '/registry/domain/validators');
 
 module.exports = function(){
 
@@ -102,7 +102,7 @@ module.exports = function(){
   };
 
   var missingDependencies = function(requires, component){
-    return _.filter(requires, function(dep){ 
+    return _.filter(requires, function(dep){
       return !_.contains(_.keys(component.dependencies), dep);
     });
   };
@@ -229,7 +229,7 @@ module.exports = function(){
 
           localConfig.components[componentName] = componentVersion;
           fs.writeJson(settings.configFile.src, localConfig, callback);
-        });      
+        });
       });
     },
     mock: function(params, callback){

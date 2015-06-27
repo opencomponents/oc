@@ -1,23 +1,26 @@
 'use strict';
 
-var ComponentsCache = require('./components-cache');
+
 var format = require('stringformat');
 var fs = require('fs-extra');
-var packageInfo = require('../../package.json');
+var _ = require('underscore');
 var path = require('path');
+
+var packageInfo = require(__BASE + '/package.json');
 var S3 = require('./s3');
-var settings = require('../../resources/settings');
-var strings = require('../../resources');
+var ComponentsCache = require(__BASE + '/registry/domain/components-cache');
+var settings = require(__BASE + '/resources/settings');
+var strings = require(__BASE + '/resources');
 var validator = require('./validators');
 var versionHandler = require('./version-handler');
-var _ = require('underscore');
+
 
 module.exports = function(conf){
 
   var cdn = !conf.local && new S3(conf),
       repositorySource = conf.local ? 'local repository' : 's3 cdn',
       componentsCache = new ComponentsCache(conf, cdn);
-  
+
   var local = {
     getCompiledView: function(componentName, componentVersion){
       if(componentName === 'oc-client'){
@@ -26,7 +29,7 @@ module.exports = function(conf){
 
       return fs.readFileSync(path.join(conf.path, componentName + '/_package/template.js')).toString();
     },
-    getComponents: function(){ 
+    getComponents: function(){
 
       var validComponents = fs.readdirSync(conf.path).filter(function(file){
         var isDir = file.indexOf('.') === -1,
@@ -39,7 +42,7 @@ module.exports = function(conf){
 
       validComponents.push('oc-client');
       return validComponents;
-    }, 
+    },
     getComponentVersions: function(componentName, callback){
       if(componentName === 'oc-client'){
         return callback(null, [fs.readJsonSync(path.join(__dirname, '../../package.json')).version]);
@@ -79,7 +82,7 @@ module.exports = function(conf){
       }
 
       this.getComponentVersions(componentName, function(err, availableVersions){
-        
+
         if(err){
           return callback(err);
         }
@@ -120,7 +123,7 @@ module.exports = function(conf){
       }
 
       var packagePath = format('{0}/{1}/{2}/package.json', conf.s3.componentsDir, componentName, componentVersion);
-      
+
       cdn.getFile(packagePath, function(err, component){
         var parsed;
 
@@ -198,7 +201,7 @@ module.exports = function(conf){
       }
 
       this.getComponentVersions(componentName, function(err, componentVersions){
-        
+
         if(!versionHandler.validateNewVersion(componentVersion, componentVersions)){
           return callback({
             code: strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND_CODE,

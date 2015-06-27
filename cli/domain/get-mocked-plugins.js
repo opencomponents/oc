@@ -2,7 +2,7 @@
 
 var fs = require('fs-extra');
 var path = require('path');
-var settings = require('../../resources/settings');
+var settings = require(__BASE + '/resources/settings');
 var _ = require('underscore');
 
 module.exports = function(){

@@ -2,17 +2,19 @@
 
 var acceptLanguageParser = require('accept-language-parser');
 var Cache = require('nice-cache');
-var Client = require('../../client');
 var Domain = require('domain');
-var detective = require('../domain/plugins-detective');
 var format = require('stringformat');
-var RequireWrapper = require('../domain/require-wrapper');
-var sanitiser = require('../domain/sanitiser');
-var strings = require('../../resources');
-var urlBuilder = require('../domain/url-builder');
-var validator = require('../domain/validators');
 var vm = require('vm');
 var _ = require('underscore');
+
+var Client = require(__BASE + '/client');
+var detective = require(__BASE + '/registry/domain/plugins-detective');
+var RequireWrapper = require(__BASE + '/registry/domain/require-wrapper');
+var sanitiser = require(__BASE + '/registry/domain/sanitiser');
+var strings = require(__BASE + '/resources');
+var urlBuilder = require(__BASE + '/registry/domain/url-builder');
+var validator = require(__BASE + '/registry/domain/validators');
+
 
 module.exports = function(conf, repository){
 
@@ -40,7 +42,7 @@ module.exports = function(conf, repository){
         return res.json(404, { err: err });
       }
 
-      // check component requirements are satisfied by registry      
+      // check component requirements are satisfied by registry
       var pluginsCompatibility = validator.validatePluginsRequirements(component.oc.plugins, conf.plugins);
 
       if(!pluginsCompatibility.isValid){
@@ -49,7 +51,7 @@ module.exports = function(conf, repository){
 
         return res.json(501, {
           code: res.errorCode,
-          error: res.errorDetails, 
+          error: res.errorDetails,
           missingPlugins: pluginsCompatibility.missing
         });
       }
@@ -81,7 +83,7 @@ module.exports = function(conf, repository){
           version: component.version,
           requestVersion: requestedComponent.version
         };
-        
+
         if(req.headers.accept === 'application/vnd.oc.prerendered+json'){
           res.json(200, _.extend(response, {
             data: data,
@@ -91,7 +93,7 @@ module.exports = function(conf, repository){
               key: component.oc.files.template.hashKey
             },
             renderMode: 'pre-rendered'
-          }));        
+          }));
         } else {
 
           var cacheKey = format('{0}/{1}/template.js', component.name, component.version),
@@ -107,8 +109,8 @@ module.exports = function(conf, repository){
 
           var returnResult = function(template){
             client.renderTemplate(template, data, options, function(err, html){
-              res.json(200, _.extend(response, { 
-                html: html, 
+              res.json(200, _.extend(response, {
+                html: html,
                 renderMode: 'rendered'
               }));
             });
@@ -134,7 +136,7 @@ module.exports = function(conf, repository){
 
         var cacheKey = format('{0}/{1}/server.js', component.name, component.version),
             cached = cache.get('file-contents', cacheKey),
-            contextObj = { 
+            contextObj = {
               acceptLanguage: acceptLanguageParser.parse(req.headers['accept-language']),
               baseUrl: conf.baseUrl,
               env: conf.env,
@@ -153,9 +155,9 @@ module.exports = function(conf, repository){
               return res.json(502, { error: res.errorDetails });
             }
 
-            var context = { 
-              require: new RequireWrapper(res.conf.dependencies), 
-              module: { 
+            var context = {
+              require: new RequireWrapper(res.conf.dependencies),
+              module: {
                 exports: {}
               },
               console: res.conf.local ? console : { log: _.noop },
@@ -183,10 +185,10 @@ module.exports = function(conf, repository){
 
                 res.errorDetails = format(strings.errors.registry.PLUGIN_NOT_FOUND, unRegisteredPlugins.join(' ,'));
                 res.errorCode = 'PLUGIN_MISSING_FROM_COMPONENT';
-                
+
                 return res.json(501, {
                   code: res.errorCode,
-                  error: res.errorDetails, 
+                  error: res.errorDetails,
                   missingPlugins: unRegisteredPlugins
                 });
               }
@@ -194,12 +196,12 @@ module.exports = function(conf, repository){
               returnComponent(err);
             };
 
-            try {              
+            try {
               vm.runInNewContext(dataProcessorJs, context);
 
               var processData = context.module.exports.data,
                   domain = Domain.create();
-              
+
               cache.set('file-contents', cacheKey, processData);
               domain.on('error', handleError);
 

@@ -2,10 +2,10 @@
 
 var colors = require('colors');
 var format = require('stringformat');
-var strings = require('../../resources/index');
+var strings = require(__BASE + '/resources/index');
 
 module.exports = function(dependencies){
-  
+
   var local = dependencies.local,
       logger = dependencies.logger;
 

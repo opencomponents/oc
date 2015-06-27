@@ -1,6 +1,6 @@
 'use strict';
 
-var strings = require('../../resources');
+var strings = require(__BASE + '/resources');
 var _ = require('underscore');
 
 module.exports = function(injectedDependencies){

@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 
 describe('registry : domain : plugins-detective', function(){
 
-  var detective = require('../../registry/domain/plugins-detective');
+  var detective = require(__BASE + '/registry/domain/plugins-detective');
 
   describe('when detecting plugins usage', function(){
 

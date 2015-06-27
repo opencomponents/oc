@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 
 describe('utils : getMimeType', function(){
 
-  var getMimeType = require('../../utils/get-mime-type');
+  var getMimeType = require(__BASE + '/utils/get-mime-type');
 
   describe('when extension is known', function(){
     var mimeType = getMimeType('.js');

@@ -1,8 +1,10 @@
 'use strict';
 
-var packageInfo = require('../../package.json');
-var urlBuilder = require('../domain/url-builder');
 var _ = require('underscore');
+
+var packageInfo = require(__BASE + '/package.json');
+var urlBuilder = require(__BASE + '/registry/domain/url-builder');
+
 
 module.exports = function(repository){
   return function(req, res){

@@ -1,9 +1,8 @@
 'use strict';
-
-var dependenciesResolver = require('./dependencies-resolver');
 var express = require('express');
-var settings = require('../../resources/settings');
 var _ = require('underscore');
+var settings = require(__BASE + '/resources/settings');
+var dependenciesResolver = require('./dependencies-resolver');
 
 module.exports = function(input){
   var options = _.clone(input);

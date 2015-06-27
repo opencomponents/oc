@@ -1,7 +1,7 @@
 'use strict';
-
-var strings = require('../../../resources');
 var _ = require('underscore');
+var strings = require(__BASE + '/resources');
+
 
 module.exports = function(conf){
 
@@ -12,7 +12,7 @@ module.exports = function(conf){
     response.message = message || 'registry configuration is not valid';
     return response;
   };
-  
+
   if(!conf || !_.isObject(conf) || _.keys(conf).length === 0){
     return returnError(strings.errors.registry.CONFIGURATION_EMPTY);
   }
@@ -22,7 +22,7 @@ module.exports = function(conf){
   if(!!prefix){
     if(prefix.substr(0, 1) !== '/'){
       return returnError(strings.errors.registry.CONFIGURATION_PREFIX_DOES_NOT_START_WITH_SLASH);
-    } 
+    }
 
     if(prefix.substr(prefix.length - 1) !== '/'){
       return returnError(strings.errors.registry.CONFIGURATION_PREFIX_DOES_NOT_END_WITH_SLASH);

@@ -5,9 +5,9 @@ var sinon = require('sinon');
 
 describe('registry : routes : component', function(){
 
-  var ComponentRoute = require('../../registry/routes/component'),
+  var ComponentRoute = require(__BASE + '/registry/routes/component'),
       mockedRepository, resJsonStub, componentRoute;
-  
+
   var initialise = function(params){
     resJsonStub = sinon.stub();
     mockedRepository = {
@@ -325,7 +325,7 @@ describe('registry : routes : component', function(){
           json: resJsonStub
         });
       });
-  
+
       it('should return 200 status code', function(){
         expect(resJsonStub.args[0][0]).to.be.equal(200);
       });

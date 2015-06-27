@@ -2,7 +2,7 @@
 
 var colors = require('colors/safe');
 var format = require('stringformat');
-var packageInfo = require('../package.json');
+var packageInfo = require(__BASE + '/package.json');
 var path = require('path');
 var _ = require('underscore');
 
@@ -30,7 +30,7 @@ module.exports = function(repository, options, callback){
       logger.log(colors.yellow('Component not found. Publishing it...'));
 
       var componentPath = path.resolve(__dirname, '../components/oc-client/_package');
-      
+
       repository.publishComponent(componentPath, 'oc-client', packageInfo.version, function(err, res){
         if(!err){
           logger.log(colors.green('Component published.'));

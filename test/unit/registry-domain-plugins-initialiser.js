@@ -4,19 +4,19 @@ var expect = require('chai').expect;
 
 describe('registry : domain : plugins-initialiser', function(){
 
-  var pluginsInitialiser = require('../../registry/domain/plugins-initialiser');
+  var pluginsInitialiser = require(__BASE + '/registry/domain/plugins-initialiser');
 
   describe('when initialising not valid plugins', function(){
 
     describe('when plugin not registered correctly', function(){
-      
+
       var result, error;
       beforeEach(function(done){
 
         var plugins = [{
           name: 'doSomething'
         }];
-      
+
         pluginsInitialiser.init(plugins, function(err, res){
           error = err;
           result = res;
@@ -30,7 +30,7 @@ describe('registry : domain : plugins-initialiser', function(){
     });
 
     describe('when plugin is anonymous', function(){
-      
+
       var result, error;
       beforeEach(function(done){
 
@@ -40,7 +40,7 @@ describe('registry : domain : plugins-initialiser', function(){
             execute: function(){}
           }
         }];
-      
+
         pluginsInitialiser.init(plugins, function(err, res){
           error = err;
           result = res;
@@ -54,7 +54,7 @@ describe('registry : domain : plugins-initialiser', function(){
     });
 
     describe('when plugin does not expose a register method', function(){
-      
+
       var result, error;
       beforeEach(function(done){
 
@@ -62,7 +62,7 @@ describe('registry : domain : plugins-initialiser', function(){
           name: 'doSomething',
           register: { execute: function(){}}
         }];
-      
+
         pluginsInitialiser.init(plugins, function(err, res){
           error = err;
           result = res;
@@ -76,7 +76,7 @@ describe('registry : domain : plugins-initialiser', function(){
     });
 
     describe('when plugin does not expose an execute method', function(){
-      
+
       var result, error;
       beforeEach(function(done){
 
@@ -84,7 +84,7 @@ describe('registry : domain : plugins-initialiser', function(){
           name: 'doSomething',
           register: { register: function(){}}
         }];
-      
+
         pluginsInitialiser.init(plugins, function(err, res){
           error = err;
           result = res;
@@ -99,7 +99,7 @@ describe('registry : domain : plugins-initialiser', function(){
   });
 
   describe('when initialising valid plugins', function(){
-    
+
     var passedOptions, flag, error, result;
     beforeEach(function(done){
 

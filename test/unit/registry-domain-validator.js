@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 
 describe('registry : domain : validator', function(){
 
-  var validator = require('../../registry/domain/validators');
+  var validator = require(__BASE + '/registry/domain/validators');
 
   describe('when validating registry configuration', function(){
 
@@ -207,7 +207,7 @@ describe('registry : domain : validator', function(){
     });
 
     describe('when component have not mandatory parameters', function(){
-      var componentParameters = { 
+      var componentParameters = {
         name: {
           type: 'string',
           mandatory: false,
@@ -241,7 +241,7 @@ describe('registry : domain : validator', function(){
     describe('when component have mandatory parameters', function(){
 
       it('should not be valid when mandatory parameter not provided', function(){
-        
+
         var componentParameters = {
           returnUrl: {
             type: 'string',
@@ -260,7 +260,7 @@ describe('registry : domain : validator', function(){
       });
 
       describe('when mandatory string parameter provided', function(){
-        
+
         var componentParameters = {
           name: {
             type: 'string',
@@ -298,7 +298,7 @@ describe('registry : domain : validator', function(){
         });
 
         describe('when non mandatory number provided', function(){
-        
+
           var componentParameters = {
             name: {
               type: 'string',
@@ -340,7 +340,7 @@ describe('registry : domain : validator', function(){
         });
 
         describe('when non mandatory boolean provided', function(){
-        
+
           var componentParameters = {
             name: {
               type: 'string',
@@ -541,7 +541,7 @@ describe('registry : domain : validator', function(){
 
     var existingVersions = ['1.0.0', '1.0.1', '2.0.0', '2.1.0'],
         isValid = function(a,b){ return validator.validateVersion(a, b); };
-  
+
     describe('when version already exists', function(){
       it('should not be valid', function(){
         expect(isValid('this.is.not.valid', existingVersions)).not.to.be.true;
@@ -623,7 +623,7 @@ describe('registry : domain : validator', function(){
 
     describe('when component does not require any plugin', function(){
 
-      var requirements = null, 
+      var requirements = null,
           supportedPlugins = {
             log: function(){}
           };

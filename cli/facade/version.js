@@ -1,9 +1,9 @@
 'use strict';
 
-var packageInfo = require('../../package.json');
+var packageInfo = require(__BASE + '/package.json');
 
 module.exports = function(dependencies){
-  
+
   var logger = dependencies.logger;
 
   return function(){

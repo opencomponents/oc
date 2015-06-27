@@ -2,10 +2,11 @@
 
 var async = require('async');
 var fs = require('fs-extra');
-var put = require('../../utils/put');
-var request = require('../../utils/request');
-var settings = require('../../resources/settings');
 var _ = require('underscore');
+var put = require(__BASE + '/utils/put');
+var request = require(__BASE + '/utils/request');
+var settings = require(__BASE + '/resources/settings');
+
 
 module.exports = function(){
 
@@ -94,7 +95,7 @@ module.exports = function(){
         }, callback);
       });
     },
-    putComponent: function(options, callback){ 
+    putComponent: function(options, callback){
       var headers = {};
 
       if(!!options.username && !!options.password){
@@ -116,7 +117,7 @@ module.exports = function(){
           } else if(!!err.error){
             err = err.error;
           }
-          
+
           return callback(err);
         }
 

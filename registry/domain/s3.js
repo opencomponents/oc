@@ -5,12 +5,14 @@ var AWS = require('aws-sdk');
 var Cache = require('nice-cache');
 var format = require('stringformat');
 var fs = require('fs-extra');
-var getMimeType = require('../../utils/get-mime-type');
-var getNextYear = require('../../utils/get-next-year');
 var nodeDir = require('node-dir');
 var path = require('path');
-var strings = require('../../resources');
 var _ = require('underscore');
+
+var getMimeType = require(__BASE + '/utils/get-mime-type');
+var getNextYear = require(__BASE + '/utils/get-next-year');
+var strings = require(__BASE + '/resources');
+
 
 module.exports = function(conf){
 
@@ -43,7 +45,7 @@ module.exports = function(conf){
         if(err){ return callback(err); }
 
         if(data.CommonPrefixes.length === 0){
-          return callback({ 
+          return callback({
             code: strings.errors.s3.DIR_NOT_FOUND_CODE,
             msg: format(strings.errors.s3.DIR_NOT_FOUND, dir)
           });
@@ -68,7 +70,7 @@ module.exports = function(conf){
           Bucket: bucket,
           Key: filePath
         }, function(err, data){
-          if(err){ 
+          if(err){
             return callback(err.code === 'NoSuchKey' ? {
               code: strings.errors.s3.FILE_NOT_FOUND_CODE,
               msg: format(strings.errors.s3.FILE_NOT_FOUND, filePath)
@@ -123,7 +125,7 @@ module.exports = function(conf){
     },
     putFile: function(filePath, fileName, isPrivate, callback){
       var self = this;
-      
+
       fs.readFile(filePath, function(err, fileContent){
         if(!!err){ return callback(err); }
         self.putFileContent(fileContent, fileName, isPrivate, callback);

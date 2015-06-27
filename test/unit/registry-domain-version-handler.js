@@ -3,8 +3,8 @@
 var expect = require('chai').expect;
 
 describe('registry : domain : version-handler', function(){
-  
-  var versionHandler = require('../../registry/domain/version-handler');
+
+  var versionHandler = require(__BASE + '/registry/domain/version-handler');
 
   describe('when getting component', function(){
 

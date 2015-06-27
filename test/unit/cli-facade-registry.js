@@ -1,15 +1,15 @@
 'use strict';
 
 var colors = require('colors');
-var consoleMock = require('../mocks/console');
 var expect = require('chai').expect;
 var sinon = require('sinon');
+var consoleMock = require(__BASE + '/test/mocks/console');
 
 describe('cli : facade : registry', function(){
 
-  var Registry = require('../../cli/domain/registry'),
+  var Registry = require(__BASE + '/cli/domain/registry'),
       registry = new Registry(),
-      RegistryFacade = require('../../cli/facade/registry'),
+      RegistryFacade = require(__BASE + '/cli/facade/registry'),
       registryFacade = new RegistryFacade({ registry: registry, logger: consoleMock }),
       logs;
 
@@ -22,11 +22,11 @@ describe('cli : facade : registry', function(){
   describe('when using ls command', function(){
 
     describe('when no registries linked to the app', function(){
-      
+
       beforeEach(function(){
         sinon.stub(registry, 'get').yields(null, []);
         execute('ls');
-      }); 
+      });
 
       afterEach(function(){
         registry.get.restore();
