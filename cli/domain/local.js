@@ -324,7 +324,9 @@ module.exports = function(){
           wrappedRequires = getLocalDependencies(componentPath, serverContent);
         } catch(e){
           if(e instanceof SyntaxError){
-            return callback('Error while parsing json');
+            return callback({
+              message: format('Error while parsing {0}: {1}', dataPath, e)
+            });
           }
           return callback(e);
         }
