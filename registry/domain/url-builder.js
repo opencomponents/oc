@@ -5,10 +5,8 @@ var _ = require('underscore');
 
 module.exports = {
   component: function(component, baseUrl){
-    if(typeof(component) === 'string'){
-      component = {
-        name: component
-      };
+    if(_.isString(component)){
+      component = { name: component };
     }
 
     var componentUrl = url.resolve(baseUrl, component.name);
