@@ -62,7 +62,7 @@ describe('registry : domain : url-builder', function(){
         execute(component, 'http://oc-registry.org');
       });
 
-      it('should be baseUrl/componentName/version/?oaram=encodedUrl', function(){
+      it('should be baseUrl/componentName/version/?param=encodedUrl', function(){
         expect(builtUrl).to.equal('http://oc-registry.org/hello-world/1.X.X?returnUrl=http%3A%2F%2Fwww.website.com%2F%3Fq%3Dblabla%26q2%3Dhello');
       });
     });
