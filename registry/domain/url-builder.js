@@ -21,7 +21,7 @@ module.exports = {
       componentUrl += '?';
 
       _.forEach(component.parameters, function(parameter, key){
-        componentUrl += key + '=' + parameter + '&';
+        componentUrl += key + '=' + encodeURIComponent(parameter) + '&';
       });
 
       if(_.keys(component.parameters).length > 0){
