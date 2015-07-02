@@ -152,21 +152,23 @@ var Client = function(conf){
 
         self.getStaticTemplate(apiResponse.template.src, !local, function(templateText){
 
-          var context = {};
+          var context = apiResponse.template.type === 'jade' ? {
+             jade: require('jade/runtime.js')
+          } : {};
 
           vm.runInNewContext(templateText, context);
 
           var key = apiResponse.template.key,
               template = context.oc.components[key],
-              options = {
+              renderOptions = {
                 href: href,
                 key: key,
                 version: apiResponse.version,
                 templateType: apiResponse.template.type,
-                container: (apiResponse.container === false) ? false : true
+                container: (options.container === true) ? true : false
               };
 
-          self.renderTemplate(template, data, options, callback);
+          self.renderTemplate(template, data, renderOptions, callback);
         });
       }
     });

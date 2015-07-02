@@ -146,32 +146,49 @@ describe('client', function(){
 
   describe('when server-side rendering an existing component linked to a responsive registry', function(){
 
-    var $component;
+    describe('when container option = true', function(){
+      var $component;
 
-    before(function(done){
-      client.renderComponent('hello-world', function(err, html){
-        result = html;
-        var $ = cheerio.load(result);
-        $component = $('oc-component');
-        done();
+      before(function(done){
+        client.renderComponent('hello-world', { container: true }, function(err, html){
+          result = html;
+          var $ = cheerio.load(result);
+          $component = $('oc-component');
+          done();
+        });
+      });
+
+      it('should return rendered contents', function(){
+        expect($component).to.exist();
+        expect($component.data('rendered')).to.eql(true);
+      });
+
+      it('should contain the hashed view\'s key', function(){
+        expect($component.data('hash')).to.eql('46ee85c314b371cac60471cef5b2e2e6c443dccf');
+      });
+
+      it('should return expected html', function(){
+        expect($component.text()).to.eql('Hello world!');
+      });
+
+      it('should contain the component version', function(){
+        expect($component.data('version')).to.eql('1.0.0');
       });
     });
 
-    it('should return rendered contents', function(){
-      expect($component).to.exist();
-      expect($component.data('rendered')).to.eql(true);
-    });
+    describe('when container option not specified', function(){
+      var $component;
 
-    it('should contain the hashed view\'s key', function(){
-      expect($component.data('hash')).to.eql('46ee85c314b371cac60471cef5b2e2e6c443dccf');
-    });
+      before(function(done){
+        client.renderComponent('hello-world', { container: false }, function(err, html){
+          result = html;
+          done();
+        });
+      });
 
-    it('should return expected html', function(){
-      expect($component.text()).to.eql('Hello world!');
-    });
-
-    it('should contain the component version', function(){
-      expect($component.data('version')).to.eql('1.0.0');
+      it('should return expected html without the container', function(){
+        expect(result).to.eql('Hello world!');
+      });
     });
   });
 });
