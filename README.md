@@ -26,6 +26,7 @@ Front-end tests:
 1. [Consuming components](#consuming-components)
   * [Server-side rendering via rest API](#server-side-rendering-via-rest-api)
   * [Server-side rendering with node.js](#server-side-rendering-with-nodejs)
+  * [Server-side rendering with Ruby](#server-side-rendering-with-ruby)
   * [Client-side rendering](#client-side-rendering)
   * [Server-side rendering with client-side failover](#server-side-rendering-with-client-side-failover)
 1. [Install the cli](#install-the-cli)
@@ -168,6 +169,12 @@ http.createServer(function (req, res) {
 }).listen(4000);
 ```
 Open `http://localhost:4000/` and enjoy!
+
+## Server-side rendering with Ruby
+
+* [Ruby library](https://github.com/opentable/ruby-oc)
+* [Rails plugin](https://github.com/opentable/opencomponents-rails)
+* [Sinatra plugin](https://github.com/opentable/sinatra-opencomponents)
 
 ## Client-side rendering
 
