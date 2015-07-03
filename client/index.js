@@ -71,6 +71,9 @@ var Client = function(conf){
   this.renderComponent = function(componentName, options, callback){
     var self = this;
 
+    options = options || {};
+    options.headers = options.headers || {};
+
     var getConfig = function(callback){
       if(!!self.config){
         return callback(null, self.config);
@@ -125,7 +128,11 @@ var Client = function(conf){
 
     var self = this;
 
-    request(href, { 'Accept': 'application/vnd.oc.prerendered+json' }, function(err, apiResponse){
+    options = options || {};
+    options.headers = options.headers || {};
+    options.headers.accept = 'application/vnd.oc.prerendered+json';
+
+    request(href, options.headers, function(err, apiResponse){
 
       if(err){
         var errorDescription = settings.messages.serverSideRenderingFail;
