@@ -10,7 +10,7 @@ module.exports = function(dirs, baseDir, changed){
       ignoreDotFiles: false
     }, function(fileName, currentStat, previousStat){
       if(!!currentStat || !!previousStat){
-        if(/node_modules|package.tar.gz|_package|\.sw(o|p)/gi.test(fileName) === false){
+        if(/node_modules|package.tar.gz|_package|\.sw[op]/gi.test(fileName) === false){
           changed(null, fileName);
         }
       }
