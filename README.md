@@ -1,19 +1,17 @@
 ![oc](https://raw.github.com/opentable/oc/master/logo.png)
 =============
 
-[![Join the chat at https://gitter.im/opentable/oc](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/opentable/oc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 OpenComponents is a framework to develop and deploy robust and distributed html components.
 
 The goal is to own a system that allows big corporations (that may involve hundreds of engineers on a number of projects) to have tools to facilitate code sharing, reduce dependencies, and easily approach new features and experiments.
 
-[![NPM](https://nodei.co/npm/oc.png?downloads=true)](https://npmjs.org/package/oc)
+[![npm version](https://img.shields.io/npm/v/oc.svg)](https://npmjs.org/package/oc)
+[![node version](https://img.shields.io/node/v/oc.svg)](https://npmjs.org/package/oc)
+[![downloads](https://img.shields.io/npm/dm/oc.svg?label=downloads+from+npm)](https://npmjs.org/package/oc)
+[![Join the chat at https://gitter.im/opentable/oc](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/opentable/oc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Node.js version: **0.10.35** required
-
-Build status: Linux: [![Build Status](https://secure.travis-ci.org/opentable/oc.png?branch=master)](http://travis-ci.org/opentable/oc) | Windows: [![Build status](https://ci.appveyor.com/api/projects/status/8cklgw4hymutqrsg?svg=true)](https://ci.appveyor.com/project/matteofigus/oc)
-
-Front-end tests:
+[![linux build](https://img.shields.io/travis/opentable/oc/master.svg?label=linux+build)](http://travis-ci.org/opentable/oc)
+[![windows build](https://img.shields.io/appveyor/ci/matteofigus/oc.svg?label=windows+build)](https://ci.appveyor.com/project/matteofigus/oc)
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/matteofigus.svg)](https://saucelabs.com/u/matteofigus)
 
