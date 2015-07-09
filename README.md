@@ -282,5 +282,6 @@ Contributors:
 * [@andyroyle](https://github.com/andyroyle)
 * [@federicomaffei](https://github.com/federicomaffei)
 * [@jankowiakmaria](https://github.com/jankowiakmaria)
+* [@stevejhiggs](https://github.com/stevejhiggs)
 * [@todd](https://github.com/todd)
 * [@tpgmartin](https://github.com/tpgmartin)
