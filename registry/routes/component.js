@@ -132,6 +132,19 @@ module.exports = function(conf, repository){
         returnComponent(null, {});
       } else {
 
+        var wrapPlugins = function(plugins, requestInfo){
+          var wrapped = {};
+
+          _.forEach(plugins, function(plugin, pluginName){
+            wrapped[pluginName] = function(){
+              this.__reqInfo = requestInfo;
+              return plugin.apply(this, arguments);
+            };
+          });
+
+          return wrapped;
+        };
+
         var cacheKey = format('{0}/{1}/server.js', component.name, component.version),
             cached = cache.get('file-contents', cacheKey),
             contextObj = { 
@@ -139,7 +152,13 @@ module.exports = function(conf, repository){
               baseUrl: conf.baseUrl,
               env: conf.env,
               params: params,
-              plugins: conf.plugins,
+              plugins: wrapPlugins(conf.plugins, {
+                params: params,
+                component: {
+                  name: component.name,
+                  version: component.version
+                }
+              }),
               staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', '')
             };
 
