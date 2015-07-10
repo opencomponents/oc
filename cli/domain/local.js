@@ -12,6 +12,7 @@ var nodeDir = require('node-dir');
 var request = require('../../utils/request');
 var path = require('path');
 var settings = require('../../resources/settings');
+var spawnSync = require('spawn-sync');
 var Targz = require('tar.gz');
 var uglifyJs = require('uglify-js');
 var validator = require('../../registry/domain/validators');
@@ -101,8 +102,29 @@ module.exports = function(){
     return uglifyJs.minify(serverContent, {fromString: true}).code;
   };
 
+  var preprocessors = function(oc, serverjs){
+      if(!oc.preprocessors || oc.preprocessors.length === 0){
+          return serverjs;
+      }
+
+      var interim = serverjs;
+      oc.preprocessors.forEach(function(item){
+          var result = spawnSync(item.command, item.args || [], {
+              input: interim
+          });
+
+          if(result.status !== 0){
+              throw new Error(result.stderr);
+          } else {
+              interim = result.stdout;
+          }
+      });
+
+      return interim;
+  };
+
   var missingDependencies = function(requires, component){
-    return _.filter(requires, function(dep){ 
+    return _.filter(requires, function(dep){
       return !_.contains(_.keys(component.dependencies), dep);
     });
   };
@@ -229,7 +251,7 @@ module.exports = function(){
 
           localConfig.components[componentName] = componentVersion;
           fs.writeJson(settings.configFile.src, localConfig, callback);
-        });      
+        });
       });
     },
     mock: function(params, callback){
@@ -336,7 +358,7 @@ module.exports = function(){
           return callback('Missing dependencies from package.json => ' + JSON.stringify(missingDeps));
         }
 
-        var sandBoxedJs = getSandBoxedJs(wrappedRequires.files, serverContent);
+        var sandBoxedJs = getSandBoxedJs(wrappedRequires.files, preprocessors(component.oc, serverContent));
         fs.writeFileSync(path.join(publishPath, 'server.js'), sandBoxedJs);
 
         component.oc.files.dataProvider = {
