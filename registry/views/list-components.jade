@@ -1,0 +1,38 @@
+mixin parseObject(obj)
+  ul
+    each val, key in obj
+      if (typeof val !== 'object')
+        li #{key}: #{val}
+      else
+        li #{key}:
+        mixin parseObject(val)
+
+h1 List Component
+
+h2 Href
+p= href
+
+h2 Components
+each component in components
+  +parseObject(component)
+
+h2 Type
+p= type
+
+h2 OC Version
+p= ocVersion
+
+style.
+    body {
+        width: 1024px;
+        margin: 0 auto;
+        font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial;
+    }
+
+    ul {
+        list-style-type: none;
+    }
+
+    h1, h2 {
+        color: darkred;
+    }
