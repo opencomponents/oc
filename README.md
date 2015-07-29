@@ -81,6 +81,12 @@ oc preview http://localhost:3030/hello-world 3031
 
 As soon as you make changes on the component, you will be able to refresh this page and see how it looks.
 
+### Troubleshooting
+
+Error: `Packaging components...undefined`
+
+Resolution: Try manually deleting the generated *_package* folder and re-run `oc dev . 3030`.
+
 ## Publishing to a registry
 
 You will need an online registry connected to a library. A component with the same name and version can't be already existing on that registry.
