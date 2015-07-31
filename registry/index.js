@@ -147,7 +147,10 @@ module.exports = function(options){
                 console.log(format('Registry serving {0} components for a total of {1} releases.', componentsNumber, componentsReleases).green);
               }
             }
-            callback(null, self.app);
+            callback(null, {
+              app: self.app,
+              server: server
+            });
           });
 
           server.on('error', function(e){
