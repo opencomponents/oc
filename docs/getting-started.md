@@ -85,6 +85,7 @@ The basic package file `package.json` looks as follows:
 |`oc.files.template.type`|`string`|the template engine's type, by default `handlebars`|
 |`oc.files.static`|`array of strings`|An array of directories that contain static resources referenced from the component's markup|
 |`oc.minify`|`boolean`|Default `true`, will minify static css and js files during publishing|
+|`oc.ie8css`|`boolean`|Default `false`, if true, will minify ie8 compatible css files during publishing|
 |`oc.plugins`|`array of strings`|the [plugins](registry.md#plugins) the component requires|
 
 ## Template
