@@ -102,7 +102,7 @@ module.exports = function(){
   };
 
   var missingDependencies = function(requires, component){
-    return _.filter(requires, function(dep){ 
+    return _.filter(requires, function(dep){
       return !_.contains(_.keys(component.dependencies), dep);
     });
   };
@@ -229,7 +229,7 @@ module.exports = function(){
 
           localConfig.components[componentName] = componentVersion;
           fs.writeJson(settings.configFile.src, localConfig, callback);
-        });      
+        });
       });
     },
     mock: function(params, callback){
@@ -379,8 +379,9 @@ module.exports = function(){
 
                 fs.writeFileSync(fileDestination, minifiedContent);
               } else if(minify && fileExt === '.css' && component.oc.minify !== false){
-                fileContent = fs.readFileSync(filePath).toString(),
-                minifiedContent = new CleanCss().minify(fileContent).styles;
+                fileContent = fs.readFileSync(filePath).toString();
+                var options = (component.oc.ie8css === true) ? {compatibility:'ie8'} : null;
+                minifiedContent = new CleanCss(options).minify(fileContent).styles;
 
                 fs.writeFileSync(fileDestination, minifiedContent);
               } else {
