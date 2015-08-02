@@ -20,7 +20,9 @@ module.exports = function(dependencies){
 
       http.createServer(function(req, res){
         res.writeHead(200, {'Content-Type': 'text/html'});
-        res.end(format('<html><body><oc-component href="{0}"></oc-component><script src="{1}"></script></body></html>', 
+        res.end(format('<!DOCTYPE html><html><head><meta charset="utf-8" />' +
+                       '</head><body><oc-component href="{0}"></oc-component>' +
+                       '<script src="{1}"></script></body></html>', 
                         opts.componentHref, parsed.clientHref));
 
       }).listen(port, function(){
