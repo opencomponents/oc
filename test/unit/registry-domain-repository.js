@@ -152,7 +152,7 @@ describe('registry : domain : repository', function(){
     describe('when trying to publish a component', function(){
 
       describe('when component has not a valid name', function(){
-        
+
         before(function(done){
           repository.publishComponent('', 'blue velvet', '1.0.0', saveResult(done));
         });

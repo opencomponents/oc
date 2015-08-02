@@ -10,7 +10,7 @@ describe('cli : facade : publish', function(){
 
   var Registry = require('../../cli/domain/registry'),
       registry = new Registry(),
-      consoleMock = require('../mocks/console'),
+      consoleMock = require('../../test/mocks/console'),
       Local = require('../../cli/domain/local'),
       local = new Local(),
       PublishFacade = require('../../cli/facade/publish'),

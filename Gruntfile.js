@@ -1,11 +1,13 @@
 'use strict';
 
+global.__BASE = __dirname;
 var commandsParser = require('./grunt-tasks/support/cli-commands-parser');
 var format = require('stringformat');
 var fs = require('fs-extra');
 var path = require('path');
 var semver = require('semver');
 var uglifyJs = require('uglify-js');
+
 
 module.exports = function(grunt) {
 
@@ -63,17 +65,17 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('generate-cli-doc', 'Automatically updates the cli.md file', function(){
-    
+
     var parsed = commandsParser.parse(),
         data = fs.readFileSync('./grunt-tasks/support/cli-template.md', 'utf8'),
         newFileData = data.replace('[commands-shortlist]', parsed.commandList).replace('[commands-detailed]', parsed.detailedCommandList);
-      
+
     fs.writeFileSync('./docs/cli.md', newFileData);
   });
 
   // used for version patching
   grunt.registerTask('version', 'Does the version upgrade', function(versionType){
-    
+
     taskObject.pkg.version = semver.inc(taskObject.pkg.version, versionType);
 
     grunt.log.ok('Package version upgrading to: ' + taskObject.pkg.version);

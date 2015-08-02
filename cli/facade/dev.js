@@ -3,15 +3,17 @@
 var async = require('async');
 var colors = require('colors');
 var format = require('stringformat');
-var getComponentsDependencies = require('../domain/get-components-deps');
-var getMissingDeps = require('../domain/get-missing-deps');
-var getMockedPlugins = require('../domain/get-mocked-plugins');
-var npmInstaller = require('../domain/npm-installer');
-var oc = require('../../index');
 var path = require('path');
-var strings = require('../../resources/index');
-var watch = require('../domain/watch');
 var _ = require('underscore');
+
+var getComponentsDependencies = require(__BASE + '/cli/domain/get-components-deps');
+var getMissingDeps = require(__BASE + '/cli/domain/get-missing-deps');
+var getMockedPlugins = require(__BASE + '/cli/domain/get-mocked-plugins');
+var npmInstaller = require(__BASE + '/cli/domain/npm-installer');
+var oc = require(__BASE + '/index');
+var strings = require(__BASE + '/resources/index');
+var watch = require(__BASE + '/cli/domain/watch');
+
 
 module.exports = function(dependencies){
   var local = dependencies.local,
@@ -106,7 +108,7 @@ module.exports = function(dependencies){
           for(var i = 0; i < mockedPlugins.length; i++){
             logger.log('├── '.green + mockedPlugins[i].name + ' () => ' + mockedPlugins[i].register.execute());
             registry.register(mockedPlugins[i]);
-          }            
+          }
         }
       } catch(er){
         return logger.log(er.red);
@@ -137,7 +139,7 @@ module.exports = function(dependencies){
 
       loadDependencies(components, function(dependencies){
         packageComponents(components, function(){
-          
+
           var registry = new oc.Registry({
             local: true,
             verbosity: 1,

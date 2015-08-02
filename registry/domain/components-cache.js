@@ -1,9 +1,10 @@
 'use strict';
 
 var async = require('async');
-var getUnixUTCTimestamp = require('../../utils/get-unix-utc-timestamp');
 var semver = require('semver');
 var _ = require('underscore');
+var getUnixUTCTimestamp = require(__BASE + '/utils/get-unix-utc-timestamp');
+
 
 module.exports = function(conf, cdn){
 
@@ -18,13 +19,13 @@ module.exports = function(conf, cdn){
     cb(null, data);
   };
 
-  var getAndSaveFromDirectories = function(cb){ 
+  var getAndSaveFromDirectories = function(cb){
     getFromDirectories(function(err, components){
       if(!!err){ return cb(err); }
       saveData(components, function(err, res){
         if(!!err){ return cb(err); }
         cb(err, components);
-      }); 
+      });
     });
   };
 
@@ -40,8 +41,8 @@ module.exports = function(conf, cdn){
             components: []
           });
         }
-        
-        return cb(err); 
+
+        return cb(err);
       }
 
       async.map(components, getVersionsForComponent, function(errors, versions){
@@ -61,8 +62,8 @@ module.exports = function(conf, cdn){
 
   var getFromJson = function(cb){
     cdn.getFile(conf.s3.componentsDir + '/components.json', true, function(err, res){
-      var result; 
-      
+      var result;
+
       if(!err){
         try {
           result = JSON.parse(res);

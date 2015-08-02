@@ -1,7 +1,7 @@
 'use strict';
 
 var querystring = require('querystring');
-var request = require('../../utils/request');
+var request = require(__BASE + '/utils/request');
 var url = require('url');
 
 var removeFinalSlashes = function(s){
@@ -32,6 +32,6 @@ module.exports = {
         registryUrl: registryUrl,
         version: requestedVersion
       });
-    }); 
+    });
   }
 };

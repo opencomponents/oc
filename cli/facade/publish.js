@@ -1,12 +1,13 @@
 'use strict';
 
+var async = require('async');
 var colors = require('colors');
 var format = require('stringformat');
 var path = require('path');
 var read = require('read');
-var strings = require('../../resources/index');
 var _ = require('underscore');
-var async = require('async');
+var strings = require(__BASE + '/resources/index');
+
 
 module.exports = function(dependencies){
 

@@ -13,7 +13,7 @@ describe('registry : domain : sanitiser', function(){
     describe('when component have boolean parameter', function(){
 
       it('should convert string to boolean when true', function(){
-        
+
         var componentParameters = {
           isTrue: {
             type: 'boolean',
@@ -29,7 +29,7 @@ describe('registry : domain : sanitiser', function(){
       });
 
       it('should convert string to boolean when true', function(){
-        
+
         var componentParameters = {
           isTrue: {
             type: 'boolean',

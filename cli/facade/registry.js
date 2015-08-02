@@ -2,11 +2,11 @@
 
 var colors = require('colors');
 var format = require('stringformat');
-var strings = require('../../resources/index');
 var _ = require('underscore');
+var strings = require(__BASE + '/resources/index');
 
 module.exports = function(dependencies){
-  
+
   var registry = dependencies.registry,
       logger = dependencies.logger;
 
@@ -23,7 +23,7 @@ module.exports = function(dependencies){
           }
 
           _.forEach(registries, function(registryLocation){
-            logger.log(registryLocation.green);       
+            logger.log(registryLocation.green);
           });
         }
       });

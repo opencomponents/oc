@@ -1,5 +1,4 @@
 'use strict';
-
 var _ = require('underscore');
 
 var customLaunchers = {
@@ -67,7 +66,7 @@ var customLaunchers = {
     platform: 'OS X 10.10',
     version: '8',
     'device-orientation': 'portrait'
-  } 
+  }
 };
 
 module.exports = {
@@ -91,11 +90,11 @@ module.exports = {
   'sauce-ie8': {
     customLaunchers: _.pick(customLaunchers, 'ie8'),
     browsers: ['ie8']
-  },  
+  },
   'sauce-ie9': {
     customLaunchers: _.pick(customLaunchers, 'ie9'),
     browsers: ['ie9']
-  },  
+  },
   'sauce-osx': {
     customLaunchers: _.pick(customLaunchers, 'safari', 'iphone', 'ipad'),
     browsers: ['safari', 'iphone', 'ipad']

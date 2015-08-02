@@ -2,12 +2,12 @@
 
 var async = require('async');
 var colors = require('colors');
-var strings = require('../../resources/index');
+var strings = require(__BASE + '/resources/index');
 var Table = require('cli-table');
 var _ = require('underscore');
 
 module.exports = function(dependencies){
-  
+
   var registry = dependencies.registry,
       local = dependencies.local,
       logger = dependencies.logger;
@@ -23,11 +23,11 @@ module.exports = function(dependencies){
         if(_.keys(res.components).length === 0){
           return logger.log(strings.errors.cli.COMPONENTS_LINKED_NOT_FOUND.red);
         }
-          
+
         logger.log(strings.messages.cli.COMPONENTS_LINKED_LIST.yellow);
 
         var componentUrls = _.map(res.components, function(componentVersion, componentName){
-          return [res.registries[0] + '/' + componentName + '/' + componentVersion]; 
+          return [res.registries[0] + '/' + componentName + '/' + componentVersion];
         });
 
         async.map(componentUrls, function(componentUrl, cb){
@@ -41,7 +41,7 @@ module.exports = function(dependencies){
               namesLength = 0,
               versionsLength = 0,
               urlsLength = 0;
-          
+
           _.forEach(callbacks, function(callback, i){
 
             var error = callback[0],
@@ -60,7 +60,7 @@ module.exports = function(dependencies){
               versionColumn = (component.version === component.requestVersion ? component.version : component.requestVersion + ' => ' + component.version),
               descriptionColumn = component.description;
             }
-          
+
             if(nameColumn.length > namesLength){
               namesLength = nameColumn.length;
             }
@@ -68,7 +68,7 @@ module.exports = function(dependencies){
             if(versionColumn.length > versionsLength){
               versionsLength = versionColumn.length;
             }
-            
+
             if(urlColumn.length > urlsLength){
               urlsLength = urlColumn.length;
             }
@@ -77,7 +77,7 @@ module.exports = function(dependencies){
 
           }, this);
 
-          var table = new Table({ 
+          var table = new Table({
             head: ['name', 'version', 'description', 'href'],
             colWidths: [namesLength + margin, versionsLength + margin, (100 - namesLength - urlsLength - versionsLength), urlsLength + margin]
           });

@@ -8,7 +8,7 @@ describe('registry', function(){
 
   var registry,
       oc = require('../../index'),
-      conf = {          
+      conf = {
         local: true,
         path: path.resolve('test/fixtures/components'),
         port: 3030,
@@ -58,8 +58,8 @@ describe('registry', function(){
 
     it('should list the components', function(){
       expect(result.components).to.eql([
-        'http://localhost:3030/hello-world', 
-        'http://localhost:3030/no-container', 
+        'http://localhost:3030/hello-world',
+        'http://localhost:3030/no-container',
         'http://localhost:3030/oc-client'
       ]);
     });

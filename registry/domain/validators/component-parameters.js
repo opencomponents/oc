@@ -1,8 +1,8 @@
 'use strict';
 
 var format = require('stringformat');
-var strings = require('../../../resources');
 var _ = require('underscore');
+var strings = require(__BASE + '/resources');
 
 var validate = {
   booleanParameter: function(booleanParameter){
@@ -52,7 +52,7 @@ module.exports = function(requestParameters, expectedParameters){
 
   _.forEach(requestParameters, function(requestParameter, requestParameterName){
     if(_.has(expectedParameters, requestParameterName)){
-      
+
       var expectedType = expectedParameters[requestParameterName].type;
 
       if(!validate.parameter(requestParameter, expectedType)){
@@ -88,7 +88,7 @@ module.exports = function(requestParameters, expectedParameters){
       }).join('').slice(0, -2);
 
       errorString += format(strings.errors.registry.PARAMETER_WRONG_FORMAT, badParams);
-    } 
+    }
     return errorString;
   }());
 

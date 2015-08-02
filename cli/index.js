@@ -2,10 +2,10 @@
 
 var autocomplete = require('./autocomplete');
 var cli = require('nomnom');
-var commands = require('./commands');
-var Local = require('./domain/local');
-var Registry = require('./domain/registry');
-var strings = require('../resources');
+var commands = require(__BASE + '/cli/commands');
+var Local = require(__BASE + '/cli/domain/local');
+var Registry = require(__BASE + '/cli/domain/registry');
+var strings = require(__BASE + '/resources');
 var _ = require('underscore');
 
 var dependencies = {
@@ -33,7 +33,7 @@ _.forEach(commands, function(commandsConfiguration, commandsConfigurationName){
 
   _.forEach(commandsConfiguration, function(command, commandName){
 
-    var facade = require('./facade/' + commandName)(dependencies),
+    var facade = require(__BASE + '/cli/facade/' + commandName)(dependencies),
         cliCommand = cli.command(commandName).help(command.help).callback(facade),
         c;
 

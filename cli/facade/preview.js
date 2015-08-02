@@ -4,8 +4,8 @@ var colors = require('colors');
 var format = require('stringformat');
 var http = require('http');
 var opn = require('opn');
-var strings = require('../../resources/index');
-var urlParser = require('../../registry/domain/url-parser');
+var strings = require(__BASE + '/resources/index');
+var urlParser = require(__BASE + '/registry/domain/url-parser');
 
 module.exports = function(dependencies){
 
@@ -20,7 +20,7 @@ module.exports = function(dependencies){
 
       http.createServer(function(req, res){
         res.writeHead(200, {'Content-Type': 'text/html'});
-        res.end(format('<html><body><oc-component href="{0}"></oc-component><script src="{1}"></script></body></html>', 
+        res.end(format('<html><body><oc-component href="{0}"></oc-component><script src="{1}"></script></body></html>',
                         opts.componentHref, parsed.clientHref));
 
       }).listen(port, function(){
