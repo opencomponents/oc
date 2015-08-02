@@ -280,6 +280,7 @@ Maintainer:
 
 Contributors:
 * [@andyroyle](https://github.com/andyroyle)
+* [@char1e5](https://github.com/char1e5)
 * [@federicomaffei](https://github.com/federicomaffei)
 * [@jankowiakmaria](https://github.com/jankowiakmaria)
 * [@stevejhiggs](https://github.com/stevejhiggs)
