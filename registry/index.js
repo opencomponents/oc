@@ -2,21 +2,23 @@
 
 var appStart = require('./app-start');
 var baseUrlHandler = require('./middleware/base-url-handler');
-var colors = require('colors');
 var cors = require('./middleware/cors');
+var discoveryHandler = require('./middleware/discovery-handler');
 var EventsHandler = require('./events-handler');
-var express = require('express');
 var fileUploads = require('./middleware/file-uploads');
-var format = require('stringformat');
-var http = require('http');
 var pluginsInitialiser = require('./domain/plugins-initialiser');
-var sanitiseOptions = require('./domain/options-sanitiser');
 var Repository = require('./domain/repository');
 var requestHandler = require('./middleware/request-handler');
 var Router = require('./router');
+var sanitiseOptions = require('./domain/options-sanitiser');
 var settings = require('../resources/settings');
 var validator = require('./domain/validators');
+
 var _ = require('underscore');
+var colors = require('colors');
+var express = require('express');
+var format = require('stringformat');
+var http = require('http');
 var path = require('path');
 
 module.exports = function(options){
@@ -64,6 +66,8 @@ module.exports = function(options){
     app.use(cors);
     app.use(fileUploads);
     app.use(baseUrlHandler);
+    app.use(discoveryHandler);
+
     app.set('views', path.join(__dirname, 'views'));
     app.set('view engine', 'jade');
 

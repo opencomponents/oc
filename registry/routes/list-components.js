@@ -2,8 +2,9 @@
 
 var packageInfo = require('../../package.json');
 var urlBuilder = require('../domain/url-builder');
-var _ = require('underscore');
+
 var async = require('async');
+var _ = require('underscore');
 
 module.exports = function(repository){
   return function(req, res, next){
@@ -14,27 +15,25 @@ module.exports = function(repository){
         return res.json(404, { error: res.errorDetails });
       }
 
-      var componentInfo = [];
+      var isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
 
-      if (req.headers.accept && req.headers.accept.indexOf('text/html') > -1) {
+      if(isHtmlRequest && !!res.conf.discovery){
+
+        var componentsInfo = [];
 
         async.each(components, function(component, callback){
           return repository.getComponent(component, function (err, result) {
-            if (err) {
-              return callback(err);
-            }
+            if(err){ return callback(err); }
 
-            componentInfo.push(result);
+            componentsInfo.push(result);
             callback();
           });
         }, function(err){
-          if(err){
-            return next(err);
-          }
+          if(err){ return next(err); }
 
           return res.render('list-components', {
             href: res.conf.baseUrl,
-            components:componentInfo,
+            components: componentsInfo,
             type: res.conf.local ? 'oc-registry-local' : 'oc-registry',
             ocVersion: packageInfo.version
           });
@@ -48,7 +47,6 @@ module.exports = function(repository){
           type: res.conf.local ? 'oc-registry-local' : 'oc-registry',
           ocVersion: packageInfo.version
         });
-
       }
     });
   };
