@@ -1,1 +1,1 @@
-{"name":"oc-client","description":"","version":"0.16.18","dependencies":{},"repository":"","oc":{"parameters":{},"files":{"data":"server.js","template":{"src":"template.html","type":"handlebars"},"static":["src"]}}}
+{"name":"oc-client","description":"","version":"0.16.19","repository":"","oc":{"parameters":{},"files":{"data":"server.js","template":{"src":"template.html","type":"handlebars"},"static":["src"]}}}
