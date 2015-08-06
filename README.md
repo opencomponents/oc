@@ -15,6 +15,8 @@ The goal is to own a system that allows big corporations (that may involve hundr
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/matteofigus.svg)](https://saucelabs.com/u/matteofigus)
 
+Disclaimer: This project is still under heavy development and the API is likely to change at any time. In case you would find any issues, check the [troubleshooting page](contributing.md#troubleshooting).
+
 # Index
 1. [Introduction](#introduction)
 1. [Components](#components)
@@ -80,12 +82,6 @@ oc preview http://localhost:3030/hello-world 3031
 ```
 
 As soon as you make changes on the component, you will be able to refresh this page and see how it looks.
-
-### Troubleshooting
-
-Error: `Packaging components...undefined`
-
-Resolution: Try manually deleting the generated *_package* folder and re-run `oc dev . 3030`.
 
 ## Publishing to a registry
 
@@ -279,7 +275,7 @@ MIT
 
 # Contributors
 
-If you wish to contribute, feel free to open or comment to issues, or [get in touch via twitter](https://twitter.com/OpenTableTechUK)
+If you wish to contribute, check the [contributing guidelines](contributing.md).
 
 Maintainer:
 * [@matteofigus](https://github.com/matteofigus)
