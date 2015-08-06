@@ -154,7 +154,7 @@ var oc = oc || {};
       href = href.slice(0, -1);
     }
 
-    return '<' + OC_TAG + ' href="' + href + '"></' + OC_TAG + '>';
+    return is8 ? '<div data-oc-component="true" href="' + href + '"></div>' : '<' + OC_TAG + ' href="' + href + '"></' + OC_TAG + '>';
 
   };
 
