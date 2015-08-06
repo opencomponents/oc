@@ -15,6 +15,8 @@ The goal is to own a system that allows big corporations (that may involve hundr
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/matteofigus.svg)](https://saucelabs.com/u/matteofigus)
 
+Disclaimer: This project is still under heavy development and the API is likely to change at any time. In case you would find any issues, check the [troubleshooting page](contributing.md#troubleshooting).
+
 # Index
 1. [Introduction](#introduction)
 1. [Components](#components)
@@ -273,7 +275,7 @@ MIT
 
 # Contributors
 
-If you wish to contribute, feel free to open or comment to issues, or [get in touch via twitter](https://twitter.com/OpenTableTechUK)
+If you wish to contribute, check the [contributing guidelines](contributing.md).
 
 Maintainer:
 * [@matteofigus](https://github.com/matteofigus)
