@@ -201,7 +201,7 @@ describe('registry : routes : component', function(){
         expect(codes[0]).to.be.equal(200);
       });
 
-      it('should return 500 status code', function(){
+      it('should return 500 status code when error happens', function(){
         expect(codes[1]).to.be.equal(500);
       });
 
