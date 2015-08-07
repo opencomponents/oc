@@ -1,12 +1,13 @@
 'use strict';
 
-var autocomplete = require('./autocomplete');
 var cli = require('nomnom');
+var _ = require('underscore');
+
+var autocomplete = require('./autocomplete');
 var commands = require('./commands');
 var Local = require('./domain/local');
 var Registry = require('./domain/registry');
 var strings = require('../resources');
-var _ = require('underscore');
 
 var dependencies = {
   local: new Local(),

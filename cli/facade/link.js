@@ -1,6 +1,7 @@
 'use strict';
 
 var colors = require('colors');
+
 var strings = require('../../resources/index');
 
 module.exports = function(dependencies){

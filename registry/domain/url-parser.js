@@ -1,8 +1,9 @@
 'use strict';
 
 var querystring = require('querystring');
-var request = require('../../utils/request');
 var url = require('url');
+
+var request = require('../../utils/request');
 
 var removeFinalSlashes = function(s){
   while(s.slice(-1) === '/'){

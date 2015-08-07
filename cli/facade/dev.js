@@ -3,15 +3,16 @@
 var async = require('async');
 var colors = require('colors');
 var format = require('stringformat');
+var path = require('path');
+var _ = require('underscore');
+
 var getComponentsDependencies = require('../domain/get-components-deps');
 var getMissingDeps = require('../domain/get-missing-deps');
 var getMockedPlugins = require('../domain/get-mocked-plugins');
 var npmInstaller = require('../domain/npm-installer');
 var oc = require('../../index');
-var path = require('path');
 var strings = require('../../resources/index');
 var watch = require('../domain/watch');
-var _ = require('underscore');
 
 module.exports = function(dependencies){
   var local = dependencies.local,

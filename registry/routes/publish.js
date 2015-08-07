@@ -2,10 +2,11 @@
 
 var format = require('stringformat');
 var path = require('path');
-var RequireWrapper = require('../domain/require-wrapper');
 var Targz = require('tar.gz');
-var validator = require('../domain/validators');
 var _ = require('underscore');
+
+var RequireWrapper = require('../domain/require-wrapper');
+var validator = require('../domain/validators');
 
 module.exports = function(repository){
 

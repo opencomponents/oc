@@ -1,7 +1,8 @@
 'use strict';
 
-var commands = require('../../cli/commands');
 var _ = require('underscore');
+
+var commands = require('../../cli/commands');
 
 module.exports = {
   parse: function(){

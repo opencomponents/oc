@@ -6,16 +6,17 @@ var detective = require('detective');
 var format = require('stringformat');
 var fs = require('fs-extra');
 var handlebars = require('handlebars');
-var hashBuilder = require('../../utils/hash-builder');
 var jade = require('jade');
 var nodeDir = require('node-dir');
-var request = require('../../utils/request');
 var path = require('path');
-var settings = require('../../resources/settings');
 var Targz = require('tar.gz');
 var uglifyJs = require('uglify-js');
-var validator = require('../../registry/domain/validators');
 var _ = require('underscore');
+
+var hashBuilder = require('../../utils/hash-builder');
+var request = require('../../utils/request');
+var settings = require('../../resources/settings');
+var validator = require('../../registry/domain/validators');
 
 module.exports = function(){
 

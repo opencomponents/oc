@@ -2,8 +2,9 @@
 
 var async = require('async');
 var format = require('stringformat');
-var strings = require('../../resources');
 var _ = require('underscore');
+
+var strings = require('../../resources');
 
 module.exports.init = function(pluginsToRegister, callback){
 

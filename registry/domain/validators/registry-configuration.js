@@ -1,7 +1,8 @@
 'use strict';
 
-var strings = require('../../../resources');
 var _ = require('underscore');
+
+var strings = require('../../../resources');
 
 module.exports = function(conf){
 

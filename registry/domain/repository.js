@@ -1,16 +1,17 @@
 'use strict';
 
-var ComponentsCache = require('./components-cache');
 var format = require('stringformat');
 var fs = require('fs-extra');
-var packageInfo = require('../../package.json');
 var path = require('path');
+var _ = require('underscore');
+
+var ComponentsCache = require('./components-cache');
+var packageInfo = require('../../package.json');
 var S3 = require('./s3');
 var settings = require('../../resources/settings');
 var strings = require('../../resources');
 var validator = require('./validators');
 var versionHandler = require('./version-handler');
-var _ = require('underscore');
 
 module.exports = function(conf){
 

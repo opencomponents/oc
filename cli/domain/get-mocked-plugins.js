@@ -2,8 +2,9 @@
 
 var fs = require('fs-extra');
 var path = require('path');
-var settings = require('../../resources/settings');
 var _ = require('underscore');
+
+var settings = require('../../resources/settings');
 
 module.exports = function(){
   var mockedPlugins = [],
