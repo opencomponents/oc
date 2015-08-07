@@ -196,7 +196,7 @@ describe('registry : routes : component', function(){
         });
       });
 
-      it('should return 200 status code for successful request', function(){ console.log(codes); console.log(responses);
+      it('should return 200 status code for successful request', function(){
         expect(codes[0]).to.be.equal(200);
       });
 
