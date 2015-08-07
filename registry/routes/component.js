@@ -66,7 +66,7 @@ module.exports = function(conf, repository){
 
       var returnComponent = function(err, data){
         if(!!err){
-          res.errorDetails = strings.errors.registry.COMPONENT_EXECUTION_ERROR;
+          res.errorDetails = format(strings.errors.registry.COMPONENT_EXECUTION_ERROR, err.message || '');
           return res.json(500, { error: res.errorDetails, details: { message: err.message, stack: err.stack, originalError: err} });
         }
 
@@ -148,6 +148,7 @@ module.exports = function(conf, repository){
 
         var cacheKey = format('{0}/{1}/server.js', component.name, component.version),
             cached = cache.get('file-contents', cacheKey),
+            domain = Domain.create(),
             contextObj = { 
               acceptLanguage: acceptLanguageParser.parse(req.headers['accept-language']),
               baseUrl: conf.baseUrl,
@@ -164,7 +165,15 @@ module.exports = function(conf, repository){
             };
 
         if(!!cached && !res.conf.local){
-          cached(contextObj, returnComponent);
+          domain.on('error', returnComponent);
+
+          try {
+            domain.run(function(){
+              cached(contextObj, returnComponent);
+            });
+          } catch(e){
+            return returnComponent(e);
+          }
         } else {
           repository.getDataProvider(component.name, component.version, function(err, dataProcessorJs){
 
@@ -216,13 +225,10 @@ module.exports = function(conf, repository){
 
             try {              
               vm.runInNewContext(dataProcessorJs, context);
-
-              var processData = context.module.exports.data,
-                  domain = Domain.create();
-              
+              var processData = context.module.exports.data;
               cache.set('file-contents', cacheKey, processData);
-              domain.on('error', handleError);
 
+              domain.on('error', handleError);
               domain.run(function(){
                 processData(contextObj, returnComponent);
               });
