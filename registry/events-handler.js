@@ -1,7 +1,8 @@
 'use strict';
 
-var strings = require('../resources/index');
 var _ = require('underscore');
+
+var strings = require('../resources/index');
 
 module.exports = function(){
 

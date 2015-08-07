@@ -5,12 +5,13 @@ var AWS = require('aws-sdk');
 var Cache = require('nice-cache');
 var format = require('stringformat');
 var fs = require('fs-extra');
-var getMimeType = require('../../utils/get-mime-type');
-var getNextYear = require('../../utils/get-next-year');
 var nodeDir = require('node-dir');
 var path = require('path');
-var strings = require('../../resources');
 var _ = require('underscore');
+
+var getMimeType = require('../../utils/get-mime-type');
+var getNextYear = require('../../utils/get-next-year');
+var strings = require('../../resources');
 
 module.exports = function(conf){
 

@@ -1,6 +1,7 @@
 'use strict';
 
 var omelette = require('omelette');
+
 var complete = omelette('oc <action>');
 
 module.exports = {

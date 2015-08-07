@@ -1,5 +1,12 @@
 'use strict';
 
+var colors = require('colors');
+var express = require('express');
+var format = require('stringformat');
+var http = require('http');
+var path = require('path');
+var _ = require('underscore');
+
 var appStart = require('./app-start');
 var baseUrlHandler = require('./middleware/base-url-handler');
 var cors = require('./middleware/cors');
@@ -13,13 +20,6 @@ var Router = require('./router');
 var sanitiseOptions = require('./domain/options-sanitiser');
 var settings = require('../resources/settings');
 var validator = require('./domain/validators');
-
-var _ = require('underscore');
-var colors = require('colors');
-var express = require('express');
-var format = require('stringformat');
-var http = require('http');
-var path = require('path');
 
 module.exports = function(options){
 

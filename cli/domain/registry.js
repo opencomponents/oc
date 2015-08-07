@@ -2,10 +2,11 @@
 
 var async = require('async');
 var fs = require('fs-extra');
+var _ = require('underscore');
+
 var put = require('../../utils/put');
 var request = require('../../utils/request');
 var settings = require('../../resources/settings');
-var _ = require('underscore');
 
 module.exports = function(){
 

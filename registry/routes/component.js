@@ -2,17 +2,18 @@
 
 var acceptLanguageParser = require('accept-language-parser');
 var Cache = require('nice-cache');
-var Client = require('../../client');
 var Domain = require('domain');
-var detective = require('../domain/plugins-detective');
 var format = require('stringformat');
+var vm = require('vm');
+var _ = require('underscore');
+
+var Client = require('../../client');
+var detective = require('../domain/plugins-detective');
 var RequireWrapper = require('../domain/require-wrapper');
 var sanitiser = require('../domain/sanitiser');
 var strings = require('../../resources');
 var urlBuilder = require('../domain/url-builder');
 var validator = require('../domain/validators');
-var vm = require('vm');
-var _ = require('underscore');
 
 module.exports = function(conf, repository){
 

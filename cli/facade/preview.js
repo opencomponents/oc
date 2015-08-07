@@ -4,6 +4,7 @@ var colors = require('colors');
 var format = require('stringformat');
 var http = require('http');
 var opn = require('opn');
+
 var strings = require('../../resources/index');
 var urlParser = require('../../registry/domain/url-parser');
 

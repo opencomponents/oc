@@ -1,8 +1,9 @@
 'use strict';
 
 var format = require('stringformat');
-var strings = require('../../../resources');
 var _ = require('underscore');
+
+var strings = require('../../../resources');
 
 var validate = {
   booleanParameter: function(booleanParameter){

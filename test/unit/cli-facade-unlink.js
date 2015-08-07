@@ -1,9 +1,10 @@
 'use strict';
 
 var colors = require('colors');
-var consoleMock = require('../mocks/console');
 var expect = require('chai').expect;
 var sinon = require('sinon');
+
+var consoleMock = require('../mocks/console');
 
 describe('cli : facade : unlink', function(){
 

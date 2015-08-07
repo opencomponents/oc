@@ -1,11 +1,12 @@
 'use strict';
 
-var commandsParser = require('./grunt-tasks/support/cli-commands-parser');
 var format = require('stringformat');
 var fs = require('fs-extra');
 var path = require('path');
 var semver = require('semver');
 var uglifyJs = require('uglify-js');
+
+var commandsParser = require('./grunt-tasks/support/cli-commands-parser');
 
 module.exports = function(grunt) {
 

@@ -3,14 +3,15 @@
 var Cache = require('nice-cache');
 var format = require('stringformat');
 var fs = require('fs');
-var Handlebars = require('./renderers/handlebars');
-var Jade = require('./renderers/jade');
 var path = require('path');
 var querystring = require('querystring');
-var request = require('./request');
-var settings = require('./settings');
 var url = require('url');
 var vm = require('vm');
+
+var Handlebars = require('./renderers/handlebars');
+var Jade = require('./renderers/jade');
+var request = require('./request');
+var settings = require('./settings');
 
 var isLocal = function(apiResponse){
   return apiResponse.type === 'oc-component-local';

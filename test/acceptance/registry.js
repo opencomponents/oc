@@ -2,6 +2,7 @@
 
 var expect = require('chai').expect;
 var path = require('path');
+
 var request = require('../../utils/request');
 
 describe('registry', function(){

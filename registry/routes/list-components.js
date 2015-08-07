@@ -1,10 +1,10 @@
 'use strict';
 
-var packageInfo = require('../../package.json');
-var urlBuilder = require('../domain/url-builder');
-
 var async = require('async');
 var _ = require('underscore');
+
+var packageInfo = require('../../package.json');
+var urlBuilder = require('../domain/url-builder');
 
 module.exports = function(repository){
   return function(req, res, next){

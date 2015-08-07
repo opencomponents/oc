@@ -1,12 +1,12 @@
 'use strict';
 
+var semver = require('semver');
+var _ = require('underscore');
+
 var componentParametersValidator = require('./component-parameters');
 var pluginsRequirementsValidator = require('./plugins-requirements');
 var registryConfigurationValidator = require('./registry-configuration');
 var uploadedPackageValidator = require('./uploaded-package');
-
-var semver = require('semver');
-var _ = require('underscore');
 
 module.exports = {
   validateComponentName: function(componentName){

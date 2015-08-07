@@ -1,9 +1,10 @@
 'use strict';
 
 var async = require('async');
-var getUnixUTCTimestamp = require('../../utils/get-unix-utc-timestamp');
 var semver = require('semver');
 var _ = require('underscore');
+
+var getUnixUTCTimestamp = require('../../utils/get-unix-utc-timestamp');
 
 module.exports = function(conf, cdn){
 
