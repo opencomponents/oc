@@ -8,7 +8,7 @@ module.exports = {
   },
   errors: {
     registry: {
-      COMPONENT_EXECUTION_ERROR: 'component execution error',
+      COMPONENT_EXECUTION_ERROR: 'Component execution error: {0}',
       COMPONENT_NAME_NOT_VALID: 'The component\'s name contains invalid characters. Allowed are alphanumeric, _, -',
       COMPONENT_NAME_NOT_VALID_CODE: 'name_not_valid',
       COMPONENT_NOT_FOUND: 'Component "{0}" not found on {1}',

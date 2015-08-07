@@ -66,7 +66,7 @@ module.exports = function(conf, repository){
 
       var returnComponent = function(err, data){
         if(!!err){
-          res.errorDetails = strings.errors.registry.COMPONENT_EXECUTION_ERROR;
+          res.errorDetails = format(strings.errors.registry.COMPONENT_EXECUTION_ERROR, err.message || '');
           return res.json(500, { error: res.errorDetails, details: { message: err.message, stack: err.stack, originalError: err} });
         }
 
@@ -164,7 +164,19 @@ module.exports = function(conf, repository){
             };
 
         if(!!cached && !res.conf.local){
-          cached(contextObj, returnComponent);
+          var domain = Domain.create();
+
+          domain.on('error', returnComponent);
+
+          try {
+
+            domain.run(function(){
+              cached(contextObj, returnComponent);
+            });
+          } catch(e){
+            return returnComponent(e);
+          }
+
         } else {
           repository.getDataProvider(component.name, component.version, function(err, dataProcessorJs){
 
