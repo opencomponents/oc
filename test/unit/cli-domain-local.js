@@ -36,7 +36,8 @@ var initialise = function(){
       resolve: function(){
         return _.toArray(arguments).join('/');
       }
-    }
+    },
+    './package-static-files': sinon.stub().yields(null, 'ok')
   }, { __dirname: '' });
 
   var local = new Local();
