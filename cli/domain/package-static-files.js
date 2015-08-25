@@ -2,11 +2,14 @@
 
 var async = require('async');
 var CleanCss = require('clean-css');
+var format = require('stringformat');
 var fs = require('fs-extra');
 var nodeDir = require('node-dir');
 var path = require('path');
 var uglifyJs = require('uglify-js');
 var _ = require('underscore');
+
+var strings = require('../../resources');
 
 var minifyFile = function(fileType, fileContent, ocOptions){
 
@@ -21,11 +24,14 @@ var minifyFile = function(fileType, fileContent, ocOptions){
 };
 
 var copyDir = function(params, cb){
-  var staticPath = path.join(params.componentPath, params.staticDir);
-  if(!fs.existsSync(staticPath)){
-    return cb('"' + staticPath + '" not found');
-  } else if(!fs.lstatSync(staticPath).isDirectory()){
-    return cb('"' + staticPath + '" must be a directory');
+  var staticPath = path.join(params.componentPath, params.staticDir),
+      exists = fs.existsSync(staticPath),
+      isDir = exists && fs.lstatSync(staticPath).isDirectory();
+
+  if(!exists){
+    return cb(format(strings.errors.cli.FOLDER_NOT_FOUND, staticPath));
+  } else if(!isDir){
+    return cb(format(strings.errors.cli.FOLDER_IS_NOT_A_FOLDER, staticPath));
   } else {
 
     nodeDir.paths(staticPath, function(err, res){
@@ -54,11 +60,14 @@ var copyDir = function(params, cb){
 };
 
 module.exports = function(params, callback){
-  if(params.ocOptions.files.static.length === 0){
+
+  var staticList = params.ocOptions.files.static;
+
+  if(staticList.length === 0){
     return callback(null, 'ok');
   }
 
-  async.eachSeries(params.ocOptions.files.static, function(staticDir, cb){
+  async.eachSeries(staticList, function(staticDir, cb){
     copyDir(_.extend(params, { staticDir: staticDir }), cb);
   }, function(errors){
     if(errors){ return callback(errors); }

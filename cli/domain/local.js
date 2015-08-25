@@ -1,13 +1,10 @@
 'use strict';
 
-var async = require('async');
-var CleanCss = require('clean-css');
 var detective = require('detective');
 var format = require('stringformat');
 var fs = require('fs-extra');
 var handlebars = require('handlebars');
 var jade = require('jade');
-var nodeDir = require('node-dir');
 var path = require('path');
 var Targz = require('tar.gz');
 var uglifyJs = require('uglify-js');

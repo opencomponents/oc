@@ -51,6 +51,8 @@ module.exports = {
       COMPONENT_HREF_NOT_FOUND: 'The specified path is not a valid component\'s url',
       COMPONENTS_LINKED_NOT_FOUND: 'No components linked in the project',
       COMPONENTS_NOT_FOUND: 'no components found in specified path',
+      FOLDER_IS_NOT_A_FOLDER: '"{0}" must be a directory',
+      FOLDER_NOT_FOUND: '"{0}" not found',
       DEV_FAIL: 'An error happened when initialising the dev runner: {0}',
       INIT_FAIL: 'An error happened when initialising the component: {0}',
       INVALID_CREDENTIALS: 'Invalid credentials',
