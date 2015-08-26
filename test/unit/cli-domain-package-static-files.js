@@ -4,6 +4,7 @@ var expect = require('chai').expect;
 var injectr = require('injectr');
 var path = require('path');
 var sinon = require('sinon');
+var _ = require('underscore');
 
 var packageStaticFiles,
     error,
@@ -36,6 +37,22 @@ var cleanup = function(){
       writeFileSync: sinon.spy()
     },
     'node-dir': { paths: sinon.stub().yields(null, { files:[] })},
+    path: {
+      basename: path.basename,
+      dirname: function(){
+        return path.dirname.apply(this, _.toArray(arguments)).replace(/\\/g, '/');
+      },
+      extname: path.extname,
+      join: function(){
+        return path.join.apply(this, _.toArray(arguments)).replace(/\\/g, '/');
+      },
+      relative: function(){
+        return path.relative.apply(this, _.toArray(arguments)).replace(/\\/g, '/');
+      },
+      resolve: function(){
+        return _.toArray(arguments).join('/');
+      }
+    },
     'uglify-js': { minify: sinon.stub().returns({
       code: 'this-is-minified'
     })}
