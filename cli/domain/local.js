@@ -1,19 +1,17 @@
 'use strict';
 
-var async = require('async');
-var CleanCss = require('clean-css');
 var detective = require('detective');
 var format = require('stringformat');
 var fs = require('fs-extra');
 var handlebars = require('handlebars');
 var jade = require('jade');
-var nodeDir = require('node-dir');
 var path = require('path');
 var Targz = require('tar.gz');
 var uglifyJs = require('uglify-js');
 var _ = require('underscore');
 
 var hashBuilder = require('../../utils/hash-builder');
+var packageStaticFiles = require('./package-static-files');
 var request = require('../../utils/request');
 var settings = require('../../resources/settings');
 var validator = require('../../registry/domain/validators');
@@ -359,52 +357,13 @@ module.exports = function(){
 
       fs.writeJsonSync(path.join(publishPath, 'package.json'), component);
 
-      var copyDir = function(staticComponent, staticPath, cb){
-        if(!fs.existsSync(staticPath)){
-          return cb('"' + staticPath + '" not found');
-        } else if(!fs.lstatSync(staticPath).isDirectory()){
-          return cb('"' + staticPath + '" must be a directory');
-        } else {
-          nodeDir.paths(staticPath, function(err, res){
-            fs.ensureDirSync(path.join(publishPath, staticComponent));
-            _.forEach(res.files, function(filePath){
-              var fileName = path.basename(filePath),
-                  fileExt = path.extname(filePath),
-                  fileDestination = path.join(publishPath, staticComponent, fileName),
-                  fileContent,
-                  minifiedContent;
-
-              if(minify && fileExt === '.js' && component.oc.minify !== false){
-                fileContent = fs.readFileSync(filePath).toString();
-                minifiedContent = uglifyJs.minify(fileContent, {fromString: true}).code;
-
-                fs.writeFileSync(fileDestination, minifiedContent);
-              } else if(minify && fileExt === '.css' && component.oc.minify !== false){
-                fileContent = fs.readFileSync(filePath).toString();
-                var options = (component.oc.ie8css === true) ? {compatibility:'ie8'} : null;
-                minifiedContent = new CleanCss(options).minify(fileContent).styles;
-
-                fs.writeFileSync(fileDestination, minifiedContent);
-              } else {
-                fs.copySync(filePath, fileDestination);
-              }
-            });
-            cb(null, 'ok');
-          });
-        }
-      };
-
-      if(component.oc.files.static.length === 0){
-        return callback(null, component);
-      }
-      async.eachSeries(component.oc.files.static, function(staticDir, cb){
-        copyDir(staticDir, path.join(componentPath, staticDir), cb);
-      }, function(errors){
-        if(errors){
-          return callback(errors);
-        }
-
-        callback(null, component);
+      packageStaticFiles({
+        componentPath: componentPath, 
+        publishPath: publishPath, 
+        minify: minify, 
+        ocOptions: component.oc
+      }, function(err, res){
+        return callback(err, component);
       });
     },
     unlink: function(componentName, callback){
