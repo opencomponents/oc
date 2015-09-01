@@ -61,7 +61,7 @@ describe('registry : routes : component', function(){
       }, {
         conf: {
           baseUrl: 'http://component.com/',
-          executionTimeout: 100
+          executionTimeout: 0.1
         },
         json: resJson
       });

@@ -173,9 +173,9 @@ module.exports = function(conf, repository){
           if(!!conf.executionTimeout){
             setTimeout(function(){
               returnComponent({
-                message: format('timeout ({0}ms)', conf.executionTimeout)
+                message: format('timeout ({0}ms)', conf.executionTimeout * 1000)
               });
-            }, conf.executionTimeout);
+            }, conf.executionTimeout * 1000);
           }
         };
 
