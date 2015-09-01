@@ -18,6 +18,64 @@ describe('registry : routes : component', function(){
     };
   };
 
+  describe('when getting a component with server.js execution timeout', function(){
+
+    var code, response;
+    before(function(done){
+      initialise({
+        component: {
+          name: 'timeout-component',
+          version: '1.0.0',
+          oc: {
+            container: false,
+            files: {
+              template: {
+                type: 'jade',
+                hashKey: '8c1fbd954f2b0d8cd5cf11c885fed4805225749f',
+                src: 'template.js'
+              },
+              dataProvider: {
+                type: 'node.js',
+                hashKey: '123456',
+                src: 'server.js'
+              }
+            }
+          }
+        },
+        data: '"use strict";module.exports.data=function(t,u){setTimeout(function(){u(null,{done:true});}, 5000);};',
+        view: 'var oc=oc||{};oc.components=oc.components||{},oc.components["8c1fbd954f2b0d8cd5cf11c885fed4805225749f"]' +
+              '=function(){var o=[];return o.push("<div>hello</div>"),o.join("")};'
+      });
+
+      componentRoute = new ComponentRoute({}, mockedRepository);
+
+      var resJson = function(calledCode, calledResponse){
+        code = calledCode;
+        response = calledResponse;
+        done();
+      };
+
+      componentRoute({
+        headers: {},
+        params: { componentName: 'timeout-component' }
+      }, {
+        conf: {
+          baseUrl: 'http://component.com/',
+          executionTimeout: 0.1
+        },
+        json: resJson
+      });
+    });
+
+    it('should return 500 status code', function(){
+      expect(code).to.be.equal(500);
+    });
+
+    it('should respond with error message', function(){
+      expect(response.error).to.equal('Component execution error: timeout (100ms)');
+    });
+  });
+
   describe('when getting a component with server.js execution errors', function(){
 
     before(function(){

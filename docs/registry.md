@@ -90,6 +90,7 @@ registry.register({
 |`dependencies`|`array`|the npm modules available for components logic|
 |`env`|`object`|sets the registry environment|
 |`env.name`|`string`|sets the environment name|
+|`executionTimeout`|`number` (seconds)|timeout for component's server execution time|
 |`pollingInterval`|`number` (seconds)|When the components' list cache will be refreshed. This is required for distributing the components on each registry instance. Given the polling mechanism is quite efficient, this number should be very low. Suggested is around 5-10 seconds.|
 |`port`|`number`|default `3000`, sets the port where to start the registry|
 |`prefix`|`string`|sets the href prefix, for example: `/v2/`|

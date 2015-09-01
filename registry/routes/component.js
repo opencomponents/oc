@@ -31,7 +31,8 @@ module.exports = function(conf, repository){
       parameters: req.query
     };
 
-    var conf = res.conf;
+    var conf = res.conf,
+        componentCallbackDone = false;
 
     repository.getComponent(requestedComponent.name, requestedComponent.version, function(err, component){
 
@@ -65,6 +66,10 @@ module.exports = function(conf, repository){
       }
 
       var returnComponent = function(err, data){
+
+        if(componentCallbackDone){ return; }
+        componentCallbackDone = true;
+
         if(!!err){
           res.errorDetails = format(strings.errors.registry.COMPONENT_EXECUTION_ERROR, err.message || '');
           return res.json(500, { error: res.errorDetails, details: { message: err.message, stack: err.stack, originalError: err} });
@@ -164,12 +169,23 @@ module.exports = function(conf, repository){
               staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', '')
             };
 
+        var setCallbackTimeout = function(){
+          if(!!conf.executionTimeout){
+            setTimeout(function(){
+              returnComponent({
+                message: format('timeout ({0}ms)', conf.executionTimeout * 1000)
+              });
+            }, conf.executionTimeout * 1000);
+          }
+        };
+
         if(!!cached && !res.conf.local){
           domain.on('error', returnComponent);
 
           try {
             domain.run(function(){
               cached(contextObj, returnComponent);
+              setCallbackTimeout();
             });
           } catch(e){
             return returnComponent(e);
@@ -178,6 +194,7 @@ module.exports = function(conf, repository){
           repository.getDataProvider(component.name, component.version, function(err, dataProcessorJs){
 
             if(err){
+              componentCallbackDone = true;
               res.errorDetails = strings.errors.registry.RESOLVING_ERROR;
               return res.json(502, { error: res.errorDetails });
             }
@@ -197,6 +214,7 @@ module.exports = function(conf, repository){
               if(err.code === 'DEPENDENCY_MISSING_FROM_REGISTRY'){
                 res.errorDetails = format(strings.errors.registry.DEPENDENCY_NOT_FOUND, err.missing.join(', '));
                 res.errorCode = err.code;
+                componentCallbackDone = true;
 
                 return res.json(501, {
                   code: res.errorCode,
@@ -212,6 +230,7 @@ module.exports = function(conf, repository){
 
                 res.errorDetails = format(strings.errors.registry.PLUGIN_NOT_FOUND, unRegisteredPlugins.join(' ,'));
                 res.errorCode = 'PLUGIN_MISSING_FROM_COMPONENT';
+                componentCallbackDone = true;
                 
                 return res.json(501, {
                   code: res.errorCode,
@@ -231,6 +250,7 @@ module.exports = function(conf, repository){
               domain.on('error', handleError);
               domain.run(function(){
                 processData(contextObj, returnComponent);
+                setCallbackTimeout();
               });
             } catch(err){
               handleError(err);
