@@ -1,6 +1,6 @@
 'use strict';
 
-var detective = require('detective');
+var async = require('async');
 var format = require('stringformat');
 var fs = require('fs-extra');
 var handlebars = require('handlebars');
@@ -11,6 +11,7 @@ var uglifyJs = require('uglify-js');
 var _ = require('underscore');
 
 var hashBuilder = require('../../utils/hash-builder');
+var packageServerScript = require('./package-server-script');
 var packageStaticFiles = require('./package-static-files');
 var request = require('../../utils/request');
 var settings = require('../../resources/settings');
@@ -46,64 +47,6 @@ module.exports = function(){
       hash: hashView,
       view: uglifyJs.minify(compiledView, {fromString: true}).code
     };
-  };
-
-  var getLocalDependencies = function(componentPath, serverContent){
-
-    var requires = {
-      files: {},
-      modules: []
-    };
-
-    var localRequires = detective(serverContent);
-
-    var tryEncapsulating = function(required){
-      var requiredPath = path.resolve(componentPath, required),
-          ext = path.extname(requiredPath).toLowerCase();
-
-      if(ext === ''){
-        requiredPath += '.json';
-      } else if(ext !== '.json'){
-        throw 'Requiring local js files is not allowed. Keep it small.';
-      }
-
-      if(!fs.existsSync(requiredPath)){
-        throw requiredPath + ' not found. Only json files are require-able.';
-      }
-
-      var content = fs.readFileSync(requiredPath).toString();
-      return JSON.parse(content);
-    };
-
-    var isLocalFile = function(f){
-      return _.first(f) === '/' || _.first(f) === '.';
-    };
-
-    _.forEach(localRequires, function(required){
-      if(isLocalFile(required)) {
-        requires.files[required] = tryEncapsulating(required);
-      } else {
-        requires.modules.push(required);
-      }
-    });
-
-    return requires;
-  };
-
-  var getSandBoxedJs = function(wrappedRequires, serverContent){
-    if(_.keys(wrappedRequires).length > 0){
-      serverContent = 'var __sandboxedRequire = require, __localRequires=' + JSON.stringify(wrappedRequires) +
-                      ';require=function(x){return __localRequires[x] ? __localRequires[x] : __sandboxedRequire(x); };\n' +
-                      serverContent;
-    }
-
-    return uglifyJs.minify(serverContent, {fromString: true}).code;
-  };
-
-  var missingDependencies = function(requires, component){
-    return _.filter(requires, function(dep){
-      return !_.contains(_.keys(component.dependencies), dep);
-    });
   };
 
   return _.extend(this, {
@@ -314,57 +257,52 @@ module.exports = function(){
       component.oc.version = ocInfo.version;
       component.oc.packaged = true;
 
-      if(!!component.oc.files.data){
-        var dataPath = path.join(componentPath, component.oc.files.data),
-            serverContent = fs.readFileSync(dataPath).toString(),
-            wrappedRequires;
-
-        try {
-          wrappedRequires = getLocalDependencies(componentPath, serverContent);
-        } catch(e){
-          if(e instanceof SyntaxError){
-            return callback({
-              message: format('Error while parsing {0}: {1}', dataPath, e)
-            });
+      async.waterfall([
+        function(cb){
+          // Packaging server.js
+          if(!component.oc.files.data){
+            return cb(null, component);
           }
-          return callback(e);
+
+          packageServerScript({
+            componentPath: componentPath,
+            ocOptions: component.oc,
+            publishPath: publishPath
+          }, function(err, packagedServerScriptInfo){
+            if(err){ return cb(err); }
+
+            component.oc.files.dataProvider = packagedServerScriptInfo;
+            delete component.oc.files.data;
+            cb(err, component);
+          });
+        },
+        function(component, cb){
+          // Packaging package.json
+
+          if(!component.oc.files.static){
+            component.oc.files.static = [];
+          }
+
+          if(!_.isArray(component.oc.files.static)){
+            component.oc.files.static = [component.oc.files.static];
+          }
+
+          fs.writeJson(path.join(publishPath, 'package.json'), component, function(err, res){
+            cb(err, component);
+          });
+        },
+        function(component, cb){
+
+          packageStaticFiles({
+            componentPath: componentPath, 
+            publishPath: publishPath, 
+            minify: minify, 
+            ocOptions: component.oc
+          }, function(err, res){
+            return cb(err, component);
+          });
         }
-
-        var missingDeps = missingDependencies(wrappedRequires.modules, component);
-        if(missingDeps.length > 0){
-          return callback('Missing dependencies from package.json => ' + JSON.stringify(missingDeps));
-        }
-
-        var sandBoxedJs = getSandBoxedJs(wrappedRequires.files, serverContent);
-        fs.writeFileSync(path.join(publishPath, 'server.js'), sandBoxedJs);
-
-        component.oc.files.dataProvider = {
-          type: 'node.js',
-          hashKey: hashBuilder.fromString(sandBoxedJs),
-          src: 'server.js'
-        };
-
-        delete component.oc.files.data;
-      }
-
-      if(!component.oc.files.static){
-        component.oc.files.static = [];
-      }
-
-      if(!_.isArray(component.oc.files.static)){
-        component.oc.files.static = [component.oc.files.static];
-      }
-
-      fs.writeJsonSync(path.join(publishPath, 'package.json'), component);
-
-      packageStaticFiles({
-        componentPath: componentPath, 
-        publishPath: publishPath, 
-        minify: minify, 
-        ocOptions: component.oc
-      }, function(err, res){
-        return callback(err, component);
-      });
+      ], callback);
     },
     unlink: function(componentName, callback){
       fs.readJson(settings.configFile.src, function(err, localConfig){

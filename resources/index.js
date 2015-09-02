@@ -65,6 +65,9 @@ module.exports = {
       PORT_IS_BUSY: 'The port {0} is already in use. Specify the optional port parameter to use another port.',
       PUBLISHING_FAIL: 'An error happened when publishing the component: {0}',
       REGISTRY_NOT_FOUND: 'oc registries not found. Run "oc registry add <registry href>"',
+      SERVERJS_DEPENDENCY_NOT_DECLARED: 'Missing dependencies from package.json => {0}',
+      SERVERJS_PARSING_ERROR: 'Error while parsing {0}: {1}',
+      SERVERJS_REQUIRE_JS_NOT_ALLOWED: 'Requiring local js files is not allowed. Keep it small.',
       TEMPLATE_TYPE_NOT_VALID: 'the template is not valid. Allowed values are handlebars and jade'
     },
     generic: 'An error occurred: {0}',
