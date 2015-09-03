@@ -68,7 +68,7 @@ describe('cli : domain : package-server-script', function(){
       });
 
       it('should throw an error with error details', function(){
-        expect(error).to.equal('Error while parsing myserver.js: SyntaxError: Unexpected token (3:19)');
+        expect(error).to.equal('Javascript error found in myserver.js [3,19]: Unexpected token punc «;», expected punc «,»]');
       });
 
 
@@ -198,6 +198,37 @@ describe('cli : domain : package-server-script', function(){
 
       it('should not package component and respond with error', function(){
         expect(error).to.equal('Requiring local js files is not allowed. Keep it small.');
+      });
+    });
+
+    describe('when component requires a file without extension that is not found as json', function(){
+
+      var serverjs = 'var data=require(\'./hi\');module.exports.data=function(context,cb){return cb(null,data); };',
+          error;
+
+      beforeEach(function(done){
+
+        initialise({ 
+          readFileSync: sinon.stub().returns(serverjs),
+          existsSync: sinon.stub().returns(false)
+        });
+
+        packageServerScript({
+          componentPath: '/path/to/component/',
+          ocOptions: {
+            files: {
+              data: 'server.js'
+            }
+          },
+          publishPath: '/path/to/component/_package/'
+        }, function(e, r){
+          error = e;
+          done();
+        });
+      });
+
+      it('should not package component and respond with error', function(){
+        expect(error).to.equal('./hi.json not found. Only json files are require-able.');
       });
     });
   });

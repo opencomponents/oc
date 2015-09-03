@@ -10,33 +10,46 @@ var _ = require('underscore');
 var hashBuilder = require('../../utils/hash-builder');
 var strings = require('../../resources');
 
+var compress = function(code, fileName){
+  var compressed;
+
+  try {
+    compressed = uglifyJs.minify(code, { fromString: true }).code;
+  } catch (e){
+    var m = e.message;
+    if(!!e.line && !!e.col){
+      m = format(strings.errors.cli.SERVERJS_PARSING_ERROR, fileName, e.line, e.col, e.message);
+    }
+    throw m;
+  }
+
+  return compressed;
+};
+
 var isLocalFile = function(f){
   return _.first(f) === '/' || _.first(f) === '.';
 };
 
-var getLocalDependencies = function(componentPath, serverContent){
+var getLocalDependencies = function(componentPath, serverContent, fileName){
 
   var requires = { files: {}, modules: [] },
       localRequires;
 
-  try {
-    localRequires = detective(serverContent);
-  } catch(e){
-    throw new SyntaxError(e.message);
-  }
+  localRequires = detective(compress(serverContent, fileName));
 
   var tryEncapsulating = function(required){
-    var requiredPath = path.resolve(componentPath, required),
-        ext = path.extname(requiredPath).toLowerCase();
-
+    var ext = path.extname(required).toLowerCase();
+        
     if(ext === ''){
-      requiredPath += '.json';
+      required += '.json';
     } else if(ext !== '.json'){
       throw strings.errors.cli.SERVERJS_REQUIRE_JS_NOT_ALLOWED;
     }
 
+    var requiredPath = path.resolve(componentPath, required);
+
     if(!fs.existsSync(requiredPath)){
-      throw requiredPath + ' not found. Only json files are require-able.';
+      throw format(strings.errors.cli.SERVERJS_REQUIRE_JSON_NOT_FOUND, required);
     }
 
     var content = fs.readFileSync(requiredPath).toString();
@@ -54,14 +67,14 @@ var getLocalDependencies = function(componentPath, serverContent){
   return requires;
 };
 
-var getSandBoxedJs = function(wrappedRequires, serverContent){
+var getSandBoxedJs = function(wrappedRequires, serverContent, fileName){
   if(_.keys(wrappedRequires).length > 0){
     serverContent = 'var __sandboxedRequire = require, __localRequires=' + JSON.stringify(wrappedRequires) +
                     ';require=function(x){return __localRequires[x] ? __localRequires[x] : __sandboxedRequire(x); };\n' +
                     serverContent;
   }
 
-  return uglifyJs.minify(serverContent, {fromString: true}).code;
+  return compress(serverContent, fileName);
 };
 
 var missingDependencies = function(requires, dependencies){
@@ -79,11 +92,8 @@ module.exports = function(params, callback){
       serverContent = fs.readFileSync(dataPath).toString();
 
   try {
-    wrappedRequires = getLocalDependencies(params.componentPath, serverContent);
+    wrappedRequires = getLocalDependencies(params.componentPath, serverContent, params.ocOptions.files.data);
   } catch(e){
-    if(e instanceof SyntaxError){
-      return callback(format(strings.errors.cli.SERVERJS_PARSING_ERROR, params.ocOptions.files.data, e));
-    }
     return callback(e);
   }
 
@@ -94,13 +104,9 @@ module.exports = function(params, callback){
   }
 
   try {
-    sandboxedJs = getSandBoxedJs(wrappedRequires.files, serverContent);
+    sandboxedJs = getSandBoxedJs(wrappedRequires.files, serverContent, params.ocOptions.files.data);
   } catch(e){
-    var m = e.message;
-    if(!!e.line && !!e.col){
-      m = format('Javascript error found in {0} [{1},{2}]: {3}]', params.ocOptions.files.data, e.line, e.col, e.message);
-    }
-    return callback(m);
+    return callback(e);
   }
 
   fs.writeFile(path.join(params.publishPath, fileName), sandboxedJs, function(err, res){
