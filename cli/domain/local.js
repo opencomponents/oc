@@ -1,17 +1,15 @@
 'use strict';
 
-var detective = require('detective');
+var async = require('async');
 var format = require('stringformat');
 var fs = require('fs-extra');
-var handlebars = require('handlebars');
-var jade = require('jade');
 var path = require('path');
 var Targz = require('tar.gz');
-var uglifyJs = require('uglify-js');
 var _ = require('underscore');
 
-var hashBuilder = require('../../utils/hash-builder');
+var packageServerScript = require('./package-server-script');
 var packageStaticFiles = require('./package-static-files');
+var packageTemplate = require('./package-template');
 var request = require('../../utils/request');
 var settings = require('../../resources/settings');
 var validator = require('../../registry/domain/validators');
@@ -19,92 +17,6 @@ var validator = require('../../registry/domain/validators');
 module.exports = function(){
 
   var targz = new Targz();
-
-  var javaScriptizeTemplate = function(functionName, data){
-    return format('var {0}={0}||{};{0}.components={0}.components||{};{0}.components[\'{1}\']={2}', 'oc', functionName, data.toString());
-  };
-
-  var compileView = function(template, type, fileName, baseDir){
-    var preCompiledView;
-
-    if(type === 'jade'){
-      preCompiledView = jade.compileClient(template, {
-        filename: path.resolve('./' + baseDir + '/' + fileName),
-        compileDebug: false,
-        name: 't'
-      }).toString().replace('function t(locals) {', 'function(locals){');
-    } else if(type === 'handlebars'){
-      preCompiledView = handlebars.precompile(template);
-    } else {
-      throw 'template type not supported';
-    }
-
-    var hashView = hashBuilder.fromString(preCompiledView.toString()),
-        compiledView = javaScriptizeTemplate(hashView, preCompiledView);
-
-    return {
-      hash: hashView,
-      view: uglifyJs.minify(compiledView, {fromString: true}).code
-    };
-  };
-
-  var getLocalDependencies = function(componentPath, serverContent){
-
-    var requires = {
-      files: {},
-      modules: []
-    };
-
-    var localRequires = detective(serverContent);
-
-    var tryEncapsulating = function(required){
-      var requiredPath = path.resolve(componentPath, required),
-          ext = path.extname(requiredPath).toLowerCase();
-
-      if(ext === ''){
-        requiredPath += '.json';
-      } else if(ext !== '.json'){
-        throw 'Requiring local js files is not allowed. Keep it small.';
-      }
-
-      if(!fs.existsSync(requiredPath)){
-        throw requiredPath + ' not found. Only json files are require-able.';
-      }
-
-      var content = fs.readFileSync(requiredPath).toString();
-      return JSON.parse(content);
-    };
-
-    var isLocalFile = function(f){
-      return _.first(f) === '/' || _.first(f) === '.';
-    };
-
-    _.forEach(localRequires, function(required){
-      if(isLocalFile(required)) {
-        requires.files[required] = tryEncapsulating(required);
-      } else {
-        requires.modules.push(required);
-      }
-    });
-
-    return requires;
-  };
-
-  var getSandBoxedJs = function(wrappedRequires, serverContent){
-    if(_.keys(wrappedRequires).length > 0){
-      serverContent = 'var __sandboxedRequire = require, __localRequires=' + JSON.stringify(wrappedRequires) +
-                      ';require=function(x){return __localRequires[x] ? __localRequires[x] : __sandboxedRequire(x); };\n' +
-                      serverContent;
-    }
-
-    return uglifyJs.minify(serverContent, {fromString: true}).code;
-  };
-
-  var missingDependencies = function(requires, component){
-    return _.filter(requires, function(dep){
-      return !_.contains(_.keys(component.dependencies), dep);
-    });
-  };
 
   return _.extend(this, {
     cleanup: function(compressedPackagePath, callback){
@@ -282,89 +194,79 @@ module.exports = function(){
       }
 
       var component = fs.readJsonSync(componentPackagePath),
-          viewPath = path.join(componentPath, component.oc.files.template.src);
+          ocInfo = fs.readJsonSync(ocPackagePath);
 
-      if(!fs.existsSync(viewPath)){
-        return callback(format('file {0} not found', component.oc.files.template.src));
-      } else if(!validator.validateComponentName(component.name)){
+      if(!validator.validateComponentName(component.name)){
         return callback('name not valid');
       }
 
-      var ocInfo = fs.readJsonSync(ocPackagePath),
-          template = fs.readFileSync(viewPath).toString(),
-          compiled;
+      async.waterfall([
+        function(cb){
+          // Packaging template.js
 
-      try {
-        compiled = compileView(template, component.oc.files.template.type, component.oc.files.template.src, component.name);
-      } catch(e){
-        return callback({
-          message: format('{0} compilation failed - {1}', component.oc.files.template.src, e.toString())
-        });
-      }
+          packageTemplate({
+            componentName: component.name,
+            componentPath: componentPath,
+            ocOptions: component.oc,
+            publishPath: publishPath
+          }, function(err, packagedTemplateInfo){
+            if(err){ return cb(err); }
 
-      fs.writeFileSync(path.join(publishPath, 'template.js'), compiled.view);
+            component.oc.files.template = packagedTemplateInfo;
+            delete component.oc.files.client;
+            cb(err, component);
+          });
+        },
+        function(component, cb){
+          // Packaging server.js
 
-      component.oc.files.template = {
-        type: component.oc.files.template.type,
-        hashKey: compiled.hash,
-        src: 'template.js'
-      };
-
-      delete component.oc.files.client;
-      component.oc.version = ocInfo.version;
-      component.oc.packaged = true;
-
-      if(!!component.oc.files.data){
-        var dataPath = path.join(componentPath, component.oc.files.data),
-            serverContent = fs.readFileSync(dataPath).toString(),
-            wrappedRequires;
-
-        try {
-          wrappedRequires = getLocalDependencies(componentPath, serverContent);
-        } catch(e){
-          if(e instanceof SyntaxError){
-            return callback({
-              message: format('Error while parsing {0}: {1}', dataPath, e)
-            });
+          if(!component.oc.files.data){
+            return cb(null, component);
           }
-          return callback(e);
+
+          packageServerScript({
+            componentPath: componentPath,
+            dependencies: component.dependencies,
+            ocOptions: component.oc,
+            publishPath: publishPath
+          }, function(err, packagedServerScriptInfo){
+            if(err){ return cb(err); }
+
+            component.oc.files.dataProvider = packagedServerScriptInfo;
+            delete component.oc.files.data;
+            cb(err, component);
+          });
+        },
+        function(component, cb){
+          // Packaging package.json
+
+          component.oc.version = ocInfo.version;
+          component.oc.packaged = true;
+
+          if(!component.oc.files.static){
+            component.oc.files.static = [];
+          }
+
+          if(!_.isArray(component.oc.files.static)){
+            component.oc.files.static = [component.oc.files.static];
+          }
+
+          fs.writeJson(path.join(publishPath, 'package.json'), component, function(err, res){
+            cb(err, component);
+          });
+        },
+        function(component, cb){
+
+          packageStaticFiles({
+            componentPath: componentPath, 
+            publishPath: publishPath, 
+            minify: minify, 
+            ocOptions: component.oc
+          }, function(err, res){
+            return cb(err, component);
+          });
         }
-
-        var missingDeps = missingDependencies(wrappedRequires.modules, component);
-        if(missingDeps.length > 0){
-          return callback('Missing dependencies from package.json => ' + JSON.stringify(missingDeps));
-        }
-
-        var sandBoxedJs = getSandBoxedJs(wrappedRequires.files, serverContent);
-        fs.writeFileSync(path.join(publishPath, 'server.js'), sandBoxedJs);
-
-        component.oc.files.dataProvider = {
-          type: 'node.js',
-          hashKey: hashBuilder.fromString(sandBoxedJs),
-          src: 'server.js'
-        };
-
-        delete component.oc.files.data;
-      }
-
-      if(!component.oc.files.static){
-        component.oc.files.static = [];
-      }
-
-      if(!_.isArray(component.oc.files.static)){
-        component.oc.files.static = [component.oc.files.static];
-      }
-
-      fs.writeJsonSync(path.join(publishPath, 'package.json'), component);
-
-      packageStaticFiles({
-        componentPath: componentPath, 
-        publishPath: publishPath, 
-        minify: minify, 
-        ocOptions: component.oc
-      }, function(err, res){
-        return callback(err, component);
-      });
+      ], callback);
     },
     unlink: function(componentName, callback){
       fs.readJson(settings.configFile.src, function(err, localConfig){
