@@ -185,8 +185,7 @@ module.exports = function(){
       fs.mkdirSync(publishPath);
 
       var componentPackagePath = path.join(componentPath, 'package.json'),
-          ocPackagePath = path.join(__dirname, '../../package.json'),
-          ocInfo = fs.readJsonSync(ocPackagePath);
+          ocPackagePath = path.join(__dirname, '../../package.json');
 
       if(!fs.existsSync(componentPackagePath)){
         return callback('component does not contain package.json');
@@ -194,7 +193,8 @@ module.exports = function(){
         return callback('error resolving oc internal dependencies');
       }
 
-      var component = fs.readJsonSync(componentPackagePath);
+      var component = fs.readJsonSync(componentPackagePath),
+          ocInfo = fs.readJsonSync(ocPackagePath);
 
       if(!validator.validateComponentName(component.name)){
         return callback('name not valid');

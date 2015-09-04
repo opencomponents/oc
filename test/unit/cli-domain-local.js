@@ -86,8 +86,8 @@ describe('cli : domain : local', function(){
         };
 
         data.fs.existsSync.returns(true);
-        data.fs.readJsonSync.onCall(0).returns({ version: '1.2.3' });
-        data.fs.readJsonSync.onCall(1).returns(component);
+        data.fs.readJsonSync.onCall(0).returns(component);
+        data.fs.readJsonSync.onCall(1).returns({ version: '1.2.3' });
 
         executePackaging(data.local, done);
       });
