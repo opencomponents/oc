@@ -17,9 +17,7 @@ var initialise = function(){
     readJson: sinon.stub(),
     readJsonSync: sinon.stub(),
     writeFile: sinon.stub().yields(null, 'ok'),
-    writeFileSync: sinon.spy(),
-    writeJson: sinon.stub().yields(null, 'ok'),
-    writeJsonSync: sinon.stub()
+    writeJson: sinon.stub().yields(null, 'ok')
   };
 
   var Local = injectr('../../cli/domain/local.js', {
@@ -38,7 +36,8 @@ var initialise = function(){
         return _.toArray(arguments).join('/');
       }
     },
-    './package-static-files': sinon.stub().yields(null, 'ok')
+    './package-static-files': sinon.stub().yields(null, 'ok'),
+    './package-template': sinon.stub().yields(null, { type: 'jade', src: 'template.js', hashKey: '123456'})
   }, { __dirname: '' });
 
   var local = new Local();
@@ -79,7 +78,7 @@ describe('cli : domain : local', function(){
             files: {
               template: {
                 type: 'jade',
-                src: ''
+                src: 'template.jade'
               }
             }
           },
@@ -87,9 +86,8 @@ describe('cli : domain : local', function(){
         };
 
         data.fs.existsSync.returns(true);
-        data.fs.readFileSync.returns('');
-        data.fs.readJsonSync.onCall(0).returns(component);
-        data.fs.readJsonSync.onCall(1).returns({ version: '1.2.3' });
+        data.fs.readJsonSync.onCall(0).returns({ version: '1.2.3' });
+        data.fs.readJsonSync.onCall(1).returns(component);
 
         executePackaging(data.local, done);
       });

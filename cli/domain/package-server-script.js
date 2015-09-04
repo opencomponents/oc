@@ -11,10 +11,8 @@ var hashBuilder = require('../../utils/hash-builder');
 var strings = require('../../resources');
 
 var compress = function(code, fileName){
-  var compressed;
-
   try {
-    compressed = uglifyJs.minify(code, { fromString: true }).code;
+    return uglifyJs.minify(code, { fromString: true }).code;
   } catch (e){
     var m = e.message;
     if(!!e.line && !!e.col){
@@ -22,43 +20,38 @@ var compress = function(code, fileName){
     }
     throw m;
   }
-
-  return compressed;
 };
 
 var isLocalFile = function(f){
   return _.first(f) === '/' || _.first(f) === '.';
 };
 
+var getRequiredContent = function(componentPath, required){
+  var ext = path.extname(required).toLowerCase();
+
+  if(ext === ''){
+    required += '.json';
+  } else if(ext !== '.json'){
+    throw strings.errors.cli.SERVERJS_REQUIRE_JS_NOT_ALLOWED;
+  }
+
+  var requiredPath = path.resolve(componentPath, required);
+
+  if(!fs.existsSync(requiredPath)){
+    throw format(strings.errors.cli.SERVERJS_REQUIRE_JSON_NOT_FOUND, required);
+  }
+
+  return fs.readJsonSync(requiredPath);
+};
+
 var getLocalDependencies = function(componentPath, serverContent, fileName){
 
   var requires = { files: {}, modules: [] },
-      localRequires;
-
-  localRequires = detective(compress(serverContent, fileName));
-
-  var tryEncapsulating = function(required){
-    var ext = path.extname(required).toLowerCase();
-        
-    if(ext === ''){
-      required += '.json';
-    } else if(ext !== '.json'){
-      throw strings.errors.cli.SERVERJS_REQUIRE_JS_NOT_ALLOWED;
-    }
-
-    var requiredPath = path.resolve(componentPath, required);
-
-    if(!fs.existsSync(requiredPath)){
-      throw format(strings.errors.cli.SERVERJS_REQUIRE_JSON_NOT_FOUND, required);
-    }
-
-    var content = fs.readFileSync(requiredPath).toString();
-    return JSON.parse(content);
-  };
+      localRequires = detective(compress(serverContent, fileName));
 
   _.forEach(localRequires, function(required){
     if(isLocalFile(required)) {
-      requires.files[required] = tryEncapsulating(required);
+      requires.files[required] = getRequiredContent(componentPath, required);
     } else {
       requires.modules.push(required);
     }
@@ -69,9 +62,13 @@ var getLocalDependencies = function(componentPath, serverContent, fileName){
 
 var getSandBoxedJs = function(wrappedRequires, serverContent, fileName){
   if(_.keys(wrappedRequires).length > 0){
-    serverContent = 'var __sandboxedRequire = require, __localRequires=' + JSON.stringify(wrappedRequires) +
-                    ';require=function(x){return __localRequires[x] ? __localRequires[x] : __sandboxedRequire(x); };\n' +
-                    serverContent;
+    serverContent = 'var __sandboxedRequire = require, ' + 
+                    '    __localRequires=' + JSON.stringify(wrappedRequires) + ';' +
+                    
+                    'require=function(x){' +
+                    '  return __localRequires[x] ? __localRequires[x] : __sandboxedRequire(x);' +
+                    '};' +
+                    '\n' + serverContent;
   }
 
   return compress(serverContent, fileName);

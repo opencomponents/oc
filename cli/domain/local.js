@@ -3,16 +3,13 @@
 var async = require('async');
 var format = require('stringformat');
 var fs = require('fs-extra');
-var handlebars = require('handlebars');
-var jade = require('jade');
 var path = require('path');
 var Targz = require('tar.gz');
-var uglifyJs = require('uglify-js');
 var _ = require('underscore');
 
-var hashBuilder = require('../../utils/hash-builder');
 var packageServerScript = require('./package-server-script');
 var packageStaticFiles = require('./package-static-files');
+var packageTemplate = require('./package-template');
 var request = require('../../utils/request');
 var settings = require('../../resources/settings');
 var validator = require('../../registry/domain/validators');
@@ -20,34 +17,6 @@ var validator = require('../../registry/domain/validators');
 module.exports = function(){
 
   var targz = new Targz();
-
-  var javaScriptizeTemplate = function(functionName, data){
-    return format('var {0}={0}||{};{0}.components={0}.components||{};{0}.components[\'{1}\']={2}', 'oc', functionName, data.toString());
-  };
-
-  var compileView = function(template, type, fileName, baseDir){
-    var preCompiledView;
-
-    if(type === 'jade'){
-      preCompiledView = jade.compileClient(template, {
-        filename: path.resolve('./' + baseDir + '/' + fileName),
-        compileDebug: false,
-        name: 't'
-      }).toString().replace('function t(locals) {', 'function(locals){');
-    } else if(type === 'handlebars'){
-      preCompiledView = handlebars.precompile(template);
-    } else {
-      throw 'template type not supported';
-    }
-
-    var hashView = hashBuilder.fromString(preCompiledView.toString()),
-        compiledView = javaScriptizeTemplate(hashView, preCompiledView);
-
-    return {
-      hash: hashView,
-      view: uglifyJs.minify(compiledView, {fromString: true}).code
-    };
-  };
 
   return _.extend(this, {
     cleanup: function(compressedPackagePath, callback){
@@ -216,7 +185,8 @@ module.exports = function(){
       fs.mkdirSync(publishPath);
 
       var componentPackagePath = path.join(componentPath, 'package.json'),
-          ocPackagePath = path.join(__dirname, '../../package.json');
+          ocPackagePath = path.join(__dirname, '../../package.json'),
+          ocInfo = fs.readJsonSync(ocPackagePath);
 
       if(!fs.existsSync(componentPackagePath)){
         return callback('component does not contain package.json');
@@ -224,48 +194,39 @@ module.exports = function(){
         return callback('error resolving oc internal dependencies');
       }
 
-      var component = fs.readJsonSync(componentPackagePath),
-          viewPath = path.join(componentPath, component.oc.files.template.src);
+      var component = fs.readJsonSync(componentPackagePath);
 
-      if(!fs.existsSync(viewPath)){
-        return callback(format('file {0} not found', component.oc.files.template.src));
-      } else if(!validator.validateComponentName(component.name)){
+      if(!validator.validateComponentName(component.name)){
         return callback('name not valid');
       }
 
-      var ocInfo = fs.readJsonSync(ocPackagePath),
-          template = fs.readFileSync(viewPath).toString(),
-          compiled;
-
-      try {
-        compiled = compileView(template, component.oc.files.template.type, component.oc.files.template.src, component.name);
-      } catch(e){
-        return callback({
-          message: format('{0} compilation failed - {1}', component.oc.files.template.src, e.toString())
-        });
-      }
-
-      fs.writeFileSync(path.join(publishPath, 'template.js'), compiled.view);
-
-      component.oc.files.template = {
-        type: component.oc.files.template.type,
-        hashKey: compiled.hash,
-        src: 'template.js'
-      };
-
-      delete component.oc.files.client;
-      component.oc.version = ocInfo.version;
-      component.oc.packaged = true;
-
       async.waterfall([
         function(cb){
+          // Packaging template.js
+
+          packageTemplate({
+            componentName: component.name,
+            componentPath: componentPath,
+            ocOptions: component.oc,
+            publishPath: publishPath
+          }, function(err, packagedTemplateInfo){
+            if(err){ return cb(err); }
+
+            component.oc.files.template = packagedTemplateInfo;
+            delete component.oc.files.client;
+            cb(err, component);
+          });
+        },
+        function(component, cb){
           // Packaging server.js
+
           if(!component.oc.files.data){
             return cb(null, component);
           }
 
           packageServerScript({
             componentPath: componentPath,
+            dependencies: component.dependencies,
             ocOptions: component.oc,
             publishPath: publishPath
           }, function(err, packagedServerScriptInfo){
@@ -278,6 +239,9 @@ module.exports = function(){
         },
         function(component, cb){
           // Packaging package.json
+
+          component.oc.version = ocInfo.version;
+          component.oc.packaged = true;
 
           if(!component.oc.files.static){
             component.oc.files.static = [];

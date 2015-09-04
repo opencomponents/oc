@@ -17,6 +17,7 @@ var initialise = function(fs, uglifyStub){
   fsMock = _.extend({
     existsSync: sinon.stub().returns(true),
     readFileSync: sinon.stub().returns('file content'),
+    readJsonSync: sinon.stub().returns({ content: true }),
     writeFile: sinon.stub().yields(null, 'ok')
   }, fs || {});
 
@@ -70,8 +71,6 @@ describe('cli : domain : package-server-script', function(){
       it('should throw an error with error details', function(){
         expect(error).to.equal('Javascript error found in myserver.js [3,19]: Unexpected token punc «;», expected punc «,»]');
       });
-
-
     });
 
     describe('when component does not require any json', function(){
@@ -112,19 +111,15 @@ describe('cli : domain : package-server-script', function(){
 
     describe('when component requires a json', function(){
 
-      var requiredJson = '{"hello":"world"}',
+      var requiredJson = { hello: 'world' },
           serverjs = 'var data=require(\'./someJson\');module.exports.data=function(context,cb){return cb(null,data); };';
 
       beforeEach(function(done){
         
-        var mocks = {
-          readFileSync: sinon.stub()
-        };
-
-        mocks.readFileSync.onCall(0).returns(serverjs);
-        mocks.readFileSync.onCall(1).returns(requiredJson);
-
-        initialise(mocks);
+        initialise({
+          readFileSync: sinon.stub().returns(serverjs),
+          readJsonSync: sinon.stub().returns(requiredJson)
+        });
 
         packageServerScript({
           componentPath: '/path/to/component/',
@@ -137,11 +132,11 @@ describe('cli : domain : package-server-script', function(){
         }, done);        
       });
 
-      it('should save compiled and minified view-model handler incapsulating json content', function(){
+      it('should save compiled and minified data provider incapsulating json content', function(){
         var written = fsMock.writeFile.args[0][1];
 
         expect(written).to.contain(serverjs);
-        expect(written).to.contain(requiredJson);
+        expect(written).to.contain(JSON.stringify(requiredJson));
       });
     });
 

@@ -69,6 +69,7 @@ module.exports = {
       SERVERJS_PARSING_ERROR: 'Javascript error found in {0} [{1},{2}]: {3}]',
       SERVERJS_REQUIRE_JS_NOT_ALLOWED: 'Requiring local js files is not allowed. Keep it small.',
       SERVERJS_REQUIRE_JSON_NOT_FOUND: '{0} not found. Only json files are require-able.',
+      TEMPLATE_NOT_FOUND: 'file {0} not found',
       TEMPLATE_TYPE_NOT_VALID: 'the template is not valid. Allowed values are handlebars and jade'
     },
     generic: 'An error occurred: {0}',
