@@ -8,7 +8,7 @@ mixin componentRow(component)
     div.version= component.version
     div.activity= component.allVersions.length
     div.link
-      a(href="component/" + component.name) View
+      a(href=component.name + '/' + component.version + '/~info') View
 
 h1 OpenComponents Registry
 p Base url: #{href}
