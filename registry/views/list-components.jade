@@ -1,7 +1,8 @@
-- var alternate = false;
+extends layout
+
 mixin componentRow(component)
   - alternate = !alternate;
-  div(id="component-" + component.name, class="componentRow"+(alternate ? " alternate" : ""))
+  div(id="component-" + component.name).componentRow
     div.title
       p.name= component.name
       span.description= component.description
@@ -10,77 +11,32 @@ mixin componentRow(component)
     div.link
       a(href=component.name + '/' + component.version + '/~info') View
 
-h1 OpenComponents Registry
-p Base url: #{href}
-p Version: #{ocVersion}
-p Components: #{components.length}
-p Components releases: #{componentsReleases}
+block content
+  h1 OpenComponents Registry
+  p Base url: #{href}
+  p Version: #{ocVersion}
+  p Components: #{components.length}
+  p Components releases: #{componentsReleases}
 
-h2 Components
+  h2 Components
 
-div#components-header.componentRow
-  div.title Component
-  div.version Latest version
-  div.activity Activity
+  div#components-header.componentRow
+    div.title Component
+    div.version Latest version
+    div.activity Activity
 
-each component in components
-  +componentRow(component)
+  each component in components
+    +componentRow(component)
 
-style.
-  body {
-    width: 1024px;
-    margin: 0 auto;
-    font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial;
-  }
-
-  h1, h2 {
-    color: darkred;
-  }
-
-  #components-header {
-    background-color: #FDD;
-  }
-
-  #components-header div {
-    font-weight: bold;
-    margin: 0;
-    padding: 1%;
-  }
-
-  .componentRow {
-    width: 100%;
-    height: 60px;
-    background-color: #F9F9F9;
-  }
-
-  .componentRow.alternate {
-    background-color: #EBE9E9;
-  }
-
-  .componentRow div {
-    float: left;
-    padding: 2%;
-  }
-
-  .componentRow .title {
-    width: 66%;
-    padding: 0 0 0 9px;
-  }
-
-  .componentRow .title .name {
-    padding: 6px 0 0 0;
-    font-weight: bold;
-    font-size: 18px;
-    margin: 0;
-  }
-
-  .componentRow .title .description {
-    padding: 0;
-    font-size: 14px;
-  }
-
-  .componentRow .version,
-  .componentRow .activity,
-  .componentRow .link {
-    width: 6%;
-  }
+block scripts
+  script.
+    var oc = oc || {};
+    oc.cmd = oc.cmd || [];
+    oc.cmd.push(function(){
+      $('.componentRow').click(function(){
+        var $link = $(this).find('a');
+        if(!!$link && $link.length > 0){
+          window.location.href = $link.attr('href');
+        }
+      });
+    });

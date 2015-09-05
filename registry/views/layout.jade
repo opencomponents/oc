@@ -1,0 +1,86 @@
+doctype html
+html
+  head
+    title= title
+    meta(name="robots", content="index, follow")
+    meta(name="language", content="EN")
+    meta(name="distribution", content="global")
+
+    style.
+      body {
+        width: 1024px;
+        margin: 0 auto;
+        font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial;
+      }
+
+      h1, h2 {
+        color: darkred;
+      }
+
+      #components-header {
+        background-color: #EBE9E9;
+        border: 1px solid #000 !important;
+      }
+
+      #components-header div {
+        font-weight: bold;
+        margin: 0;
+        padding: 1%;
+      }
+
+      .componentRow {
+        width: 100%;
+        height: 60px;
+        background-color: #F9F9F9;
+        border: 1px solid #000;
+        border-top: 0;
+      }
+
+      .componentRow:hover {
+        background-color: #EBE9E9;
+        cursor: pointer;
+      }
+
+      .componentRow div {
+        float: left;
+        padding: 2%;
+      }
+
+      .componentRow .title {
+        width: 66%;
+        padding: 0 0 0 9px;
+      }
+
+      .componentRow .title .name {
+        padding: 6px 0 0 0;
+        font-weight: bold;
+        font-size: 18px;
+        margin: 0;
+      }
+
+      .componentRow .title .description {
+        padding: 0;
+        font-size: 14px;
+      }
+
+      .componentRow .version,
+      .componentRow .activity,
+      .componentRow .link {
+        width: 6%;
+      }
+
+      .social {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+    block head
+  body
+
+    block content
+
+    div.social
+      iframe#gh_badge(src="http://ghbtns.com/github-btn.html?user=opentable&repo=oc&type=watch&count=true", allowtransparency="true", frameborder="0", scrolling="0", width="110", height="20")
+
+    script(src=href+"oc-client/client.js")
+    block scripts
