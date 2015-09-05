@@ -1,38 +1,86 @@
-mixin parseObject(obj)
-  ul
-    each val, key in obj
-      if (typeof val !== 'object')
-        li #{key}: #{val}
-      else
-        li #{key}:
-        mixin parseObject(val)
+- var alternate = false;
+mixin componentRow(component)
+  - alternate = !alternate;
+  div(id="component-" + component.name, class="componentRow"+(alternate ? " alternate" : ""))
+    div.title
+      p.name= component.name
+      span.description= component.description
+    div.version= component.version
+    div.activity= component.allVersions.length
+    div.link
+      a(href="component/" + component.name) View
 
-h1 List Component
-
-h2 Href
-p= href
+h1 OpenComponents Registry
+p Base url: #{href}
+p Version: #{ocVersion}
+p Components: #{components.length}
+p Components releases: #{componentsReleases}
 
 h2 Components
+
+div#components-header.componentRow
+  div.title Component
+  div.version Latest version
+  div.activity Activity
+
 each component in components
-  +parseObject(component)
-
-h2 Type
-p= type
-
-h2 OC Version
-p= ocVersion
+  +componentRow(component)
 
 style.
-    body {
-        width: 1024px;
-        margin: 0 auto;
-        font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial;
-    }
+  body {
+    width: 1024px;
+    margin: 0 auto;
+    font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial;
+  }
 
-    ul {
-        list-style-type: none;
-    }
+  h1, h2 {
+    color: darkred;
+  }
 
-    h1, h2 {
-        color: darkred;
-    }
+  #components-header {
+    background-color: #FDD;
+  }
+
+  #components-header div {
+    font-weight: bold;
+    margin: 0;
+    padding: 1%;
+  }
+
+  .componentRow {
+    width: 100%;
+    height: 60px;
+    background-color: #F9F9F9;
+  }
+
+  .componentRow.alternate {
+    background-color: #EBE9E9;
+  }
+
+  .componentRow div {
+    float: left;
+    padding: 2%;
+  }
+
+  .componentRow .title {
+    width: 66%;
+    padding: 0 0 0 9px;
+  }
+
+  .componentRow .title .name {
+    padding: 6px 0 0 0;
+    font-weight: bold;
+    font-size: 18px;
+    margin: 0;
+  }
+
+  .componentRow .title .description {
+    padding: 0;
+    font-size: 14px;
+  }
+
+  .componentRow .version,
+  .componentRow .activity,
+  .componentRow .link {
+    width: 6%;
+  }

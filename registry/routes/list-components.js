@@ -19,23 +19,26 @@ module.exports = function(repository){
 
       if(isHtmlRequest && !!res.conf.discovery){
 
-        var componentsInfo = [];
+        var componentsInfo = [],
+            componentsReleases = 0;
 
         async.each(components, function(component, callback){
-          return repository.getComponent(component, function (err, result) {
+          return repository.getComponent(component, function(err, result){
             if(err){ return callback(err); }
 
             componentsInfo.push(result);
+            componentsReleases += result.allVersions.length;
             callback();
           });
         }, function(err){
           if(err){ return next(err); }
 
           return res.render('list-components', {
-            href: res.conf.baseUrl,
             components: componentsInfo,
-            type: res.conf.local ? 'oc-registry-local' : 'oc-registry',
-            ocVersion: packageInfo.version
+            componentsReleases: componentsReleases,
+            href: res.conf.baseUrl,
+            ocVersion: packageInfo.version,
+            type: res.conf.local ? 'oc-registry-local' : 'oc-registry'
           });
         });
       } else {

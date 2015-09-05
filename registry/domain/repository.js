@@ -99,7 +99,9 @@ module.exports = function(conf){
           if(err){
             return callback('component not available: ' + err, null);
           }
-          callback(null, component);
+          callback(null, _.extend(component, {
+            allVersions: availableVersions
+          }));
         });
       });
     },
