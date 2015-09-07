@@ -4,17 +4,28 @@ var expect = require('chai').expect;
 var injectr = require('injectr');
 var sinon = require('sinon');
 
-var getRegistry = function(dependencies){
+var getRegistry = function(dependencies, opts){
   var Registry = injectr('../../cli/domain/registry.js', {
         '../../utils/request': dependencies.request,
         'fs-extra': dependencies.fs,
         '../../utils/put': dependencies.put
       }, { Buffer: Buffer });
-      
-  return new Registry();
+
+  return new Registry(opts);
 };
 
 describe('cli : domain : registry', function(){
+
+  describe('registry specified at runtime', function(){
+
+    it('should use the registry specified', function(){
+      var registry = getRegistry({}, { registry: 'http://myotherregistry.com'});
+
+      registry.get(function(err, registries){
+        expect(registries[0]).to.eql('http://myotherregistry.com');
+      });
+    });
+  });
 
   describe('when adding registry', function(){
 
@@ -78,8 +89,8 @@ describe('cli : domain : registry', function(){
       beforeEach(function(){
         putSpy = sinon.spy();
         var registry = getRegistry({ put: putSpy });
-        registry.putComponent({ 
-          route: 'http://registry.com/component/1.0.0', 
+        registry.putComponent({
+          route: 'http://registry.com/component/1.0.0',
           path: '/blabla/path',
           username: 'johndoe',
           password: 'aPassw0rd'
