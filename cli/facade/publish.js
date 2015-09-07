@@ -15,7 +15,7 @@ module.exports = function(dependencies){
       local = dependencies.local,
       logger = dependencies.logger;
 
-  return function(opts){
+  return function(opts, reallyDoneThisTime){
 
     var componentPath = opts.componentPath,
         packageDir = path.resolve(componentPath, '_package'),
@@ -107,7 +107,7 @@ module.exports = function(dependencies){
               componentRoute = format('{0}/{1}/{2}', registryNormalised, component.name, component.version);
 
           putComponentToRegistry({ route: componentRoute, path: compressedPackagePath}, done);
-        }, function(err){});
+        }, reallyDoneThisTime);
       });
     });
   };
