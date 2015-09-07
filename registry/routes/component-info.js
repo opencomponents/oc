@@ -2,6 +2,8 @@
 
 var _ = require('underscore');
 
+var urlBuilder = require('../domain/url-builder');
+
 module.exports = function(repository){
   return function(req, res){
 
@@ -12,9 +14,36 @@ module.exports = function(repository){
         return res.json(404, { err: err });
       }
 
-      res.json(200, _.extend(component, {
-        requestVersion: req.params.componentVersion || ''
-      }));
+      var isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
+
+      if(isHtmlRequest && !!res.conf.discovery){
+
+        var params = {};
+        if(!!component.oc.parameters){
+          var mandatoryParams = _.filter(_.keys(component.oc.parameters), function(paramName){
+            var param = component.oc.parameters[paramName];
+            return !!param.mandatory && !!param.example;
+          });
+
+          params = _.mapObject(_.pick(component.oc.parameters, mandatoryParams), function(param){
+            return param.example;
+          });
+        }
+        
+        return res.render('component-info', {
+          component: component,
+          dependencies: _.keys(component.dependencies),
+          href: res.conf.baseUrl,
+          sandBoxDefaultUrl: urlBuilder.component(_.extend(component, {
+            parameters: params
+          }), res.conf.baseUrl)
+        });
+
+      } else {
+        res.json(200, _.extend(component, {
+          requestVersion: req.params.componentVersion || ''
+        }));
+      }
     });
   };
 };

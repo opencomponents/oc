@@ -1,42 +1,23 @@
 extends layout
 
-mixin componentRow(component)
-  - alternate = !alternate;
-  div(id="component-" + component.name).componentRow
-    div.title
-      p.name= component.name
-      span.description= component.description
-    div.version= component.version
-    div.activity= component.allVersions.length
-    div.link
-      a(href=component.name + '/' + component.version + '/~info') View
-
 block content
   h1 OpenComponents Registry
   p Base url: #{href}
   p Version: #{ocVersion}
   p Components: #{components.length}
   p Components releases: #{componentsReleases}
-
   h2 Components
-
   div#components-header.componentRow
     div.title Component
     div.version Latest version
     div.activity Activity
 
   each component in components
-    +componentRow(component)
-
-block scripts
-  script.
-    var oc = oc || {};
-    oc.cmd = oc.cmd || [];
-    oc.cmd.push(function(){
-      $('.componentRow').click(function(){
-        var $link = $(this).find('a');
-        if(!!$link && $link.length > 0){
-          window.location.href = $link.attr('href');
-        }
-      });
-    });
+    a(href=component.name + '/' + component.version + '/~info')
+      div(id="component-" + component.name).componentRow
+        div.title
+          p.name= component.name
+          span.description= component.description
+        div.version= component.version
+        div.activity= component.allVersions.length
+        div.link

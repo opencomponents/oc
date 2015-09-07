@@ -141,6 +141,7 @@ module.exports = function(dependencies){
           
           var registry = new oc.Registry({
             local: true,
+            discovery: true,
             verbosity: 1,
             path: path.resolve(componentsDir),
             port: port,

@@ -1,0 +1,60 @@
+extends layout
+
+mixin showArray(title, arr)
+  div.field
+    p #{title}:
+    span #{!!arr && arr.length > 0 ? arr.join(', ') : 'none'}
+  
+block content
+  a(href=href) &lt;&lt; All components
+  h1
+    | #{component.name} &nbsp;
+    select#versions
+      each version in component.allVersions
+        option(value=version, selected=(version === component.version ? "selected" : ""))=version
+  p=component.description
+
+  h2 Component Info
+  div.field
+    p Repository:
+    - if(!!component.repository)
+      a(href=component.repository, target="_blank")=component.repository
+    - else
+      span not available
+  +showArray('Node.js dependencies', dependencies)
+  +showArray('Plugin dependencies', component.oc.plugins)
+
+  h2 Parameters
+  - if(!component.oc.parameters)
+    p none
+  - else {
+    - for(var parameterName in component.oc.parameters){
+      - if(component.oc.parameters.hasOwnProperty(parameterName)){
+        - var parameter = component.oc.parameters[parameterName];
+        div.field
+          p #{parameterName}:
+          span 
+            | #{parameter.mandatory ? 'mandatory' : 'optional'}, 
+            | #{parameter.type}, 
+            | example: #{parameter.example}
+      - }
+    - }
+  - }
+
+  h2 Code
+  p &lt;oc-component href=&quot;#{href + component.name + '/' + component.version + '/'}&quot;&gt;&lt;/oc-component&gt;
+
+  h2 Preview
+  oc-component(href=sandBoxDefaultUrl)
+
+
+block scripts
+  script.
+    var oc = oc || {};
+    oc.cmd = oc.cmd || [];
+
+    oc.cmd.push(function(){
+      $('#versions').change(function(){
+        window.location = '#{href + component.name}/' + $(this).val() + '/~info';
+      });
+    });
