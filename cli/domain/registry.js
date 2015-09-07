@@ -8,7 +8,8 @@ var put = require('../../utils/put');
 var request = require('../../utils/request');
 var settings = require('../../resources/settings');
 
-module.exports = function(){
+module.exports = function(opts){
+  opts = opts || {};
 
   return _.extend(this, {
     add: function(registry, callback){
@@ -49,6 +50,10 @@ module.exports = function(){
       });
     },
     get: function(callback){
+      if(opts.registry){
+          return callback(null, [opts.registry]);
+      }
+
       fs.readJson(settings.configFile.src, function(err, res){
         if(err || !res.registries || res.registries.length === 0){
           return callback('No oc registries');
@@ -95,7 +100,7 @@ module.exports = function(){
         }, callback);
       });
     },
-    putComponent: function(options, callback){ 
+    putComponent: function(options, callback){
       var headers = {};
 
       if(!!options.username && !!options.password){
@@ -117,7 +122,7 @@ module.exports = function(){
           } else if(!!err.error){
             err = err.error;
           }
-          
+
           return callback(err);
         }
 
