@@ -3,7 +3,7 @@
 var url = require('url');
 var _ = require('underscore');
 
-module.exports = {
+var build = {
   component: function(component, baseUrl){
     if(_.isString(component)){
       component = { name: component };
@@ -15,18 +15,27 @@ module.exports = {
       componentUrl += '/' + component.version;
     }
 
-    if(_.keys(component.parameters).length > 0){
-      componentUrl += '?';
+    componentUrl += build.queryString(component.parameters);
 
-      _.forEach(component.parameters, function(parameter, key){
-        componentUrl += key + '=' + encodeURIComponent(parameter) + '&';
+    return componentUrl;
+  },
+  queryString: function(parameters){
+    var qs = '';
+
+    if(_.keys(parameters).length > 0){
+      qs += '?';
+
+      _.forEach(parameters, function(parameter, key){
+        qs += key + '=' + encodeURIComponent(parameter) + '&';
       });
 
-      if(_.keys(component.parameters).length > 0){
-        componentUrl = componentUrl.slice(0, -1);
+      if(_.keys(parameters).length > 0){
+        qs = qs.slice(0, -1);
       }
     }
 
-    return componentUrl;
+    return qs;
   }
 };
+
+module.exports = build;

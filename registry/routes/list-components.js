@@ -32,9 +32,10 @@ module.exports = function(repository){
           });
         }, function(err){
           if(err){ return next(err); }
-
+          
           return res.render('list-components', {
             components: componentsInfo,
+            componentsList: _.map(componentsInfo, function(component){ return component.name; }),
             componentsReleases: componentsReleases,
             href: res.conf.baseUrl,
             ocVersion: packageInfo.version,

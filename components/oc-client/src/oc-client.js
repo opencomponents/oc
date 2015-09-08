@@ -183,6 +183,12 @@ var oc = oc || {};
         for(var i = 0; i < oc.cmd.length; i++){
           oc.cmd[i](oc);
         }
+
+        oc.cmd = {
+          push: function(f){
+            f(oc);
+          }
+        };
       };
 
       oc.require('jQuery', JQUERY_URL, function(jQuery){

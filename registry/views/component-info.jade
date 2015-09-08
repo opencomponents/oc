@@ -1,9 +1,7 @@
 extends layout
 
 mixin showArray(title, arr)
-  div.field
-    p #{title}:
-    span #{!!arr && arr.length > 0 ? arr.join(', ') : 'none'}
+  +property(title, !!arr && arr.length > 0 ? arr.join(', ') : 'none')
   
 block content
   a(href=href) &lt;&lt; All components
@@ -15,12 +13,7 @@ block content
   p=component.description
 
   h2 Component Info
-  div.field
-    p Repository:
-    - if(!!component.repository)
-      a(href=component.repository, target="_blank")=component.repository
-    - else
-      span not available
+  +property('Repository', component.repository || 'not available', !!component.repository)
   +showArray('Node.js dependencies', dependencies)
   +showArray('Plugin dependencies', component.oc.plugins)
 
@@ -28,33 +21,45 @@ block content
   - if(!component.oc.parameters)
     p none
   - else {
-    - for(var parameterName in component.oc.parameters){
-      - if(component.oc.parameters.hasOwnProperty(parameterName)){
-        - var parameter = component.oc.parameters[parameterName];
-        div.field
-          p #{parameterName}:
-          span 
-            | #{parameter.mandatory ? 'mandatory' : 'optional'}, 
-            | #{parameter.type}, 
-            | example: #{parameter.example}
+
+    div#plugins.table
+      div.row.header
+        div.t-25 Name
+        div.t-25 Type
+        div.t-25 Mandatory
+        div.t-25 Example
+
+      - for(var pName in component.oc.parameters){
+        - if(component.oc.parameters.hasOwnProperty(pName)){
+          - var p = component.oc.parameters[pName];
+          div.row
+            div.t-25=pName
+            div.t-25=p.type
+            div.t-25=(p.mandatory ? 'yes' : 'no')
+            div.t-25=p.example
+        - }
       - }
-    - }
   - }
 
   h2 Code
-  p &lt;oc-component href=&quot;#{href + component.name + '/' + component.version + '/'}&quot;&gt;&lt;/oc-component&gt;
+  div.code
+    pre
+      code
+        | &lt;oc-component href=&quot;#{href + component.name + '/' + component.version + '/'}&quot;&gt;&lt;/oc-component&gt;
 
   h2 Preview
-  oc-component(href=sandBoxDefaultUrl)
-
+    iframe.preview(src='~preview/' + sandBoxDefaultQs)
 
 block scripts
   script.
+    if(!!window.hljs)
+      hljs.initHighlightingOnLoad();
+
     var oc = oc || {};
     oc.cmd = oc.cmd || [];
 
-    oc.cmd.push(function(){
-      $('#versions').change(function(){
+    oc.cmd.push(function(){ console.log('hi');
+      $('#versions').change(function(){ console.log('changed');
         window.location = '#{href + component.name}/' + $(this).val() + '/~info';
       });
     });

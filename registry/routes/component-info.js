@@ -29,14 +29,12 @@ module.exports = function(repository){
             return param.example;
           });
         }
-        
+                
         return res.render('component-info', {
           component: component,
           dependencies: _.keys(component.dependencies),
           href: res.conf.baseUrl,
-          sandBoxDefaultUrl: urlBuilder.component(_.extend(component, {
-            parameters: params
-          }), res.conf.baseUrl)
+          sandBoxDefaultQs: urlBuilder.queryString(params)
         });
 
       } else {

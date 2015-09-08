@@ -1,23 +1,62 @@
 extends layout
 
 block content
+  - var isLocal = (type !== 'oc-registry');
   h1 OpenComponents Registry
-  p Base url: #{href}
-  p Version: #{ocVersion}
-  p Components: #{components.length}
-  p Components releases: #{componentsReleases}
+  +property('Base url', href, true)
+  +property('Version', ocVersion)
+  +property('Components', components.length)
+  - if(!isLocal)
+    +property('Components releases', componentsReleases)
+  +property('Registry type', isLocal ? 'Local dev registry' : 'On-line registry')
   h2 Components
-  div#components-header.componentRow
-    div.title Component
-    div.version Latest version
-    div.activity Activity
+
+  form#filter-components
+    input.search(placeholder="Filter by component name")
+
+  div.row.double.header.componentRow.table
+    div.t-80 Component
+    div.version.t-10 Latest version
+    - if(!isLocal)
+      div.activity.t-10 Activity
 
   each component in components
     a(href=component.name + '/' + component.version + '/~info')
-      div(id="component-" + component.name).componentRow
-        div.title
+      div(id="component-" + component.name).componentRow.row.double.table
+        div.t-80.title
           p.name= component.name
-          span.description= component.description
-        div.version= component.version
-        div.activity= component.allVersions.length
-        div.link
+          span.description= component.description 
+        div.version.t-10= component.version
+        - if(!isLocal)
+          div.activity.t-10= component.allVersions.length
+  
+  h2 Plugins
+
+block scripts
+  script.
+    var oc = oc || {};
+    oc.cmd = oc.cmd || [];
+
+    oc.cmd.push(function(){
+
+      var changed = function(){
+        var componentsList = !{JSON.stringify(componentsList)},
+            s = $('.search').val(),
+            r = new RegExp(s);
+
+        if(!s){
+          $('.componentRow').removeClass('hide');
+        } else {
+          for(var i = 0; i < componentsList.length; i++){
+            var matches = !!componentsList[i].match(r),
+                selector = $('#component-' + componentsList[i]);
+
+            selector[matches ? 'removeClass' : 'addClass']('hide');
+          }
+        }
+
+        return false;
+      };
+
+      $('#filter-components').submit(changed).keyup(changed);
+    });

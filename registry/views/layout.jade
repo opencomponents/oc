@@ -1,3 +1,11 @@
+mixin property(display, value, linked)
+  div.field
+    p #{display}:
+    - if(!!linked)
+      a(href=value)=value
+    - else
+      span=value
+
 doctype html
 html
   head
@@ -5,7 +13,8 @@ html
     meta(name="robots", content="index, follow")
     meta(name="language", content="EN")
     meta(name="distribution", content="global")
-
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/default.min.css", type="text/css")
+    
     style.
       body {
         width: 1024px;
@@ -23,38 +32,64 @@ html
         color: #000;
       }
 
-      #components-header {
+      .code,
+      .preview {
+        float: left;
+        width: 100%;
+      }
+
+      .preview {
+        height: 300px;
+      }
+
+      .row.header {
         background-color: #EBE9E9;
         border: 1px solid #000 !important;
       }
 
-      #components-header div {
+      .row.header div {
         font-weight: bold;
         margin: 0;
         padding: 1%;
       }
 
-      .componentRow {
+      .table {
         width: 100%;
-        height: 60px;
+        float: left;
+      }
+
+      .t-80 {
+        width: 76%;
+        padding: 0 0 0 9px;
+      }
+
+      .t-25 {
+        width: 23%;
+        padding: 1%
+      }
+
+      .t-10 {
+        width: 6%;
+        padding: 2%;
+      }
+
+      .row {
+        height: 40px;
         background-color: #F9F9F9;
         border: 1px solid #000;
         border-top: 0;
+      }
+
+      .row.double {
+        height: 60px;
+      }
+
+      .row div {
         float: left;
       }
 
       .componentRow:hover {
         background-color: #EBE9E9;
-      }
-
-      .componentRow div {
-        float: left;
-        padding: 2%;
-      }
-
-      .componentRow .title {
-        width: 66%;
-        padding: 0 0 0 9px;
       }
 
       .componentRow .title .name {
@@ -67,12 +102,6 @@ html
       .componentRow .title .description {
         padding: 0;
         font-size: 14px;
-      }
-
-      .componentRow .version,
-      .componentRow .activity,
-      .componentRow .link {
-        width: 6%;
       }
 
       .social {
@@ -98,6 +127,19 @@ html
         margin-right: 10px;
       }
 
+      .search {
+        width: 98%;
+        font-family: Arial;
+        border: 1px solid #8B0000;
+        margin-bottom: 20px;
+        font-size: 20px;
+        padding: 10px;
+      }
+
+      .hide {
+        display: none !important;
+      }
+
     block head
   body
 
@@ -106,5 +148,7 @@ html
     div.social
       iframe#gh_badge(src="http://ghbtns.com/github-btn.html?user=opentable&repo=oc&type=watch&count=true", allowtransparency="true", frameborder="0", scrolling="0", width="110", height="20")
 
+    include jquery
     script(src=href+"oc-client/client.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js")
     block scripts
