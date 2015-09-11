@@ -34,6 +34,8 @@ module.exports = function(repository){
           if(err){ return next(err); }
           
           return res.render('list-components', {
+            availableDependencies: res.conf.dependencies,
+            availablePlugins: res.conf.plugins,
             components: componentsInfo,
             componentsList: _.map(componentsInfo, function(component){ return component.name; }),
             componentsReleases: componentsReleases,
