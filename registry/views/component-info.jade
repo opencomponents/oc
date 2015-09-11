@@ -4,20 +4,20 @@ mixin showArray(title, arr)
   +property(title, !!arr && arr.length > 0 ? arr.join(', ') : 'none')
   
 block content
-  a(href=href) &lt;&lt; All components
-  h1
+  h2
     | #{component.name} &nbsp;
     select#versions
       each version in component.allVersions
         option(value=version, selected=(version === component.version ? "selected" : false))=version
   p=component.description
+  a.back(href=href) &lt;&lt; All components
 
-  h2 Component Info
+  h3 Component Info
   +property('Repository', component.repository || 'not available', !!component.repository)
   +showArray('Node.js dependencies', dependencies)
   +showArray('Plugin dependencies', component.oc.plugins)
 
-  h2 Parameters
+  h3 Parameters
   - if(!component.oc.parameters)
     p none
   - else {
@@ -41,7 +41,7 @@ block content
       - }
   - }
 
-  h2 Code
+  h3 Code
   p 
     | You can edit the following area and then 
     a.refresh-preview(href="#refresh") refresh 
@@ -49,7 +49,7 @@ block content
   #editor
     | &lt;oc-component href=&quot;#{href + component.name + '/' + component.version + '/' + sandBoxDefaultQs}&quot;&gt;&lt;/oc-component&gt;
 
-  h2
+  h3
     | Preview 
     a.refresh-preview(href="#refresh") (Refresh)
   iframe.preview(src='~preview/' + sandBoxDefaultQs)

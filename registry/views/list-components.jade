@@ -2,7 +2,6 @@ extends layout
 
 block content
   - var isLocal = (type !== 'oc-registry');
-  h1 OpenComponents Registry
   +property('Base url', href, true)
   +property('Version', ocVersion)
   +property('Components', components.length)
