@@ -32,6 +32,10 @@ module.exports = function(repository){
           });
         }, function(err){
           if(err){ return next(err); }
+
+          componentsInfo = _.sortBy(componentsInfo, function(componentInfo){
+            return componentInfo.name;
+          });
           
           return res.render('list-components', {
             availableDependencies: res.conf.dependencies,
