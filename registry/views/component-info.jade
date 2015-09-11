@@ -1,0 +1,95 @@
+extends layout
+
+mixin showArray(title, arr)
+  +property(title, !!arr && arr.length > 0 ? arr.join(', ') : 'none')
+  
+block content
+  a(href=href) &lt;&lt; All components
+  h1
+    | #{component.name} &nbsp;
+    select#versions
+      each version in component.allVersions
+        option(value=version, selected=(version === component.version ? "selected" : ""))=version
+  p=component.description
+
+  h2 Component Info
+  +property('Repository', component.repository || 'not available', !!component.repository)
+  +showArray('Node.js dependencies', dependencies)
+  +showArray('Plugin dependencies', component.oc.plugins)
+
+  h2 Parameters
+  - if(!component.oc.parameters)
+    p none
+  - else {
+
+    #plugins.table
+      .row.header
+        .t-25 Name
+        .t-25 Type
+        .t-25 Mandatory
+        .t-25 Example
+
+      - for(var pName in component.oc.parameters){
+        - if(component.oc.parameters.hasOwnProperty(pName)){
+          - var p = component.oc.parameters[pName];
+          .row
+            .t-25=pName
+            .t-25=p.type
+            .t-25=(p.mandatory ? 'yes' : 'no')
+            .t-25=p.example
+        - }
+      - }
+  - }
+
+  h2 Code
+  #editor
+    | &lt;oc-component href=&quot;#{href + component.name + '/' + component.version + '/' + sandBoxDefaultQs}&quot;&gt;&lt;/oc-component&gt;
+
+  h2
+    | Preview 
+    a#preview-refresh(href="#refresh") (Refresh)
+  iframe.preview(src='~preview/' + sandBoxDefaultQs)
+
+block scripts
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.min.js")
+  script.
+    var editor;
+    if(!!window.ace){
+      editor = ace.edit('editor');
+      editor.container.style.opacity = '';
+      editor.session.setMode('ace/mode/html');
+      editor.setAutoScrollEditorIntoView(true);
+      editor.setOption('maxLines', 40);
+      editor.setTheme('ace/theme/github');
+    }
+
+    var oc = oc || {};
+    oc.cmd = oc.cmd || [];
+
+    oc.cmd.push(function(){
+      $('#versions').change(function(){
+        window.location = '#{href + component.name}/' + $(this).val() + '/~info';
+      });
+
+      $('#preview-refresh').click(function(){
+        if(!!editor){
+          var code = editor.getValue(),
+              splitted = $(code).attr('href').split('?'),
+              url = splitted[0];
+
+          if(url.slice(-1) !== '/'){
+            url += '/';
+          }
+
+          url += '~preview';
+
+          if(splitted.length > 1){
+            url += '/?' + splitted[1];
+          }
+
+          $('.preview').attr('src', url);
+        }
+
+        return false;
+      });
+    });

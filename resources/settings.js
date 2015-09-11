@@ -6,6 +6,7 @@ module.exports = {
   },
   registry: {
     componentInfoPath: '/~info',
+    componentPreviewPath: '/~preview',
     defaultTempPath: './temp/',
     localStaticRedirectorPath: 'static/'
   }

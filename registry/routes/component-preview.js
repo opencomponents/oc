@@ -17,24 +17,12 @@ module.exports = function(repository){
       var isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
 
       if(isHtmlRequest && !!res.conf.discovery){
-
-        var params = {};
-        if(!!component.oc.parameters){
-          var mandatoryParams = _.filter(_.keys(component.oc.parameters), function(paramName){
-            var param = component.oc.parameters[paramName];
-            return !!param.mandatory && !!param.example;
-          });
-
-          params = _.mapObject(_.pick(component.oc.parameters, mandatoryParams), function(param){
-            return param.example;
-          });
-        }
                 
-        return res.render('component-info', {
+        return res.render('component-preview', {
           component: component,
           dependencies: _.keys(component.dependencies),
           href: res.conf.baseUrl,
-          sandBoxDefaultQs: urlBuilder.queryString(params)
+          qs: urlBuilder.queryString(req.query)
         });
 
       } else {

@@ -1,38 +1,60 @@
-mixin parseObject(obj)
-  ul
-    each val, key in obj
-      if (typeof val !== 'object')
-        li #{key}: #{val}
-      else
-        li #{key}:
-        mixin parseObject(val)
+extends layout
 
-h1 List Component
+block content
+  - var isLocal = (type !== 'oc-registry');
+  h1 OpenComponents Registry
+  +property('Base url', href, true)
+  +property('Version', ocVersion)
+  +property('Components', components.length)
+  - if(!isLocal)
+    +property('Components releases', componentsReleases)
+  +property('Registry type', isLocal ? 'Local dev registry' : 'On-line registry')
+  h2 Components
 
-h2 Href
-p= href
+  form#filter-components
+    input.search(placeholder="Filter by component name")
 
-h2 Components
-each component in components
-  +parseObject(component)
+  .row.double.header.componentRow.table
+    .t-80 Component
+    .version.t-10 Latest version
+    - if(!isLocal)
+      .activity.t-10 Activity
 
-h2 Type
-p= type
+  each component in components
+    a(href=component.name + '/' + component.version + '/~info')
+      .componentRow.row.double.table(id="component-" + component.name)
+        .t-80.title
+          p.name= component.name
+          span.description= component.description 
+        .version.t-10= component.version
+        - if(!isLocal)
+          .activity.t-10= component.allVersions.length
 
-h2 OC Version
-p= ocVersion
+block scripts
+  script.
+    var oc = oc || {};
+    oc.cmd = oc.cmd || [];
 
-style.
-    body {
-        width: 1024px;
-        margin: 0 auto;
-        font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial;
-    }
+    oc.cmd.push(function(){
 
-    ul {
-        list-style-type: none;
-    }
+      var changed = function(){
+        var componentsList = !{JSON.stringify(componentsList)},
+            s = $('.search').val(),
+            r = new RegExp(s);
 
-    h1, h2 {
-        color: darkred;
-    }
+        if(!s){
+          $('.componentRow').removeClass('hide');
+        } else {
+          for(var i = 0; i < componentsList.length; i++){
+            var matches = !!componentsList[i].match(r),
+                selector = $('#component-' + componentsList[i]);
+
+            selector[matches ? 'removeClass' : 'addClass']('hide');
+          }
+        }
+
+        return false;
+      };
+
+      $('#filter-components').submit(changed).keyup(changed);
+    });

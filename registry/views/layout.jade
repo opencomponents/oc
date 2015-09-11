@@ -1,0 +1,26 @@
+mixin property(display, value, linked)
+  div.field
+    p #{display}:
+    - if(!!linked)
+      a(href=value)=value
+    - else
+      span=value
+
+doctype html
+html
+  head
+    title= title
+    meta(name="robots", content="index, follow")
+    meta(name="language", content="EN")
+    meta(name="distribution", content="global")
+    include css
+    block head
+
+  body
+    block content
+
+    .social
+      iframe#gh_badge(src="http://ghbtns.com/github-btn.html?user=opentable&repo=oc&type=watch&count=true", allowtransparency="true", frameborder="0", scrolling="0", width="110", height="20")
+
+    script(src=href+"oc-client/client.js")
+    block scripts
