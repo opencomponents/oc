@@ -9,7 +9,7 @@ block content
     | #{component.name} &nbsp;
     select#versions
       each version in component.allVersions
-        option(value=version, selected=(version === component.version ? "selected" : ""))=version
+        option(value=version, selected=(version === component.version ? "selected" : false))=version
   p=component.description
 
   h2 Component Info
