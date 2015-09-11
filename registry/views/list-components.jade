@@ -14,21 +14,21 @@ block content
   form#filter-components
     input.search(placeholder="Filter by component name")
 
-  div.row.double.header.componentRow.table
-    div.t-80 Component
-    div.version.t-10 Latest version
+  .row.double.header.componentRow.table
+    .t-80 Component
+    .version.t-10 Latest version
     - if(!isLocal)
-      div.activity.t-10 Activity
+      .activity.t-10 Activity
 
   each component in components
     a(href=component.name + '/' + component.version + '/~info')
-      div(id="component-" + component.name).componentRow.row.double.table
-        div.t-80.title
+      .componentRow.row.double.table(id="component-" + component.name)
+        .t-80.title
           p.name= component.name
           span.description= component.description 
-        div.version.t-10= component.version
+        .version.t-10= component.version
         - if(!isLocal)
-          div.activity.t-10= component.allVersions.length
+          .activity.t-10= component.allVersions.length
 
 block scripts
   script.
