@@ -147,7 +147,7 @@ Runs a test page consuming a component
 
 Usage:
 ```sh
-oc preview <componentHref> [port]
+oc preview <componentHref>
 ```
 
 
@@ -156,7 +156,6 @@ Parameters:
 |Name|Description|
 |----|-----------|
 |componentHref|The name of the component to preview|
-|port|The port where to start the server. Default 3000|
 
 ##publish
 Publish a component
