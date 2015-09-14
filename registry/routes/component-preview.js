@@ -17,6 +17,8 @@ module.exports = function(repository){
       var isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
 
       if(isHtmlRequest && !!res.conf.discovery){
+
+        
                 
         return res.render('component-preview', {
           component: component,
