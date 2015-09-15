@@ -1,6 +1,6 @@
 'use strict';
 
-var colors = require('colors');
+var colors = require('colors/safe');
 var expect = require('chai').expect;
 var injectr = require('injectr');
 var sinon = require('sinon');
@@ -42,7 +42,7 @@ describe('cli : facade : preview', function(){
     });
 
     it('should show error message', function(){
-      expect(logSpy.log.args[0][0]).to.equal('The specified path is not a valid component\'s url'.red);
+      expect(logSpy.log.args[0][0]).to.equal(colors.red('The specified path is not a valid component\'s url'));
     });
   });
 
