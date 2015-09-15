@@ -4,21 +4,19 @@ var colors = require('colors');
 var expect = require('chai').expect;
 var sinon = require('sinon');
 
-var consoleMock = require('../mocks/console');
-
 describe('cli : facade : dev', function(){
 
-  var DevFacade = require('../../cli/facade/dev'),
+  var logSpy = {},
+      DevFacade = require('../../cli/facade/dev'),
       Local = require('../../cli/domain/local'),
       local = new Local(),
       npm = require('npm'),
-      devFacade = new DevFacade({ local: local, logger: consoleMock }),
-      logs;
+      devFacade = new DevFacade({ local: local, logger: logSpy });
 
   var execute = function(dirName, port){
-    consoleMock.reset();
+    logSpy.logNoNewLine = sinon.spy();
+    logSpy.log = sinon.spy();
     devFacade({ dirName: dirName, port: port });
-    logs = consoleMock.get();
   };
 
   describe('when running a dev version of the registry', function(){
@@ -37,7 +35,7 @@ describe('cli : facade : dev', function(){
       });
 
       it('should show an error', function(){
-        expect(logs[1]).to.equal('path is not valid!'.red);
+        expect(logSpy.log.args[0][0]).to.equal('path is not valid!'.red);
       });
     });
 
@@ -55,7 +53,7 @@ describe('cli : facade : dev', function(){
       });
 
       it('should show an error', function(){
-        expect(logs[1]).to.equal('An error happened when initialising the dev runner: no components found in specified path'.red);
+        expect(logSpy.log.args[0][0]).to.equal('An error happened when initialising the dev runner: no components found in specified path'.red);
       });
     });
   });

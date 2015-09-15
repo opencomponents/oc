@@ -4,26 +4,22 @@ var colors = require('colors');
 var expect = require('chai').expect;
 var sinon = require('sinon');
 
-var consoleMock = require('../mocks/console');
-
 describe('cli : facade : unlink', function(){
 
-  var Local = require('../../cli/domain/local'),
+  var logSpy = {},
+      Local = require('../../cli/domain/local'),
       local = new Local(),  
       UnlinkFacade = require('../../cli/facade/unlink'),
-      unlinkFacade = new UnlinkFacade({ local:local, logger: consoleMock }),
-      logs;
-
-  beforeEach(consoleMock.reset);
+      unlinkFacade = new UnlinkFacade({ local:local, logger: logSpy });
 
   describe('when unlinking component', function(){
 
     describe('when an error happens', function(){
 
       beforeEach(function(){
+        logSpy.log = sinon.spy();
         sinon.stub(local, 'unlink').yields('an error!');
         unlinkFacade({ componentName: 'a-component' });
-        logs = consoleMock.get();
       });
 
       afterEach(function(){
@@ -31,16 +27,16 @@ describe('cli : facade : unlink', function(){
       });
 
       it('should show the error', function(){
-        expect(logs[0]).to.equal('an error!'.red);
+        expect(logSpy.log.args[0][0]).to.equal('an error!'.red);
       });
     }); 
 
     describe('when it succeeds', function(){
 
       beforeEach(function(){
+        logSpy.log = sinon.spy();
         sinon.stub(local, 'unlink').yields(null, 'yay');
         unlinkFacade({ componentName: 'a-component' });
-        logs = consoleMock.get();
       });
 
       afterEach(function(){
@@ -48,7 +44,7 @@ describe('cli : facade : unlink', function(){
       });
 
       it('should show a confirmation message', function(){
-        expect(logs[0]).to.equal('oc Component unlinked'.green);
+        expect(logSpy.log.args[0][0]).to.equal('oc Component unlinked'.green);
       });
     });
   });

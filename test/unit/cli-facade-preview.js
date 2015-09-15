@@ -7,7 +7,7 @@ var sinon = require('sinon');
 
 describe('cli : facade : preview', function(){
 
-  var opnSpy, parseStub, logSpy;
+  var opnSpy, parseStub, logSpy = {};
 
   var execute = function(href, error, parsed){
 
@@ -18,7 +18,7 @@ describe('cli : facade : preview', function(){
 
     opnSpy = sinon.spy();
     parseStub = sinon.stub().yields(error, parsed);
-    logSpy = sinon.stub().returns(null);
+    logSpy.log = sinon.spy();
 
     var PreviewFacade = injectr('../../cli/facade/preview.js', {
       opn: opnSpy,
@@ -27,7 +27,7 @@ describe('cli : facade : preview', function(){
       }
     }, {console:console});
 
-    var previewFacade = new PreviewFacade({ logger: { log: logSpy }});
+    var previewFacade = new PreviewFacade({ logger: logSpy });
     previewFacade({ componentHref: href });
   };
 
@@ -42,7 +42,7 @@ describe('cli : facade : preview', function(){
     });
 
     it('should show error message', function(){
-      expect(logSpy.args[0][0]).to.equal('The specified path is not a valid component\'s url'.red);
+      expect(logSpy.log.args[0][0]).to.equal('The specified path is not a valid component\'s url'.red);
     });
   });
 
