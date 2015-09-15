@@ -40,7 +40,7 @@ describe('cli : facade : preview', function(){
       });
     });
 
-    it('should open /component/~preview', function(){ console.log()
+    it('should open /component/~preview', function(){
       expect(opnSpy.args[0][0]).to.equal('http://registry.com/component/~preview/');
     });
   });
@@ -56,7 +56,7 @@ describe('cli : facade : preview', function(){
       });
     });
 
-    it('should open /component/1.X.X/~preview', function(){ console.log()
+    it('should open /component/1.X.X/~preview', function(){
       expect(opnSpy.args[0][0]).to.equal('http://registry.com/component/1.X.X/~preview/');
     });
   });
@@ -72,7 +72,7 @@ describe('cli : facade : preview', function(){
       });
     });
 
-    it('should open /component/~preview/?hello=world', function(){ console.log()
+    it('should open /component/~preview/?hello=world', function(){
       expect(opnSpy.args[0][0]).to.equal('http://registry.com/component/~preview/?hello=world');
     });
   });
@@ -88,7 +88,7 @@ describe('cli : facade : preview', function(){
       });
     });
 
-    it('should open /component/~preview/?hello=world', function(){ console.log()
+    it('should open /component/~preview/?hello=world', function(){
       expect(opnSpy.args[0][0]).to.equal('http://registry.com/component/~preview/?hello=world');
     });
   });
@@ -104,7 +104,7 @@ describe('cli : facade : preview', function(){
       });
     });
 
-    it('should open /component/~preview/?hello=world', function(){ console.log()
+    it('should open /component/~preview/?hello=world', function(){
       expect(opnSpy.args[0][0]).to.equal('http://registry.com/component/1.X.X/~preview/?hello=world');
     });
   });
@@ -120,7 +120,7 @@ describe('cli : facade : preview', function(){
       });
     });
 
-    it('should open /component/~preview/?hello=world', function(){ console.log()
+    it('should open /component/~preview/?hello=world', function(){
       expect(opnSpy.args[0][0]).to.equal('http://registry.com/component/1.X.X/~preview/?hello=world');
     });
   });
