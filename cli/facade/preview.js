@@ -1,6 +1,6 @@
 'use strict';
 
-var colors = require('colors');
+var colors = require('colors/safe');
 var opn = require('opn');
 var querystring = require('querystring');
 var _ = require('underscore');
@@ -15,7 +15,7 @@ module.exports = function(dependencies){
   return function(opts){
 
     urlParser.parse(opts.componentHref, function(err, parsed){
-      if(err){ return logger.log(strings.errors.cli.COMPONENT_HREF_NOT_FOUND.red); }
+      if(err){ return logger.log(colors.red(strings.errors.cli.COMPONENT_HREF_NOT_FOUND)); }
 
       var href = parsed.registryUrl + parsed.componentName + '/';
 

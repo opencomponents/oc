@@ -1,33 +1,50 @@
 'use strict';
 
+var colors = require('colors');
 var expect = require('chai').expect;
-var injectr = require('injectr')
+var injectr = require('injectr');
 var sinon = require('sinon');
-
-var consoleMock = require('../mocks/console');
 
 describe('cli : facade : preview', function(){
 
-  var opnSpy, parseStub;
+  var opnSpy, parseStub, logSpy;
 
-  var execute = function(href, parsed){
+  var execute = function(href, error, parsed){
+
+    if(!parsed){
+      parsed = error;
+      error = null;
+    }
 
     opnSpy = sinon.spy();
-    parseStub = sinon.stub().yields(null, parsed);
+    parseStub = sinon.stub().yields(error, parsed);
+    logSpy = sinon.stub().returns(null);
 
     var PreviewFacade = injectr('../../cli/facade/preview.js', {
       opn: opnSpy,
       '../../registry/domain/url-parser': {
         parse: parseStub
       }
+    }, {console:console});
+
+    var previewFacade = new PreviewFacade({ logger: { log: logSpy }});
+    previewFacade({ componentHref: href });
+  };
+
+  describe('when previewing not valid component', function(){
+
+    beforeEach(function(){
+      execute('http://registry.com/not-existing-component', '404!!!', {});
     });
 
-    var previewFacade = new PreviewFacade({ logger: consoleMock })
-    consoleMock.reset();
+    it('should not open any preview', function(){
+      expect(opnSpy.called).to.be.false;
+    });
 
-    previewFacade({ componentHref: href });
-    var logs = consoleMock.get();
-  };
+    it('should show error message', function(){
+      expect(logSpy.args[0][0]).to.equal('The specified path is not a valid component\'s url'.red);
+    });
+  });
 
   describe('when previewing /component', function(){
 
