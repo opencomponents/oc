@@ -3,6 +3,7 @@
 var colors = require('colors');
 var opn = require('opn');
 var querystring = require('querystring');
+var _ = require('underscore');
 
 var strings = require('../../resources/index');
 var urlParser = require('../../registry/domain/url-parser');
@@ -24,7 +25,7 @@ module.exports = function(dependencies){
 
       href += '~preview/';
 
-      if(!!parsed.parameters){
+      if(!!parsed.parameters && !_.isEmpty(parsed.parameters)){
         href += '?' + querystring.stringify(parsed.parameters);
       }
       
