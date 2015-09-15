@@ -7,14 +7,13 @@ var _ = require('underscore');
 
 describe('cli : facade : info', function(){
 
-  var Registry = require('../../cli/domain/registry'),
+  var logSpy = {},
+      Registry = require('../../cli/domain/registry'),
       registry = new Registry(),
-      consoleMock = require('../mocks/console'),
       Local = require('../../cli/domain/local'),
       local = new Local(),
       InfoFacade = require('../../cli/facade/info'),
-      infoFacade = new InfoFacade({ registry: registry, local: local, logger: consoleMock }),
-      logs;
+      infoFacade = new InfoFacade({ registry: registry, local: local, logger: logSpy });
 
   var setup = function(stubs){
     _.forEach(stubs, function(stubInfo){
@@ -26,9 +25,8 @@ describe('cli : facade : info', function(){
   };
 
   var execute = function(){
-    consoleMock.reset();
+    logSpy.log = sinon.spy();
     infoFacade();
-    logs = consoleMock.get();    
   };
 
   describe('when showing project info', function(){
@@ -45,7 +43,7 @@ describe('cli : facade : info', function(){
       });
 
       it('should show an error', function(){
-        expect(logs[0]).to.be.equal('something bad happened'.red);
+        expect(logSpy.log.args[0][0]).to.be.equal('something bad happened'.red);
       });
     });
 
@@ -63,7 +61,7 @@ describe('cli : facade : info', function(){
         });
 
         it('should show an error', function(){
-          expect(logs[0]).to.be.equal('oc registries not found. Run "oc registry add <registry href>"'.red);
+          expect(logSpy.log.args[0][0]).to.be.equal('oc registries not found. Run "oc registry add <registry href>"'.red);
         });
       });
 
@@ -79,7 +77,7 @@ describe('cli : facade : info', function(){
         });
 
         it('should show an error', function(){
-          expect(logs[0]).to.be.equal('No components linked in the project'.red);
+          expect(logSpy.log.args[0][0]).to.be.equal('No components linked in the project'.red);
         });
       });
 
@@ -117,21 +115,21 @@ describe('cli : facade : info', function(){
         });
 
         it('should list the components', function(){
-          expect(logs[0]).to.be.equal('Components linked in project:'.yellow);
+          expect(logSpy.log.args[0][0]).to.be.equal('Components linked in project:'.yellow);
         }); 
 
         it('should show a message when a component is not found on the registry', function(){
-          expect(logs[1]).to.include('Not available'.red);
+          expect(logSpy.log.args[1][0]).to.include('Not available'.red);
         });
 
         it('should show the component\'s details when it is found on the registry', function(){
-          expect(logs[1]).to.include('hello');
-          expect(logs[1]).to.include('the best component ever');
-          expect(logs[1]).to.include('http://registry.com/hello/~1.0.0');
+          expect(logSpy.log.args[1][0]).to.include('hello');
+          expect(logSpy.log.args[1][0]).to.include('the best component ever');
+          expect(logSpy.log.args[1][0]).to.include('http://registry.com/hello/~1.0.0');
         });
 
         it('should show the component\'s resolved version', function(){
-          expect(logs[1]).to.include('~1.0.0 => 1.0.1');
+          expect(logSpy.log.args[1][0]).to.include('~1.0.0 => 1.0.1');
         });
       });
     });

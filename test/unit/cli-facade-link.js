@@ -4,20 +4,17 @@ var colors = require('colors');
 var expect = require('chai').expect;
 var sinon = require('sinon');
 
-var consoleMock = require('../mocks/console');
-
 describe('cli : facade : link', function(){
 
-  var LinkFacade = require('../../cli/facade/link'),
+  var logSpy = {},
+      LinkFacade = require('../../cli/facade/link'),
       Local = require('../../cli/domain/local'),
       local = new Local(),
-      linkFacade = new LinkFacade({ local: local, logger: consoleMock }),
-      logs;
+      linkFacade = new LinkFacade({ local: local, logger: logSpy });
 
   var execute = function(){
-    consoleMock.reset();
+    logSpy.log = sinon.spy();
     linkFacade({ componentName: 'hello' });
-    logs = consoleMock.get();
   };
 
   describe('when linking component', function(){
@@ -34,7 +31,7 @@ describe('cli : facade : link', function(){
       });
 
       it('should show the error', function(){
-        expect(logs[0]).to.equal('an error!'.red);
+        expect(logSpy.log.args[0][0]).to.equal('an error!'.red);
       });
     }); 
 
@@ -50,7 +47,7 @@ describe('cli : facade : link', function(){
       });
 
       it('should show a confirmation message', function(){
-        expect(logs[0]).to.equal('oc Component linked'.green);
+        expect(logSpy.log.args[0][0]).to.equal('oc Component linked'.green);
       });
     });
   });

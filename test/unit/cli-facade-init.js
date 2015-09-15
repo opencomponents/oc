@@ -4,20 +4,17 @@ var colors = require('colors');
 var expect = require('chai').expect;
 var sinon = require('sinon');
 
-var consoleMock = require('../mocks/console');
-
 describe('cli : facade : init', function(){
 
-  var InitFacade = require('../../cli/facade/init'),
+  var logSpy = {},
+      InitFacade = require('../../cli/facade/init'),
       Local = require('../../cli/domain/local'),
       local = new Local(),
-      initFacade = new InitFacade({ local: local, logger: consoleMock }),
-      logs;
+      initFacade = new InitFacade({ local: local, logger: logSpy });
 
   var execute = function(componentName, templateType){
-    consoleMock.reset();
+    logSpy.log = sinon.spy();
     initFacade({ componentName: componentName, templateType: templateType });
-    logs = consoleMock.get();
   };
 
   describe('when initialising a new component', function(){
@@ -29,7 +26,7 @@ describe('cli : facade : init', function(){
       });
 
       it('should show an error', function(){
-        expect(logs[0]).to.equal('An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -'.red);
+        expect(logSpy.log.args[0][0]).to.equal('An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -'.red);
       });
     });
 
@@ -40,17 +37,18 @@ describe('cli : facade : init', function(){
       });
 
       it('should show an error', function(){
-        expect(logs[0]).to.equal('An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -'.red);
+        expect(logSpy.log.args[0][0]).to.equal('An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -'.red);
       });
     });
 
     describe('when the template is of a non valid type', function(){
         beforeEach(function(){
-            execute('valid-component', 'invalid-type');
+          execute('valid-component', 'invalid-type');
         });
 
         it('should show an error', function(){
-            expect(logs[0]).to.equal('An error happened when initialising the component: the template is not valid. Allowed values are handlebars and jade'.red);
+          var expected = 'An error happened when initialising the component: the template is not valid. Allowed values are handlebars and jade';
+          expect(logSpy.log.args[0][0]).to.equal(expected.red);
         });
     });
 
@@ -66,7 +64,7 @@ describe('cli : facade : init', function(){
       });
 
       it('should show an error', function(){
-        expect(logs[0]).to.equal('An error happened when initialising the component: nope!'.red);
+        expect(logSpy.log.args[0][0]).to.equal('An error happened when initialising the component: nope!'.red);
       });
     });
 
@@ -82,7 +80,7 @@ describe('cli : facade : init', function(){
       });
 
       it('should show a message', function(){
-        expect(logs[0]).to.equal('Component "the-best-component" created'.green);
+        expect(logSpy.log.args[0][0]).to.equal('Component "the-best-component" created'.green);
       });
     });
   });

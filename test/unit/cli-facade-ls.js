@@ -4,20 +4,17 @@ var colors = require('colors');
 var expect = require('chai').expect;
 var sinon = require('sinon');
 
-var consoleMock = require('../mocks/console');
-
 describe('cli : facade : ls', function(){
 
-  var Registry = require('../../cli/domain/registry'),
+  var logSpy = {},
+      Registry = require('../../cli/domain/registry'),
       registry = new Registry(),
       LsFacade = require('../../cli/facade/ls'),
-      lsFacade = new LsFacade({ registry: registry, logger: consoleMock }),
-      logs;
+      lsFacade = new LsFacade({ registry: registry, logger: logSpy });
 
   var execute = function(opts){
-    consoleMock.reset();
+    logSpy.log = sinon.spy();
     lsFacade(opts);
-    logs = consoleMock.get();
   };
 
   describe('when no registries linked to the app', function(){
@@ -32,7 +29,7 @@ describe('cli : facade : ls', function(){
     });
 
     it('should show an error', function(){
-      expect(logs[0]).to.equal('oc registries not found. Run "oc registry add <registry href>"'.red);
+      expect(logSpy.log.args[0][0]).to.equal('oc registries not found. Run "oc registry add <registry href>"'.red);
     });
   });
 
@@ -67,7 +64,7 @@ describe('cli : facade : ls', function(){
 
     it('should show the list of components for given registry', function(){
       sinon.stub(registry, 'getRegistryComponentsByRegistry').yields(null, []);
-      expect(logs[0]).to.equal('Components available in oc registry: http://www.registry.com'.yellow);
+      expect(logSpy.log.args[0][0]).to.equal('Components available in oc registry: http://www.registry.com'.yellow);
       registry.getRegistryComponentsByRegistry.restore();
     });
 
@@ -83,7 +80,7 @@ describe('cli : facade : ls', function(){
       });
 
       it('should show an empty list of components', function(){
-        expect(logs[1]).not.to.include('http://www.registry.com');
+        expect(logSpy.log.args[1][0]).not.to.include('http://www.registry.com');
       });
     });
 
@@ -101,10 +98,10 @@ describe('cli : facade : ls', function(){
       });
 
       it('should list the components', function(){
-        expect(logs[1]).to.include('hello');
-        expect(logs[1]).to.include('a description');
-        expect(logs[1]).to.include('1.0.0');
-        expect(logs[1]).to.include('http://www.api.com/hello');
+        expect(logSpy.log.args[1][0]).to.include('hello');
+        expect(logSpy.log.args[1][0]).to.include('a description');
+        expect(logSpy.log.args[1][0]).to.include('1.0.0');
+        expect(logSpy.log.args[1][0]).to.include('http://www.api.com/hello');
       });
     });
   });

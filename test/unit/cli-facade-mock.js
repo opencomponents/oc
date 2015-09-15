@@ -4,20 +4,17 @@ var colors = require('colors');
 var expect = require('chai').expect;
 var sinon = require('sinon');
 
-var consoleMock = require('../mocks/console');
-
 describe('cli : facade : mock', function(){
 
-  var MockFacade = require('../../cli/facade/mock'),
+  var logSpy = {},
+      MockFacade = require('../../cli/facade/mock'),
       Local = require('../../cli/domain/local'),
       local = new Local(),
-      mockFacade = new MockFacade({ local: local, logger: consoleMock }),
-      logs;
+      mockFacade = new MockFacade({ local: local, logger: logSpy });
 
   var execute = function(){
-    consoleMock.reset();
+    logSpy.log = sinon.spy();
     mockFacade({ targetType: 'plugin', targetName: 'getValue', targetValue: 'value' });
-    logs = consoleMock.get();
   };
 
   describe('when mocking plugin', function(){
@@ -34,7 +31,7 @@ describe('cli : facade : mock', function(){
       });
 
       it('should show a confirmation message', function(){
-        expect(logs[0]).to.equal('Mock for plugin has been registered: getValue () => value'.green);
+        expect(logSpy.log.args[0][0]).to.equal('Mock for plugin has been registered: getValue () => value'.green);
       });
     });
   });

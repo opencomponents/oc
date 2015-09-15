@@ -76,10 +76,6 @@ module.exports = {
       options: {
         componentHref: {
           help: 'The name of the component to preview'
-        },
-        port: {
-          help: 'The port where to start the server. Default 3000',
-          required: false
         }
       }
     },

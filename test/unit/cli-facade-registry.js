@@ -4,20 +4,17 @@ var colors = require('colors');
 var expect = require('chai').expect;
 var sinon = require('sinon');
 
-var consoleMock = require('../mocks/console');
-
 describe('cli : facade : registry', function(){
 
-  var Registry = require('../../cli/domain/registry'),
+  var logSpy = {},
+      Registry = require('../../cli/domain/registry'),
       registry = new Registry(),
       RegistryFacade = require('../../cli/facade/registry'),
-      registryFacade = new RegistryFacade({ registry: registry, logger: consoleMock }),
-      logs;
+      registryFacade = new RegistryFacade({ registry: registry, logger: logSpy });
 
   var execute = function(command){
-    consoleMock.reset();
+    logSpy.log = sinon.spy();
     registryFacade({ command: command });
-    logs = consoleMock.get();
   };
 
   describe('when using ls command', function(){
@@ -34,11 +31,11 @@ describe('cli : facade : registry', function(){
       });
 
       it('should introduce the list of registries', function(){
-        expect(logs[0]).to.equal('oc linked registries:'.yellow);
+        expect(logSpy.log.args[0][0]).to.equal('oc linked registries:'.yellow);
       });
 
       it('should log an error', function(){
-        expect(logs[1]).to.equal('oc registries not found. Run "oc registry add <registry href>"'.red);
+        expect(logSpy.log.args[1][0]).to.equal('oc registries not found. Run "oc registry add <registry href>"'.red);
       });
     });
 
@@ -54,12 +51,12 @@ describe('cli : facade : registry', function(){
       });
 
       it('should introduce the list of registries', function(){
-        expect(logs[0]).to.equal('oc linked registries:'.yellow);
+        expect(logSpy.log.args[0][0]).to.equal('oc linked registries:'.yellow);
       });
 
       it('should list the linked registries', function(){
-        expect(logs[1]).to.equal('http://www.registry.com'.green);
-        expect(logs[2]).to.equal('https://www.anotherregistry.com'.green);
+        expect(logSpy.log.args[1][0]).to.equal('http://www.registry.com'.green);
+        expect(logSpy.log.args[2][0]).to.equal('https://www.anotherregistry.com'.green);
       });
     });
   });
@@ -78,7 +75,7 @@ describe('cli : facade : registry', function(){
       });
 
       it('should show the error', function(){
-        expect(logs[0]).to.equal('An error!!!'.red);
+        expect(logSpy.log.args[0][0]).to.equal('An error!!!'.red);
       });
     });
 
@@ -94,7 +91,7 @@ describe('cli : facade : registry', function(){
       });
 
       it('should show a confirmation message', function(){
-        expect(logs[0]).to.equal('oc registry added'.green);
+        expect(logSpy.log.args[0][0]).to.equal('oc registry added'.green);
       });
     });
   });
@@ -113,7 +110,7 @@ describe('cli : facade : registry', function(){
       });
 
       it('should show the error', function(){
-        expect(logs[0]).to.equal('something bad happened!'.red);
+        expect(logSpy.log.args[0][0]).to.equal('something bad happened!'.red);
       });
     });
 
@@ -129,7 +126,7 @@ describe('cli : facade : registry', function(){
       });
 
       it('should show a confirmation message', function (){
-        expect(logs[0]).to.equal('oc registry deleted'.green);
+        expect(logSpy.log.args[0][0]).to.equal('oc registry deleted'.green);
       });
     });
   });

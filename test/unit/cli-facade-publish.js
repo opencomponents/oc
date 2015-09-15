@@ -8,22 +8,18 @@ var _ = require('underscore');
 
 describe('cli : facade : publish', function(){
 
-  var Registry = require('../../cli/domain/registry'),
+  var logSpy = {},
+      Registry = require('../../cli/domain/registry'),
       registry = new Registry(),
-      consoleMock = require('../mocks/console'),
       Local = require('../../cli/domain/local'),
       local = new Local(),
       PublishFacade = require('../../cli/facade/publish'),
-      publishFacade = new PublishFacade({ registry: registry, local: local, logger: consoleMock }),
-      logs;
+      publishFacade = new PublishFacade({ registry: registry, local: local, logger: logSpy });
 
   var execute = function(){
-    consoleMock.reset();
+    logSpy.log = sinon.stub();
     publishFacade({ componentPath: path.resolve('test/fixtures/components/hello-world/') });
-    logs = consoleMock.get();
   };
-
-  afterEach(consoleMock.reset);
 
   describe('when publishing component', function(){
 
@@ -39,7 +35,7 @@ describe('cli : facade : publish', function(){
       });
 
       it('should show an error', function(){
-        expect(logs[0]).to.equal('an error!'.red);
+        expect(logSpy.log.args[0][0]).to.equal('an error!'.red);
       });
     });
 
@@ -58,7 +54,7 @@ describe('cli : facade : publish', function(){
         execute();
         local.package.restore();
 
-        var message = logs[0],
+        var message = logSpy.log.args[0][0],
             re = new RegExp('\\' + path.sep, 'g'),
             messageWithSlashesOnPath = message.replace(re, '/');
 
@@ -80,7 +76,7 @@ describe('cli : facade : publish', function(){
           });
 
           it('should show an error', function(){
-            expect(logs[1]).to.equal('An error happened when creating the package: the component is not valid'.red);
+            expect(logSpy.log.args[1][0]).to.equal('An error happened when creating the package: the component is not valid'.red);
           });
         });
 
@@ -112,7 +108,7 @@ describe('cli : facade : publish', function(){
               execute();
               registry.putComponent.restore();
 
-              var message = logs[1],
+              var message = logSpy.log.args[1][0],
                   re = new RegExp('\\' + path.sep, 'g'),
                   messageWithSlashesOnPath = message.replace(re, '/');
 
@@ -127,7 +123,7 @@ describe('cli : facade : publish', function(){
                 execute();
                 registry.putComponent.restore();
 
-                expect(logs[2]).to.include('Publishing -> ');
+                expect(logSpy.log.args[2][0]).to.include('Publishing -> ');
               });
 
               it('should publish to all registries', function(){
@@ -135,8 +131,8 @@ describe('cli : facade : publish', function(){
                 execute();
                 registry.putComponent.restore();
 
-                expect(logs[2]).to.include('http://www.api.com');
-                expect(logs[4]).to.include('http://www.api2.com');
+                expect(logSpy.log.args[2][0]).to.include('http://www.api.com');
+                expect(logSpy.log.args[4][0]).to.include('http://www.api2.com');
               });
 
               describe('when error happens', function(){
@@ -151,7 +147,7 @@ describe('cli : facade : publish', function(){
                 });
 
                 it('should show an error', function(){
-                  expect(logs[3]).to.include('An error happened when publishing the component: nope!');
+                  expect(logSpy.log.args[3][0]).to.include('An error happened when publishing the component: nope!');
                 });
               });
 
@@ -170,8 +166,8 @@ describe('cli : facade : publish', function(){
                 });
 
                 it('should show a message', function(){
-                  expect(logs[3]).to.include('Published -> ');
-                  expect(logs[3]).to.include('http://www.api.com/hello-world/1.0.0');
+                  expect(logSpy.log.args[3][0]).to.include('Published -> ');
+                  expect(logSpy.log.args[3][0]).to.include('http://www.api.com/hello-world/1.0.0');
                 });
 
                 it('should remove the compressed package', function(){
