@@ -8,6 +8,7 @@ var put = require('../../utils/put');
 var querystring = require('querystring');
 var request = require('../../utils/request');
 var settings = require('../../resources/settings');
+var urlBuilder = require('../../registry/domain/url-builder');
 var urlParser = require('../domain/url-parser');
 
 module.exports = function(opts){
@@ -78,23 +79,10 @@ module.exports = function(opts){
       request(componentHref, function(err, res){
         if(err){ return callback(err); }
 
-        var parsed = urlParser.parse(JSON.parse(res));        
+        var parsed = urlParser.parse(JSON.parse(res)),
+            previewUrl = urlBuilder.componentPreview(parsed, parsed.registryUrl);
 
-        if(err){ return callback(err); }
-
-        var href = parsed.registryUrl + parsed.componentName + '/';
-
-        if(!!parsed.version){
-          href += parsed.version + '/';
-        }
-
-        href += '~preview/';
-
-        if(!!parsed.parameters && !_.isEmpty(parsed.parameters)){
-          href += '?' + querystring.stringify(parsed.parameters);
-        }
-
-        callback(null, href);
+        callback(null, previewUrl);
       });  
     },
     getRegistryComponentsByRegistry: function(registry, callback){

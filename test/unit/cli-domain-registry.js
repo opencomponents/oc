@@ -140,7 +140,7 @@ describe('cli : domain : registry', function(){
         execute('http://registry.com/component', null, {
           href: 'http://registry.com/component',
           registryUrl: 'http://registry.com/',
-          componentName: 'component',
+          name: 'component',
           version: '',
           parameters: {}
         }, done);
@@ -157,7 +157,7 @@ describe('cli : domain : registry', function(){
         execute('http://registry.com/component/1.X.X', null, {
           href: 'http://registry.com/component/1.X.X',
           registryUrl: 'http://registry.com/',
-          componentName: 'component',
+          name: 'component',
           version: '1.X.X',
           parameters: {}
         }, done);
@@ -174,7 +174,7 @@ describe('cli : domain : registry', function(){
         execute('http://registry.com/component?hello=world', null, {
           href: 'http://registry.com/component?hello=world',
           registryUrl: 'http://registry.com/',
-          componentName: 'component',
+          name: 'component',
           version: '',
           parameters: {hello: 'world'}
         }, done);
@@ -191,7 +191,7 @@ describe('cli : domain : registry', function(){
         execute('http://registry.com/component/?hello=world', null, {
           href: 'http://registry.com/component/?hello=world',
           registryUrl: 'http://registry.com/',
-          componentName: 'component',
+          name: 'component',
           version: '',
           parameters: {hello: 'world'}
         }, done);
@@ -208,7 +208,7 @@ describe('cli : domain : registry', function(){
         execute('http://registry.com/component/1.X.X?hello=world', null, {
           href: 'http://registry.com/component/1.X.X?hello=world',
           registryUrl: 'http://registry.com/',
-          componentName: 'component',
+          name: 'component',
           version: '1.X.X',
           parameters: {hello: 'world'}
         }, done);
@@ -225,7 +225,7 @@ describe('cli : domain : registry', function(){
         execute('http://registry.com/component/1.X.X/?hello=world', null, {
           href: 'http://registry.com/component/1.X.X/?hello=world',
           registryUrl: 'http://registry.com/',
-          componentName: 'component',
+          name: 'component',
           version: '1.X.X',
           parameters: {hello: 'world'}
         }, done);

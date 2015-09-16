@@ -21,8 +21,8 @@ describe('cli : domain : url-parser', function(){
       execute('http://www.registry.com/api/v2/component-name', '');
     });
 
-    it('componentName should be component-name', function(){
-      expect(parsed.componentName).to.equal('component-name');
+    it('name should be component-name', function(){
+      expect(parsed.name).to.equal('component-name');
     });
 
     it('version should be blank', function(){
@@ -48,8 +48,8 @@ describe('cli : domain : url-parser', function(){
       execute('http://www.registry.com/component-name/~1.0.0/?hello=world', '~1.0.0');
     });
 
-    it('componentName should be component-name', function(){
-      expect(parsed.componentName).to.equal('component-name');
+    it('name should be component-name', function(){
+      expect(parsed.name).to.equal('component-name');
     });
 
     it('version should be ~1.0.0', function(){
@@ -75,8 +75,8 @@ describe('cli : domain : url-parser', function(){
       execute('http://www.registry.com/12345/~1.0.0?hello=world', '~1.0.0');
     });
 
-    it('componentName should be 12345', function(){
-      expect(parsed.componentName).to.equal('12345');
+    it('name should be 12345', function(){
+      expect(parsed.name).to.equal('12345');
     });
 
     it('version should be ~1.0.0', function(){
