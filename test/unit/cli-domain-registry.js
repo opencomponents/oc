@@ -8,7 +8,8 @@ var getRegistry = function(dependencies, opts){
   var Registry = injectr('../../cli/domain/registry.js', {
         '../../utils/request': dependencies.request,
         'fs-extra': dependencies.fs,
-        '../../utils/put': dependencies.put
+        '../../utils/put': dependencies.put,
+        '../domain/url-parser': dependencies.urlParser
       }, { Buffer: Buffer });
 
   return new Registry(opts);
@@ -103,6 +104,135 @@ describe('cli : domain : registry', function(){
         expect(args[0]).to.eql('http://registry.com/component/1.0.0');
         expect(args[1]).to.eql('/blabla/path');
         expect(args[2]).to.eql({ 'Authorization': 'Basic am9obmRvZTphUGFzc3cwcmQ=' });
+      });
+    });
+  });
+
+  describe('when getting preview url', function(){
+
+    var err, res;
+    var execute = function(href, error, parsed, done){
+      var registry = getRegistry({ 
+        request: sinon.stub().yields(error, JSON.stringify(parsed)),
+        urlParser: {
+          parse: sinon.stub().returns(parsed)
+        }
+      });        
+      registry.getComponentPreviewUrlByUrl(href, function(e, r){
+        err = e;
+        res = r;
+        done();
+      });
+    };
+
+    describe('when href not valid', function(){
+      beforeEach(function(done){
+        execute('http://registry.com/not-existing-component', '404!!!', {}, done);
+      });
+
+      it('should show error message', function(){
+        expect(err).to.equal('404!!!');
+      });
+    });
+
+    describe('when href = /component', function(){
+      beforeEach(function(done){
+        execute('http://registry.com/component', null, {
+          href: 'http://registry.com/component',
+          registryUrl: 'http://registry.com/',
+          componentName: 'component',
+          version: '',
+          parameters: {}
+        }, done);
+      });
+
+      it('href should be /component/~preview/', function(){
+        expect(res).to.equal('http://registry.com/component/~preview/');
+      });
+    });
+
+    describe('when href = /component/1.X.X', function(){
+
+      beforeEach(function(done){
+        execute('http://registry.com/component/1.X.X', null, {
+          href: 'http://registry.com/component/1.X.X',
+          registryUrl: 'http://registry.com/',
+          componentName: 'component',
+          version: '1.X.X',
+          parameters: {}
+        }, done);
+      });
+
+      it('href should be /component/1.X.X/~preview/', function(){
+        expect(res).to.equal('http://registry.com/component/1.X.X/~preview/');
+      });
+    });
+
+    describe('when href = /component?hello=world', function(){
+
+      beforeEach(function(done){
+        execute('http://registry.com/component?hello=world', null, {
+          href: 'http://registry.com/component?hello=world',
+          registryUrl: 'http://registry.com/',
+          componentName: 'component',
+          version: '',
+          parameters: {hello: 'world'}
+        }, done);
+      });
+
+      it('href should be /component/~preview/?hello=world', function(){
+        expect(res).to.equal('http://registry.com/component/~preview/?hello=world');
+      });
+    });
+
+    describe('when href = /component/?hello=world', function(){
+
+      beforeEach(function(done){
+        execute('http://registry.com/component/?hello=world', null, {
+          href: 'http://registry.com/component/?hello=world',
+          registryUrl: 'http://registry.com/',
+          componentName: 'component',
+          version: '',
+          parameters: {hello: 'world'}
+        }, done);
+      });
+
+      it('href should be /component/~preview/?hello=world', function(){
+        expect(res).to.equal('http://registry.com/component/~preview/?hello=world');
+      });
+    });
+
+    describe('when href = /component/1.X.X?hello=world', function(){
+
+      beforeEach(function(done){
+        execute('http://registry.com/component/1.X.X?hello=world', null, {
+          href: 'http://registry.com/component/1.X.X?hello=world',
+          registryUrl: 'http://registry.com/',
+          componentName: 'component',
+          version: '1.X.X',
+          parameters: {hello: 'world'}
+        }, done);
+      });
+
+      it('href should be /component/1.X.X/~preview/?hello=world', function(){
+        expect(res).to.equal('http://registry.com/component/1.X.X/~preview/?hello=world');
+      });
+    });
+
+    describe('when href = /component/1.X.X/?hello=world', function(){
+
+      beforeEach(function(done){
+        execute('http://registry.com/component/1.X.X/?hello=world', null, {
+          href: 'http://registry.com/component/1.X.X/?hello=world',
+          registryUrl: 'http://registry.com/',
+          componentName: 'component',
+          version: '1.X.X',
+          parameters: {hello: 'world'}
+        }, done);
+      });
+
+      it('href should be /component/1.X.X/~preview/?hello=world', function(){
+        expect(res).to.equal('http://registry.com/component/1.X.X/~preview/?hello=world');
       });
     });
   });

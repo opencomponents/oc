@@ -5,8 +5,10 @@ var fs = require('fs-extra');
 var _ = require('underscore');
 
 var put = require('../../utils/put');
+var querystring = require('querystring');
 var request = require('../../utils/request');
 var settings = require('../../resources/settings');
+var urlParser = require('../domain/url-parser');
 
 module.exports = function(opts){
   opts = opts || {};
@@ -71,6 +73,29 @@ module.exports = function(opts){
 
         callback(err, JSON.parse(res));
       });
+    },
+    getComponentPreviewUrlByUrl: function(componentHref, callback){
+      request(componentHref, function(err, res){
+        if(err){ return callback(err); }
+
+        var parsed = urlParser.parse(JSON.parse(res));        
+
+        if(err){ return callback(err); }
+
+        var href = parsed.registryUrl + parsed.componentName + '/';
+
+        if(!!parsed.version){
+          href += parsed.version + '/';
+        }
+
+        href += '~preview/';
+
+        if(!!parsed.parameters && !_.isEmpty(parsed.parameters)){
+          href += '?' + querystring.stringify(parsed.parameters);
+        }
+
+        callback(null, href);
+      });  
     },
     getRegistryComponentsByRegistry: function(registry, callback){
 
