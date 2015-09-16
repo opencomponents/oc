@@ -5,12 +5,25 @@ var injectr = require('injectr');
 var sinon = require('sinon');
 
 var getRegistry = function(dependencies, opts){
+  dependencies.fs = dependencies.fs || {};
+  dependencies.fs.readJsonSync = sinon.stub().returns({ version: '1.2.3' });
   var Registry = injectr('../../cli/domain/registry.js', {
         '../../utils/request': dependencies.request,
         'fs-extra': dependencies.fs,
         '../../utils/put': dependencies.put,
-        '../domain/url-parser': dependencies.urlParser
-      }, { Buffer: Buffer });
+        '../domain/url-parser': dependencies.urlParser,
+        path: {
+          join: sinon.stub().returns('/hello/world')
+        }
+      }, { 
+        Buffer: Buffer, 
+        __dirname: '/hello',
+        process: {
+          arch: 'x64',
+          platform: 'darwin',
+          version: 'v0.10.35'
+        }
+      });
 
   return new Registry(opts);
 };
@@ -76,11 +89,15 @@ describe('cli : domain : registry', function(){
         args = putSpy.args[0];
       });
 
-      it('should do the request without headers', function(){
+      it('should do the request without authorization header', function(){
         expect(putSpy.called).to.be.true;
         expect(args[0]).to.eql('http://registry.com/component/1.0.0');
         expect(args[1]).to.eql('/blabla/path');
-        expect(args[2]).to.eql({});
+        expect(!!args[2]['Authorization']).to.be.false;
+      });
+
+      it('should do the request with user-agent including cli version and node details', function(){
+        expect(args[2]['user-agent']).to.equal('oc-cli-1.2.3/v0.10.35-darwin-x64');
       });
     });
 
@@ -103,7 +120,11 @@ describe('cli : domain : registry', function(){
         expect(putSpy.called).to.be.true;
         expect(args[0]).to.eql('http://registry.com/component/1.0.0');
         expect(args[1]).to.eql('/blabla/path');
-        expect(args[2]).to.eql({ 'Authorization': 'Basic am9obmRvZTphUGFzc3cwcmQ=' });
+        expect(args[2]['Authorization']).to.eql('Basic am9obmRvZTphUGFzc3cwcmQ=');
+      });
+
+      it('should do the request with user-agent including cli version and node details', function(){
+        expect(args[2]['user-agent']).to.equal('oc-cli-1.2.3/v0.10.35-darwin-x64');
       });
     });
   });

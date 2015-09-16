@@ -1,7 +1,9 @@
 'use strict';
 
 var async = require('async');
+var format = require('stringformat');
 var fs = require('fs-extra');
+var path = require('path');
 var _ = require('underscore');
 
 var put = require('../../utils/put');
@@ -11,8 +13,26 @@ var settings = require('../../resources/settings');
 var urlBuilder = require('../../registry/domain/url-builder');
 var urlParser = require('../domain/url-parser');
 
+var getOcVersion = function(){
+
+  var ocPackagePath = path.join(__dirname, '../../package.json'),
+      ocInfo = fs.readJsonSync(ocPackagePath);
+
+  return ocInfo.version;
+};
+
 module.exports = function(opts){
   opts = opts || {};
+
+  var requestsOptions = {
+    headers: {
+      'user-agent': format('oc-cli-{0}/{1}-{2}-{3}', 
+                            getOcVersion(),
+                            process.version,
+                            process.platform,
+                            process.arch)
+    }
+  };
 
   return _.extend(this, {
     add: function(registry, callback){
@@ -21,7 +41,7 @@ module.exports = function(opts){
         registry += '/';
       }
 
-      request(registry, function(err, res){
+      request(registry, requestsOptions, function(err, res){
         if(err || !res){
           return callback('oc registry not available', null);
         }
@@ -66,7 +86,7 @@ module.exports = function(opts){
       });
     },
     getApiComponentByHref: function(href, callback){
-      request(href + settings.registry.componentInfoPath, function(err, res){
+      request(href + settings.registry.componentInfoPath, requestsOptions, function(err, res){
 
         if(err){
           return callback(err, null);
@@ -76,7 +96,7 @@ module.exports = function(opts){
       });
     },
     getComponentPreviewUrlByUrl: function(componentHref, callback){
-      request(componentHref, function(err, res){
+      request(componentHref, requestsOptions, function(err, res){
         if(err){ return callback(err); }
 
         var parsed = urlParser.parse(JSON.parse(res)),
@@ -87,7 +107,7 @@ module.exports = function(opts){
     },
     getRegistryComponentsByRegistry: function(registry, callback){
 
-      request(registry, function(err, res){
+      request(registry, requestsOptions, function(err, res){
         if(err || !res){
           return callback('not components found for registry: ' + registry, null);
         }
@@ -105,7 +125,7 @@ module.exports = function(opts){
         }
 
         async.map(components, function(component, cb){
-          request(component + settings.registry.componentInfoPath, function(err, res){
+          request(component + settings.registry.componentInfoPath, requestsOptions, function(err, res){
             cb(err, _.extend(JSON.parse(res), {
               href: component
             }));
@@ -114,10 +134,10 @@ module.exports = function(opts){
       });
     },
     putComponent: function(options, callback){
-      var headers = {};
+      var headers = requestsOptions.headers;
 
       if(!!options.username && !!options.password){
-        headers = { 'Authorization': 'Basic ' + new Buffer(options.username + ':' + options.password).toString('base64') };
+        headers = _.extend(headers, { 'Authorization': 'Basic ' + new Buffer(options.username + ':' + options.password).toString('base64') });
       }
 
       put(options.route, options.path, headers, function(err, res){
