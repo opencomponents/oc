@@ -7,6 +7,7 @@ var path = require('path');
 var Targz = require('tar.gz');
 var _ = require('underscore');
 
+var getUnixUtcTimestamp = require('../../utils/get-unix-utc-timestamp');
 var packageServerScript = require('./package-server-script');
 var packageStaticFiles = require('./package-static-files');
 var packageTemplate = require('./package-template');
@@ -242,6 +243,7 @@ module.exports = function(){
 
           component.oc.version = ocInfo.version;
           component.oc.packaged = true;
+          component.oc.date = getUnixUtcTimestamp();
 
           if(!component.oc.files.static){
             component.oc.files.static = [];
@@ -256,7 +258,7 @@ module.exports = function(){
           });
         },
         function(component, cb){
-
+          // Packaging static files
           packageStaticFiles({
             componentPath: componentPath, 
             publishPath: publishPath, 
