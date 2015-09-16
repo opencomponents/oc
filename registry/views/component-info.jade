@@ -4,22 +4,25 @@ mixin showArray(title, arr)
   +property(title, !!arr && arr.length > 0 ? arr.join(', ') : 'none')
   
 block content
+  a.back(href=href) &lt;&lt; All components
   h2
     | #{component.name} &nbsp;
     select#versions
       each version in component.allVersions
         option(value=version, selected=(version === component.version ? "selected" : false))=version
-  p=component.description
-  a.back(href=href) &lt;&lt; All components
+  p.w-100=component.description
 
   h3 Component Info
   +property('Repository', component.repository || 'not available', !!component.repository)
+  +property('Author', component.author || 'not available')
+  +property('Publish date', new Date(component.oc.date) || 'not available')
+  +property('Publish agent', ('OC CLI ' + component.oc.version) || 'not available')
   +showArray('Node.js dependencies', dependencies)
   +showArray('Plugin dependencies', component.oc.plugins)
 
   h3 Parameters
   - if(!component.oc.parameters)
-    p none
+    p.w-100 none
   - else {
 
     #plugins.table

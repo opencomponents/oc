@@ -1,33 +1,28 @@
 'use strict';
 
 var expect = require('chai').expect;
-var injectr = require('injectr');
 var sinon = require('sinon');
 
-describe('registry : domain : url-parser', function(){
+describe('cli : domain : url-parser', function(){
 
   var parsed;
-  var execute = function(url, returnVersion, callback){
-    var urlParser = injectr('../../registry/domain/url-parser.js', {
-      '../../utils/request': sinon.stub().yields(null, JSON.stringify({
-        requestVersion: returnVersion
-      }))
-    });
+  var execute = function(url, returnVersion){
+    var urlParser = require('../../cli/domain/url-parser');
 
-    urlParser.parse(url, function(err, res){
-      parsed = res;
-      callback();
+    parsed = urlParser.parse({
+      href: url,
+      requestVersion: returnVersion
     });
   };
   
   describe('when parsing http://www.registry.com/api/v2/component-name', function(){
 
-    before(function(done){
-      execute('http://www.registry.com/api/v2/component-name', '', done);
+    before(function(){
+      execute('http://www.registry.com/api/v2/component-name', '');
     });
 
-    it('componentName should be component-name', function(){
-      expect(parsed.componentName).to.equal('component-name');
+    it('name should be component-name', function(){
+      expect(parsed.name).to.equal('component-name');
     });
 
     it('version should be blank', function(){
@@ -49,12 +44,12 @@ describe('registry : domain : url-parser', function(){
   
   describe('when parsing http://www.registry.com/component-name/~1.0.0/?hello=world', function(){
 
-    before(function(done){
-      execute('http://www.registry.com/component-name/~1.0.0/?hello=world', '~1.0.0', done);
+    before(function(){
+      execute('http://www.registry.com/component-name/~1.0.0/?hello=world', '~1.0.0');
     });
 
-    it('componentName should be component-name', function(){
-      expect(parsed.componentName).to.equal('component-name');
+    it('name should be component-name', function(){
+      expect(parsed.name).to.equal('component-name');
     });
 
     it('version should be ~1.0.0', function(){
@@ -76,12 +71,12 @@ describe('registry : domain : url-parser', function(){
   
   describe('when parsing http://www.registry.com/12345/~1.0.0?hello=world', function(){
 
-    before(function(done){
-      execute('http://www.registry.com/12345/~1.0.0?hello=world', '~1.0.0', done);
+    before(function(){
+      execute('http://www.registry.com/12345/~1.0.0?hello=world', '~1.0.0');
     });
 
-    it('componentName should be 12345', function(){
-      expect(parsed.componentName).to.equal('12345');
+    it('name should be 12345', function(){
+      expect(parsed.name).to.equal('12345');
     });
 
     it('version should be ~1.0.0', function(){

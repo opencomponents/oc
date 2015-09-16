@@ -7,34 +7,24 @@ var sinon = require('sinon');
 
 describe('cli : facade : preview', function(){
 
-  var opnSpy, parseStub, logSpy = {};
+  var opnSpy, logSpy, registryStub;
 
-  var execute = function(href, error, parsed){
-
-    if(!parsed){
-      parsed = error;
-      error = null;
-    }
+  var execute = function(error, url){
 
     opnSpy = sinon.spy();
-    parseStub = sinon.stub().yields(error, parsed);
-    logSpy.log = sinon.spy();
+    registryStub = { getComponentPreviewUrlByUrl: sinon.stub().yields(error, url)};
+    logSpy = { log: sinon.spy()};
 
-    var PreviewFacade = injectr('../../cli/facade/preview.js', {
-      opn: opnSpy,
-      '../../registry/domain/url-parser': {
-        parse: parseStub
-      }
-    }, {console:console});
+    var PreviewFacade = injectr('../../cli/facade/preview.js', { opn: opnSpy }),
+        previewFacade = new PreviewFacade({ logger: logSpy, registry: registryStub });
 
-    var previewFacade = new PreviewFacade({ logger: logSpy });
-    previewFacade({ componentHref: href });
+    previewFacade({ componentHref: 'http://components.com/component' });
   };
 
   describe('when previewing not valid component', function(){
 
     beforeEach(function(){
-      execute('http://registry.com/not-existing-component', '404!!!', {});
+      execute('404!!!', {});
     });
 
     it('should not open any preview', function(){
@@ -46,99 +36,14 @@ describe('cli : facade : preview', function(){
     });
   });
 
-  describe('when previewing /component', function(){
+  describe('when previewing valid component', function(){
 
     beforeEach(function(){
-      execute('http://registry.com/component', {
-        registryUrl: 'http://registry.com/',
-        componentName: 'component',
-        version: '',
-        parameters: {}
-      });
+      execute(null, 'http://registry.com/component/~preview/');
     });
 
     it('should open /component/~preview/', function(){
       expect(opnSpy.args[0][0]).to.equal('http://registry.com/component/~preview/');
-    });
-  });
-
-  describe('when previewing /component/1.X.X', function(){
-
-    beforeEach(function(){
-      execute('http://registry.com/component/1.X.X', {
-        registryUrl: 'http://registry.com/',
-        componentName: 'component',
-        version: '1.X.X',
-        parameters: {}
-      });
-    });
-
-    it('should open /component/1.X.X/~preview/', function(){
-      expect(opnSpy.args[0][0]).to.equal('http://registry.com/component/1.X.X/~preview/');
-    });
-  });
-
-  describe('when previewing /component?hello=world', function(){
-
-    beforeEach(function(){
-      execute('http://registry.com/component?hello=world', {
-        registryUrl: 'http://registry.com/',
-        componentName: 'component',
-        version: '',
-        parameters: {hello: 'world'}
-      });
-    });
-
-    it('should open /component/~preview/?hello=world', function(){
-      expect(opnSpy.args[0][0]).to.equal('http://registry.com/component/~preview/?hello=world');
-    });
-  });
-
-  describe('when previewing /component/?hello=world', function(){
-
-    beforeEach(function(){
-      execute('http://registry.com/component/?hello=world', {
-        registryUrl: 'http://registry.com/',
-        componentName: 'component',
-        version: '',
-        parameters: {hello: 'world'}
-      });
-    });
-
-    it('should open /component/~preview/?hello=world', function(){
-      expect(opnSpy.args[0][0]).to.equal('http://registry.com/component/~preview/?hello=world');
-    });
-  });
-
-  describe('when previewing /component/1.X.X?hello=world', function(){
-
-    beforeEach(function(){
-      execute('http://registry.com/component/1.X.X?hello=world', {
-        registryUrl: 'http://registry.com/',
-        componentName: 'component',
-        version: '1.X.X',
-        parameters: {hello: 'world'}
-      });
-    });
-
-    it('should open /component/1.X.X/~preview/?hello=world', function(){
-      expect(opnSpy.args[0][0]).to.equal('http://registry.com/component/1.X.X/~preview/?hello=world');
-    });
-  });
-
-  describe('when previewing /component/1.X.X/?hello=world', function(){
-
-    beforeEach(function(){
-      execute('http://registry.com/component/1.X.X/?hello=world', {
-        registryUrl: 'http://registry.com/',
-        componentName: 'component',
-        version: '1.X.X',
-        parameters: {hello: 'world'}
-      });
-    });
-
-    it('should open /component/1.X.X/~preview/?hello=world', function(){
-      expect(opnSpy.args[0][0]).to.equal('http://registry.com/component/1.X.X/~preview/?hello=world');
     });
   });
 });

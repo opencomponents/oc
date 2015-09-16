@@ -1,5 +1,6 @@
 'use strict';
 
+var querystring = require('querystring');
 var url = require('url');
 var _ = require('underscore');
 
@@ -18,6 +19,21 @@ var build = {
     componentUrl += build.queryString(component.parameters);
 
     return componentUrl;
+  },
+  componentPreview: function(component, baseUrl){
+    var href = baseUrl + component.name + '/';
+
+    if(!!component.version){
+      href += component.version + '/';
+    }
+
+    href += '~preview/';
+
+    if(!!component.parameters && !_.isEmpty(component.parameters)){
+      href += '?' + querystring.stringify(component.parameters);
+    }
+
+    return href;
   },
   queryString: function(parameters){
     var qs = '';

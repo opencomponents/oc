@@ -1,10 +1,11 @@
 mixin property(display, value, linked)
-  div.field
-    p #{display}:
-    - if(!!linked)
-      a(href=value)=value
-    - else
-      span=value
+  - if(!!value)
+    div.field
+      p #{display}:
+      - if(!!linked)
+        a(href=value)=value
+      - else
+        span=value
 
 doctype html
 html

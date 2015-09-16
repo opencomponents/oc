@@ -5,11 +5,25 @@ var injectr = require('injectr');
 var sinon = require('sinon');
 
 var getRegistry = function(dependencies, opts){
+  dependencies.fs = dependencies.fs || {};
+  dependencies.fs.readJsonSync = sinon.stub().returns({ version: '1.2.3' });
   var Registry = injectr('../../cli/domain/registry.js', {
         '../../utils/request': dependencies.request,
         'fs-extra': dependencies.fs,
-        '../../utils/put': dependencies.put
-      }, { Buffer: Buffer });
+        '../../utils/put': dependencies.put,
+        '../domain/url-parser': dependencies.urlParser,
+        path: {
+          join: sinon.stub().returns('/hello/world')
+        }
+      }, { 
+        Buffer: Buffer, 
+        __dirname: '/hello',
+        process: {
+          arch: 'x64',
+          platform: 'darwin',
+          version: 'v0.10.35'
+        }
+      });
 
   return new Registry(opts);
 };
@@ -75,11 +89,15 @@ describe('cli : domain : registry', function(){
         args = putSpy.args[0];
       });
 
-      it('should do the request without headers', function(){
+      it('should do the request without authorization header', function(){
         expect(putSpy.called).to.be.true;
         expect(args[0]).to.eql('http://registry.com/component/1.0.0');
         expect(args[1]).to.eql('/blabla/path');
-        expect(args[2]).to.eql({});
+        expect(!!args[2]['Authorization']).to.be.false;
+      });
+
+      it('should do the request with user-agent including cli version and node details', function(){
+        expect(args[2]['user-agent']).to.equal('oc-cli-1.2.3/v0.10.35-darwin-x64');
       });
     });
 
@@ -102,7 +120,140 @@ describe('cli : domain : registry', function(){
         expect(putSpy.called).to.be.true;
         expect(args[0]).to.eql('http://registry.com/component/1.0.0');
         expect(args[1]).to.eql('/blabla/path');
-        expect(args[2]).to.eql({ 'Authorization': 'Basic am9obmRvZTphUGFzc3cwcmQ=' });
+        expect(args[2]['Authorization']).to.eql('Basic am9obmRvZTphUGFzc3cwcmQ=');
+      });
+
+      it('should do the request with user-agent including cli version and node details', function(){
+        expect(args[2]['user-agent']).to.equal('oc-cli-1.2.3/v0.10.35-darwin-x64');
+      });
+    });
+  });
+
+  describe('when getting preview url', function(){
+
+    var err, res;
+    var execute = function(href, error, parsed, done){
+      var registry = getRegistry({ 
+        request: sinon.stub().yields(error, JSON.stringify(parsed)),
+        urlParser: {
+          parse: sinon.stub().returns(parsed)
+        }
+      });        
+      registry.getComponentPreviewUrlByUrl(href, function(e, r){
+        err = e;
+        res = r;
+        done();
+      });
+    };
+
+    describe('when href not valid', function(){
+      beforeEach(function(done){
+        execute('http://registry.com/not-existing-component', '404!!!', {}, done);
+      });
+
+      it('should show error message', function(){
+        expect(err).to.equal('404!!!');
+      });
+    });
+
+    describe('when href = /component', function(){
+      beforeEach(function(done){
+        execute('http://registry.com/component', null, {
+          href: 'http://registry.com/component',
+          registryUrl: 'http://registry.com/',
+          name: 'component',
+          version: '',
+          parameters: {}
+        }, done);
+      });
+
+      it('href should be /component/~preview/', function(){
+        expect(res).to.equal('http://registry.com/component/~preview/');
+      });
+    });
+
+    describe('when href = /component/1.X.X', function(){
+
+      beforeEach(function(done){
+        execute('http://registry.com/component/1.X.X', null, {
+          href: 'http://registry.com/component/1.X.X',
+          registryUrl: 'http://registry.com/',
+          name: 'component',
+          version: '1.X.X',
+          parameters: {}
+        }, done);
+      });
+
+      it('href should be /component/1.X.X/~preview/', function(){
+        expect(res).to.equal('http://registry.com/component/1.X.X/~preview/');
+      });
+    });
+
+    describe('when href = /component?hello=world', function(){
+
+      beforeEach(function(done){
+        execute('http://registry.com/component?hello=world', null, {
+          href: 'http://registry.com/component?hello=world',
+          registryUrl: 'http://registry.com/',
+          name: 'component',
+          version: '',
+          parameters: {hello: 'world'}
+        }, done);
+      });
+
+      it('href should be /component/~preview/?hello=world', function(){
+        expect(res).to.equal('http://registry.com/component/~preview/?hello=world');
+      });
+    });
+
+    describe('when href = /component/?hello=world', function(){
+
+      beforeEach(function(done){
+        execute('http://registry.com/component/?hello=world', null, {
+          href: 'http://registry.com/component/?hello=world',
+          registryUrl: 'http://registry.com/',
+          name: 'component',
+          version: '',
+          parameters: {hello: 'world'}
+        }, done);
+      });
+
+      it('href should be /component/~preview/?hello=world', function(){
+        expect(res).to.equal('http://registry.com/component/~preview/?hello=world');
+      });
+    });
+
+    describe('when href = /component/1.X.X?hello=world', function(){
+
+      beforeEach(function(done){
+        execute('http://registry.com/component/1.X.X?hello=world', null, {
+          href: 'http://registry.com/component/1.X.X?hello=world',
+          registryUrl: 'http://registry.com/',
+          name: 'component',
+          version: '1.X.X',
+          parameters: {hello: 'world'}
+        }, done);
+      });
+
+      it('href should be /component/1.X.X/~preview/?hello=world', function(){
+        expect(res).to.equal('http://registry.com/component/1.X.X/~preview/?hello=world');
+      });
+    });
+
+    describe('when href = /component/1.X.X/?hello=world', function(){
+
+      beforeEach(function(done){
+        execute('http://registry.com/component/1.X.X/?hello=world', null, {
+          href: 'http://registry.com/component/1.X.X/?hello=world',
+          registryUrl: 'http://registry.com/',
+          name: 'component',
+          version: '1.X.X',
+          parameters: {hello: 'world'}
+        }, done);
+      });
+
+      it('href should be /component/1.X.X/~preview/?hello=world', function(){
+        expect(res).to.equal('http://registry.com/component/1.X.X/~preview/?hello=world');
       });
     });
   });
