@@ -10,7 +10,7 @@ block content
     select#versions
       each version in component.allVersions
         option(value=version, selected=(version === component.version ? "selected" : false))=version
-  p=component.description
+  p.w-100=component.description
 
   h3 Component Info
   +property('Repository', component.repository || 'not available', !!component.repository)
