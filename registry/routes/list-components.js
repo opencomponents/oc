@@ -3,6 +3,7 @@
 var async = require('async');
 var _ = require('underscore');
 
+var dateStringified = require('../../utils/date-stringify');
 var packageInfo = require('../../package.json');
 var urlBuilder = require('../domain/url-builder');
 
@@ -26,6 +27,10 @@ module.exports = function(repository){
           return repository.getComponent(component, function(err, result){
             if(err){ return callback(err); }
 
+            if(result.oc && result.oc.date) {
+              result.oc.stringifiedDate = dateStringified(new Date(result.oc.date));
+            }
+
             componentsInfo.push(result);
             componentsReleases += result.allVersions.length;
             callback();
@@ -36,7 +41,7 @@ module.exports = function(repository){
           componentsInfo = _.sortBy(componentsInfo, function(componentInfo){
             return componentInfo.name;
           });
-          
+
           return res.render('list-components', {
             availableDependencies: res.conf.dependencies,
             availablePlugins: res.conf.plugins,
