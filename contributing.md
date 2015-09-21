@@ -17,6 +17,8 @@ When preparing a pull request, ensure all the tests pass locally running `grunt 
 
 You need to be ebabled for doing this. 
 * `master` should be all green. If not, make it green first.
+* git checkout master
+* git pull
 * Run `grunt version:<versionType>` for new version.
 ** While on 0.X.X (not stable):
 *** `grunt version:patch` for bugfixes, new features
