@@ -14,19 +14,21 @@ block content
     input.search(placeholder="Filter by component name")
 
   .row.double.header.componentRow.table
-    .t-80 Component
+    .t-55 Component
     .version.t-10 Latest version
     - if(!isLocal)
+      .date.t-25 Updated
       .activity.t-10 Activity
 
   each component in components
     a(href=component.name + '/' + component.version + '/~info')
       .componentRow.row.double.table(id="component-" + component.name)
-        .t-80.title
+        .t-55.title
           p.name= component.name
           span.description= component.description 
         .version.t-10= component.version
         - if(!isLocal)
+          .date.t-25= component.oc.stringifiedDate
           .activity.t-10= component.allVersions.length
 
 block scripts
