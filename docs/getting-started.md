@@ -75,6 +75,8 @@ The basic package file `package.json` looks as follows:
 |`name`|`string`|the component's name, by default the name of initialised component|
 |`description`|`string`|the component's description, by default an empty string|
 |`version`|`string`|the component's version, by default `1.0.0`|
+|`author`|`string`|the component's author - suggested format is `John Doe <john@doe.com>`|
+|`repository`|`string`|the component's repository|
 |`dependencies`|`object`|the npm modules the component requires|
 |`oc`|`object`|the data involved with the component|
 |`oc.container`|`boolean`|forces the component to be server-side rendered without being wrapped inside the `<oc-component />` tag.|
@@ -86,7 +88,12 @@ The basic package file `package.json` looks as follows:
 |`oc.files.static`|`array of strings`|An array of directories that contain static resources referenced from the component's markup|
 |`oc.minify`|`boolean`|Default `true`, will minify static css and js files during publishing|
 |`oc.ie8css`|`boolean`|Default `false`, if true, will minify ie8 compatible css files during publishing|
+|`oc.parameters`|`object`|Describes the component's api. Used to auto-generate documentation and get requests validation. Each `key` is the parameter name|
+|`oc.parameters[key].mandatory`|`boolean`|Default `false`, if `true`, any request that does not include a valid value will be rejected with a `400` code.|
+|`oc.parameters[key].type`|`string`|Type of parameter, used for a basic validation check Allowed types are `string`, `boolean`, `number`. When parameter is not valid, request will be rejected with a `400` code|
+|`oc.parameters[key].example`|`string`| Used for auto-generated documentation|
 |`oc.plugins`|`array of strings`|the [plugins](registry.md#plugins) the component requires|
+|`oc.state`|`string`|Describes the state of the component with a keyword. Suggested values are `active`, `experimental`, `deprecated`|
 
 ## Template
 

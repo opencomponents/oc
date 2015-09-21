@@ -5,30 +5,35 @@ block content
   +property('Base url', href, true)
   +property('Version', ocVersion)
   +property('Components', components.length)
-  - if(!isLocal)
+  if !isLocal
     +property('Components releases', componentsReleases)
   +property('Registry type', isLocal ? 'Local dev registry' : 'On-line registry')
+
   h2 Components
 
   form#filter-components
     input.search(placeholder="Filter by component name")
 
   .row.double.header.componentRow.table
-    .t-55 Component
+    div(class="title t-" + (isLocal ? '80' : '60'))
+    .t-10
     .version.t-10 Latest version
-    - if(!isLocal)
-      .date.t-25 Updated
+    if !isLocal
+      .date.t-10 Updated
       .activity.t-10 Activity
 
   each component in components
     a(href=component.name + '/' + component.version + '/~info')
       .componentRow.row.double.table(id="component-" + component.name)
-        .t-55.title
+        div(class="title t-" + (isLocal ? '80' : '60'))
           p.name= component.name
           span.description= component.description 
+        .state.t-10
+          if component.oc.state
+            span(class='component-state-' + component.oc.state.toLowerCase())= component.oc.state
         .version.t-10= component.version
-        - if(!isLocal)
-          .date.t-25= component.oc.stringifiedDate
+        if !isLocal
+          .date.t-10.two-rows= component.oc.stringifiedDate
           .activity.t-10= component.allVersions.length
 
 block scripts
