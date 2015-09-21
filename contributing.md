@@ -20,10 +20,10 @@ You need to be ebabled for doing this.
 * git checkout master
 * git pull
 * Run `grunt version:<versionType>` for new version.
-** While on 0.X.X (not stable):
-*** `grunt version:patch` for bugfixes, new features
-*** `grunt version:minor` for all breaking changes
-*** `grunt version:major` NOT YET. Still need to define milestones for 1.0.0.
+  * While on 0.X.X (not stable):
+    * `grunt version:patch` for bugfixes, new features
+    * `grunt version:minor` for all breaking changes
+    * `grunt version:major` NOT YET. Still need to define milestones for 1.0.0.
 * git add .
 * git commit -m "\<new version\>"
 * git push
