@@ -15,7 +15,7 @@ When preparing a pull request, ensure all the tests pass locally running `grunt 
 
 ### Publishing new version to npm
 
-You need to be ebabled for doing this. 
+You need to be enabled for doing this. 
 * `master` should be all green. If not, make it green first.
 * git checkout master
 * git pull
