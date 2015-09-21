@@ -1,6 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
+var sinon = require('sinon');
 
 describe('utils : dateStringify', function(){
 
@@ -8,7 +9,19 @@ describe('utils : dateStringify', function(){
 
   describe('when the date is provided', function(){
     var anyValidDate = new Date(1442592664035);
-    var dateString = dateStringified(anyValidDate);
+    var dateString;
+
+    before(function(){
+      var mockedDate = new Date();
+      sinon.stub(mockedDate, 'getFullYear').returns(2015);
+      sinon.stub(mockedDate, 'getMonth').returns(8);
+      sinon.stub(mockedDate, 'getDate').returns(18);
+      sinon.stub(mockedDate, 'getHours').returns(17);
+      sinon.stub(mockedDate, 'getMinutes').returns(11);
+      sinon.stub(mockedDate, 'getSeconds').returns(4);
+
+      dateString = dateStringified(mockedDate);
+    });
 
     it('should return the correct stringified date', function(){
       expect(dateString).to.equal('2015/09/18 17:11:04');
