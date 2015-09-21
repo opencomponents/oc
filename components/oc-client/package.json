@@ -1,1 +1,19 @@
-{"name":"oc-client","description":"The OpenComponents client-side javascript client","version":"0.16.32","repository":"https://github.com/opentable/oc/tree/master/components/oc-client","oc":{"parameters":{},"files":{"data":"server.js","template":{"src":"template.html","type":"handlebars"},"static":["src"]}}}
+{
+  "name": "oc-client",
+  "description": "The OpenComponents client-side javascript client",
+  "version": "0.16.33",
+  "repository": "https://github.com/opentable/oc/tree/master/components/oc-client",
+  "oc": {
+    "parameters": {},
+    "files": {
+      "data": "server.js",
+      "template": {
+        "src": "template.html",
+        "type": "handlebars"
+      },
+      "static": [
+        "src"
+      ]
+    }
+  }
+}
