@@ -1,6 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
+var injectr = require('injectr');
 
 describe('registry : domain : validator', function(){
 
@@ -207,7 +208,7 @@ describe('registry : domain : validator', function(){
     });
 
     describe('when component have not mandatory parameters', function(){
-      var componentParameters = { 
+      var componentParameters = {
         name: {
           type: 'string',
           mandatory: false,
@@ -241,7 +242,7 @@ describe('registry : domain : validator', function(){
     describe('when component have mandatory parameters', function(){
 
       it('should not be valid when mandatory parameter not provided', function(){
-        
+
         var componentParameters = {
           returnUrl: {
             type: 'string',
@@ -260,7 +261,7 @@ describe('registry : domain : validator', function(){
       });
 
       describe('when mandatory string parameter provided', function(){
-        
+
         var componentParameters = {
           name: {
             type: 'string',
@@ -298,7 +299,7 @@ describe('registry : domain : validator', function(){
         });
 
         describe('when non mandatory number provided', function(){
-        
+
           var componentParameters = {
             name: {
               type: 'string',
@@ -340,7 +341,7 @@ describe('registry : domain : validator', function(){
         });
 
         describe('when non mandatory boolean provided', function(){
-        
+
           var componentParameters = {
             name: {
               type: 'string',
@@ -541,7 +542,7 @@ describe('registry : domain : validator', function(){
 
     var existingVersions = ['1.0.0', '1.0.1', '2.0.0', '2.1.0'],
         isValid = function(a,b){ return validator.validateVersion(a, b); };
-  
+
     describe('when version already exists', function(){
       it('should not be valid', function(){
         expect(isValid('this.is.not.valid', existingVersions)).not.to.be.true;
@@ -623,7 +624,7 @@ describe('registry : domain : validator', function(){
 
     describe('when component does not require any plugin', function(){
 
-      var requirements = null, 
+      var requirements = null,
           supportedPlugins = {
             log: function(){}
           };
@@ -660,6 +661,58 @@ describe('registry : domain : validator', function(){
         it('should be valid', function(){
           expect(validate(requirements, supportedPlugins).isValid).to.be.true;
         });
+      });
+    });
+  });
+
+  describe('when validating CLI OC version in request headers', function(){
+    var validator = injectr('../../registry/domain/validators/index.js', {
+      './oc-cli-version': injectr('../../registry/domain/validators/oc-cli-version.js', {
+        '../../../package.json': { version: '0.16.34'}
+      })
+    });
+
+    var validate = function(headers){
+      return validator.validateOcCliVersion(headers);
+    };
+
+    describe('when user-agent header is not specified', function(){
+      var headers = {'any-header': 'value'};
+
+      it('should be invalid', function(){
+        expect(validate(headers)).to.be.false;
+      });
+    });
+
+    describe('when user-agent header doesn\'t have correct format', function(){
+      var headers = {'user-agent': 'oc-cli/1.2.3-v0.10.35-darwin-x64'};
+
+      it('should be invalid', function(){
+        expect(validate(headers)).to.be.false;
+      });
+    });
+
+    describe('when OC CLI version in user-agent header is lower than Registry version', function(){
+      var headers = {'user-agent': 'oc-cli-0.2.3/v0.10.35-darwin-x64'};
+
+      it('should be invalid', function(){
+        expect(validate(headers)).to.be.false;
+      });
+    });
+
+    describe('when OC CLI version in user-agent header is equal to Registry version', function(){
+      var headers = {'user-agent': 'oc-cli-0.16.34/v0.10.35-darwin-x64'};
+
+      it('should be valid', function(){
+        expect(validate(headers)).to.be.true;
+      });
+    });
+
+    describe('when OC CLI version in user-agent header is higher than Registry version', function(){
+      var headers = {'user-agent': 'oc-cli-0.16.35/v0.10.35-darwin-x64'};
+
+      it('should be valid', function(){
+        expect(validate(headers)).to.be.true;
       });
     });
   });

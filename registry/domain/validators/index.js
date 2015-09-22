@@ -3,6 +3,7 @@
 var semver = require('semver');
 var _ = require('underscore');
 
+var OcCliVersionValidator = require('./oc-cli-version');
 var componentParametersValidator = require('./component-parameters');
 var pluginsRequirementsValidator = require('./plugins-requirements');
 var registryConfigurationValidator = require('./registry-configuration');
@@ -13,6 +14,7 @@ module.exports = {
     return !/[^a-zA-Z0-9\-\_]/.test(componentName) && componentName !== '_package';
   },
   validateComponentParameters: componentParametersValidator,
+  validateOcCliVersion: OcCliVersionValidator,
   validatePackage: uploadedPackageValidator,
   validatePluginsRequirements: pluginsRequirementsValidator,
   validateRegistryConfiguration: registryConfigurationValidator,

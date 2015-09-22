@@ -79,6 +79,9 @@ module.exports = function(dependencies){
               }), callback);
             });
 
+          } else if(err === strings.errors.registry.OC_CLI_VERSION_IS_NOT_VALID) {
+            logger.log(format(strings.errors.cli.OC_CLI_VERSION_IS_NOT_VALID, err).red);
+            return callback();
           } else {
             logger.log(format(strings.errors.cli.PUBLISHING_FAIL, err).red);
             return callback();
