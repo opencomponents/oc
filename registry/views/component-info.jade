@@ -10,7 +10,11 @@ block content
     select#versions
       each version in component.allVersions
         option(value=version, selected=(version === component.version ? "selected" : false))=version
-  p.w-100=component.description
+  p.w-100
+    | #{component.description}
+    if component.oc.state
+      span.details-state
+        span(class='component-state-' + component.oc.state.toLowerCase())= component.oc.state
 
   h3 Component Info
   +property('Repository', component.repository || 'not available', !!component.repository)
@@ -21,28 +25,26 @@ block content
   +showArray('Plugin dependencies', component.oc.plugins)
 
   h3 Parameters
-  - if(!component.oc.parameters)
+  if !component.oc.parameters
     p.w-100 none
-  - else {
+  else
 
     #plugins.table
       .row.header
-        .t-25 Name
-        .t-25 Type
-        .t-25 Mandatory
-        .t-25 Example
-
-      - for(var pName in component.oc.parameters){
-        - if(component.oc.parameters.hasOwnProperty(pName)){
-          - var p = component.oc.parameters[pName];
-          .row
-            .t-25=pName
-            .t-25=p.type
-            .t-25=(p.mandatory ? 'yes' : 'no')
-            .t-25=p.example
-        - }
-      - }
-  - }
+        .t-25 Parameters 
+        .t.75
+      each p, pName in component.oc.parameters
+        .row
+          .t-25
+            span.bold=pName
+            span (#{p.type}, #{p.mandatory ? 'mandatory' : 'optional'})
+          .t-75
+            if p.description
+              span=p.description
+              br
+              br
+            span.bold Example:
+            span=p.example
 
   h3 Code
   p 
