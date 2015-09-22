@@ -5,7 +5,7 @@ var path = require('path');
 var Targz = require('tar.gz');
 var _ = require('underscore');
 
-var packageInfo = require('../../package.json')
+var packageInfo = require('../../package.json');
 var RequireWrapper = require('../domain/require-wrapper');
 var strings = require('../../resources/index');
 var validator = require('../domain/validators');

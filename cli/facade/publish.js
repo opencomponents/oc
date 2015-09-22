@@ -5,6 +5,7 @@ var colors = require('colors');
 var format = require('stringformat');
 var path = require('path');
 var read = require('read');
+var semver = require('semver');
 var _ = require('underscore');
 
 var strings = require('../../resources/index');
