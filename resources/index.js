@@ -40,7 +40,7 @@ module.exports = {
       MANDATORY_PARAMETER_MISSING: 'Expected mandatory parameters are missing: {0}',
       MANDATORY_PARAMETER_MISSING_CODE: 'missing',
 
-      OC_CLI_VERSION_IS_NOT_VALID: 'OC CLI version is not valid',
+      OC_CLI_VERSION_IS_NOT_VALID: 'OC CLI version is not valid; Registry version: {0}',
       PARAMETER_WRONG_FORMAT: 'Parameters are not correctly formatted: {0}',
       PARAMETER_WRONG_FORMAT_CODE: 'wrong type',
       PLUGIN_NOT_FOUND: 'Component is trying to use un-registered plugins: {0}',
@@ -58,7 +58,7 @@ module.exports = {
       INIT_FAIL: 'An error happened when initialising the component: {0}',
       INVALID_CREDENTIALS: 'Invalid credentials',
       NAME_NOT_VALID: 'the name is not valid. Allowed characters are alphanumeric, _, -',
-      OC_CLI_VERSION_IS_NOT_VALID: 'The version of used OC CLI is invalid. Try to upgrade OC',
+      OC_CLI_VERSION_IS_NOT_VALID: 'The version of used OC CLI is invalid. Try to upgrade OC CLI running [sudo] npm i -g oc{0}',
       PACKAGE_CREATION_FAIL: 'An error happened when creating the package: {0}',
       PACKAGING_FAIL: 'an error happened while packaging {0}: {1}',
       PLUGIN_MISSING_FROM_REGISTRY: 'Looks like you are trying to use a plugin in the dev mode ({0}).\nYou need to mock it doing {1}',

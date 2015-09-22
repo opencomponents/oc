@@ -5,6 +5,7 @@ var path = require('path');
 var Targz = require('tar.gz');
 var _ = require('underscore');
 
+var packageInfo = require('../../package.json')
 var RequireWrapper = require('../domain/require-wrapper');
 var strings = require('../../resources/index');
 var validator = require('../domain/validators');
@@ -26,7 +27,7 @@ module.exports = function(repository){
     }
 
     if(!validator.validateOcCliVersion(req.headers)) {
-      res.errorDetails = strings.errors.registry.OC_CLI_VERSION_IS_NOT_VALID;
+      res.errorDetails = format(strings.errors.registry.OC_CLI_VERSION_IS_NOT_VALID, packageInfo.version);
       return res.json(409, { error: res.errorDetails });
     }
 
