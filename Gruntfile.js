@@ -47,7 +47,7 @@ module.exports = function(grunt) {
 
     ocClientPackageInfo.version = taskObject.pkg.version;
 
-    fs.writeJsonSync(path.join(__dirname, 'components/oc-client/package.json', {spaces: 2}), ocClientPackageInfo);
+    fs.writeJsonSync(path.join(__dirname, 'components/oc-client/package.json'), ocClientPackageInfo, {spaces: 2});
 
     var compressedClientLibrary = uglifyJs.minify(bundle, {fromString: true}).code;
 
