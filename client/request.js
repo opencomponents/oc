@@ -35,8 +35,8 @@ module.exports = function(urlPath, headers, callback){
       if(!callbackDone){
         callbackDone = true;
 
-        if(response.statusCode === 404){
-          callback('not found', null);
+        if(response.statusCode >= 400){
+          callback(response.statusCode);
         } else { 
           callback(null, body);
         }
@@ -45,7 +45,7 @@ module.exports = function(urlPath, headers, callback){
   }).on('error', function(e){
     if(!callbackDone){
       callbackDone = true;
-      callback(e, null);
+      callback(e);
     }
   });
 };
