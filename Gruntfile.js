@@ -47,7 +47,7 @@ module.exports = function(grunt) {
 
     ocClientPackageInfo.version = taskObject.pkg.version;
 
-    fs.writeJsonSync(path.join(__dirname, 'components/oc-client/package.json'), ocClientPackageInfo);
+    fs.writeJsonSync(path.join(__dirname, 'components/oc-client/package.json', {spaces: 2}), ocClientPackageInfo);
 
     var compressedClientLibrary = uglifyJs.minify(bundle, {fromString: true}).code;
 
@@ -79,7 +79,7 @@ module.exports = function(grunt) {
 
     grunt.log.ok('Package version upgrading to: ' + taskObject.pkg.version);
 
-    fs.writeJsonSync('package.json', taskObject.pkg);
+    fs.writeJsonSync('package.json', taskObject.pkg, {spaces: 2});
 
     grunt.task.run([
       'test-local',
