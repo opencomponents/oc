@@ -133,23 +133,30 @@ var Client = function(conf){
     options.headers = options.headers || {};
     options.headers.accept = 'application/vnd.oc.prerendered+json';
 
+    var processError = function(){
+      var errorDescription = settings.messages.serverSideRenderingFail;
+
+      if(!!options.disableFailoverRendering){
+        return callback(errorDescription, '');
+      }
+
+      fs.readFile(path.resolve(__dirname, './oc-client.min.js'), 'utf-8', function(err, clientJs){
+        var clientSideHtml = format('<script class="ocClientScript">{0}</script>{1}', clientJs, self.getUnrenderedComponent(href, options));
+        return callback(errorDescription, clientSideHtml);
+      });
+    };
+
     request(href, options.headers, function(err, apiResponse){
 
       if(err){
-        var errorDescription = settings.messages.serverSideRenderingFail;
-
-        if(!!options.disableFailoverRendering){
-          return callback(errorDescription, '');
-        }
-
-        fs.readFile(path.resolve(__dirname, './oc-client.min.js'), 'utf-8', function(err, clientJs){
-          var clientSideHtml = format('<script class="ocClientScript">{0}</script>{1}', clientJs, self.getUnrenderedComponent(href, options));
-          return callback(errorDescription, clientSideHtml);
-        });
-
+        return processError();
       } else {
 
-        apiResponse = JSON.parse(apiResponse);
+        try {
+          apiResponse = JSON.parse(apiResponse);
+        } catch(e){
+          return processError();
+        }
 
         var data = apiResponse.data,
             local = isLocal(apiResponse);
