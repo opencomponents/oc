@@ -672,47 +672,67 @@ describe('registry : domain : validator', function(){
       })
     });
 
-    var validate = function(headers){
-      return validator.validateOcCliVersion(headers);
+    var validate = function(userAgent){
+      return validator.validateOcCliVersion(userAgent);
     };
 
     describe('when user-agent header is not specified', function(){
-      var headers = {'any-header': 'value'};
+      var result = validate('value');
 
       it('should be invalid', function(){
-        expect(validate(headers)).to.be.false;
+        expect(result.isValid).to.be.false;
+      });
+
+      it('should suggest correct version of CLI', function(){
+        expect(result.error.suggestedVersion).to.equal('0.16.X');
       });
     });
 
     describe('when user-agent header doesn\'t have correct format', function(){
-      var headers = {'user-agent': 'oc-cli/1.2.3-v0.10.35-darwin-x64'};
+      var result = validate('oc-cli/1.2.3-v0.10.35-darwin-x64');
 
       it('should be invalid', function(){
-        expect(validate(headers)).to.be.false;
+        expect(result.isValid).to.be.false;
+      });
+
+      it('should suggest correct version of CLI', function(){
+        expect(result.error.suggestedVersion).to.equal('0.16.X');
       });
     });
 
     describe('when OC CLI version in user-agent header is lower than Registry version', function(){
-      var headers = {'user-agent': 'oc-cli-0.2.3/v0.10.35-darwin-x64'};
+      var result = validate('oc-cli-0.2.3/v0.10.35-darwin-x64');
 
       it('should be invalid', function(){
-        expect(validate(headers)).to.be.false;
+        expect(result.isValid).to.be.false;
+      });
+
+      it('should suggest correct version of CLI', function(){
+        expect(result.error.suggestedVersion).to.equal('0.16.X');
       });
     });
 
     describe('when OC CLI version in user-agent header is equal to Registry version', function(){
-      var headers = {'user-agent': 'oc-cli-0.16.34/v0.10.35-darwin-x64'};
+      var result = validate('oc-cli-0.16.34/v0.10.35-darwin-x64');
 
       it('should be valid', function(){
-        expect(validate(headers)).to.be.true;
+        expect(result.isValid).to.be.true;
+      });
+
+      it('should not return an error', function(){
+        expect(result.error).to.be.empty;
       });
     });
 
     describe('when OC CLI version in user-agent header is higher than Registry version', function(){
-      var headers = {'user-agent': 'oc-cli-0.16.35/v0.10.35-darwin-x64'};
+      var result = validate('oc-cli-0.16.35/v0.10.35-darwin-x64');
 
       it('should be valid', function(){
-        expect(validate(headers)).to.be.true;
+        expect(result.isValid).to.be.true;
+      });
+
+      it('should not return an error', function(){
+        expect(result.error).to.be.empty;
       });
     });
   });
