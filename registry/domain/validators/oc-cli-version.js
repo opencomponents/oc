@@ -1,25 +1,39 @@
 'use strict';
 
+var format = require('stringformat');
 var semver = require('semver');
 
 var packageInfo = require('../../../package.json');
 
-module.exports = function(headers) {
-  var userAgent = headers['user-agent'];
+module.exports = function(userAgent) {
+  var result = { isValid: false};
+  var error = {
+    suggestedVersion: format('{0}.{1}.X', semver.major(packageInfo.version), semver.minor(packageInfo.version)),
+    registryVersion: packageInfo.version,
+    cliVersion: ''
+  };
 
   if(!userAgent) {
-    return false;
+    result.error = error;
+    result.error.code = 'empty';
+    return result;
   }
 
   var matchVersion = /oc-cli-([\w|.]+).*/.exec(userAgent);
   if(!matchVersion) {
-    return false;
+    result.error = error;
+    result.error.code = result.error.cliVersion = 'not_valid';
+    return result;
   }
 
   var cliVersion = matchVersion[1];
   if(semver.lt(cliVersion, packageInfo.version)) {
-    return false;
+    result.error = error;
+    result.error.code = 'old_version';
+    result.error.cliVersion = cliVersion;
+    return result;
   }
 
-  return true;
+  result.isValid = true;
+  return result;
 };

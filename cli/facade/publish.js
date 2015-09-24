@@ -80,14 +80,9 @@ module.exports = function(dependencies){
               }), callback);
             });
 
-          } else if(err.match('OC CLI version is not valid; Registry version:')) {
-            var matchVersion = /OC CLI version is not valid; Registry version: ([\w|.]+)/.exec(err);
-            var registryVersion = '';
-            if(!!matchVersion) {
-              registryVersion = matchVersion[1];
-              registryVersion = format('@{0}.{1}.X', semver.major(registryVersion), semver.minor(registryVersion));
-            }
-            logger.log(format(strings.errors.cli.OC_CLI_VERSION_IS_NOT_VALID, registryVersion).red);
+          } else if(err.code === 'cli_version_not_valid') {
+            var errorDetails = format(strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE, err.details.suggestedVersion);
+            logger.log(format(strings.errors.cli.PUBLISHING_FAIL, errorDetails).red);
             return callback();
           } else {
             logger.log(format(strings.errors.cli.PUBLISHING_FAIL, err).red);

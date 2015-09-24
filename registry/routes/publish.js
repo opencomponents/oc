@@ -5,7 +5,6 @@ var path = require('path');
 var Targz = require('tar.gz');
 var _ = require('underscore');
 
-var packageInfo = require('../../package.json');
 var RequireWrapper = require('../domain/require-wrapper');
 var strings = require('../../resources/index');
 var validator = require('../domain/validators');
@@ -26,9 +25,14 @@ module.exports = function(repository){
       return res.json(409, { error: res.errorDetails });
     }
 
-    if(!validator.validateOcCliVersion(req.headers)) {
-      res.errorDetails = format(strings.errors.registry.OC_CLI_VERSION_IS_NOT_VALID, packageInfo.version);
-      return res.json(409, { error: res.errorDetails });
+    var validationResult = validator.validateOcCliVersion(req.headers['user-agent']);
+    if(!validationResult.isValid) {
+      res.errorDetails = format(strings.errors.registry.OC_CLI_VERSION_IS_NOT_VALID, validationResult.error.registryVersion, validationResult.error.cliVersion);
+      return res.json(409, {
+        code: 'cli_version_not_valid',
+        error: res.errorDetails,
+        details: validationResult.error
+      });
     }
 
     var files = req.files,
