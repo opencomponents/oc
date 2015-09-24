@@ -81,7 +81,8 @@ module.exports = function(dependencies){
             });
 
           } else if(err.code === 'cli_version_not_valid') {
-            var errorDetails = format(strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE, err.details.suggestedVersion);
+            var upgradeCommand = format(strings.commands.cli.UPGRADE, err.details.suggestedVersion),
+                errorDetails = format(strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE, upgradeCommand.blue);
             logger.log(format(strings.errors.cli.PUBLISHING_FAIL, errorDetails).red);
             return callback();
           } else {

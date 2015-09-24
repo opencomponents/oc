@@ -135,7 +135,7 @@ describe('cli : facade : publish', function(){
                 expect(logSpy.log.args[4][0]).to.include('http://www.api2.com');
               });
 
-              describe('when error happens', function(){
+              describe('when a generic error happens', function(){
 
                 beforeEach(function(){
                   sinon.stub(registry, 'putComponent').yields('nope!');
@@ -148,6 +148,32 @@ describe('cli : facade : publish', function(){
 
                 it('should show an error', function(){
                   expect(logSpy.log.args[3][0]).to.include('An error happened when publishing the component: nope!');
+                });
+              });
+
+              describe('when using an old cli', function(){
+
+                beforeEach(function(){
+                  sinon.stub(registry, 'putComponent').yields({
+                    code: 'cli_version_not_valid',
+                    error: 'OC CLI version is not valid: Registry 1.23.4, CLI 0.1.2',
+                    details: {
+                      code: 'old_version',
+                      cliVersion: '0.1.2',
+                      registryVersion: '1.23.4',
+                      suggestedVersion: '1.23.X'
+                    }
+                  });
+                  execute();
+                });
+
+                afterEach(function(){
+                  registry.putComponent.restore();
+                });
+
+                it('should show an error', function(){
+                  expect(logSpy.log.args[3][0]).to.equal(('An error happened when publishing the component: the version of used ' +
+                    'OC CLI is invalid. Try to upgrade OC CLI running ' + ('[sudo] npm i -g oc@1.23.X').blue).red);
                 });
               });
 
