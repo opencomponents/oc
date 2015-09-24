@@ -5,6 +5,7 @@ var colors = require('colors');
 var format = require('stringformat');
 var path = require('path');
 var read = require('read');
+var semver = require('semver');
 var _ = require('underscore');
 
 var strings = require('../../resources/index');
@@ -79,6 +80,11 @@ module.exports = function(dependencies){
               }), callback);
             });
 
+          } else if(err.code === 'cli_version_not_valid') {
+            var upgradeCommand = format(strings.commands.cli.UPGRADE, err.details.suggestedVersion),
+                errorDetails = format(strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE, upgradeCommand.blue);
+            logger.log(format(strings.errors.cli.PUBLISHING_FAIL, errorDetails).red);
+            return callback();
           } else {
             logger.log(format(strings.errors.cli.PUBLISHING_FAIL, err).red);
             return callback();

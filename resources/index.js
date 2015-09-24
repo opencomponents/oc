@@ -3,7 +3,8 @@
 module.exports = {
   commands: {
     cli: {
-      MOCK_PLUGIN: 'oc mock plugin <pluginName> "some value"'
+      MOCK_PLUGIN: 'oc mock plugin <pluginName> "some value"',
+      UPGRADE: '[sudo] npm i -g oc@{0}'
     }
   },
   errors: {
@@ -17,7 +18,6 @@ module.exports = {
       COMPONENT_VERSION_ALREADY_FOUND_CODE: 'already_exists',
       COMPONENT_VERSION_NOT_VALID: 'Version "{0}" is not a valid semantic version.',
       COMPONENT_VERSION_NOT_VALID_CODE: 'version_not_valid',
-       
       CONFIGURATION_DEPENDENCIES_MUST_BE_ARRAY: 'Registry configuration is not valid: dependencies must be an array',
       CONFIGURATION_A_DEPENDENCY_NOT_FOUND: 'Registry configuration is not valid: a dependency is not valid.',
       CONFIGURATION_EMPTY: 'Registry configuration is empty',
@@ -33,13 +33,11 @@ module.exports = {
       DEPENDENCY_NOT_FOUND_CODE: 'DEPENDENCY_MISSING_FROM_REGISTRY',
       LOCAL_PUBLISH_NOT_ALLOWED: 'Components can\'t be published to local repository',
       LOCAL_PUBLISH_NOT_ALLOWED_CODE: 'not_allowed',
-
       GENERIC_ERROR: 'error!',
       GENERIC_NOT_FOUND: 'not found!',
-
       MANDATORY_PARAMETER_MISSING: 'Expected mandatory parameters are missing: {0}',
       MANDATORY_PARAMETER_MISSING_CODE: 'missing',
-
+      OC_CLI_VERSION_IS_NOT_VALID: 'OC CLI version is not valid: Registry {0}, CLI {1}',
       PARAMETER_WRONG_FORMAT: 'Parameters are not correctly formatted: {0}',
       PARAMETER_WRONG_FORMAT_CODE: 'wrong type',
       PLUGIN_NOT_FOUND: 'Component is trying to use un-registered plugins: {0}',
@@ -57,6 +55,7 @@ module.exports = {
       INIT_FAIL: 'An error happened when initialising the component: {0}',
       INVALID_CREDENTIALS: 'Invalid credentials',
       NAME_NOT_VALID: 'the name is not valid. Allowed characters are alphanumeric, _, -',
+      OC_CLI_VERSION_NEEDS_UPGRADE: 'the version of used OC CLI is invalid. Try to upgrade OC CLI running {0}',
       PACKAGE_CREATION_FAIL: 'An error happened when creating the package: {0}',
       PACKAGING_FAIL: 'an error happened while packaging {0}: {1}',
       PLUGIN_MISSING_FROM_REGISTRY: 'Looks like you are trying to use a plugin in the dev mode ({0}).\nYou need to mock it doing {1}',
@@ -76,7 +75,6 @@ module.exports = {
     s3: {
       DIR_NOT_FOUND: 'Directory "{0}" not found',
       DIR_NOT_FOUND_CODE: 'dir_not_found',
-
       FILE_NOT_FOUND: 'File "{0}" not found',
       FILE_NOT_FOUND_CODE: 'file_not_found'
     }

@@ -6,6 +6,7 @@ var Targz = require('tar.gz');
 var _ = require('underscore');
 
 var RequireWrapper = require('../domain/require-wrapper');
+var strings = require('../../resources/index');
 var validator = require('../domain/validators');
 
 module.exports = function(repository){
@@ -24,6 +25,16 @@ module.exports = function(repository){
       return res.json(409, { error: res.errorDetails });
     }
 
+    var validationResult = validator.validateOcCliVersion(req.headers['user-agent']);
+    if(!validationResult.isValid) {
+      res.errorDetails = format(strings.errors.registry.OC_CLI_VERSION_IS_NOT_VALID, validationResult.error.registryVersion, validationResult.error.cliVersion);
+      return res.json(409, {
+        code: 'cli_version_not_valid',
+        error: res.errorDetails,
+        details: validationResult.error
+      });
+    }
+
     var files = req.files,
         packageFile = files[_.keys(files)[0]],
         packagePath = path.resolve(packageFile.path),
@@ -38,7 +49,7 @@ module.exports = function(repository){
       }
 
       repository.publishComponent(packageOutput, req.params.componentName, req.params.componentVersion, function(err, result){
-        
+
         if(err){
           if(err.code === 'not_allowed'){
             res.errorDetails = format('Publish not allowed: {0}', err.msg);
