@@ -50,17 +50,6 @@ style.
     border: 1px solid #000;
   }
 
-  .row.header {
-    background-color: #EBE9E9;
-    border: 1px solid #000 !important;
-  }
-
-  .row.header div {
-    font-weight: bold;
-    margin: 0;
-    padding: 1%;
-  }
-
   .table {
     width: 100%;
     float: left;
@@ -71,9 +60,19 @@ style.
     padding: 0 1% 1% 1%;
   }
   
+  .t-75 {
+    width: 73%;
+    padding: 1% 1% 1% 1%;
+  }
+
   .t-60 {
     width: 58%;
     padding: 0 1% 1% 1%;
+  }
+
+  .t-25 {
+    width: 23%;
+    padding: 1% 1% 1% 1%;
   }
 
   .t-10 {
@@ -90,10 +89,22 @@ style.
   }
 
   .row {
-    height: 40px;
     background-color: #F9F9F9;
     border: 1px solid #000;
-    border-top: 0;
+    width: 100%;
+    float: none;
+    display: inline-block;
+  }
+
+  .row.header {
+    background-color: #EBE9E9;
+    border: 1px solid #000 !important;
+  }
+
+  .row.header div {
+    font-weight: bold;
+    margin: 0;
+    padding: 1%;
   }
 
   .row.double {
@@ -102,6 +113,11 @@ style.
 
   .row div {
     float: left;
+    word-wrap: break-word;
+  }
+
+  .row span {
+    padding-right: 10px;
   }
 
   .componentRow:hover {
@@ -155,20 +171,35 @@ style.
     padding: 10px;
   }
 
+  .details-state span {
+    padding: 3px;
+    margin-left: 10px;
+    font-size: 75%;
+    font-weight: bold;
+    color: #FFF;
+    background-color: #1E42B9;
+    white-space: nowrap;
+  }
+
   .state span {
     padding: 3% 8% 3% 8%;
     font-size: 75%;
     font-weight: bold;
     color: #FFF;
     background-color: #1E42B9;
+    white-space: nowrap;
   }
 
-  .state .component-state-experimental {
+  span.component-state-experimental {
     background-color: #B9961E;
   }
 
-  .state .component-state-deprecated {
+  span.component-state-deprecated {
     background-color: #B9381E;
+  }
+
+  .bold {
+    font-weight: bold;
   }
 
   .hide {
