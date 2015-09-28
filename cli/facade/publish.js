@@ -23,6 +23,12 @@ module.exports = function(dependencies){
         compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
 
     var getCredentials = function(callback){
+      if(opts.username && opts.password){
+        return callback(null, {
+          username: opts.username,
+          password: opts.password
+        });
+      }
 
       logger.log(strings.messages.cli.ENTER_USERNAME.yellow);
 
