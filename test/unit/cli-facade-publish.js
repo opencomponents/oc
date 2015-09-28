@@ -16,9 +16,10 @@ describe('cli : facade : publish', function(){
       PublishFacade = require('../../cli/facade/publish'),
       publishFacade = new PublishFacade({ registry: registry, local: local, logger: logSpy });
 
-  var execute = function(){
+  var execute = function(creds){
+    creds = creds || {};
     logSpy.log = sinon.stub();
-    publishFacade({ componentPath: path.resolve('test/fixtures/components/hello-world/') });
+    publishFacade({ componentPath: path.resolve('test/fixtures/components/hello-world/'), username: creds.username, password: creds.password });
   };
 
   describe('when publishing component', function(){
@@ -174,6 +175,39 @@ describe('cli : facade : publish', function(){
                 it('should show an error', function(){
                   expect(logSpy.log.args[3][0]).to.equal(('An error happened when publishing the component: the version of used ' +
                     'OC CLI is invalid. Try to upgrade OC CLI running ' + ('[sudo] npm i -g oc@1.23.X').blue).red);
+                });
+              });
+
+              describe('when registry requires authentication', function(){
+                beforeEach(function(){
+                  sinon.stub(registry, 'putComponent').yields('Unauthorized');
+                  execute();
+                });
+
+                afterEach(function(){
+                  registry.putComponent.restore();
+                });
+
+                it('should prompt for credentials', function(){
+                  expect(logSpy.log.args[3][0]).to.equal(('Registry requires credentials.').yellow);
+                });
+              });
+
+              describe('when credentials are prepopulated', function(){
+                beforeEach(function(){
+                  sinon.stub(registry, 'putComponent').yields('Unauthorized');
+                  execute({
+                      username: 'myuser',
+                      password: 'password'
+                  });
+                });
+
+                afterEach(function(){
+                  registry.putComponent.restore();
+                });
+
+                it('should not prompt for credentials', function(){
+                  expect(logSpy.log.args[4][0]).to.equal(('Using specified credentials').green);
                 });
               });
 

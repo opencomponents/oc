@@ -24,6 +24,7 @@ module.exports = function(dependencies){
 
     var getCredentials = function(callback){
       if(opts.username && opts.password){
+        logger.log(strings.messages.cli.USING_CREDS.green);
         return callback(null, {
           username: opts.username,
           password: opts.password
