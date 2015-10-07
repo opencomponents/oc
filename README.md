@@ -275,12 +275,13 @@ MIT
 
 # Contributors
 
-If you wish to contribute, check the [contributing guidelines](contributing.md).
+If you wish to contribute, check the [contributing guidelines](CONTRIBUTING.md).
 
 Maintainer:
 * [@matteofigus](https://github.com/matteofigus)
 
 Contributors:
+* [@ajcw](https://github.com/ajcw)
 * [@andyroyle](https://github.com/andyroyle)
 * [@char1e5](https://github.com/char1e5)
 * [@federicomaffei](https://github.com/federicomaffei)
