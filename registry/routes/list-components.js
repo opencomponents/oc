@@ -46,7 +46,12 @@ module.exports = function(repository){
             availableDependencies: res.conf.dependencies,
             availablePlugins: res.conf.plugins,
             components: componentsInfo,
-            componentsList: _.map(componentsInfo, function(component){ return component.name; }),
+            componentsList: _.map(componentsInfo, function(component){ 
+              return {
+                name: component.name,
+                state: (!!component.oc && !!component.oc.state) ? component.oc.state : ''
+              }; 
+            }),
             componentsReleases: componentsReleases,
             href: res.conf.baseUrl,
             ocVersion: packageInfo.version,
