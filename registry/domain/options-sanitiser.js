@@ -5,6 +5,7 @@ var _ = require('underscore');
 
 var dependenciesResolver = require('./dependencies-resolver');
 var settings = require('../../resources/settings');
+var auth = require('./authentication');
 
 module.exports = function(input){
   var options = _.clone(input);
@@ -12,7 +13,7 @@ module.exports = function(input){
   if(!options.publishAuth){
     options.beforePublish = function(req, res, next){ next(); };
   } else {
-    options.beforePublish = express.basicAuth(options.publishAuth.username, options.publishAuth.password);
+    options.beforePublish = auth.middleware(options.publishAuth);
   }
 
   if(!options.prefix){

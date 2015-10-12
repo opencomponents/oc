@@ -65,11 +65,11 @@ describe('registry : domain : validator', function(){
 
       describe('when specified and not supported', function(){
 
-        var conf = { publishAuth: { type: 'oauth' }};
+        var conf = { publishAuth: { type: 'blarg' }};
 
         it('should not be valid', function(){
           expect(validate(conf).isValid).to.be.false;
-          expect(validate(conf).message).to.equal('Registry configuration is not valid: auth not supported');
+          expect(validate(conf).message).to.equal('Registry configuration is not valid: module "oc-auth-blarg" not found');
         });
       });
 
