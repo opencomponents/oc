@@ -3,6 +3,7 @@
 var _ = require('underscore');
 
 var strings = require('../../../resources');
+var auth = require('../authentication');
 
 module.exports = function(conf){
 
@@ -13,7 +14,7 @@ module.exports = function(conf){
     response.message = message || 'registry configuration is not valid';
     return response;
   };
-  
+
   if(!conf || !_.isObject(conf) || _.keys(conf).length === 0){
     return returnError(strings.errors.registry.CONFIGURATION_EMPTY);
   }
@@ -23,7 +24,7 @@ module.exports = function(conf){
   if(!!prefix){
     if(prefix.substr(0, 1) !== '/'){
       return returnError(strings.errors.registry.CONFIGURATION_PREFIX_DOES_NOT_START_WITH_SLASH);
-    } 
+    }
 
     if(prefix.substr(prefix.length - 1) !== '/'){
       return returnError(strings.errors.registry.CONFIGURATION_PREFIX_DOES_NOT_END_WITH_SLASH);
@@ -33,12 +34,9 @@ module.exports = function(conf){
   var publishAuth = conf.publishAuth;
 
   if(!!publishAuth){
-    if(publishAuth.type !== 'basic'){
-      return returnError(strings.errors.registry.CONFIGURATION_PUBLISH_AUTH_NOT_SUPPORTED);
-    } else {
-      if(!publishAuth.username || !publishAuth.password){
-        return returnError(strings.errors.registry.CONFIGURATION_PUBLISH_AUTH_CREDENTIALS_MISSING);
-      }
+    var res = auth.validate(publishAuth);
+    if(!res.isValid){
+        return returnError(res.message);
     }
   }
 
