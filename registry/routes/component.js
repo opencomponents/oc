@@ -205,7 +205,8 @@ module.exports = function(conf, repository){
                 exports: {}
               },
               console: res.conf.local ? console : { log: _.noop },
-              setTimeout: setTimeout
+              setTimeout: setTimeout,
+              Buffer: Buffer
             };
 
 
