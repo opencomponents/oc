@@ -143,7 +143,6 @@ module.exports = function(conf, repository){
 
           _.forEach(plugins, function(plugin, pluginName){
             wrapped[pluginName] = function(){
-              this.__reqInfo = requestInfo;
               return plugin.apply(this, arguments);
             };
           });
