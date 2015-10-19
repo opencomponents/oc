@@ -736,4 +736,76 @@ describe('registry : domain : validator', function(){
       });
     });
   });
+
+  describe('when validating node engine version in request headers', function(){
+    var validator = injectr('../../registry/domain/validators/index.js', {
+      './node-version': injectr('../../registry/domain/validators/node-version.js', {
+        '../../../package.json': { engines: { node: '>=0.10.35' }}
+      })
+    });
+
+    var validate = function(userAgent){
+      return validator.validateNodeVersion(userAgent, 'v0.10.36');
+    };
+
+    describe('when user-agent header is not specified', function(){
+      var result = validate('value');
+
+      it('should be invalid', function(){
+        expect(result.isValid).to.be.false;
+      });
+
+      it('should suggest correct version of node engine', function(){
+        expect(result.error.suggestedVersion).to.equal('>=0.10.35');
+      });
+    });
+
+    describe('when user-agent header doesn\'t have correct format', function(){
+      var result = validate('oc-cli/1.2.3-v0.10.35-darwin-x64');
+
+      it('should be invalid', function(){
+        expect(result.isValid).to.be.false;
+      });
+
+      it('should suggest correct version of node engine', function(){
+        expect(result.error.suggestedVersion).to.equal('>=0.10.35');
+      });
+    });
+
+    describe('when node version in user-agent header is lower than Registry version of node', function(){
+      var result = validate('oc-cli-0.2.3/v0.10.34-darwin-x64');
+
+      it('should be invalid', function(){
+        expect(result.isValid).to.be.false;
+      });
+
+      it('should suggest correct version of node engine', function(){
+        expect(result.error.suggestedVersion).to.equal('>=0.10.35');
+      });
+    });
+
+    describe('when node version in user-agent header is equal to Registry version of node', function(){
+      var result = validate('oc-cli-0.16.34/v0.10.35-darwin-x64');
+
+      it('should be valid', function(){
+        expect(result.isValid).to.be.true;
+      });
+
+      it('should not return an error', function(){
+        expect(result.error).to.be.empty;
+      });
+    });
+
+    describe('when node version in user-agent header is higher than Registry version of node', function(){
+      var result = validate('oc-cli-0.16.35/v0.10.36-darwin-x64');
+
+      it('should be valid', function(){
+        expect(result.isValid).to.be.true;
+      });
+
+      it('should not return an error', function(){
+        expect(result.error).to.be.empty;
+      });
+    });
+  });
 });

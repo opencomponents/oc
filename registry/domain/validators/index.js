@@ -3,18 +3,20 @@
 var semver = require('semver');
 var _ = require('underscore');
 
-var OcCliVersionValidator = require('./oc-cli-version');
+var ocCliVersionValidator = require('./oc-cli-version');
 var componentParametersValidator = require('./component-parameters');
 var pluginsRequirementsValidator = require('./plugins-requirements');
 var registryConfigurationValidator = require('./registry-configuration');
 var uploadedPackageValidator = require('./uploaded-package');
+var nodeVersionValidator = require('./node-version');
 
 module.exports = {
   validateComponentName: function(componentName){
     return !/[^a-zA-Z0-9\-\_]/.test(componentName) && componentName !== '_package';
   },
   validateComponentParameters: componentParametersValidator,
-  validateOcCliVersion: OcCliVersionValidator,
+  validateNodeVersion: nodeVersionValidator,
+  validateOcCliVersion: ocCliVersionValidator,
   validatePackage: uploadedPackageValidator,
   validatePluginsRequirements: pluginsRequirementsValidator,
   validateRegistryConfiguration: registryConfigurationValidator,
