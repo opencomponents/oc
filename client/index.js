@@ -10,8 +10,9 @@ var vm = require('vm');
 
 var Handlebars = require('./renderers/handlebars');
 var Jade = require('./renderers/jade');
-var request = require('./request');
+var request = require('./utils/request');
 var settings = require('./settings');
+var _ = require('./utils/helpers');
 
 var isLocal = function(apiResponse){
   return apiResponse.type === 'oc-component-local';
@@ -19,10 +20,7 @@ var isLocal = function(apiResponse){
 
 var readJson = function(file, callback){
   fs.readFile(file, {}, function(err, data) {
-    
-    if(err){
-      return callback(err);
-    }
+    if(err){ return callback(err); }
 
     var obj = null;
 
@@ -50,7 +48,7 @@ var loadConfig = function(callback){
         var nextConfigFolder = path.resolve(baseDir, '..');
 
         if(nextConfigFolder === baseDir){
-          return callback('File not found');
+          return callback(settings.messages.fileNotFound);
         } else {
           return checkConfigInFolder(nextConfigFolder, callback);
         }
@@ -60,20 +58,70 @@ var loadConfig = function(callback){
 
   return checkConfigInFolder(currentFolder, callback);
 };
+  
+var getRenderedComponent = function(data){
 
-var Client = function(conf){
+  if(!data.container){ return data.html; }
+
+  var random = Math.floor(Math.random()*9999999999);
+
+  return format('<oc-component href="{0}" data-hash="{1}" id="{2}" data-rendered="true" data-version="{3}">{4}</oc-component>', 
+                data.href, data.key, random, data.version, data.html);
+};
+
+
+var getUnrenderedComponent = function(href, options){
+
+  if(!options || !options.ie8){
+    return format('<oc-component href="{0}" data-rendered="false"></oc-component>', href);
+  }
+
+  return format('<script class="ocComponent">(function($d,$w,oc){var href=\'href="{0}"\';' + 
+                '$d.write((!!$w.navigator.userAgent.match(/MSIE 8/))?(\'<div data-oc-component="true" \'+href+\'>' +
+                '</div>\'):(\'<oc-component \'+href+\'></oc-component>\'));if(oc) oc.renderUnloadedComponents();}' +
+                '(document,window,((typeof(oc)===\'undefined\')?undefined:oc)));</script>', href);
+};
+
+module.exports = function(conf){
+
   this.renderers = {
     handlebars: new Handlebars(),
     jade: new Jade()
   };
 
-  this.cacheManager = new Cache(!!conf && !!conf.cache ? conf.cache : {});
+  this.config = conf;
+  this.cacheManager = new Cache(_.has(conf, 'cache') ? conf.cache : {});
+
+  var self = this;
+
+  var getCompiledTemplate = function(template, tryGetCached, timeout, callback){
+    if(!!tryGetCached){
+      var compiledTemplate = self.cacheManager.get('template', template.key);
+      if(!!compiledTemplate){
+        return callback(null, compiledTemplate);
+      }
+    }
+
+    request(template.src, {}, timeout, function(err, templateText){
+      if(!!err){ return callback(err); }
+
+      var context = { jade: require('jade/runtime.js')};
+      vm.runInNewContext(templateText, context);
+      var compiledTemplate = context.oc.components[template.key];
+      self.cacheManager.set('template', template.key, compiledTemplate);
+      return callback(null, compiledTemplate);
+     });
+  };
 
   this.renderComponent = function(componentName, options, callback){
-    var self = this;
+    if(_.isFunction(options)){
+      callback = options;
+      options = {};
+    }
 
     options = options || {};
     options.headers = options.headers || {};
+    options.timeout = options.timeout || 5;
 
     var getConfig = function(callback){
       if(!!self.config){
@@ -90,20 +138,16 @@ var Client = function(conf){
     };
 
     getConfig(function(err, config){
-      if(!!err){
-        return callback(err);
+      if(!!err){ return callback(err); }
+
+      config.registries = _.toArray(config.registries);
+
+      if(_.isEmpty(config.registries)){
+        return callback(settings.messages.registryUrlMissing);
       }
 
-      if(!!config.registries && typeof(config.registries) === 'string'){
-        config.registries = [config.registries];
-      }
-
-      if(!config.registries || config.registries.length === 0){
-        return callback('Configuration is not valid - Registry location not found');
-      }
-
-      if(!config.components || !config.components.hasOwnProperty(componentName)){
-        return callback('Configuration is not valid - Component not found');
+      if(!_.has(config.components, componentName)){
+        return callback(settings.messages.componentMissing);
       }
 
       var version = config.components[componentName],
@@ -122,16 +166,15 @@ var Client = function(conf){
   };
 
   this.render = function(href, options, callback){
-    if(typeof options === 'function'){
+    if(_.isFunction(options)){
       callback = options;
       options = {};
     }
 
-    var self = this;
-
     options = options || {};
     options.headers = options.headers || {};
     options.headers.accept = 'application/vnd.oc.prerendered+json';
+    options.timeout = options.timeout || 5;
 
     var processError = function(){
       var errorDescription = settings.messages.serverSideRenderingFail;
@@ -141,12 +184,12 @@ var Client = function(conf){
       }
 
       fs.readFile(path.resolve(__dirname, './oc-client.min.js'), 'utf-8', function(err, clientJs){
-        var clientSideHtml = format('<script class="ocClientScript">{0}</script>{1}', clientJs, self.getUnrenderedComponent(href, options));
+        var clientSideHtml = format('<script class="ocClientScript">{0}</script>{1}', clientJs, getUnrenderedComponent(href, options));
         return callback(errorDescription, clientSideHtml);
       });
     };
 
-    request(href, options.headers, function(err, apiResponse){
+    request(href, options.headers, options.timeout, function(err, apiResponse){
 
       if(err){
         return processError();
@@ -162,82 +205,31 @@ var Client = function(conf){
             local = isLocal(apiResponse);
 
         if(options.render === 'client'){
-          return callback(null, self.getUnrenderedComponent(href, options));
+          return callback(null, getUnrenderedComponent(href, options));
         }
 
-        self.getStaticTemplate(apiResponse.template.src, !local, function(templateText){
+        getCompiledTemplate(apiResponse.template, !local, options.timeout, function(err, template){
 
-          var context = apiResponse.template.type === 'jade' ? {
-             jade: require('jade/runtime.js')
-          } : {};
+          if(!!err){ return processError(); }
 
-          vm.runInNewContext(templateText, context);
+          var renderOptions = {
+            href: href,
+            key: apiResponse.template.key,
+            version: apiResponse.version,
+            templateType: apiResponse.template.type,
+            container: (options.container === true) ? true : false
+          };
 
-          var key = apiResponse.template.key,
-              template = context.oc.components[key],
-              renderOptions = {
-                href: href,
-                key: key,
-                version: apiResponse.version,
-                templateType: apiResponse.template.type,
-                container: (options.container === true) ? true : false
-              };
-
-          self.renderTemplate(template, data, renderOptions, callback);
+          return self.renderTemplate(template, data, renderOptions, callback);
         });
       }
     });
   };
 
-  this.getUnrenderedComponent = function(href, options){
-
-    if(!options || !options.ie8){
-      return format('<oc-component href="{0}" data-rendered="false"></oc-component>', href);
-    }
-
-    return format('<script class="ocComponent">(function($d,$w,oc){var href=\'href="{0}"\';' + 
-                  '$d.write((!!$w.navigator.userAgent.match(/MSIE 8/))?(\'<div data-oc-component="true" \'+href+\'>' +
-                  '</div>\'):(\'<oc-component \'+href+\'></oc-component>\'));if(oc) oc.renderUnloadedComponents();}' +
-                  '(document,window,((typeof(oc)===\'undefined\')?undefined:oc)));</script>', href);
-  };
-
-  this.getRenderedComponent = function(data){
-
-    if(!data.container){
-      return data.html;
-    }
-
-    var random = Math.floor(Math.random()*9999999999);
-
-    return format('<oc-component href="{0}" data-hash="{1}" id="{2}" data-rendered="true" data-version="{3}">{4}</oc-component>', 
-                  data.href, data.key, random, data.version, data.html);
-  };
-
-  this.getStaticTemplate = function(templatePath, tryGetCached, callback){
-    var self = this;
-    
-    if(!!tryGetCached){
-      var template = self.cacheManager.get('template', templatePath);
-      if(!!template){
-        return callback(template);
-      }
-    }
-
-    request(templatePath, function(err, template){
-      self.cacheManager.set('template', templatePath, template);
-      callback(template);
-    });
-  };
-
   this.renderTemplate = function(template, data, options, callback){
-
-    var getRendered = this.getRenderedComponent;
-
     this.renderers[options.templateType].render(template, data, function(err, html){
       options.html = html;
-      callback(err, getRendered(options));
+      return callback(err, getRenderedComponent(options));
     });
   };
 };
-
-module.exports = Client;

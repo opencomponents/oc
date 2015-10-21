@@ -5,6 +5,9 @@ module.exports = {
     src: './oc.json'
   },
   messages: {
-    serverSideRenderingFail: 'Server-side rendering failed',
+    componentMissing: 'Configuration is not valid - Component not found',
+    fileNotFound: 'File not found',
+    registryUrlMissing: 'Configuration is not valid - Registry location not found',
+    serverSideRenderingFail: 'Server-side rendering failed'
   }
 };

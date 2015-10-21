@@ -21,27 +21,23 @@ describe('client', function(){
       };
 
   before(function(done){
-    client = new oc.Client();
-    registry = new oc.Registry(conf);
-    clientOfflineRegistry = new oc.Client();
-
-    client.config = {
+    client = new oc.Client({
       registries: ['http://localhost:3030'],
       components: {
         'hello-world': '~1.0.0'
       }
-    };
+    });
 
-    clientOfflineRegistry.config = {
+    registry = new oc.Registry(conf);
+
+    clientOfflineRegistry = new oc.Client({
       registries: ['http://localhost:1234'],
       components: {
         'hello-world': '~1.0.0'
       }
-    };
-
-    registry.start(function(err, app){
-      done();
     });
+
+    registry.start(done);
   });
 
   after(function(done){
