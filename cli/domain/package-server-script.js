@@ -10,13 +10,13 @@ var _ = require('underscore');
 
 var hashBuilder = require('../../utils/hash-builder');
 var strings = require('../../resources');
+var config = require('../../resources/settings');
+var CONST_MAX_ITERATIONS = config.maxLoopIterations;
 
 var wrapLoops = function(code){
-  var CONST_MAX_ITERATIONS = 1e9; // should this be configurable?
-  var monitoredKeywords = ['WhileStatement', 'ForStatement', 'DoWhileStatement'];
-
+  var loopKeywords = ['WhileStatement', 'ForStatement', 'DoWhileStatement'];
   return falafel(code, function (node) {
-    if(monitoredKeywords.indexOf(node.type) > -1){
+    if(loopKeywords.indexOf(node.type) > -1){
       node.update('{ var __ITER = ' + CONST_MAX_ITERATIONS + ';'
         + node.source() + '}');
     }
@@ -25,7 +25,7 @@ var wrapLoops = function(code){
         return;
     }
 
-    if(monitoredKeywords.indexOf(node.parent.type) > -1 && node.type === 'BlockStatement'){
+    if(loopKeywords.indexOf(node.parent.type) > -1 && node.type === 'BlockStatement'){
       node.update('{ if(__ITER <=0){ throw new Error("loop exceeded maximum allowed iterations"); } '
         + node.source() + ' __ITER--; }');
     }
