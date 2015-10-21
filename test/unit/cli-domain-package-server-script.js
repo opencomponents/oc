@@ -8,12 +8,10 @@ var uglifyJs = require('uglify-js');
 var _ = require('underscore');
 
 var fsMock,
-    packageServerScript,
-    uglifySpy;
+    packageServerScript;
 
-var initialise = function(fs, uglifyStub){
+var initialise = function(fs){
 
-  uglifySpy = sinon.spy();
   fsMock = _.extend({
     existsSync: sinon.stub().returns(true),
     readFileSync: sinon.stub().returns('file content'),
@@ -23,12 +21,6 @@ var initialise = function(fs, uglifyStub){
 
   packageServerScript = injectr('../../cli/domain/package-server-script.js', {
     'fs-extra': fsMock,
-    'uglify-js': {
-      minify: uglifyStub || function(code){
-        uglifySpy();
-        return { code: code };
-      }
-    },
     path: {
       extname: path.extname,
       join: path.join,
@@ -36,7 +28,7 @@ var initialise = function(fs, uglifyStub){
         return _.toArray(arguments).join('/');
       }
     }
-  });
+  }, { console: console });
 };
 
 describe('cli : domain : package-server-script', function(){
@@ -50,9 +42,7 @@ describe('cli : domain : package-server-script', function(){
 
       beforeEach(function(done){
 
-        initialise({ readFileSync: sinon.stub().returns(serverjs) }, function(codeToMinify){
-          return uglifyJs.minify(codeToMinify, {fromString: true});
-        });
+        initialise({ readFileSync: sinon.stub().returns(serverjs) });
 
         packageServerScript({
           componentPath: '/path/to/component/',
@@ -69,7 +59,7 @@ describe('cli : domain : package-server-script', function(){
       });
 
       it('should throw an error with error details', function(){
-        expect(error).to.equal('Javascript error found in myserver.js [3,19]: Unexpected token punc «;», expected punc «,»]');
+        expect(error.toString()).to.equal('Error: Javascript error found in myserver.js [3,19]: Unexpected token punc «;», expected punc «,»]');
       });
     });
 
@@ -96,12 +86,8 @@ describe('cli : domain : package-server-script', function(){
         });
       });
 
-      it('should minify the script', function(){
-        expect(uglifySpy.called).to.be.true;
-      });
-
       it('should save compiled data provider', function(){
-        expect(fsMock.writeFile.args[0][1]).to.equal(serverjs);
+        expect(fsMock.writeFile.args[0][1]).to.equal('module.exports.data=function(n,e){return e(null,{name:"John"})};');
       });
 
       it('should return hash for script', function(){
@@ -112,10 +98,10 @@ describe('cli : domain : package-server-script', function(){
     describe('when component requires a json', function(){
 
       var requiredJson = { hello: 'world' },
-          serverjs = 'var data=require(\'./someJson\');module.exports.data=function(context,cb){return cb(null,data); };';
+          serverjs = 'var data = require(\'./someJson\'); module.exports.data=function(context,cb){return cb(null,{}); };';
 
       beforeEach(function(done){
-        
+
         initialise({
           readFileSync: sinon.stub().returns(serverjs),
           readJsonSync: sinon.stub().returns(requiredJson)
@@ -129,14 +115,15 @@ describe('cli : domain : package-server-script', function(){
             }
           },
           publishPath: '/path/to/component/_package/'
-        }, done);        
+        }, done);
       });
 
-      it('should save compiled and minified data provider incapsulating json content', function(){
+      it('should save compiled and minified data provider encapsulating json content', function(){
         var written = fsMock.writeFile.args[0][1];
 
-        expect(written).to.contain(serverjs);
-        expect(written).to.contain(JSON.stringify(requiredJson));
+        expect(written).to.contain('var __sandboxedRequire=require,__localRequires={"./someJson":{hello:"world"}};'
+          + 'require=function(e){return __localRequires[e]?__localRequires[e]:__sandboxedRequire(e)};var data=require("./someJson");'
+          + 'module.exports.data=function(e,r){return r(null,{})};');
       });
     });
 
@@ -164,7 +151,7 @@ describe('cli : domain : package-server-script', function(){
       });
 
       it('should throw an error when the dependency is not present in the package.json', function(){
-        expect(error).to.equal('Missing dependencies from package.json => ["request"]');
+        expect(error.toString()).to.equal('Error: Missing dependencies from package.json => ["request"]');
       });
     });
 
@@ -192,7 +179,7 @@ describe('cli : domain : package-server-script', function(){
       });
 
       it('should not package component and respond with error', function(){
-        expect(error).to.equal('Requiring local js files is not allowed. Keep it small.');
+        expect(error.toString()).to.equal('Error: Requiring local js files is not allowed. Keep it small.');
       });
     });
 
@@ -203,7 +190,7 @@ describe('cli : domain : package-server-script', function(){
 
       beforeEach(function(done){
 
-        initialise({ 
+        initialise({
           readFileSync: sinon.stub().returns(serverjs),
           existsSync: sinon.stub().returns(false)
         });
@@ -223,7 +210,50 @@ describe('cli : domain : package-server-script', function(){
       });
 
       it('should not package component and respond with error', function(){
-        expect(error).to.equal('./hi.json not found. Only json files are require-able.');
+        expect(error.toString()).to.equal('Error: ./hi.json not found. Only json files are require-able.');
+      });
+    });
+
+    describe('when component code includes a loop', function(){
+
+      var serverjs = 'module.exports.data=function(context,cb){ var x,y,z;'
+          + 'while(true){ x = 234; } '
+          + 'for(var i=1e12;;){ y = 546; }'
+          + 'do { z = 342; } while(true);'
+          + 'return cb(null,data); };',
+          result;
+
+      beforeEach(function(done){
+
+        initialise({
+          readFileSync: sinon.stub().returns(serverjs),
+          existsSync: sinon.stub().returns(false)
+        });
+
+        packageServerScript({
+          componentPath: '/path/to/component/',
+          ocOptions: {
+            files: {
+              data: 'server.js'
+            }
+          },
+          publishPath: '/path/to/component/_package/'
+        }, function(e, r){
+          result = r;
+          done();
+        });
+      });
+
+      it('should wrap the while loop with an iterator limit (and convert it to a for loop)', function(){
+        expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var r,a,t,i=1e9;;){if(0>=i)throw new Error(\"loop exceeded maximum allowed iterations\");r=234,i--}');
+      });
+
+      it('should wrap the for loop with an iterator limit', function(){
+        expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var i=1e9;;){if(0>=i)throw new Error(\"loop exceeded maximum allowed iterations\");a=546,i--}');
+      });
+
+      it('should wrap the do loop with an iterator limit (and convert it to a for loop)', function(){
+        expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var i=1e9;;){if(0>=i)throw new Error(\"loop exceeded maximum allowed iterations\");t=342,i--}');
       });
     });
   });
