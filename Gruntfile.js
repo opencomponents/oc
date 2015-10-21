@@ -87,8 +87,5 @@ module.exports = function(grunt) {
       'generate-cli-doc',
       'build'
     ]);
-
-    grunt.log.ok('Package version upgraded to: ' + taskObject.pkg.version);
   });
-
 };
