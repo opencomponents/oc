@@ -28,7 +28,7 @@ var initialise = function(fs){
         return _.toArray(arguments).join('/');
       }
     }
-  }, { console: console });
+  });
 };
 
 describe('cli : domain : package-server-script', function(){
