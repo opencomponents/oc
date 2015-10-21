@@ -36,11 +36,10 @@ var compress = function(code, fileName){
   try {
     return uglifyJs.minify(code, { fromString: true }).code;
   } catch (e){
-    var m = e.message;
     if(!!e.line && !!e.col){
-      m = format(strings.errors.cli.SERVERJS_PARSING_ERROR, fileName, e.line, e.col, e.message);
+      throw new Error(format(strings.errors.cli.SERVERJS_PARSING_ERROR, fileName, e.line, e.col, e.message));
     }
-    throw m;
+    throw e;
   }
 };
 
@@ -54,13 +53,13 @@ var getRequiredContent = function(componentPath, required){
   if(ext === ''){
     required += '.json';
   } else if(ext !== '.json'){
-    throw strings.errors.cli.SERVERJS_REQUIRE_JS_NOT_ALLOWED;
+    throw new Error(strings.errors.cli.SERVERJS_REQUIRE_JS_NOT_ALLOWED);
   }
 
   var requiredPath = path.resolve(componentPath, required);
 
   if(!fs.existsSync(requiredPath)){
-    throw format(strings.errors.cli.SERVERJS_REQUIRE_JSON_NOT_FOUND, required);
+    throw new Error(format(strings.errors.cli.SERVERJS_REQUIRE_JSON_NOT_FOUND, required));
   }
 
   return fs.readJsonSync(requiredPath);
@@ -84,16 +83,15 @@ var getLocalDependencies = function(componentPath, serverContent, fileName){
 
 var getSandBoxedJs = function(wrappedRequires, serverContent, fileName){
   if(_.keys(wrappedRequires).length > 0){
-    serverContent = 'var __sandboxedRequire = require, ' + 
+    serverContent = 'var __sandboxedRequire = require, ' +
                     '    __localRequires=' + JSON.stringify(wrappedRequires) + ';' +
-                    
                     'require=function(x){' +
                     '  return __localRequires[x] ? __localRequires[x] : __sandboxedRequire(x);' +
                     '};' +
                     '\n' + serverContent;
   }
 
-  return compress(serverContent, fileName);
+  return compress(wrapLoops(serverContent), fileName);
 };
 
 var missingDependencies = function(requires, dependencies){
@@ -119,7 +117,7 @@ module.exports = function(params, callback){
   var missingDeps = missingDependencies(wrappedRequires.modules, params.dependencies);
 
   if(missingDeps.length > 0){
-    return callback(format(strings.errors.cli.SERVERJS_DEPENDENCY_NOT_DECLARED, JSON.stringify(missingDeps)));
+    return callback(new Error(format(strings.errors.cli.SERVERJS_DEPENDENCY_NOT_DECLARED, JSON.stringify(missingDeps))));
   }
 
   try {
