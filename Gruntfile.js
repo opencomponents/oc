@@ -33,6 +33,7 @@ module.exports = function(grunt) {
   // test
   grunt.registerTask('sauce', ['karma:sauce-linux', 'karma:sauce-osx', 'karma:sauce-windows']);
   grunt.registerTask('test-local', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance', 'karma:local']);
+  grunt.registerTask('test-local-silent', ['jshint:all', 'mochaTest:silent', 'karma:local']);
   grunt.registerTask('test', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance', 'sauce']);
   grunt.registerTask('test-windows', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance']);
 
@@ -82,10 +83,12 @@ module.exports = function(grunt) {
     fs.writeJsonSync('package.json', taskObject.pkg, {spaces: 2});
 
     grunt.task.run([
-      'test-local',
+      'test-local-silent',
       'generate-cli-doc',
       'build'
     ]);
+
+    grunt.log.ok('Package version upgraded to: ' + taskObject.pkg.version);
   });
 
 };

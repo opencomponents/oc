@@ -4,10 +4,16 @@ module.exports = {
   options: {
     reporter: '<%= grunt.option("mocha") || "spec" %>'
   },
-  acceptance:{
+  acceptance: {
     src: ['test/acceptance/**/*.js']
   },
-  unit:{
+  unit: {
     src: ['test/unit/**/*.js']
+  },
+  silent: {
+    src: ['test/unit/**/*.js', 'test/acceptance/**/*.js'],
+    options: {
+      reporter: 'progress'
+    }
   }
 };
