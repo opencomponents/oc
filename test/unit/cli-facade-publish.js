@@ -178,6 +178,32 @@ describe('cli : facade : publish', function(){
                 });
               });
 
+              describe('when using an old node version', function(){
+
+                beforeEach(function(){
+                  sinon.stub(registry, 'putComponent').yields({
+                    code: 'node_version_not_valid',
+                    error: 'Node CLI version is not valid: Registry 0.10.36, CLI 0.10.35',
+                    details: {
+                      code: 'not_matching',
+                      cliNodeVersion: '0.10.35',
+                      registryNodeVersion: '0.10.36',
+                      suggestedVersion: '>=0.10.35'
+                    }
+                  });
+                  execute();
+                });
+
+                afterEach(function(){
+                  registry.putComponent.restore();
+                });
+
+                it('should show an error', function(){
+                  expect(logSpy.log.args[3][0]).to.equal(('An error happened when publishing the component: the version of used ' +
+                    'node is invalid. Try to upgrade node to version matching \'>=0.10.35\'').red);
+                });
+              });
+
               describe('when registry requires authentication', function(){
                 beforeEach(function(){
                   sinon.stub(registry, 'putComponent').yields('Unauthorized');

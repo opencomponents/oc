@@ -56,7 +56,7 @@ module.exports = {
       INIT_FAIL: 'An error happened when initialising the component: {0}',
       INVALID_CREDENTIALS: 'Invalid credentials',
       NAME_NOT_VALID: 'the name is not valid. Allowed characters are alphanumeric, _, -',
-      NODE_CLI_VERSION_NEEDS_UPGRADE: 'the version of used node is invalid. Try to upgrade node running {0}',
+      NODE_CLI_VERSION_NEEDS_UPGRADE: 'the version of used node is invalid. Try to upgrade node to version matching \'{0}\'',
       OC_CLI_VERSION_NEEDS_UPGRADE: 'the version of used OC CLI is invalid. Try to upgrade OC CLI running {0}',
       PACKAGE_CREATION_FAIL: 'An error happened when creating the package: {0}',
       PACKAGING_FAIL: 'an error happened while packaging {0}: {1}',

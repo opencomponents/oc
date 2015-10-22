@@ -29,7 +29,7 @@ module.exports = function(userAgent, nodeVersion) {
   var cliNodeVersion = matchVersion[1];
   if(!semver.satisfies(cliNodeVersion, packageInfo.engines.node)) {
     result.error = error;
-    result.error.code = 'not_satisfying';
+    result.error.code = 'not_matching';
     result.error.cliNodeVersion = cliNodeVersion;
     return result;
   }
