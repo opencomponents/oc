@@ -138,9 +138,12 @@ Parameters:
 
 |Name|Description|
 |----|-----------|
-|targetType|The type of item to mock|
+|targetType|The type of item to mock (plugin, command)|
 |targetName|The item to mock|
 |targetValue|The mocked value|
+
+example: `oc mock plugin foo bar` adds a static mock for plugin `foo` to return value `bar`.
+example: `oc mock plugin foo ./bar.js` adds a dynamic mock using file `./bar.js`
 
 ##preview
 Runs a test page consuming a component
@@ -210,4 +213,3 @@ Usage:
 ```sh
 oc version
 ```
-
