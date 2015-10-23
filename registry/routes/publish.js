@@ -35,6 +35,16 @@ module.exports = function(repository){
       });
     }
 
+    validationResult = validator.validateNodeVersion(req.headers['user-agent'], process.version);
+    if(!validationResult.isValid) {
+      res.errorDetails = format(strings.errors.registry.NODE_CLI_VERSION_IS_NOT_VALID, validationResult.error.registryNodeVersion, validationResult.error.cliNodeVersion);
+      return res.json(409, {
+        code: 'node_version_not_valid',
+        error: res.errorDetails,
+        details: validationResult.error
+      });
+    }
+
     var files = req.files,
         packageFile = files[_.keys(files)[0]],
         packagePath = path.resolve(packageFile.path),

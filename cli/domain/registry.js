@@ -26,7 +26,7 @@ module.exports = function(opts){
 
   var requestsOptions = {
     headers: {
-      'user-agent': format('oc-cli-{0}/{1}-{2}-{3}', 
+      'user-agent': format('oc-cli-{0}/{1}-{2}-{3}',
                             getOcVersion(),
                             process.version,
                             process.platform,
@@ -103,7 +103,7 @@ module.exports = function(opts){
             previewUrl = urlBuilder.componentPreview(parsed, parsed.registryUrl);
 
         callback(null, previewUrl);
-      });  
+      });
     },
     getRegistryComponentsByRegistry: function(registry, callback){
 
@@ -152,7 +152,8 @@ module.exports = function(opts){
 
           if(!!err.code && err.code === 'ECONNREFUSED'){
             err = 'Connection to registry has not been established';
-          } else if(!!err.code && err.code !== 'cli_version_not_valid' && !!err.error){
+          } else if(!!err.code && err.code !== 'cli_version_not_valid'
+            && err.code !== 'node_version_not_valid' && !!err.error){
             err = err.error;
           }
 

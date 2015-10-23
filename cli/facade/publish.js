@@ -92,6 +92,10 @@ module.exports = function(dependencies){
                 errorDetails = format(strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE, upgradeCommand.blue);
             logger.log(format(strings.errors.cli.PUBLISHING_FAIL, errorDetails).red);
             return callback();
+          } else if(err.code === 'node_version_not_valid') {
+            var details = format(strings.errors.cli.NODE_CLI_VERSION_NEEDS_UPGRADE, err.details.suggestedVersion);
+            logger.log(format(strings.errors.cli.PUBLISHING_FAIL, details).red);
+            return callback();
           } else {
             logger.log(format(strings.errors.cli.PUBLISHING_FAIL, err).red);
             return callback();
