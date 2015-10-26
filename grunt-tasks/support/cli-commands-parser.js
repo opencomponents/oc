@@ -24,11 +24,11 @@ module.exports = {
       }
 
       detailedCommandList += '\n```\n';
-      
+
       if(!!command.options){
-        detailedCommandList += '\n\nParameters:\n\n|Name|Description|\n|----|-----------|\n';
+        detailedCommandList += '\n\nParameters:\n\n|Name|Description|Choices|\n|----|-----------|-------|\n';
         _.forEach(command.options, function(option, optionName){
-          detailedCommandList += '|' + optionName + '|' + option.help + '|\n';
+          detailedCommandList += '|' + optionName + '|' + option.help + '|' + (option.choices || '') + '|\n';
         });
       }
     });

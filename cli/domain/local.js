@@ -160,13 +160,18 @@ module.exports = function(){
           localConfig.mocks[mockType] = {};
         }
 
-        if(!localConfig.mocks[mockType].static){
-          localConfig.mocks[mockType].static = {};
+        var pluginType = 'static';
+        if(fs.existsSync(path.resolve(params.targetValue))){
+          pluginType = 'dynamic';
         }
 
-        localConfig.mocks[mockType].static[params.targetName] = params.targetValue;
+        if(!localConfig.mocks[mockType][pluginType]){
+          localConfig.mocks[mockType][pluginType] = {};
+        }
 
-        return fs.writeJson(settings.configFile.src, localConfig, callback);
+        localConfig.mocks[mockType][pluginType][params.targetName] = params.targetValue;
+
+        return fs.writeJson(settings.configFile.src, localConfig, {spaces: 2}, callback);
       });
     },
     package: function(componentPath, minify, callback){
@@ -260,9 +265,9 @@ module.exports = function(){
         function(component, cb){
           // Packaging static files
           packageStaticFiles({
-            componentPath: componentPath, 
-            publishPath: publishPath, 
-            minify: minify, 
+            componentPath: componentPath,
+            publishPath: publishPath,
+            minify: minify,
             ocOptions: component.oc
           }, function(err, res){
             return cb(err, component);

@@ -65,10 +65,10 @@ oc dev <dirName> [port]
 
 Parameters:
 
-|Name|Description|
-|----|-----------|
-|dirName|The name of the directory to watch, where the components are stored|
-|port|The port where to start a local oc instance. Default 3000|
+|Name|Description|Choices|
+|----|-----------|-------|
+|dirName|The name of the directory to watch, where the components are stored||
+|port|The port where to start a local oc instance. Default 3000||
 
 ##info
 Shows installed components on the current project
@@ -89,10 +89,10 @@ oc init <componentName> [templateType]
 
 Parameters:
 
-|Name|Description|
-|----|-----------|
-|componentName|The name of the component to create|
-|templateType|The component's template type. Options are jade or handlebars (default).|
+|Name|Description|Choices|
+|----|-----------|-------|
+|componentName|The name of the component to create||
+|templateType|The component's template type. Options are jade or handlebars (default).||
 
 ##link
 Links a component in the current project
@@ -105,10 +105,10 @@ oc link <componentName> [componentVersion]
 
 Parameters:
 
-|Name|Description|
-|----|-----------|
-|componentName|The name of the component to link. <oc ls> to see the list of available components|
-|componentVersion|The specific version of the component to link. Default is the latest|
+|Name|Description|Choices|
+|----|-----------|-------|
+|componentName|The name of the component to link. <oc ls> to see the list of available components||
+|componentVersion|The specific version of the component to link. Default is the latest||
 
 ##ls
 Shows the list of the available components for a linked oc registry
@@ -121,9 +121,9 @@ oc ls [registry]
 
 Parameters:
 
-|Name|Description|
-|----|-----------|
-|registry|Specify registry to query|
+|Name|Description|Choices|
+|----|-----------|-------|
+|registry|Specify registry to query||
 
 ##mock
 Allows to mock configuration in order to facilitate local development
@@ -136,11 +136,11 @@ oc mock <targetType> <targetName> <targetValue>
 
 Parameters:
 
-|Name|Description|
-|----|-----------|
-|targetType|The type of item to mock|
-|targetName|The item to mock|
-|targetValue|The mocked value|
+|Name|Description|Choices|
+|----|-----------|-------|
+|targetType|The type of item to mock|plugin|
+|targetName|The item to mock||
+|targetValue|The mocked value (static plugins) or the file to read (dynamic plugins)||
 
 ##preview
 Runs a test page consuming a component
@@ -153,9 +153,9 @@ oc preview <componentHref>
 
 Parameters:
 
-|Name|Description|
-|----|-----------|
-|componentHref|The name of the component to preview|
+|Name|Description|Choices|
+|----|-----------|-------|
+|componentHref|The name of the component to preview||
 
 ##publish
 Publish a component
@@ -168,9 +168,9 @@ oc publish <componentPath>
 
 Parameters:
 
-|Name|Description|
-|----|-----------|
-|componentPath|The path of the component to publish|
+|Name|Description|Choices|
+|----|-----------|-------|
+|componentPath|The path of the component to publish||
 
 ##registry
 Shows, adds, removes oc registries to the current project
@@ -183,10 +183,10 @@ oc registry <command> [parameter]
 
 Parameters:
 
-|Name|Description|
-|----|-----------|
-|command|Action: add, ls, or remove|
-|parameter|Parameter to perform the action|
+|Name|Description|Choices|
+|----|-----------|-------|
+|command|Action: add, ls, or remove|add,ls,remove|
+|parameter|Parameter to perform the action||
 
 ##unlink
 Unlinks a component from the current project
@@ -199,9 +199,9 @@ oc unlink <componentName>
 
 Parameters:
 
-|Name|Description|
-|----|-----------|
-|componentName|The name of the component to unlink. <oc info> to see the list of linked components|
+|Name|Description|Choices|
+|----|-----------|-------|
+|componentName|The name of the component to unlink. <oc info> to see the list of linked components||
 
 ##version
 Shows the cli version

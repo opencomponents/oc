@@ -99,19 +99,7 @@ module.exports = function(dependencies){
     };
 
     var registerPlugins = function(registry){
-      var mockedPlugins = getMockedPlugins();
-
-      try {
-        if(!_.isEmpty(mockedPlugins)){
-          logger.log(strings.messages.cli.REGISTERING_MOCKED_PLUGINS.yellow);
-          for(var i = 0; i < mockedPlugins.length; i++){
-            logger.log('├── '.green + mockedPlugins[i].name + ' () => ' + mockedPlugins[i].register.execute());
-            registry.register(mockedPlugins[i]);
-          }            
-        }
-      } catch(er){
-        return logger.log(er.red);
-      }
+      var mockedPlugins = getMockedPlugins(logger);
 
       registry.on('request', function(data){
         if(data.errorCode === 'PLUGIN_MISSING_FROM_REGISTRY'){
@@ -138,7 +126,7 @@ module.exports = function(dependencies){
 
       loadDependencies(components, function(dependencies){
         packageComponents(components, function(){
-          
+
           var registry = new oc.Registry({
             local: true,
             discovery: true,
