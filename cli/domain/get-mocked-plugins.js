@@ -3,12 +3,13 @@
 var fs = require('fs-extra');
 var path = require('path');
 var _ = require('underscore');
+var colors = require('colors/safe');
 var strings = require('../../resources/');
 var settings = require('../../resources/settings');
 
 var registerStaticMocks = function(mocks, logger){
   return _.map(mocks, function(mockedValue, pluginName){
-    logger.log('├── '.green + pluginName + ' () => ' + mockedValue);
+    logger.log(colors.green('├── ' + pluginName + ' () => ' + mockedValue));
     return {
       name: pluginName,
       register: {
@@ -29,11 +30,16 @@ var registerDynamicMocks = function(mocks, logger){
     try {
       p = require(path.resolve(source));
     } catch(er) {
-      logger.log(er.toString().red);
+      logger.log(colors.red(er.toString()));
       return;
     }
 
-    logger.log('├── '.green + pluginName + ' () => [Function]');
+    if(!_.isFunction(p)){
+      logger.log(colors.red(strings.errors.cli.MOCK_PLUGIN_IS_NOT_A_FUNCTION));
+      return;
+    }
+
+    logger.log(colors.green('├── ' + pluginName + ' () => [Function]'));
     return {
       name: pluginName,
       register: {
@@ -43,7 +49,7 @@ var registerDynamicMocks = function(mocks, logger){
         execute: p
       }
     };
-  });
+  }).filter(function(p){ return p; });
 };
 
 module.exports = function(logger){
@@ -59,7 +65,7 @@ module.exports = function(logger){
     return plugins;
   }
 
-  logger.log(strings.messages.cli.REGISTERING_MOCKED_PLUGINS.yellow);
+  logger.log(colors.yellow(strings.messages.cli.REGISTERING_MOCKED_PLUGINS));
 
   plugins = plugins.concat(registerStaticMocks(content.mocks.plugins.static, logger));
   plugins = plugins.concat(registerDynamicMocks(content.mocks.plugins.dynamic, logger));
