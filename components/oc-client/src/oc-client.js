@@ -237,7 +237,8 @@ var oc = oc || {};
 
         oc.renderByHref($component.attr('href'), function(err, data){
           if(err || !data || !data.html){
-            return logger.error(err);
+            logger.error(err);
+            return callback();
           }
 
           processHtml($component, data, callback);
