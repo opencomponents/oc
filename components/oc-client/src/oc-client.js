@@ -236,7 +236,7 @@ var oc = oc || {};
         $component.html('<div class="oc-loading">' + MESSAGES_LOADING_COMPONENT + '</div>');
 
         oc.renderByHref($component.attr('href'), function(err, data){
-          if(err || !data || !data.html){
+          if(err || !data){
             logger.error(err);
             return callback();
           }
