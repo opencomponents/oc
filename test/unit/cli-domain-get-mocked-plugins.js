@@ -157,8 +157,8 @@ describe('cli : domain : get-mocked-plugins', function(){
       });
 
       it('should log an error', function(){
-        expect(logger.log.secondCall.args[0]).to.equal(
-          '\u001b[31mError: Cannot find module \'/Users/aroyle/Documents/repos/oc/cli/domain/not-exist.js\'\u001b[39m');
+        expect(logger.log.secondCall.args[0]).to.contain(
+          'Error: Cannot find module');
       });
 
       it('should omit the broken plugin from the results', function(){
