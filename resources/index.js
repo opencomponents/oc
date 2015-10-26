@@ -55,6 +55,7 @@ module.exports = {
       DEV_FAIL: 'An error happened when initialising the dev runner: {0}',
       INIT_FAIL: 'An error happened when initialising the component: {0}',
       INVALID_CREDENTIALS: 'Invalid credentials',
+      MOCK_PLUGIN_IS_NOT_A_FUNCTION: 'Looks like you are trying to register a dynamic mock plugin but the file you specified is not a function',
       NAME_NOT_VALID: 'the name is not valid. Allowed characters are alphanumeric, _, -',
       NODE_CLI_VERSION_NEEDS_UPGRADE: 'the version of used node is invalid. Try to upgrade node to version matching \'{0}\'',
       OC_CLI_VERSION_NEEDS_UPGRADE: 'the version of used OC CLI is invalid. Try to upgrade OC CLI running {0}',
