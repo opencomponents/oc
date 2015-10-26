@@ -190,8 +190,8 @@ describe('cli : domain : get-mocked-plugins', function(){
       });
 
       it('should log an error', function(){
-        expect(logger.log.secondCall.args[0]).to.equal(
-          '\u001b[31mLooks like you are trying to register a dynamic mock plugin but the file you specified is not a function\u001b[39m');
+        expect(logger.log.secondCall.args[0]).to.contain(
+          'Looks like you are trying to register a dynamic mock plugin but the file you specified is not a function');
       });
 
       it('should omit the broken plugin from the results', function(){
