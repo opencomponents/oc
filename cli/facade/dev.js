@@ -101,6 +101,10 @@ module.exports = function(dependencies){
     var registerPlugins = function(registry){
       var mockedPlugins = getMockedPlugins(logger);
 
+      mockedPlugins.forEach(function(p){
+          registry.register(p);
+      });
+
       registry.on('request', function(data){
         if(data.errorCode === 'PLUGIN_MISSING_FROM_REGISTRY'){
           logger.log(format(strings.errors.cli.PLUGIN_MISSING_FROM_REGISTRY, data.errorDetails, strings.commands.cli.MOCK_PLUGIN.blue).red);
