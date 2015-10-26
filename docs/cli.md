@@ -140,7 +140,7 @@ Parameters:
 |----|-----------|-------|
 |targetType|The type of item to mock|plugin|
 |targetName|The item to mock||
-|targetValue|The mocked value (static plugins) or the file to read (dynamic plugins)||
+|targetValue|The mocked value (static plugin) or the file to read (dynamic plugin)||
 
 ##preview
 Runs a test page consuming a component
