@@ -45,7 +45,7 @@ module.exports = {
       }
     },
 
-    ls: { 
+    ls: {
       help: 'Shows the list of the available components for a linked oc registry',
       options: {
         registry: {
@@ -66,7 +66,7 @@ module.exports = {
           help: 'The item to mock'
         },
         targetValue: {
-          help: 'The mocked value'
+          help: 'The mocked value (static plugin) or the file to read (dynamic plugin)'
         }
       }
     },
