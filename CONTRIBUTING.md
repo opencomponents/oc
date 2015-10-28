@@ -1,7 +1,7 @@
 Contributing guidelines
 =======================
 
-Contributes are more than welcome! 
+Contributes are more than welcome!
 
 ## Troubleshooting
 
@@ -15,7 +15,7 @@ When preparing a pull request, ensure all the tests pass locally running `grunt 
 
 ### Publishing new version to npm
 
-You need to be enabled for doing this. 
+You need to be enabled for doing this.
 * `master` should be all green. If not, make it green first.
 * git checkout master
 * git pull
@@ -24,9 +24,7 @@ You need to be enabled for doing this.
     * `grunt version:patch` for bugfixes, new features
     * `grunt version:minor` for all breaking changes
     * `grunt version:major` NOT YET. Still need to define milestones for 1.0.0.
-* git add .
-* git commit -m "\<new version\>"
-* git push
+* git push && git push v\<new version\>
 * [sudo] npm publish .
 
 ## Code of Conduct
