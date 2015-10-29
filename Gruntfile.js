@@ -36,6 +36,7 @@ module.exports = function(grunt) {
   grunt.registerTask('test-local-silent', ['jshint:all', 'mochaTest:silent', 'karma:local']);
   grunt.registerTask('test', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance', 'sauce']);
   grunt.registerTask('test-windows', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance']);
+  grunt.registerTask('git-stage', ['gitadd', 'gitcommit:version', 'gittag:addtag']);
 
   // custom tasks
   grunt.registerTask('build', 'Builds and minifies the oc-client component', function(){
@@ -65,18 +66,19 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('generate-cli-doc', 'Automatically updates the cli.md file', function(){
-    
+
     var parsed = commandsParser.parse(),
         data = fs.readFileSync('./grunt-tasks/support/cli-template.md', 'utf8'),
         newFileData = data.replace('[commands-shortlist]', parsed.commandList).replace('[commands-detailed]', parsed.detailedCommandList);
-      
+
     fs.writeFileSync('./docs/cli.md', newFileData);
   });
 
   // used for version patching
   grunt.registerTask('version', 'Does the version upgrade', function(versionType){
-    
+
     taskObject.pkg.version = semver.inc(taskObject.pkg.version, versionType);
+    grunt.config.set('version', taskObject.pkg.version);
 
     grunt.log.ok('Package version upgrading to: ' + taskObject.pkg.version);
 
@@ -85,7 +87,8 @@ module.exports = function(grunt) {
     grunt.task.run([
       'test-local-silent',
       'generate-cli-doc',
-      'build'
+      'build',
+      'git-stage'
     ]);
   });
 };
