@@ -24,7 +24,7 @@ You need to be enabled for doing this.
     * `grunt version:patch` for bugfixes, new features
     * `grunt version:minor` for all breaking changes
     * `grunt version:major` NOT YET. Still need to define milestones for 1.0.0.
-* git push && git push v\<new version\>
+* git push --follow-tags
 * [sudo] npm publish .
 
 ## Code of Conduct
