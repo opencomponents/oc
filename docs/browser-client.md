@@ -17,7 +17,7 @@ It will build an oc-component tag for provided parameters:
 Example:
 
 ```js
-var html = oc.build{
+var html = oc.build({
   baseUrl: 'https://my-registry.com/components',
   name: 'my-component',
   version: '~2.3.4',
@@ -25,7 +25,7 @@ var html = oc.build{
     age: 23,
     hello: 'world'
   }
-};
+});
 
 // html => <oc-component href="https://my-registry.com/components/my-component/~2.3.4/?age=23&hello=world"></oc-component>
 ```

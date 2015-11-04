@@ -140,7 +140,7 @@ Then you may want to create a blank html page to start playing with it and see h
 
 Or, just use the preview function:
 ```sh
-oc preview http://localhost:3030/hello-world 3031
+oc preview http://localhost:3030/hello-world
 ```
 
 That's it. As soon as you make changes on the component, you will be able to refresh this page and see how it looks.

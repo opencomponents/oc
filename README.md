@@ -78,7 +78,7 @@ oc dev . 3030
 
 To see how the component looks like when consuming it:
 ```sh
-oc preview http://localhost:3030/hello-world 3031
+oc preview http://localhost:3030/hello-world
 ```
 
 As soon as you make changes on the component, you will be able to refresh this page and see how it looks.
@@ -154,12 +154,10 @@ Then, this is what you would do with a simple node.js http app:
 ```js
 var http = require('http'),
     Client = require('oc-client'),
-    client = new Client();
-
-client.config = {
-  registries: ['http://my-components-registry.mydomain.com/'],
-  components: {'hello-world': '~1.0.0'}
-};
+    client = new Client({
+      registries: ['http://my-components-registry.mydomain.com/'],
+      components: {'hello-world': '~1.0.0'}
+    });
 
 http.createServer(function (req, res) {
   client.renderComponent('hello-world', function(err, html){
@@ -200,9 +198,10 @@ When on the client-side, a retry rendering attempt via Javascript will happen ev
 If for some reasons you want to avoid client-side rendering when using the node.js client, you can do:
 ```js
 var http = require('http'),
-    oc = require('oc');
-
-var client = new oc.Client({ disableFailoverRendering: true });
+    oc = require('oc'),
+    client = new oc.Client({ 
+      disableFailoverRendering: true
+    });
 
 http.createServer(function (req, res) {
   client.renderComponent('hello-world', function(err, html){
