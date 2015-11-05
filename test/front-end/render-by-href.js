@@ -1,6 +1,6 @@
 'use strict';
 
-var preRenderedResponse = {
+var unRenderedResponse = {
   href: 'http://my-registry.com/v3/a-component/1.2.X/?name=John',
   type: 'oc-component',
   version: '1.2.123',
@@ -11,7 +11,7 @@ var preRenderedResponse = {
     type: 'handlebars',
     key: '46ee85c314b371cac60471cef5b2e2e6c443dccf'
   },
-  renderMode: 'pre-rendered'
+  renderMode: 'unrendered'
 };
 
 var renderedResponse = {
@@ -87,16 +87,16 @@ describe('oc-client : renderByHref', function(){
 
         it('should make a request to the registry with proper headers', function(){
           expect(ajaxMock.args[0][0].contentType).toEqual('text/plain');
-          expect(ajaxMock.args[0][0].headers['Accept']).toEqual('application/vnd.oc.prerendered+json');
+          expect(ajaxMock.args[0][0].headers['Accept']).toEqual('application/vnd.oc.unrendered+json');
         });
       });
 
-      describe('when the registry responds with pre-rendered component', function(){
+      describe('when the registry responds with unrendered component', function(){
 
         var callback;
         beforeEach(function(){
           callback = sinon.spy();
-          initialise(preRenderedResponse);
+          initialise(unRenderedResponse);
           eval(compiledViewContent);
           oc.renderByHref(route, callback);
         });

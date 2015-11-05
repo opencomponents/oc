@@ -122,7 +122,7 @@ curl http://my-components-registry.mydomain.com/hello-world
 
 In case you would like to do the rendering yourself, try:
 ```sh
- curl http://my-components-registry.mydomain.com/hello-world/~1.0.0 -H Accept:application/vnd.oc.prerendered+json
+ curl http://my-components-registry.mydomain.com/hello-world/~1.0.0 -H Accept:application/vnd.oc.unrendered+json
 
 {
   "href": "https://my-components-registry.mydomain.com/hello-world/~1.0.0",
@@ -137,7 +137,7 @@ In case you would like to do the rendering yourself, try:
     "key": "cad2a9671257d5033d2abfd739b1660993021d02"
   },
   "type": "oc-component",
-  "renderMode": "pre-rendered"
+  "renderMode": "unrendered"
 }
 ```
 

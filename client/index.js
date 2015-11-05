@@ -173,7 +173,7 @@ module.exports = function(conf){
 
     options = options || {};
     options.headers = options.headers || {};
-    options.headers.accept = 'application/vnd.oc.prerendered+json';
+    options.headers.accept = 'application/vnd.oc.unrendered+json';
     options.timeout = options.timeout || 5;
 
     var processError = function(){

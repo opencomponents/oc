@@ -254,12 +254,13 @@ var oc = oc || {};
       if(href !== ''){
         $.ajax({
           url: href,
-          headers: { 'Accept': 'application/vnd.oc.prerendered+json' }, 
+          headers: { 'Accept': 'application/vnd.oc.unrendered+json' }, 
           contentType: 'text/plain',
           crossDomain: true,
           async: true,
           success: function(apiResponse){
-            if(apiResponse.renderMode === 'pre-rendered'){
+            if(apiResponse.renderMode === 'pre-rendered' ||
+               apiResponse.renderMode === 'unrendered'){
               oc.render(apiResponse.template, apiResponse.data, function(err, html){
                 if(err){ 
                   return callback(MESSAGES_ERRORS_RENDERING.replace('{0}', apiResponse.href).replace('{1}', err));
