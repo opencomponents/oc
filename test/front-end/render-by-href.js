@@ -74,7 +74,7 @@ describe('oc-client : renderByHref', function(){
         var callback, ajaxMock;
         beforeEach(function(){
           callback = sinon.spy();
-          ajaxMock = initialise(preRenderedResponse);
+          ajaxMock = initialise(unRenderedResponse);
           eval(compiledViewContent);
           oc.renderByHref(route, callback);
         });
