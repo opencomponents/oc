@@ -94,13 +94,13 @@ describe('registry', function(){
       });
     });
 
-    describe('when Accept header set to application/vnd.oc.prerendered+json', function(){
+    describe('when Accept header set to application/vnd.oc.unrendered+json', function(){
 
       var url = 'http://localhost:3030/hello-world',
           result;
 
       before(function(done){
-        request(url, { headers: {'Accept': 'application/vnd.oc.prerendered+json'}}, function(err, res){
+        request(url, { headers: {'Accept': 'application/vnd.oc.unrendered+json'}}, function(err, res){
           result = JSON.parse(res);
           done();
         });
@@ -110,12 +110,12 @@ describe('registry', function(){
         expect(result.href).to.eql('http://localhost:3030/hello-world');
       });
 
-      it('should respond with the pre-rendered template', function(){
+      it('should respond with the un-rendered template', function(){
         expect(result.template).to.exist;
       });
 
       it('should respond with proper render type', function(){
-        expect(result.renderMode).to.equal('pre-rendered');
+        expect(result.renderMode).to.equal('unrendered');
       });
     });
   });

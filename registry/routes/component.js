@@ -88,7 +88,8 @@ module.exports = function(conf, repository){
           requestVersion: requestedComponent.version
         };
         
-        if(req.headers.accept === 'application/vnd.oc.prerendered+json'){
+        if(req.headers.accept === 'application/vnd.oc.prerendered+json' ||
+           req.headers.accept === 'application/vnd.oc.unrendered+json'){
           res.json(200, _.extend(response, {
             data: data,
             template: {
@@ -96,7 +97,7 @@ module.exports = function(conf, repository){
               type: component.oc.files.template.type,
               key: component.oc.files.template.hashKey
             },
-            renderMode: 'pre-rendered'
+            renderMode: 'unrendered'
           }));        
         } else {
 
