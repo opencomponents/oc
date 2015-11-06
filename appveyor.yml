@@ -25,4 +25,4 @@ install:
 build: off
 
 test_script:
-  - cmd: grunt test-windows
+  - cmd: grunt test

@@ -1,10 +1,24 @@
 language: node_js
-node_js:
-- '0.10'
+
+matrix:
+  include:
+    - node_js: "0.10"
+      env: TEST_COMMAND=test-with-sauce
+    - node_js: "0.12"
+      env: TEST_COMMAND=test
+    - node_js: "iojs"
+      env: TEST_COMMAND=test
+    - node_js: "4"
+      env: TEST_COMMAND=test
+
 before_script:
 - npm install -g grunt-cli
+
+script: grunt $TEST_COMMAND
+
 notifications:
   email: false
+
 env:
   global:
   - secure: OUooygPgokU2pa5FmVKb5tEQ+NjrUS7vr2al2MYqQDi7VOViOkKiP+1TMKDaPEo3+H3BQlsRd/HxItSCucg5Wy+45pMsTnYgR0Lsp2zmcuHmY67EPOM3B6bdCyPtB5VokrpO3O+uBTtMPAKS/sQq62gKV5Xq/K1t5CQ31EgfCd4=
