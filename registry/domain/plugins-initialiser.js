@@ -7,6 +7,18 @@ var madge = require('madge');
 
 var strings = require('../../resources');
 
+var validatePlugins = function(plugins){
+  var c = 0;
+
+  plugins.forEach(function(plugin){
+    c++;
+    if(!_.isObject(plugin.register) || !_.isFunction(plugin.register.register) ||
+       !_.isFunction(plugin.register.execute) || !_.isString(plugin.name)){
+      throw new Error(format(strings.errors.registry.PLUGIN_NOT_VALID, plugin.name || c));
+    }
+  });
+};
+
 var checkDependencies = function(plugins){
     var dependencies = {};
 
@@ -42,10 +54,10 @@ var defer = function(plugin, cb){
 
 module.exports.init = function(pluginsToRegister, callback){
 
-  var c = 0,
-      registered = {};
+  var registered = {};
 
   try {
+      validatePlugins(pluginsToRegister);
       checkDependencies(pluginsToRegister);
   }
   catch(err){
@@ -68,12 +80,6 @@ module.exports.init = function(pluginsToRegister, callback){
   };
 
   var loadPlugin = function(plugin, cb){
-    c++;
-    if(!_.isObject(plugin.register) || !_.isFunction(plugin.register.register) ||
-       !_.isFunction(plugin.register.execute) || !_.isString(plugin.name)){
-      return cb(new Error(format(strings.errors.registry.PLUGIN_NOT_VALID, c)));
-    }
-
     if(registered[plugin.name]){
       return cb();
     }
