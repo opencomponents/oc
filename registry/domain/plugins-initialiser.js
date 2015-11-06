@@ -3,7 +3,7 @@
 var async = require('async');
 var format = require('stringformat');
 var _ = require('underscore');
-var madge = require('madge');
+var DepGraph = require('dependency-graph').DepGraph;
 
 var strings = require('../../resources');
 
@@ -20,30 +20,28 @@ var validatePlugins = function(plugins){
 };
 
 var checkDependencies = function(plugins){
-    var dependencies = {};
+    var graph = new DepGraph();
+
+    plugins.forEach(function(p){
+      graph.addNode(p.name);
+    });
 
     plugins.forEach(function(p){
       if(!p.register.dependencies){
-        dependencies[p.name] = [];
         return;
       }
 
-      dependencies[p.name] = p.register.dependencies;
+      p.register.dependencies.forEach(function(d){
+          try {
+            graph.addDependency(p.name, d);
+          }
+          catch(err) {
+            throw new Error('unknown plugin dependency: ' + d);
+          }
+      });
     });
 
-    var missing = _.difference(_.flatten(_.values(dependencies)), _.pluck(plugins, 'name'));
-
-    if(missing.length > 0){
-      throw new Error('unknown plugin dependency(s) :' + JSON.stringify(missing));
-    }
-
-    var tree = madge(dependencies, { findNestedDependencies: true });
-    var circular = tree.circular().getArray();
-    if(circular.length){
-        throw new Error('circular dependency detected in plugins: ' + circular);
-    }
-
-    return tree;
+    return graph.overallOrder();
 };
 
 var deferredLoads = [];

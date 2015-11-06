@@ -238,7 +238,7 @@ describe('registry : domain : plugins-initialiser', function(){
     });
 
     it('should throw an error', function(){
-      expect(error.toString()).to.eql('Error: circular dependency detected in plugins: getValue,isFlagged');
+      expect(error.toString()).to.eql('Error: Dependency Cycle Found: getValue -> isFlagged -> getValue');
     });
   });
 
@@ -268,7 +268,7 @@ describe('registry : domain : plugins-initialiser', function(){
     });
 
     it('should throw an error', function(){
-      expect(error.toString()).to.eql('Error: unknown plugin dependency(s) :["isFlagged"]');
+      expect(error.toString()).to.eql('Error: unknown plugin dependency: isFlagged');
     });
   });
 
