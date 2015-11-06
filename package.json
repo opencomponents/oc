@@ -60,6 +60,7 @@
     "fs-extra": "0.12.0",
     "handlebars": "3.0.1",
     "jade": "1.9.1",
+    "madge": "^0.5.2",
     "multer": "0.1.4",
     "nice-cache": "0.0.5",
     "node-dir": "0.1.9",
