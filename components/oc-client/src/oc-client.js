@@ -14,6 +14,7 @@ var oc = oc || {};
       JADE_URL = CDNJS_BASEURL + 'jade/1.9.2/runtime.min.js',
       JQUERY_URL = CDNJS_BASEURL + 'jquery/1.11.2/jquery.min.js',
       RETRY_INTERVAL = oc.conf.retryInterval || 5000,
+      RETRY_LIMIT = oc.conf.retryLimit || 30,
       POLLING_INTERVAL = oc.conf.pollingInterval || 500,
       OC_TAG = oc.conf.tag || 'oc-component',
       MESSAGES_ERRORS_HREF_MISSING = 'Href parameter missing',
@@ -43,6 +44,21 @@ var oc = oc || {};
     info: function(msg){
       return !!debug ? console.log(msg) : false;
     }
+  };
+
+  var retries = {};
+
+  var retry = function(component, cb){
+    if(retries[component] === undefined){
+      retries[component] = RETRY_LIMIT;
+    }
+
+    if(retries[component] <= 0){
+      return;
+    }
+
+    setTimeout(cb, RETRY_INTERVAL);
+    retries[component]--;
   };
 
   // A minimal require.js-ish that uses head.js
@@ -122,12 +138,12 @@ var oc = oc || {};
 
     if(!options.baseUrl){
       throw 'baseUrl parameter is required';
-    } 
+    }
 
     if(!options.name){
       throw 'name parameter is required';
     }
-    
+
     var withFinalSlash = function(s){
       s = s || '';
 
@@ -137,7 +153,7 @@ var oc = oc || {};
 
       return s;
     };
-    
+
     var href = withFinalSlash(options.baseUrl) + withFinalSlash(options.name);
 
     if(!!options.version){
@@ -224,7 +240,7 @@ var oc = oc || {};
   };
 
   oc.renderNestedComponent = function($component, callback){
-    oc.ready(function(){ 
+    oc.ready(function(){
       var dataRendering = $component.attr('data-rendering'),
           dataRendered = $component.attr('data-rendered'),
           isRendering = typeof(dataRendering) === 'boolean' ? dataRendering : (dataRendering === 'true'),
@@ -254,7 +270,7 @@ var oc = oc || {};
       if(href !== ''){
         $.ajax({
           url: href,
-          headers: { 'Accept': 'application/vnd.oc.unrendered+json' }, 
+          headers: { 'Accept': 'application/vnd.oc.unrendered+json' },
           contentType: 'text/plain',
           crossDomain: true,
           async: true,
@@ -262,12 +278,12 @@ var oc = oc || {};
             if(apiResponse.renderMode === 'pre-rendered' ||
                apiResponse.renderMode === 'unrendered'){
               oc.render(apiResponse.template, apiResponse.data, function(err, html){
-                if(err){ 
+                if(err){
                   return callback(MESSAGES_ERRORS_RENDERING.replace('{0}', apiResponse.href).replace('{1}', err));
                 }
                 logger.info(MESSAGES_RENDERED.replace('{0}', apiResponse.template.src));
                 callback(null, {
-                  html: html, 
+                  html: html,
                   key: apiResponse.template.key,
                   version: apiResponse.version
                 });
@@ -281,18 +297,18 @@ var oc = oc || {};
                     innerHtml = innerHtmlPlusEnding.slice(0, innerHtmlPlusEnding.lastIndexOf('<'));
                 apiResponse.html = innerHtml;
               }
-                  
+
               callback(null, {
-                html: apiResponse.html, 
+                html: apiResponse.html,
                 version: apiResponse.version
-              });            
+              });
             }
           },
           error: function(){
             logger.error(MESSAGES_ERRORS_RETRIEVING);
-            setTimeout(function() {
+            retry(href, function() {
               oc.renderByHref(href, callback);
-            }, RETRY_INTERVAL);
+            });
           }
         });
       } else {
