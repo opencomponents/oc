@@ -9,14 +9,16 @@ var Local = require('./domain/local');
 var Registry = require('./domain/registry');
 var strings = require('../resources');
 
+var logger = {
+  log: console.log,
+  logNoNewLine: function(msg){
+    return process.stdout.write(msg.toString());
+  }
+};
+
 var dependencies = {
-  local: new Local(),
-  logger: {
-    log: console.log,
-    logNoNewLine: function(msg){
-      return process.stdout.write(msg.toString());
-    }
-  },
+  local: new Local({ logger: logger }),
+  logger: logger,
   registry: new Registry()
 };
 

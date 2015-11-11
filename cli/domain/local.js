@@ -3,6 +3,7 @@
 var async = require('async');
 var format = require('stringformat');
 var fs = require('fs-extra');
+var colors = require('colors');
 var path = require('path');
 var Targz = require('tar.gz');
 var _ = require('underscore');
@@ -11,12 +12,13 @@ var getUnixUtcTimestamp = require('../../utils/get-unix-utc-timestamp');
 var packageServerScript = require('./package-server-script');
 var packageStaticFiles = require('./package-static-files');
 var packageTemplate = require('./package-template');
+var getComponentsByDir = require('./get-components-by-dir');
 var request = require('../../utils/request');
 var settings = require('../../resources/settings');
 var validator = require('../../registry/domain/validators');
 
-module.exports = function(){
-
+module.exports = function(dependencies){
+  var logger = dependencies.logger;
   var targz = new Targz();
 
   return _.extend(this, {
@@ -26,38 +28,7 @@ module.exports = function(){
     compress: function(input, output, callback){
       return targz.compress(input, output, callback);
     },
-    getComponentsByDir: function(componentsDir, callback){
-
-      try {
-        var components = fs.readdirSync(componentsDir).filter(function(file){
-
-          var filePath = path.resolve(componentsDir, file),
-              isDir = fs.lstatSync(filePath).isDirectory(),
-              packagePath = path.join(filePath, 'package.json');
-
-          if(!isDir || !fs.existsSync(packagePath)){
-            return false;
-          }
-
-          var content = fs.readJsonSync(packagePath);
-
-          if(!content.oc || !!content.oc.packaged){
-            return false;
-          }
-
-          return true;
-        });
-
-        var fullPathComponents = _.map(components, function(component){
-          return path.resolve(componentsDir, component);
-        });
-
-        callback(null, fullPathComponents);
-
-      } catch(err){
-        return callback(err);
-      }
-    },
+    getComponentsByDir: getComponentsByDir(dependencies),
     getLocalNpmModules: function(componentsDir){
 
       var nodeFolder = path.join(componentsDir, 'node_modules');

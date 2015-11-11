@@ -9,7 +9,7 @@ describe('cli : facade : link', function(){
   var logSpy = {},
       LinkFacade = require('../../cli/facade/link'),
       Local = require('../../cli/domain/local'),
-      local = new Local(),
+      local = new Local({ logger: { log: function(){} } }),
       linkFacade = new LinkFacade({ local: local, logger: logSpy });
 
   var execute = function(){
@@ -33,7 +33,7 @@ describe('cli : facade : link', function(){
       it('should show the error', function(){
         expect(logSpy.log.args[0][0]).to.equal('an error!'.red);
       });
-    }); 
+    });
 
     describe('when it succeeds', function(){
 
@@ -41,7 +41,7 @@ describe('cli : facade : link', function(){
         sinon.stub(local, 'link').yields(null, 'yay');
         execute();
       });
-      
+
       afterEach(function(){
         local.link.restore();
       });
