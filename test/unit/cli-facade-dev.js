@@ -9,7 +9,7 @@ describe('cli : facade : dev', function(){
   var logSpy = {},
       DevFacade = require('../../cli/facade/dev'),
       Local = require('../../cli/domain/local'),
-      local = new Local(),
+      local = new Local({ logger: { log: function(){} } }),
       npm = require('npm'),
       devFacade = new DevFacade({ local: local, logger: logSpy });
 

@@ -57,7 +57,7 @@ module.exports = function(grunt) {
     fs.writeFileSync(path.join(__dirname, 'client/oc-client.min.js'), compressedClientLibrary);
 
     var Local = require('./cli/domain/local'),
-        local = new Local();
+        local = new Local({ logger: { log: grunt.log.writeln }});
 
     local.package(path.join(__dirname, 'components/oc-client'), function(err, res){
       grunt.log[!!err ? 'error' : 'ok'](!!err ? err : 'Client has been built and packaged');

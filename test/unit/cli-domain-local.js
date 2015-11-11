@@ -20,6 +20,14 @@ var initialise = function(){
     writeJson: sinon.stub().yields(null, 'ok')
   };
 
+  var pathMock = {
+    extname: path.extname,
+    join: path.join,
+    resolve: function(){
+      return _.toArray(arguments).join('/');
+    }
+  };
+
   var Local = injectr('../../cli/domain/local.js', {
     'fs-extra': fsMock,
     'uglify-js': {
@@ -29,18 +37,12 @@ var initialise = function(){
         };
       }
     },
-    path: {
-      extname: path.extname,
-      join: path.join,
-      resolve: function(){
-        return _.toArray(arguments).join('/');
-      }
-    },
+    path: pathMock,
     './package-static-files': sinon.stub().yields(null, 'ok'),
     './package-template': sinon.stub().yields(null, { type: 'jade', src: 'template.js', hashKey: '123456'})
   }, { __dirname: '' });
 
-  var local = new Local();
+  var local = new Local({ logger: { log: console.log } });
 
   return { local: local, fs: fsMock };
 };
@@ -55,10 +57,6 @@ var executeMocking = function(local, type, name, value, cb){
     targetName: name,
     targetValue: value
   }, cb);
-};
-
-var executeComponentsListingByDir = function(local, callback){
-  return local.getComponentsByDir('.', callback);
 };
 
 describe('cli : domain : local', function(){
@@ -103,45 +101,6 @@ describe('cli : domain : local', function(){
       it('should save hash for template in package.json', function(){
         expect(component.oc.files.template.hashKey).not.be.empty;
       });
-    });
-  });
-
-  describe('when getting components from dir', function(){
-
-    var error, result;
-    beforeEach(function(done){
-
-      var data = initialise();
-
-      data.fs.readdirSync.onCall(0).returns([
-        'a-component',
-        'a-not-component-dir',
-        'a-file.json',
-        '_package'
-      ]);
-
-      data.fs.lstatSync.onCall(0).returns({ isDirectory: function(){ return true; }});
-      data.fs.existsSync.onCall(0).returns(true);
-      data.fs.readJsonSync.onCall(0).returns({ oc: {}});
-
-      data.fs.lstatSync.onCall(1).returns({ isDirectory: function(){ return true; }});
-      data.fs.existsSync.onCall(1).returns(false);
-
-      data.fs.lstatSync.onCall(2).returns({ isDirectory: function(){ return false; }});
-
-      data.fs.lstatSync.onCall(3).returns({ isDirectory: function(){ return true; }});
-      data.fs.existsSync.onCall(2).returns(true);
-      data.fs.readJsonSync.onCall(1).returns({ oc: { packaged: true }});
-
-      executeComponentsListingByDir(data.local, function(err, res){
-        error = err;
-        result = res;
-        done();
-      });
-    });
-
-    it('should add version to package.json file', function(){
-      expect(result).to.eql(['./a-component']);
     });
   });
 

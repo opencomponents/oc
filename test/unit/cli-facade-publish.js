@@ -12,7 +12,7 @@ describe('cli : facade : publish', function(){
       Registry = require('../../cli/domain/registry'),
       registry = new Registry(),
       Local = require('../../cli/domain/local'),
-      local = new Local(),
+      local = new Local({ logger: { log: function(){} } }),
       PublishFacade = require('../../cli/facade/publish'),
       publishFacade = new PublishFacade({ registry: registry, local: local, logger: logSpy });
 

@@ -8,7 +8,7 @@ describe('cli : facade : unlink', function(){
 
   var logSpy = {},
       Local = require('../../cli/domain/local'),
-      local = new Local(),  
+      local = new Local({ logger: { log: function(){} } }),  
       UnlinkFacade = require('../../cli/facade/unlink'),
       unlinkFacade = new UnlinkFacade({ local:local, logger: logSpy });
 
@@ -29,7 +29,7 @@ describe('cli : facade : unlink', function(){
       it('should show the error', function(){
         expect(logSpy.log.args[0][0]).to.equal('an error!'.red);
       });
-    }); 
+    });
 
     describe('when it succeeds', function(){
 

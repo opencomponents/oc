@@ -9,7 +9,7 @@ describe('cli : facade : mock', function(){
   var logSpy = {},
       MockFacade = require('../../cli/facade/mock'),
       Local = require('../../cli/domain/local'),
-      local = new Local(),
+      local = new Local({ logger: { log: function(){} } }),
       mockFacade = new MockFacade({ local: local, logger: logSpy });
 
   var execute = function(){
@@ -25,7 +25,7 @@ describe('cli : facade : mock', function(){
         sinon.stub(local, 'mock').yields(null, 'ok');
         execute();
       });
-      
+
       afterEach(function(){
         local.mock.restore();
       });

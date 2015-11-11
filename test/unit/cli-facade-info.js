@@ -11,7 +11,7 @@ describe('cli : facade : info', function(){
       Registry = require('../../cli/domain/registry'),
       registry = new Registry(),
       Local = require('../../cli/domain/local'),
-      local = new Local(),
+      local = new Local({ logger: { log: function(){} } }),
       InfoFacade = require('../../cli/facade/info'),
       infoFacade = new InfoFacade({ registry: registry, local: local, logger: logSpy });
 
@@ -32,7 +32,7 @@ describe('cli : facade : info', function(){
   describe('when showing project info', function(){
 
     describe('when the information can\'t be retrieved', function(){
-      
+
       beforeEach(function(){
         setup([{ obj: local, method: 'info', responses: [{err: 'something bad happened'}]}]);
         execute();
@@ -67,7 +67,7 @@ describe('cli : facade : info', function(){
 
       describe('when there are no components linked in the project', function(){
 
-        beforeEach(function(){          
+        beforeEach(function(){
           setup([{ obj: local, method: 'info', responses: [{ res: { registries: ['http://registry.com'], components: {}}}]}]);
           execute();
         });
@@ -83,10 +83,10 @@ describe('cli : facade : info', function(){
 
       describe('when there are components linked in the project', function(){
 
-        beforeEach(function(){     
-          setup([{ 
-            obj: local, 
-            method: 'info', 
+        beforeEach(function(){
+          setup([{
+            obj: local,
+            method: 'info',
             responses: [{
               res: { registries: ['http://registry.com'], components: { 'ghost': '1.X.X', 'hello': '~1.0.0' }}
             }]
@@ -116,7 +116,7 @@ describe('cli : facade : info', function(){
 
         it('should list the components', function(){
           expect(logSpy.log.args[0][0]).to.be.equal('Components linked in project:'.yellow);
-        }); 
+        });
 
         it('should show a message when a component is not found on the registry', function(){
           expect(logSpy.log.args[1][0]).to.include('Not available'.red);
