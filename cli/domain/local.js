@@ -13,6 +13,7 @@ var packageServerScript = require('./package-server-script');
 var packageStaticFiles = require('./package-static-files');
 var packageTemplate = require('./package-template');
 var getComponentsByDir = require('./get-components-by-dir');
+var getLocalNpmModules = require('./get-local-npm-modules');
 var request = require('../../utils/request');
 var settings = require('../../resources/settings');
 var validator = require('../../registry/domain/validators');
@@ -29,23 +30,7 @@ module.exports = function(dependencies){
       return targz.compress(input, output, callback);
     },
     getComponentsByDir: getComponentsByDir(dependencies),
-    getLocalNpmModules: function(componentsDir){
-
-      var nodeFolder = path.join(componentsDir, 'node_modules');
-
-      if(!fs.existsSync(nodeFolder)){
-        return [];
-      }
-
-      return fs.readdirSync(nodeFolder).filter(function(file){
-
-        var filePath = path.resolve(nodeFolder, file),
-            isBin = file === '.bin',
-            isDir = fs.lstatSync(filePath).isDirectory();
-
-        return isDir && !isBin;
-      });
-    },
+    getLocalNpmModules: getLocalNpmModules(),
     info: function(callback){
       return fs.readJson(settings.configFile.src, callback);
     },
