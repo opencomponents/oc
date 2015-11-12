@@ -14,6 +14,7 @@ var packageStaticFiles = require('./package-static-files');
 var packageTemplate = require('./package-template');
 var getComponentsByDir = require('./get-components-by-dir');
 var getLocalNpmModules = require('./get-local-npm-modules');
+var link = require('./link');
 var request = require('../../utils/request');
 var settings = require('../../resources/settings');
 var validator = require('../../registry/domain/validators');
@@ -66,40 +67,7 @@ module.exports = function(dependencies){
         return callback(e);
       }
     },
-    link: function(componentName, componentVersion, callback){
-
-      fs.readJson(settings.configFile.src, function(err, localConfig){
-        if(!localConfig || !localConfig.registries || localConfig.registries.length === 0){
-          return callback('Registry configuration not found. Add a registry reference to the project first');
-        }
-
-        localConfig.components = localConfig.components || {};
-
-        if(!!localConfig.components[componentName]){
-          return callback('Component already linked in the project');
-        }
-
-        var componentHref = format('{0}/{1}/{2}', localConfig.registries[0], componentName, componentVersion);
-
-        request(componentHref, function(err, res){
-          if(err || !res){
-            return callback('Component not available');
-          }
-
-          try {
-            var apiResponse = JSON.parse(res);
-            if(apiResponse.type !== 'oc-component'){
-              return callback('not a valid oc Component');
-            }
-          } catch(e){
-            return callback('not a valid oc Component');
-          }
-
-          localConfig.components[componentName] = componentVersion;
-          fs.writeJson(settings.configFile.src, localConfig, callback);
-        });
-      });
-    },
+    link: link(),
     mock: function(params, callback){
 
       fs.readJson(settings.configFile.src, function(err, localConfig){
