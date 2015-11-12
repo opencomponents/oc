@@ -91,6 +91,7 @@ The basic package file `package.json` looks as follows:
 |`oc.parameters`|`object`|Describes the component's api. Used to auto-generate documentation and get requests validation. Each `key` is the parameter name|
 |`oc.parameters[key].mandatory`|`boolean`|Default `false`, if `true`, any request that does not include a valid value will be rejected with a `400` code.|
 |`oc.parameters[key].type`|`string`|Type of parameter, used for a basic validation check Allowed types are `string`, `boolean`, `number`. When parameter is not valid, request will be rejected with a `400` code|
+|`oc.parameters[key].description`|`string`| Used for auto-generated documentation|
 |`oc.parameters[key].example`|`string`| Used for auto-generated documentation|
 |`oc.plugins`|`array of strings`|the [plugins](registry.md#plugins) the component requires|
 |`oc.state`|`string`|Describes the state of the component with a keyword. Suggested values are `active`, `experimental`, `deprecated`|
