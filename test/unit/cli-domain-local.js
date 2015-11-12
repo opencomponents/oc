@@ -30,13 +30,6 @@ var initialise = function(){
 
   var Local = injectr('../../cli/domain/local.js', {
     'fs-extra': fsMock,
-    'uglify-js': {
-      minify: function(code){
-        return {
-          code: code
-        };
-      }
-    },
     path: pathMock,
     './package-static-files': sinon.stub().yields(null, 'ok'),
     './package-template': sinon.stub().yields(null, { type: 'jade', src: 'template.js', hashKey: '123456'})
@@ -45,10 +38,6 @@ var initialise = function(){
   var local = new Local({ logger: { log: console.log } });
 
   return { local: local, fs: fsMock };
-};
-
-var executePackaging = function(local, callback){
-  return local.package('.', callback);
 };
 
 var executeMocking = function(local, type, name, value, cb){
@@ -60,49 +49,6 @@ var executeMocking = function(local, type, name, value, cb){
 };
 
 describe('cli : domain : local', function(){
-
-  describe('when packaging', function(){
-
-    describe('when component is valid', function(){
-
-      var component;
-      beforeEach(function(done){
-
-        var data = initialise();
-
-        component = {
-          name: 'helloworld',
-          oc: {
-            files: {
-              template: {
-                type: 'jade',
-                src: 'template.jade'
-              }
-            }
-          },
-          dependencies: {}
-        };
-
-        data.fs.existsSync.returns(true);
-        data.fs.readJsonSync.onCall(0).returns(component);
-        data.fs.readJsonSync.onCall(1).returns({ version: '1.2.3' });
-
-        executePackaging(data.local, done);
-      });
-
-      it('should add version to package.json file', function(){
-        expect(component.oc.version).to.eql('1.2.3');
-      });
-
-      it('should mark the package.json as a packaged', function(){
-        expect(component.oc.packaged).to.eql(true);
-      });
-
-      it('should save hash for template in package.json', function(){
-        expect(component.oc.files.template.hashKey).not.be.empty;
-      });
-    });
-  });
 
   describe('when mocking a static plugin', function(){
 
