@@ -15,9 +15,11 @@ var oc = oc || {};
       JQUERY_URL = CDNJS_BASEURL + 'jquery/1.11.2/jquery.min.js',
       RETRY_INTERVAL = oc.conf.retryInterval || 5000,
       RETRY_LIMIT = oc.conf.retryLimit || 30,
+      RETRY_SEND_NUMBER = oc.conf.retrySendNumber || true,
       POLLING_INTERVAL = oc.conf.pollingInterval || 500,
       OC_TAG = oc.conf.tag || 'oc-component',
       MESSAGES_ERRORS_HREF_MISSING = 'Href parameter missing',
+      MESSAGES_ERRORS_RETRY_FAILED = 'Failed to load {0} component {1} times. Giving up'.replace('{1}', RETRY_LIMIT),
       MESSAGES_ERRORS_LOADING_COMPILED_VIEW = 'Error getting compiled view: {0}',
       MESSAGES_ERRORS_RENDERING = 'Error rendering component: {0}, error: {1}',
       MESSAGES_ERRORS_RETRIEVING = 'Failed to retrieve the component. Retrying in {0} seconds...'.replace('{0}', RETRY_INTERVAL/1000),
@@ -48,7 +50,7 @@ var oc = oc || {};
 
   var retries = {};
 
-  var retry = function(component, cb){
+  var retry = function(component, cb, failedRetryCb){
     if(retries[component] === undefined){
       retries[component] = RETRY_LIMIT;
     }
@@ -57,8 +59,23 @@ var oc = oc || {};
       return;
     }
 
-    setTimeout(cb, RETRY_INTERVAL);
+    setTimeout(function(){
+      cb(RETRY_LIMIT - retries[component] + 1);
+    }, RETRY_INTERVAL);
     retries[component]--;
+  };
+  
+  var addParametersToHref = function (href, parameters) {
+    if(href && parameters) {
+      var param = $.param(parameters);
+      if(href.indexOf('?') > -1) {
+        return href + '&' + param;
+      } else {
+        return href + '?' + param;
+      }
+    }
+
+    return href;
   };
 
   // A minimal require.js-ish that uses head.js
@@ -306,8 +323,17 @@ var oc = oc || {};
           },
           error: function(){
             logger.error(MESSAGES_ERRORS_RETRIEVING);
-            retry(href, function() {
-              oc.renderByHref(href, callback);
+            retry(href, function(requestNumber) {
+              var hrefWithCount = href;
+              if(RETRY_SEND_NUMBER) {
+                hrefWithCount = addParametersToHref(href, {
+                  '__oc_Retry': requestNumber
+                });
+              }
+
+              oc.renderByHref(hrefWithCount, callback);
+            }, function(){
+              callback(MESSAGES_ERRORS_RETRY_FAILED.replace('{0}', href));
             });
           }
         });
