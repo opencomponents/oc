@@ -282,13 +282,25 @@ var oc = oc || {};
     });
   };
 
-  oc.renderByHref = function(href, callback){
-    console.log(RETRY_INTERVAL);
-    console.log(href);
+  oc.renderByHref = function(href, retryNumberOrCallback, cb){
+    var callback = cb;
+    var retryNumber = retryNumberOrCallback;
+    if(typeof retryNumberOrCallback === 'function') {
+      callback = retryNumberOrCallback;
+      retryNumber = 0;
+    }
+
     oc.ready(function(){
       if(href !== ''){
+        var hrefWithCount = href;
+        if(RETRY_SEND_NUMBER) {
+          hrefWithCount = addParametersToHref(hrefWithCount, {
+            '__oc_Retry': retryNumber
+          });
+        }
+
         $.ajax({
-          url: href,
+          url: hrefWithCount,
           headers: { 'Accept': 'application/vnd.oc.unrendered+json' },
           contentType: 'text/plain',
           crossDomain: true,
@@ -325,21 +337,8 @@ var oc = oc || {};
           },
           error: function(){
             logger.error(MESSAGES_ERRORS_RETRIEVING);
-            var hrefWithoutCount = href;
-            if(RETRY_SEND_NUMBER) {
-              hrefWithoutCount = hrefWithoutCount.replace(/[\?\&]__oc_Retry=[0-9]+/, '');
-            }
-
-            retry(hrefWithoutCount, function(requestNumber) {
-              var hrefWithCount = hrefWithoutCount;
-              if(RETRY_SEND_NUMBER) {
-                hrefWithCount = addParametersToHref(hrefWithCount, {
-                  '__oc_Retry': requestNumber
-                });
-                console.log(hrefWithCount);
-              }
-
-              oc.renderByHref(hrefWithCount, callback);
+            retry(href, function(requestNumber) {
+              oc.renderByHref(href, requestNumber, callback);
             }, function(){
               callback(MESSAGES_ERRORS_RETRY_FAILED.replace('{0}', href));
             });
