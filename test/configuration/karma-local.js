@@ -10,6 +10,7 @@ module.exports = function(config) {
       '../../components/oc-client/src/head.load.js',
       '../../node_modules/handlebars/dist/handlebars.runtime.js',
       '../../node_modules/jade/runtime.js',
+      '../front-end/ocTestConfig.js',
       '../../components/oc-client/src/oc-client.js',
 
       '../front-end/*.js'
@@ -17,9 +18,9 @@ module.exports = function(config) {
     reporters: ['dots'],
     port: 9876,
     colors: true,
-    logLevel: config.LOG_INFO,
+    logLevel: config.LOG_DEBUG,
     autoWatch: true,
     browsers: ['PhantomJS'],
-    singleRun: false
+    singleRun: false,
   });
 };

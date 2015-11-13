@@ -169,6 +169,28 @@ describe('oc-client : renderByHref', function(){
           expect(callback.args[0][1].version).toEqual('1.2.123');
         });
       });
+
+      describe('when getting component returns an error', function(){
+
+        var ajaxMock, error;
+        beforeEach(function(done){
+          ajaxMock = initialise('', true);
+          oc.renderByHref(route, function(err){
+            error = err;
+            done();
+          });
+        });
+
+        afterEach(cleanup);
+
+        it('should make a call to the registry multiple times', function(){
+          expect(ajaxMock.callCount).toBe(31);
+        });
+        
+        it('should throw an error', function () {
+          expect(error).toContain('Failed to load');
+        });
+      });
     });
   });
 });

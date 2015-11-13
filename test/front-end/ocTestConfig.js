@@ -1,3 +1,3 @@
-/**
- * Created by pbazydlo on 12/11/2015.
- */
+var oc = oc || {};
+oc.conf = oc.conf || {};
+oc.conf.retryInterval = 1;
