@@ -56,7 +56,7 @@ var oc = oc || {};
     }
 
     if(retries[component] <= 0){
-      return;
+      return failedRetryCb();
     }
 
     setTimeout(function(){
@@ -283,6 +283,8 @@ var oc = oc || {};
   };
 
   oc.renderByHref = function(href, callback){
+    console.log(RETRY_INTERVAL);
+    console.log(href);
     oc.ready(function(){
       if(href !== ''){
         $.ajax({
@@ -323,12 +325,18 @@ var oc = oc || {};
           },
           error: function(){
             logger.error(MESSAGES_ERRORS_RETRIEVING);
-            retry(href, function(requestNumber) {
-              var hrefWithCount = href;
+            var hrefWithoutCount = href;
+            if(RETRY_SEND_NUMBER) {
+              hrefWithoutCount = hrefWithoutCount.replace(/[\?\&]__oc_Retry=[0-9]+/, '');
+            }
+
+            retry(hrefWithoutCount, function(requestNumber) {
+              var hrefWithCount = hrefWithoutCount;
               if(RETRY_SEND_NUMBER) {
-                hrefWithCount = addParametersToHref(href, {
+                hrefWithCount = addParametersToHref(hrefWithCount, {
                   '__oc_Retry': requestNumber
                 });
+                console.log(hrefWithCount);
               }
 
               oc.renderByHref(hrefWithCount, callback);
