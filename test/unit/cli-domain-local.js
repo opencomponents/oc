@@ -40,68 +40,7 @@ var initialise = function(){
   return { local: local, fs: fsMock };
 };
 
-var executeMocking = function(local, type, name, value, cb){
-  return local.mock({
-    targetType: type,
-    targetName: name,
-    targetValue: value
-  }, cb);
-};
-
 describe('cli : domain : local', function(){
 
-  describe('when mocking a static plugin', function(){
 
-    var data;
-    beforeEach(function(done){
-      data = initialise();
-
-      data.fs.readJson.yields(null, { something: 'hello' });
-      data.fs.writeJson.yields(null, 'ok');
-
-      executeMocking(data.local, 'plugin', 'getValue', 'value', done);
-    });
-
-    it('should add mock to oc.json', function(){
-      expect(data.fs.writeJson.called).to.be.true;
-      expect(data.fs.writeJson.args[0][1]).to.eql({
-        something: 'hello',
-        mocks: {
-          plugins: {
-            static: {
-              getValue: 'value'
-            }
-          }
-        }
-      });
-    });
-  });
-
-  describe('when mocking a dynamic plugin', function(){
-
-    var data;
-    beforeEach(function(done){
-      data = initialise();
-
-      data.fs.readJson.yields(null, { something: 'hello' });
-      data.fs.existsSync.returns(true);
-      data.fs.writeJson.yields(null, 'ok');
-
-      executeMocking(data.local, 'plugin', 'getValue', './value.js', done);
-    });
-
-    it('should add mock to oc.json', function(){
-      expect(data.fs.writeJson.called).to.be.true;
-      expect(data.fs.writeJson.args[0][1]).to.eql({
-        something: 'hello',
-        mocks: {
-          plugins: {
-            dynamic: {
-              getValue: './value.js'
-            }
-          }
-        }
-      });
-    });
-  });
 });

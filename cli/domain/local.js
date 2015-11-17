@@ -10,6 +10,7 @@ var getComponentsByDir = require('./get-components-by-dir');
 var getLocalNpmModules = require('./get-local-npm-modules');
 var link = require('./link');
 var packageComponents = require('./package-components');
+var mock = require('./mock');
 var settings = require('../../resources/settings');
 var validator = require('../../registry/domain/validators');
 
@@ -62,36 +63,7 @@ module.exports = function(dependencies){
       }
     },
     link: link(),
-    mock: function(params, callback){
-
-      fs.readJson(settings.configFile.src, function(err, localConfig){
-
-        localConfig = localConfig || {};
-
-        var mockType = params.targetType + 's';
-
-        if(!localConfig.mocks){
-          localConfig.mocks = {};
-        }
-
-        if(!localConfig.mocks[mockType]){
-          localConfig.mocks[mockType] = {};
-        }
-
-        var pluginType = 'static';
-        if(fs.existsSync(path.resolve(params.targetValue))){
-          pluginType = 'dynamic';
-        }
-
-        if(!localConfig.mocks[mockType][pluginType]){
-          localConfig.mocks[mockType][pluginType] = {};
-        }
-
-        localConfig.mocks[mockType][pluginType][params.targetName] = params.targetValue;
-
-        return fs.writeJson(settings.configFile.src, localConfig, {spaces: 2}, callback);
-      });
-    },
+    mock: mock(),
     package: packageComponents(),
     unlink: function(componentName, callback){
       fs.readJson(settings.configFile.src, function(err, localConfig){
