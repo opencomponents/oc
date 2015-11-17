@@ -4,6 +4,8 @@ var format = require('stringformat');
 var fs = require('fs-extra');
 var path = require('path');
 
+var getMimeType = require('../../utils/get-mime-type');
+
 module.exports = function(repository){
   return function(req, res){
 
@@ -27,7 +29,13 @@ module.exports = function(repository){
       return res.json(404, { err: res.errorDetails });
     }
 
-    var fileStream = fs.createReadStream(filePath);
+    var fileStream = fs.createReadStream(filePath),
+        fileExt = path.extname(filePath),
+        mimeType = getMimeType(fileExt);
+
+    if(!!mimeType){
+      res.set('Content-type', mimeType);
+    }
 
     fileStream.on('open', function(){
       fileStream.pipe(res);
