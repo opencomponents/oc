@@ -13,6 +13,7 @@ var packageComponents = require('./package-components');
 var mock = require('./mock');
 var settings = require('../../resources/settings');
 var validator = require('../../registry/domain/validators');
+var unlink = require('./unlink');
 
 module.exports = function(dependencies){
   var logger = dependencies.logger;
@@ -65,17 +66,6 @@ module.exports = function(dependencies){
     link: link(),
     mock: mock(),
     package: packageComponents(),
-    unlink: function(componentName, callback){
-      fs.readJson(settings.configFile.src, function(err, localConfig){
-
-        localConfig = localConfig || {};
-
-        if(!!localConfig.components[componentName]){
-          delete localConfig.components[componentName];
-        }
-
-        fs.writeJson(settings.configFile.src, localConfig, callback);
-      });
-    }
+    unlink: unlink()
   });
 };
