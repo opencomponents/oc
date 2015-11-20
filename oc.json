@@ -1,9 +1,0 @@
-{
-  "mocks": {
-    "plugins": {
-      "static": {
-        "getValue": "./value.js"
-      }
-    }
-  }
-}
