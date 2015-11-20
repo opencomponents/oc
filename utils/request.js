@@ -6,7 +6,7 @@ var _ = require('underscore');
 module.exports = function(urlPath, options, callback){
 
   var httpProtocol = urlPath.indexOf('https') === 0 ? 'https' : 'http',
-      callbackDone = false; 
+      callbackDone = false;
 
   if(_.isFunction(options)){
     callback = options;
@@ -28,7 +28,7 @@ module.exports = function(urlPath, options, callback){
         callbackDone = true;
 
         if(response.statusCode === 404){
-          callback('not found', null);
+          callback(new Error('component not found'), null);
         } else {
           callback(null, body);
         }
