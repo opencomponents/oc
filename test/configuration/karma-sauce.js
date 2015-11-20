@@ -1,21 +1,10 @@
 'use strict';
+var _ = require('underscore');
+var commonConfig = require('./karma-common');
 
 module.exports = function(config) {
-  config.set({
-    basePath: '',
-    frameworks: ['jasmine', 'sinon'],
-    files: [
-      'jquery-1.11.2.js',
-      'jQuery.XDomainRequest.js',
-      '../../components/oc-client/src/head.load.js',
-      '../../node_modules/handlebars/dist/handlebars.runtime.js',
-      '../../node_modules/jade/runtime.js',
-      '../../components/oc-client/src/oc-client.js',
-
-      '../front-end/*.js'
-    ],
+  config.set(_.extend({}, commonConfig, {
     reporters: ['dots', 'saucelabs'],
-    port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
@@ -26,10 +15,9 @@ module.exports = function(config) {
       startConnect: true
     },
     captureTimeout: 180000,
-    singleRun: false,
     browserNoActivityTimeout: 180000,
     browserDisconnectTolerance: 5
-  });
+  }));
 
   if (process.env.TRAVIS)
   {
