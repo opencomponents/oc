@@ -146,8 +146,8 @@ This is a plugin example:
 var connection,
     client = require('./hobknob-client');
 
-module.exports.register = function(connectionString, next){
-  client.connect(connectionString, function(err, conn){
+module.exports.register = function(options, dependencies, next){
+  client.connect(options.connectionString, function(err, conn){
     connection = conn;
     next();
   });
@@ -165,9 +165,11 @@ This is how to register it in a registry:
 var registry = new oc.Registry(configuration);
 
 registry.register({
-  name: 'getFeatureSwitch', 
+  name: 'getFeatureSwitch',
   register: require('./oc-plugins/hobknob'),
-  options: connectionString
+  options: {
+      connectionString: connectionString
+  }
 });
 ...
 ```
@@ -179,5 +181,28 @@ module.exports.data = function(context, callback){
   callback(null, {
     variable: context.plugins.getFeatureSwitch('AbTestHomePage')
   });
+};
+```
+
+This is how to depend on (and use) other plugins:
+
+```js
+// ./registry/oc-plugins/hobknob.js
+var connection,
+    client = require('./hobknob-client');
+
+module.exports.dependencies = ['log', 'otherplugin'];
+
+module.exports.register = function(options, dependencies, next){
+  // this register function is only called after all dependencies are registered
+  client.connect(options.connectionString, function(err, conn){
+    connection = conn;
+    dependencies.log('hobknob client initialised');
+    next();
+  });
+};
+
+module.exports.execute = function(featureName){
+  return connection.get(featureName);
 };
 ```

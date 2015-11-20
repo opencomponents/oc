@@ -53,6 +53,7 @@
     "clean-css": "3.4.5",
     "cli-table": "0.3.1",
     "colors": "1.0.3",
+    "dependency-graph": "^0.4.1",
     "detective": "4.0.0",
     "express": "3.21.2",
     "falafel": "^1.2.0",

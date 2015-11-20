@@ -50,7 +50,7 @@ module.exports = function(options){
     var app = express();
 
     repository = new Repository(options);
-    
+
     // middleware
     app.set('port', process.env.PORT || options.port);
     app.set('json spaces', 0);
@@ -59,7 +59,7 @@ module.exports = function(options){
       res.conf = options;
       next();
     });
-    
+
     app.use(requestHandler(eventsHandler));
     app.use(express.json());
     app.use(express.urlencoded());
@@ -102,7 +102,7 @@ module.exports = function(options){
       app.get('/', function(req, res){ res.redirect(options.prefix); });
       app.get(options.prefix.substr(0, options.prefix.length - 1), router.listComponents);
     }
-        
+
     app.get(options.prefix + 'oc-client/client.js', router.staticRedirector);
 
     if(options.local){
@@ -131,7 +131,7 @@ module.exports = function(options){
     app.set('etag', 'strong');
 
     pluginsInitialiser.init(plugins, function(err, plugins){
-      if(!!err){ return callback(err.msg); }
+      if(!!err){ return callback(err); }
       options.plugins = plugins;
 
       repository.init(eventsHandler, function(err, componentsInfo){

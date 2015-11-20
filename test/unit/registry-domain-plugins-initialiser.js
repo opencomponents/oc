@@ -9,14 +9,14 @@ describe('registry : domain : plugins-initialiser', function(){
   describe('when initialising not valid plugins', function(){
 
     describe('when plugin not registered correctly', function(){
-      
+
       var result, error;
       beforeEach(function(done){
 
         var plugins = [{
           name: 'doSomething'
         }];
-      
+
         pluginsInitialiser.init(plugins, function(err, res){
           error = err;
           result = res;
@@ -25,12 +25,12 @@ describe('registry : domain : plugins-initialiser', function(){
       });
 
       it('should error', function(){
-        expect(error).to.be.eql('Plugin 1 is not valid');
+        expect(error.toString()).to.be.eql('Error: Plugin doSomething is not valid');
       });
     });
 
     describe('when plugin is anonymous', function(){
-      
+
       var result, error;
       beforeEach(function(done){
 
@@ -40,7 +40,7 @@ describe('registry : domain : plugins-initialiser', function(){
             execute: function(){}
           }
         }];
-      
+
         pluginsInitialiser.init(plugins, function(err, res){
           error = err;
           result = res;
@@ -49,12 +49,12 @@ describe('registry : domain : plugins-initialiser', function(){
       });
 
       it('should error', function(){
-        expect(error).to.be.eql('Plugin 1 is not valid');
+        expect(error.toString()).to.be.eql('Error: Plugin 1 is not valid');
       });
     });
 
     describe('when plugin does not expose a register method', function(){
-      
+
       var result, error;
       beforeEach(function(done){
 
@@ -62,7 +62,7 @@ describe('registry : domain : plugins-initialiser', function(){
           name: 'doSomething',
           register: { execute: function(){}}
         }];
-      
+
         pluginsInitialiser.init(plugins, function(err, res){
           error = err;
           result = res;
@@ -71,12 +71,12 @@ describe('registry : domain : plugins-initialiser', function(){
       });
 
       it('should error', function(){
-        expect(error).to.be.eql('Plugin 1 is not valid');
+        expect(error.toString()).to.be.eql('Error: Plugin doSomething is not valid');
       });
     });
 
     describe('when plugin does not expose an execute method', function(){
-      
+
       var result, error;
       beforeEach(function(done){
 
@@ -84,7 +84,7 @@ describe('registry : domain : plugins-initialiser', function(){
           name: 'doSomething',
           register: { register: function(){}}
         }];
-      
+
         pluginsInitialiser.init(plugins, function(err, res){
           error = err;
           result = res;
@@ -93,20 +93,20 @@ describe('registry : domain : plugins-initialiser', function(){
       });
 
       it('should error', function(){
-        expect(error).to.be.eql('Plugin 1 is not valid');
+        expect(error.toString()).to.be.eql('Error: Plugin doSomething is not valid');
       });
     });
   });
 
   describe('when initialising valid plugins', function(){
-    
+
     var passedOptions, flag, error, result;
     beforeEach(function(done){
 
       var plugins = [{
         name: 'getValue',
         register: {
-          register: function(options, cb){
+          register: function(options, deps, cb){
             passedOptions = options;
             cb();
           },
@@ -122,7 +122,7 @@ describe('registry : domain : plugins-initialiser', function(){
       {
         name: 'isFlagged',
         register: {
-          register: function(options, cb){
+          register: function(options, deps, cb){
             flag = true;
             cb();
           },
@@ -154,6 +154,174 @@ describe('registry : domain : plugins-initialiser', function(){
 
       expect(a).to.equal(123);
       expect(flagged).to.equal(true);
+    });
+  });
+
+  describe('when plugin specifies dependencies', function(){
+
+    var passedDeps, flag, error, result;
+    beforeEach(function(done){
+
+      var plugins = [{
+        name: 'isFlagged',
+        register: {
+          register: function(options, deps, cb){
+            flag = true;
+            cb();
+          },
+          execute: function(){
+            return flag;
+          }
+        }
+      },
+      {
+        name: 'getValue',
+        register: {
+          register: function(options, deps, cb){
+            passedDeps = deps;
+            cb();
+          },
+          execute: function(key){},
+          dependencies: ['isFlagged']
+        },
+        options: {}
+      }];
+
+      pluginsInitialiser.init(plugins, function(err, res){
+        error = err;
+        result = res;
+        done();
+      });
+    });
+
+    it('should provide the getValue register method with the required dependent plugins', function(){
+      expect(passedDeps.isFlagged()).to.eql(true);
+    });
+  });
+
+  describe('when plugins have a circular dependency', function(){
+
+    var passedOptions, passedDeps, flag, error, result;
+    beforeEach(function(done){
+
+      var plugins = [{
+        name: 'getValue',
+        register: {
+          register: function(options, deps, cb){
+            passedDeps = deps;
+            cb();
+          },
+          execute: function(key){},
+          dependencies: ['isFlagged']
+        },
+        options: {}
+      },
+      {
+        name: 'isFlagged',
+        register: {
+          register: function(options, deps, cb){
+            flag = true;
+            cb();
+          },
+          execute: function(){
+            return flag;
+          },
+          dependencies: ['getValue']
+        }
+      }];
+
+      pluginsInitialiser.init(plugins, function(err, res){
+        error = err;
+        result = res;
+        done();
+      });
+    });
+
+    it('should throw an error', function(){
+      expect(error.toString()).to.eql('Error: Dependency Cycle Found: getValue -> isFlagged -> getValue');
+    });
+  });
+
+  describe('when plugin depends on a plugin that is not registered', function(){
+
+    var passedOptions, passedDeps, flag, error, result;
+    beforeEach(function(done){
+
+      var plugins = [{
+        name: 'getValue',
+        register: {
+          register: function(options, deps, cb){
+            passedDeps = deps;
+            cb();
+          },
+          execute: function(key){},
+          dependencies: ['isFlagged']
+        },
+        options: {}
+      }];
+
+      pluginsInitialiser.init(plugins, function(err, res){
+        error = err;
+        result = res;
+        done();
+      });
+    });
+
+    it('should throw an error', function(){
+      expect(error.toString()).to.eql('Error: unknown plugin dependency: isFlagged');
+    });
+  });
+
+  describe('when plugin chain requires multiple passes', function(){
+
+    var passedOptions, passedDeps, flag, error, result;
+    beforeEach(function(done){
+
+      var plugins = [{
+        name: 'doSomething',
+        register: {
+          register: function(options, deps, cb){
+            cb();
+          },
+          execute: function(key){ return true; },
+          dependencies: ['getValue']
+        },
+        options: {}
+      },
+      {
+        name: 'getValue',
+        register: {
+          register: function(options, deps, cb){
+            passedDeps = deps;
+            cb();
+          },
+          execute: function(key){},
+          dependencies: ['isFlagged']
+        },
+        options: {}
+      },
+      {
+        name: 'isFlagged',
+        register: {
+          register: function(options, deps, cb){
+            flag = true;
+            cb();
+          },
+          execute: function(){
+            return flag;
+          }
+        }
+      }];
+
+      pluginsInitialiser.init(plugins, function(err, res){
+        error = err;
+        result = res;
+        done();
+      });
+    });
+
+    it('should defer the initalisation of the plugin until all dependencies have bee registered', function(){
+      expect(result.doSomething()).to.eql(true);
     });
   });
 });
