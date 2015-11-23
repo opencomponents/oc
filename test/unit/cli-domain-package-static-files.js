@@ -55,7 +55,8 @@ var cleanup = function(){
     },
     'uglify-js': { minify: sinon.stub().returns({
       code: 'this-is-minified'
-    })}
+    })},
+    '../../utils/gzip': sinon.stub().yields(null)
   };
 };
 
@@ -160,6 +161,10 @@ describe('cli : domain : packageStaticFiles', function(){
       it('should copy the file to the right destination', function(){
         expect(mocks['fs-extra'].copySync.args[0][1]).to.equal('/path/to/component/_package/img/file.png');
       });
+
+      it('should not gzip the image', function(){
+        expect(mocks['../../utils/gzip'].called).to.equal(false);
+      });
     });
 
     describe('when copying folder with sub-folders', function(){
@@ -225,6 +230,10 @@ describe('cli : domain : packageStaticFiles', function(){
 
         it('should copy the file to the right destination', function(){
           expect(mocks['fs-extra'].copySync.args[0][1]).to.equal('/path/to/component/_package/js/file.js');
+        });
+
+        it('should gzip the file', function(){
+          expect(mocks['../../utils/gzip'].called).to.equal(true);
         });
       });
 
@@ -292,6 +301,10 @@ describe('cli : domain : packageStaticFiles', function(){
         it('should copy the file to the right destination', function(){
           expect(mocks['fs-extra'].copySync.args[0][1]).to.equal('/path/to/component/_package/css/file.css');
         });
+
+        it('should gzip the file', function(){
+          expect(mocks['../../utils/gzip'].called).to.equal(true);
+        });
       });
 
       describe('when minify=true', function(){
@@ -325,6 +338,10 @@ describe('cli : domain : packageStaticFiles', function(){
 
         it('should save the file to the right destination', function(){
           expect(mocks['fs-extra'].writeFileSync.args[0][0]).to.equal('/path/to/component/_package/css/file.css');
+        });
+
+        it('should gzip the file', function(){
+          expect(mocks['../../utils/gzip'].called).to.equal(true);
         });
       });
 
