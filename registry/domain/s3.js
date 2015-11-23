@@ -9,7 +9,7 @@ var nodeDir = require('node-dir');
 var path = require('path');
 var _ = require('underscore');
 
-var getMimeType = require('../../utils/get-mime-type');
+var getFileInfo = require('../../utils/get-file-info');
 var getNextYear = require('../../utils/get-next-year');
 var strings = require('../../resources');
 
@@ -132,7 +132,7 @@ module.exports = function(conf){
     },
     putFileContent: function(fileContent, fileName, isPrivate, callback){
 
-      var mimeType = getMimeType(path.extname(fileName)),
+      var fileInfo = getFileInfo(fileName),
           obj = {
             Bucket: bucket,
             Key: fileName,
@@ -142,13 +142,15 @@ module.exports = function(conf){
             Expires: getNextYear()
           };
 
-      if(mimeType){
-        obj.ContentType = mimeType;
+      if(!!fileInfo.mimeType){
+        obj.ContentType = fileInfo.mimeType;
       }
 
-      client.putObject(obj, function (err, res) {
-         callback(err, res);
-      });
+      if(!!fileInfo.gzip){
+        obj.ContentEncoding = 'gzip';
+      }
+
+      client.putObject(obj, callback);
     }
   };
 };
