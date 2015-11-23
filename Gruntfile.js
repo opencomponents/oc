@@ -28,7 +28,7 @@ module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt);
 
   // default task
-  grunt.registerTask('default', ['test', 'build']);
+  grunt.registerTask('default', ['test-local', 'build']);
 
   // test
   grunt.registerTask('sauce', ['karma:sauce-linux', 'karma:sauce-osx', 'karma:sauce-windows']);
