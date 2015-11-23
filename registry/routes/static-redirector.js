@@ -4,6 +4,7 @@ var format = require('stringformat');
 var fs = require('fs-extra');
 var path = require('path');
 
+var getFileInfo = require('../../utils/get-file-info');
 var getMimeType = require('../../utils/get-mime-type');
 
 module.exports = function(repository){
@@ -30,11 +31,14 @@ module.exports = function(repository){
     }
 
     var fileStream = fs.createReadStream(filePath),
-        fileExt = path.extname(filePath),
-        mimeType = getMimeType(fileExt);
+        fileInfo = getFileInfo(filePath);
 
-    if(!!mimeType){
-      res.set('Content-type', mimeType);
+    if(!!fileInfo.mimeType){
+      res.set('Content-type', fileInfo.mimeType);
+    }
+
+    if(fileInfo.gzip){
+      res.set('Accept-Encoding', 'gzip');
     }
 
     fileStream.on('open', function(){

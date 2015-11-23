@@ -11,6 +11,22 @@ var _ = require('underscore');
 
 var strings = require('../../resources');
 
+var getFileInfo = function(filePath){
+  var ext = path.extname(filePath).toLowerCase(),
+      isGizipped = false;
+
+  if(ext === '.gz'){
+    isGizipped = true;
+    ext = path.extname(filePath.slice(0, -3)).toLowerCase();
+  }
+
+  return {
+    gzip: isGizipped,
+    isCss: ext === '.css',
+    isJs: ext === '.js'
+  };
+};
+
 var minifyFile = function(fileType, fileContent, ocOptions){
 
   if(fileType === '.js'){
