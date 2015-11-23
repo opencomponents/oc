@@ -6,7 +6,6 @@ var Cache = require('nice-cache');
 var format = require('stringformat');
 var fs = require('fs-extra');
 var nodeDir = require('node-dir');
-var path = require('path');
 var _ = require('underscore');
 
 var getFileInfo = require('../../utils/get-file-info');
