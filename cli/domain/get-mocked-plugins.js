@@ -13,7 +13,7 @@ var registerStaticMocks = function(mocks, logger){
     return {
       name: pluginName,
       register: {
-        register: function(options, next){
+        register: function(options, dependencies, next){
           return next();
         },
         execute: function(){
@@ -43,7 +43,7 @@ var registerDynamicMocks = function(mocks, logger){
     return {
       name: pluginName,
       register: {
-        register: function(options, next){
+        register: function(options, dependencies, next){
           return next();
         },
         execute: p
