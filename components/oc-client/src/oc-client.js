@@ -14,9 +14,12 @@ var oc = oc || {};
       JADE_URL = CDNJS_BASEURL + 'jade/1.9.2/runtime.min.js',
       JQUERY_URL = CDNJS_BASEURL + 'jquery/1.11.2/jquery.min.js',
       RETRY_INTERVAL = oc.conf.retryInterval || 5000,
+      RETRY_LIMIT = oc.conf.retryLimit || 30,
+      RETRY_SEND_NUMBER = oc.conf.retrySendNumber || true,
       POLLING_INTERVAL = oc.conf.pollingInterval || 500,
       OC_TAG = oc.conf.tag || 'oc-component',
       MESSAGES_ERRORS_HREF_MISSING = 'Href parameter missing',
+      MESSAGES_ERRORS_RETRY_FAILED = 'Failed to load {0} component {1} times. Giving up'.replace('{1}', RETRY_LIMIT),
       MESSAGES_ERRORS_LOADING_COMPILED_VIEW = 'Error getting compiled view: {0}',
       MESSAGES_ERRORS_RENDERING = 'Error rendering component: {0}, error: {1}',
       MESSAGES_ERRORS_RETRIEVING = 'Failed to retrieve the component. Retrying in {0} seconds...'.replace('{0}', RETRY_INTERVAL/1000),
@@ -43,6 +46,36 @@ var oc = oc || {};
     info: function(msg){
       return !!debug ? console.log(msg) : false;
     }
+  };
+
+  var retries = {};
+
+  var retry = function(component, cb, failedRetryCb){
+    if(retries[component] === undefined){
+      retries[component] = RETRY_LIMIT;
+    }
+
+    if(retries[component] <= 0){
+      return failedRetryCb();
+    }
+
+    setTimeout(function(){
+      cb(RETRY_LIMIT - retries[component] + 1);
+    }, RETRY_INTERVAL);
+    retries[component]--;
+  };
+  
+  var addParametersToHref = function (href, parameters) {
+    if(href && parameters) {
+      var param = $.param(parameters);
+      if(href.indexOf('?') > -1) {
+        return href + '&' + param;
+      } else {
+        return href + '?' + param;
+      }
+    }
+
+    return href;
   };
 
   // A minimal require.js-ish that uses head.js
@@ -122,12 +155,12 @@ var oc = oc || {};
 
     if(!options.baseUrl){
       throw 'baseUrl parameter is required';
-    } 
+    }
 
     if(!options.name){
       throw 'name parameter is required';
     }
-    
+
     var withFinalSlash = function(s){
       s = s || '';
 
@@ -137,7 +170,7 @@ var oc = oc || {};
 
       return s;
     };
-    
+
     var href = withFinalSlash(options.baseUrl) + withFinalSlash(options.name);
 
     if(!!options.version){
@@ -224,7 +257,7 @@ var oc = oc || {};
   };
 
   oc.renderNestedComponent = function($component, callback){
-    oc.ready(function(){ 
+    oc.ready(function(){
       var dataRendering = $component.attr('data-rendering'),
           dataRendered = $component.attr('data-rendered'),
           isRendering = typeof(dataRendering) === 'boolean' ? dataRendering : (dataRendering === 'true'),
@@ -249,12 +282,26 @@ var oc = oc || {};
     });
   };
 
-  oc.renderByHref = function(href, callback){
+  oc.renderByHref = function(href, retryNumberOrCallback, cb){
+    var callback = cb;
+    var retryNumber = retryNumberOrCallback;
+    if(typeof retryNumberOrCallback === 'function') {
+      callback = retryNumberOrCallback;
+      retryNumber = 0;
+    }
+
     oc.ready(function(){
       if(href !== ''){
+        var hrefWithCount = href;
+        if(RETRY_SEND_NUMBER) {
+          hrefWithCount = addParametersToHref(hrefWithCount, {
+            '__oc_Retry': retryNumber
+          });
+        }
+
         $.ajax({
-          url: href,
-          headers: { 'Accept': 'application/vnd.oc.unrendered+json' }, 
+          url: hrefWithCount,
+          headers: { 'Accept': 'application/vnd.oc.unrendered+json' },
           contentType: 'text/plain',
           crossDomain: true,
           async: true,
@@ -262,12 +309,12 @@ var oc = oc || {};
             if(apiResponse.renderMode === 'pre-rendered' ||
                apiResponse.renderMode === 'unrendered'){
               oc.render(apiResponse.template, apiResponse.data, function(err, html){
-                if(err){ 
+                if(err){
                   return callback(MESSAGES_ERRORS_RENDERING.replace('{0}', apiResponse.href).replace('{1}', err));
                 }
                 logger.info(MESSAGES_RENDERED.replace('{0}', apiResponse.template.src));
                 callback(null, {
-                  html: html, 
+                  html: html,
                   key: apiResponse.template.key,
                   version: apiResponse.version
                 });
@@ -281,18 +328,20 @@ var oc = oc || {};
                     innerHtml = innerHtmlPlusEnding.slice(0, innerHtmlPlusEnding.lastIndexOf('<'));
                 apiResponse.html = innerHtml;
               }
-                  
+
               callback(null, {
-                html: apiResponse.html, 
+                html: apiResponse.html,
                 version: apiResponse.version
-              });            
+              });
             }
           },
           error: function(){
             logger.error(MESSAGES_ERRORS_RETRIEVING);
-            setTimeout(function() {
-              oc.renderByHref(href, callback);
-            }, RETRY_INTERVAL);
+            retry(href, function(requestNumber) {
+              oc.renderByHref(href, requestNumber, callback);
+            }, function(){
+              callback(MESSAGES_ERRORS_RETRY_FAILED.replace('{0}', href));
+            });
           }
         });
       } else {
