@@ -8,6 +8,7 @@ var nodeDir = require('node-dir');
 var path = require('path');
 var uglifyJs = require('uglify-js');
 var _ = require('underscore');
+var gzip = require('../../utils/gzip');
 
 var strings = require('../../resources');
 
@@ -35,8 +36,8 @@ var copyDir = function(params, cb){
   } else {
 
     nodeDir.paths(staticPath, function(err, res){
-      _.forEach(res.files, function(filePath){
-    
+      async.each(res.files, function(filePath, done){
+
         var fileName = path.basename(filePath),
             fileExt = path.extname(filePath).toLowerCase(),
             fileRelativePath = path.relative(staticPath, path.dirname(filePath)),
@@ -53,8 +54,15 @@ var copyDir = function(params, cb){
         } else {
           fs.copySync(filePath, fileDestination);
         }
+
+        if(fileExt === '.js' || fileExt === '.css'){
+          return gzip(fileDestination, fileDestination + '.gz', done);
+        }
+
+        done();
+      }, function(err){
+        cb(err, 'ok');
       });
-      cb(null, 'ok');
     });
   }
 };
