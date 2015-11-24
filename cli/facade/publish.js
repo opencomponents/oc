@@ -18,6 +18,8 @@ module.exports = function(dependencies){
 
   return function(opts, reallyDoneThisTime){
 
+    reallyDoneThisTime = reallyDoneThisTime || _.noop;
+
     var componentPath = opts.componentPath,
         packageDir = path.resolve(componentPath, '_package'),
         compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
