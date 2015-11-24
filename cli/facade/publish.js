@@ -102,7 +102,7 @@ module.exports = function(dependencies){
           }
         } else {
           logger.log(format(strings.messages.cli.PUBLISHED, options.route.green).yellow);
-          return local.cleanup(options.path, callback);
+          return callback();
         }
       });
     };
@@ -124,7 +124,9 @@ module.exports = function(dependencies){
               componentRoute = format('{0}/{1}/{2}', registryNormalised, component.name, component.version);
 
           putComponentToRegistry({ route: componentRoute, path: compressedPackagePath}, done);
-        }, reallyDoneThisTime);
+        }, function(err){
+          local.cleanup(compressedPackagePath, reallyDoneThisTime);
+        });
       });
     });
   };
