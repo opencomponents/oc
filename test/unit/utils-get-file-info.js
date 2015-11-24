@@ -16,6 +16,10 @@ describe('utils : getFileInfo', function(){
     it('should return the correct extension', function(){
       expect(fileInfo.extname).to.equal('.js');
     });
+
+    it('should recognise it is not a gzip', function(){
+      expect(fileInfo.gzip).to.be.false;
+    });
   });
 
   describe('when extension is .js.gz', function(){
@@ -55,6 +59,10 @@ describe('utils : getFileInfo', function(){
 
     it('should return mime undefined', function(){
       expect(fileInfo.mimeType).to.be.undefined;
+    });
+
+    it('should handle it as not gzip', function(){
+      expect(fileInfo.gzip).to.be.false;
     });
   });
 });
