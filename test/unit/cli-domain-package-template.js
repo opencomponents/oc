@@ -135,7 +135,7 @@ describe('cli : domain : package-template', function(){
       });
 
       it('should gzip compiled view', function(){
-        expect(gzipMock.args[0][1]).to.contain('/path/to/component/_package/template.js');
+        expect(gzipMock.args[0][1]).to.contain('template.js.gz');
       });
     });
   });
