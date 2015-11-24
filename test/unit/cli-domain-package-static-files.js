@@ -261,7 +261,6 @@ describe('cli : domain : packageStaticFiles', function(){
       });
     });
 
-
     describe('when copying folder with css file', function(){
 
       beforeEach(function(){
