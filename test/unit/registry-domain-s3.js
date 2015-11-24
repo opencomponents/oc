@@ -240,9 +240,26 @@ describe('registry : domain : s3', function(){
         initialiseAndExecutePut('hello.js', false, done);
       });
 
-      it('should be saved using application/javascript fileType', function(){
+      it('should be saved using application/javascript Content-Type', function(){
         var params = mockedS3Client.putObject.args;
         expect(params[0][0].ContentType).to.equal('application/javascript');
+      });
+    });
+
+    describe('when putting gzipped js file', function(){
+
+      before(function(done){
+        initialiseAndExecutePut('hello.js.gz', false, done);
+      });
+
+      it('should be saved using application/javascript Content-Type', function(){
+        var params = mockedS3Client.putObject.args;
+        expect(params[0][0].ContentType).to.equal('application/javascript');
+      });
+
+      it('should be saved using gzip Content Content-Encoding', function(){
+        var params = mockedS3Client.putObject.args;
+        expect(params[0][0].ContentEncoding).to.equal('gzip');
       });
     });
 
@@ -252,9 +269,26 @@ describe('registry : domain : s3', function(){
         initialiseAndExecutePut('hello.css', false, done);
       });
 
-      it('should be saved using text/css fileType', function(){
+      it('should be saved using text/css Content-Type', function(){
         var params = mockedS3Client.putObject.args;
         expect(params[0][0].ContentType).to.equal('text/css');
+      });
+    });
+
+    describe('when putting gzipped css file', function(){
+
+      before(function(done){
+        initialiseAndExecutePut('hello.css.gz', false, done);
+      });
+
+      it('should be saved using text/css Content-Type', function(){
+        var params = mockedS3Client.putObject.args;
+        expect(params[0][0].ContentType).to.equal('text/css');
+      });
+
+      it('should be saved using text/css Content-Encoding', function(){
+        var params = mockedS3Client.putObject.args;
+        expect(params[0][0].ContentEncoding).to.equal('gzip');
       });
     });
 
@@ -264,7 +298,7 @@ describe('registry : domain : s3', function(){
         initialiseAndExecutePut('hello.jpg', false, done);
       });
 
-      it('should be saved using image/jpeg fileType', function(){
+      it('should be saved using image/jpeg Content-Type', function(){
         var params = mockedS3Client.putObject.args;
         expect(params[0][0].ContentType).to.equal('image/jpeg');
       });
@@ -276,7 +310,7 @@ describe('registry : domain : s3', function(){
         initialiseAndExecutePut('hello.gif', false, done);
       });
 
-      it('should be saved using image/gif fileType', function(){
+      it('should be saved using image/gif Content-Type', function(){
         var params = mockedS3Client.putObject.args;
         expect(params[0][0].ContentType).to.equal('image/gif');
       });
