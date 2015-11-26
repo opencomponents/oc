@@ -17,47 +17,6 @@ var _ = require('./utils/helpers');
 var isLocal = function(apiResponse){
   return apiResponse.type === 'oc-component-local';
 };
-
-var readJson = function(file, callback){
-  fs.readFile(file, {}, function(err, data) {
-    if(err){ return callback(err); }
-
-    var obj = null;
-
-    try {
-      obj = JSON.parse(data);
-    } catch (err2) {
-      return callback(err2);
-    }
-
-    callback(null, obj);
-  });
-};
-
-var loadConfig = function(callback){
-  var mainModule = process.mainModule.filename,
-      currentFolder = path.resolve(mainModule, '..');
-
-  var checkConfigInFolder = function(baseDir, callback){
-    var configInFolder = path.resolve(baseDir, settings.configFile.src);
-
-    fs.exists(configInFolder, function(exists){
-      if(exists){
-        readJson(configInFolder, callback);
-      } else {
-        var nextConfigFolder = path.resolve(baseDir, '..');
-
-        if(nextConfigFolder === baseDir){
-          return callback(settings.messages.fileNotFound);
-        } else {
-          return checkConfigInFolder(nextConfigFolder, callback);
-        }
-      }
-    });
-  };
-
-  return checkConfigInFolder(currentFolder, callback);
-};
   
 var getRenderedComponent = function(data){
 
@@ -68,7 +27,6 @@ var getRenderedComponent = function(data){
   return format('<oc-component href="{0}" data-hash="{1}" id="{2}" data-rendered="true" data-version="{3}">{4}</oc-component>', 
                 data.href, data.key, random, data.version, data.html);
 };
-
 
 var getUnrenderedComponent = function(href, options){
 
@@ -123,45 +81,29 @@ module.exports = function(conf){
     options.headers = options.headers || {};
     options.timeout = options.timeout || 5;
 
-    var getConfig = function(callback){
-      if(!!self.config){
-        return callback(null, self.config);
-      }
+    var config = self.config || {};
 
-      loadConfig(function(err, content){
-        if(!!content){
-          self.config = content;
-        }
+    config.registries = _.toArray(config.registries);
 
-        callback(err, content);
-      });
-    };
+    if(_.isEmpty(config.registries)){
+      return callback(settings.messages.registryUrlMissing);
+    }
 
-    getConfig(function(err, config){
-      if(!!err){ return callback(err); }
+    if(!_.has(config.components, componentName)){
+      return callback(settings.messages.componentMissing);
+    }
 
-      config.registries = _.toArray(config.registries);
+    var version = config.components[componentName],
+        versionSegment = !!version ? (version + '/') : '',
+        registryUrl = config.registries[0],
+        registrySegment = registryUrl.slice(-1) === '/' ? registryUrl : (registryUrl + '/'),
+        href = url.resolve(registrySegment, componentName + '/') + versionSegment;
 
-      if(_.isEmpty(config.registries)){
-        return callback(settings.messages.registryUrlMissing);
-      }
+    if(!!options.params){
+      href += '?' + querystring.stringify(options.params);
+    }
 
-      if(!_.has(config.components, componentName)){
-        return callback(settings.messages.componentMissing);
-      }
-
-      var version = config.components[componentName],
-          versionSegment = !!version ? (version + '/') : '',
-          registryUrl = config.registries[0],
-          registrySegment = registryUrl.slice(-1) === '/' ? registryUrl : (registryUrl + '/'),
-          href = url.resolve(registrySegment, componentName + '/') + versionSegment;
-
-      if(!!options.params){
-        href += '?' + querystring.stringify(options.params);
-      }
-
-      self.render(href, options, callback);
-    });
+    self.render(href, options, callback);
 
   };
 
