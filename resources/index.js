@@ -48,7 +48,6 @@ module.exports = {
     },
     cli: {
       COMPONENT_HREF_NOT_FOUND: 'The specified path is not a valid component\'s url',
-      COMPONENTS_LINKED_NOT_FOUND: 'No components linked in the project',
       COMPONENTS_NOT_FOUND: 'no components found in specified path',
       FOLDER_IS_NOT_A_FOLDER: '"{0}" must be a directory',
       FOLDER_NOT_FOUND: '"{0}" not found',
@@ -61,7 +60,7 @@ module.exports = {
       OC_CLI_VERSION_NEEDS_UPGRADE: 'the version of used OC CLI is invalid. Try to upgrade OC CLI running {0}',
       PACKAGE_CREATION_FAIL: 'An error happened when creating the package: {0}',
       PACKAGING_FAIL: 'an error happened while packaging {0}: {1}',
-      PLUGIN_MISSING_FROM_REGISTRY: 'Looks like you are trying to use a plugin in the dev mode ({0}).\nYou need to mock it doing {1}',
+      PLUGIN_MISSING_FROM_REGISTRY: 'Looks  like you are trying to use a plugin in the dev mode ({0}).\nYou need to mock it doing {1}',
       PLUGIN_MISSING_FROM_COMPONENT: 'Looks like you are trying to use a plugin you haven\'t registered ({0}).' +
         '\nYou need to register it editing your component\'s package.json',
       PORT_IS_BUSY: 'The port {0} is already in use. Specify the optional port parameter to use another port.',
@@ -87,10 +86,6 @@ module.exports = {
       CHANGES_DETECTED: 'Changes detected on file: {0}',
       CHECKING_DEPENDENCIES: 'Ensuring dependencies are loaded...',
       COMPONENT_INITED: 'Component "{0}" created',
-      COMPONENT_LINKED: 'oc Component linked',
-      COMPONENT_UNLINKED: 'oc Component unlinked',
-      COMPONENTS_LINKED_LIST: 'Components linked in project:',
-      COMPONENTS_LIST: 'Components available in oc registry: {0}',
       COMPRESSING: 'Compressing -> {0}',
       ENTER_PASSWORD: 'Enter password:',
       ENTER_USERNAME: 'Enter username:',

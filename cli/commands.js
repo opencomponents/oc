@@ -16,8 +16,6 @@ module.exports = {
       }
     },
 
-    info: { help: 'Shows installed components on the current project' },
-
     init: {
       help: 'Creates a new empty component in the current folder',
       options: {
@@ -28,29 +26,6 @@ module.exports = {
           help: 'The component\'s template type. Options are jade or handlebars (default).',
           required: false,
           default: 'handlebars'
-        }
-      }
-    },
-
-    link: {
-      help: 'Links a component in the current project',
-      options: {
-        componentName: {
-          help: 'The name of the component to link. <oc ls> to see the list of available components'
-        },
-        componentVersion: {
-          help: 'The specific version of the component to link. Default is the latest',
-          required: false
-        }
-      }
-    },
-
-    ls: {
-      help: 'Shows the list of the available components for a linked oc registry',
-      options: {
-        registry: {
-          help: 'Specify registry to query',
-          required: false
         }
       }
     },
@@ -97,15 +72,6 @@ module.exports = {
         parameter: {
           help: 'Parameter to perform the action',
           required: false
-        }
-      }
-    },
-
-    unlink: {
-      help: 'Unlinks a component from the current project',
-      options: {
-        componentName: {
-          help: 'The name of the component to unlink. <oc info> to see the list of linked components'
         }
       }
     },

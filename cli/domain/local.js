@@ -1,19 +1,15 @@
 'use strict';
 
 var fs = require('fs-extra');
-var colors = require('colors');
 var path = require('path');
 var Targz = require('tar.gz');
 var _ = require('underscore');
 
 var getComponentsByDir = require('./get-components-by-dir');
 var getLocalNpmModules = require('./get-local-npm-modules');
-var link = require('./link');
 var packageComponents = require('./package-components');
 var mock = require('./mock');
-var settings = require('../../resources/settings');
 var validator = require('../../registry/domain/validators');
-var unlink = require('./unlink');
 
 module.exports = function(dependencies){
   var logger = dependencies.logger;
@@ -28,9 +24,6 @@ module.exports = function(dependencies){
     },
     getComponentsByDir: getComponentsByDir(dependencies),
     getLocalNpmModules: getLocalNpmModules(),
-    info: function(callback){
-      return fs.readJson(settings.configFile.src, callback);
-    },
     init: function(componentName, templateType, callback){
 
       if(!validator.validateComponentName(componentName)){
@@ -63,9 +56,7 @@ module.exports = function(dependencies){
         return callback(e);
       }
     },
-    link: link(),
     mock: mock(),
-    package: packageComponents(),
-    unlink: unlink()
+    package: packageComponents()
   });
 };
