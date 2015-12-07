@@ -85,7 +85,8 @@ module.exports = function(conf, repository){
           href: componentHref,
           type: res.conf.local ? 'oc-component-local' : 'oc-component',
           version: component.version,
-          requestVersion: requestedComponent.version
+          requestVersion: requestedComponent.version,
+          name: requestedComponent.name
         };
         
         if(req.headers.accept === 'application/vnd.oc.prerendered+json' ||
@@ -108,6 +109,7 @@ module.exports = function(conf, repository){
                 href: componentHref,
                 key: key,
                 version: component.version,
+                name: component.name,
                 templateType: component.oc.files.template.type,
                 container: (component.oc.container === false) ? false : true
               };

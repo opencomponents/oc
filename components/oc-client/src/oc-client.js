@@ -6,6 +6,7 @@ var oc = oc || {};
 
   oc.conf = oc.conf || {};
   oc.cmd = oc.cmd || [];
+  oc.renderedComponents = oc.renderedComponents || {};
 
   // Constants
   var CDNJS_BASEURL = 'https://cdnjs.cloudflare.com/ajax/libs/',
@@ -18,7 +19,9 @@ var oc = oc || {};
       RETRY_SEND_NUMBER = oc.conf.retrySendNumber || true,
       POLLING_INTERVAL = oc.conf.pollingInterval || 500,
       OC_TAG = oc.conf.tag || 'oc-component',
+      MESSAGES_ERRORS_BASEURL_PARAMETER_IS_REQUIRED ='baseUrl parameter is required',
       MESSAGES_ERRORS_HREF_MISSING = 'Href parameter missing',
+      MESSAGES_ERRORS_NAME_PARAMETER_IS_REQUIRED ='name parameter is required',
       MESSAGES_ERRORS_RETRY_FAILED = 'Failed to load {0} component {1} times. Giving up'.replace('{1}', RETRY_LIMIT),
       MESSAGES_ERRORS_LOADING_COMPILED_VIEW = 'Error getting compiled view: {0}',
       MESSAGES_ERRORS_RENDERING = 'Error rendering component: {0}, error: {1}',
@@ -37,7 +40,8 @@ var oc = oc || {};
       is8 = !!(nav.match(/MSIE 8/)),
       is9 = !!(nav.match(/MSIE 9/)),
       initialised = false,
-      initialising = false;
+      initialising = false,
+      retries = {}
 
   var logger = {
     error: function(msg){
@@ -47,8 +51,6 @@ var oc = oc || {};
       return !!debug ? console.log(msg) : false;
     }
   };
-
-  var retries = {};
 
   var retry = function(component, cb, failedRetryCb){
     if(retries[component] === undefined){
@@ -136,10 +138,10 @@ var oc = oc || {};
 
   var processHtml = function($component, data, callback){
 
-    var newId = Math.floor(Math.random()*9999999999);
+    data.id = Math.floor(Math.random()*9999999999);
 
     $component.html(data.html);
-    $component.attr('id', newId);
+    $component.attr('id', data.id);
     $component.attr('data-rendered', true);
     $component.attr('data-rendering', false);
     $component.attr('data-version', data.version);
@@ -148,17 +150,23 @@ var oc = oc || {};
       $component.attr('data-hash', data.key);
     }
 
+    if(!!data.name){
+      $component.attr('data-name', data.name);
+      oc.renderedComponents[data.name] = data.version;
+      oc.events.fire('oc:rendered', data);
+    }
+
     callback();
   };
 
   oc.build = function(options){
 
     if(!options.baseUrl){
-      throw 'baseUrl parameter is required';
+      throw MESSAGES_ERRORS_BASEURL_PARAMETER_IS_REQUIRED;
     }
 
     if(!options.name){
-      throw 'name parameter is required';
+      throw MESSAGES_ERRORS_NAME_PARAMETER_IS_REQUIRED;
     }
 
     var withFinalSlash = function(s){
@@ -188,8 +196,9 @@ var oc = oc || {};
     }
 
     return is8 ? '<div data-oc-component="true" href="' + href + '"></div>' : '<' + OC_TAG + ' href="' + href + '"></' + OC_TAG + '>';
-
   };
+
+  oc.events = {};
 
   oc.ready = function(callback){
 
@@ -212,7 +221,27 @@ var oc = oc || {};
       var done = function(){
         initialised = true;
         initialising = false;
+
+        oc.events = (function(){
+
+          var obj = $({});
+
+          return {
+            fire: function(key, data){
+              return obj.trigger(key, data);
+            },
+            on: function(key, cb){
+              return obj.on(key, cb || noop);
+            },
+            reset: function(){
+              return obj.off();
+            }
+          };
+        })();
+
         callback();
+        oc.events.fire('oc:ready', oc);
+
         for(var i = 0; i < oc.cmd.length; i++){
           oc.cmd[i](oc);
         }
@@ -283,14 +312,16 @@ var oc = oc || {};
   };
 
   oc.renderByHref = function(href, retryNumberOrCallback, cb){
-    var callback = cb;
-    var retryNumber = retryNumberOrCallback;
+    var callback = cb,
+        retryNumber = retryNumberOrCallback;
+    
     if(typeof retryNumberOrCallback === 'function') {
       callback = retryNumberOrCallback;
       retryNumber = 0;
     }
 
     oc.ready(function(){
+
       if(href !== ''){
         var hrefWithCount = href;
         if(RETRY_SEND_NUMBER) {
@@ -316,7 +347,8 @@ var oc = oc || {};
                 callback(null, {
                   html: html,
                   key: apiResponse.template.key,
-                  version: apiResponse.version
+                  version: apiResponse.version,
+                  name: apiResponse.name
                 });
               });
             } else if(apiResponse.renderMode === 'rendered'){
@@ -328,10 +360,10 @@ var oc = oc || {};
                     innerHtml = innerHtmlPlusEnding.slice(0, innerHtmlPlusEnding.lastIndexOf('<'));
                 apiResponse.html = innerHtml;
               }
-
               callback(null, {
                 html: apiResponse.html,
-                version: apiResponse.version
+                version: apiResponse.version,
+                name: apiResponse.name
               });
             }
           },
@@ -353,21 +385,20 @@ var oc = oc || {};
   oc.renderUnloadedComponents = function(){
     oc.ready(function(){
       var selector = (is8 ? 'div[data-oc-component=true]' : OC_TAG),
-          $unloadedComponents = $(selector + '[data-rendered!=true]');
-
-      var renderUnloadedComponent = function($unloadedComponents, i){
-        oc.renderNestedComponent($($unloadedComponents[i]), function(){
-          i++;
-          if(i < $unloadedComponents.length){
-            renderUnloadedComponent($unloadedComponents, i);
-          } else {
-            oc.renderUnloadedComponents();
-          }
-        });
+          $unloadedComponents = $(selector + '[data-rendered!=true]'),
+          toDo = $unloadedComponents.length;
+      
+      var done = function(cb){
+        toDo--;
+        if(!toDo){
+          oc.renderUnloadedComponents();
+        }
       };
-
-      if($unloadedComponents.length > 0){
-        renderUnloadedComponent($unloadedComponents, 0);
+      
+      if(toDo > 0){
+        for(var i = 0; i < $unloadedComponents.length; i++){
+          oc.renderNestedComponent($($unloadedComponents[i]), done);
+        }
       }
     });
   };

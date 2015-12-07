@@ -29,16 +29,16 @@ describe('registry', function(){
     registry.close(done);
   });
 
-  describe('when initialised with not valid configuration', function(){
+  describe('when initialised with invalid configuration', function(){
 
-      it('should throw an error', function(done){
-          var f = function throwsWithNoArgs() {
-              var args = {};
-              var wrongRegistry = new oc.Registry(args);
-          };
-          expect(f).to.throw('Registry configuration is empty');
-          done();
-      });
+    it('should throw an error', function(done){
+      var f = function throwsWithNoArgs() {
+          var args = {};
+          var wrongRegistry = new oc.Registry(args);
+      };
+      expect(f).to.throw('Registry configuration is empty');
+      done();
+    });
   });
 
   describe('GET /', function(){
@@ -84,6 +84,18 @@ describe('registry', function(){
         expect(result.href).to.eql('http://localhost:3030/hello-world');
       });
 
+      it('should respond with requested version', function(){
+        expect(result.requestVersion).to.eql('');
+      });
+	
+      it('should respond with resolved version', function(){
+        expect(result.version).to.eql('1.0.0');
+      });
+
+      it('should respond with component name', function(){
+        expect(result.name).to.eql('hello-world');
+      });
+
       it('should respond with the rendered template', function(){
         expect(result.html).to.exist;
         expect(result.html).to.match(/<oc-component (.*?)>Hello world!<\/oc-component>/g);
@@ -108,6 +120,18 @@ describe('registry', function(){
 
       it('should respond with the correct href', function(){
         expect(result.href).to.eql('http://localhost:3030/hello-world');
+      });
+
+      it('should respond with requested version', function(){
+        expect(result.requestVersion).to.eql('');
+      });
+  
+      it('should respond with resolved version', function(){
+        expect(result.version).to.eql('1.0.0');
+      });
+
+      it('should respond with component name', function(){
+        expect(result.name).to.eql('hello-world');
       });
 
       it('should respond with the un-rendered template', function(){

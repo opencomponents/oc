@@ -20,12 +20,17 @@ var isLocal = function(apiResponse){
   
 var getRenderedComponent = function(data){
 
+  if(!!data.name){
+    data.html += format('<script>window.oc=window.oc||{};oc.renderedComponents=oc.renderedComponents||{};' + 
+                      'oc.renderedComponents["{0}"]="{1}";</script>',
+                      data.name,
+                      data.version);
+  }
+
   if(!data.container){ return data.html; }
 
-  var random = Math.floor(Math.random()*9999999999);
-
-  return format('<oc-component href="{0}" data-hash="{1}" id="{2}" data-rendered="true" data-version="{3}">{4}</oc-component>', 
-                data.href, data.key, random, data.version, data.html);
+  return format('<oc-component href="{0}" data-hash="{1}" data-name="{2}" data-rendered="true" data-version="{3}">{4}</oc-component>', 
+                data.href, data.key, data.name || '', data.version, data.html);
 };
 
 var getUnrenderedComponent = function(href, options){
@@ -159,7 +164,8 @@ module.exports = function(conf){
             key: apiResponse.template.key,
             version: apiResponse.version,
             templateType: apiResponse.template.type,
-            container: (options.container === true) ? true : false
+            container: (options.container === true) ? true : false,
+            name: apiResponse.name
           };
 
           return self.renderTemplate(template, data, renderOptions, callback);
