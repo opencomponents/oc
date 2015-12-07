@@ -56,7 +56,7 @@ describe('registry : domain : repository', function(){
     var componentsCacheBaseResponse = {
       components: {
         'hello-world': ['1.0.0'],
-        'no-container': ['1.0.0'],
+        'no-containers': ['1.0.0'],
         'oc-client': ['1.0.0']
       }
     };
@@ -79,7 +79,7 @@ describe('registry : domain : repository', function(){
       });
 
       it('should list the components', function(){
-        expect(response.result).to.eql(['hello-world', 'no-container', 'oc-client']);
+        expect(response.result).to.eql(['hello-world', 'no-containers', 'oc-client']);
       });
     });
 
@@ -250,7 +250,7 @@ describe('registry : domain : repository', function(){
       });
 
       it('should list the components', function(){
-        expect(response.result).to.eql(['hello-world', 'no-container', 'oc-client']);
+        expect(response.result).to.eql(['hello-world', 'no-containers', 'oc-client']);
       });
     });
 

@@ -1,10 +1,11 @@
 {
-  "name": "no-container",
+  "name": "no-containers",
   "description": "",
   "version": "1.0.0",
   "repository": "",
   "oc": {
     "container": false,
+    "renderInfo": false,
     "files": {
       "template": {
         "src": "template.html",

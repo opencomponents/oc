@@ -60,7 +60,7 @@ describe('registry', function(){
     it('should list the components', function(){
       expect(result.components).to.eql([
         'http://localhost:3030/hello-world', 
-        'http://localhost:3030/no-container', 
+        'http://localhost:3030/no-containers', 
         'http://localhost:3030/oc-client'
       ]);
     });
@@ -98,10 +98,10 @@ describe('registry', function(){
 
       it('should respond with the rendered template', function(){
         expect(result.html).to.exist;
-        expect(result.html).to.match(/<oc-component (.*?)>Hello world!<\/oc-component>/g);
+        expect(result.html).to.match(/<oc-component (.*?)>Hello world!<script>(.*?)<\/script><\/oc-component>/g);
       });
 
-      it('should respond with proper render type', function(){
+      it('should respond with render type = rendered', function(){
         expect(result.renderMode).to.equal('rendered');
       });
     });
@@ -144,11 +144,11 @@ describe('registry', function(){
     });
   });
 
-  describe('GET /no-container', function(){
+  describe('GET /no-containers', function(){
 
     describe('when Accept header not specified', function(){
 
-      var url = 'http://localhost:3030/no-container',
+      var url = 'http://localhost:3030/no-containers',
           result;
 
       before(function(done){
@@ -159,10 +159,10 @@ describe('registry', function(){
       });
 
       it('should respond with the correct href', function(){
-        expect(result.href).to.eql('http://localhost:3030/no-container');
+        expect(result.href).to.eql('http://localhost:3030/no-containers');
       });
 
-      it('should respond with the rendered template without the outer container', function(){
+      it('should respond with the rendered template without the outer container and without render info script', function(){
         expect(result.html).to.exist;
         expect(result.html).to.eql('Hello world!');
       });

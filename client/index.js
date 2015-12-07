@@ -20,17 +20,19 @@ var isLocal = function(apiResponse){
   
 var getRenderedComponent = function(data){
 
-  if(!!data.name){
+  if(!!data.name && data.renderInfo !== false){
     data.html += format('<script>window.oc=window.oc||{};oc.renderedComponents=oc.renderedComponents||{};' + 
                       'oc.renderedComponents["{0}"]="{1}";</script>',
                       data.name,
                       data.version);
   }
 
-  if(!data.container){ return data.html; }
+  if(data.container !== false){ 
+    data.html = format('<oc-component href="{0}" data-hash="{1}" data-name="{2}" data-rendered="true" data-version="{3}">{4}</oc-component>', 
+                       data.href, data.key, data.name || '', data.version, data.html);
+  }
 
-  return format('<oc-component href="{0}" data-hash="{1}" data-name="{2}" data-rendered="true" data-version="{3}">{4}</oc-component>', 
-                data.href, data.key, data.name || '', data.version, data.html);
+  return data.html;
 };
 
 var getUnrenderedComponent = function(href, options){
@@ -109,7 +111,6 @@ module.exports = function(conf){
     }
 
     self.render(href, options, callback);
-
   };
 
   this.render = function(href, options, callback){
@@ -165,6 +166,7 @@ module.exports = function(conf){
             version: apiResponse.version,
             templateType: apiResponse.template.type,
             container: (options.container === true) ? true : false,
+            renderInfo: (options.renderInfo === false) ? false : true,
             name: apiResponse.name
           };
 

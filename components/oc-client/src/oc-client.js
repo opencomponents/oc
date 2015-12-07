@@ -41,7 +41,7 @@ var oc = oc || {};
       is9 = !!(nav.match(/MSIE 9/)),
       initialised = false,
       initialising = false,
-      retries = {}
+      retries = {};
 
   var logger = {
     error: function(msg){

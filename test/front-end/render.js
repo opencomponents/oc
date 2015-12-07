@@ -149,7 +149,7 @@ describe('oc-client : render', function(){
     describe('when jade runtime loaded', function(){
 
       var callback, headSpy;
-      beforeEach(function(){
+      beforeEach(function(){  
         headSpy = sinon.spy(head, 'load');
         callback = sinon.spy();
         eval(jadeCompiledView);            
