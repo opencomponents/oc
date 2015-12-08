@@ -40,7 +40,8 @@ describe('oc-client : renderUnloadedComponents', function(){
     view: 'oc.components=oc.components||{},oc.components["97f07144341a214735c4cec85b002c4c8f394455"]=function(c){var o=[];return o.push("<div>this is a component</div>"),o.join("")};'
   };
 
-  var originalAjax = jQuery.ajax;
+  var originalAjax = jQuery.ajax, 
+      originalConsoleLog = console.log;
 
   var initialise = function(){
     jQuery.ajax = $.ajax = function(p){
@@ -49,7 +50,7 @@ describe('oc-client : renderUnloadedComponents', function(){
     };
 
     sinon.stub(head, 'load').yields(null, 'ok');
-    sinon.stub(console, 'log');  
+    console.log = function(){};
     $('body').append(aComponent.html);
     $('body').append(anotherComponent.html);
     eval(aComponent.view);
@@ -58,7 +59,7 @@ describe('oc-client : renderUnloadedComponents', function(){
 
   var cleanup = function(){
     head.load.restore();
-    console.log.restore();
+    console.log = originalConsoleLog;
     oc.events.reset();
     $('body').find('oc-component').remove();
     jQuery.ajax = $.ajax = originalAjax;
