@@ -44,6 +44,7 @@
     "karma-sinon": "1.0.4",
     "load-grunt-tasks": "0.6.0",
     "mocha": "2.2.4",
+    "phantomjs": "^1.9.19",
     "sinon": "1.14.1"
   },
   "dependencies": {
