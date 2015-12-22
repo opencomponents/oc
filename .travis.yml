@@ -10,6 +10,8 @@ matrix:
       env: TEST_COMMAND=test
     - node_js: "4"
       env: TEST_COMMAND=test
+    - node_js: "5"
+      env: TEST_COMMAND=test
 
 before_script:
 - npm install -g grunt-cli
