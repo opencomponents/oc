@@ -1,16 +1,1 @@
-{
-  "name": "hello-world",
-  "description": "",
-  "version": "1.0.0",
-  "repository": "",
-  "oc": {
-    "files": {
-      "template": {
-        "type": "handlebars",
-        "hashKey": "46ee85c314b371cac60471cef5b2e2e6c443dccf",
-        "src": "template.js"
-      }
-    },
-    "version": "0.13.0"
-  }
-}
+{"name":"hello-world","description":"","version":"1.0.0","repository":"","oc":{"files":{"template":{"type":"handlebars","hashKey":"46ee85c314b371cac60471cef5b2e2e6c443dccf","src":"template.js"},"static":[]},"version":"0.20.5","packaged":true,"date":1449510953834}}

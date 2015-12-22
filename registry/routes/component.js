@@ -85,7 +85,8 @@ module.exports = function(conf, repository){
           href: componentHref,
           type: res.conf.local ? 'oc-component-local' : 'oc-component',
           version: component.version,
-          requestVersion: requestedComponent.version
+          requestVersion: requestedComponent.version,
+          name: requestedComponent.name
         };
         
         if(req.headers.accept === 'application/vnd.oc.prerendered+json' ||
@@ -98,7 +99,7 @@ module.exports = function(conf, repository){
               key: component.oc.files.template.hashKey
             },
             renderMode: 'unrendered'
-          }));        
+          }));
         } else {
 
           var cacheKey = format('{0}/{1}/template.js', component.name, component.version),
@@ -108,8 +109,10 @@ module.exports = function(conf, repository){
                 href: componentHref,
                 key: key,
                 version: component.version,
+                name: component.name,
                 templateType: component.oc.files.template.type,
-                container: (component.oc.container === false) ? false : true
+                container: (component.oc.container === false) ? false : true,
+                renderInfo: (component.oc.renderInfo === false) ? false : true 
               };
 
           var returnResult = function(template){

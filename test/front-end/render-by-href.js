@@ -1,65 +1,69 @@
 'use strict';
 
-var unRenderedResponse = {
-  href: 'http://my-registry.com/v3/a-component/1.2.X/?name=John',
-  type: 'oc-component',
-  version: '1.2.123',
-  requestVersion: '1.2.X',
-  data: {},
-  template: {
-    src: 'https://my-cdn.com/components/a-component/1.2.123/template.js',
-    type: 'handlebars',
-    key: '46ee85c314b371cac60471cef5b2e2e6c443dccf'
-  },
-  renderMode: 'unrendered'
-};
+describe('oc-client : renderByHref', function(){
 
-var renderedResponse = {
-  href: 'http://my-registry.com/v3/a-component/1.2.X/?name=John',
-  type: 'oc-component',
-  version: '1.2.123',
-  requestVersion: '1.2.X',
-  html: '<oc-component href="http://my-registry.com/v3/a-component/1.2.X/?name=John" data-hash="46ee85c314b371cac60471cef5b2e2e6c443dccf" id="4709139819" data-rendered="true" data-version="1.2.123">Hello, world!!!</oc-component>',
-  renderMode: 'rendered'
-};
-
-var renderedNoContainerResponse = {
-  href: 'http://my-registry.com/v3/a-component/1.2.X/?name=John',
-  type: 'oc-component',
-  version: '1.2.123',
-  requestVersion: '1.2.X',
-  html: 'Hello, world!!',
-  renderMode: 'rendered'
-};
-
-var route = 'http://my-registry.com/v3/a-component/1.2.X/?name=John',
-    compiledViewContent = 'oc.components=oc.components||{},oc.components["46ee85c314b371cac60471cef5b2e2e6c443dccf"]={compiler:[6,">= 2.0.0-beta.1"],main:function(){return"Hello world!"},useData:!0};';
-
-var originalAjax = jQuery.ajax;
-
-var initialise = function(response, fail){
-  var spy = sinon.spy();
-
-  jQuery.ajax = $.ajax = function(params){
-    var method = (typeof(fail) === 'boolean' && fail) ? 'error' : 'success';
-
-    spy(params);
-    params[method](response);
+  var unRenderedResponse = {
+    href: 'http://my-registry.com/v3/a-component/1.2.X/?name=John',
+    name: 'a-component',
+    type: 'oc-component',
+    version: '1.2.123',
+    requestVersion: '1.2.X',
+    data: {},
+    template: {
+      src: 'https://my-cdn.com/components/a-component/1.2.123/template.js',
+      type: 'handlebars',
+      key: '46ee85c314b371cac60471cef5b2e2e6c443dccf'
+    },
+    renderMode: 'unrendered'
   };
 
-  sinon.stub(head, 'load').yields(null, 'ok');
-  sinon.stub(console, 'log');
-  return spy;
-};
+  var renderedResponse = {
+    href: 'http://my-registry.com/v3/a-component/1.2.X/?name=John',
+    name: 'a-component',
+    type: 'oc-component',
+    version: '1.2.123',
+    requestVersion: '1.2.X',
+    html: '<oc-component href="http://my-registry.com/v3/a-component/1.2.X/?name=John" data-hash="46ee85c314b371cac60471cef5b2e2e6c443dccf" id="4709139819" data-rendered="true" data-version="1.2.123">Hello, world!!!</oc-component>',
+    renderMode: 'rendered'
+  };
 
-var cleanup = function(){
-  head.load.restore();
-  console.log.restore();
-  jQuery.ajax = $.ajax = originalAjax;
-  delete oc.components;
-};
+  var renderedNoContainerResponse = {
+    href: 'http://my-registry.com/v3/a-component/1.2.X/?name=John',
+    name: 'a-component',
+    type: 'oc-component',
+    version: '1.2.123',
+    requestVersion: '1.2.X',
+    html: 'Hello, world!!',
+    renderMode: 'rendered'
+  };
 
-describe('oc-client : renderByHref', function(){
+  var route = 'http://my-registry.com/v3/a-component/1.2.X/?name=John',
+      compiledViewContent = 'oc.components=oc.components||{},oc.components["46ee85c314b371cac60471cef5b2e2e6c443dccf"]={compiler:[6,">= 2.0.0-beta.1"],main:function(){return"Hello world!"},useData:!0};';
+
+  var originalAjax = jQuery.ajax,
+      originalConsoleLog = console.log;
+
+  var initialise = function(response, fail){
+    var spy = sinon.spy();
+
+    jQuery.ajax = $.ajax = function(params){
+      var method = (typeof(fail) === 'boolean' && fail) ? 'error' : 'success';
+
+      spy(params);
+      params[method](response);
+    };
+
+    sinon.stub(head, 'load').yields(null, 'ok');
+    console.log = function(){};
+    return spy;
+  };
+
+  var cleanup = function(){
+    head.load.restore();
+    console.log = originalConsoleLog;
+    jQuery.ajax = $.ajax = originalAjax;
+    delete oc.components;
+  };
   
   describe('when loaded', function(){
     

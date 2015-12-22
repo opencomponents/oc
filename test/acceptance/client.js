@@ -164,7 +164,7 @@ describe('client', function(){
       });
 
       it('should return expected html', function(){
-        expect($component.text()).to.eql('Hello world!');
+        expect($component.text()).to.contain('Hello world!');
       });
 
       it('should contain the component version', function(){
@@ -172,11 +172,11 @@ describe('client', function(){
       });
     });
 
-    describe('when container option not specified', function(){
+    describe('when container option = false', function(){
       var $component;
 
       before(function(done){
-        client.renderComponent('hello-world', { container: false }, function(err, html){
+        client.renderComponent('hello-world', { container: false, renderInfo: false }, function(err, html){
           result = html;
           done();
         });
