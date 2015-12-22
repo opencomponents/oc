@@ -358,6 +358,7 @@ var oc = oc || {};
 
                 var innerHtmlPlusEnding = apiResponse.html.slice(apiResponse.html.indexOf('>') + 1),
                     innerHtml = innerHtmlPlusEnding.slice(0, innerHtmlPlusEnding.lastIndexOf('<'));
+
                 apiResponse.html = innerHtml;
               }
               callback(null, {
