@@ -112,6 +112,7 @@ module.exports = function(options){
     }
 
     app.get(options.prefix, router.listComponents);
+    app.post(options.prefix, router.components);
 
     app.get(format('{0}:componentName/:componentVersion{1}', options.prefix, settings.registry.componentInfoPath), router.componentInfo);
     app.get(format('{0}:componentName{1}', options.prefix, settings.registry.componentInfoPath), router.componentInfo);

@@ -11,14 +11,14 @@ module.exports = function(conf, repository){
       conf: res.conf,
       headers: req.headers,
       name: req.params.componentName,
-      query: req.query,
+      parameters: req.query,
       version: req.params.componentVersion
     }, function(result){
       if(!!result.response.error){
         res.errorCode = result.response.code;
         res.errorDetails = result.response.error;
       }
-      
+
       return res.json(result.status, result.response);
     });
   };

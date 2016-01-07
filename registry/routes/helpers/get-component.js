@@ -30,7 +30,7 @@ module.exports = function(conf, repository){
         requestedComponent = {
           name: options.name,
           version: options.version || '',
-          parameters: options.query
+          parameters: options.parameters
         };
 
     repository.getComponent(requestedComponent.name, requestedComponent.version, function(err, component){
