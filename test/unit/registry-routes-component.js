@@ -2,17 +2,19 @@
 
 var expect = require('chai').expect;
 var sinon = require('sinon');
+var _ = require('underscore');
 
 describe('registry : routes : component', function(){
 
   var ComponentRoute = require('../../registry/routes/component'),
+      mockedComponents = require('../fixtures/mocked-components'),
       mockedRepository, resJsonStub, componentRoute;
   
   var initialise = function(params){
     resJsonStub = sinon.stub();
     mockedRepository = {
       getCompiledView: sinon.stub().yields(null, params.view),
-      getComponent: sinon.stub().yields(null, params.component),
+      getComponent: sinon.stub().yields(null, params.package),
       getDataProvider: sinon.stub().yields(null, params.data),
       getStaticFilePath: sinon.stub().returns('//my-cdn.com/files/')
     };
@@ -22,31 +24,7 @@ describe('registry : routes : component', function(){
 
     var code, response;
     before(function(done){
-      initialise({
-        component: {
-          name: 'timeout-component',
-          version: '1.0.0',
-          oc: {
-            container: false,
-            files: {
-              template: {
-                type: 'jade',
-                hashKey: '8c1fbd954f2b0d8cd5cf11c885fed4805225749f',
-                src: 'template.js'
-              },
-              dataProvider: {
-                type: 'node.js',
-                hashKey: '123456',
-                src: 'server.js'
-              }
-            }
-          }
-        },
-        data: '"use strict";module.exports.data=function(t,u){setTimeout(function(){u(null,{done:true});}, 5000);};',
-        view: 'var oc=oc||{};oc.components=oc.components||{},oc.components["8c1fbd954f2b0d8cd5cf11c885fed4805225749f"]' +
-              '=function(){var o=[];return o.push("<div>hello</div>"),o.join("")};'
-      });
-
+      initialise(mockedComponents['timeout-component']);
       componentRoute = new ComponentRoute({}, mockedRepository);
 
       var resJson = function(calledCode, calledResponse){
@@ -79,32 +57,7 @@ describe('registry : routes : component', function(){
   describe('when getting a component with server.js execution errors', function(){
 
     before(function(){
-      initialise({
-        component: {
-          name: 'error-component',
-          version: '1.0.0',
-          oc: {
-            container: false,
-            files: {
-              template: {
-                type: 'jade',
-                hashKey: '8c1fbd954f2b0d8cd5cf11c885fed4805225749f',
-                src: 'template.js'
-              },
-              dataProvider: {
-                type: 'node.js',
-                hashKey: 'dd5fea649b80425ff9f6f4d18d6699fe2d210df5',
-                src: 'server.js'
-              }
-            },
-            plugins: ['a']
-          }
-        },
-        data: '"use strict";module.exports.data=function(t,u){u(null,{a:t.plugins.a(),b:c()})};',
-        view: 'var oc=oc||{};oc.components=oc.components||{},oc.components["8c1fbd954f2b0d8cd5cf11c885fed4805225749f"]' +
-              '=function(){var o=[];return o.push("<div>hello</div>"),o.join("")};'
-      });
-
+      initialise(mockedComponents['error-component']);
       componentRoute = new ComponentRoute({}, mockedRepository);
 
       componentRoute({
@@ -136,31 +89,7 @@ describe('registry : routes : component', function(){
 
       var code, response;
       before(function(done){
-        initialise({
-          component: {
-            name: 'async-error-component',
-            version: '1.0.0',
-            oc: {
-              container: false,
-              files: {
-                template: {
-                  type: 'jade',
-                  hashKey: '8c1fbd954f2b0d8cd5cf11c885fed4805225749f',
-                  src: 'template.js'
-                },
-                dataProvider: {
-                  type: 'node.js',
-                  hashKey: 'f59f3942504fee8a5850cdd806172c24964bcf37',
-                  src: 'server.js'
-                }
-              }
-            }
-          },
-          data: '"use strict";module.exports.data=function(t,e){setTimeout(function(){e(null,{a:thisDoesnotExist()})},1e3)};',
-          view: 'var oc=oc||{};oc.components=oc.components||{},oc.components["8c1fbd954f2b0d8cd5cf11c885fed4805225749f"]' +
-                '=function(){var o=[];return o.push("<div>hello</div>"),o.join("")};'
-        });
-
+        initialise(mockedComponents['async-error-component']);
         componentRoute = new ComponentRoute({}, mockedRepository);
 
         var resJson = function(calledCode, calledResponse){
@@ -195,31 +124,7 @@ describe('registry : routes : component', function(){
       var codes = [],
           responses = [];
       before(function(done){
-        initialise({
-          component: {
-            name: 'async-error-component2',
-            version: '1.0.0',
-            oc: {
-              container: false,
-              files: {
-                template: {
-                  type: 'jade',
-                  hashKey: '8c1fbd954f2b0d8cd5cf11c885fed4805225749f',
-                  src: 'template.js'
-                },
-                dataProvider: {
-                  type: 'node.js',
-                  hashKey: 'bf6318cf5d5f2e7654a750c574fd0db9fb493432',
-                  src: 'server.js'
-                }
-              }
-            }
-          },
-          data: '"use strict";module.exports.data=function(r,t){r.params.error?setTimeout(function(){thisDoesnotExist()},1e3):t(null,{error:!!r.params.error})};',
-          view: 'var oc=oc||{};oc.components=oc.components||{},oc.components["8c1fbd954f2b0d8cd5cf11c885fed4805225749f"]' +
-                '=function(){var o=[];return o.push("<div>hello</div>"),o.join("")};'
-        });
-
+        initialise(mockedComponents['async-error2-component']);
         componentRoute = new ComponentRoute({}, mockedRepository);
 
         var resJson = function(calledCode, calledResponse){
@@ -232,7 +137,7 @@ describe('registry : routes : component', function(){
 
         componentRoute({
           headers: {},
-          params: { componentName: 'async-error-component2' }
+          params: { componentName: 'async-error2-component' }
         }, {
           conf: {
             baseUrl: 'http://components.com/',
@@ -243,7 +148,7 @@ describe('registry : routes : component', function(){
 
         componentRoute({
           headers: {},
-          params: { componentName: 'async-error-component2' },
+          params: { componentName: 'async-error2-component' },
           query: { error: true }
         }, {
           conf: {
@@ -277,32 +182,7 @@ describe('registry : routes : component', function(){
     describe('when plugin not declared in package.json', function(){
 
       before(function(){
-        initialise({
-          component: {
-            name: 'plugin-component',
-            version: '1.0.0',
-            oc: {
-              container: false,
-              files: {
-                template: {
-                  type: 'jade',
-                  hashKey: '8b3650989d66345eea8152e89ec03e1dad8e8e9b',
-                  src: 'template.js'
-                },
-                dataProvider: {
-                  type: 'node.js',
-                  hashKey: '6b28f479ae521755c9a4a9ecdd6e552b1e70892d',
-                  src: 'server.js'
-                }
-              }
-            },
-          },
-          data: '"use strict";module.exports.data=function(t,n){n(null,{a:t.plugins.doSomething()})};',
-          view: 'var oc=oc||{};oc.components=oc.components||{},oc.components["8b3650989d66345eea8152e89ec03e1dad8e8e9b"]' +
-                '=function(e){var n,o=[],c=e||{};return function(e){o.push("<div>"+jade.escape(null==(n=e)?"":n)+" John  </div>")}.' +
-                'call(this,"a"in c?c.a:"undefined"!=typeof a?a:void 0),o.join("")};'
-        });
-
+        initialise(mockedComponents['plugin-component']);
         componentRoute = new ComponentRoute({}, mockedRepository);
 
         componentRoute({
@@ -333,33 +213,9 @@ describe('registry : routes : component', function(){
     describe('when plugin declared in package.json', function(){
 
       beforeEach(function(){
-        initialise({
-          component: {
-            name: 'plugin-component',
-            version: '1.0.0',
-            oc: {
-              container: false,
-              files: {
-                template: {
-                  type: 'jade',
-                  hashKey: '8b3650989d66345eea8152e89ec03e1dad8e8e9b',
-                  src: 'template.js'
-                },
-                dataProvider: {
-                  type: 'node.js',
-                  hashKey: '6b28f479ae521755c9a4a9ecdd6e552b1e70892d',
-                  src: 'server.js'
-                }
-              },
-              plugins: ['doSomething']
-            },
-          },
-          data: '"use strict";module.exports.data=function(t,n){n(null,{a:t.plugins.doSomething()})};',
-          view: 'var oc=oc||{};oc.components=oc.components||{},oc.components["8b3650989d66345eea8152e89ec03e1dad8e8e9b"]' +
-                '=function(e){var n,o=[],c=e||{};return function(e){o.push("<div>"+jade.escape(null==(n=e)?"":n)+" John  </div>")}.' +
-                'call(this,"a"in c?c.a:"undefined"!=typeof a?a:void 0),o.join("")};'
-        });
-
+        var component = _.clone(mockedComponents['plugin-component']);
+        component.package.oc.plugins = ['doSomething'];
+        initialise(component);
         componentRoute = new ComponentRoute({}, mockedRepository);
       });
 
@@ -421,35 +277,7 @@ describe('registry : routes : component', function(){
     describe('when registry implements dependency', function(){
 
       beforeEach(function(){
-        initialise({
-          component: {
-            name: 'npm-component',
-            version: '1.0.0',
-            dependencies: {
-              underscore: ''
-            },
-            oc: {
-              container: false,
-              files: {
-                template: {
-                  type: 'jade',
-                  hashKey: '8b3650989d66345eea8152e89ec03e1dad8e8e9b',
-                  src: 'template.js'
-                },
-                dataProvider: {
-                  type: 'node.js',
-                  hashKey: '6a448d319fd64f46c6cdbad675f9eef09dde2d1b',
-                  src: 'server.js'
-                }
-              }
-            },
-          },
-          data: '"use strict";var _=require("underscore");module.exports.data=function(e,r){r(null,{a:_.first(["bye","welcome"])})};',
-          view: 'var oc=oc||{};oc.components=oc.components||{},oc.components["8b3650989d66345eea8152e89ec03e1dad8e8e9b"]' +
-                '=function(e){var n,o=[],c=e||{};return function(e){o.push("<div>"+jade.escape(null==(n=e)?"":n)+" John  </div>")}.' +
-                'call(this,"a"in c?c.a:"undefined"!=typeof a?a:void 0),o.join("")};'
-        });
-
+        initialise(mockedComponents['npm-component']);
         componentRoute = new ComponentRoute({}, mockedRepository);
 
         componentRoute({
@@ -480,35 +308,7 @@ describe('registry : routes : component', function(){
     describe('when registry does not implement dependency', function(){
 
       beforeEach(function(){
-        initialise({
-          component: {
-            name: 'npm-component',
-            version: '1.0.0',
-            dependencies: {
-              underscore: ''
-            },
-            oc: {
-              container: false,
-              files: {
-                template: {
-                  type: 'jade',
-                  hashKey: '8b3650989d66345eea8152e89ec03e1dad8e8e9b',
-                  src: 'template.js'
-                },
-                dataProvider: {
-                  type: 'node.js',
-                  hashKey: '6a448d319fd64f46c6cdbad675f9eef09dde2d1b',
-                  src: 'server.js'
-                }
-              }
-            },
-          },
-          data: '"use strict";var _=require("underscore");module.exports.data=function(e,r){r(null,{a:_.first(["bye","welcome"])})};',
-          view: 'var oc=oc||{};oc.components=oc.components||{},oc.components["8b3650989d66345eea8152e89ec03e1dad8e8e9b"]' +
-                '=function(e){var n,o=[],c=e||{};return function(e){o.push("<div>"+jade.escape(null==(n=e)?"":n)+" John  </div>")}.' +
-                'call(this,"a"in c?c.a:"undefined"!=typeof a?a:void 0),o.join("")};'
-        });
-
+        initialise(mockedComponents['npm-component']);
         componentRoute = new ComponentRoute({}, mockedRepository);
 
         componentRoute({
