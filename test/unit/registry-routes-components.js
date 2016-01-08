@@ -68,4 +68,34 @@ describe('registry : routes : components', function(){
       expect(response[1].html).to.be.equal('<div>hello</div>');
     });
   });
+
+  describe('when making not valid request', function(){
+
+    var code, response;
+    describe('when not providing components property', function(){
+      before(function(done){
+        componentsRoute({
+          headers: {},
+          body: {
+          }
+        }, {
+          conf: { baseUrl: 'http://components.com/' },
+          json: function(jsonCode, jsonResponse){
+            response = jsonResponse;
+            code = jsonCode;
+            done();
+          }
+        });
+      });
+
+      it('should return 400 status code', function() {
+        expect(code).to.be.equal(400);
+      });
+
+      it('should return error details', function() {
+        expect(response.code).to.be.equal('POST_BODY_NOT_VALID');
+        expect(response.error).to.be.equal('The request body is malformed');
+      });
+    });
+  });
 });
