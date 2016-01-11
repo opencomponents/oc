@@ -143,6 +143,8 @@ In case you would like to do the rendering yourself, try:
 
 In this case you get the compiled view + the data, and you can do the rendering, eventually, interpolating the view-model data and rendering the compiled view with it.
 
+When retrieving multiple components, a [batch POST endpoint](docs/registry-post-route.md) allows to make a single request to the API.
+
 ## Server-side rendering with node.js
 
 First install the node.js client in your project:

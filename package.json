@@ -45,6 +45,7 @@
     "load-grunt-tasks": "0.6.0",
     "mocha": "2.2.4",
     "phantomjs": "^1.9.19",
+    "request": "^2.67.0",
     "sinon": "1.14.1"
   },
   "dependencies": {

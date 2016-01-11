@@ -2,8 +2,7 @@
 
 var expect = require('chai').expect;
 var path = require('path');
-
-var request = require('../../utils/request');
+var request = require('request');
 
 describe('registry', function(){
 
@@ -20,9 +19,7 @@ describe('registry', function(){
 
   before(function(done){
     registry = new oc.Registry(conf);
-    registry.start(function(err, app){
-      done();
-    });
+    registry.start(done);
   });
 
   after(function(done){
@@ -33,8 +30,7 @@ describe('registry', function(){
 
     it('should throw an error', function(done){
       var f = function throwsWithNoArgs() {
-          var args = {};
-          var wrongRegistry = new oc.Registry(args);
+        var args = {}, wrongRegistry = new oc.Registry(args);
       };
       expect(f).to.throw('Registry configuration is empty');
       done();
@@ -47,8 +43,8 @@ describe('registry', function(){
         result;
 
     before(function(done){
-      request(url, function(err, res){
-        result = JSON.parse(res);
+      request(url, function(err, res, body){
+        result = JSON.parse(body);
         done();
       });
     });
@@ -74,8 +70,8 @@ describe('registry', function(){
           result;
 
       before(function(done){
-        request(url, function(err, res){
-          result = JSON.parse(res);
+        request(url, function(err, res, body){
+          result = JSON.parse(body);
           done();
         });
       });
@@ -112,8 +108,11 @@ describe('registry', function(){
           result;
 
       before(function(done){
-        request(url, { headers: {'Accept': 'application/vnd.oc.unrendered+json'}}, function(err, res){
-          result = JSON.parse(res);
+        request({
+          url: url,
+          headers: {'Accept': 'application/vnd.oc.unrendered+json'}
+        }, function(err, res, body){
+          result = JSON.parse(body);
           done();
         });
       });
@@ -152,8 +151,8 @@ describe('registry', function(){
           result;
 
       before(function(done){
-        request(url, function(err, res){
-          result = JSON.parse(res);
+        request(url, function(err, res, body){
+          result = JSON.parse(body);
           done();
         });
       });
@@ -164,12 +163,99 @@ describe('registry', function(){
 
       it('should respond with the rendered template without the outer container and without render info script', function(){
         expect(result.html).to.exist;
-        expect(result.html).to.eql('Hello world!');
+        expect(result.html).to.equal('Hello world!');
       });
 
       it('should respond with proper render type', function(){
         expect(result.renderMode).to.equal('rendered');
       });
     });
+  });
+
+  describe('POST /', function(){
+
+    describe('when body is malformed', function(){
+
+      var url = 'http://localhost:3030/',
+          result;
+
+      before(function(done){
+        request({
+          method: 'POST',
+          url: url
+        }, function(err, res, body){
+          result = JSON.parse(body);
+          done();
+        });
+      });
+
+      it('should respond with error', function() {
+        expect(result.error).to.equal('The request body is malformed: components property is missing');
+      });
+    });
+
+    describe('when body contains two components', function(){
+
+      describe('when Accept header not specified', function(){
+
+        var url = 'http://localhost:3030/',
+            result;
+
+        before(function(done){
+          request({
+            method: 'POST',
+            url: url,
+            json: true,
+            body: {
+              components: [
+                {name:'hello-world'},
+                {name:'no-containers'}
+              ]
+            }
+          }, function(err, res, body){ 
+            result = body;
+            done();
+          });
+        });
+
+        it('should respond with two rendered components', function() {
+          expect(result[0].html).to.match(/<oc-component (.*?)>Hello world!<script>(.*?)<\/script><\/oc-component>/g);
+          expect(result[0].renderMode).to.equal('rendered');
+          expect(result[1].html).to.equal('Hello world!');
+          expect(result[1].renderMode).to.equal('rendered');
+        });
+      });
+
+      describe('when Accept header set to application/vnd.oc.unrendered+json', function(){
+
+        var url = 'http://localhost:3030/',
+            result;
+
+        before(function(done){
+          request({
+            method: 'POST',
+            url: url,
+            headers: {'Accept': 'application/vnd.oc.unrendered+json'},
+            json: true,
+            body: {
+              components: [
+                {name:'hello-world'},
+                {name:'no-containers'}
+              ]
+            }
+          }, function(err, res, body){ 
+            result = body;
+            done();
+          });
+        });
+
+        it('should respond with two unrendered components', function() {
+          expect(result[0].template).to.exist;
+          expect(result[0].renderMode).to.equal('unrendered');
+          expect(result[1].template).to.exist;
+          expect(result[1].renderMode).to.equal('unrendered');
+        });
+      });
+    });   
   });
 });

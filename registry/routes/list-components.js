@@ -16,7 +16,12 @@ module.exports = function(repository){
         return res.json(404, { error: res.errorDetails });
       }
 
-      var isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
+      var isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0,
+          baseResponse = {
+            href: res.conf.baseUrl,
+            ocVersion: packageInfo.version,
+            type: res.conf.local ? 'oc-registry-local' : 'oc-registry'
+          };
 
       if(isHtmlRequest && !!res.conf.discovery){
 
@@ -42,31 +47,25 @@ module.exports = function(repository){
             return componentInfo.name;
           });
 
-          return res.render('list-components', {
+          return res.render('list-components', _.extend(baseResponse, {
             availableDependencies: res.conf.dependencies,
             availablePlugins: res.conf.plugins,
             components: componentsInfo,
+            componentsReleases: componentsReleases,
             componentsList: _.map(componentsInfo, function(component){ 
               return {
                 name: component.name,
                 state: (!!component.oc && !!component.oc.state) ? component.oc.state : ''
               }; 
-            }),
-            componentsReleases: componentsReleases,
-            href: res.conf.baseUrl,
-            ocVersion: packageInfo.version,
-            type: res.conf.local ? 'oc-registry-local' : 'oc-registry'
-          });
+            })
+          }));
         });
       } else {
-        res.json(200, {
-          href: res.conf.baseUrl,
+        res.json(200, _.extend(baseResponse, {
           components: _.map(components, function(component){
             return urlBuilder.component(component, res.conf.baseUrl);
-          }),
-          type: res.conf.local ? 'oc-registry-local' : 'oc-registry',
-          ocVersion: packageInfo.version
-        });
+          })
+        }));
       }
     });
   };

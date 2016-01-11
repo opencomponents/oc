@@ -9,6 +9,11 @@ module.exports = {
   },
   errors: {
     registry: {
+      BATCH_ROUTE_BODY_NOT_VALID: 'The request body is malformed: {0}',
+      BATCH_ROUTE_BODY_NOT_VALID_CODE: 'POST_BODY_NOT_VALID',
+      BATCH_ROUTE_COMPONENTS_PROPERTY_MISSING: 'components property is missing',
+      BATCH_ROUTE_COMPONENTS_NOT_ARRAY: 'components property is not an array',
+      BATCH_ROUTE_COMPONENT_NAME_MISSING: 'component {0} must have name property',
       COMPONENT_EXECUTION_ERROR: 'Component execution error: {0}',
       COMPONENT_NAME_NOT_VALID: 'The component\'s name contains invalid characters. Allowed are alphanumeric, _, -',
       COMPONENT_NAME_NOT_VALID_CODE: 'name_not_valid',
