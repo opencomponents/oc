@@ -6,6 +6,7 @@ module.exports = function(eventsHandler){
   return express.logger(function(tokens, req, res){
 
     var data = {
+      body: req.body,
       duration: tokens['response-time'](req, res)*1000,
       headers: req.headers,
       method: req.method,
