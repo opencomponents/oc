@@ -44,6 +44,7 @@ module.exports = function(conf, repository){
     async.map(components, function(component, callback){
       getComponent({
         conf: res.conf,
+        eventsHandler: res.eventsHandler,
         headers: req.headers,
         name: component.name,
         parameters: component.parameters,

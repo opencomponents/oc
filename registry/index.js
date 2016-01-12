@@ -57,6 +57,7 @@ module.exports = function(options){
 
     app.use(function(req, res, next){
       res.conf = options;
+      res.eventsHandler = eventsHandler;
       next();
     });
 

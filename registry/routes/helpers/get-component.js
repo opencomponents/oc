@@ -9,6 +9,7 @@ var _ = require('underscore');
 
 var Client = require('../../../client');
 var detective = require('../../domain/plugins-detective');
+var GetComponentRetrievingInfo = require('./get-component-retrieving-info');
 var RequireWrapper = require('../../domain/require-wrapper');
 var sanitiser = require('../../domain/sanitiser');
 var strings = require('../../../resources');
@@ -23,7 +24,19 @@ module.exports = function(conf, repository){
         refreshInterval: conf.refreshInterval
       });
 
-  return function(options, callback){
+  return function(options, cb){
+
+    var retrievingInfo = new GetComponentRetrievingInfo(options);
+
+    var callback = function(result){
+
+      if(!!result.response.error){
+        retrievingInfo.extend(result.response);
+      }
+
+      options.eventsHandler.fire('component-retrieved', retrievingInfo.getData());
+      return cb(result);
+    };
     
     var conf = options.conf,
         componentCallbackDone = false,
@@ -109,7 +122,13 @@ module.exports = function(conf, repository){
           name: requestedComponent.name,
           renderMode: renderMode
         };
-        
+
+        retrievingInfo.extend({
+          href: componentHref,
+          version: component.version,
+          renderMode: renderMode
+        });
+
         if(isUnrendered){
           callback({
             status: 200,
