@@ -1,8 +1,9 @@
 'use strict';
 
 var fs = require('fs-extra');
-var settings = require('../../resources/settings');
 var path = require('path');
+
+var settings = require('../../resources/settings');
 
 module.exports = function(){
   return function(params, callback){

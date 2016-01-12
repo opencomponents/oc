@@ -1,8 +1,9 @@
 'use strict';
 
 var path = require('path');
-var strings = require('../../resources/');
 var format = require('stringformat');
+
+var strings = require('../../resources/');
 
 var builtin = {
   basic: {
