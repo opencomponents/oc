@@ -8,6 +8,7 @@ var uglifyJs = require('uglify-js');
 var _ = require('underscore');
 
 var fsMock,
+    gzipMock,
     packageTemplate,
     uglifySpy;
 
@@ -19,6 +20,8 @@ var initialise = function(fs, uglifyStub){
     readFileSync: sinon.stub().returns('file content'),
     writeFile: sinon.stub().yields(null, 'ok')
   }, fs || {});
+
+  gzipMock = sinon.stub().yields(null);
 
   packageTemplate = injectr('../../cli/domain/package-template.js', {
     'fs-extra': fsMock,
@@ -33,7 +36,8 @@ var initialise = function(fs, uglifyStub){
       resolve: function(){
         return _.toArray(arguments).join('/');
       }
-    }
+    },
+    '../../utils/gzip': gzipMock
   });
 };
 
@@ -128,6 +132,10 @@ describe('cli : domain : package-template', function(){
 
       it('should save compiled view', function(){
         expect(fsMock.writeFile.args[0][1]).to.contain('<div>this is a jade view</div>');
+      });
+
+      it('should gzip compiled view', function(){
+        expect(gzipMock.args[0][1]).to.contain('template.js.gz');
       });
     });
   });

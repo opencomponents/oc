@@ -6,6 +6,7 @@ var handlebars = require('handlebars');
 var jade = require('jade');
 var path = require('path');
 var uglifyJs = require('uglify-js');
+var gzip = require('../../utils/gzip');
 
 var hashBuilder = require('../../utils/hash-builder');
 var strings = require('../../resources');
@@ -57,11 +58,16 @@ module.exports = function(params, callback){
     return callback(format('{0} compilation failed - {1}', viewSrc, e));
   }
 
-  fs.writeFile(path.join(params.publishPath, 'template.js'), compiled.view, function(err, res){
-    callback(err, {
-      type: params.ocOptions.files.template.type,
-      hashKey: compiled.hash,
-      src: 'template.js'
+  var destination = path.join(params.publishPath, 'template.js');
+
+  fs.writeFile(destination, compiled.view, function(err, res){
+    if(err){ return callback(err); }
+    gzip(destination, destination + '.gz', function(err){
+      callback(err, {
+        type: params.ocOptions.files.template.type,
+        hashKey: compiled.hash,
+        src: 'template.js'
+      });
     });
   });
 
