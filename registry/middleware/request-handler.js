@@ -2,7 +2,9 @@
 
 var express = require('express');
 
-module.exports = function(eventsHandler){
+var eventsHandler = require('../domain/events-handler');
+
+module.exports = function(){
   return express.logger(function(tokens, req, res){
 
     var data = {

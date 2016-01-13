@@ -9,7 +9,6 @@ module.exports = function(conf, repository){
   return function(req, res){
     getComponent({
       conf: res.conf,
-      eventsHandler: res.eventsHandler,
       headers: req.headers,
       name: req.params.componentName,
       parameters: req.query,

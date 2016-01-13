@@ -9,6 +9,7 @@ var _ = require('underscore');
 
 var Client = require('../../../client');
 var detective = require('../../domain/plugins-detective');
+var eventsHandler = require('../../domain/events-handler');
 var GetComponentRetrievingInfo = require('./get-component-retrieving-info');
 var RequireWrapper = require('../../domain/require-wrapper');
 var sanitiser = require('../../domain/sanitiser');
@@ -34,7 +35,7 @@ module.exports = function(conf, repository){
         retrievingInfo.extend(result.response);
       }
 
-      options.eventsHandler.fire('component-retrieved', retrievingInfo.getData());
+      eventsHandler.fire('component-retrieved', retrievingInfo.getData());
       return cb(result);
     };
     
