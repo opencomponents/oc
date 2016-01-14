@@ -22,7 +22,7 @@ module.exports = function(options){
       var delta = process.hrtime(start),
           nanosec = delta[0] * 1e9 + delta[1];
 
-      eventData.duration = nanosec / 1e6;
+      eventData.duration = nanosec / 1e3;
 
       return eventData;
     }
