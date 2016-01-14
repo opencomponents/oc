@@ -1,9 +1,9 @@
 'use strict';
 
-var _ = require('underscore');
 var fs = require('fs-extra');
 var path = require('path');
 var async = require('async');
+var _ = require('underscore');
 
 var packageServerScript = require('./package-server-script');
 var packageStaticFiles = require('./package-static-files');

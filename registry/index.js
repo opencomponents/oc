@@ -11,7 +11,7 @@ var appStart = require('./app-start');
 var baseUrlHandler = require('./middleware/base-url-handler');
 var cors = require('./middleware/cors');
 var discoveryHandler = require('./middleware/discovery-handler');
-var EventsHandler = require('./events-handler');
+var eventsHandler = require('./domain/events-handler');
 var fileUploads = require('./middleware/file-uploads');
 var pluginsInitialiser = require('./domain/plugins-initialiser');
 var Repository = require('./domain/repository');
@@ -23,8 +23,7 @@ var validator = require('./domain/validators');
 
 module.exports = function(options){
 
-  var eventsHandler = new EventsHandler(),
-      repository,
+  var repository,
       self = this,
       server,
       withLogging = !_.has(options, 'verbosity') || options.verbosity > 0,
@@ -60,7 +59,7 @@ module.exports = function(options){
       next();
     });
 
-    app.use(requestHandler(eventsHandler));
+    app.use(requestHandler());
     app.use(express.json());
     app.use(express.urlencoded());
     app.use(cors);
@@ -135,7 +134,7 @@ module.exports = function(options){
       if(!!err){ return callback(err); }
       options.plugins = plugins;
 
-      repository.init(eventsHandler, function(err, componentsInfo){
+      repository.init(function(err, componentsInfo){
         appStart(repository, options, function(err, res){
 
           if(!!err){ return callback(err.msg); }

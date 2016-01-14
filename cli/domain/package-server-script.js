@@ -8,9 +8,10 @@ var uglifyJs = require('uglify-js');
 var falafel = require('falafel');
 var _ = require('underscore');
 
+var config = require('../../resources/settings');
 var hashBuilder = require('../../utils/hash-builder');
 var strings = require('../../resources');
-var config = require('../../resources/settings');
+
 var CONST_MAX_ITERATIONS = config.maxLoopIterations;
 
 var wrapLoops = function(code){

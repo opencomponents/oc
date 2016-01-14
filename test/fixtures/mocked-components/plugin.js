@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
   package: {
     name: 'plugin-component',

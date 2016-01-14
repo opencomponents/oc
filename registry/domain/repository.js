@@ -171,12 +171,12 @@ module.exports = function(conf){
     getStaticFilePath: function(componentName, componentVersion, filePath){
       return this.getComponentPath(componentName, componentVersion) + (conf.local ? settings.registry.localStaticRedirectorPath : '') + filePath;
     },
-    init: function(eventsHandler, callback){
+    init: function(callback){
       if(conf.local){
         return callback(null, 'ok');
       }
 
-      componentsCache.load(eventsHandler, callback);
+      componentsCache.load(callback);
     },
     publishComponent: function(componentDir, componentName, componentVersion, callback){
       if(conf.local){

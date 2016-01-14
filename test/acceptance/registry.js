@@ -29,10 +29,10 @@ describe('registry', function(){
   describe('when initialised with invalid configuration', function(){
 
     it('should throw an error', function(done){
-      var f = function throwsWithNoArgs() {
-        var args = {}, wrongRegistry = new oc.Registry(args);
-      };
-      expect(f).to.throw('Registry configuration is empty');
+      expect(function(){
+        var wrongRegistry = new oc.Registry({});
+      }).to.throw('Registry configuration is empty');
+
       done();
     });
   });

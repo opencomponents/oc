@@ -2,10 +2,13 @@
 
 var express = require('express');
 
-module.exports = function(eventsHandler){
+var eventsHandler = require('../domain/events-handler');
+
+module.exports = function(){
   return express.logger(function(tokens, req, res){
 
     var data = {
+      body: req.body,
       duration: tokens['response-time'](req, res)*1000,
       headers: req.headers,
       method: req.method,

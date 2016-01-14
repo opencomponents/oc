@@ -4,16 +4,16 @@ var async = require('async');
 var semver = require('semver');
 var _ = require('underscore');
 
+var eventsHandler = require('./events-handler');
 var getUnixUTCTimestamp = require('../../utils/get-unix-utc-timestamp');
 
 module.exports = function(conf, cdn){
 
   var cachedComponentsList,
-      refreshLoop,
-      _eventsHandler;
+      refreshLoop;
 
   var cacheDataAndStartRefresh = function(data, cb){
-    _eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
+    eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
     cachedComponentsList = data;
     refreshCachedData();
     cb(null, data);
@@ -87,7 +87,7 @@ module.exports = function(conf, cdn){
     refreshLoop = setInterval(function(){
       getFromJson(function(err, data){
         if(err){
-          _eventsHandler.fire('error', { code: 'components_list_get', message: err });
+          eventsHandler.fire('error', { code: 'components_list_get', message: err });
         } else {
           updateCachedData(data);
         }
@@ -96,7 +96,7 @@ module.exports = function(conf, cdn){
   };
 
   var returnError = function(errorCode, errorMessage, callback){
-    _eventsHandler.fire('error', { code: errorCode, message: errorMessage });
+    eventsHandler.fire('error', { code: errorCode, message: errorMessage });
     return callback(errorCode);
   };
 
@@ -105,7 +105,7 @@ module.exports = function(conf, cdn){
   };
 
   var updateCachedData = function(newData){
-    _eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
+    eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
     if(newData.lastEdit > cachedComponentsList.lastEdit){
       cachedComponentsList = newData;
     }
@@ -116,9 +116,7 @@ module.exports = function(conf, cdn){
       if(!cachedComponentsList){ return returnError('components_cache_empty', 'The component\'s cache was empty', callback); }
       callback(null, cachedComponentsList);
     },
-    load: function(eventsHandler, callback){
-      _eventsHandler = eventsHandler;
-
+    load: function(callback){
       getFromJson(function(jsonErr, jsonComponents){
         getFromDirectories(function(dirErr, dirComponents){
           if(!!dirErr){

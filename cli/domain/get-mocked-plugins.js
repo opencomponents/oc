@@ -1,11 +1,12 @@
 'use strict';
 
+var colors = require('colors/safe');
 var fs = require('fs-extra');
 var path = require('path');
 var _ = require('underscore');
-var colors = require('colors/safe');
-var strings = require('../../resources/');
+
 var settings = require('../../resources/settings');
+var strings = require('../../resources/');
 
 var registerStaticMocks = function(mocks, logger){
   return _.map(mocks, function(mockedValue, pluginName){
