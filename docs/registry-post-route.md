@@ -11,20 +11,26 @@ curl http://my-components-registry.mydomain.com/
   -d '{components:[{"name": hello-world", "version": "1.X.X"}, {"name": "my-component", "parameters": { "something": 2345 }}]}'
 
 [{
-  "href": "https://my-components-registry.mydomain.com/hello-world/1.X.X",
-  "name": "hello-world",
-  "version": "1.0.0",
-  "requestVersion": "1.X.X",
-  "html": "Hello John doe!",
-  "type": "oc-component",
-  "renderMode": "rendered"
+  "status": 200,
+  "response": {
+    "href": "https://my-components-registry.mydomain.com/hello-world/1.X.X",
+    "name": "hello-world",
+    "version": "1.0.0",
+    "requestVersion": "1.X.X",
+    "html": "Hello John doe!",
+    "type": "oc-component",
+    "renderMode": "rendered"
+  }
 },{
-  "href": "https://my-components-registry.mydomain.com/my-component/?something=2345",
-  "name": "my-component",
-  "version": "1.0.0",
-  "requestVersion": "",
-  "html": "Bla bla",
-  "type": "oc-component",
-  "renderMode": "rendered"
+  "status": 200,
+  "response": {
+    "href": "https://my-components-registry.mydomain.com/my-component/?something=2345",
+    "name": "my-component",
+    "version": "1.0.0",
+    "requestVersion": "",
+    "html": "Bla bla",
+    "type": "oc-component",
+    "renderMode": "rendered"
+  }
 }]
 ```

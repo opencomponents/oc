@@ -49,7 +49,7 @@ module.exports = function(conf, repository){
         parameters: component.parameters,
         version: component.version
       }, function(result){
-        callback(null, result.response);
+        callback(null, result);
       });
     }, function(err, results){
       return res.json(200, results);

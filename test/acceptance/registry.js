@@ -218,11 +218,16 @@ describe('registry', function(){
           });
         });
 
+        it('should respond with two 200 status codes', function(){
+          expect(result[0].status).to.equal(200);
+          expect(result[1].status).to.equal(200);
+        });
+
         it('should respond with two rendered components', function() {
-          expect(result[0].html).to.match(/<oc-component (.*?)>Hello world!<script>(.*?)<\/script><\/oc-component>/g);
-          expect(result[0].renderMode).to.equal('rendered');
-          expect(result[1].html).to.equal('Hello world!');
-          expect(result[1].renderMode).to.equal('rendered');
+          expect(result[0].response.html).to.match(/<oc-component (.*?)>Hello world!<script>(.*?)<\/script><\/oc-component>/g);
+          expect(result[0].response.renderMode).to.equal('rendered');
+          expect(result[1].response.html).to.equal('Hello world!');
+          expect(result[1].response.renderMode).to.equal('rendered');
         });
       });
 
@@ -250,10 +255,10 @@ describe('registry', function(){
         });
 
         it('should respond with two unrendered components', function() {
-          expect(result[0].template).to.exist;
-          expect(result[0].renderMode).to.equal('unrendered');
-          expect(result[1].template).to.exist;
-          expect(result[1].renderMode).to.equal('unrendered');
+          expect(result[0].response.template).to.exist;
+          expect(result[0].response.renderMode).to.equal('unrendered');
+          expect(result[1].response.template).to.exist;
+          expect(result[1].response.renderMode).to.equal('unrendered');
         });
       });
     });   

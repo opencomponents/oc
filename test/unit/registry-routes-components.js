@@ -59,17 +59,25 @@ describe('registry : routes : components', function(){
     });
 
     it('should return a response containing components in the correct order', function(){
-      expect(response[0].href).to.be.undefined;
-      expect(response[1].href).to.be.equal('http://components.com/async-error2-component/1.0.0');
+      expect(response[0].response.href).to.be.undefined;
+      expect(response[1].response.href).to.be.equal('http://components.com/async-error2-component/1.0.0');
     });
 
     it('should return a response with error code and description for first component', function(){
-      expect(response[0].code).to.be.equal('GENERIC_ERROR');
-      expect(response[0].error).to.be.equal('Component execution error: thisDoesnotExist is not defined');
+      expect(response[0].response.code).to.be.equal('GENERIC_ERROR');
+      expect(response[0].response.error).to.be.equal('Component execution error: thisDoesnotExist is not defined');
     });
 
     it('should return a response with rendered html for second component', function(){
-      expect(response[1].html).to.be.equal('<div>hello</div>');
+      expect(response[1].response.html).to.be.equal('<div>hello</div>');
+    });
+
+    it('should include 500 status code for first component', function(){
+      expect(response[0].status).to.equal(500);
+    });
+
+    it('should include 200 status code for second component', function(){
+      expect(response[1].status).to.equal(200);
     });
   });
 
