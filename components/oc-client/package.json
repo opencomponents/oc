@@ -1,7 +1,7 @@
 {
   "name": "oc-client",
   "description": "The OpenComponents client-side javascript client",
-  "version": "0.22.2",
+  "version": "0.22.3",
   "repository": "https://github.com/opentable/oc/tree/master/components/oc-client",
   "oc": {
     "parameters": {},
