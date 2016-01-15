@@ -8,6 +8,7 @@ It allows to retrieve a set of components with a single request to the API. Whil
 ```sh
 curl http://my-components-registry.mydomain.com/
   -X POST
+  -H "Content-Type: application/json"
   -d '{components:[{"name": hello-world", "version": "1.X.X"}, {"name": "my-component", "parameters": { "something": 2345 }}]}'
 
 [{

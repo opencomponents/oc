@@ -7,26 +7,26 @@ var customLaunchers = {
     base: 'SauceLabs',
     browserName: 'chrome',
     platform: 'Linux',
-    version: '45'
+    version: '47'
   },
   'ff': {
     base: 'SauceLabs',
     browserName: 'firefox',
     platform: 'Linux',
-    version: '41'
+    version: '43'
   },
   'android': {
     base: 'SauceLabs',
     browserName: 'android',
     platform: 'Linux',
-    version: '5.0',
+    version: '5.1',
     deviceName: 'Android Emulator',
     'device-orientation': 'portrait'
   },
   'ie11': {
     base: 'SauceLabs',
     browserName: 'internet explorer',
-    platform: 'Windows 8.1',
+    platform: 'Windows 10',
     version: '11'
   },
   'ie10': {
