@@ -66,14 +66,14 @@
     "nice-cache": "0.0.5",
     "node-dir": "0.1.9",
     "nomnom": "1.8.1",
-    "npm": "2.9.0",
+    "npm": "3.5.3",
     "omelette": "0.3.1",
     "opn": "1.0.1",
     "read": "1.0.7",
     "semver": "5.0.3",
     "stringformat": "0.0.5",
-    "tar.gz": "0.1.1",
-    "uglify-js": "2.5.0",
+    "tar.gz": "1.0.2",
+    "uglify-js": "2.6.1",
     "underscore": "1.8.1",
     "watch": "0.13.0"
   }
