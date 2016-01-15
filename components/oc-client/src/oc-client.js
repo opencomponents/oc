@@ -337,8 +337,7 @@ var oc = oc || {};
           crossDomain: true,
           async: true,
           success: function(apiResponse){
-            if(apiResponse.renderMode === 'pre-rendered' ||
-               apiResponse.renderMode === 'unrendered'){
+            if(apiResponse.renderMode === 'unrendered'){
               oc.render(apiResponse.template, apiResponse.data, function(err, html){
                 if(err){
                   return callback(MESSAGES_ERRORS_RENDERING.replace('{0}', apiResponse.href).replace('{1}', err));

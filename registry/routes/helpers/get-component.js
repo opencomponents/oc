@@ -111,8 +111,7 @@ module.exports = function(conf, repository){
         }, conf.baseUrl);
 
         var acceptH = options.headers.accept,
-            isUnrendered = acceptH === 'application/vnd.oc.prerendered+json' ||
-              acceptH === 'application/vnd.oc.unrendered+json',
+            isUnrendered = acceptH === 'application/vnd.oc.unrendered+json',
             renderMode = isUnrendered ? 'unrendered' : 'rendered';
 
         var response = {
