@@ -15,15 +15,16 @@ var javaScriptizeTemplate = function(functionName, data){
   return format('var {0}={0}||{};{0}.components={0}.components||{};{0}.components[\'{1}\']={2}', 'oc', functionName, data.toString());
 };
 
-var compileView = function(template, type, fileName, baseDir){
-  var preCompiledView;
+var compileView = function(viewPath, type) {
+    var template = fs.readFileSync(viewPath).toString();
+    var preCompiledView;
 
   if(type === 'jade'){
-    preCompiledView = jade.compileClient(template, {
-      filename: path.resolve('./' + baseDir + '/' + fileName),
+      preCompiledView = jade.compileClient(template, {
+      filename: viewPath,
       compileDebug: false,
       name: 't'
-    }).toString().replace('function t(locals) {', 'function(locals){');
+      }).toString().replace('function t(locals) {', 'function(locals){');
   } else if(type === 'handlebars'){
     preCompiledView = handlebars.precompile(template);
   } else {
@@ -49,10 +50,9 @@ module.exports = function(params, callback){
     return callback(format(strings.errors.cli.TEMPLATE_NOT_FOUND, viewSrc));
   }
 
-  var template = fs.readFileSync(viewPath).toString();
 
   try {
-    compiled = compileView(template, params.ocOptions.files.template.type, viewSrc, params.componentName);
+    compiled = compileView(viewPath, params.ocOptions.files.template.type, viewSrc, params.componentName);
   } catch(e){
     return callback(format('{0} compilation failed - {1}', viewSrc, e));
   }
