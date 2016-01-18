@@ -27,12 +27,6 @@ var initialise = function(fs, uglifyStub){
         uglifySpy();
         return { code: code };
       }
-    },
-    path: {
-      join: path.join,
-      resolve: function(){
-        return _.toArray(arguments).join('/');
-      }
     }
   });
 };

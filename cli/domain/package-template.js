@@ -16,15 +16,15 @@ var javaScriptizeTemplate = function(functionName, data){
 };
 
 var compileView = function(viewPath, type) {
-    var template = fs.readFileSync(viewPath).toString();
-    var preCompiledView;
+    var template = fs.readFileSync(viewPath).toString(),
+        preCompiledView;
 
   if(type === 'jade'){
-      preCompiledView = jade.compileClient(template, {
+    preCompiledView = jade.compileClient(template, {
       filename: viewPath,
       compileDebug: false,
       name: 't'
-      }).toString().replace('function t(locals) {', 'function(locals){');
+    }).toString().replace('function t(locals) {', 'function(locals){');
   } else if(type === 'handlebars'){
     preCompiledView = handlebars.precompile(template);
   } else {
@@ -50,9 +50,8 @@ module.exports = function(params, callback){
     return callback(format(strings.errors.cli.TEMPLATE_NOT_FOUND, viewSrc));
   }
 
-
   try {
-    compiled = compileView(viewPath, params.ocOptions.files.template.type, viewSrc, params.componentName);
+    compiled = compileView(viewPath, params.ocOptions.files.template.type);
   } catch(e){
     return callback(format('{0} compilation failed - {1}', viewSrc, e));
   }

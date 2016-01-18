@@ -284,6 +284,7 @@ Maintainer:
 Contributors:
 * [@ajcw](https://github.com/ajcw)
 * [@andyroyle](https://github.com/andyroyle)
+* [@antwhite](https://github.com/antwhite)
 * [@char1e5](https://github.com/char1e5)
 * [@federicomaffei](https://github.com/federicomaffei)
 * [@jankowiakmaria](https://github.com/jankowiakmaria)
