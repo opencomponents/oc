@@ -7,6 +7,7 @@ var oc = oc || {};
   oc.conf = oc.conf || {};
   oc.cmd = oc.cmd || [];
   oc.renderedComponents = oc.renderedComponents || {};
+  oc.$ = undefined;
 
   // Constants
   var CDNJS_BASEURL = 'https://cdnjs.cloudflare.com/ajax/libs/',
@@ -34,14 +35,14 @@ var oc = oc || {};
   // The code
   var debug = oc.conf.debug || false,
       headScripts = [],
-      $,
       noop = function(){},
       nav = $window.navigator.userAgent,
       is8 = !!(nav.match(/MSIE 8/)),
       is9 = !!(nav.match(/MSIE 9/)),
       initialised = false,
       initialising = false,
-      retries = {};
+      retries = {},
+      isBool = function(a){ return typeof(a) === 'boolean'; };
 
   var logger = {
     error: function(msg){
@@ -69,7 +70,7 @@ var oc = oc || {};
   
   var addParametersToHref = function (href, parameters) {
     if(href && parameters) {
-      var param = $.param(parameters);
+      var param = oc.$.param(parameters);
       if(href.indexOf('?') > -1) {
         return href + '&' + param;
       } else {
@@ -211,7 +212,7 @@ var oc = oc || {};
       initialising = true;
 
       var requirePolyfills = function(cb){
-        if((is8 || is9) && !$.IE_POLYFILL_LOADED){
+        if((is8 || is9) && !oc.$.IE_POLYFILL_LOADED){
           oc.require(IE89_AJAX_POLYFILL_URL, cb);
         } else {
           cb();
@@ -224,7 +225,7 @@ var oc = oc || {};
 
         oc.events = (function(){
 
-          var obj = $({});
+          var obj = oc.$({});
 
           return {
             fire: function(key, data){
@@ -254,7 +255,7 @@ var oc = oc || {};
       };
 
       oc.require('jQuery', JQUERY_URL, function(jQuery){
-        $ = jQuery;
+        oc.$ = jQuery.noConflict(true);
         requirePolyfills(done);
       });
     }
@@ -289,8 +290,8 @@ var oc = oc || {};
     oc.ready(function(){
       var dataRendering = $component.attr('data-rendering'),
           dataRendered = $component.attr('data-rendered'),
-          isRendering = typeof(dataRendering) === 'boolean' ? dataRendering : (dataRendering === 'true'),
-          isRendered = typeof(dataRendered) === 'boolean' ? dataRendered : (dataRendered === 'true');
+          isRendering = isBool(dataRendering) ? dataRendering : (dataRendering === 'true'),
+          isRendered = isBool(dataRendered) ? dataRendered : (dataRendered === 'true');
 
       if(!isRendering && !isRendered){
         logger.info(MESSAGES_RETRIEVING);
@@ -330,7 +331,7 @@ var oc = oc || {};
           });
         }
 
-        $.ajax({
+        oc.$.ajax({
           url: hrefWithCount,
           headers: { 'Accept': 'application/vnd.oc.unrendered+json' },
           contentType: 'text/plain',
@@ -385,7 +386,7 @@ var oc = oc || {};
   oc.renderUnloadedComponents = function(){
     oc.ready(function(){
       var selector = (is8 ? 'div[data-oc-component=true]' : OC_TAG),
-          $unloadedComponents = $(selector + '[data-rendered!=true]'),
+          $unloadedComponents = oc.$(selector + '[data-rendered!=true]'),
           toDo = $unloadedComponents.length;
       
       var done = function(cb){
@@ -397,7 +398,7 @@ var oc = oc || {};
       
       if(toDo > 0){
         for(var i = 0; i < $unloadedComponents.length; i++){
-          oc.renderNestedComponent($($unloadedComponents[i]), done);
+          oc.renderNestedComponent(oc.$($unloadedComponents[i]), done);
         }
       }
     });
@@ -409,9 +410,9 @@ var oc = oc || {};
         callback = noop;
       }
 
-      if($(placeholder)){
-        $(placeholder).html('<' + OC_TAG + ' href="' + href + '" />');
-        var newComponent = $(OC_TAG, placeholder);
+      if(oc.$(placeholder)){
+        oc.$(placeholder).html('<' + OC_TAG + ' href="' + href + '" />');
+        var newComponent = oc.$(OC_TAG, placeholder);
         oc.renderNestedComponent(newComponent, function(){
           callback(newComponent);
         });

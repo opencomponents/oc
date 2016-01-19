@@ -41,11 +41,11 @@ describe('oc-client : renderUnloadedComponents', function(){
     view: 'oc.components=oc.components||{},oc.components["97f07144341a214735c4cec85b002c4c8f394455"]=function(c){var o=[];return o.push("<div>this is a component</div>"),o.join("")};'
   };
 
-  var originalAjax = jQuery.ajax, 
+  var originalAjax = oc.$.ajax, 
       originalConsoleLog = console.log;
 
   var initialise = function(){
-    jQuery.ajax = $.ajax = function(p){
+    oc.$.ajax = function(p){
       var isAnother = p.url.indexOf('another') > 0;
       p.success((isAnother ? anotherComponent : aComponent).response); 
     };
@@ -61,8 +61,8 @@ describe('oc-client : renderUnloadedComponents', function(){
       '<div data-oc-component="true" href="' + anotherComponent.response.href + '"></div>' :
       '<oc-component href="' + anotherComponent.response.href + '"></oc-component>';
 
-    $('body').append(aComponentHtml);
-    $('body').append(anotherComponentHtml);
+    oc.$('body').append(aComponentHtml);
+    oc.$('body').append(anotherComponentHtml);
     eval(aComponent.view);
     eval(anotherComponent.view);
   };
@@ -71,8 +71,8 @@ describe('oc-client : renderUnloadedComponents', function(){
     head.load.restore();
     console.log = originalConsoleLog;
     oc.events.reset();
-    $('body').find('oc-component').remove();
-    jQuery.ajax = $.ajax = originalAjax;
+    oc.$('body').find('oc-component').remove();
+    oc.$.ajax = originalAjax;
     delete oc.components;
     oc.renderedComponents = {};
   };
