@@ -255,7 +255,7 @@ var oc = oc || {};
       };
 
       oc.require('jQuery', JQUERY_URL, function(jQuery){
-        oc.$ = jQuery.noConflict(true);
+        oc.$ = jQuery.noConflict();
         requirePolyfills(done);
       });
     }
