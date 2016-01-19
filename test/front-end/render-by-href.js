@@ -40,13 +40,13 @@ describe('oc-client : renderByHref', function(){
   var route = 'http://my-registry.com/v3/a-component/1.2.X/?name=John',
       compiledViewContent = 'oc.components=oc.components||{},oc.components["46ee85c314b371cac60471cef5b2e2e6c443dccf"]={compiler:[6,">= 2.0.0-beta.1"],main:function(){return"Hello world!"},useData:!0};';
 
-  var originalAjax = jQuery.ajax,
+  var originalAjax = oc.$.ajax,
       originalConsoleLog = console.log;
 
   var initialise = function(response, fail){
     var spy = sinon.spy();
 
-    jQuery.ajax = $.ajax = function(params){
+    oc.$.ajax = function(params){
       var method = (typeof(fail) === 'boolean' && fail) ? 'error' : 'success';
 
       spy(params);
@@ -61,7 +61,7 @@ describe('oc-client : renderByHref', function(){
   var cleanup = function(){
     head.load.restore();
     console.log = originalConsoleLog;
-    jQuery.ajax = $.ajax = originalAjax;
+    oc.$.ajax = originalAjax;
     delete oc.components;
   };
   
