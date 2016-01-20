@@ -7,7 +7,12 @@ var oc = oc || {};
   oc.conf = oc.conf || {};
   oc.cmd = oc.cmd || [];
   oc.renderedComponents = oc.renderedComponents || {};
-  oc.$ = undefined;
+  oc.loaded = oc.loaded || false;
+
+  // If oc client is already inside the page, we do nothing. 
+  if(!!oc.loaded){
+    return oc;
+  }
 
   // Constants
   var CDNJS_BASEURL = 'https://cdnjs.cloudflare.com/ajax/libs/',
@@ -242,6 +247,7 @@ var oc = oc || {};
 
         callback();
         oc.events.fire('oc:ready', oc);
+        oc.loaded = true;
 
         for(var i = 0; i < oc.cmd.length; i++){
           oc.cmd[i](oc);
