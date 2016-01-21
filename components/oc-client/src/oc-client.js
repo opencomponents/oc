@@ -218,8 +218,8 @@ var oc = oc || {};
 
       initialising = true;
 
-      var requirePolyfills = function(cb){
-        if((is8 || is9) && !oc.$.IE_POLYFILL_LOADED){
+      var requirePolyfills = function($, cb){
+        if((is8 || is9) && !$.IE_POLYFILL_LOADED){
           oc.require(IE89_AJAX_POLYFILL_URL, cb);
         } else {
           cb();
@@ -248,6 +248,7 @@ var oc = oc || {};
         })();
 
         callback();
+
         oc.events.fire('oc:ready', oc);
         oc.status = 'ready';
 
@@ -256,15 +257,25 @@ var oc = oc || {};
         }
 
         oc.cmd = {
-          push: function(f){
-            f(oc);
-          }
+          push: function(f){ f(oc); }
         };
       };
 
+      var wasDollarThereAlready = !!$window.$;
       oc.require('jQuery', JQUERY_URL, function(jQuery){
-        oc.$ = jQuery.noConflict();
-        requirePolyfills(done);
+
+        requirePolyfills(jQuery, function(){
+          if(wasDollarThereAlready){
+            // jQuery was already there. The client shares the same instance.
+            oc.$ = jQuery;
+          } else {
+            // jQuery wasn't there. The client dynamically downloads it and 
+            // it tries to avoid sharing it by freeing the $ symbol.
+            oc.$ = jQuery.noConflict();
+          }
+
+          done();
+        });
       });
     }
   };
