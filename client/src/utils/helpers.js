@@ -4,6 +4,9 @@ module.exports = {
   has: function(obj, key){
     return !!obj && obj.hasOwnProperty(key);
   },
+  isArray: function(input){
+    return Object.prototype.toString.call(input) === '[object Array]';
+  },
   isEmpty: function(input){
     return !input || input.length === 0;
   },
