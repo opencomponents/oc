@@ -87,7 +87,7 @@ describe.only('client', function(){
                 response = res;
                 done();
               });
-            })
+            });
           });
 
           it('should make server-side request using serverRendering baseUrl', function(){
@@ -102,7 +102,7 @@ describe.only('client', function(){
           it('should include oc-client javascript library', function(){
             var $script = cheerio.load(response)('script');
             expect($script.text()).to.equal('document.write("hi");');
-          })
+          });
         });
 
         describe('when client-side failover is disabled', function(){
