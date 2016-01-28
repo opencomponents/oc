@@ -157,7 +157,9 @@ Then, this is what you would do with a simple node.js http app:
 var http = require('http'),
     Client = require('oc-client'),
     client = new Client({
-      registries: ['http://my-components-registry.mydomain.com/'],
+      registries: {
+        serverRendering: 'http://oc-registry.intranet.com/',
+        clientRendering: 'https://components.mydomain.com' },
       components: {'hello-world': '~1.0.0'}
     });
 
@@ -201,7 +203,8 @@ If for some reasons you want to avoid client-side rendering when using the node.
 ```js
 var http = require('http'),
     oc = require('oc'),
-    client = new oc.Client({ 
+    client = new oc.Client({
+      ...
       disableFailoverRendering: true
     });
 
