@@ -10,13 +10,20 @@ module.exports = function(repository){
   return function(req, res){
 
     var filePath,
-        clientPath = (!!res.conf.prefix ? res.conf.prefix : '/') + 'oc-client/client.js';
+        clientPath = (!!res.conf.prefix ? res.conf.prefix : '/') + 'oc-client/client.js',
+        clientMapPath = (!!res.conf.prefix ? res.conf.prefix : '/') + 'oc-client/oc-client.min.map';
 
     if(req.route.path === clientPath){
       if(res.conf.local){
         filePath = path.join(__dirname, '../../components/oc-client/_package/src/oc-client.min.js');
       } else {
         return res.redirect(repository.getStaticClientPath());
+      }
+    } else if(req.route.path === clientMapPath){
+      if(res.conf.local){
+        filePath = path.join(__dirname, '../../components/oc-client/_package/src/oc-client.min.map');
+      } else {
+        return res.redirect(repository.getStaticClientMapPath());
       }
     } else if(req.params.componentName === 'oc-client'){
       filePath = path.join(__dirname, '../../components/oc-client/_package/' + req.params[0]);

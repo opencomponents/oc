@@ -19,10 +19,14 @@ module.exports = function(grunt, taskObject){
     ocClientPackageInfo.version = taskObject.pkg.version;
     fs.writeJsonSync(path.join(__dirname, clientComponentDir, 'package.json'), ocClientPackageInfo, {spaces: 2});
 
-    var compressedClientLibrary = uglifyJs.minify(bundle, {fromString: true}).code;
+    var compressed = uglifyJs.minify(bundle, {
+      fromString: true,
+      outSourceMap: 'oc-client.min.map'
+    });
 
-    fs.writeFileSync(path.join(__dirname, clientComponentDir, 'src/oc-client.min.js'), compressedClientLibrary);
-    fs.writeFileSync(path.join(__dirname, '../../client/oc-client.min.js'), compressedClientLibrary);
+    fs.writeFileSync(path.join(__dirname, clientComponentDir, 'src/oc-client.min.js'), compressed.code);
+    fs.writeFileSync(path.join(__dirname, clientComponentDir, 'src/oc-client.min.map'), compressed.map);
+    fs.writeFileSync(path.join(__dirname, '../../client/oc-client.min.js'), compressed.code);
 
     var Local = require('../../cli/domain/local'),
         local = new Local({ logger: { log: grunt.log.writeln }});

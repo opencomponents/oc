@@ -168,6 +168,9 @@ module.exports = function(conf){
     getStaticClientPath: function(){
       return 'https:' + conf.s3.path + conf.s3.componentsDir + '/oc-client/' + packageInfo.version + '/src/oc-client.min.js';
     },
+    getStaticClientMapPath: function(){
+      return getStaticClientPath().replace('.js', '.map');
+    },
     getStaticFilePath: function(componentName, componentVersion, filePath){
       return this.getComponentPath(componentName, componentVersion) + (conf.local ? settings.registry.localStaticRedirectorPath : '') + filePath;
     },

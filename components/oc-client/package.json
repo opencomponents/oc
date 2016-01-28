@@ -7,6 +7,7 @@
   "oc": {
     "container": false,
     "renderInfo": false,
+    "minify": false,
     "parameters": {},
     "files": {
       "data": "server.js",
