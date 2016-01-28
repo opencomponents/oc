@@ -3,7 +3,7 @@
 var customTasks = {
   build: require('./grunt-tasks/support/task-build'),
   generateCliDoc: require('./grunt-tasks/support/task-generate-cli-doc'),
-  version: require('./grunt-tasks/support/version')
+  version: require('./grunt-tasks/support/task-version')
 };
 
 module.exports = function(grunt){
