@@ -36,6 +36,8 @@ var getRenderedComponent = function(data){
 };
 
 var getUnrenderedComponent = function(href, options){
+  if(!href){ return ''; }
+
   var youCareAboutIe8 = !!options && !!options.ie8,
       template = templates['componentUnrenderedTag' + (youCareAboutIe8 ? 'Ie8' : '')];
 
@@ -135,8 +137,14 @@ module.exports = function(conf){
         return callback(errorDescription, '');
       }
 
+      var unrenderedComponentTag = getUnrenderedComponent(hrefs.clientRendering, options);
+
+      if(!unrenderedComponentTag){
+        return callback(errorDescription);
+      }
+      
       fs.readFile(path.resolve(__dirname, './oc-client.min.js'), 'utf-8', function(err, clientJs){
-        var clientSideHtml = format(templates.clientScript, clientJs, getUnrenderedComponent(hrefs.clientRendering, options));
+        var clientSideHtml = format(templates.clientScript, clientJs, unrenderedComponentTag);
         return callback(errorDescription, clientSideHtml);
       });
     };

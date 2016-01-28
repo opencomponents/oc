@@ -24,7 +24,9 @@ It will create an instance of the client. Options:
 |`cache.flushInterval`|`number` (seconds)|no|The interval for flushing the cache|
 |`components`|`object`|yes|The components to consume with versions|
 |`components[name]`|`string`|yes|The component version|
-|`registries`|`array of string`|yes|The array of registries' endpoints|
+|`registries`|`object`|yes|The registries' endpoints|
+|`registries.serverRendering`|`string`|no|The baseUrl for server-side rendering requests|
+|`registries.clientRendering`|`string`|no|The baseUrl for client-side rendering requests|
 
 Example:
 
@@ -51,7 +53,7 @@ Options:
 |Parameter|type|mandatory|description|
 |---------|----|---------|-----------|
 |`container`|`boolean`|no|Default true, when false, renders a component without its <oc-component> container|
-|`disableFailoverRendering`|`boolean`|no|Disables the automatic failover rendering in case the registry times-out. Default false|
+|`disableFailoverRendering`|`boolean`|no|Disables the automatic failover rendering in case the registry times-out (in case configuration.registries.clientRendering contains a valid value.) Default false|
 |`headers`|`object`|no|An object containing all the headers that must be forwarded to the component|
 |`ie8`|`boolean`|no|Default false, if true puts in place the necessary polyfills to make all the stuff work with ie8|
 |`params`|`object`|no|An object containing the parameters for component's request|
