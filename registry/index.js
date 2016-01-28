@@ -103,6 +103,7 @@ module.exports = function(options){
     }
 
     app.get(options.prefix + 'oc-client/client.js', router.staticRedirector);
+    app.get(options.prefix + 'oc-client/oc-client.min.map', router.staticRedirector);
 
     if(options.local){
       app.get(format('{0}:componentName/:componentVersion/{1}*', options.prefix, settings.registry.localStaticRedirectorPath), router.staticRedirector);
