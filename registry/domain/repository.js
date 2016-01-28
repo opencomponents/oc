@@ -18,6 +18,10 @@ module.exports = function(conf){
   var cdn = !conf.local && new S3(conf),
       repositorySource = conf.local ? 'local repository' : 's3 cdn',
       componentsCache = new ComponentsCache(conf, cdn);
+
+  var getFilePath = function(component, version, filePath){
+    return format('{0}/{1}/{2}/{3}', conf.s3.componentsDir, component, version, filePath);
+  };
   
   var local = {
     getCompiledView: function(componentName, componentVersion){
@@ -67,8 +71,7 @@ module.exports = function(conf){
         return callback(null, local.getCompiledView(componentName, componentVersion));
       }
 
-      var viewPath = format('{0}/{1}/{2}/template.js', conf.s3.componentsDir, componentName, componentVersion);
-      cdn.getFile(viewPath, callback);
+      cdn.getFile(getFilePath(componentName, componentVersion, 'template.js'), callback);
     },
     getComponent: function(componentName, componentVersion, callback){
 
@@ -122,9 +125,7 @@ module.exports = function(conf){
         }
       }
 
-      var packagePath = format('{0}/{1}/{2}/package.json', conf.s3.componentsDir, componentName, componentVersion);
-      
-      cdn.getFile(packagePath, function(err, component){
+      cdn.getFile(getFilePath(componentName, componentVersion, 'package.json'), function(err, component){
         var parsed;
 
         try {
@@ -163,10 +164,13 @@ module.exports = function(conf){
         return callback(null, local.getDataProvider(componentName));
       }
 
-      cdn.getFile(conf.s3.componentsDir + '/' + componentName + '/' + componentVersion + '/server.js', callback);
+      cdn.getFile(getFilePath(componentName, componentVersion, 'server.js'), callback);
     },
     getStaticClientPath: function(){
-      return 'https:' + conf.s3.path + conf.s3.componentsDir + '/oc-client/' + packageInfo.version + '/src/oc-client.min.js';
+      return 'https:' + conf.s3.path + getFilePath('oc-client', packageInfo.version, 'src/oc-client.min.js');
+    },
+    getStaticClientMapPath: function(){
+      return 'https:' + conf.s3.path + getFilePath('oc-client', packageInfo.version, 'src/oc-client.min.map');
     },
     getStaticFilePath: function(componentName, componentVersion, filePath){
       return this.getComponentPath(componentName, componentVersion) + (conf.local ? settings.registry.localStaticRedirectorPath : '') + filePath;

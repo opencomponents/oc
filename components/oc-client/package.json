@@ -3,7 +3,11 @@
   "description": "The OpenComponents client-side javascript client",
   "version": "0.24.1",
   "repository": "https://github.com/opentable/oc/tree/master/components/oc-client",
+  "author": "Matteo Figus <matteofigus@gmail.com>",
   "oc": {
+    "container": false,
+    "renderInfo": false,
+    "minify": false,
     "parameters": {},
     "files": {
       "data": "server.js",
