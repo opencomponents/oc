@@ -26,7 +26,7 @@ module.exports = function(grunt, taskObject){
 
     fs.writeFileSync(path.join(__dirname, clientComponentDir, 'src/oc-client.min.js'), compressed.code);
     fs.writeFileSync(path.join(__dirname, clientComponentDir, 'src/oc-client.min.map'), compressed.map);
-    fs.writeFileSync(path.join(__dirname, '../../client/oc-client.min.js'), compressed.code);
+    fs.writeFileSync(path.join(__dirname, '../../client/src/oc-client.min.js'), compressed.code);
 
     var Local = require('../../cli/domain/local'),
         local = new Local({ logger: { log: grunt.log.writeln }});
