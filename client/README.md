@@ -34,14 +34,13 @@ Example:
 var Client = require('oc-client');
 
 var client = new Client({
-  registries: ['https://myregistry.com/'],
+  registries: { serverRendering: 'https://myregistry.com/'},
   components: {
     hello: '1.2.3',
     world: '~2.2.5',
     bla: ''
   }
 });
-
 ```
 
 ### Client#renderComponent(componentName [, options], callback)
