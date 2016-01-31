@@ -69,7 +69,10 @@ module.exports = function(conf){
       }
     }
 
-    request(template.src, {}, timeout, function(err, templateText){
+    request({
+      url: template.src,
+      timeout: timeout
+    }, function(err, templateText){
 
       if(!!err){ return callback(err); }
 
@@ -153,7 +156,11 @@ module.exports = function(conf){
       return callback(null, getUnrenderedComponent(hrefs.clientRendering, options));
     }
 
-    request(hrefs.serverRendering, options.headers, options.timeout, function(err, apiResponse){
+    request({
+      url: hrefs.serverRendering,
+      headers: options.headers,
+      timeout: options.timeout
+    }, function(err, apiResponse){
 
       if(err){
         return processError();
@@ -167,7 +174,7 @@ module.exports = function(conf){
 
         var data = apiResponse.data,
             local = isLocal(apiResponse);
-
+            
         getCompiledTemplate(apiResponse.template, !local, options.timeout, function(err, template){
 
           if(!!err){ return processError(); }

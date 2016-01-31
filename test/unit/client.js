@@ -25,7 +25,7 @@ describe('client', function(){
       fs: { readFile: readFileStub },
       './utils/request': requestStub,
       './validator': { validateConfiguration: validatorStub }
-    }, { console: console, __dirname: '/something/' });
+    }, { __dirname: '/something/' });
   };
 
   var executeWithServerEndpointOnly = function(fn){
@@ -99,7 +99,7 @@ describe('client', function(){
           expect($script.length).to.be.empty;
         });
 
-        it('should not respond with error', function(){ console.log(error);
+        it('should not respond with error', function(){
           expect(error).to.be.null;
         });
       });
@@ -280,7 +280,7 @@ describe('client', function(){
           });
 
           it('should make server-side request using serverRendering baseUrl', function(){
-            expect(requestStub.args[0][0]).to.equal('http://components.company.com/hello/1.2.3/?name=matt');
+            expect(requestStub.args[0][0].url).to.equal('http://components.company.com/hello/1.2.3/?name=matt');
           });
 
           it('should include client-side failover tag using clientRendering baseUrl', function(){
@@ -315,7 +315,7 @@ describe('client', function(){
           });
 
           it('should make server-side request using serverRendering baseUrl', function(){
-            expect(requestStub.args[0][0]).to.equal('http://components.company.com/hello/1.2.3/?name=matt');
+            expect(requestStub.args[0][0].url).to.equal('http://components.company.com/hello/1.2.3/?name=matt');
           });
 
           it('shouldn\'t make client-side failover request', function(){

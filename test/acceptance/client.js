@@ -51,22 +51,22 @@ describe('The node.js OC client', function(){
         });
       });
 
-      it('should use the first registries\' array url', function(){
+      it('should use the serverRendering url', function(){
         expect($component.attr('href')).to.equal('http://localhost:3030/hello-world/~1.0.0/');
         expect($component.data('rendered')).to.equal(true);
       });
     });
 
-    describe('when server-side rendering an existing component linked to a not responsive registry', function(){
+    describe('when client-side rendering an existing component', function(){
 
       before(function(done){
-        clientOfflineRegistry.renderComponent('hello-world', function(err, html){
+        clientOfflineRegistry.renderComponent('hello-world', { render: 'client' }, function(err, html){
           $component = cheerio.load(html)('oc-component');
           done();
         });
       });
 
-      it('should use the first registries\' array url', function(){
+      it('should use clientRendering url', function(){
         expect($component.attr('href')).to.equal('http://localhost:1234/hello-world/~1.0.0/');
       });
     });

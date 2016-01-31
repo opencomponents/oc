@@ -1,36 +1,30 @@
 'use strict';
 
 var url = require('url');
+var _ = require('./helpers');
 
-module.exports = function(urlPath, headers, timeout, callback){
+module.exports = function(options, callback){
 
   var callbackDone = false,
-      httpProtocol = urlPath.indexOf('https') === 0 ? 'https' : 'http',
-      requestData = url.parse(urlPath);
+      httpProtocol = options.url.indexOf('https') === 0 ? 'https' : 'http',
+      requestData = url.parse(options.url),
+      method = options.method || 'get',
+      headers = options.headers || {};
 
-  if(typeof(headers) === 'function'){
-    callback = headers;
-    headers = {};
-  }
+  requestData.headers = {};
 
-  for(var header in headers){
-    if(headers.hasOwnProperty(header)){
-      if(!requestData.headers){
-        requestData.headers = {};
-      }
-
-      requestData.headers[header] = headers[header];
-    }
-  }
+  _.each(headers, function(header){
+    requestData.headers[header] = headers[header];
+  });
   
   var timer = setTimeout(function() {
     if(!callbackDone){
       callbackDone = true;
       return callback('timeout');
     }
-  }, 1000 * timeout);
+  }, 1000 * options.timeout);
 
-  require(httpProtocol).get(requestData).on('response', function(response) {
+  require(httpProtocol)[method](requestData).on('response', function(response) {
 
     if(!callbackDone){
       clearTimeout(timer);
