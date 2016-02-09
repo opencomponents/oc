@@ -1,10 +1,16 @@
 'use strict';
 
-module.exports = {
+var _ = {
   each: function(obj, fn){
-    for(var el in obj){
-      if(obj.hasOwnProperty(el)){
-        fn(el);
+    if(_.isArray(obj)){
+      for(var i = 0; i < obj.length; i++){
+        fn(obj[i], i, obj);
+      }
+    } else {
+      for(var el in obj){
+        if(_.has(obj, el)){
+          fn(obj[el], el, obj);
+        }
       }
     }
   },
@@ -28,3 +34,5 @@ module.exports = {
     return input;
   }
 };
+
+module.exports = _;
