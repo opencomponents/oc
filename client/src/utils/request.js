@@ -53,7 +53,7 @@ module.exports = function(options, callback){
       callbackDone = true;
       return callback('timeout');
     }
-  }, 1000 * options.timeout);
+  }, 1000 * timeout);
 
   var req = require(httpProtocol).request(requestData).on('response', function(response) {
     
