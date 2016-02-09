@@ -2,6 +2,7 @@
 
 var url = require('url');
 var zlib = require('zlib');
+
 var _ = require('./helpers');
 
 module.exports = function(options, callback){
@@ -52,7 +53,7 @@ module.exports = function(options, callback){
       callbackDone = true;
       return callback('timeout');
     }
-  }, 1000 * timeout);
+  }, 1000 * options.timeout);
 
   var req = require(httpProtocol).request(requestData).on('response', function(response) {
     
