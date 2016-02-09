@@ -8,24 +8,25 @@ var sinon = require('sinon');
 describe('client : components-renderer', function(){
 
   var getCompiledTemplateStub,
-      readFileStub,
+      getOcClientStub,
       requestStub,
       render,
       Renderer,
       init,
       response,
       error,
-      TemplateRenderer = require('../../client/src/template-renderer');
+      templateRendererStub;
 
   var initialise = function(){
 
     getCompiledTemplateStub = sinon.stub();
-    readFileStub = sinon.stub();
+    getOcClientStub = sinon.stub();
     requestStub = sinon.stub();
+    templateRendererStub = sinon.stub();
 
     Renderer = injectr('../../client/src/components-renderer.js', {
       './get-compiled-template': function(){ return getCompiledTemplateStub; },
-      './get-oc-client-script': function(){ return readFileStub; },
+      './get-oc-client-script': function(){ return getOcClientStub; },
       './utils/request': requestStub
     }, { __dirname: '/something/', console: console });
   };
@@ -53,7 +54,7 @@ describe('client : components-renderer', function(){
         hello: '1.2.3',
         world: '4.5.6'
       }
-    }, new TemplateRenderer());
+    }, templateRendererStub);
     fn();
   };
 
@@ -64,7 +65,7 @@ describe('client : components-renderer', function(){
           initialise();
 
           requestStub.onCall(0).yields('error');
-          readFileStub.yields(null, 'document.write("hi");');
+          getOcClientStub.yields(null, 'document.write("hi");');
 
           executeWithClientEndpointOnly(function(){
             render([{
@@ -101,7 +102,7 @@ describe('client : components-renderer', function(){
           initialise();
 
           requestStub.onCall(0).yields('error');
-          readFileStub.yields(null, 'document.write("hi");');
+          getOcClientStub.yields(null, 'document.write("hi");');
 
           executeWithClientEndpointOnly(function(){
             render([{
@@ -141,7 +142,7 @@ describe('client : components-renderer', function(){
           initialise();
 
           requestStub.onCall(0).yields('error');
-          readFileStub.yields(null, 'document.write("hi");');
+          getOcClientStub.yields(null, 'document.write("hi");');
 
           executeWithClientEndpointOnly(function(){
             render([{
@@ -177,7 +178,7 @@ describe('client : components-renderer', function(){
           initialise();
 
           requestStub.onCall(0).yields('error');
-          readFileStub.yields(null, 'document.write("hi");');
+          getOcClientStub.yields(null, 'document.write("hi");');
 
           executeWithClientEndpointOnly(function(){
             render([{
@@ -211,7 +212,7 @@ describe('client : components-renderer', function(){
         initialise();
 
         requestStub.onCall(0).yields('error');
-        readFileStub.yields(null, 'document.write("hi");');
+        getOcClientStub.yields(null, 'document.write("hi");');
 
         executeWithServerEndpointOnly(function(){
           render([{
@@ -238,53 +239,54 @@ describe('client : components-renderer', function(){
   });
 
   describe('when correctly initialised with both client and server-side rendering endpoints', function(){
-    before(function(){
-      initialise();
-    });
-/*
+    
     describe('when rendering multiple components on the server-side', function(){
 
       before(function(done){
         initialise();
 
-        requestStub.onCall(0).yields(null, JSON.stringify([
-          {
-            status: 200,
-            response: {
-              name: 'hello',
-              data: { name: 'jane' },
-              template: {
-                src: 'https://cdn.com/hello/template.js',
-                key: 'hash1',
-                type: 'jade'
-              }
-            }
-          },{
-            status: 200,
-            response: {
-              name: 'world',
-              data: { name: 'john' },
-              template: {
-                src: 'https://cdn.com/world/template.js',
-                key: 'hash2',
-                type: 'jade'
-              }
+        requestStub.onCall(0).yields(null, [{
+          status: 200,
+          response: {
+            name: 'hello',
+            version: '1.2.3',
+            href: 'http://components.company.com/hello/1.2.3/?name=jane',
+            data: { name: 'jane' },
+            template: {
+              src: 'https://cdn.com/hello/template.js',
+              key: 'hash1',
+              type: 'jade'
             }
           }
-        ]));
+        },{
+          status: 200,
+          response: {
+            name: 'world',
+            version: '4.5.6',
+            href: 'http://components.company.com/world/4.5.6',
+            data: { name: 'john' },
+            template: {
+              src: 'https://cdn.com/world/template.js',
+              key: 'hash2',
+              type: 'jade'
+            }
+          }
+        }]);
+
+        getCompiledTemplateStub.onCall(0).yields(null, 'first template');
+        getCompiledTemplateStub.onCall(1).yields(null, 'second template');
+        templateRendererStub.onCall(0).yields(null, '<div>hello</div>');
+        templateRendererStub.onCall(1).yieldsAsync(null, '<p>world</p>');
+        getOcClientStub.yields(null, 'document.write("hi");');
 
         execute(function(){
-          client.renderComponents({
-            components: [
-              {
-                name: 'hello',
-                parameters: { name: 'jane' }  
-              },
-              {
-                name: 'world'
-              }
-            ]
-          }, function(err, res){
+          render([{
+            name: 'hello',
+            parameters: { name: 'jane' }  
+          },
+          {
+            name: 'world'
+          }], {}, function(err, res){
             response = res;
             done();
           });
@@ -292,9 +294,76 @@ describe('client : components-renderer', function(){
       });
 
       it('should respond with 2 components', function(){
-        expect(response).not.to.be.empty;
+        expect(response.length).to.equal(2);
       });
-    });*/
+
+      it('should respond with components in the right order', function(){
+        expect(response[0]).to.equal('<div>hello</div>');
+        expect(response[1]).to.equal('<p>world</p>');
+      });
+    });
+
+    describe('when rendering multiple components with mixed rendering modes', function(){
+
+      before(function(done){
+        initialise();
+
+        requestStub.onCall(0).yields(null, [{
+          status: 200,
+          response: {
+            name: 'hello',
+            version: '1.2.3',
+            href: 'http://components.company.com/hello/1.2.3/?name=jane',
+            data: { name: 'jane' },
+            template: {
+              src: 'https://cdn.com/hello/template.js',
+              key: 'hash1',
+              type: 'jade'
+            }
+          }
+        },{
+          status: 200,
+          response: {
+            name: 'world',
+            version: '4.5.6',
+            href: 'http://components.company.com/world/4.5.6',
+            data: { name: 'john' },
+            template: {
+              src: 'https://cdn.com/world/template.js',
+              key: 'hash2',
+              type: 'jade'
+            }
+          }
+        }]);
+
+        getCompiledTemplateStub.onCall(0).yields(null, 'first template');
+        templateRendererStub.onCall(0).yields(null, '<div>hello</div>');
+        getOcClientStub.yields(null, 'document.write("hi");');
+
+        execute(function(){
+          render([{
+            name: 'hello',
+            parameters: { name: 'jane' }  
+          },
+          {
+            name: 'world',
+            render: 'client'
+          }], {}, function(err, res){
+            response = res;
+            done();
+          });
+        });
+      });
+
+      it('should respond with 2 components', function(){
+        expect(response.length).to.equal(2);
+      });
+
+      it('should respond with components in the right order', function(){
+        expect(response[0]).to.equal('<div>hello</div>');
+        expect(response[1]).to.equal('<oc-component href="https://components.com/world/4.5.6"></oc-component>');
+      });
+    });
 
     describe('when rendering component on the server-side', function(){
 
@@ -317,8 +386,9 @@ describe('client : components-renderer', function(){
                 version: '1.2.3'
               }
             }]);
+
             requestStub.onCall(1).yields('error');
-            readFileStub.yields(null, 'document.write("hi");');
+            getOcClientStub.yields(null, 'document.write("hi");');
             getCompiledTemplateStub.yields('error');
 
             execute(function(){
@@ -376,7 +446,7 @@ describe('client : components-renderer', function(){
             initialise();
 
             requestStub.onCall(0).yields('error');
-            readFileStub.yields(null, 'document.write("hi");');
+            getOcClientStub.yields(null, 'document.write("hi");');
 
             execute(function(){
               render([{

@@ -86,7 +86,10 @@ module.exports = function(config, renderTemplate){
         }
 
         _.each(apiResponse, function(componentResponse, i){
-          if(componentResponse.status >= 400){
+          if(components[i].render === 'client'){ console.log('hi');
+            errors[i] = null;
+            results[i] = htmlRenderer.unrenderedComponent(buildHref.client(components[i]), options);
+          } else if(componentResponse.status >= 400){
             setErrorResponseForComponent(i);
           } else {
             errors[i] = null;

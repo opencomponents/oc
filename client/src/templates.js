@@ -6,7 +6,7 @@ module.exports = {
   
   componentTag: '<oc-component href="{0}" data-hash="{1}" data-name="{2}" data-rendered="true" data-version="{3}">{4}</oc-component>',
   
-  componentUnrenderedTag: '<oc-component href="{0}" data-rendered="false"></oc-component>',
+  componentUnrenderedTag: '<oc-component href="{0}"></oc-component>',
   
   componentUnrenderedTagIe8: '<script class="ocComponent">(function($d,$w,oc){var href=\'href="{0}"\';' + 
                              '$d.write((!!$w.navigator.userAgent.match(/MSIE 8/))?(\'<div data-oc-component="true" \'+href+\'>' +

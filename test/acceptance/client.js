@@ -131,7 +131,7 @@ describe('The node.js OC client', function(){
 
         it('should return non rendered contents', function(){
           expect($component).to.exist();
-          expect($component.data('rendered')).to.equal(false);
+          expect($component.data('rendered')).to.be.undefined;
         });
 
         it('should contain the component url', function(){

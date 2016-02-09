@@ -20,6 +20,7 @@ module.exports = function(conf){
   this.renderTemplate = renderTemplate;
 
   this.renderComponent = function(componentName, options, callback){
+
     if(_.isFunction(options)){
       callback = options;
       options = {};
@@ -28,13 +29,14 @@ module.exports = function(conf){
     renderComponents([{
       name: componentName,
       version: options.version,
-      parameters: options.params
+      parameters: options.parameters || options.params
     }], options, function(errors, results){
       callback(errors[0], results[0]);
     });
   };
 
   this.renderComponents = function(components, options, callback){
+
     if(_.isFunction(options)){
       callback = options;
       options = {};
