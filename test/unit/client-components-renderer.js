@@ -24,7 +24,7 @@ describe('client : components-renderer', function(){
     requestStub = sinon.stub();
 
     Renderer = injectr('../../client/src/components-renderer.js', {
-      './get-compiled-template': function(){ return getCompiledTemplateStub },
+      './get-compiled-template': function(){ return getCompiledTemplateStub; },
       './get-oc-client-script': function(){ return readFileStub; },
       './utils/request': requestStub
     }, { __dirname: '/something/', console: console });

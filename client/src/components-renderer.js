@@ -89,7 +89,7 @@ module.exports = function(config, renderTemplate){
           if(componentResponse.status >= 400){
             setErrorResponseForComponent(i);
           } else {
-            errors[pos] = null;
+            errors[i] = null;
             componentsToRender.push({ pos: i, res: componentResponse.response });  
           }
         });

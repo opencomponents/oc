@@ -38,7 +38,7 @@ module.exports = function(conf){
     if(_.isFunction(options)){
       callback = options;
       options = {};
-    };
+    }
 
     renderComponents(components, options, callback);
   };
