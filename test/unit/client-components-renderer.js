@@ -426,10 +426,6 @@ describe('client : components-renderer', function(){
             expect(requestStub.args[0][0].headers['accept-language']).to.equal('es-MX');
           });
 
-          it('should make request for unrendered component', function(){
-            expect(requestStub.args[0][0].headers.accept).to.equal('application/vnd.oc.unrendered+json');
-          });
-
           it('should include client-side failover tag using clientRendering baseUrl', function(){
             var $ocComponent = cheerio.load(response)('oc-component');
             expect($ocComponent.attr('href')).to.equal('https://components.com/hello/1.2.3/?name=matt');

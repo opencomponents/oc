@@ -14,6 +14,22 @@ var _ = {
       }
     }
   },
+  eachAsync: function(obj, fn, cb){
+    var c = obj.length;
+    
+    var next = function(){
+      c--;
+      if(c === 0){ 
+        var a = cb;
+        cb = _.noop;
+        return a();
+      }
+    };
+
+    _.each(obj, function(el){
+      fn(el, next);
+    });
+  },
   has: function(obj, key){
     return !!obj && obj.hasOwnProperty(key);
   },
@@ -25,6 +41,9 @@ var _ = {
   },
   isFunction: function(input){
     return typeof(input) === 'function';
+  },
+  noop: function(){
+    return function(){};
   },
   toArray: function(input){
     if(!!input && typeof(input) === 'string'){

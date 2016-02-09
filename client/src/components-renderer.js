@@ -25,13 +25,6 @@ module.exports = function(config, renderTemplate){
 
   return function(components, options, callback){
 
-    options = options || {};
-    options.headers = options.headers || {};
-    options.headers.accept = 'application/vnd.oc.unrendered+json';
-    options.timeout = options.timeout || 5;
-    options.container = (options.container === true) ?  true : false;
-    options.renderInfo = (options.renderInfo === false) ? false : true;
-
     _.each(components, function(component){
       component.version = component.version || config.components[component.name];
     });
@@ -86,7 +79,7 @@ module.exports = function(config, renderTemplate){
         }
 
         _.each(apiResponse, function(componentResponse, i){
-          if(components[i].render === 'client'){ console.log('hi');
+          if(components[i].render === 'client'){
             errors[i] = null;
             results[i] = htmlRenderer.unrenderedComponent(buildHref.client(components[i]), options);
           } else if(componentResponse.status >= 400){
@@ -101,7 +94,6 @@ module.exports = function(config, renderTemplate){
           return callback(errors, results);
         }
 
-        var toDo = componentsToRender.length;
         var fetchTemplateAndRender = function(component, pos, cb){
           var data = component.data,
               useCache = !isLocal(component);
@@ -134,15 +126,10 @@ module.exports = function(config, renderTemplate){
           });
         };
 
-        var next = function(){
-          toDo--;
-          if(toDo === 0){
-            return callback(errors, results);
-          }
-        };
-
-        _.each(componentsToRender, function(component){
+        _.eachAsync(componentsToRender, function(component, next){
           fetchTemplateAndRender(component.res, component.pos, next);
+        }, function(){
+          callback(errors, results);
         });
       });
     });

@@ -23,8 +23,9 @@ module.exports = function(conf){
 
     if(_.isFunction(options)){
       callback = options;
-      options = {};
     }
+
+    options = sanitiser.sanitiseGlobalRenderOptions(options);
 
     renderComponents([{
       name: componentName,
@@ -39,8 +40,9 @@ module.exports = function(conf){
 
     if(_.isFunction(options)){
       callback = options;
-      options = {};
     }
+
+    options = sanitiser.sanitiseGlobalRenderOptions(options);
 
     renderComponents(components, options, callback);
   };
