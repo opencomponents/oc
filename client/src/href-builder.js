@@ -11,12 +11,12 @@ module.exports = function(config){
         return null;
       }
 
-      var versionSegment = !!component.version ? (component.version + '/') : '',
+      var versionSegment = !!component.version ? ('/' + component.version) : '',
           registryUrl = config.registries.clientRendering,
           registrySegment = registryUrl.slice(-1) === '/' ? registryUrl : (registryUrl + '/'),
-          qs = !!component.parameters ? ('?' + querystring.stringify(component.parameters)) : '';
+          qs = !!component.parameters ? ('/?' + querystring.stringify(component.parameters)) : '';
 
-      return url.resolve(registrySegment, component.name + '/') + versionSegment + qs;
+      return url.resolve(registrySegment, component.name) + versionSegment + qs;
     }
   };
 };

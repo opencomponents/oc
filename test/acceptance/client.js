@@ -45,14 +45,14 @@ describe('The node.js OC client', function(){
     describe('when server-side rendering an existing component linked to a responsive registry', function(){
 
       before(function(done){
-        client.renderComponent('hello-world', { container: true }, function(err, html){
+        client.renderComponent('hello-world', { container: true }, function(err, html){ console.log(arguments);
           $component = cheerio.load(html)('oc-component');
           done();
         });
       });
 
       it('should use the serverRendering url', function(){
-        expect($component.attr('href')).to.equal('http://localhost:3030/hello-world/~1.0.0/');
+        expect($component.attr('href')).to.equal('http://localhost:3030/hello-world/~1.0.0');
         expect($component.data('rendered')).to.equal(true);
       });
     });
@@ -67,7 +67,7 @@ describe('The node.js OC client', function(){
       });
 
       it('should use clientRendering url', function(){
-        expect($component.attr('href')).to.equal('http://localhost:1234/hello-world/~1.0.0/');
+        expect($component.attr('href')).to.equal('http://localhost:1234/hello-world/~1.0.0');
       });
     });
   });
@@ -135,7 +135,7 @@ describe('The node.js OC client', function(){
         });
 
         it('should contain the component url', function(){
-          expect($component.attr('href')).to.equal('http://localhost:1234/hello-world/~1.0.0/');
+          expect($component.attr('href')).to.equal('http://localhost:1234/hello-world/~1.0.0');
         });
 
         it('should contain the error details', function(){
