@@ -19,7 +19,7 @@ var validator = require('../../domain/validators');
 
 module.exports = function(conf, repository){
 
-  var client = new Client(conf),
+  var client = new Client(),
       cache = new Cache({
         verbose: !!conf.verbosity,
         refreshInterval: conf.refreshInterval
@@ -152,8 +152,8 @@ module.exports = function(conf, repository){
                 version: component.version,
                 name: component.name,
                 templateType: component.oc.files.template.type,
-                container: (component.oc.container === false) ? false : true,
-                renderInfo: (component.oc.renderInfo === false) ? false : true 
+                container: component.oc.container,
+                renderInfo: component.oc.renderInfo
               };
 
           var returnResult = function(template){

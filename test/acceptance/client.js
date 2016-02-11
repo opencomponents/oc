@@ -27,7 +27,10 @@ describe('The node.js OC client', function(){
         clientRendering: 'http://localhost:' + port,
         serverRendering: 'http://localhost:' + port
       },
-      components: {'hello-world': '~1.0.0'}
+      components: {
+        'hello-world': '~1.0.0',
+        'no-containers': ''
+      }
     };
   };
 
@@ -42,6 +45,79 @@ describe('The node.js OC client', function(){
 
     after(function(done){ registry.close(done); });
 
+    describe('when rendering 2 components', function(){
+      describe('when rendering both on the server-side', function(){
+        var $components;
+        before(function(done){
+          client.renderComponents([{
+            name: 'hello-world'
+          }, {
+            name: 'no-containers'
+          }], { container: false, renderInfo: false }, function(err, html){
+            $components = {
+              'hello-world': html[0],
+              'no-containers': html[1]
+            };
+            done();
+          });
+        });
+
+        it('should return rendered contents', function(){
+          expect($components['hello-world']).to.equal('Hello world!');
+          expect($components['no-containers']).to.equal('Hello world!');
+        });
+      });
+
+      describe('when rendering both on the client-side', function(){
+        var $components;
+        before(function(done){
+          client.renderComponents([{
+            name: 'hello-world'
+          }, {
+            name: 'no-containers'
+          }], { container: false, renderInfo: false, render: 'client' }, function(err, html){
+            $components = {
+              'hello-world': cheerio.load(html[0])('oc-component'),
+              'no-containers': cheerio.load(html[1])('oc-component')
+            };
+            done();
+          });
+        });
+
+        it('should return browser oc tags', function(){
+          expect($components['hello-world'].attr('href')).to.equal('http://localhost:3030/hello-world/~1.0.0');
+          expect($components['no-containers'].attr('href')).to.equal('http://localhost:3030/no-containers');
+        });
+      });
+
+      describe('when rendering one on the server, one on the client', function(){
+        var $components;
+        before(function(done){
+          client.renderComponents([{
+            name: 'hello-world',
+            render: 'server'
+          }, {
+            name: 'no-containers',
+            render: 'client'
+          }], { container: false, renderInfo: false }, function(err, html){
+            $components = {
+              'hello-world': html[0],
+              'no-containers': cheerio.load(html[1])('oc-component')
+            };
+            done();
+          });
+        });
+
+        it('should return rendered content for rendered component', function(){
+          expect($components['hello-world']).to.equal('Hello world!');
+          });
+
+        it('should return browser oc tag for unrendered component', function(){
+          expect($components['no-containers'].attr('href')).to.equal('http://localhost:3030/no-containers');
+        });
+      });
+    });
+
     describe('when server-side rendering an existing component linked to a responsive registry', function(){
 
       before(function(done){
@@ -51,23 +127,23 @@ describe('The node.js OC client', function(){
         });
       });
 
-      it('should use the first registries\' array url', function(){
-        expect($component.attr('href')).to.equal('http://localhost:3030/hello-world/~1.0.0/');
+      it('should use the serverRendering url', function(){
+        expect($component.attr('href')).to.equal('http://localhost:3030/hello-world/~1.0.0');
         expect($component.data('rendered')).to.equal(true);
       });
     });
 
-    describe('when server-side rendering an existing component linked to a not responsive registry', function(){
+    describe('when client-side rendering an existing component', function(){
 
       before(function(done){
-        clientOfflineRegistry.renderComponent('hello-world', function(err, html){
+        clientOfflineRegistry.renderComponent('hello-world', { render: 'client' }, function(err, html){
           $component = cheerio.load(html)('oc-component');
           done();
         });
       });
 
-      it('should use the first registries\' array url', function(){
-        expect($component.attr('href')).to.equal('http://localhost:1234/hello-world/~1.0.0/');
+      it('should use clientRendering url', function(){
+        expect($component.attr('href')).to.equal('http://localhost:1234/hello-world/~1.0.0');
       });
     });
   });
@@ -131,11 +207,11 @@ describe('The node.js OC client', function(){
 
         it('should return non rendered contents', function(){
           expect($component).to.exist();
-          expect($component.data('rendered')).to.equal(false);
+          expect($component.data('rendered')).to.be.undefined;
         });
 
         it('should contain the component url', function(){
-          expect($component.attr('href')).to.equal('http://localhost:1234/hello-world/~1.0.0/');
+          expect($component.attr('href')).to.equal('http://localhost:1234/hello-world/~1.0.0');
         });
 
         it('should contain the error details', function(){

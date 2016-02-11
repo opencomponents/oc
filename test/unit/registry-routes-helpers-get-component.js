@@ -16,7 +16,7 @@ describe('registry : routes : helpers : get-component', function(){
           on: _.noop,
           fire: fireStub
         }
-      });
+      }, { console: console, Buffer: Buffer, setTimeout: setTimeout });
   
   var initialise = function(params){
     mockedRepository = {
