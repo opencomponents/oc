@@ -172,6 +172,8 @@ http.createServer(function (req, res) {
 ```
 Open `http://localhost:4000/` and enjoy!
 
+More docs about the node.js client [here](client/README.md).
+
 ## Server-side rendering with Ruby
 
 * [Ruby library](https://github.com/opentable/ruby-oc)

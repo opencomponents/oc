@@ -79,14 +79,14 @@ client.renderComponent('header', {
 
 ### Client#renderComponents(components [, options], callback)
 
-It will make a request to the registry, and will render the components. The callback will contain an array of errors (array of `null`s in case there aren't any) and an array of rendered html snippets. It will follow the same order of the request. This method will make **1** request to the registry + **n** requests for each component to get the views of components that aren't cached yet. After caching the views, this will make just **1** request to the registry.
+It will make a request to the registry, and will render the components. The callback will contain an array of errors (array of `null` in case there aren't any) and an array of rendered html snippets. It will follow the same order of the request. This method will make **1** request to the registry + **n** requests for each component to get the views of components that aren't cached yet. After caching the views, this will make just **1** request to the registry.
 
 Components parameter:
 
 |Parameter|type|mandatory|description|
 |---------|----|---------|-----------|
 |`components`|`array of objects`|yes|The array of components to retrieve and render|
-|`components[index].name`|`name`|yes|The component's name|
+|`components[index].name`|`string`|yes|The component's name|
 |`components[index].version`|`string`|no|The component's version. When not speficied, it will use globally specified one (doing client initialisation); when not specified and not globally specified, it will default to "" (latest)|
 |`components[index].parameters`|`object`|no|The component's parameters|
 |`components[index].render`|`string`|no|The component's render mode. When not specified, it will be the one specified in the options (for all components); if none is specified in options, it will default to `server`. When `server`, the rendering will be performed on the server-side and the result will be component's html. If `client`, the html will contain a promise to do the rendering on the browser.|
