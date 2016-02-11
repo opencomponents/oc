@@ -219,6 +219,45 @@ describe('The node.js OC client', function(){
         });
       });
 
+      describe('when client-side failover rendering enabled with forwardAcceptLanguageToClient=true', function(){
+
+        var $componentScript,
+            $clientScript,
+            error,
+            options = { 
+              forwardAcceptLanguageToClient: true,
+              parameters: {
+                hi: 'john'
+              },
+              headers: {
+                'accept-language': 'da, en-gb;q=0.8, en;q=0.7'
+              }
+            };
+
+        before(function(done){
+          clientOfflineRegistry.renderComponent('hello-world', options, function(err, html){
+            error = err;
+            var $ = cheerio.load(html);
+            $component = $('oc-component');
+            $clientScript = $('script.ocClientScript');
+            done();
+          });
+        });
+
+        it('should include the client-side rendering script', function(){
+          expect($clientScript).to.have.length.above(0);
+        });
+
+        it('should contain the component url including parameters and __ocAcceptLanguage parameter', function(){
+          var u = 'http://localhost:1234/hello-world/~1.0.0/?hi=john&__ocAcceptLanguage=da%2C%20en-gb%3Bq%3D0.8%2C%20en%3Bq%3D0.7';
+          expect($component.attr('href')).to.equal(u);
+        });
+
+        it('should contain the error details', function(){
+          expect(error).to.eql('Server-side rendering failed');
+        });
+      });
+
       describe('when client-side failover rendering enabled with ie8=true', function(){
 
         var $componentScript,

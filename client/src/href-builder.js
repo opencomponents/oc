@@ -6,9 +6,21 @@ var url = require('url');
 module.exports = function(config){
 
   return {
-    client: function(component){
+    client: function(component, options){
       if(!config.registries.clientRendering){
         return null;
+      }
+
+      var lang = options.headers['accept-language'],
+          forwardLang = config.forwardAcceptLanguageToClient === true;
+
+      if(!forwardLang && options.forwardAcceptLanguageToClient === true){
+        forwardLang = true;
+      }
+
+      if(!!forwardLang && !!lang){
+        component.parameters = component.parameters || {};
+        component.parameters['__ocAcceptLanguage'] = lang;
       }
 
       var versionSegment = !!component.version ? ('/' + component.version) : '',

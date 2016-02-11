@@ -186,7 +186,7 @@ module.exports = function(config, renderTemplate){
               action.result.error = settings.genericError;
               action.result.html = '';
             } else {
-              var componentClientHref = buildHref.client(action.component);
+              var componentClientHref = buildHref.client(action.component, options);
 
               if(!componentClientHref){
                 action.result.error = settings.clientSideRenderingFail;
