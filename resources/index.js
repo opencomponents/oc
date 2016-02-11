@@ -108,7 +108,7 @@ module.exports = {
       REGISTRY_CREDENTIALS_REQUIRED: 'Registry requires credentials.',
       REGISTRY_LIST: 'oc linked registries:',
       REGISTRY_REMOVED: 'oc registry deleted',
-      REGISTRY_STARTING: 'Starting dev registry on http://localhost:{0}...',
+      REGISTRY_STARTING: 'Starting dev registry on {0} ...',
       RETRYING_10_SECONDS: 'Retrying in 10 seconds...',
       SCANNING_COMPONENTS: 'Looking for components...'
     },
