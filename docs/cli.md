@@ -55,7 +55,7 @@ Runs a local oc test registry in order to develop and test components
 
 Usage:
 ```sh
-oc dev <dirName> [port]
+oc dev <dirName> [port] [baseUrl]
 ```
 
 
@@ -65,6 +65,7 @@ Parameters:
 |----|-----------|-------|
 |dirName|The name of the directory to watch, where the components are stored||
 |port|The port where to start a local oc instance. Default 3000||
+|baseUrl|The base url the component is hosted from. Default http://localhost:port/||
 
 ##init
 Creates a new empty component in the current folder

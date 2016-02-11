@@ -12,6 +12,10 @@ module.exports = {
         port: {
           help: 'The port where to start a local oc instance. Default 3000',
           required: false
+        },
+        baseUrl:{
+          help: 'The base url the component is hosted from. Default http://localhost:port/',
+          required: false
         }
       }
     },
