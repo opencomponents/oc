@@ -28,6 +28,8 @@ var sanitise = {
   }
 };
 
+var toRemove = ['__ocAcceptLanguage'];
+
 module.exports = {
   sanitiseComponentParameters: function(requestParameters, expectedParameters){
 
@@ -40,7 +42,7 @@ module.exports = {
             sanitised = sanitise.parameter(requestParameter, expectedType);
 
         result[requestParameterName] = sanitised;
-      } else {
+      } else if(!_.contains(toRemove, requestParameterName)){
         result[requestParameterName] = requestParameter;
       }
     }, this);

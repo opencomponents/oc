@@ -55,7 +55,8 @@ describe('registry', function(){
 
     it('should list the components', function(){
       expect(result.components).to.eql([
-        'http://localhost:3030/hello-world', 
+        'http://localhost:3030/hello-world',
+        'http://localhost:3030/language',
         'http://localhost:3030/no-containers', 
         'http://localhost:3030/oc-client'
       ]);
@@ -168,6 +169,84 @@ describe('registry', function(){
 
       it('should respond with proper render type', function(){
         expect(result.renderMode).to.equal('rendered');
+      });
+    });
+  });
+
+  describe('GET /language', function(){
+
+    describe('when Accept-Language: en-US', function(){
+
+      var url = 'http://localhost:3030/language',
+          result;
+
+      before(function(done){
+        request({
+          url: url,
+          json: true,
+          headers: { 'accept-language': 'en-US' }
+        }, function(e, r, b){
+          result = b;
+          done();
+        });
+      });
+
+      it('should respond with correct href', function(){
+        expect(result.href).to.equal('http://localhost:3030/language');
+      });
+
+      it('should contain english language', function(){
+        expect(result.html).to.equal('<p>selected language is english</p>');
+      });
+    });
+
+    describe('when Accept-Language: ja-JP', function(){
+
+      var url = 'http://localhost:3030/language',
+          result;
+
+      before(function(done){
+        request({
+          url: url,
+          json: true,
+          headers: { 'accept-language': 'ja-JP' }
+        }, function(e, r, b){
+          result = b;
+          done();
+        });
+      });
+
+      it('should respond with correct href', function(){
+        expect(result.href).to.equal('http://localhost:3030/language');
+      });
+
+      it('should contain japanese language', function(){
+        expect(result.html).to.equal('<p>selected language is japanese</p>');
+      });
+    });
+
+    describe('when Accept-Language: ja-JP but __ocAcceptLanguage overrides with en-US (client-side failover)', function(){
+
+      var url = 'http://localhost:3030/language/?__ocAcceptLanguage=en-US',
+          result;
+
+      before(function(done){
+        request({
+          url: url,
+          json: true,
+          headers: { 'accept-language': 'ja-JP' }
+        }, function(e, r, b){
+          result = b;
+          done();
+        });
+      });
+
+      it('should respond with correct href', function(){
+        expect(result.href).to.equal('http://localhost:3030/language');
+      });
+
+      it('should contain japanese language', function(){
+        expect(result.html).to.equal('<p>selected language is english</p>');
       });
     });
   });
