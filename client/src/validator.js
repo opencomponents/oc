@@ -1,5 +1,6 @@
 'use strict';
 
+var settings = require('./settings');
 var _ = require('./utils/helpers');
 
 module.exports = {
@@ -7,14 +8,14 @@ module.exports = {
     var errorMessage = function(msg){
       return {
         isValid: false,
-        error: 'Configuration is not valid: ' + msg
+        error: settings.configurationNotValid + msg
       };
     };
 
     if(!!conf.registries && _.isArray(conf.registries)){
-      return errorMessage('registries must be an object');
+      return errorMessage(settings.registriesIsNotObject);
     } else if(!!conf.registries && !conf.registries.serverRendering && !conf.clientRendering){
-      return errorMessage('registries must contain at least one endpoint');
+      return errorMessage(settings.registriesEmpty);
     }
 
     return { isValid: true };

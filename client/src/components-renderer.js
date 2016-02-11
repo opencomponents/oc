@@ -19,7 +19,7 @@ module.exports = function(config, renderTemplate){
       getOCClientScript = new GetOCClientScript(cache),
       getCompiledTemplate = new GetCompiledTemplate(cache),
       buildHref = new HrefBuilder(config),
-      errorDescription = settings.messages.serverSideRenderingFail;
+      serverRenderingFail = settings.serverSideRenderingFail;
 
   return function(components, options, callback){
 
@@ -66,7 +66,7 @@ module.exports = function(config, renderTemplate){
         return cb();
       } else if(!config.registries.serverRendering){
         _.each(toDo, function(action){
-          action.result.error = errorDescription;
+          action.result.error = serverRenderingFail;
           if(!!options.disableFailoverRendering){
             action.result.html = '';
             action.done = true;
@@ -76,7 +76,7 @@ module.exports = function(config, renderTemplate){
           }
         });
         
-        return cb(errorDescription);
+        return cb(serverRenderingFail);
       }
 
       makePostRequest(serverRendering.components, function(error, responses){
@@ -92,7 +92,7 @@ module.exports = function(config, renderTemplate){
 
           if(action.render === 'server'){
             if(response.status !== 200){
-              action.result.error = errorDescription;
+              action.result.error = serverRenderingFail;
               if(!!options.disableFailoverRendering){
                 action.result.html = '';
                 action.done = true;
@@ -111,12 +111,9 @@ module.exports = function(config, renderTemplate){
 
     var fetchTemplateAndRender = function(component, cb){
 
-      var isLocal = function(apiResponse){
-        return apiResponse.type === 'oc-component-local';
-      };
-
       var data = component.data,
-          useCache = !isLocal(component);
+          isLocal = component.type === 'oc-component-local',
+          useCache = !isLocal;
           
       getCompiledTemplate(component.template, useCache, options.timeout, function(err, template){
         if(!!err){ return cb(err); }
@@ -152,7 +149,7 @@ module.exports = function(config, renderTemplate){
       _.eachAsync(toRender, function(action, next){
         fetchTemplateAndRender(action.apiResponse, function(err, html){
           if(!!err){
-            action.result.error = errorDescription;
+            action.result.error = serverRenderingFail;
             if(!!options.disableFailoverRendering){
               action.result.html = '';
               action.done = true;
@@ -186,13 +183,13 @@ module.exports = function(config, renderTemplate){
         _.each(toDo, function(action){
           if(action.render === 'client'){
             if(!!clientErr || !clientJs){
-              action.result.error = 'Internal client error';
+              action.result.error = settings.genericError;
               action.result.html = '';
             } else {
               var componentClientHref = buildHref.client(action.component);
 
               if(!componentClientHref){
-                action.result.error = 'Client-side rendering failed.';
+                action.result.error = settings.clientSideRenderingFail;
                 action.result.html = '';
               } else {
                 var unrenderedComponentTag = htmlRenderer.unrenderedComponent(componentClientHref, options);
