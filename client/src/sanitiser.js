@@ -2,6 +2,16 @@
 
 var _ = require('./utils/helpers');
 
+var lowerHeaderKeys = function(headers){
+  var result = {};
+
+  _.each(headers, function(header, headerName){
+    result[headerName.toLowerCase()] = header;
+  });
+
+  return result;
+};
+
 module.exports = {
   sanitiseConfiguration: function(conf){
     conf = conf || {};
@@ -17,7 +27,7 @@ module.exports = {
     }
 
     options = options || {};
-    options.headers = options.headers || {};
+    options.headers = lowerHeaderKeys(options.headers);
     options.headers.accept = 'application/vnd.oc.unrendered+json';
     options.timeout = options.timeout || 5;
     options.container = (options.container === true) ?  true : false;
