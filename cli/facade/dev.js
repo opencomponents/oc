@@ -22,6 +22,7 @@ module.exports = function(dependencies){
 
     var componentsDir = opts.dirName,
         port = opts.port || 3000,
+        baseUrl = opts.baseUrl || format('http://localhost:{0}/', port),
         packaging = false,
         errors = strings.errors.cli;
 
@@ -137,14 +138,14 @@ module.exports = function(dependencies){
             verbosity: 1,
             path: path.resolve(componentsDir),
             port: port,
-            baseUrl: format('http://localhost:{0}/', port),
+            baseUrl: baseUrl,
             env: { name: 'local' },
             dependencies: dependencies
           });
 
           registerPlugins(registry);
 
-          logger.logNoNewLine(format(strings.messages.cli.REGISTRY_STARTING, port).yellow);
+          logger.logNoNewLine(format(strings.messages.cli.REGISTRY_STARTING, baseUrl).yellow);
           registry.start(function(err, app){
 
             if(err){
