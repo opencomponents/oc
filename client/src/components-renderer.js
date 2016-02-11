@@ -8,127 +8,219 @@ var GetOCClientScript = require('./get-oc-client-script');
 var HrefBuilder = require('./href-builder');
 var htmlRenderer = require('./html-renderer');
 var request = require('./utils/request');
+var sanitiser = require('./sanitiser');
 var settings = require('./settings');
 var templates = require('./templates');
 var _ = require('./utils/helpers');
-
-var isLocal = function(apiResponse){
-  return apiResponse.type === 'oc-component-local';
-};
 
 module.exports = function(config, renderTemplate){
 
   var cache = new Cache(config.cache),
       getOCClientScript = new GetOCClientScript(cache),
       getCompiledTemplate = new GetCompiledTemplate(cache),
-      buildHref = new HrefBuilder(config);
+      buildHref = new HrefBuilder(config),
+      errorDescription = settings.messages.serverSideRenderingFail;
 
   return function(components, options, callback){
 
-    _.each(components, function(component){
+    options = sanitiser.sanitiseGlobalRenderOptions(options, config);
+
+    var toDo = [];
+
+    _.each(components, function(component, i){
       component.version = component.version || config.components[component.name];
+      toDo.push({
+        component: component,
+        pos: i,
+        render: component.render || options.render || 'server',
+        result: {}
+      });
     });
 
-    var errors = [], 
-        results = [];
-    
-    if(options.render === 'client'){
-      _.each(components, function(component){
-        errors.push(null);
-        results.push(htmlRenderer.unrenderedComponent(buildHref.client(component), options));
-      });
-      return callback(errors, results);
-    }
+    var makePostRequest = function(components, cb){
+      request({
+        url: config.registries.serverRendering,
+        method: 'post',
+        headers: options.headers,
+        timeout: options.timeout,
+        json: true,
+        body: { components: components }
+      }, cb);
+    };
 
-    request({
-      url: config.registries.serverRendering,
-      method: 'post',
-      headers: options.headers,
-      timeout: options.timeout,
-      json: true,
-      body: { components: components }
-    }, function(err, apiResponse){
+    var getComponentsData = function(cb){
 
-      var errorDescription = settings.messages.serverSideRenderingFail,
-          componentsToRender = [];
+      var serverRendering = {
+        components: [],
+        positions: []
+      };
 
-      getOCClientScript(function(clientErr, clientJs){
-
-        var getFailoverReponse = function(component){
-          var componentClientHref = buildHref.client(component);
-                
-          if(!!options.disableFailoverRendering || !!clientErr || !componentClientHref){
-            return '';
-          } else {
-            var unrenderedComponentTag = htmlRenderer.unrenderedComponent(componentClientHref, options);
-            return format(templates.clientScript, clientJs, unrenderedComponentTag);
-          }
-        };
-
-        var setErrorResponseForComponent = function(pos){
-          errors[pos] = errorDescription;
-          results[pos] = getFailoverReponse(components[pos]);
-        };
-
-        if(!!err || !apiResponse){
-          _.each(components, function(component, i){
-            setErrorResponseForComponent(i);
-          });
-
-          return callback(errors, results);
+      _.each(toDo, function(action){
+        if(action.render === 'server'){
+          serverRendering.components.push(action.component);
+          serverRendering.positions.push(action.pos);
         }
+      });
 
-        _.each(apiResponse, function(componentResponse, i){
-          if(components[i].render === 'client'){
-            errors[i] = null;
-            results[i] = htmlRenderer.unrenderedComponent(buildHref.client(components[i]), options);
-          } else if(componentResponse.status >= 400){
-            setErrorResponseForComponent(i);
+      if(_.isEmpty(serverRendering.components)){
+        return cb();
+      } else if(!config.registries.serverRendering){
+        _.each(toDo, function(action){
+          action.result.error = errorDescription;
+          if(!!options.disableFailoverRendering){
+            action.result.html = '';
+            action.done = true;
           } else {
-            errors[i] = null;
-            componentsToRender.push({ pos: i, res: componentResponse.response });  
+            action.render = 'client';
+            action.failover = true;
           }
         });
+        
+        return cb(errorDescription);
+      }
 
-        if(_.isEmpty(componentsToRender)){
-          return callback(errors, results);
+      makePostRequest(serverRendering.components, function(error, responses){
+        if(!!error || !responses || _.isEmpty(responses)){
+          responses = [];
+          _.each(serverRendering.components, function(){
+            responses.push({ status: -1 });
+          });
         }
 
-        var fetchTemplateAndRender = function(component, pos, cb){
-          var data = component.data,
-              useCache = !isLocal(component);
-              
-          getCompiledTemplate(component.template, useCache, options.timeout, function(err, template){
+        _.each(responses, function(response, i){
+          var action = toDo[serverRendering.positions[i]];
 
-            if(!!err){ 
-              setErrorResponseForComponent(pos);
-              return cb(err);
-            }
-
-            var renderOptions = {
-              href: component.href,
-              key: component.template.key,
-              version: component.version,
-              templateType: component.template.type,
-              container: options.container,
-              renderInfo: options.renderInfo,
-              name: component.name
-            };
-
-            return renderTemplate(template, data, renderOptions, function(err, res){
-              if(!!err){
-                setErrorResponseForComponent(pos);
+          if(action.render === 'server'){
+            if(response.status !== 200){
+              action.result.error = errorDescription;
+              if(!!options.disableFailoverRendering){
+                action.result.html = '';
+                action.done = true;
               } else {
-                results[pos] = res;
+                action.render = 'client';
+                action.failover = true;
               }
-              cb(err, res);
-            });
-          });
+            } else {
+              action.apiResponse = response.response;
+            }
+          }
+        });
+        cb();
+      });
+    };
+
+    var fetchTemplateAndRender = function(component, cb){
+
+      var isLocal = function(apiResponse){
+        return apiResponse.type === 'oc-component-local';
+      };
+
+      var data = component.data,
+          useCache = !isLocal(component);
+          
+      getCompiledTemplate(component.template, useCache, options.timeout, function(err, template){
+        if(!!err){ return cb(err); }
+
+        var renderOptions = {
+          href: component.href,
+          key: component.template.key,
+          version: component.version,
+          templateType: component.template.type,
+          container: options.container,
+          renderInfo: options.renderInfo,
+          name: component.name
         };
 
-        _.eachAsync(componentsToRender, function(component, next){
-          fetchTemplateAndRender(component.res, component.pos, next);
-        }, function(){
+        renderTemplate(template, data, renderOptions, cb);
+      });
+    };
+
+    var renderComponents = function(cb){
+
+      var toRender = [];
+
+      _.each(toDo, function(action){
+        if(action.render === 'server' && !!action.apiResponse){
+          toRender.push(action);
+        }
+      });
+
+      if(_.isEmpty(toRender)){
+        return cb();
+      }
+
+      _.eachAsync(toRender, function(action, next){
+        fetchTemplateAndRender(action.apiResponse, function(err, html){
+          if(!!err){
+            action.result.error = errorDescription;
+            if(!!options.disableFailoverRendering){
+              action.result.html = '';
+              action.done = true;
+            } else {
+              action.render = 'client';
+              action.failover = true;
+            }
+          } else {
+            action.result.html = html;
+            action.done = true;
+          }
+          next();
+        });
+      }, cb);
+    };
+
+    var processClientReponses = function(cb){
+      var toProcess = [];
+
+      _.each(toDo, function(action){
+        if(action.render === 'client' && !action.done){
+          toProcess.push(action);
+        }
+      });
+
+      if(_.isEmpty(toProcess)){
+        return cb();
+      }
+
+      getOCClientScript(function(clientErr, clientJs){
+        _.each(toDo, function(action){
+          if(action.render === 'client'){
+            if(!!clientErr || !clientJs){
+              action.result.error = 'Internal client error';
+              action.result.html = '';
+            } else {
+              var componentClientHref = buildHref.client(action.component);
+
+              if(!componentClientHref){
+                action.result.error = 'Client-side rendering failed.';
+                action.result.html = '';
+              } else {
+                var unrenderedComponentTag = htmlRenderer.unrenderedComponent(componentClientHref, options);
+
+                if(action.failover){
+                  action.result.html = format(templates.clientScript, clientJs, unrenderedComponentTag);
+                } else {
+                  action.result.error = null;
+                  action.result.html = unrenderedComponentTag;
+                }
+              }
+            }
+          }
+        });
+        cb();
+      });
+    };
+
+    getComponentsData(function(){
+      renderComponents(function(){
+        processClientReponses(function(){
+          var errors = [], 
+              results = [];
+        
+          _.each(toDo, function(action){
+            errors.push(action.result.error);
+            results.push(action.result.html);
+          });
           callback(errors, results);
         });
       });

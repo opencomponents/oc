@@ -321,19 +321,6 @@ describe('client : components-renderer', function(){
               type: 'jade'
             }
           }
-        },{
-          status: 200,
-          response: {
-            name: 'world',
-            version: '4.5.6',
-            href: 'http://components.company.com/world/4.5.6',
-            data: { name: 'john' },
-            template: {
-              src: 'https://cdn.com/world/template.js',
-              key: 'hash2',
-              type: 'jade'
-            }
-          }
         }]);
 
         getCompiledTemplateStub.onCall(0).yields(null, 'first template');

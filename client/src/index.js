@@ -20,12 +20,7 @@ module.exports = function(conf){
   this.renderTemplate = renderTemplate;
 
   this.renderComponent = function(componentName, options, callback){
-
-    if(_.isFunction(options)){
-      callback = options;
-    }
-
-    options = sanitiser.sanitiseGlobalRenderOptions(options);
+    if(_.isFunction(options)){ callback = options; }
 
     renderComponents([{
       name: componentName,
@@ -37,13 +32,7 @@ module.exports = function(conf){
   };
 
   this.renderComponents = function(components, options, callback){
-
-    if(_.isFunction(options)){
-      callback = options;
-    }
-
-    options = sanitiser.sanitiseGlobalRenderOptions(options);
-
+    if(_.isFunction(options)){ callback = options; }
     renderComponents(components, options, callback);
   };
 };

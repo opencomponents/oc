@@ -10,7 +10,7 @@ module.exports = {
 
     return conf;
   },
-  sanitiseGlobalRenderOptions: function(options){
+  sanitiseGlobalRenderOptions: function(options, config){
 
     if(_.isFunction(options)){
       options = {};
@@ -22,6 +22,10 @@ module.exports = {
     options.timeout = options.timeout || 5;
     options.container = (options.container === true) ?  true : false;
     options.renderInfo = (options.renderInfo === false) ? false : true;
+
+    if(!!config.registries && !config.registries.clientRendering){
+      options.disableFailoverRendering = true;
+    }
 
     return options;
   }
