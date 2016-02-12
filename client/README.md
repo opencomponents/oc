@@ -24,6 +24,7 @@ It will create an instance of the client. Options:
 |`cache.flushInterval`|`number` (seconds)|no|The interval for flushing the cache|
 |`components`|`object`|yes|The components to consume with versions|
 |`components[name]`|`string`|yes|The component version|
+|`forwardAcceptLanguageToClient`|`boolean`|no|Default false. When true, when doing client-side requests (normal or failover) appends a custom parameter to the browser's component hrefs so that the framework will ignore the browser's Accept-Language in favour of the query-string value|
 |`registries`|`object`|yes|The registries' endpoints|
 |`registries.serverRendering`|`string`|no|The baseUrl for server-side rendering requests|
 |`registries.clientRendering`|`string`|no|The baseUrl for client-side rendering requests|
@@ -53,6 +54,7 @@ Options:
 |---------|----|---------|-----------|
 |`container`|`boolean`|no|Default true, when false, renders a component without its <oc-component> container|
 |`disableFailoverRendering`|`boolean`|no|Disables the automatic failover rendering in case the registry times-out (in case configuration.registries.clientRendering contains a valid value.) Default false|
+|`forwardAcceptLanguageToClient`|`boolean`|no|When not specified in config, defaults to false. When true, when doing client-side requests (normal or failover) appends a custom parameter to the browser's component hrefs so that the framework will ignore the browser's Accept-Language in favour of the query-string value|
 |`headers`|`object`|no|An object containing all the headers that must be forwarded to the component|
 |`ie8`|`boolean`|no|Default false, if true puts in place the necessary polyfills to make all the stuff work with ie8|
 |`parameters`|`object`|no|An object containing the parameters for component's request|

@@ -29,6 +29,11 @@ module.exports = function(conf, repository){
 
     var retrievingInfo = new GetComponentRetrievingInfo(options);
 
+    var getLanguage = function(){
+      var paramOverride = !!options.parameters && options.parameters['__ocAcceptLanguage'];
+      return paramOverride || options.headers['accept-language'];
+    };
+
     var callback = function(result){
 
       if(!!result.response.error){
@@ -40,6 +45,7 @@ module.exports = function(conf, repository){
     };
     
     var conf = options.conf,
+        acceptLanguage = getLanguage(),
         componentCallbackDone = false,
         requestedComponent = {
           name: options.name,
@@ -187,7 +193,7 @@ module.exports = function(conf, repository){
             cached = cache.get('file-contents', cacheKey),
             domain = Domain.create(),
             contextObj = { 
-              acceptLanguage: acceptLanguageParser.parse(options.headers['accept-language']),
+              acceptLanguage: acceptLanguageParser.parse(acceptLanguage),
               baseUrl: conf.baseUrl,
               env: conf.env,
               params: params,
