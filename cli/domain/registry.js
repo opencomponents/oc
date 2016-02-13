@@ -92,7 +92,9 @@ module.exports = function(opts){
         json: true
       }, function(err, res){
         if(err){ return callback(err); }
-        callback(null, urlBuilder.componentPreview(res, res.registryUrl));
+
+        var parsed = urlParser.parse(res);
+        callback(null, urlBuilder.componentPreview(parsed, parsed.registryUrl));
       });
     },
     putComponent: function(options, callback){
