@@ -27,7 +27,7 @@ describe('client : components-renderer', function(){
     Renderer = injectr('../../client/src/components-renderer.js', {
       './get-compiled-template': function(){ return getCompiledTemplateStub; },
       './get-oc-client-script': function(){ return getOcClientStub; },
-      './utils/request': requestStub
+      'minimal-request': requestStub
     }, { __dirname: '/something/', console: console });
   };
 

@@ -2,11 +2,13 @@
 
 var expect = require('chai').expect;
 var path = require('path');
-var request = require('request');
+var request = require('minimal-request');
 
 describe('registry', function(){
 
   var registry,
+      result,
+      error,
       oc = require('../../index'),
       conf = {          
         local: true,
@@ -17,14 +19,20 @@ describe('registry', function(){
         verbosity: 0
       };
 
+  var next = function(done){
+    return function(e, r){
+      error = e;
+      result = r;
+      done();
+    };
+  };
+
   before(function(done){
     registry = new oc.Registry(conf);
     registry.start(done);
   });
 
-  after(function(done){
-    registry.close(done);
-  });
+  after(function(done){ registry.close(done); });
 
   describe('when initialised with invalid configuration', function(){
 
@@ -39,14 +47,11 @@ describe('registry', function(){
 
   describe('GET /', function(){
 
-    var url = 'http://localhost:3030',
-        result;
-
     before(function(done){
-      request(url, function(err, res, body){
-        result = JSON.parse(body);
-        done();
-      });
+      request({
+        url: 'http://localhost:3030',
+        json: true
+      }, next(done));
     });
 
     it('should respond with the correct href', function(){
@@ -67,14 +72,11 @@ describe('registry', function(){
 
     describe('when Accept header not specified', function(){
 
-      var url = 'http://localhost:3030/hello-world',
-          result;
-
       before(function(done){
-        request(url, function(err, res, body){
-          result = JSON.parse(body);
-          done();
-        });
+        request({
+          url: 'http://localhost:3030/hello-world',
+          json: true
+        }, next(done));
       });
 
       it('should respond with the correct href', function(){
@@ -105,17 +107,12 @@ describe('registry', function(){
 
     describe('when Accept header set to application/vnd.oc.unrendered+json', function(){
 
-      var url = 'http://localhost:3030/hello-world',
-          result;
-
       before(function(done){
         request({
-          url: url,
-          headers: {'Accept': 'application/vnd.oc.unrendered+json'}
-        }, function(err, res, body){
-          result = JSON.parse(body);
-          done();
-        });
+          url: 'http://localhost:3030/hello-world',
+          headers: {'Accept': 'application/vnd.oc.unrendered+json'},
+          json: true
+        }, next(done));
       });
 
       it('should respond with the correct href', function(){
@@ -148,14 +145,11 @@ describe('registry', function(){
 
     describe('when Accept header not specified', function(){
 
-      var url = 'http://localhost:3030/no-containers',
-          result;
-
       before(function(done){
-        request(url, function(err, res, body){
-          result = JSON.parse(body);
-          done();
-        });
+        request({
+          url: 'http://localhost:3030/no-containers',
+          json: true
+        }, next(done));
       });
 
       it('should respond with the correct href', function(){
@@ -177,18 +171,12 @@ describe('registry', function(){
 
     describe('when Accept-Language: en-US', function(){
 
-      var url = 'http://localhost:3030/language',
-          result;
-
       before(function(done){
         request({
-          url: url,
+          url: 'http://localhost:3030/language',
           json: true,
           headers: { 'accept-language': 'en-US' }
-        }, function(e, r, b){
-          result = b;
-          done();
-        });
+        }, next(done));
       });
 
       it('should respond with correct href', function(){
@@ -202,18 +190,12 @@ describe('registry', function(){
 
     describe('when Accept-Language: ja-JP', function(){
 
-      var url = 'http://localhost:3030/language',
-          result;
-
       before(function(done){
         request({
-          url: url,
+          url: 'http://localhost:3030/language',
           json: true,
           headers: { 'accept-language': 'ja-JP' }
-        }, function(e, r, b){
-          result = b;
-          done();
-        });
+        }, next(done));
       });
 
       it('should respond with correct href', function(){
@@ -227,18 +209,12 @@ describe('registry', function(){
 
     describe('when Accept-Language: ja-JP but __ocAcceptLanguage overrides with en-US (client-side failover)', function(){
 
-      var url = 'http://localhost:3030/language/?__ocAcceptLanguage=en-US',
-          result;
-
       before(function(done){
         request({
-          url: url,
+          url: 'http://localhost:3030/language/?__ocAcceptLanguage=en-US',
           json: true,
           headers: { 'accept-language': 'ja-JP' }
-        }, function(e, r, b){
-          result = b;
-          done();
-        });
+        }, next(done));
       });
 
       it('should respond with correct href', function(){
@@ -255,20 +231,20 @@ describe('registry', function(){
 
     describe('when body is malformed', function(){
 
-      var url = 'http://localhost:3030/',
-          result;
-
       before(function(done){
         request({
-          method: 'POST',
-          url: url
-        }, function(err, res, body){
-          result = JSON.parse(body);
-          done();
-        });
+          url: 'http://localhost:3030/',
+          method: 'post',
+          json: true,
+          body: {}
+        }, next(done));
       });
 
-      it('should respond with error', function() {
+      it('should respond with 400 status code', function(){
+        expect(error).to.equal(400);
+      });
+
+      it('should respond with error', function(){
         expect(result.error).to.equal('The request body is malformed: components property is missing');
       });
     });
@@ -277,13 +253,10 @@ describe('registry', function(){
 
       describe('when Accept header not specified', function(){
 
-        var url = 'http://localhost:3030/',
-            result;
-
         before(function(done){
           request({
-            method: 'POST',
-            url: url,
+            url: 'http://localhost:3030/',
+            method: 'post',
             json: true,
             body: {
               components: [
@@ -291,10 +264,7 @@ describe('registry', function(){
                 {name:'no-containers'}
               ]
             }
-          }, function(err, res, body){ 
-            result = body;
-            done();
-          });
+          }, next(done));
         });
 
         it('should respond with two 200 status codes', function(){
@@ -312,13 +282,10 @@ describe('registry', function(){
 
       describe('when Accept header set to application/vnd.oc.unrendered+json', function(){
 
-        var url = 'http://localhost:3030/',
-            result;
-
         before(function(done){
           request({
-            method: 'POST',
-            url: url,
+            url: 'http://localhost:3030/',
+            method: 'post',
             headers: {'Accept': 'application/vnd.oc.unrendered+json'},
             json: true,
             body: {
@@ -327,10 +294,7 @@ describe('registry', function(){
                 {name:'no-containers'}
               ]
             }
-          }, function(err, res, body){ 
-            result = body;
-            done();
-          });
+          }, next(done));
         });
 
         it('should respond with two unrendered components', function() {

@@ -2,12 +2,12 @@
 
 var Cache = require('nice-cache');
 var format = require('stringformat');
+var request = require('minimal-request');
 
 var GetCompiledTemplate = require('./get-compiled-template');
 var GetOCClientScript = require('./get-oc-client-script');
 var HrefBuilder = require('./href-builder');
 var htmlRenderer = require('./html-renderer');
-var request = require('./utils/request');
 var sanitiser = require('./sanitiser');
 var settings = require('./settings');
 var templates = require('./templates');

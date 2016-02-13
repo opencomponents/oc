@@ -8,7 +8,7 @@ var getRegistry = function(dependencies, opts){
   dependencies.fs = dependencies.fs || {};
   dependencies.fs.readJsonSync = sinon.stub().returns({ version: '1.2.3' });
   var Registry = injectr('../../cli/domain/registry.js', {
-        '../../utils/request': dependencies.request,
+        'minimal-request': dependencies.request,
         'fs-extra': dependencies.fs,
         '../../utils/put': dependencies.put,
         '../domain/url-parser': dependencies.urlParser,
@@ -45,12 +45,15 @@ describe('cli : domain : registry', function(){
 
     describe('when registry does not end with "/"', function(){
 
-      it('should append the slash when doing the request', function(){
-        var spy = sinon.spy(),
-            registry = getRegistry({ request: spy });
-        registry.add('http://some-api.com/asd');
+      it('should append the slash when doing the request', function(done){
+        var requestStub = sinon.stub();
+        requestStub.yields('err');
+        var registry = getRegistry({ request: requestStub });
 
-        expect(spy.getCall(0).args[0]).to.eql('http://some-api.com/asd/');
+        registry.add('http://some-api.com/asd', function(){
+          expect(requestStub.getCall(0).args[0].url).to.eql('http://some-api.com/asd/');
+          done();
+        });
       });
 
       it('should save the file with slashed url', function(){
@@ -60,9 +63,7 @@ describe('cli : domain : registry', function(){
               writeJson: sinon.spy()
             };
 
-        requestStub.yields(null, JSON.stringify({
-          type: 'oc-registry'
-        }));
+        requestStub.yields(null, { type: 'oc-registry' });
 
         fsStub.readJson.yields(null, {});
 
@@ -134,7 +135,7 @@ describe('cli : domain : registry', function(){
     var err, res;
     var execute = function(href, error, parsed, done){
       var registry = getRegistry({ 
-        request: sinon.stub().yields(error, JSON.stringify(parsed)),
+        request: sinon.stub().yields(error, parsed),
         urlParser: {
           parse: sinon.stub().returns(parsed)
         }
