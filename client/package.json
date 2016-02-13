@@ -16,7 +16,7 @@
   "dependencies": {
     "handlebars": "3.0.1",
     "jade": "1.9.1",
-    "minimal-request": "1.0.0",
+    "minimal-request": "2.0.0",
     "nice-cache": "0.0.5",
     "stringformat": "0.0.5"
   },
