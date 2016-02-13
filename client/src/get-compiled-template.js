@@ -1,7 +1,8 @@
 'use strict';
 
+var request = require('minimal-request');
+
 var executor = require('./executor');
-var request = require('./utils/request');
 var TryGetCached = require('./try-get-cached');
 
 module.exports = function(cache){
