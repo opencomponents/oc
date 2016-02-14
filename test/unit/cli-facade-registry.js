@@ -2,18 +2,21 @@
 
 var colors = require('colors');
 var expect = require('chai').expect;
+var injectr = require('injectr');
 var sinon = require('sinon');
 
 describe('cli : facade : registry', function(){
 
   var logSpy = {},
+      processSpy = {},
       Registry = require('../../cli/domain/registry'),
       registry = new Registry(),
-      RegistryFacade = require('../../cli/facade/registry'),
+      RegistryFacade = injectr('../../cli/facade/registry.js', {}, { process: processSpy }),
       registryFacade = new RegistryFacade({ registry: registry, logger: logSpy });
 
   var execute = function(command){
     logSpy.log = sinon.spy();
+    processSpy.exit = sinon.spy();
     registryFacade({ command: command });
   };
 
@@ -36,6 +39,11 @@ describe('cli : facade : registry', function(){
 
       it('should log an error', function(){
         expect(logSpy.log.args[1][0]).to.equal('oc registries not found. Run "oc registry add <registry href>"'.red);
+      });
+
+      it('should exit with 1 code', function(){
+        expect(processSpy.exit.calledOnce).to.be.true;
+        expect(processSpy.exit.args[0][0]).to.equal(1);
       });
     });
 
@@ -77,6 +85,11 @@ describe('cli : facade : registry', function(){
       it('should show the error', function(){
         expect(logSpy.log.args[0][0]).to.equal('An error!!!'.red);
       });
+
+      it('should exit with 1 code', function(){
+        expect(processSpy.exit.calledOnce).to.be.true;
+        expect(processSpy.exit.args[0][0]).to.equal(1);
+      });
     });
 
     describe('when adding a valid registry', function(){
@@ -111,6 +124,11 @@ describe('cli : facade : registry', function(){
 
       it('should show the error', function(){
         expect(logSpy.log.args[0][0]).to.equal('something bad happened!'.red);
+      });
+
+      it('should exit with 1 code', function(){
+        expect(processSpy.exit.calledOnce).to.be.true;
+        expect(processSpy.exit.args[0][0]).to.equal(1);
       });
     });
 

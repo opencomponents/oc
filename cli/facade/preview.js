@@ -12,7 +12,11 @@ module.exports = function(dependencies){
 
   return function(opts){
     registry.getComponentPreviewUrlByUrl(opts.componentHref, function(err, href){
-      if(err){ return logger.log(colors.red(strings.errors.cli.COMPONENT_HREF_NOT_FOUND)); }
+      if(err){ 
+        logger.log(colors.red(strings.errors.cli.COMPONENT_HREF_NOT_FOUND));
+        return process.exit(1);
+      }
+
       opn(href);
     });
   };

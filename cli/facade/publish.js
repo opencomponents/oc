@@ -16,18 +16,18 @@ module.exports = function(dependencies){
       local = dependencies.local,
       logger = dependencies.logger;
 
-  return function(opts, reallyDoneThisTime){
+  return function(opts, callback){
 
-    reallyDoneThisTime = reallyDoneThisTime || _.noop;
+    callback = callback || _.noop;
 
     var componentPath = opts.componentPath,
         packageDir = path.resolve(componentPath, '_package'),
         compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
 
-    var getCredentials = function(callback){
+    var getCredentials = function(cb){
       if(opts.username && opts.password){
         logger.log(strings.messages.cli.USING_CREDS.green);
-        return callback(null, {
+        return cb(null, {
           username: opts.username,
           password: opts.password
         });
@@ -40,44 +40,42 @@ module.exports = function(dependencies){
         logger.log(strings.messages.cli.ENTER_PASSWORD.yellow);
 
         read({ silent: true }, function(err, password){
-          callback(null, { username: username, password: password});
+          cb(null, { username: username, password: password});
         });
       });
     };
 
-    var packageAndCompress = function(callback){
+    var packageAndCompress = function(cb){
 
       logger.log(format(strings.messages.cli.PACKAGING.yellow, packageDir.green));
 
       local.package(componentPath, function(err, component){
         if(err){
-          return callback(err);
+          return cb(err);
         }
 
         logger.log(format(strings.messages.cli.COMPRESSING.yellow, compressedPackagePath.green));
 
         local.compress(packageDir, compressedPackagePath, function(err){
           if(err){
-            return callback(err);
+            return cb(err);
           }
 
-          callback(null, component);
+          cb(null, component);
         });
       });
     };
 
-    var putComponentToRegistry = function(options, callback){
-
+    var putComponentToRegistry = function(options, cb){
       logger.log(format(strings.messages.cli.PUBLISHING.yellow, options.route.green));
 
       registry.putComponent(options, function(err, res){
 
         if(!!err){
-
           if(err === 'Unauthorized'){
             if(!!options.username || !!options.password){
               logger.log(format(strings.errors.cli.PUBLISHING_FAIL, strings.errors.cli.INVALID_CREDENTIALS).red);
-              return callback(err);
+              return cb(err);
             }
 
             logger.log(strings.messages.cli.REGISTRY_CREDENTIALS_REQUIRED.yellow);
@@ -86,25 +84,25 @@ module.exports = function(dependencies){
               putComponentToRegistry(_.extend(options, {
                 username: credentials.username,
                 password: credentials.password
-              }), callback);
+              }), cb);
             });
 
           } else if(err.code === 'cli_version_not_valid') {
             var upgradeCommand = format(strings.commands.cli.UPGRADE, err.details.suggestedVersion),
                 errorDetails = format(strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE, upgradeCommand.blue);
             logger.log(format(strings.errors.cli.PUBLISHING_FAIL, errorDetails).red);
-            return callback();
+            return cb();
           } else if(err.code === 'node_version_not_valid') {
             var details = format(strings.errors.cli.NODE_CLI_VERSION_NEEDS_UPGRADE, err.details.suggestedVersion);
             logger.log(format(strings.errors.cli.PUBLISHING_FAIL, details).red);
-            return callback();
+            return cb();
           } else {
             logger.log(format(strings.errors.cli.PUBLISHING_FAIL, err).red);
-            return callback();
+            return cb();
           }
         } else {
           logger.log(format(strings.messages.cli.PUBLISHED, options.route.green).yellow);
-          return callback();
+          return cb();
         }
       });
     };
@@ -119,15 +117,15 @@ module.exports = function(dependencies){
           return logger.log(format(strings.errors.cli.PACKAGE_CREATION_FAIL, err).red);
         }
 
-        async.eachSeries(registryLocations, function(l, done){
+        async.eachSeries(registryLocations, function(l, cb){
           var registryUrl = l,
               registryLength = registryUrl.length,
               registryNormalised = registryUrl.slice(registryLength - 1) === '/' ? registryUrl.slice(0, registryLength - 1) : registryUrl,
               componentRoute = format('{0}/{1}/{2}', registryNormalised, component.name, component.version);
 
-          putComponentToRegistry({ route: componentRoute, path: compressedPackagePath}, done);
+          putComponentToRegistry({ route: componentRoute, path: compressedPackagePath}, cb);
         }, function(err){
-          local.cleanup(compressedPackagePath, reallyDoneThisTime);
+          local.cleanup(compressedPackagePath, callback);
         });
       });
     });
