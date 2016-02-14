@@ -86,17 +86,18 @@ module.exports = function(dependencies){
 
     registry.get(function(err, registryLocations){
       if(err){
-        return logger.log(colors.red(err));
+        logger.log(colors.red(err));
+        return callback(err);
       }
 
       packageAndCompress(function(err, component){
         if(err){
-          return logger.log(colors.red(format(strings.errors.cli.PACKAGE_CREATION_FAIL, err)));
+          logger.log(colors.red(format(strings.errors.cli.PACKAGE_CREATION_FAIL, err)));
+          return callback(err);
         }
 
-        async.eachSeries(registryLocations, function(l, cb){
-          var registryUrl = l,
-              registryLength = registryUrl.length,
+        async.eachSeries(registryLocations, function(registryUrl, next){
+          var registryLength = registryUrl.length,
               registryNormalised = registryUrl.slice(registryLength - 1) === '/' ? registryUrl.slice(0, registryLength - 1) : registryUrl,
               componentRoute = format('{0}/{1}/{2}', registryNormalised, component.name, component.version);
 
@@ -104,7 +105,7 @@ module.exports = function(dependencies){
             if(!!err){
               logger.log(colors.red(err));
             }
-            cb();
+            next();
           });
         }, function(err){
           local.cleanup(compressedPackagePath, callback);

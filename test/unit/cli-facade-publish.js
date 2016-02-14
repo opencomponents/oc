@@ -16,22 +16,22 @@ describe('cli : facade : publish', function(){
       PublishFacade = require('../../cli/facade/publish'),
       publishFacade = new PublishFacade({ registry: registry, local: local, logger: logSpy });
 
-  var execute = function(creds){
-    creds = creds || {};
+  var execute = function(creds, done){
     logSpy.log = sinon.stub();
-    publishFacade({ componentPath: path.resolve('test/fixtures/components/hello-world/'), username: creds.username, password: creds.password });
+    publishFacade({ componentPath: path.resolve('test/fixtures/components/hello-world/'), username: creds.username, password: creds.password }, done || _.noop);
   };
 
   describe('when publishing component', function(){
-
     describe('when api is not valid', function(){
 
-      beforeEach(function(){
+      before(function(done){
         sinon.stub(registry, 'get').yields('an error!');
-        execute();
+        execute({}, function(){
+          done();
+        });
       });
 
-      afterEach(function(){
+      after(function(){
         registry.get.restore();
       });
 
@@ -50,26 +50,29 @@ describe('cli : facade : publish', function(){
         registry.get.restore();
       });
 
-      it('should show a message', function(){
-        sinon.stub(local, 'package').yields('the component is not valid');
-        execute();
-        local.package.restore();
+      it('should show a message', function(done){
+        sinon.stub(local, 'package').yields('err');
+        execute({}, function(){
+          local.package.restore();
 
-        var message = logSpy.log.args[0][0],
-            re = new RegExp('\\' + path.sep, 'g'),
-            messageWithSlashesOnPath = message.replace(re, '/');
-
-        expect(messageWithSlashesOnPath).to.include('Packaging -> ');
-        expect(messageWithSlashesOnPath).to.include('components/hello-world/_package');
+          var message = logSpy.log.args[0][0],
+              re = new RegExp('\\' + path.sep, 'g'),
+              messageWithSlashesOnPath = message.replace(re, '/');
+  
+          expect(messageWithSlashesOnPath).to.include('Packaging -> ');
+          expect(messageWithSlashesOnPath).to.include('components/hello-world/_package');
+          done();
+        });
       });
 
       describe('when packaging', function(){
-
         describe('when a component is not valid', function(){
 
-          beforeEach(function(){
+          beforeEach(function(done){
             sinon.stub(local, 'package').yields('the component is not valid');
-            execute();
+            execute({}, function(){
+              done();
+            });
           });
 
           afterEach(function(){
@@ -104,43 +107,52 @@ describe('cli : facade : publish', function(){
               local.compress.restore();
             });
 
-            it('should show a message', function(){
+            it('should show a message', function(done){
               sinon.stub(registry, 'putComponent').yields('blabla');
-              execute();
-              registry.putComponent.restore();
+              execute({}, function(){
+                registry.putComponent.restore();
 
-              var message = logSpy.log.args[1][0],
-                  re = new RegExp('\\' + path.sep, 'g'),
-                  messageWithSlashesOnPath = message.replace(re, '/');
+                var message = logSpy.log.args[1][0],
+                    re = new RegExp('\\' + path.sep, 'g'),
+                    messageWithSlashesOnPath = message.replace(re, '/');
 
-              expect(messageWithSlashesOnPath).to.include('Compressing -> ');
-              expect(messageWithSlashesOnPath).to.include('components/hello-world/package.tar.gz');
+                expect(messageWithSlashesOnPath).to.include('Compressing -> ');
+                expect(messageWithSlashesOnPath).to.include('components/hello-world/package.tar.gz');
+                done();
+              });
             });
 
             describe('when publishing', function(){
 
-              it('should show a message', function(){
+              it('should show a message', function(done){
                 sinon.stub(registry, 'putComponent').yields('blabla');
-                execute();
-                registry.putComponent.restore();
-
-                expect(logSpy.log.args[2][0]).to.include('Publishing -> ');
+                execute({}, function(){
+                  registry.putComponent.restore();
+                  expect(logSpy.log.args[2][0]).to.include('Publishing -> ');
+                  done();
+                });
               });
 
-              it('should publish to all registries', function(){
-                sinon.stub(registry, 'putComponent').yields('blabla');
-                execute();
-                registry.putComponent.restore();
+              it('should publish to all registries', function(done){
+                sinon.stub(registry, 'putComponent').yields(null, 'ok');
+                sinon.stub(local, 'cleanup').yields(null, 'ok');
+                execute({}, function(){
+                  registry.putComponent.restore();
+                  local.cleanup.restore();
 
-                expect(logSpy.log.args[2][0]).to.include('http://www.api.com');
-                expect(logSpy.log.args[4][0]).to.include('http://www.api2.com');
+                  expect(logSpy.log.args[2][0]).to.include('http://www.api.com');
+                  expect(logSpy.log.args[4][0]).to.include('http://www.api2.com');
+                  done();
+                });
               });
 
               describe('when a generic error happens', function(){
 
-                beforeEach(function(){
+                beforeEach(function(done){
                   sinon.stub(registry, 'putComponent').yields('nope!');
-                  execute();
+                  execute({}, function(){
+                    done();
+                  });
                 });
 
                 afterEach(function(){
@@ -154,7 +166,7 @@ describe('cli : facade : publish', function(){
 
               describe('when using an old cli', function(){
 
-                beforeEach(function(){
+                beforeEach(function(done){
                   sinon.stub(registry, 'putComponent').yields({
                     code: 'cli_version_not_valid',
                     error: 'OC CLI version is not valid: Registry 1.23.4, CLI 0.1.2',
@@ -165,7 +177,9 @@ describe('cli : facade : publish', function(){
                       suggestedVersion: '1.23.X'
                     }
                   });
-                  execute();
+                  execute({}, function(){
+                    done();
+                  });
                 });
 
                 afterEach(function(){
@@ -180,7 +194,7 @@ describe('cli : facade : publish', function(){
 
               describe('when using an old node version', function(){
 
-                beforeEach(function(){
+                beforeEach(function(done){
                   sinon.stub(registry, 'putComponent').yields({
                     code: 'node_version_not_valid',
                     error: 'Node CLI version is not valid: Registry 0.10.36, CLI 0.10.35',
@@ -191,7 +205,9 @@ describe('cli : facade : publish', function(){
                       suggestedVersion: '>=0.10.35'
                     }
                   });
-                  execute();
+                  execute({}, function(){
+                    done();
+                  });
                 });
 
                 afterEach(function(){
@@ -207,7 +223,7 @@ describe('cli : facade : publish', function(){
               describe('when registry requires authentication', function(){
                 beforeEach(function(){
                   sinon.stub(registry, 'putComponent').yields('Unauthorized');
-                  execute();
+                  execute({});
                 });
 
                 afterEach(function(){
@@ -240,10 +256,10 @@ describe('cli : facade : publish', function(){
               describe('when it succeeds', function(){
 
                 var stub;
-                beforeEach(function(){
+                beforeEach(function(done){
                   sinon.stub(registry, 'putComponent').yields(null, 'yay');
-                  stub = sinon.stub(local, 'cleanup');
-                  execute();
+                  stub = sinon.stub(local, 'cleanup').yields(null, 'ok');
+                  execute({}, done);
                 });
 
                 afterEach(function(){
