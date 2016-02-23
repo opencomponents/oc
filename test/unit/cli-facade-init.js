@@ -1,19 +1,22 @@
 'use strict';
 
-var colors = require('colors');
+var colors = require('colors/safe');
 var expect = require('chai').expect;
+var injectr = require('injectr');
 var sinon = require('sinon');
 
 describe('cli : facade : init', function(){
 
   var logSpy = {},
-      InitFacade = require('../../cli/facade/init'),
+      processSpy = {},
+      InitFacade = injectr('../../cli/facade/init.js', {}, { process: processSpy }),
       Local = require('../../cli/domain/local'),
       local = new Local({ logger: { log: function(){} } }),
       initFacade = new InitFacade({ local: local, logger: logSpy });
 
   var execute = function(componentName, templateType){
     logSpy.log = sinon.spy();
+    processSpy.exit = sinon.spy();
     initFacade({ componentName: componentName, templateType: templateType });
   };
 
@@ -26,7 +29,13 @@ describe('cli : facade : init', function(){
       });
 
       it('should show an error', function(){
-        expect(logSpy.log.args[0][0]).to.equal('An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -'.red);
+        var expected = 'An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -';
+        expect(logSpy.log.args[0][0]).to.equal(colors.red(expected));
+      });
+
+      it('should exit with 1 code', function(){
+        expect(processSpy.exit.calledOnce).to.be.true;
+        expect(processSpy.exit.args[0][0]).to.equal(1);
       });
     });
 
@@ -37,19 +46,30 @@ describe('cli : facade : init', function(){
       });
 
       it('should show an error', function(){
-        expect(logSpy.log.args[0][0]).to.equal('An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -'.red);
+        var expected = 'An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -';
+        expect(logSpy.log.args[0][0]).to.equal(colors.red(expected));
+      });
+
+      it('should exit with 1 code', function(){
+        expect(processSpy.exit.calledOnce).to.be.true;
+        expect(processSpy.exit.args[0][0]).to.equal(1);
       });
     });
 
     describe('when the template is of a non valid type', function(){
-        beforeEach(function(){
-          execute('valid-component', 'invalid-type');
-        });
+      beforeEach(function(){
+        execute('valid-component', 'invalid-type');
+      });
 
-        it('should show an error', function(){
-          var expected = 'An error happened when initialising the component: the template is not valid. Allowed values are handlebars and jade';
-          expect(logSpy.log.args[0][0]).to.equal(expected.red);
-        });
+      it('should show an error', function(){
+        var expected = 'An error happened when initialising the component: the template is not valid. Allowed values are handlebars and jade';
+        expect(logSpy.log.args[0][0]).to.equal(colors.red(expected));
+      });
+
+      it('should exit with 1 code', function(){
+        expect(processSpy.exit.calledOnce).to.be.true;
+        expect(processSpy.exit.args[0][0]).to.equal(1);
+      });
     });
 
     describe('when an error happens', function(){
@@ -64,7 +84,12 @@ describe('cli : facade : init', function(){
       });
 
       it('should show an error', function(){
-        expect(logSpy.log.args[0][0]).to.equal('An error happened when initialising the component: nope!'.red);
+        expect(logSpy.log.args[0][0]).to.equal(colors.red('An error happened when initialising the component: nope!'));
+      });
+
+      it('should exit with 1 code', function(){
+        expect(processSpy.exit.calledOnce).to.be.true;
+        expect(processSpy.exit.args[0][0]).to.equal(1);
       });
     });
 
@@ -80,7 +105,7 @@ describe('cli : facade : init', function(){
       });
 
       it('should show a message', function(){
-        expect(logSpy.log.args[0][0]).to.equal('Component "the-best-component" created'.green);
+        expect(logSpy.log.args[0][0]).to.equal(colors.green('Component "the-best-component" created'));
       });
     });
   });
