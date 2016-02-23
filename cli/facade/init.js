@@ -4,16 +4,19 @@ var colors = require('colors');
 var format = require('stringformat');
 
 var strings = require('../../resources/index');
+var wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
   
   var local = dependencies.local,
       logger = dependencies.logger;
 
-  return function(opts){
+  return function(opts, callback){
     var componentName = opts.componentName,
         templateType = opts.templateType,
         errors = strings.errors.cli;
+
+    callback = wrapCliCallback(callback);
 
     local.init(componentName, templateType, function(err, res){
       if(err){
@@ -29,6 +32,8 @@ module.exports = function(dependencies){
       } else {
         logger.log(format(strings.messages.cli.COMPONENT_INITED.green, componentName));
       }
+
+      callback(err, componentName);
     });
   };
 };

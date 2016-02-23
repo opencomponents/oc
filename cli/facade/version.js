@@ -1,12 +1,12 @@
 'use strict';
 
 var packageInfo = require('../../package.json');
+var wrapCliCallback = require('./wrap-cli-callback');
 
 module.exports = function(dependencies){
-  
-  var logger = dependencies.logger;
-
-  return function(){
-    return logger.log(packageInfo.version);
+  return function(callback){
+    callback = wrapCliCallback(callback);
+    dependencies.logger.log(packageInfo.version);
+    callback();
   };
 };
