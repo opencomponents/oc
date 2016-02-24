@@ -103,9 +103,7 @@ module.exports = function(dependencies){
     };
 
     registry.get(function(err, registryLocations){
-      if(err){
-        return log.err(err);
-      }
+      if(err){ return log.err(err); }
 
       packageAndCompress(function(err, component){
         if(err){
