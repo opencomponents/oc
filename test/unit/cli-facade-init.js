@@ -26,7 +26,8 @@ describe('cli : facade : init', function(){
       });
 
       it('should show an error', function(){
-        expect(logSpy.log.args[0][0]).to.equal(colors.red('An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -'));
+        var expected = 'An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -';
+        expect(logSpy.log.args[0][0]).to.equal(colors.red(expected));
       });
     });
 
@@ -37,7 +38,8 @@ describe('cli : facade : init', function(){
       });
 
       it('should show an error', function(){
-        expect(logSpy.log.args[0][0]).to.equal(colors.red('An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -'));
+        var expected = 'An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -';
+        expect(logSpy.log.args[0][0]).to.equal(colors.red(expected));
       });
     });
 
