@@ -1,6 +1,6 @@
 'use strict';
 
-var colors = require('colors');
+var colors = require('colors/safe');
 var format = require('stringformat');
 
 var strings = require('../../resources/index');
@@ -12,7 +12,7 @@ module.exports = function(dependencies){
 
   return function(opts){
     local.mock(opts, function(err, res){
-      return logger.log(format(strings.messages.cli.MOCKED_PLUGIN, opts.targetName, opts.targetValue).green);
+      return logger.log(colors.green(format(strings.messages.cli.MOCKED_PLUGIN, opts.targetName, opts.targetValue)));
     });
   };
 };

@@ -1,6 +1,6 @@
 'use strict';
 
-var colors = require('colors');
+var colors = require('colors/safe');
 var expect = require('chai').expect;
 var sinon = require('sinon');
 
@@ -26,7 +26,8 @@ describe('cli : facade : init', function(){
       });
 
       it('should show an error', function(){
-        expect(logSpy.log.args[0][0]).to.equal('An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -'.red);
+        var expected = 'An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -';
+        expect(logSpy.log.args[0][0]).to.equal(colors.red(expected));
       });
     });
 
@@ -37,7 +38,8 @@ describe('cli : facade : init', function(){
       });
 
       it('should show an error', function(){
-        expect(logSpy.log.args[0][0]).to.equal('An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -'.red);
+        var expected = 'An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -';
+        expect(logSpy.log.args[0][0]).to.equal(colors.red(expected));
       });
     });
 
@@ -48,7 +50,7 @@ describe('cli : facade : init', function(){
 
         it('should show an error', function(){
           var expected = 'An error happened when initialising the component: the template is not valid. Allowed values are handlebars and jade';
-          expect(logSpy.log.args[0][0]).to.equal(expected.red);
+          expect(logSpy.log.args[0][0]).to.equal(colors.red(expected));
         });
     });
 
@@ -64,7 +66,7 @@ describe('cli : facade : init', function(){
       });
 
       it('should show an error', function(){
-        expect(logSpy.log.args[0][0]).to.equal('An error happened when initialising the component: nope!'.red);
+        expect(logSpy.log.args[0][0]).to.equal(colors.red('An error happened when initialising the component: nope!'));
       });
     });
 
@@ -80,7 +82,7 @@ describe('cli : facade : init', function(){
       });
 
       it('should show a message', function(){
-        expect(logSpy.log.args[0][0]).to.equal('Component "the-best-component" created'.green);
+        expect(logSpy.log.args[0][0]).to.equal(colors.green('Component "the-best-component" created'));
       });
     });
   });

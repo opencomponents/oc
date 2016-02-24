@@ -1,6 +1,6 @@
 'use strict';
 
-var colors = require('colors');
+var colors = require('colors/safe');
 var expect = require('chai').expect;
 var sinon = require('sinon');
 
@@ -35,7 +35,7 @@ describe('cli : facade : dev', function(){
       });
 
       it('should show an error', function(){
-        expect(logSpy.log.args[0][0]).to.equal('path is not valid!'.red);
+        expect(logSpy.log.args[0][0]).to.equal(colors.red('path is not valid!'));
       });
     });
 
@@ -53,7 +53,7 @@ describe('cli : facade : dev', function(){
       });
 
       it('should show an error', function(){
-        expect(logSpy.log.args[0][0]).to.equal('An error happened when initialising the dev runner: no components found in specified path'.red);
+        expect(logSpy.log.args[0][0]).to.equal(colors.red('An error happened when initialising the dev runner: no components found in specified path'));
       });
     });
   });
