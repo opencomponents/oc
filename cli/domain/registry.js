@@ -114,7 +114,7 @@ module.exports = function(opts){
 
           if(!!err.code && err.code === 'ECONNREFUSED'){
             err = 'Connection to registry has not been established';
-          } else if(!!err.code && err.code !== 'cli_version_not_valid'
+          } else if(err.code !== 'cli_version_not_valid'
             && err.code !== 'node_version_not_valid' && !!err.error){
             err = err.error;
           }
