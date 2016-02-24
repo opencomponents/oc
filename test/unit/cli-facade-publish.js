@@ -1,6 +1,6 @@
 'use strict';
 
-var colors = require('colors');
+var colors = require('colors/safe');
 var expect = require('chai').expect;
 var path = require('path');
 var sinon = require('sinon');
@@ -36,7 +36,7 @@ describe('cli : facade : publish', function(){
       });
 
       it('should show an error', function(){
-        expect(logSpy.log.args[0][0]).to.equal('an error!'.red);
+        expect(logSpy.log.args[0][0]).to.equal(colors.red('an error!'));
       });
     });
 
@@ -77,7 +77,7 @@ describe('cli : facade : publish', function(){
           });
 
           it('should show an error', function(){
-            expect(logSpy.log.args[1][0]).to.equal('An error happened when creating the package: the component is not valid'.red);
+            expect(logSpy.log.args[1][0]).to.equal(colors.red('An error happened when creating the package: the component is not valid'));
           });
         });
 
@@ -173,8 +173,8 @@ describe('cli : facade : publish', function(){
                 });
 
                 it('should show an error', function(){
-                  expect(logSpy.log.args[3][0]).to.equal(('An error happened when publishing the component: the version of used ' +
-                    'OC CLI is invalid. Try to upgrade OC CLI running ' + ('[sudo] npm i -g oc@1.23.X').blue).red);
+                  expect(logSpy.log.args[3][0]).to.equal(colors.red('An error happened when publishing the component: the version of used ' +
+                    'OC CLI is invalid. Try to upgrade OC CLI running ' + colors.blue('[sudo] npm i -g oc@1.23.X')));
                 });
               });
 
@@ -199,8 +199,8 @@ describe('cli : facade : publish', function(){
                 });
 
                 it('should show an error', function(){
-                  expect(logSpy.log.args[3][0]).to.equal(('An error happened when publishing the component: the version of used ' +
-                    'node is invalid. Try to upgrade node to version matching \'>=0.10.35\'').red);
+                  expect(logSpy.log.args[3][0]).to.equal(colors.red('An error happened when publishing the component: the version of used ' +
+                    'node is invalid. Try to upgrade node to version matching \'>=0.10.35\''));
                 });
               });
 
@@ -215,7 +215,7 @@ describe('cli : facade : publish', function(){
                 });
 
                 it('should prompt for credentials', function(){
-                  expect(logSpy.log.args[3][0]).to.equal(('Registry requires credentials.').yellow);
+                  expect(logSpy.log.args[3][0]).to.equal(colors.yellow('Registry requires credentials.'));
                 });
               });
 
@@ -233,7 +233,7 @@ describe('cli : facade : publish', function(){
                 });
 
                 it('should not prompt for credentials', function(){
-                  expect(logSpy.log.args[4][0]).to.equal(('Using specified credentials').green);
+                  expect(logSpy.log.args[4][0]).to.equal(colors.green('Using specified credentials'));
                 });
               });
 

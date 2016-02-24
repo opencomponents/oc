@@ -1,7 +1,7 @@
 'use strict';
 
 var async = require('async');
-var colors = require('colors');
+var colors = require('colors/safe');
 var format = require('stringformat');
 var path = require('path');
 var read = require('read');
@@ -16,118 +16,111 @@ module.exports = function(dependencies){
       local = dependencies.local,
       logger = dependencies.logger;
 
-  return function(opts, reallyDoneThisTime){
+  var log = {
+    err: function(msg){ return logger.log(colors.red(msg)); },
+    ok: function(msg){ return logger.log(colors.green(msg)); },
+    warn: function(msg){ return logger.log(colors.yellow(msg)); }
+  };
 
-    reallyDoneThisTime = reallyDoneThisTime || _.noop;
+  return function(opts, callback){
+
+    callback = callback || _.noop;
 
     var componentPath = opts.componentPath,
         packageDir = path.resolve(componentPath, '_package'),
         compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
 
-    var getCredentials = function(callback){
+    var getCredentials = function(cb){
       if(opts.username && opts.password){
-        logger.log(strings.messages.cli.USING_CREDS.green);
-        return callback(null, {
-          username: opts.username,
-          password: opts.password
-        });
+        log.ok(strings.messages.cli.USING_CREDS);
+        return cb(null, _.pick(opts, 'username', 'password'));
       }
 
-      logger.log(strings.messages.cli.ENTER_USERNAME.yellow);
+      log.warn(strings.messages.cli.ENTER_USERNAME);
 
       read({}, function(err, username){
-
-        logger.log(strings.messages.cli.ENTER_PASSWORD.yellow);
+        log.warn(strings.messages.cli.ENTER_PASSWORD);
 
         read({ silent: true }, function(err, password){
-          callback(null, { username: username, password: password});
+          cb(null, { username: username, password: password});
         });
       });
     };
 
-    var packageAndCompress = function(callback){
-
-      logger.log(format(strings.messages.cli.PACKAGING.yellow, packageDir.green));
+    var packageAndCompress = function(cb){
+      log.warn(format(strings.messages.cli.PACKAGING, packageDir));
 
       local.package(componentPath, function(err, component){
-        if(err){
-          return callback(err);
-        }
+        if(err){ return cb(err); }
 
-        logger.log(format(strings.messages.cli.COMPRESSING.yellow, compressedPackagePath.green));
+        log.warn(format(strings.messages.cli.COMPRESSING, compressedPackagePath));
 
         local.compress(packageDir, compressedPackagePath, function(err){
-          if(err){
-            return callback(err);
-          }
-
-          callback(null, component);
+          if(err){ return cb(err); }
+          cb(null, component);
         });
       });
     };
 
-    var putComponentToRegistry = function(options, callback){
-
-      logger.log(format(strings.messages.cli.PUBLISHING.yellow, options.route.green));
+    var putComponentToRegistry = function(options, cb){
+      log.warn(format(strings.messages.cli.PUBLISHING, options.route));
 
       registry.putComponent(options, function(err, res){
 
         if(!!err){
-
           if(err === 'Unauthorized'){
             if(!!options.username || !!options.password){
-              logger.log(format(strings.errors.cli.PUBLISHING_FAIL, strings.errors.cli.INVALID_CREDENTIALS).red);
-              return callback(err);
+              log.err(format(strings.errors.cli.PUBLISHING_FAIL, strings.errors.cli.INVALID_CREDENTIALS));
+              return cb(err);
             }
 
-            logger.log(strings.messages.cli.REGISTRY_CREDENTIALS_REQUIRED.yellow);
+            log.warn(strings.messages.cli.REGISTRY_CREDENTIALS_REQUIRED);
 
             return getCredentials(function(err, credentials){
-              putComponentToRegistry(_.extend(options, {
-                username: credentials.username,
-                password: credentials.password
-              }), callback);
+              putComponentToRegistry(_.extend(options, credentials), cb);
             });
 
           } else if(err.code === 'cli_version_not_valid') {
             var upgradeCommand = format(strings.commands.cli.UPGRADE, err.details.suggestedVersion),
-                errorDetails = format(strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE, upgradeCommand.blue);
-            logger.log(format(strings.errors.cli.PUBLISHING_FAIL, errorDetails).red);
-            return callback();
+                errorDetails = format(strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE, colors.blue(upgradeCommand));
+
+            log.err(format(strings.errors.cli.PUBLISHING_FAIL, errorDetails));
+            return cb();
           } else if(err.code === 'node_version_not_valid') {
             var details = format(strings.errors.cli.NODE_CLI_VERSION_NEEDS_UPGRADE, err.details.suggestedVersion);
-            logger.log(format(strings.errors.cli.PUBLISHING_FAIL, details).red);
-            return callback();
+
+            log.err(format(strings.errors.cli.PUBLISHING_FAIL, details));
+            return cb();
           } else {
-            logger.log(format(strings.errors.cli.PUBLISHING_FAIL, err).red);
-            return callback();
+            log.err(format(strings.errors.cli.PUBLISHING_FAIL, err));
+            return cb();
           }
         } else {
-          logger.log(format(strings.messages.cli.PUBLISHED, options.route.green).yellow);
-          return callback();
+          log.ok(format(strings.messages.cli.PUBLISHED, options.route.green));
+          return cb();
         }
       });
     };
 
     registry.get(function(err, registryLocations){
       if(err){
-        return logger.log(err.red);
+        return log.err(err);
       }
 
       packageAndCompress(function(err, component){
         if(err){
-          return logger.log(format(strings.errors.cli.PACKAGE_CREATION_FAIL, err).red);
+          return log.err(format(strings.errors.cli.PACKAGE_CREATION_FAIL, err));
         }
 
-        async.eachSeries(registryLocations, function(l, done){
+        async.eachSeries(registryLocations, function(l, next){
           var registryUrl = l,
               registryLength = registryUrl.length,
               registryNormalised = registryUrl.slice(registryLength - 1) === '/' ? registryUrl.slice(0, registryLength - 1) : registryUrl,
               componentRoute = format('{0}/{1}/{2}', registryNormalised, component.name, component.version);
 
-          putComponentToRegistry({ route: componentRoute, path: compressedPackagePath}, done);
+          putComponentToRegistry({ route: componentRoute, path: compressedPackagePath}, next);
         }, function(err){
-          local.cleanup(compressedPackagePath, reallyDoneThisTime);
+          local.cleanup(compressedPackagePath, callback);
         });
       });
     });

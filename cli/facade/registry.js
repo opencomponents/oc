@@ -1,6 +1,6 @@
 'use strict';
 
-var colors = require('colors');
+var colors = require('colors/safe');
 var format = require('stringformat');
 var _ = require('underscore');
 
@@ -11,30 +11,36 @@ module.exports = function(dependencies){
   var registry = dependencies.registry,
       logger = dependencies.logger;
 
+  var log = {
+    err: function(msg){ return logger.log(colors.red(msg)); },
+    ok: function(msg){ return logger.log(colors.green(msg)); },
+    warn: function(msg){ return logger.log(colors.yellow(msg)); }
+  };
+
   return function(opts){
     if(opts.command === 'ls'){
       registry.get(function(err, registries){
         if(err){
-          return logger.log(format(strings.errors.generic, err).red);
+          return log.err(format(strings.errors.generic, err));
         } else {
-          logger.log(strings.messages.cli.REGISTRY_LIST.yellow);
+          log.warn(strings.messages.cli.REGISTRY_LIST);
 
           if(registries.length === 0){
-            logger.log(strings.errors.cli.REGISTRY_NOT_FOUND.red);
+            log.err(strings.errors.cli.REGISTRY_NOT_FOUND);
           }
 
           _.forEach(registries, function(registryLocation){
-            logger.log(registryLocation.green);       
+            log.ok(registryLocation);       
           });
         }
       });
     } else if(opts.command === 'add'){
       registry.add(opts.parameter, function(err, res){
-        return logger.log(err ? err.red : strings.messages.cli.REGISTRY_ADDED.green);
+        return err ? log.err(err) : log.ok(strings.messages.cli.REGISTRY_ADDED);
       });
     } else if(opts.command === 'remove'){
       registry.remove(opts.parameter, function(err, res){
-        return logger.log(err ? err.red : strings.messages.cli.REGISTRY_REMOVED.green);
+        return err ? log.err(err) : log.ok(strings.messages.cli.REGISTRY_REMOVED);
       });
     }
   };

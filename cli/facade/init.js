@@ -1,6 +1,6 @@
 'use strict';
 
-var colors = require('colors');
+var colors = require('colors/safe');
 var format = require('stringformat');
 
 var strings = require('../../resources/index');
@@ -28,9 +28,9 @@ module.exports = function(dependencies){
           err = errors.TEMPLATE_TYPE_NOT_VALID;
         }
 
-        logger.log(format(errors.INIT_FAIL.red, err));
+        logger.log(format(colors.red(errors.INIT_FAIL), err));
       } else {
-        logger.log(format(strings.messages.cli.COMPONENT_INITED.green, componentName));
+        logger.log(format(colors.green(strings.messages.cli.COMPONENT_INITED), componentName));
       }
 
       callback(err, componentName);

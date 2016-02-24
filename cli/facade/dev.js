@@ -1,7 +1,7 @@
 'use strict';
 
 var async = require('async');
-var colors = require('colors');
+var colors = require('colors/safe');
 var format = require('stringformat');
 var path = require('path');
 var _ = require('underscore');
@@ -18,6 +18,12 @@ module.exports = function(dependencies){
   var local = dependencies.local,
       logger = dependencies.logger;
 
+  var log = {
+    err: function(msg){ return logger.log(colors.red(msg)); },
+    ok: function(msg){ return logger.log(colors.green(msg)); },
+    warn: function(msg, noNewLine){ return logger[!!noNewLine ? 'logNoNewLine' : 'log'](colors.yellow(msg)); }
+  };
+
   return function(opts){
 
     var componentsDir = opts.dirName,
@@ -29,10 +35,10 @@ module.exports = function(dependencies){
     var installMissingDeps = function(missing, cb){
       if(_.isEmpty(missing)){ return cb(); }
 
-      logger.log(format(strings.messages.cli.INSTALLING_DEPS, missing.join(', ')).yellow);
+      log.warn(format(strings.messages.cli.INSTALLING_DEPS, missing.join(', ')));
       npmInstaller(missing, componentsDir, function(err, result){
         if(!!err){
-          logger.log(err.toString().red);
+          log.err(err.toString());
           throw err;
         }
         cb();
@@ -42,9 +48,9 @@ module.exports = function(dependencies){
     var watchForChanges = function(components, callback){
       watch(components, componentsDir, function(err, changedFile){
         if(!!err){
-          logger.log(format(strings.errors.generic.red, err));
+          log.err(format(strings.errors.generic, err));
         } else {
-          logger.log(format(strings.messages.cli.CHANGES_DETECTED, changedFile).yellow);
+          log.warn(format(strings.messages.cli.CHANGES_DETECTED, changedFile));
           callback(components);
         }
       });
@@ -57,7 +63,7 @@ module.exports = function(dependencies){
 
       if(!packaging){
         packaging = true;
-        logger.logNoNewLine(strings.messages.cli.PACKAGING_COMPONENTS.yellow);
+        log.warn(strings.messages.cli.PACKAGING_COMPONENTS, true);
 
         async.eachSeries(componentsDirs, function(dir, cb){
           local.package(dir, false, function(err){
@@ -67,15 +73,15 @@ module.exports = function(dependencies){
         }, function(error){
           if(!!error){
             var errorDescription = ((error instanceof SyntaxError) || !!error.message) ? error.message : error;
-            logger.log(format(strings.errors.cli.PACKAGING_FAIL, componentsDirs[i], errorDescription.red));
-            logger.log(strings.messages.cli.RETRYING_10_SECONDS.yellow);
+            log.err(format(strings.errors.cli.PACKAGING_FAIL, componentsDirs[i], errorDescription));
+            log.warn(strings.messages.cli.RETRYING_10_SECONDS);
             setTimeout(function(){
               packaging = false;
               packageComponents(componentsDirs);
             }, 10000);
           } else {
             packaging = false;
-            logger.log('OK'.green);
+            log.ok('OK');
             callback();
           }
         });
@@ -83,17 +89,17 @@ module.exports = function(dependencies){
     };
 
     var loadDependencies = function(components, cb){
-      logger.logNoNewLine(strings.messages.cli.CHECKING_DEPENDENCIES.yellow);
+      log.warn(strings.messages.cli.CHECKING_DEPENDENCIES, true);
 
       var dependencies = getComponentsDependencies(components),
           missing = getMissingDeps(dependencies, components);
 
       if(_.isEmpty(missing)){
-        logger.log('OK'.green);
+        log.ok('OK');
         return cb(dependencies);
       }
 
-      logger.log('FAIL'.red);
+      log.err('FAIL');
       installMissingDeps(missing, function(){
         loadDependencies(components, cb);
       });
@@ -103,30 +109,30 @@ module.exports = function(dependencies){
       var mockedPlugins = getMockedPlugins(logger);
 
       mockedPlugins.forEach(function(p){
-          registry.register(p);
+        registry.register(p);
       });
 
       registry.on('request', function(data){
         if(data.errorCode === 'PLUGIN_MISSING_FROM_REGISTRY'){
-          logger.log(format(strings.errors.cli.PLUGIN_MISSING_FROM_REGISTRY, data.errorDetails, strings.commands.cli.MOCK_PLUGIN.blue).red);
+          log.err(format(strings.errors.cli.PLUGIN_MISSING_FROM_REGISTRY, data.errorDetails, colors.blue(strings.commands.cli.MOCK_PLUGIN)));
         } else if(data.errorCode === 'PLUGIN_MISSING_FROM_COMPONENT'){
-          logger.log(format(strings.errors.cli.PLUGIN_MISSING_FROM_COMPONENT, data.errorDetails).red);
+          log.err(format(strings.errors.cli.PLUGIN_MISSING_FROM_COMPONENT, data.errorDetails));
         }
       });
     };
 
-    logger.logNoNewLine(strings.messages.cli.SCANNING_COMPONENTS.yellow);
+    log.warn(strings.messages.cli.SCANNING_COMPONENTS, true);
     local.getComponentsByDir(componentsDir, function(err, components){
 
       if(err){
-        return logger.log(err.red);
+        return log.err(err);
       } else if(_.isEmpty(components)){
-        return logger.log(format(errors.DEV_FAIL, errors.COMPONENTS_NOT_FOUND).red);
+        return log.err(format(errors.DEV_FAIL, errors.COMPONENTS_NOT_FOUND));
       }
 
-      logger.log('OK'.green);
+      log.ok('OK');
       _.forEach(components, function(component){
-        logger.log('├── '.green + component);
+        logger.log(colors.green('├── ') + component);
       });
 
       loadDependencies(components, function(dependencies){
@@ -145,14 +151,14 @@ module.exports = function(dependencies){
 
           registerPlugins(registry);
 
-          logger.logNoNewLine(format(strings.messages.cli.REGISTRY_STARTING, baseUrl).yellow);
+          log.warn(format(strings.messages.cli.REGISTRY_STARTING, baseUrl));
           registry.start(function(err, app){
 
             if(err){
               if(err.code === 'EADDRINUSE'){
-                return logger.log(format(strings.errors.cli.PORT_IS_BUSY, port).red);
+                return log.err(format(strings.errors.cli.PORT_IS_BUSY, port));
               } else {
-                logger.log(err.red);
+                log.err(err);
               }
             }
 
