@@ -24,7 +24,9 @@ module.exports = function(dependencies){
     warn: function(msg, noNewLine){ return logger[!!noNewLine ? 'logNoNewLine' : 'log'](colors.yellow(msg)); }
   };
 
-  return function(opts){
+  return function(opts, callback){
+
+    callback = callback || _.noop;
 
     var componentsDir = opts.dirName,
         port = opts.port || 3000,
@@ -45,19 +47,19 @@ module.exports = function(dependencies){
       });
     };
 
-    var watchForChanges = function(components, callback){
+    var watchForChanges = function(components, cb){
       watch(components, componentsDir, function(err, changedFile){
         if(!!err){
           log.err(format(strings.errors.generic, err));
         } else {
           log.warn(format(strings.messages.cli.CHANGES_DETECTED, changedFile));
-          callback(components);
+          cb(components);
         }
       });
     };
 
-    var packageComponents = function(componentsDirs, callback){
-      callback = _.isFunction(callback) ? callback : _.noop;
+    var packageComponents = function(componentsDirs, cb){
+      cb = _.isFunction(cb) ? cb : _.noop;
 
       var i = 0;
 
@@ -82,7 +84,7 @@ module.exports = function(dependencies){
           } else {
             packaging = false;
             log.ok('OK');
-            callback();
+            cb();
           }
         });
       }
@@ -125,9 +127,12 @@ module.exports = function(dependencies){
     local.getComponentsByDir(componentsDir, function(err, components){
 
       if(err){
+        callback(err);
         return log.err(err);
       } else if(_.isEmpty(components)){
-        return log.err(format(errors.DEV_FAIL, errors.COMPONENTS_NOT_FOUND));
+        err = format(errors.DEV_FAIL, errors.COMPONENTS_NOT_FOUND);
+        callback(err);
+        return log.err(err);        
       }
 
       log.ok('OK');
@@ -156,13 +161,14 @@ module.exports = function(dependencies){
 
             if(err){
               if(err.code === 'EADDRINUSE'){
-                return log.err(format(strings.errors.cli.PORT_IS_BUSY, port));
-              } else {
-                log.err(err);
+                err = format(strings.errors.cli.PORT_IS_BUSY, port);
               }
+              callback(err);
+              return log.err(err);
             }
 
             watchForChanges(components, packageComponents);
+            callback(null, registry);
           });
         });
       });
