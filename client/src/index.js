@@ -36,7 +36,11 @@ module.exports = function(conf){
   };
 
   this.renderComponents = function(components, options, callback){
-    if(_.isFunction(options)){ callback = options; }
+    if(_.isFunction(options)){ 
+      callback = options;
+      options = {};
+    }
+    
     renderComponents(components, options, callback);
   };
 
