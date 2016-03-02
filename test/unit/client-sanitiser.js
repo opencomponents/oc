@@ -23,7 +23,7 @@ describe('client : sanitiser', function(){
 
       var result = sanitiser.sanitiseGlobalRenderOptions({}, {});
 
-      it('set oc-client user-agent', function(){
+      it('should set oc-client user-agent', function(){
         expect(result.headers['user-agent']).to.equal('oc-client-1.2.3/v0.10.40-darwin-x64');
       });
     });
