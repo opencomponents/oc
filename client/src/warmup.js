@@ -12,7 +12,7 @@ module.exports = function(config, renderComponents){
     cb = cb || _.noop;
 
     if(!config || !config.registries || !config.registries.serverRendering){
-      return cb();
+      return cb(null, {});
     }
 
     config.components = config.components || {};
@@ -22,7 +22,7 @@ module.exports = function(config, renderComponents){
       config.registries.serverRendering = config.registries.serverRendering + '/';
     }
 
-    options.timeout = options.timeout || 20;
+    options.timeout = options.timeout || 5;
     options.headers = options.headers || {};
 
     var urls = [],
@@ -40,7 +40,7 @@ module.exports = function(config, renderComponents){
         timeout: options.timeout
       }, function(err, componentInfo){
         if(err){
-          return cb(format('Error warming up oc-client: request to {0} failed ({1})', url, err));
+          return cb(new Error(format('Error warming up oc-client: request to {0} failed ({1})', url, err)));
         }
 
         var parameters = componentInfo.oc.parameters,
