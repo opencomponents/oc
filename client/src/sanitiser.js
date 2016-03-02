@@ -1,5 +1,8 @@
 'use strict';
 
+var format = require('stringformat');
+
+var packageInfo = require('../package');
 var _ = require('./utils/helpers');
 
 var lowerHeaderKeys = function(headers){
@@ -26,9 +29,18 @@ module.exports = {
       options = {};
     }
 
+    var defaultUserAgent = format('oc-client-{0}/{1}-{2}-{3}',
+                                  packageInfo.version,
+                                  process.version,
+                                  process.platform,
+                                  process.arch);
+
     options = options || {};
+    
     options.headers = lowerHeaderKeys(options.headers);
     options.headers.accept = 'application/vnd.oc.unrendered+json';
+    options.headers['user-agent'] = options.headers['user-agent'] || defaultUserAgent;
+
     options.timeout = options.timeout || 5;
     options.container = (options.container === true) ?  true : false;
     options.renderInfo = (options.renderInfo === false) ? false : true;
