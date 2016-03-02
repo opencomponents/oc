@@ -4,6 +4,7 @@ var ComponentsRenderer = require('./components-renderer');
 var sanitiser = require('./sanitiser');
 var TemplateRenderer = require('./template-renderer');
 var validator = require('./validator');
+var Warmup = require('./warmup');
 var _ = require('./utils/helpers');
 
 module.exports = function(conf){
@@ -20,7 +21,10 @@ module.exports = function(conf){
   this.renderTemplate = renderTemplate;
 
   this.renderComponent = function(componentName, options, callback){
-    if(_.isFunction(options)){ callback = options; }
+    if(_.isFunction(options)){ 
+      callback = options;
+      options = {};
+    }
 
     renderComponents([{
       name: componentName,
@@ -34,5 +38,10 @@ module.exports = function(conf){
   this.renderComponents = function(components, options, callback){
     if(_.isFunction(options)){ callback = options; }
     renderComponents(components, options, callback);
+  };
+
+  this.init = function(options, callback){
+    var warmup = new Warmup(config, this.renderComponents);
+    return warmup(options, callback);
   };
 };
