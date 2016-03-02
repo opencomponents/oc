@@ -18,34 +18,33 @@ module.exports = function(conf){
     throw new Error(validationResult.error);
   }
 
-  this.renderTemplate = renderTemplate;
+  return {
+    init: function(options, callback){
+      var warmup = new Warmup(config, renderComponents);
+      return warmup(options, callback);
+    },
+    renderComponent: function(componentName, options, callback){
+      if(_.isFunction(options)){ 
+        callback = options;
+        options = {};
+      }
 
-  this.renderComponent = function(componentName, options, callback){
-    if(_.isFunction(options)){ 
-      callback = options;
-      options = {};
-    }
-
-    renderComponents([{
-      name: componentName,
-      version: options.version,
-      parameters: options.parameters || options.params
-    }], options, function(errors, results){
-      callback(errors[0], results[0]);
-    });
-  };
-
-  this.renderComponents = function(components, options, callback){
-    if(_.isFunction(options)){ 
-      callback = options;
-      options = {};
-    }
-    
-    renderComponents(components, options, callback);
-  };
-
-  this.init = function(options, callback){
-    var warmup = new Warmup(config, this.renderComponents);
-    return warmup(options, callback);
+      renderComponents([{
+        name: componentName,
+        version: options.version,
+        parameters: options.parameters || options.params
+      }], options, function(errors, results){
+        callback(errors[0], results[0]);
+      });
+    },
+    renderComponents: function(components, options, callback){
+      if(_.isFunction(options)){ 
+        callback = options;
+        options = {};
+      }
+      
+      renderComponents(components, options, callback);
+    },
+    renderTemplate: renderTemplate
   };
 };

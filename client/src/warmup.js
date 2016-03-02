@@ -9,6 +9,8 @@ var _ = require('./utils/helpers');
 module.exports = function(config, renderComponents){
   return function(options, cb){
 
+    cb = cb || _.noop;
+
     if(!config || !config.registries || !config.registries.serverRendering){
       return cb();
     }
@@ -22,7 +24,6 @@ module.exports = function(config, renderComponents){
 
     options.timeout = options.timeout || 20;
     options.headers = options.headers || {};
-    options.headers['user-agent'] = 'oc-client/' + packageInfo.version;
 
     var urls = [],
         toWarmup = [];
