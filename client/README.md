@@ -44,6 +44,38 @@ var client = new Client({
 });
 ```
 
+### Client#init(options, callback)
+
+It will warmup the components that have been declared during the instantiation. Options:
+
+|Parameter|type|mandatory|description|
+|---------|----|---------|-----------|
+|`headers`|`object`|no|An object containing all the headers that must be forwarded to the components' requests|
+|`timeout`|`number` (seconds)|no|Default 5. Maximum amount of time to wait during requests|
+
+Example:
+
+```js
+var Client = require('oc-client');
+
+var client = new Client({
+  registries: { serverRendering: 'https://myregistry.com/'},
+  components: {
+    hello: '1.2.3'
+  }
+});
+
+client.init({
+  headers { 'accept-language': 'en-US'}
+}, function(error, responses){
+  console.log(error);
+  // => something like null or Error making request to registry
+
+  console.log(responses);
+  // => something like { hello: '<b>hello</b>'}
+});
+```
+
 ### Client#renderComponent(componentName [, options], callback)
 
 It will resolve a component href, will make a request to the registry, and will render the component. The callback will contain an error (if present) and rendered html.
