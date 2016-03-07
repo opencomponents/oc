@@ -43,7 +43,7 @@ module.exports = function(config, renderTemplate){
               hasErrors = true;
             }
 
-            errors.push(action.result.error);
+            errors.push(action.result.error || null);
             results.push(action.result.html);
           });
 
