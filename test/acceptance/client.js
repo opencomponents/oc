@@ -207,7 +207,7 @@ describe('The node.js OC client', function(){
         });
 
         it('should contain the error details', function(){
-          expect(error.toString()).to.eql('Error: Server-side rendering failed: Error: connect ECONNREFUSED when connecting to http://localhost:1234 (500)');
+          expect(error.toString()).to.match(/Error\: Server-side rendering failed: Error: (.*?) when connecting to http\:\/\/localhost\:1234 \(500\)/g);
         });
       });
 
@@ -240,7 +240,7 @@ describe('The node.js OC client', function(){
         });
 
         it('should contain the error details', function(){
-          expect(error.toString()).to.equal('Error: Server-side rendering failed: Error: connect ECONNREFUSED when connecting to http://localhost:1234 (500)');
+          expect(error.toString()).to.match(/Error\: Server-side rendering failed: Error: (.*?) when connecting to http\:\/\/localhost\:1234 \(500\)/g);
         });
       });
 
@@ -279,7 +279,7 @@ describe('The node.js OC client', function(){
         });
 
         it('should contain the error details', function(){
-          expect(error.toString()).to.eql('Error: Server-side rendering failed: Error: connect ECONNREFUSED when connecting to http://localhost:1234 (500)');
+          expect(error.toString()).to.match(/Error\: Server-side rendering failed: Error: (.*?) when connecting to http\:\/\/localhost\:1234 \(500\)/g);
         });
       });
 
@@ -313,7 +313,7 @@ describe('The node.js OC client', function(){
         });
 
         it('should contain the error details', function(){
-          expect(error.toString()).to.eql('Error: Server-side rendering failed: Error: connect ECONNREFUSED when connecting to http://localhost:1234 (500)');
+          expect(error.toString()).to.match(/Error\: Server-side rendering failed: Error: (.*?) when connecting to http\:\/\/localhost\:1234 \(500\)/g);
         });
       });
     });
