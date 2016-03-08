@@ -1,5 +1,6 @@
 'use strict';
 
+var format = require('stringformat');
 var request = require('minimal-request');
 
 var settings = require('./settings');
@@ -50,8 +51,12 @@ module.exports = function(config){
     makePostRequest(serverRendering.components, options, function(error, responses){
       if(!!error || !responses || _.isEmpty(responses)){
         responses = [];
+        var errorDetails = !!error ? error.toString() : settings.emptyResponse;
         _.each(serverRendering.components, function(){
-          responses.push({ status: -1 });
+          responses.push({
+            response: { error: format(settings.connectionError, errorDetails, config.registries.serverRendering) },
+            status: 500
+          });
         });
       }
 
@@ -60,7 +65,8 @@ module.exports = function(config){
 
         if(action.render === 'server'){
           if(response.status !== 200){
-            action.result.error = serverRenderingFail;
+            var errorDetails = format('{0} ({1})', (response.response && response.response.error) || '', response.status);
+            action.result.error = new Error(format(serverRenderingFail, errorDetails));
             if(!!options.disableFailoverRendering){
               action.result.html = '';
               action.done = true;

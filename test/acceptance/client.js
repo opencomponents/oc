@@ -137,7 +137,7 @@ describe('The node.js OC client', function(){
         });
 
         it('should return an error for the component with error', function(){
-          expect($errs[0]).to.not.be.null;
+          expect($errs[0].toString()).to.be.equal('Error: Server-side rendering failed: Component "hello-world-i-dont-exist" not found on local repository (404)');
           expect($errs[1]).to.be.null;
         });
       });
@@ -207,7 +207,7 @@ describe('The node.js OC client', function(){
         });
 
         it('should contain the error details', function(){
-          expect(error).to.eql('Server-side rendering failed');
+          expect(error.toString()).to.match(/Error\: Server-side rendering failed: Error: (.*?) when connecting to http\:\/\/localhost\:1234 \(500\)/g);
         });
       });
 
@@ -240,7 +240,7 @@ describe('The node.js OC client', function(){
         });
 
         it('should contain the error details', function(){
-          expect(error).to.equal('Server-side rendering failed');
+          expect(error.toString()).to.match(/Error\: Server-side rendering failed: Error: (.*?) when connecting to http\:\/\/localhost\:1234 \(500\)/g);
         });
       });
 
@@ -279,7 +279,7 @@ describe('The node.js OC client', function(){
         });
 
         it('should contain the error details', function(){
-          expect(error).to.eql('Server-side rendering failed');
+          expect(error.toString()).to.match(/Error\: Server-side rendering failed: Error: (.*?) when connecting to http\:\/\/localhost\:1234 \(500\)/g);
         });
       });
 
@@ -313,7 +313,7 @@ describe('The node.js OC client', function(){
         });
 
         it('should contain the error details', function(){
-          expect(error).to.eql('Server-side rendering failed');
+          expect(error.toString()).to.match(/Error\: Server-side rendering failed: Error: (.*?) when connecting to http\:\/\/localhost\:1234 \(500\)/g);
         });
       });
     });
@@ -321,8 +321,10 @@ describe('The node.js OC client', function(){
     describe('when server-side rendering an existing component linked to a responsive registry', function(){
 
       describe('when container option = true', function(){
+        var error;
         before(function(done){
           client.renderComponent('hello-world', { container: true }, function(err, html){
+            error = err;
             $component = cheerio.load(html)('oc-component');
             done();
           });
@@ -343,6 +345,10 @@ describe('The node.js OC client', function(){
 
         it('should contain the component version', function(){
           expect($component.data('version')).to.equal('1.0.0');
+        });
+
+        it('should contain a null error', function(){
+          expect(error).to.be.null;
         });
       });
 
