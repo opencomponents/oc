@@ -35,13 +35,23 @@ module.exports = function(config, renderTemplate){
       renderComponents(toDo, options, function(){
         processClientReponses(toDo, options, function(){
           var errors = [], 
-              results = [];
+              results = [],
+              hasErrors = false;
         
           _.each(toDo, function(action){
-            errors.push(action.result.error);
+            if(action.result.error) {
+              hasErrors = true;
+            }
+
+            errors.push(action.result.error || null);
             results.push(action.result.html);
           });
-          callback(errors, results);
+
+          if(hasErrors) {
+            callback(errors, results);
+          } else {
+            callback(null, results);
+          }
         });
       });
     });

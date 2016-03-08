@@ -34,7 +34,11 @@ module.exports = function(conf){
         version: options.version,
         parameters: options.parameters || options.params
       }], options, function(errors, results){
-        callback(errors[0], results[0]);
+        if(errors) {
+          return callback(errors[0], results[0]);
+        }
+
+        callback(null, results[0]);
       });
     },
     renderComponents: function(components, options, callback){
