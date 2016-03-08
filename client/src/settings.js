@@ -6,5 +6,5 @@ module.exports = {
   genericError: 'Internal client error',
   registriesEmpty: 'registries must contain at least one endpoint',
   registriesIsNotObject: 'registries must be an object',
-  serverSideRenderingFail: 'Server-side rendering failed'
+  serverSideRenderingFail: 'Server-side rendering failed: {0}'
 };

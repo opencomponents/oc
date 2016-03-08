@@ -1,5 +1,7 @@
 'use strict';
 
+var format = require('stringformat');
+
 var GetCompiledTemplate = require('./get-compiled-template');
 var settings = require('./settings');
 var _ = require('./utils/helpers');
@@ -48,7 +50,8 @@ module.exports = function(cache, renderTemplate){
     _.eachAsync(toRender, function(action, next){
       fetchTemplateAndRender(action.apiResponse, options, function(err, html){
         if(!!err){
-          action.result.error = settings.serverRenderingFail;
+          var errorDetails = format('{0} ({1})', (err.response && err.response.error), err.status);
+          action.result.error = new Error(format(settings.serverRenderingFail, errorDetails));
           if(!!options.disableFailoverRendering){
             action.result.html = '';
             action.done = true;
