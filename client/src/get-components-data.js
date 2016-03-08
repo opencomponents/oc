@@ -51,9 +51,10 @@ module.exports = function(config){
     makePostRequest(serverRendering.components, options, function(error, responses){
       if(!!error || !responses || _.isEmpty(responses)){
         responses = [];
+        var errorDetails = !!error ? error.toString() : settings.emptyResponse;
         _.each(serverRendering.components, function(){
           responses.push({
-            response: { error: (!!error ? error.toString() : 'Empty response') + ' when connecting to ' + config.registries.serverRendering },
+            response: { error: format(settings.connectionError, errorDetails, config.registries.serverRendering) },
             status: 500
           });
         });
