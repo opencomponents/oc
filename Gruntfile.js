@@ -25,7 +25,14 @@ module.exports = function(grunt){
   grunt.registerTask('test-local-silent', ['jshint:all', 'mochaTest:silent', 'karma:local']);
   grunt.registerTask('test', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance']);
   grunt.registerTask('test-with-sauce', ['test', 'sauce']);
-  grunt.registerTask('git-stage', ['gitadd', 'gitcommit:version', 'gittag:addtag']);
+  grunt.registerTask('git-stage', [
+    'gitadd:versionFiles',
+    'gitcommit:version',
+    'gittag:addtag',
+    'githubChange',
+    'gitadd:changelog',
+    'gitcommit:changelog'
+  ]);
 
   grunt.registerTask('build', 'Builds and minifies the oc-client component', customTasks.build(grunt, taskObject));
   grunt.registerTask('generate-cli-doc', 'Automatically updates the cli.md file', customTasks.generateCliDoc);
