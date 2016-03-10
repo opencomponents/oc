@@ -53,7 +53,7 @@ CoC](http://www.rust-lang.org/conduct.html).
   excludes people in socially marginalized groups.
 * Private harassment is also unacceptable. No matter who you are, if
   you feel you have been or are being harassed or made uncomfortable
-  by a community member, please contact one of the contributors with a capture (log, photo, email) of
+  by a community member, please contact us at oc@opentable.com with a capture (log, photo, email) of
   the harassment if possible.  Whether you're a regular contributor or
   a newcomer, we care about making this community a safe place for you
   and we've got your back.

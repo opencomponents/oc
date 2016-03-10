@@ -19,19 +19,17 @@ Disclaimer: This project is still under heavy development and the API is likely 
 
 # Index
 1. [Introduction](#introduction)
-1. [Components](#components)
+2. [Components](#components)
   * [Creation](#creation)
   * [Editing, debugging, testing](#editing-debugging-testing)
   * [Publishing to a registry](#publishing-to-a-registry)
-1. [Consuming components](#consuming-components)
-  * [Server-side rendering via rest API](#server-side-rendering-via-rest-api)
-  * [Server-side rendering with node.js](#server-side-rendering-with-nodejs)
-  * [Server-side rendering with Ruby](#server-side-rendering-with-ruby)
+3. [Consuming components](#consuming-components)
   * [Client-side rendering](#client-side-rendering)
-  * [Server-side rendering with client-side failover](#server-side-rendering-with-client-side-failover)
-1. [Install the cli](#install-the-cli)
-1. [Setup a library](#setup-a-library)
-1. [Setup a registry](#setup-a-registry)
+  * [Server-side rendering](#server-side-rendering)
+4. [Install the cli](#install-the-cli)
+5. [Setup a library](#setup-a-library)
+6. [Setup a registry](#setup-a-registry)
+7. [Contacts](#contacts)
 
 # Introduction
 OpenComponents involves two parts:
@@ -104,7 +102,23 @@ You don't need node.js to consume components on the server-side. The registry ca
 
 When published, components are immutable and semantic versioned. The registry allows consumers to get any version of the component: the latest patch, or minor version, etc.
 
-## Server-side rendering via rest API
+## Client-side rendering
+
+To make this happen, your components registry has to be publicly available.
+This is all you need:
+```html
+<html>
+  <head></head>
+  <body>
+    <oc-component href="http://my-components-registry.mydomain.com/hello-world/1.X.X"></oc-component>
+    <script src="http://my-components-registry.mydomain.com/oc-client/client.js" />
+  </body>
+</html>
+```
+
+For more information about client-side operations, look at [this page](docs/browser-client.md).
+
+## Server-side rendering
 
 You can get rendered components via the registry rest api.
 ```sh
@@ -120,7 +134,7 @@ curl http://my-components-registry.mydomain.com/hello-world
 }
 ```
 
-In case you would like to do the rendering yourself, try:
+Nevertheless, for improving caching and response size, when using the `node.js` client or any language capable of executing server-side javascript the request will look more like:
 ```sh
  curl http://my-components-registry.mydomain.com/hello-world/~1.0.0 -H Accept:application/vnd.oc.unrendered+json
 
@@ -145,78 +159,10 @@ In this case you get the compiled view + the data, and you can do the rendering,
 
 When retrieving multiple components, a [batch POST endpoint](docs/registry-post-route.md) allows to make a single request to the API.
 
-## Server-side rendering with node.js
-
-First install the node.js client in your project:
-```sh
-npm install oc-client --save
-```
-
-Then, this is what you would do with a simple node.js http app:
-```js
-var http = require('http'),
-    Client = require('oc-client'),
-    client = new Client({
-      registries: {
-        serverRendering: 'http://oc-registry.intranet.com/',
-        clientRendering: 'https://components.mydomain.com' },
-      components: {'hello-world': '~1.0.0'}
-    });
-
-http.createServer(function (req, res) {
-  client.renderComponent('hello-world', function(err, html){
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.end('<html><head></head><body>' + html + '</body></html>');
-  });
-}).listen(4000);
-```
-Open `http://localhost:4000/` and enjoy!
-
-More docs about the node.js client [here](client/README.md).
-
-## Server-side rendering with Ruby
-
+* [Node.js library](client/README.md)
 * [Ruby library](https://github.com/opentable/ruby-oc)
 * [Rails plugin](https://github.com/opentable/opencomponents-rails)
 * [Sinatra plugin](https://github.com/opentable/sinatra-opencomponents)
-
-## Client-side rendering
-
-To make this happen, your components registry has to be publicly available.
-This is all you need:
-```html
-<html>
-  <head></head>
-  <body>
-    <oc-component href="http://my-components-registry.mydomain.com/hello-world/1.X.X"></oc-component>
-    <script src="http://my-components-registry.mydomain.com/oc-client/client.js" />
-  </body>
-</html>
-```
-
-For more information about client-side operations, look at [this page](docs/browser-client.md).
-
-## Server-side rendering with client-side failover
-
-When the registry is slow or returns errors while doing server-side rendering, you may want to unblock the server-side rendering and postpone it to make it happen on the client-side after the DOM is loaded. If your registry is publicly available and you use the node.js client, this is done automatically.
-When on the client-side, a retry rendering attempt via Javascript will happen every ten seconds until the component is rendered.
-
-If for some reasons you want to avoid client-side rendering when using the node.js client, you can do:
-```js
-var http = require('http'),
-    oc = require('oc'),
-    client = new oc.Client({
-      ...
-      disableFailoverRendering: true
-    });
-
-http.createServer(function (req, res) {
-  client.renderComponent('hello-world', function(err, html){
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.end('<html><head></head><body>' + html + '</body></html>');
-  });
-}).listen(4000);
-```
 
 # Install the cli
 
@@ -275,13 +221,15 @@ registry.start(function(err, app){
 
 For the registry configuration's documentation, [look at this page](docs/registry.md).
 
-# License
+# Contacts
 
-MIT
+We appreciate contributions, in terms of feedbacks, code, anything really. If you use OC in productions, please let us know (but there is no obligation on that as OC is MIT licensed).
 
-# Contributors
-
-If you wish to contribute, check the [contributing guidelines](CONTRIBUTING.md).
+* [contributing guidelines](CONTRIBUTING.md)
+* [code of conduct](CONTRIBUTING.md#code-of-conduct)
+* [troubleshooting](CONTRIBUTING.md#troubleshooting)
+* [gitter chat](https://gitter.im/opentable/oc)
+* oc@opentable.com
 
 Maintainer:
 * [@matteofigus](https://github.com/matteofigus)
@@ -297,3 +245,7 @@ Contributors:
 * [@stevejhiggs](https://github.com/stevejhiggs)
 * [@todd](https://github.com/todd)
 * [@tpgmartin](https://github.com/tpgmartin)
+
+# License
+
+MIT
