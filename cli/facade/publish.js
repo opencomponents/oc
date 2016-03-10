@@ -28,7 +28,8 @@ module.exports = function(dependencies){
 
     var componentPath = opts.componentPath,
         packageDir = path.resolve(componentPath, '_package'),
-        compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
+        compressedPackagePath = path.resolve(componentPath, 'package.tar.gz'),
+        errorMessage;
 
     var getCredentials = function(cb){
       if(opts.username && opts.password){
@@ -84,41 +85,54 @@ module.exports = function(dependencies){
             var upgradeCommand = format(strings.commands.cli.UPGRADE, err.details.suggestedVersion),
                 errorDetails = format(strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE, colors.blue(upgradeCommand));
 
-            log.err(format(strings.errors.cli.PUBLISHING_FAIL, errorDetails));
-            return cb();
+            errorMessage = format(strings.errors.cli.PUBLISHING_FAIL, errorDetails);
+            log.err(errorMessage);
+            return cb(errorMessage);
           } else if(err.code === 'node_version_not_valid') {
             var details = format(strings.errors.cli.NODE_CLI_VERSION_NEEDS_UPGRADE, err.details.suggestedVersion);
 
-            log.err(format(strings.errors.cli.PUBLISHING_FAIL, details));
-            return cb();
+            errorMessage = format(strings.errors.cli.PUBLISHING_FAIL, details);
+            log.err(errorMessage);
+            return cb(errorMessage);
           } else {
-            log.err(format(strings.errors.cli.PUBLISHING_FAIL, err));
-            return cb();
+            errorMessage = format(strings.errors.cli.PUBLISHING_FAIL, err);
+            log.err(errorMessage);
+            return cb(errorMessage);
           }
         } else {
-          log.ok(format(strings.messages.cli.PUBLISHED, options.route.green));
-          return cb();
+          log.ok(format(strings.messages.cli.PUBLISHED, options.route));
+          return cb(null, 'ok');
         }
       });
     };
 
     registry.get(function(err, registryLocations){
-      if(err){ return log.err(err); }
+      if(err){ 
+        log.err(err);
+        return callback(err);
+      }
 
       packageAndCompress(function(err, component){
         if(err){
-          return log.err(format(strings.errors.cli.PACKAGE_CREATION_FAIL, err));
+          errorMessage = format(strings.errors.cli.PACKAGE_CREATION_FAIL, err);
+          log.err(errorMessage);
+          return callback(errorMessage);
         }
 
-        async.eachSeries(registryLocations, function(l, next){
-          var registryUrl = l,
-              registryLength = registryUrl.length,
+        async.eachSeries(registryLocations, function(registryUrl, next){
+          var registryLength = registryUrl.length,
               registryNormalised = registryUrl.slice(registryLength - 1) === '/' ? registryUrl.slice(0, registryLength - 1) : registryUrl,
               componentRoute = format('{0}/{1}/{2}', registryNormalised, component.name, component.version);
 
           putComponentToRegistry({ route: componentRoute, path: compressedPackagePath}, next);
         }, function(err){
-          local.cleanup(compressedPackagePath, callback);
+          local.cleanup(compressedPackagePath, function(err2, res){
+            if(err){
+              return callback(err);
+            }
+
+            callback(err2, res);
+          });
         });
       });
     });
