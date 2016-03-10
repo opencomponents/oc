@@ -128,7 +128,7 @@ describe('cli : facade : publish', function(){
               });
 
               it('should publish to all registries', function(){
-                sinon.stub(registry, 'putComponent').yields('blabla');
+                sinon.stub(registry, 'putComponent').yields(null, 'ok');
                 execute();
                 registry.putComponent.restore();
 
