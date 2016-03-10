@@ -127,10 +127,7 @@ module.exports = function(dependencies){
           putComponentToRegistry({ route: componentRoute, path: compressedPackagePath}, next);
         }, function(err){
           local.cleanup(compressedPackagePath, function(err2, res){
-            if(err){
-              return callback(err);
-            }
-
+            if(err){ return callback(err); }
             callback(err2, res);
           });
         });
