@@ -1,6 +1,10 @@
 ## Change Log
 
 ### upcoming 2016/03/11
+- [#204](https://github.com/opentable/oc/pull/204) add "getRepositoryUrl" in order to support repository package.json property as object (@mattiaerre)
+- [#206](https://github.com/opentable/oc/pull/206) Fix travis forks PRs (@matteofigus)
+
+### v0.28.3 2016/03/11
 - [#203](https://github.com/opentable/oc/pull/203) Fix githubChanges task name (@pbazydlo)
 - [#199](https://github.com/opentable/oc/pull/199) Changelog (@matteofigus)
 
