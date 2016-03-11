@@ -1,125 +1,131 @@
 ## Change Log
 
-### v0.28.0 (2016/03/08 18:39 +00:00)
+### v0.28.2 2016/03/10
+- [#201](https://github.com/opentable/oc/pull/201) Added license on minified oc-client.min.js (@matteofigus)
+
+### v0.28.1 2016/03/10
+- [#200](https://github.com/opentable/oc/pull/200) Have optional callbacks in CLI functions (@matteofigus)
+
+### v0.28.0 2016/03/08
 - [#198](https://github.com/opentable/oc/pull/198) More details on errors from node client (@matteofigus)
 - [#197](https://github.com/opentable/oc/pull/197) Return null when there's no error in renderComponents (@pbazydlo)
 
-### v0.27.9 (2016/03/02 17:09 +00:00)
+### v0.27.9 2016/03/02
 - [#195](https://github.com/opentable/oc/pull/195) Warmup on client.init (@matteofigus)
 
-### v0.27.8 (2016/03/02 11:58 +00:00)
+### v0.27.8 2016/03/02
 - [#196](https://github.com/opentable/oc/pull/196) Adding user-agent to node oc-client (@matteofigus)
 
-### v0.27.7 (2016/03/01 18:57 +00:00)
+### v0.27.7 2016/03/01
 - [#194](https://github.com/opentable/oc/pull/194) Cleanup on client (@matteofigus)
 
-### v0.27.6 (2016/02/29 11:38 +00:00)
+### v0.27.6 2016/02/29
 - [#193](https://github.com/opentable/oc/pull/193) Dev has optional callback in order to be used by grunt-oc (@matteofigus)
 - [#192](https://github.com/opentable/oc/pull/192) Less docs, more links (@matteofigus)
 
-### v0.27.5 (2016/02/24 01:00 +00:00)
+### v0.27.5 2016/02/24
 - [#190](https://github.com/opentable/oc/pull/190) Publish error (@matteofigus)
 
-### v0.27.4 (2016/02/24 00:42 +00:00)
+### v0.27.4 2016/02/24
 - [#189](https://github.com/opentable/oc/pull/189) Safe colors in order to avoid extending object and better testing (@matteofigus)
 
-### v0.27.1 (2016/02/13 20:28 +00:00)
+### v0.27.1 2016/02/13
 - [#187](https://github.com/opentable/oc/pull/187) Moved the request util to its own module (@matteofigus)
 
-### v0.27.0 (2016/02/12 15:28 +00:00)
+### v0.27.0 2016/02/12
 - [#186](https://github.com/opentable/oc/pull/186) Preserve language when doing client-side failover (@matteofigus)
 
-### v0.26.2 (2016/02/11 19:02 +00:00)
+### v0.26.2 2016/02/11
 - [#182](https://github.com/opentable/oc/pull/182) Node.js client post and various improvements (@matteofigus)
 
-### v0.26.1 (2016/02/11 15:20 +00:00)
+### v0.26.1 2016/02/11
 - [#184](https://github.com/opentable/oc/pull/184) Allow oc dev to be hosted from a custom base url (@antwhite)
 
-### v0.26.0 (2016/01/31 12:18 +00:00)
+### v0.26.0 2016/01/31
 - [#178](https://github.com/opentable/oc/pull/178) node.js client should accept serverRendering and clientRendering endpoints instead of generic array (breaking change) (@matteofigus)
 
-### v0.25.0 (2016/01/28 17:42 +00:00)
+### v0.25.0 2016/01/28
 - [#179](https://github.com/opentable/oc/pull/179) Oc client cleanup and improvements (@matteofigus)
 
-### v0.24.1 (2016/01/28 17:05 +00:00)
+### v0.24.1 2016/01/28
 - [#180](https://github.com/opentable/oc/pull/180) update the dependencies (@matteofigus)
 
-### v0.24.0 (2016/01/27 18:07 +00:00)
+### v0.24.0 2016/01/27
 - [#177](https://github.com/opentable/oc/pull/177) Npm ignore to avoid publishing unuseful stuff (@matteofigus)
 
-### v0.23.7 (2016/01/21 12:29 +00:00)
+### v0.23.7 2016/01/21
 - [#173](https://github.com/opentable/oc/pull/173) Ownership of $$$ (@matteofigus)
 
-### v0.23.6 (2016/01/20 00:54 +00:00)
+### v0.23.6 2016/01/20
 - [#172](https://github.com/opentable/oc/pull/172) Avoid client to be multiple times inside the page (@matteofigus)
 
-### v0.23.5 (2016/01/19 22:58 +00:00)
+### v0.23.5 2016/01/19
 - [#171](https://github.com/opentable/oc/pull/171) Without cleaning up the namespace (@matteofigus)
 
-### v0.23.4 (2016/01/19 18:16 +00:00)
+### v0.23.4 2016/01/19
 - [#170](https://github.com/opentable/oc/pull/170) jQuery in no conflict mode (@matteofigus)
 
-### v0.23.3 (2016/01/18 15:31 +00:00)
+### v0.23.3 2016/01/18
 - [#169](https://github.com/opentable/oc/pull/169) pre-rendered modality is deprecated (@matteofigus)
 
-### v0.23.2 (2016/01/15 16:34 +00:00)
+### v0.23.2 2016/01/15
 - [#168](https://github.com/opentable/oc/pull/168) Update dependencies (@matteofigus)
 - [#167](https://github.com/opentable/oc/pull/167) Sauce browsers updated + dev dependency updated (@matteofigus)
 
-### v0.23.1 (2016/01/14 18:16 +00:00)
+### v0.23.1 2016/01/14
 - [#166](https://github.com/opentable/oc/pull/166) Bugfix and docs (@matteofigus)
 
-### v0.23.0 (2016/01/14 16:45 +00:00)
+### v0.23.0 2016/01/14
 - [#165](https://github.com/opentable/oc/pull/165) Making the POST response API return status and response for each comp… (@matteofigus)
 
-### v0.22.3 (2016/01/14 12:09 +00:00)
+### v0.22.3 2016/01/14
 - [#164](https://github.com/opentable/oc/pull/164) New component-retrieved event (@matteofigus)
 
-### v0.22.2 (2016/01/11 17:44 +00:00)
+### v0.22.2 2016/01/11
 - [#163](https://github.com/opentable/oc/pull/163) POST route for allowing batch request (@matteofigus)
 - [#160](https://github.com/opentable/oc/pull/160) travis run tests with node 5 as well (@andyroyle)
 
-### v0.22.1 (2015/12/22 11:00 +00:00)
+### v0.22.1 2015/12/22
 - [#159](https://github.com/opentable/oc/pull/159) should have an explicit dep on phantom (@andyroyle)
 
-### v0.22.0 (2015/12/22 09:10 +00:00)
+### v0.22.0 2015/12/22
 - [#157](https://github.com/opentable/oc/pull/157) Server/Client-side render info (@matteofigus)
 - [#156](https://github.com/opentable/oc/pull/156) House keeping (@matteofigus)
 
-### v0.21.0 (2015/11/26 11:34 +00:00)
+### v0.21.0 2015/11/26
 - [#155](https://github.com/opentable/oc/pull/155) Removing info, ls, link, unlink (@matteofigus)
 
-### v0.20.5 (2015/11/24 09:44 +00:00)
+### v0.20.5 2015/11/24
 - [#153](https://github.com/opentable/oc/pull/153) js.gz + css.gz handling (@matteofigus)
 
-### v0.20.4 (2015/11/24 01:29 +00:00)
+### v0.20.4 2015/11/24
 - [#148](https://github.com/opentable/oc/pull/148) only remove the package once published to all registries (@andyroyle)
 
-### v0.20.3 (2015/11/23 15:58 +00:00)
+### v0.20.3 2015/11/23
 - [#152](https://github.com/opentable/oc/pull/152) woopsy, I broke `oc dev` (@andyroyle)
 
-### v0.20.2 (2015/11/23 11:51 +00:00)
+### v0.20.2 2015/11/23
 - [#151](https://github.com/opentable/oc/pull/151) Run karma tests by default (@pbazydlo)
 
-### v0.20.1 (2015/11/23 09:38 +00:00)
+### v0.20.1 2015/11/23
 - [#144](https://github.com/opentable/oc/pull/144) Oc client limited retries (@pbazydlo, @andyroyle)
 
-### v0.20.0 (2015/11/20 13:41 +00:00)
+### v0.20.0 2015/11/20
 - [#141](https://github.com/opentable/oc/pull/141) allow plugins to depend on one another (breaking change) (@andyroyle)
 
-### v0.19.5 (2015/11/20 13:39 +00:00)
+### v0.19.5 2015/11/20
 - [#147](https://github.com/opentable/oc/pull/147) Refactor cli/domain/local (@andyroyle)
 
-### v0.19.4 (2015/11/17 16:54 +00:00)
+### v0.19.4 2015/11/17
 - [#145](https://github.com/opentable/oc/pull/145) oc dev fix (ie 8+) (@matteofigus)
 
-### v0.19.3 (2015/11/11 17:22 +00:00)
+### v0.19.3 2015/11/11
 - [#143](https://github.com/opentable/oc/pull/143) Fix cli crash when `oc dev` reads a broken package.json (@andyroyle)
 
-### v0.19.1 (2015/11/06 00:31 +00:00)
+### v0.19.1 2015/11/06
 - [#140](https://github.com/opentable/oc/pull/140) Hacking on travis (@matteofigus)
 
-### v0.19.0 (2015/11/05 23:41 +00:00)
+### v0.19.0 2015/11/05
 - [#139](https://github.com/opentable/oc/pull/139) prerendered -> unrendered (@matteofigus)
 - [#134](https://github.com/opentable/oc/pull/134) Added tagging when upgrading version (@jankowiakmaria)
 - [#133](https://github.com/opentable/oc/pull/133) Empty component fix (@andyroyle)

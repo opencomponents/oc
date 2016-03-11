@@ -33,7 +33,7 @@
     "grunt": "0.4.5",
     "grunt-contrib-jshint": "0.10.0",
     "grunt-git": "0.3.5",
-    "grunt-github-changes": "0.0.9",
+    "grunt-github-changes": "0.1.0",
     "grunt-karma": "0.10.1",
     "grunt-mocha-test": "0.12.7",
     "injectr": "0.5.1",
