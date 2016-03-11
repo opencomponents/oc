@@ -31,12 +31,12 @@ module.exports = function(repository){
         }
 
         component.getRepositoryUrl = function() {
-          if (typeof this.repository === 'object') {
+          if (_.isObject(this.repository)) {
             if (this.repository.url) {
               return this.repository.url;
             }
           }
-          if (typeof this.repository === 'string') {
+          if (_.isString(this.repository)) {
             return this.repository;
           }
           return null;
