@@ -29,7 +29,7 @@ module.exports = function(grunt){
     'gitadd:versionFiles',
     'gitcommit:version',
     'gittag:addtag',
-    'githubChange',
+    'githubChanges',
     'gitadd:changelog',
     'gitcommit:changelog'
   ]);
