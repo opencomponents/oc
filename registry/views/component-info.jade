@@ -17,7 +17,7 @@ block content
         span(class='component-state-' + component.oc.state.toLowerCase())= component.oc.state
 
   h3 Component Info
-  +property('Repository', component.repository || 'not available', !!component.repository)
+  +property('Repository', component.getRepositoryUrl() || 'not available', !!component.getRepositoryUrl())
   +property('Author', component.author || 'not available')
   +property('Publish date', new Date(component.oc.date) || 'not available')
   +property('Publish agent', ('OC CLI ' + component.oc.version) || 'not available')
