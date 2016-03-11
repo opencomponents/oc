@@ -29,7 +29,17 @@ module.exports = function(repository){
             return param.example;
           });
         }
-                
+
+        component.getRepositoryUrl = function() {
+          if (typeof this.repository === 'object') {
+            if (this.repository.url)
+              return this.repository.url;
+          }
+          if (typeof this.repository === 'string')
+            return this.repository;
+          return null;
+        }
+
         return res.render('component-info', {
           component: component,
           dependencies: _.keys(component.dependencies),
