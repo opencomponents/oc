@@ -24,7 +24,6 @@ module.exports = function(grunt){
   grunt.registerTask('test-local', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance', 'karma:local']);
   grunt.registerTask('test-local-silent', ['jshint:all', 'mochaTest:silent', 'karma:local']);
   grunt.registerTask('test', ['jshint:all', 'mochaTest:unit', 'mochaTest:acceptance']);
-  grunt.registerTask('test-with-sauce', ['test', 'sauce']);
   grunt.registerTask('git-stage', [
     'gitadd:versionFiles',
     'gitcommit:version',
