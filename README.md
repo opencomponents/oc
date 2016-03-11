@@ -241,6 +241,7 @@ Contributors:
 * [@char1e5](https://github.com/char1e5)
 * [@federicomaffei](https://github.com/federicomaffei)
 * [@jankowiakmaria](https://github.com/jankowiakmaria)
+* [@mattiaerre](https://github.com/mattiaerre)
 * [@pbazydlo](https://github.com/pbazydlo)
 * [@stevejhiggs](https://github.com/stevejhiggs)
 * [@todd](https://github.com/todd)
