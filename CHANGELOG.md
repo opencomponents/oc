@@ -1,5 +1,9 @@
 ## Change Log
 
+### upcoming 2016/03/11
+- [#203](https://github.com/opentable/oc/pull/203) Fix githubChanges task name (@pbazydlo)
+- [#199](https://github.com/opentable/oc/pull/199) Changelog (@matteofigus)
+
 ### v0.28.2 2016/03/10
 - [#201](https://github.com/opentable/oc/pull/201) Added license on minified oc-client.min.js (@matteofigus)
 
