@@ -32,13 +32,15 @@ module.exports = function(repository){
 
         component.getRepositoryUrl = function() {
           if (typeof this.repository === 'object') {
-            if (this.repository.url)
+            if (this.repository.url) {
               return this.repository.url;
+            }
           }
-          if (typeof this.repository === 'string')
+          if (typeof this.repository === 'string') {
             return this.repository;
+          }
           return null;
-        }
+        };
 
         return res.render('component-info', {
           component: component,
