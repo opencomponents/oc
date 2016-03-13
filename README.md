@@ -231,16 +231,14 @@ We appreciate contributions, in terms of feedbacks, code, anything really. If yo
 * [gitter chat](https://gitter.im/opentable/oc)
 * oc@opentable.com
 
-Maintainer:
-* [@matteofigus](https://github.com/matteofigus)
-
-Contributors:
+Contributors/Maintainers:
 * [@ajcw](https://github.com/ajcw)
 * [@andyroyle](https://github.com/andyroyle)
 * [@antwhite](https://github.com/antwhite)
 * [@char1e5](https://github.com/char1e5)
 * [@federicomaffei](https://github.com/federicomaffei)
 * [@jankowiakmaria](https://github.com/jankowiakmaria)
+* [@matteofigus](https://github.com/matteofigus)
 * [@mattiaerre](https://github.com/mattiaerre)
 * [@pbazydlo](https://github.com/pbazydlo)
 * [@stevejhiggs](https://github.com/stevejhiggs)
