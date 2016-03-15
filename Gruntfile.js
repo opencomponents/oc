@@ -36,13 +36,10 @@ module.exports = function(grunt){
     'gitcommit:changelog'
   ]);
   
-  grunt.registerTask('git-stage-client', [
-    'gitadd:all',
-    'gitcommit:client',
-  ]);
+  grunt.registerTask('git-stage-client', ['gitadd:all', 'gitcommit:client']);
 
   grunt.registerTask('build', 'Builds and minifies the oc-client component', customTasks.build(grunt, taskObject));
   grunt.registerTask('generate-cli-doc', 'Automatically updates the cli.md file', customTasks.generateCliDoc);
   grunt.registerTask('version', 'Upgrades the library', customTasks.version(grunt, taskObject));
-  grunt.registerTask('client-version', 'Upgrades the node.js client', customTasks.clientVersion(grunt, taskObject));
+  grunt.registerTask('client-version', 'Upgrades the node.js client', customTasks.clientVersion(grunt, clientPkg));
 };
