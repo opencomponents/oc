@@ -99,7 +99,8 @@ module.exports = function(conf, repository){
         if(componentCallbackDone){ return; }
         componentCallbackDone = true;
 
-        if(!!err){
+        if(!!err || !data){
+          err = err || new Error(strings.errors.registry.DATA_OBJECT_IS_UNDEFINED);
           return callback({
             status: 500,
             response: {

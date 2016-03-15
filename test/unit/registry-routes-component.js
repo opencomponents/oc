@@ -54,6 +54,32 @@ describe('registry : routes : component', function(){
     });
   });
 
+  describe('when getting a component with a server.js that returns undefined data', function(){
+
+    before(function(){
+      initialise(mockedComponents['undefined-component']);
+      componentRoute = new ComponentRoute({}, mockedRepository);
+
+      componentRoute({
+        headers: {},
+        params: { componentName: 'undefined-component' }
+      }, {
+        conf: {
+          baseUrl: 'http://components.com/'
+        },
+        json: resJsonStub
+      });
+    });
+
+    it('should return 500 status code', function(){
+      expect(resJsonStub.args[0][0]).to.be.equal(500);
+    });
+
+    it('should respond with error message for undefined data', function(){
+      expect(resJsonStub.args[0][1].error).to.equal('Component execution error: data object is undefined');
+    });
+  });
+
   describe('when getting a component with server.js execution errors', function(){
 
     before(function(){
