@@ -8,5 +8,13 @@ module.exports = {
     files: {
       src: ['.']
     }
+  },
+  changelog: {
+    options: {
+      message: 'changelog',
+    },
+    files: {
+      src : ['.']
+    }
   }
 };

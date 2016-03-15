@@ -1,7 +1,14 @@
 'use strict';
 
 module.exports = {
-  files: {
-    src: ['.']
+  versionFiles: {
+    files: {
+      src: ['.']
+    }
+  },
+  changelog: {
+    files: {
+      src: ['CHANGELOG.md']
+    }
   }
 };

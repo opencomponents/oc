@@ -29,7 +29,19 @@ module.exports = function(repository){
             return param.example;
           });
         }
-                
+
+        component.getRepositoryUrl = function() {
+          if (_.isObject(this.repository)) {
+            if (this.repository.url) {
+              return this.repository.url;
+            }
+          }
+          if (_.isString(this.repository)) {
+            return this.repository;
+          }
+          return null;
+        };
+
         return res.render('component-info', {
           component: component,
           dependencies: _.keys(component.dependencies),
