@@ -18,7 +18,7 @@ When preparing a pull request, ensure all the tests pass locally running `grunt 
 You need to have access to master and enabled to publish to npm.
 
 ```sh
-# create a github authkey
+# create a github authkey (do this just once)
 $ [sudo] npm i -g github-changes
 $ github-changes -o opentable -r oc -a
 $ git stash
