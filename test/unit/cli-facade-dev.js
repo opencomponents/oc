@@ -16,7 +16,7 @@ describe('cli : facade : dev', function(){
   var execute = function(dirName, port){
     logSpy.logNoNewLine = sinon.spy();
     logSpy.log = sinon.spy();
-    devFacade({ dirName: dirName, port: port });
+    devFacade({ dirName: dirName, port: port }, function(){});
   };
 
   describe('when running a dev version of the registry', function(){

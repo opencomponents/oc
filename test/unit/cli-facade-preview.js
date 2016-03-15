@@ -18,7 +18,7 @@ describe('cli : facade : preview', function(){
     var PreviewFacade = injectr('../../cli/facade/preview.js', { opn: opnSpy }),
         previewFacade = new PreviewFacade({ logger: logSpy, registry: registryStub });
 
-    previewFacade({ componentHref: 'http://components.com/component' });
+    previewFacade({ componentHref: 'http://components.com/component' }, function(){});
   };
 
   describe('when previewing not valid component', function(){

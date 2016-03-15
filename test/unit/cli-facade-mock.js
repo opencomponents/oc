@@ -14,7 +14,7 @@ describe('cli : facade : mock', function(){
 
   var execute = function(){
     logSpy.log = sinon.spy();
-    mockFacade({ targetType: 'plugin', targetName: 'getValue', targetValue: 'value' });
+    mockFacade({ targetType: 'plugin', targetName: 'getValue', targetValue: 'value' }, function(){});
   };
 
   describe('when mocking plugin', function(){

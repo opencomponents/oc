@@ -2,9 +2,9 @@
 
 var colors = require('colors/safe');
 var format = require('stringformat');
-var _ = require('underscore');
 
 var strings = require('../../resources/index');
+var wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
   
@@ -13,7 +13,7 @@ module.exports = function(dependencies){
 
   return function(opts, callback){
 
-    callback = callback || _.noop;
+    callback = wrapCliCallback(callback);
 
     local.mock(opts, function(err, res){
       logger.log(colors.green(format(strings.messages.cli.MOCKED_PLUGIN, opts.targetName, opts.targetValue)));

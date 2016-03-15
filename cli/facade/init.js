@@ -2,9 +2,9 @@
 
 var colors = require('colors/safe');
 var format = require('stringformat');
-var _ = require('underscore');
 
 var strings = require('../../resources/index');
+var wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
   
@@ -13,11 +13,11 @@ module.exports = function(dependencies){
 
   return function(opts, callback){
 
-    callback = callback || _.noop;
-
     var componentName = opts.componentName,
         templateType = opts.templateType,
         errors = strings.errors.cli;
+
+    callback = wrapCliCallback(callback);
 
     local.init(componentName, templateType, function(err, res){
       if(err){
@@ -33,7 +33,7 @@ module.exports = function(dependencies){
       } else {
         logger.log(colors.green(format(strings.messages.cli.COMPONENT_INITED, componentName)));
       }
-      
+
       callback(err, componentName);
     });
   };
