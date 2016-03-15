@@ -17,21 +17,28 @@ When preparing a pull request, ensure all the tests pass locally running `grunt 
 
 You need to have access to master and enabled to publish to npm.
 
-* create a github authkey via
-  * run `[sudo] npm i -g github-changes`
-  * run `github-changes -o opentable -r oc -a`
-  * login with github credentials to generate a github auth key + store it safely locally
-  * stash the changes with `git stash`
-* `master` should be all green. If not, make it green first and the get to it
-  * `git checkout master`
-  * `git pull`
-* Run `grunt version:<versionType>` for new version.
-  * While on 0.X.X (not stable):
-    * `grunt version:patch` for bugfixes, new features
-    * `grunt version:minor` for all breaking changes
-    * `grunt version:major` NOT YET. Still need to define milestones for 1.0.0.
-* git push --follow-tags
-* [sudo] npm publish .
+```sh
+# create a github authkey
+$ [sudo] npm i -g github-changes
+$ github-changes -o opentable -r oc -a
+$ git stash
+
+
+# master should be all green. If not, make it green first and the get to it
+$ git checkout master
+$ git pull
+
+# Run `grunt version:<versionType>` for new version.
+#   While on 0.X.X (not stable):
+#     grunt version:patch for bugfixes, new features
+#     grunt version:minor for all breaking changes
+#     grunt version:major NOT YET. Still need to define milestones for 1.0.0.
+
+$ grunt version:patch
+
+$ git push --follow-tags
+$ [sudo] npm publish .
+```
 
 ## Code of Conduct
 
