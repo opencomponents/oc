@@ -8,7 +8,8 @@ module.exports = {
       file: 'CHANGELOG.md',
       onlyPulls: true,
       useCommitBody: true,
-      dateFormat: 'YYYY/MM/DD'
+      dateFormat: 'YYYY/MM/DD',
+      auth: true
     }
   }
 };
