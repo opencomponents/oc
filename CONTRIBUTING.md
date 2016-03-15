@@ -15,10 +15,16 @@ When preparing a pull request, ensure all the tests pass locally running `grunt 
 
 ### Publishing new version to npm
 
-You need to be enabled for doing this.
-* `master` should be all green. If not, make it green first.
-* git checkout master
-* git pull
+You need to have access to master and enabled to publish to npm.
+
+* create a github authkey via
+  * run `[sudo] npm i -g github-changes`
+  * run `github-changes -o opentable -r oc -a`
+  * login with github credentials to generate a github auth key + store it safely locally
+  * stash the changes with `git stash`
+* `master` should be all green. If not, make it green first and the get to it
+  * `git checkout master`
+  * `git pull`
 * Run `grunt version:<versionType>` for new version.
   * While on 0.X.X (not stable):
     * `grunt version:patch` for bugfixes, new features
