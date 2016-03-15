@@ -2,7 +2,6 @@
 
 var colors = require('colors/safe');
 var format = require('stringformat');
-var _ = require('underscore');
 
 var strings = require('../../resources/index');
 var wrapCliCallback = require('../wrap-cli-callback');
@@ -13,8 +12,6 @@ module.exports = function(dependencies){
       logger = dependencies.logger;
 
   return function(opts, callback){
-
-    callback = callback || _.noop;
 
     var componentName = opts.componentName,
         templateType = opts.templateType,
@@ -36,7 +33,7 @@ module.exports = function(dependencies){
       } else {
         logger.log(colors.green(format(strings.messages.cli.COMPONENT_INITED, componentName)));
       }
-      
+
       callback(err, componentName);
     });
   };

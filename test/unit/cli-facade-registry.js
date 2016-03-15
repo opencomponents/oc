@@ -14,7 +14,7 @@ describe('cli : facade : registry', function(){
 
   var execute = function(command){
     logSpy.log = sinon.spy();
-    registryFacade({ command: command });
+    registryFacade({ command: command }, function(){});
   };
 
   describe('when using ls command', function(){

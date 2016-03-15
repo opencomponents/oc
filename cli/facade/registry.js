@@ -5,6 +5,7 @@ var format = require('stringformat');
 var _ = require('underscore');
 
 var strings = require('../../resources/index');
+var wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
   
@@ -19,7 +20,7 @@ module.exports = function(dependencies){
 
   return function(opts, callback){
 
-    callback = callback || _.noop;
+    callback = wrapCliCallback(callback);
     
     if(opts.command === 'ls'){
       registry.get(function(err, registries){

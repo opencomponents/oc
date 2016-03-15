@@ -14,7 +14,7 @@ describe('cli : facade : init', function(){
 
   var execute = function(componentName, templateType){
     logSpy.log = sinon.spy();
-    initFacade({ componentName: componentName, templateType: templateType });
+    initFacade({ componentName: componentName, templateType: templateType }, function(){});
   };
 
   describe('when initialising a new component', function(){

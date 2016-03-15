@@ -19,7 +19,11 @@ describe('cli : facade : publish', function(){
   var execute = function(creds){
     creds = creds || {};
     logSpy.log = sinon.stub();
-    publishFacade({ componentPath: path.resolve('test/fixtures/components/hello-world/'), username: creds.username, password: creds.password });
+    publishFacade({ 
+      componentPath: path.resolve('test/fixtures/components/hello-world/'),
+      username: creds.username,
+      password: creds.password
+    }, function(){});
   };
 
   describe('when publishing component', function(){

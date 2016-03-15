@@ -13,6 +13,7 @@ var npmInstaller = require('../domain/npm-installer');
 var oc = require('../../index');
 var strings = require('../../resources/index');
 var watch = require('../domain/watch');
+var wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
   var local = dependencies.local,
@@ -26,13 +27,13 @@ module.exports = function(dependencies){
 
   return function(opts, callback){
 
-    callback = callback || _.noop;
-
     var componentsDir = opts.dirName,
         port = opts.port || 3000,
         baseUrl = opts.baseUrl || format('http://localhost:{0}/', port),
         packaging = false,
         errors = strings.errors.cli;
+        
+    callback = wrapCliCallback(callback);
 
     var installMissingDeps = function(missing, cb){
       if(_.isEmpty(missing)){ return cb(); }

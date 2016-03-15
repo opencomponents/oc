@@ -9,6 +9,7 @@ var semver = require('semver');
 var _ = require('underscore');
 
 var strings = require('../../resources/index');
+var wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
 
@@ -24,13 +25,13 @@ module.exports = function(dependencies){
 
   return function(opts, callback){
 
-    callback = callback || _.noop;
-
     var componentPath = opts.componentPath,
         packageDir = path.resolve(componentPath, '_package'),
         compressedPackagePath = path.resolve(componentPath, 'package.tar.gz'),
         errorMessage;
 
+    callback = wrapCliCallback(callback);
+    
     var getCredentials = function(cb){
       if(opts.username && opts.password){
         log.ok(strings.messages.cli.USING_CREDS);
