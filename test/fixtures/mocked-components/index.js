@@ -6,5 +6,6 @@ module.exports = {
   'error-component': require('./error'),
   'npm-component': require('./npm'),
   'plugin-component': require('./plugin'),
-  'timeout-component': require('./timeout')
+  'timeout-component': require('./timeout'),
+  'undefined-component': require('./undefined')
 };
