@@ -193,13 +193,14 @@ module.exports = function(conf, repository){
         var cacheKey = format('{0}/{1}/server.js', component.name, component.version),
             cached = cache.get('file-contents', cacheKey),
             domain = Domain.create(),
-            contextObj = { 
+            contextObj = {
               acceptLanguage: acceptLanguageParser.parse(acceptLanguage),
               baseUrl: conf.baseUrl,
               env: conf.env,
               params: params,
               plugins: conf.plugins,
-              staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', '')
+              staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', ''),
+              requestHeaders: options.headers
             };
 
         var setCallbackTimeout = function(){
