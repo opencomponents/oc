@@ -1,6 +1,14 @@
 'use strict';
 
 module.exports = {
+  client: {
+    options: {
+      message: 'oc-client <%= version %>'
+    },
+    files: {
+      src: ['.']
+    }
+  },
   version: {
     options: {
       message: '<%= version %>'

@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  versionFiles: {
+  all: {
     files: {
       src: ['.']
     }

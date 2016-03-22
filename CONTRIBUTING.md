@@ -15,17 +15,42 @@ When preparing a pull request, ensure all the tests pass locally running `grunt 
 
 ### Publishing new version to npm
 
-You need to be enabled for doing this.
-* `master` should be all green. If not, make it green first.
-* git checkout master
-* git pull
-* Run `grunt version:<versionType>` for new version.
-  * While on 0.X.X (not stable):
-    * `grunt version:patch` for bugfixes, new features
-    * `grunt version:minor` for all breaking changes
-    * `grunt version:major` NOT YET. Still need to define milestones for 1.0.0.
-* git push --follow-tags
-* [sudo] npm publish .
+You need to have access to master and enabled to publish to npm.
+
+```sh
+# create a github authkey (do this just once)
+$ [sudo] npm i -g github-changes
+$ github-changes -o opentable -r oc -a
+$ git stash
+
+# master should be all green. If not, make it green first and the get to it
+$ git checkout master
+$ git pull
+
+# Run `grunt version:<versionType>` for new version.
+#   While on 0.X.X (not stable):
+#     grunt version:patch for bugfixes, new features
+#     grunt version:minor for all breaking changes
+#     grunt version:major NOT YET. Still need to define milestones for 1.0.0.
+$ grunt version:patch
+
+$ git push --follow-tags
+$ [sudo] npm publish .
+```
+
+To publish the node.js client
+
+```sh
+# Run `grunt clientVersion:<versionType>` for new version.
+#   While on 0.X.X (not stable):
+#     grunt clientVersion:patch for bugfixes
+#     grunt clientVersion:minor for new features
+#     grunt clientVersion:major for breaking changes
+$ grunt clientVersion:patch
+
+$ git push
+$ [sudo] npm publish client/
+```
 
 ## Code of Conduct
 
