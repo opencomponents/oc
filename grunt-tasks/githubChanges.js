@@ -9,7 +9,8 @@ module.exports = {
       onlyPulls: true,
       useCommitBody: true,
       dateFormat: 'YYYY/MM/DD',
-      auth: true
+      auth: true,
+      verbose: true
     }
   }
 };
