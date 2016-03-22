@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.28.7
+- [#213](https://github.com/opentable/oc/pull/213) [Docs] description of oc.renderInfo param
+- [#212](https://github.com/opentable/oc/pull/212) Changelog using git history instead of github api
+
 ### v0.28.6
 - [#211](https://github.com/opentable/oc/pull/211) Forward request headers to component
 
