@@ -75,6 +75,33 @@ describe('cli : domain : mock', function(){
     });
   });
 
+  describe('when mocking a static plugin using a bool value', function(){
+
+    var data;
+    beforeEach(function(done){
+      data = initialise();
+
+      data.fs.readJson.yields(null, { something: 'hello' });
+      data.fs.writeJson.yields(null, 'ok');
+
+      executeMocking(data.local, 'plugin', 'isTrue', false, done);
+    });
+
+    it('should add mock to oc.json', function(){
+      expect(data.fs.writeJson.called).to.be.true;
+      expect(data.fs.writeJson.args[0][1]).to.eql({
+        something: 'hello',
+        mocks: {
+          plugins: {
+            static: {
+              isTrue: false
+            }
+          }
+        }
+      });
+    });
+  });
+
   describe('when mocking a dynamic plugin', function(){
 
     var data;

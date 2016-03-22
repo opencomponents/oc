@@ -23,7 +23,7 @@ module.exports = function(){
       }
 
       var pluginType = 'static';
-      if(fs.existsSync(path.resolve(params.targetValue))){
+      if(fs.existsSync(path.resolve(params.targetValue.toString()))){
         pluginType = 'dynamic';
       }
 
