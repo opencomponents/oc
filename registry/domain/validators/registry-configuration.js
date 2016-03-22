@@ -62,5 +62,11 @@ module.exports = function(conf){
     });
   }
 
+  if(!conf.local){
+    if(!conf.s3 || !conf.s3.bucket || !conf.s3.key || !conf.s3.region || !conf.s3.secret){
+      return returnError(strings.errors.registry.CONFIGURATION_S3_NOT_VALID);
+    }
+  }
+
   return response;
 };
