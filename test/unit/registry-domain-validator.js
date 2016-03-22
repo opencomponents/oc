@@ -169,17 +169,6 @@ describe('registry : domain : validator', function(){
           });
         });
 
-        describe('when s3 setting is missing bucket', function(){
-          var conf = { publishAuth: false, s3: {
-            key: 's3-key', region: 'us-west2', secret: 's3-secret'
-          }};
-
-          it('should not be valid', function(){
-            expect(validate(conf).isValid).to.be.false;
-            expect(validate(conf).message).to.equal(errorMessage);
-          });
-        });
-
         describe('when s3 setting is missing key', function(){
           var conf = { publishAuth: false, s3: {
             bucket: 'oc-registry', region: 'us-west2', secret: 's3-secret'
