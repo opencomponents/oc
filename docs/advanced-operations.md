@@ -82,7 +82,17 @@ Context aggregates request data, and the registry's context. It consists of the 
   "params": {
     "name": "Johnny"
   },
-  "staticPath": "http://localhost:3030/hello-world/1.0.0/static/"
+  "staticPath": "http://localhost:3030/hello-world/1.0.0/static/",
+  "requestHeaders": {
+      "host": "localhost:3000",
+      "connection": "keep-alive",
+      "accept": "application/vnd.oc.unrendered+json",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36",
+      "content-type": "text/plain",
+      "referer": "http://localhost:3000/oc-client/0.28.5/~preview/",
+      "accept-encoding": "gzip, deflate, sdch",
+      "accept-language": "en-US,en;q=0.8",
+  }
 }
 ```
 
@@ -94,6 +104,7 @@ Context aggregates request data, and the registry's context. It consists of the 
 |`params`|`object`|represents parameters extracted from the query string.|
 |`plugins`|`array of functions`|[custom functionalities that extend the registry](registry.md#plugins). Note: if a component needs a plugin, [it needs to be declared in the component's package.json](getting-started.md#structure-of-the-package)|
 |`staticPath`|`string`|represents the path to static resources i.e. images, styles, javascript files. This is particularly useful when we want to [reference static resources to the view](#add-static-resource-to-the-component).|
+|`requestHeaders`|`object`|represents the original request headers. When component is rendered client side this will be what is sent from the browser, when rendered server side, using oc-client, this will contain whatever the client has been configured to forward |
 
 # Add static resource to the component
 
