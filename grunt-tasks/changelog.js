@@ -13,9 +13,9 @@ module.exports = function(grunt){
       grunt.util.spawn({
         cmd: 'git',
         args: ['log', versions]
-      }, function(err, result, code){
+      }, function(err, res, code){
         if(err){ return callback(err); }
-        var commits = result.stdout.split('commit '),
+        var commits = res.stdout.split('commit '),
             result = [];
 
         _.forEach(commits, function(commit){
@@ -65,7 +65,7 @@ module.exports = function(grunt){
         callback(null, result.stdout.split('\n'));
       });
     }
-  }
+  };
 
   grunt.registerTask('changelog', 'generates the changelog', function(){
 
