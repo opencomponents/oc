@@ -1,5 +1,7 @@
 'use strict';
 
+var _ = require('underscore');
+
 var customTasks = {
   build: require('./grunt-tasks/support/task-build'),
   generateCliDoc: require('./grunt-tasks/support/task-generate-cli-doc'),
@@ -13,7 +15,13 @@ module.exports = function(grunt){
   grunt.file.expand('grunt-tasks/*.js', '!grunt-tasks/_*.js').forEach(function(file) {
     var name = file.split('/');
     name = name[name.length - 1].replace('.js', '');
-    taskObject[name] = require('./'+ file);
+    var task = require('./' + file);
+
+    if(_.isFunction(task)) {
+      task(grunt);
+    } else {
+      taskObject[name] = task;
+    }
   });
 
   grunt.initConfig(taskObject);
@@ -28,7 +36,7 @@ module.exports = function(grunt){
     'gitadd:versionFiles',
     'gitcommit:version',
     'gittag:addtag',
-    'githubChanges',
+    'changelog',
     'gitadd:changelog',
     'gitcommit:changelog'
   ]);
