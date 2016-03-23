@@ -2,6 +2,24 @@ extends layout
 
 mixin showArray(title, arr)
   +property(title, !!arr && arr.length > 0 ? arr.join(', ') : 'none')
+
+mixin author(a)
+  div.field
+    p Author:
+    if !a.name && !a.email && !a.url
+      span not available
+
+    if !!a.name
+      span #{a.name}&nbsp;
+
+    if !!a.email
+      span
+        a(href='mailto:' + a.email) #{a.email}
+        | &nbsp;
+
+    if !!a.url
+      span
+        a(href=a.url, target="_blank")=a.url
   
 block content
   a.back(href=href) &lt;&lt; All components
@@ -18,7 +36,7 @@ block content
 
   h3 Component Info
   +property('Repository', component.getRepositoryUrl() || 'not available', !!component.getRepositoryUrl())
-  +property('Author', component.author || 'not available')
+  +author(parsedAuthor)
   +property('Publish date', new Date(component.oc.date) || 'not available')
   +property('Publish agent', ('OC CLI ' + component.oc.version) || 'not available')
   +showArray('Node.js dependencies', dependencies)
