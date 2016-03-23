@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.28.9
+- [#214](https://github.com/opentable/oc/pull/214) S3 validation
+- [#216](https://github.com/opentable/oc/pull/216) Looks good;
+    tested
+
 ### v0.28.8
 - [#215](https://github.com/opentable/oc/pull/215) mock bugfix for when a value is not a string
 
