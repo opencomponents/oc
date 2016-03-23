@@ -5,7 +5,13 @@ var injectr = require('injectr');
 
 describe('registry : domain : validator', function(){
 
-  var validator = require('../../registry/domain/validators');
+  var validator = require('../../registry/domain/validators'),
+      baseS3Conf = {
+        bucket: 'oc-components',
+        key: 's3-key',
+        region: 'us-west2',
+        secret: 's3-secret'
+      };
 
   describe('when validating registry configuration', function(){
 
@@ -34,7 +40,7 @@ describe('registry : domain : validator', function(){
     describe('prefix', function(){
       describe('when prefix does not start with /', function(){
 
-        var conf = { prefix: 'hello/' };
+        var conf = { prefix: 'hello/', s3: baseS3Conf };
 
         it('should not be valid', function(){
           expect(validate(conf).isValid).to.be.false;
@@ -44,7 +50,7 @@ describe('registry : domain : validator', function(){
 
       describe('when prefix does not end with /', function(){
 
-        var conf = { prefix: '/hello' };
+        var conf = { prefix: '/hello', s3: baseS3Conf };
 
         it('should not be valid', function(){
           expect(validate(conf).isValid).to.be.false;
@@ -56,7 +62,7 @@ describe('registry : domain : validator', function(){
     describe('publishAuth', function(){
       describe('when not specified', function(){
 
-        var conf = { publishAuth: null };
+        var conf = { publishAuth: null, s3: baseS3Conf };
 
         it('should be valid', function(){
           expect(validate(conf).isValid).to.be.true;
@@ -65,7 +71,7 @@ describe('registry : domain : validator', function(){
 
       describe('when specified and not supported', function(){
 
-        var conf = { publishAuth: { type: 'blarg' }};
+        var conf = { publishAuth: { type: 'blarg' }, s3: baseS3Conf};
 
         it('should not be valid', function(){
           expect(validate(conf).isValid).to.be.false;
@@ -77,7 +83,7 @@ describe('registry : domain : validator', function(){
 
         describe('when username and password specified', function(){
 
-          var conf = { publishAuth: { type: 'basic', username: 'a', password: 'b' }};
+          var conf = { publishAuth: { type: 'basic', username: 'a', password: 'b' }, s3: baseS3Conf};
 
           it('should be valid', function(){
             expect(validate(conf).isValid).to.be.true;
@@ -86,7 +92,7 @@ describe('registry : domain : validator', function(){
 
         describe('when username and password not specified', function(){
 
-          var conf = { publishAuth: { type: 'basic', a: '' }};
+          var conf = { publishAuth: { type: 'basic', a: '' }, s3: baseS3Conf};
 
           it('should not be valid', function(){
             expect(validate(conf).isValid).to.be.false;
@@ -99,7 +105,7 @@ describe('registry : domain : validator', function(){
     describe('dependencies', function(){
       describe('when not specified', function(){
 
-        var conf = { dependencies: null };
+        var conf = { dependencies: null, s3: baseS3Conf };
 
         it('should be valid', function(){
           expect(validate(conf).isValid).to.be.true;
@@ -110,7 +116,7 @@ describe('registry : domain : validator', function(){
 
         describe('when it is an array', function(){
 
-          var conf = { dependencies: ['hello']};
+          var conf = { dependencies: ['hello'], s3: baseS3Conf};
 
           it('should be valid', function(){
             expect(validate(conf).isValid).to.be.true;
@@ -119,7 +125,7 @@ describe('registry : domain : validator', function(){
 
         describe('when it is not an array', function(){
 
-          var conf = { dependencies: { hello: 'world' }};
+          var conf = { dependencies: { hello: 'world' }, s3: baseS3Conf};
 
           it('should not be valid', function(){
             expect(validate(conf).isValid).to.be.false;
@@ -129,10 +135,87 @@ describe('registry : domain : validator', function(){
       });
     });
 
+    describe('s3', function(){
+      describe('when local=true', function(){
+
+        var conf = { local: true };
+
+        it('should be valid', function(){
+          expect(validate(conf).isValid).to.be.true;
+        });
+      });
+
+      describe('when not in local mode', function(){
+
+        var errorMessage = 'Registry configuration is not valid: S3 configuration is not valid';
+
+        describe('when s3 settings empty', function(){
+          var conf = { publishAuth: false, s3: {}};
+
+          it('should not be valid', function(){
+            expect(validate(conf).isValid).to.be.false;
+            expect(validate(conf).message).to.equal(errorMessage);
+          });
+        });
+
+        describe('when s3 setting is missing bucket', function(){
+          var conf = { publishAuth: false, s3: {
+            key: 's3-key', region: 'us-west2', secret: 's3-secret'
+          }};
+
+          it('should not be valid', function(){
+            expect(validate(conf).isValid).to.be.false;
+            expect(validate(conf).message).to.equal(errorMessage);
+          });
+        });
+
+        describe('when s3 setting is missing key', function(){
+          var conf = { publishAuth: false, s3: {
+            bucket: 'oc-registry', region: 'us-west2', secret: 's3-secret'
+          }};
+
+          it('should not be valid', function(){
+            expect(validate(conf).isValid).to.be.false;
+            expect(validate(conf).message).to.equal(errorMessage);
+          });
+        });
+
+        describe('when s3 setting is missing region', function(){
+          var conf = { publishAuth: false, s3: {
+            bucket: 'oc-registry', key: 's3-key', secret: 's3-secret'
+          }};
+
+          it('should not be valid', function(){
+            expect(validate(conf).isValid).to.be.false;
+            expect(validate(conf).message).to.equal(errorMessage);
+          });
+        });
+
+        describe('when s3 setting is missing secret', function(){
+          var conf = { publishAuth: false, s3: {
+            bucket: 'oc-registry', key: 's3-key', region: 'us-west2'
+          }};
+
+          it('should not be valid', function(){
+            expect(validate(conf).isValid).to.be.false;
+            expect(validate(conf).message).to.equal(errorMessage);
+          });
+        });
+
+        describe('when s3 setting contains all properties', function(){
+          var conf = { publishAuth: false, s3: baseS3Conf};
+
+          it('should be valid', function(){
+            expect(validate(conf).isValid).to.be.true;
+          });
+        });
+      });
+    });
+
     describe('routes', function(){
       describe('when not specified', function(){
 
-        var conf = { routes: null };
+        var conf = { routes: null, s3: baseS3Conf };
 
         it('should be valid', function(){
           expect(validate(conf).isValid).to.be.true;
@@ -143,7 +226,7 @@ describe('registry : domain : validator', function(){
 
         describe('when not an array', function(){
 
-          var conf = { routes: {thisis: 'anobject' }};
+          var conf = { routes: {thisis: 'anobject', s3: baseS3Conf }};
 
           it('should not be valid', function(){
             expect(validate(conf).isValid).to.be.false;
@@ -153,7 +236,7 @@ describe('registry : domain : validator', function(){
 
         describe('when route does not contain route', function(){
 
-          var conf = { routes: [{ method: 'get', handler: function(){}}]};
+          var conf = { routes: [{ method: 'get', handler: function(){}}], s3: baseS3Conf};
 
           it('should not be valid', function(){
             expect(validate(conf).isValid).to.be.false;
@@ -163,7 +246,7 @@ describe('registry : domain : validator', function(){
 
         describe('when route does not contain handler', function(){
 
-          var conf = { routes: [{ method: 'get', route: '/hello'}]};
+          var conf = { routes: [{ method: 'get', route: '/hello'}], s3: baseS3Conf};
 
           it('should not be valid', function(){
             expect(validate(conf).isValid).to.be.false;
@@ -173,7 +256,7 @@ describe('registry : domain : validator', function(){
 
         describe('when route does not contain method', function(){
 
-          var conf = { routes: [{ route: '/hello', handler: function(){}}]};
+          var conf = { routes: [{ route: '/hello', handler: function(){}}], s3: baseS3Conf};
 
           it('should not be valid', function(){
             expect(validate(conf).isValid).to.be.false;
@@ -183,7 +266,7 @@ describe('registry : domain : validator', function(){
 
         describe('when route contains handler that is not a function', function(){
 
-          var conf = { routes: [{ route: '/hello', method: 'get', handler: 'hello' }]};
+          var conf = { routes: [{ route: '/hello', method: 'get', handler: 'hello' }], s3: baseS3Conf};
 
           it('should not be valid', function(){
             expect(validate(conf).isValid).to.be.false;
