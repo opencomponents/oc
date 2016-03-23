@@ -1,5 +1,6 @@
 'use strict';
 
+var parseAuthor = require('parse-author');
 var _ = require('underscore');
 
 var urlBuilder = require('../domain/url-builder');
@@ -18,7 +19,10 @@ module.exports = function(repository){
 
       if(isHtmlRequest && !!res.conf.discovery){
 
-        var params = {};
+        var params = {},
+            author = component.author || {},
+            parsedAuthor = _.isString(author) ? parseAuthor(author) : author;
+
         if(!!component.oc.parameters){
           var mandatoryParams = _.filter(_.keys(component.oc.parameters), function(paramName){
             var param = component.oc.parameters[paramName];
@@ -46,6 +50,7 @@ module.exports = function(repository){
           component: component,
           dependencies: _.keys(component.dependencies),
           href: res.conf.baseUrl,
+          parsedAuthor: parsedAuthor,
           sandBoxDefaultQs: urlBuilder.queryString(params)
         });
 
