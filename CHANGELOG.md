@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.29.0
+- [#218](https://github.com/opentable/oc/pull/218) Upgrade jade
+
 ### v0.28.9
 - [#214](https://github.com/opentable/oc/pull/214) S3 validation
 - [#216](https://github.com/opentable/oc/pull/216) Looks good;
