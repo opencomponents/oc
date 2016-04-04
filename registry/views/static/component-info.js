@@ -1,3 +1,5 @@
+'use strict';
+
 var oc = oc || {};
 oc.cmd = oc.cmd || [];
 

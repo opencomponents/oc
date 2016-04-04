@@ -1,3 +1,5 @@
+'use strict';
+
 var oc = oc || {};
 oc.cmd = oc.cmd || [];
 
@@ -8,13 +10,14 @@ oc.cmd.push(function(){
     var s = $('.search').val(),
         r = new RegExp(s),
         selectedCheckboxes = $('input[type=checkbox]:checked'),
-        hiddenStates = [];
+        hiddenStates = [],
+        i;
 
-    for(var i = 0; i < selectedCheckboxes.length; i++){
+    for(i = 0; i < selectedCheckboxes.length; i++){
       hiddenStates.push($(selectedCheckboxes[i]).attr('name'));
     }
 
-    for(var i = 0; i < componentsList.length; i++){
+    for(i = 0; i < componentsList.length; i++){
       var matches = !s || !!componentsList[i].name.match(r),
           selector = $('#component-' + componentsList[i].name),
           isHidden = false;
