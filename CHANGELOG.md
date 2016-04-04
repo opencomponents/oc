@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.29.1
+- [#221](https://github.com/opentable/oc/pull/221) Removed ace editor + added Accept-Language box
+
 ### v0.29.0
 - [#218](https://github.com/opentable/oc/pull/218) Upgrade jade
 
