@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.29.2
+- [#222](https://github.com/opentable/oc/pull/222) Compress inlined js and css inside jade views
+
 ### v0.29.1
 - [#221](https://github.com/opentable/oc/pull/221) Removed ace editor + added Accept-Language box
 
