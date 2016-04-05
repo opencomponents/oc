@@ -65,6 +65,10 @@
     "predef"        : [
         "console",
         "jQuery",
+        "$",
+        "window",
+        "componentsList",
+        "thisComponentHref",
         "describe",
         "it",
         "before",
