@@ -249,7 +249,7 @@ describe('registry', function(){
       });
     });
 
-    describe('when body contains two components', function(){
+    describe('when body contains multiple components', function(){
 
       describe('when Accept header not specified', function(){
 
@@ -280,6 +280,55 @@ describe('registry', function(){
         });
       });
 
+      describe('when omitHref=false', function(){
+        describe('when getting rendered components', function(){
+
+          before(function(done){
+            request({
+              url: 'http://localhost:3030/',
+              method: 'post',
+              json: true,
+              body: {
+                omitHref: true,
+                components: [
+                  {name:'hello-world'},
+                  {name:'no-containers'}
+                ]
+              }
+            }, next(done));
+          });
+
+          it('should respond without href parameter', function(){
+            expect(result[0].response.href).not.to.exist;
+            expect(result[1].response.href).not.to.exist;
+          });
+        });
+
+        describe('when getting unrendered components', function(){
+
+          before(function(done){
+            request({
+              url: 'http://localhost:3030/',
+              method: 'post',
+              headers: {'Accept': 'application/vnd.oc.unrendered+json'},
+              json: true,
+              body: {
+                omitHref: true,
+                components: [
+                  {name:'hello-world'},
+                  {name:'no-containers'}
+                ]
+              }
+            }, next(done));
+          });
+
+          it('should respond without href parameter', function(){
+            expect(result[0].response.href).not.to.exist;
+            expect(result[1].response.href).not.to.exist;
+          });
+        });
+      });
+      
       describe('when Accept header set to application/vnd.oc.unrendered+json', function(){
 
         before(function(done){
