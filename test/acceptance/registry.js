@@ -280,7 +280,7 @@ describe('registry', function(){
         });
       });
 
-      describe('when omitHref=false', function(){
+      describe('when omitHref=true', function(){
         describe('when getting rendered components', function(){
 
           before(function(done){
