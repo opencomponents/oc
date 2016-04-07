@@ -35,3 +35,13 @@ curl http://my-components-registry.mydomain.com/
   }
 }]
 ```
+
+# Payload API
+
+|Parameter|Type|Mandatory|Description|
+|---------|----|---------|-----------|
+|components|`array of objects`|`yes`|Components to retrieve|
+|components[index].name|`string`|`yes`|Component name|
+|components[index].version|`string`|`no`|Default latest, the component's version|
+|components[index].parameters|`object`|`no`|Component's parameters|
+|omitHref|`boolean`|`no`|Default false, when `true` omits the href value in the response of each component|
