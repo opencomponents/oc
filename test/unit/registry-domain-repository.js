@@ -251,7 +251,7 @@ describe('registry : domain : repository', function(){
       });
 
       it('should list the components', function(){
-        expect(response.result).to.eql(['hello-world', 'language', 'no-containers', 'oc-client']);
+        expect(response.result).to.eql(['hello-world', 'language', 'no-containers', 'welcome', 'oc-client']);
       });
     });
 
