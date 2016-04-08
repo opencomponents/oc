@@ -42,13 +42,12 @@ module.exports = function(conf, repository){
     }
 
     async.map(components, function(component, callback){
-      getComponent({
+      getComponent(_.extend(component, {
         conf: res.conf,
         headers: req.headers,
-        name: component.name,
-        parameters: _.extend(_.clone(req.body.parameters) || {}, component.parameters || {}),
-        version: component.version
-      }, function(result){
+        omitHref: !!req.body.omitHref,
+        parameters: _.extend(_.clone(req.body.parameters) || {}, component.parameters || {})
+      }), function(result){
         callback(null, result);
       });
     }, function(err, results){

@@ -44,4 +44,5 @@ curl http://my-components-registry.mydomain.com/
 |components[index].name|`string`|`yes`|Component name|
 |components[index].version|`string`|`no`|Default latest, the component's version|
 |components[index].parameters|`object`|`no`|Component's parameters|
+|omitHref|`boolean`|`no`|Default false, when `true` omits the href value in the response of each component|
 |parameters|`object`|`no`|Global parameters for all components to retrieve. When component has its own parameters, globals will be overwritten|

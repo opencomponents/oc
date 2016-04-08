@@ -122,13 +122,16 @@ module.exports = function(conf, repository){
             renderMode = isUnrendered ? 'unrendered' : 'rendered';
 
         var response = {
-          href: componentHref,
           type: conf.local ? 'oc-component-local' : 'oc-component',
           version: component.version,
           requestVersion: requestedComponent.version,
           name: requestedComponent.name,
           renderMode: renderMode
         };
+
+        if(!options.omitHref){
+          response.href = componentHref;
+        }
 
         retrievingInfo.extend({
           href: componentHref,
