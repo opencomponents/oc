@@ -62,7 +62,8 @@ describe('registry', function(){
       expect(result.components).to.eql([
         'http://localhost:3030/hello-world',
         'http://localhost:3030/language',
-        'http://localhost:3030/no-containers', 
+        'http://localhost:3030/no-containers',
+        'http://localhost:3030/welcome', 
         'http://localhost:3030/oc-client'
       ]);
     });
@@ -351,6 +352,99 @@ describe('registry', function(){
           expect(result[0].response.renderMode).to.equal('unrendered');
           expect(result[1].response.template).to.exist;
           expect(result[1].response.renderMode).to.equal('unrendered');
+        });
+      });
+
+      describe('when components require params', function(){
+        describe('when each component requires different params', function(){
+
+          before(function(done){
+            request({
+              url: 'http://localhost:3030/',
+              method: 'post',
+              json: true,
+              body: {
+                components: [
+                  {name:'welcome', parameters: { firstName: 'Mickey', lastName: 'Mouse' }},
+                  {name:'welcome', parameters: { firstName: 'Donald', lastName: 'Duck' }}
+                ]
+              }
+            }, next(done));
+          });
+
+          it('should render components with expected parameters', function(){
+            expect(result[0].response.href).to.equal('http://localhost:3030/welcome?firstName=Mickey&lastName=Mouse');
+            expect(result[1].response.href).to.equal('http://localhost:3030/welcome?firstName=Donald&lastName=Duck');
+          });
+        });
+
+        describe('when components require same parameters', function(){
+
+          before(function(done){
+            request({
+              url: 'http://localhost:3030/',
+              method: 'post',
+              json: true,
+              body: {
+                parameters: { firstName: 'Donald', lastName: 'Duck' },
+                components: [
+                  {name:'welcome'},
+                  {name:'welcome'}
+                ]
+              }
+            }, next(done));
+          });
+
+          it('should render components with expected parameters', function(){
+            expect(result[0].response.href).to.equal('http://localhost:3030/welcome?firstName=Donald&lastName=Duck');
+            expect(result[1].response.href).to.equal('http://localhost:3030/welcome?firstName=Donald&lastName=Duck');
+          });
+        });
+
+        describe('when components have some common parameters and some different', function(){
+
+          before(function(done){
+            request({
+              url: 'http://localhost:3030/',
+              method: 'post',
+              json: true,
+              body: {
+                parameters: { firstName: 'Donald' },
+                components: [
+                  {name:'welcome', parameters: { lastName: 'Mouse' }},
+                  {name:'welcome', parameters: { lastName: 'Duck' }}
+                ]
+              }
+            }, next(done));
+          });
+
+          it('should render components with expected parameters', function(){
+            expect(result[0].response.href).to.equal('http://localhost:3030/welcome?firstName=Donald&lastName=Mouse');
+            expect(result[1].response.href).to.equal('http://localhost:3030/welcome?firstName=Donald&lastName=Duck');
+          });
+        });
+
+        describe('when components have global parameters with local overrides', function(){
+
+          before(function(done){
+            request({
+              url: 'http://localhost:3030/',
+              method: 'post',
+              json: true,
+              body: {
+                parameters: { firstName: 'Donald', lastName: 'Duck' },
+                components: [
+                  {name:'welcome', parameters: { lastName: 'Mouse' }},
+                  {name:'welcome'}
+                ]
+              }
+            }, next(done));
+          });
+
+          it('should render components with expected parameters', function(){
+            expect(result[0].response.href).to.equal('http://localhost:3030/welcome?firstName=Donald&lastName=Mouse');
+            expect(result[1].response.href).to.equal('http://localhost:3030/welcome?firstName=Donald&lastName=Duck');
+          });
         });
       });
     });   

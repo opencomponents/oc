@@ -45,7 +45,8 @@ module.exports = function(conf, repository){
       getComponent(_.extend(component, {
         conf: res.conf,
         headers: req.headers,
-        omitHref: !!req.body.omitHref
+        omitHref: !!req.body.omitHref,
+        parameters: _.extend(_.clone(req.body.parameters) || {}, component.parameters || {})
       }), function(result){
         callback(null, result);
       });
