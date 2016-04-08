@@ -2,67 +2,169 @@
 
 ### v0.29.3
 - [#227](https://github.com/opentable/oc/pull/227) Omit href
+
+### v0.29.2
 - [#222](https://github.com/opentable/oc/pull/222) Compress inlined js and css inside jade views
+
+### v0.29.1
 - [#221](https://github.com/opentable/oc/pull/221) Removed ace editor + added Accept-Language box
+
+### v0.29.0
 - [#218](https://github.com/opentable/oc/pull/218) Upgrade jade
+
+### v0.28.9
 - [#214](https://github.com/opentable/oc/pull/214) S3 validation
 - [#216](https://github.com/opentable/oc/pull/216) Looks good;
     tested
+
+### v0.28.8
 - [#215](https://github.com/opentable/oc/pull/215) mock bugfix for when a value is not a string
+
+### v0.28.7
 - [#213](https://github.com/opentable/oc/pull/213) [Docs] description of oc.renderInfo param
 - [#212](https://github.com/opentable/oc/pull/212) Changelog using git history instead of github api
+
+### v0.28.6
 - [#211](https://github.com/opentable/oc/pull/211) Forward request headers to component
+
+### v0.28.5
 - [#208](https://github.com/opentable/oc/pull/208) When data is undefined, registry should 500
 - [#209](https://github.com/opentable/oc/pull/209) Exit 1 in case of CLI error
+
+### v0.28.4
 - [#204](https://github.com/opentable/oc/pull/204) add "getRepositoryUrl" in order to support repository package.json property as object
 - [#206](https://github.com/opentable/oc/pull/206) Fix travis forks PRs
+
+### v0.28.3
 - [#203](https://github.com/opentable/oc/pull/203) Fix githubChanges task name
 - [#199](https://github.com/opentable/oc/pull/199) Changelog
+
+### v0.28.2
 - [#201](https://github.com/opentable/oc/pull/201) Added license on minified oc-client.min.js
+
+### v0.28.1
 - [#200](https://github.com/opentable/oc/pull/200) Have optional callbacks in CLI functions
+
+### v0.28.0
 - [#198](https://github.com/opentable/oc/pull/198) More details on errors
 - [#197](https://github.com/opentable/oc/pull/197) Return null when there's no error in renderComponents
+
+### v0.27.9
 - [#195](https://github.com/opentable/oc/pull/195) Warmup on client.init
+
+### v0.27.8
 - [#196](https://github.com/opentable/oc/pull/196) Adding user-agent to node oc-client
+
+### v0.27.7
 - [#194](https://github.com/opentable/oc/pull/194) Cleanup on client
+
+### v0.27.6
 - [#193](https://github.com/opentable/oc/pull/193) Dev has optional callback in order to be used by grunt-oc
 - [#192](https://github.com/opentable/oc/pull/192) Less docs, more links
+
+### v0.27.5
 - [#190](https://github.com/opentable/oc/pull/190) Publish error
+
+### v0.27.4
 - [#189](https://github.com/opentable/oc/pull/189) Safe colors in order to avoid extending object and better testing
+
+### v0.27.1
 - [#187](https://github.com/opentable/oc/pull/187) Moved the request util to its own module
+
+### v0.27.0
 - [#186](https://github.com/opentable/oc/pull/186) Preserve language when doing client-side failover
+
+### v0.26.2
 - [#182](https://github.com/opentable/oc/pull/182) Node.js client post and various improvements
+
+### v0.26.1
 - [#184](https://github.com/opentable/oc/pull/184) Allow oc dev to be hosted
+
+### v0.26.0
 - [#178](https://github.com/opentable/oc/pull/178) node.js client should accept serverRendering and clientRendering endpoints instead of generic array (breaking change)
+
+### v0.25.0
 - [#179](https://github.com/opentable/oc/pull/179) Oc client cleanup and improvements
+
+### v0.24.1
 - [#180](https://github.com/opentable/oc/pull/180) update the dependencies
+
+### v0.24.0
 - [#177](https://github.com/opentable/oc/pull/177) Npm ignore to avoid publishing unuseful stuff
+
+### v0.23.7
 - [#173](https://github.com/opentable/oc/pull/173) Ownership of $$$
+
+### v0.23.6
 - [#172](https://github.com/opentable/oc/pull/172) Avoid client to be multiple times inside the page
+
+### v0.23.5
 - [#171](https://github.com/opentable/oc/pull/171) Without cleaning up the namespace
+
+### v0.23.4
 - [#170](https://github.com/opentable/oc/pull/170) jQuery in no conflict mode
+
+### v0.23.3
 - [#169](https://github.com/opentable/oc/pull/169) pre-rendered modality is deprecated
+
+### v0.23.2
 - [#168](https://github.com/opentable/oc/pull/168) Update dependencies
 - [#167](https://github.com/opentable/oc/pull/167) Sauce browsers updated + dev dependency updated
+
+### v0.23.1
 - [#166](https://github.com/opentable/oc/pull/166) Bugfix and docs
+
+### v0.23.0
 - [#165](https://github.com/opentable/oc/pull/165) Making the POST response API return status and response for each comp…
+
+### v0.22.3
 - [#164](https://github.com/opentable/oc/pull/164) New component-retrieved event
+
+### v0.22.2
 - [#163](https://github.com/opentable/oc/pull/163) POST route for allowing batch request
 - [#160](https://github.com/opentable/oc/pull/160) travis run tests with node 5 as well
+
+### v0.22.1
 - [#159](https://github.com/opentable/oc/pull/159) should have an explicit dep on phantom
+
+### v0.22.0
 - [#157](https://github.com/opentable/oc/pull/157) Server/Client-side render info
 - [#156](https://github.com/opentable/oc/pull/156) House keeping
+
+### v0.21.0
 - [#155](https://github.com/opentable/oc/pull/155) Removing info, ls, link, unlink
+
+### v0.20.5
 - [#153](https://github.com/opentable/oc/pull/153) js.gz + css.gz handling
+
+### v0.20.4
 - [#148](https://github.com/opentable/oc/pull/148) only remove the package once published to all registries
+
+### v0.20.3
 - [#152](https://github.com/opentable/oc/pull/152) woopsy, I broke `oc dev`
+
+### v0.20.2
 - [#151](https://github.com/opentable/oc/pull/151) Run karma tests by default
+
+### v0.20.1
 - [#144](https://github.com/opentable/oc/pull/144) Oc client limited retries
+
+### v0.20.0
 - [#141](https://github.com/opentable/oc/pull/141) allow plugins to depend on one another (breaking change)
+
+### v0.19.5
 - [#147](https://github.com/opentable/oc/pull/147) Refactor cli/domain/local
+
+### v0.19.4
 - [#145](https://github.com/opentable/oc/pull/145) oc dev fix (ie 8+)
+
+### v0.19.3
 - [#143](https://github.com/opentable/oc/pull/143) Fix cli crash when `oc dev` reads a broken package.json
+
+### v0.19.1
 - [#140](https://github.com/opentable/oc/pull/140) Hacking on travis
+
+### v0.19.0
 - [#139](https://github.com/opentable/oc/pull/139) prerendered -> unrendered
 - [#134](https://github.com/opentable/oc/pull/134) Added tagging when upgrading version
 - [#133](https://github.com/opentable/oc/pull/133) Empty component fix
