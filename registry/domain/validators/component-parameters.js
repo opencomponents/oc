@@ -5,28 +5,18 @@ var _ = require('underscore');
 
 var strings = require('../../../resources');
 
-var validate = {
-  booleanParameter: function(booleanParameter){
-    return _.isBoolean(booleanParameter);
-  },
+var validateParameter = function(parameter, expectedType){
+  var expected = expectedType.toLowerCase();
 
-  numberParameter: function(numberParameter){
-    return _.isNumber(numberParameter);
-  },
-
-  parameter: function(parameter, expectedType){
-    var expected = expectedType.toLowerCase();
-
-    if(_.contains(['string', 'boolean', 'number'], expected)){
-      return validate[expected + 'Parameter'](parameter);
-    }
-
-    return false;
-  },
-
-  stringParameter: function(stringParameter){
-    return !!stringParameter && _.isString(stringParameter) && stringParameter !== '';
+  if(expected === 'boolean'){
+    return _.isBoolean(parameter);
+  } else if(expected === 'number'){
+    return _.isNumber(parameter);
+  } else if(expected === 'string'){
+    return _.isString(parameter);
   }
+
+  return false;
 };
 
 module.exports = function(requestParameters, expectedParameters){
@@ -56,7 +46,7 @@ module.exports = function(requestParameters, expectedParameters){
       
       var expectedType = expectedParameters[requestParameterName].type;
 
-      if(!validate.parameter(requestParameter, expectedType)){
+      if(!validateParameter(requestParameter, expectedType)){
         if(!result.errors.types){
           result.errors.types = {};
           result.isValid = false;
