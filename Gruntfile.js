@@ -35,10 +35,10 @@ module.exports = function(grunt){
   grunt.registerTask('git-stage', [
     'gitadd:versionFiles',
     'gitcommit:version',
-    'gittag:addtag'/*,
+    'gittag:addtag',
     'changelog',
     'gitadd:changelog',
-    'gitcommit:changelog'*/
+    'gitcommit:changelog'
   ]);
 
   grunt.registerTask('build', 'Builds and minifies the oc-client component', customTasks.build(grunt, taskObject));

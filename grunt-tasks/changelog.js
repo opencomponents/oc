@@ -19,14 +19,24 @@ module.exports = function(grunt){
             result = [];
 
         _.forEach(commits, function(commit){
-          var commitMessages = commit.split('pull request'),
-              isPr = commitMessages.length > 1;
+          var commitMessages = commit.split('Merge pull request'),
+              isPr = commitMessages.length > 1,
+              isSquashedPr = !!commit.match(/(.*?)\(#(.*?)\)\n(.*?)/g);
 
           if(isPr){
             var split = commitMessages[1].split('from'),
                 prNumber = split[0].trim().replace('#', ''),
                 branchName = split[1].trim().split(' ')[0].trim(),
                 commitMessage = split[1].replace(branchName, '').trim();
+
+            result.push(format('- [#{0}](https://github.com/opentable/oc/pull/{0}) {1}', prNumber, commitMessage));
+          } else if(isSquashedPr){
+            var lines = commit.split('\n'),
+                commitLine = lines[4],
+                prNumberStartIndex = commitLine.lastIndexOf(' ('),
+                prNumberEndIndex = commitLine.lastIndexOf(')'),
+                prNumber = commitLine.substr(prNumberStartIndex + 3, prNumberEndIndex - prNumberStartIndex - 3),
+                commitMessage = commitLine.substr(0, prNumberStartIndex).trim();
 
             result.push(format('- [#{0}](https://github.com/opentable/oc/pull/{0}) {1}', prNumber, commitMessage));
           }
