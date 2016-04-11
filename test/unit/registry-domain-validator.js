@@ -370,15 +370,12 @@ describe('registry : domain : validator', function(){
           expect(validateResult.errors.message).to.equal('Parameters are not correctly formatted: name');
         });
 
-        it('should not be valid when parameter is empty', function(){
+        it('should be valid when parameter is an empty string', function(){
           var requestParameters = { name: '' };
 
           var validateResult = validate(requestParameters, componentParameters);
 
-          expect(validateResult.isValid).to.be.false;
-          expect(validateResult.errors).not.to.be.empty;
-          expect(validateResult.errors.types['name']).to.equal('wrong type');
-          expect(validateResult.errors.message).to.equal('Parameters are not correctly formatted: name');
+          expect(validateResult.isValid).to.be.true;
         });
 
         describe('when non mandatory number provided', function(){
