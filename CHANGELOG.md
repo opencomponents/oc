@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.30.1
+- [#230](https://github.com/opentable/oc/pull/230) Fixed Changelog generator task
+
 ### v0.30.0
 - [#229](https://github.com/opentable/oc/pull/229) Empty string should be a valid string parameter
 
