@@ -1,7 +1,11 @@
 ## Change Log
 
+### v0.30.0
+- [#229](https://github.com/opentable/oc/pull/229) Empty string should be a valid string parameter
+
 ### v0.29.3
 - [#227](https://github.com/opentable/oc/pull/227) Omit href
+- [#228](https://github.com/opentable/oc/pull/228) Global params on POST request
 
 ### v0.29.2
 - [#222](https://github.com/opentable/oc/pull/222) Compress inlined js and css inside jade views
