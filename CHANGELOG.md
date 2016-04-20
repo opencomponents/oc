@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.30.2
+- [#232](https://github.com/opentable/oc/pull/232) Upgrade async
+
 ### v0.30.1
 - [#230](https://github.com/opentable/oc/pull/230) Fixed Changelog generator task
 
