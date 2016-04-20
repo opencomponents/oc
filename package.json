@@ -49,7 +49,7 @@
   },
   "dependencies": {
     "accept-language-parser": "1.0.2",
-    "async": "0.9.0",
+    "async": "1.5.2",
     "aws-sdk": "2.1.43",
     "clean-css": "3.4.9",
     "colors": "1.0.3",
