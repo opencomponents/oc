@@ -109,7 +109,7 @@ module.exports = function(dependencies){
     };
 
     var registerPlugins = function(registry){
-      var mockedPlugins = getMockedPlugins(logger);
+      var mockedPlugins = getMockedPlugins(logger, componentsDir);
 
       mockedPlugins.forEach(function(p){
         registry.register(p);
