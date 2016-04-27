@@ -8,6 +8,7 @@ matrix:
     - node_js: "iojs"
     - node_js: "4"
     - node_js: "5"
+    - node_js: "6"
 
 before_script:
 - npm install -g grunt-cli
