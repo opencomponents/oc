@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 
 describe('registry : domain : sanitiser', function(){
 
-  var sanitiser = require('../../registry/domain/sanitiser');
+  var sanitiser = require('../../src/registry/domain/sanitiser');
 
   describe('when sanitising component\'s request parameters', function(){
 

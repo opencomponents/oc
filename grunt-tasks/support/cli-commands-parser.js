@@ -2,7 +2,7 @@
 
 var _ = require('underscore');
 
-var commands = require('../../cli/commands');
+var commands = require('../../src/cli/commands');
 
 module.exports = {
   parse: function(){

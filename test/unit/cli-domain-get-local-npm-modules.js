@@ -28,7 +28,7 @@ var initialise = function(){
     }
   };
 
-  var GetLocalNpmModules = injectr('../../cli/domain/get-local-npm-modules.js', {
+  var GetLocalNpmModules = injectr('../../src/cli/domain/get-local-npm-modules.js', {
     'fs-extra': fsMock,
     path: pathMock
   }, { __dirname: '' });

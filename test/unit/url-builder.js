@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 
 describe('registry : domain : url-builder', function(){
 
-  var urlBuilder = require('../../registry/domain/url-builder');
+  var urlBuilder = require('../../src/registry/domain/url-builder');
 
   var builtUrl;
   var execute = function(component, baseUrl){

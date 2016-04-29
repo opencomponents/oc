@@ -20,7 +20,7 @@ var initialise = function(fs, uglifyStub){
     writeFile: sinon.stub().yields(null, 'ok')
   }, fs || {});
 
-  packageTemplate = injectr('../../cli/domain/package-template.js', {
+  packageTemplate = injectr('../../src/cli/domain/package-template.js', {
     'fs-extra': fsMock,
     'uglify-js': {
       minify: uglifyStub || function(code){

@@ -3,7 +3,7 @@
 var format = require('stringformat');
 var semver = require('semver');
 
-var packageInfo = require('../../../package.json');
+var packageInfo = require('../../../../package.json');
 
 module.exports = function(userAgent) {
   var result = { isValid: false};

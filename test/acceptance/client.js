@@ -10,7 +10,7 @@ describe('The node.js OC client', function(){
       client,
       clientOfflineRegistry,
       result,
-      oc = require('../../index'),
+      oc = require('../../src/index'),
       $component,
       conf = {          
         local: true,

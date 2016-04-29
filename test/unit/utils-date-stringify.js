@@ -5,7 +5,7 @@ var sinon = require('sinon');
 
 describe('utils : dateStringify', function(){
 
-  var dateStringified = require('../../utils/date-stringify');
+  var dateStringified = require('../../src/utils/date-stringify');
 
   describe('when the date is provided', function(){
     var anyValidDate = new Date(1442592664035);

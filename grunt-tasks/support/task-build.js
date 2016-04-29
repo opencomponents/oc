@@ -11,9 +11,9 @@ module.exports = function(grunt, taskObject){
 
     var done = this.async(),
         version = taskObject.pkg.version,
-        clientComponentDir = '../../components/oc-client/',
+        clientComponentDir = '../../src/components/oc-client/',
         licenseRow = '/*! OpenComponents client v{0} | (c) 2015-{1} OpenTable, Inc. | {2} */',
-        licenseLink = 'https://github.com/opentable/oc/tree/master/components/oc-client/LICENSES',
+        licenseLink = 'https://github.com/opentable/oc/tree/master/src/components/oc-client/LICENSES',
         license = format(licenseRow, version, new Date().getFullYear(), licenseLink),
         headLoad = fs.readFileSync(path.join(__dirname, clientComponentDir, 'src/head.load.js')).toString(),
         ocClient = fs.readFileSync(path.join(__dirname, clientComponentDir, 'src/oc-client.js')).toString(),
@@ -34,7 +34,7 @@ module.exports = function(grunt, taskObject){
     fs.writeFileSync(path.join(__dirname, clientComponentDir, 'src/oc-client.min.map'), compressed.map);
     fs.writeFileSync(path.join(__dirname, '../../client/src/oc-client.min.js'), compressedCode);
 
-    var Local = require('../../cli/domain/local'),
+    var Local = require('../../src/cli/domain/local'),
         local = new Local({ logger: { log: grunt.log.writeln }});
 
     local.package(path.join(__dirname, clientComponentDir), function(err, res){

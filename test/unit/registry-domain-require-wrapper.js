@@ -5,7 +5,7 @@ var vm = require('vm');
 
 describe('registry : domain : require-wrapper', function(){
 
-  var RequireWrapper = require('../../registry/domain/require-wrapper');
+  var RequireWrapper = require('../../src/registry/domain/require-wrapper');
 
   describe('when using the require wrapper in a clear context', function(){
 
