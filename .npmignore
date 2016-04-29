@@ -1,4 +1,4 @@
-grunt-tasks
+tasks
 test
 .travis.yml
 appveyor.yml
