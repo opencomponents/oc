@@ -28,7 +28,7 @@ var initialise = function(){
     }
   };
 
-  var Local = injectr('../../cli/domain/mock.js', {
+  var Local = injectr('../../src/cli/domain/mock.js', {
     'fs-extra': fsMock,
     path: pathMock
   }, { __dirname: '' });

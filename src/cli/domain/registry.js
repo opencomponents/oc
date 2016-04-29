@@ -13,7 +13,7 @@ var urlParser = require('../domain/url-parser');
 
 var getOcVersion = function(){
 
-  var ocPackagePath = path.join(__dirname, '../../package.json'),
+  var ocPackagePath = path.join(__dirname, '../../../package.json'),
       ocInfo = fs.readJsonSync(ocPackagePath);
 
   return ocInfo.version;

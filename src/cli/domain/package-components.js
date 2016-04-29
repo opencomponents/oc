@@ -29,7 +29,7 @@ module.exports = function(){
     fs.mkdirSync(publishPath);
 
     var componentPackagePath = path.join(componentPath, 'package.json'),
-        ocPackagePath = path.join(__dirname, '../../package.json');
+        ocPackagePath = path.join(__dirname, '../../../package.json');
 
     if(!fs.existsSync(componentPackagePath)){
       return callback(new Error('component does not contain package.json'));

@@ -6,7 +6,7 @@ var path = require('path');
 var _ = require('underscore');
 
 var ComponentsCache = require('./components-cache');
-var packageInfo = require('../../package.json');
+var packageInfo = require('../../../package.json');
 var S3 = require('./s3');
 var settings = require('../../resources/settings');
 var strings = require('../../resources');
@@ -47,7 +47,7 @@ module.exports = function(conf){
     }, 
     getComponentVersions: function(componentName, callback){
       if(componentName === 'oc-client'){
-        return callback(null, [fs.readJsonSync(path.join(__dirname, '../../package.json')).version]);
+        return callback(null, [fs.readJsonSync(path.join(__dirname, '../../../package.json')).version]);
       }
 
       if(!_.contains(local.getComponents(), componentName)){

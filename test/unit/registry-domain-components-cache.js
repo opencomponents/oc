@@ -30,7 +30,7 @@ describe('registry : domain : components-cache', function(){
     clearIntervalStub = sinon.stub();
     setIntervalStub = sinon.stub();
     eventsHandlerStub = { fire: sinon.stub() };
-    var ComponentsCache = injctr('../../registry/domain/components-cache.js', {
+    var ComponentsCache = injctr('../../src/registry/domain/components-cache.js', {
       '../../utils/get-unix-utc-timestamp': function(){
         return 12345678;
       },

@@ -11,7 +11,7 @@ describe('registry : routes : helpers : get-component', function(){
       mockedComponents = require('../fixtures/mocked-components'),
       mockedRepository,
       getComponent,
-      GetComponent = injectr('../../registry/routes/helpers/get-component.js', {
+      GetComponent = injectr('../../src/registry/routes/helpers/get-component.js', {
         '../../domain/events-handler': {
           on: _.noop,
           fire: fireStub

@@ -27,7 +27,7 @@ describe('registry : domain : repository', function(){
       putDir: sinon.stub()
     };
 
-    var Repository = injectr('../../registry/domain/repository.js', {
+    var Repository = injectr('../../src/registry/domain/repository.js', {
       './s3': function(conf){
         return s3Mock;
       },
@@ -226,7 +226,7 @@ describe('registry : domain : repository', function(){
 
   describe('when on local configuration', function(){
 
-    var Repository = require('../../registry/domain/repository');
+    var Repository = require('../../src/registry/domain/repository');
 
     var localConfiguration = {
       local: true,

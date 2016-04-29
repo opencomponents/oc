@@ -20,7 +20,7 @@ var initialise = function(fs){
     writeFile: sinon.stub().yields(null, 'ok')
   }, fs || {});
 
-  getMockedPlugins = injectr('../../cli/domain/get-mocked-plugins.js', {
+  getMockedPlugins = injectr('../../src/cli/domain/get-mocked-plugins.js', {
     'fs-extra': fsMock,
     path: {
       resolve: function(){

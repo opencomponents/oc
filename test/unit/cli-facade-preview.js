@@ -15,7 +15,7 @@ describe('cli : facade : preview', function(){
     registryStub = { getComponentPreviewUrlByUrl: sinon.stub().yields(error, url)};
     logSpy = { log: sinon.spy()};
 
-    var PreviewFacade = injectr('../../cli/facade/preview.js', { opn: opnSpy }),
+    var PreviewFacade = injectr('../../src/cli/facade/preview.js', { opn: opnSpy }),
         previewFacade = new PreviewFacade({ logger: logSpy, registry: registryStub });
 
     previewFacade({ componentHref: 'http://components.com/component' }, function(){});

@@ -5,7 +5,7 @@ var injectr = require('injectr');
 
 describe('registry : domain : validator', function(){
 
-  var validator = require('../../registry/domain/validators'),
+  var validator = require('../../src/registry/domain/validators'),
       baseS3Conf = {
         bucket: 'oc-components',
         key: 's3-key',
@@ -746,9 +746,9 @@ describe('registry : domain : validator', function(){
   });
 
   describe('when validating CLI OC version in request headers', function(){
-    var validator = injectr('../../registry/domain/validators/index.js', {
-      './oc-cli-version': injectr('../../registry/domain/validators/oc-cli-version.js', {
-        '../../../package.json': { version: '0.16.34'}
+    var validator = injectr('../../src/registry/domain/validators/index.js', {
+      './oc-cli-version': injectr('../../src/registry/domain/validators/oc-cli-version.js', {
+        '../../../../package.json': { version: '0.16.34'}
       })
     });
 
@@ -818,9 +818,9 @@ describe('registry : domain : validator', function(){
   });
 
   describe('when validating node engine version in request headers', function(){
-    var validator = injectr('../../registry/domain/validators/index.js', {
-      './node-version': injectr('../../registry/domain/validators/node-version.js', {
-        '../../../package.json': { engines: { node: '>=0.10.35' }}
+    var validator = injectr('../../src/registry/domain/validators/index.js', {
+      './node-version': injectr('../../src/registry/domain/validators/node-version.js', {
+        '../../../../package.json': { engines: { node: '>=0.10.35' }}
       })
     });
 

@@ -19,7 +19,7 @@ var initialise = function(fs){
     writeFile: sinon.stub().yields(null, 'ok')
   }, fs || {});
 
-  packageServerScript = injectr('../../cli/domain/package-server-script.js', {
+  packageServerScript = injectr('../../src/cli/domain/package-server-script.js', {
     'fs-extra': fsMock,
     path: {
       extname: path.extname,

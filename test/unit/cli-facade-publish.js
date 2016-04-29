@@ -10,12 +10,12 @@ var _ = require('underscore');
 describe('cli : facade : publish', function(){
 
   var logSpy = {},
-      Registry = require('../../cli/domain/registry'),
+      Registry = require('../../src/cli/domain/registry'),
       registry = new Registry(),
-      Local = require('../../cli/domain/local'),
+      Local = require('../../src/cli/domain/local'),
       local = new Local({ logger: { log: function(){} } }),
       readStub = sinon.stub().yields(null, 'test'),
-      PublishFacade = injectr('../../cli/facade/publish.js', { read: readStub }),
+      PublishFacade = injectr('../../src/cli/facade/publish.js', { read: readStub }),
       publishFacade = new PublishFacade({ registry: registry, local: local, logger: logSpy });
 
   var execute = function(cb, creds){

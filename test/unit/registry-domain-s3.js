@@ -12,7 +12,7 @@ describe('registry : domain : s3', function(){
       error, 
       response;
     
-  var S3 = injectr('../../registry/domain/s3.js', {
+  var S3 = injectr('../../src/registry/domain/s3.js', {
     'fs-extra': {
       readFile: sinon.stub().yields(null, 'file content!')
     },

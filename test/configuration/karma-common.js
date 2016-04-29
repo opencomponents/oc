@@ -15,8 +15,8 @@ module.exports = {
     'test-settings.js',
 
     // The oc-client bundle
-    '../../components/oc-client/src/head.load.js',
-    '../../components/oc-client/src/oc-client.js',
+    '../../src/components/oc-client/src/head.load.js',
+    '../../src/components/oc-client/src/oc-client.js',
 
     // The tests
     '../front-end/*.js'

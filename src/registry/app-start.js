@@ -5,7 +5,7 @@ var format = require('stringformat');
 var path = require('path');
 var _ = require('underscore');
 
-var packageInfo = require('../package.json');
+var packageInfo = require('../../package.json');
 
 module.exports = function(repository, options, callback){
 

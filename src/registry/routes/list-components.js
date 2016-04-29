@@ -4,7 +4,7 @@ var async = require('async');
 var _ = require('underscore');
 
 var dateStringified = require('../../utils/date-stringify');
-var packageInfo = require('../../package.json');
+var packageInfo = require('../../../package.json');
 var urlBuilder = require('../domain/url-builder');
 
 module.exports = function(repository){

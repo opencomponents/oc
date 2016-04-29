@@ -7,7 +7,7 @@ var format = require('stringformat');
 var vm = require('vm');
 var _ = require('underscore');
 
-var Client = require('../../../client');
+var Client = require('../../../../client');
 var detective = require('../../domain/plugins-detective');
 var eventsHandler = require('../../domain/events-handler');
 var GetComponentRetrievingInfo = require('./get-component-retrieving-info');

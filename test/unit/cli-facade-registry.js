@@ -7,9 +7,9 @@ var sinon = require('sinon');
 describe('cli : facade : registry', function(){
 
   var logSpy = {},
-      Registry = require('../../cli/domain/registry'),
+      Registry = require('../../src/cli/domain/registry'),
       registry = new Registry(),
-      RegistryFacade = require('../../cli/facade/registry'),
+      RegistryFacade = require('../../src/cli/facade/registry'),
       registryFacade = new RegistryFacade({ registry: registry, logger: logSpy });
 
   var execute = function(command){

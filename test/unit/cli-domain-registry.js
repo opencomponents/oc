@@ -7,7 +7,7 @@ var sinon = require('sinon');
 var getRegistry = function(dependencies, opts){
   dependencies.fs = dependencies.fs || {};
   dependencies.fs.readJsonSync = sinon.stub().returns({ version: '1.2.3' });
-  var Registry = injectr('../../cli/domain/registry.js', {
+  var Registry = injectr('../../src/cli/domain/registry.js', {
         'minimal-request': dependencies.request,
         'fs-extra': dependencies.fs,
         '../../utils/put': dependencies.put,
