@@ -2,17 +2,11 @@
 
 var _ = require('underscore');
 
-var customTasks = {
-  build: require('./grunt-tasks/support/task-build'),
-  generateCliDoc: require('./grunt-tasks/support/task-generate-cli-doc'),
-  version: require('./grunt-tasks/support/task-version')
-};
-
 module.exports = function(grunt){
 
   var taskObject = { pkg: grunt.file.readJSON('package.json') };
 
-  grunt.file.expand('grunt-tasks/*.js', '!grunt-tasks/_*.js').forEach(function(file) {
+  grunt.file.expand('tasks/*.js', '!tasks/_*.js').forEach(function(file) {
     var name = file.split('/');
     name = name[name.length - 1].replace('.js', '');
     var task = require('./' + file);
@@ -40,8 +34,4 @@ module.exports = function(grunt){
     'gitadd:changelog',
     'gitcommit:changelog'
   ]);
-
-  grunt.registerTask('build', 'Builds and minifies the oc-client component', customTasks.build(grunt, taskObject));
-  grunt.registerTask('generate-cli-doc', 'Automatically updates the cli.md file', customTasks.generateCliDoc);
-  grunt.registerTask('version', 'Does the version upgrade', customTasks.version(grunt, taskObject));
 };

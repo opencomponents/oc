@@ -1,6 +1,5 @@
 grunt-tasks
 test
-.jshintrc
 .travis.yml
 appveyor.yml
 Gruntfile.js
