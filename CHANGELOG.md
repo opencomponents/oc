@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.30.3
+- [#235](https://github.com/opentable/oc/pull/235) Moved things around
+
 ### v0.30.2
 - [#232](https://github.com/opentable/oc/pull/232) Upgrade async
 
