@@ -7,8 +7,8 @@ var sinon = require('sinon');
 describe('cli : facade : init', function(){
 
   var logSpy = {},
-      InitFacade = require('../../cli/facade/init'),
-      Local = require('../../cli/domain/local'),
+      InitFacade = require('../../src/cli/facade/init'),
+      Local = require('../../src/cli/domain/local'),
       local = new Local({ logger: { log: function(){} } }),
       initFacade = new InitFacade({ local: local, logger: logSpy });
 

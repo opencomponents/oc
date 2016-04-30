@@ -11,7 +11,7 @@ var packageStaticFiles,
     mocks;
 
 var initialise = function(mocks, params, cb){
-  packageStaticFiles = injectr('../../cli/domain/package-static-files.js', mocks, { console: console });
+  packageStaticFiles = injectr('../../src/cli/domain/package-static-files.js', mocks, { console: console });
   packageStaticFiles(params, function(e, r){
     error = e;
     cb();

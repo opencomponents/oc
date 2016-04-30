@@ -7,7 +7,7 @@ describe('cli : domain : url-parser', function(){
 
   var parsed;
   var execute = function(url, returnVersion){
-    var urlParser = require('../../cli/domain/url-parser');
+    var urlParser = require('../../src/cli/domain/url-parser');
 
     parsed = urlParser.parse({
       href: url,

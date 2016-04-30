@@ -28,7 +28,7 @@ var initialise = function(){
     }
   };
 
-  var Local = injectr('../../cli/domain/package-components.js', {
+  var Local = injectr('../../src/cli/domain/package-components.js', {
     'fs-extra': fsMock,
     'uglify-js': {
       minify: function(code){

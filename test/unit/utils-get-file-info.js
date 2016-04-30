@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 
 describe('utils : getFileInfo', function(){
 
-  var getFileInfo = require('../../utils/get-file-info');
+  var getFileInfo = require('../../src/utils/get-file-info');
 
   describe('when extension is .js', function(){
     var fileInfo = getFileInfo('/path/file.js');

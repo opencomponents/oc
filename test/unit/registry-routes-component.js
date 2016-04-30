@@ -6,7 +6,7 @@ var _ = require('underscore');
 
 describe('registry : routes : component', function(){
 
-  var ComponentRoute = require('../../registry/routes/component'),
+  var ComponentRoute = require('../../src/registry/routes/component'),
       mockedComponents = require('../fixtures/mocked-components'),
       mockedRepository, resJsonStub, componentRoute;
   

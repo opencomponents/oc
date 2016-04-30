@@ -1,0 +1,1 @@
+"use strict";module.exports.data=function(t,u){u(null,{})};

@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 
 describe('utils : padZero', function(){
 
-  var padZero = require('../../utils/pad-zero');
+  var padZero = require('../../src/utils/pad-zero');
 
   describe('when the correct parameters are provided', function(){
     var anyData = 3;

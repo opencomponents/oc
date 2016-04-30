@@ -9,7 +9,7 @@ describe('registry', function(){
   var registry,
       result,
       error,
-      oc = require('../../index'),
+      oc = require('../../src/index'),
       conf = {          
         local: true,
         path: path.resolve('test/fixtures/components'),

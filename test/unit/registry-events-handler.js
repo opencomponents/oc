@@ -5,7 +5,7 @@ var sinon = require('sinon');
 
 describe('registry : events-handler', function(){
 
-  var eventsHandler = require('../../registry/domain/events-handler');
+  var eventsHandler = require('../../src/registry/domain/events-handler');
 
   describe('when requiring it multiple times', function(){
 
@@ -14,7 +14,7 @@ describe('registry : events-handler', function(){
 
     before(function(){
       eventsHandler.on('eventName', spy);
-      handler2 = require('../../registry/domain/events-handler');
+      handler2 = require('../../src/registry/domain/events-handler');
       handler2.fire('eventName', { a: 1234 });
     });
 

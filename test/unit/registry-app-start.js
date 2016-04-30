@@ -5,8 +5,8 @@ var injectr = require('injectr');
 var sinon = require('sinon');
 
 var getAppStart = function(mockedRepository, options, callback){
-  var appStart = injectr('../../registry/app-start.js', {
-        '../package.json': { version: '1.2.3' }
+  var appStart = injectr('../../src/registry/app-start.js', {
+        '../../package.json': { version: '1.2.3' }
       }, { console: { log: sinon.stub() }, __dirname: '.'});
       
   return appStart(mockedRepository, options, callback);
