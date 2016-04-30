@@ -40,7 +40,7 @@
     "karma": "0.13.22",
     "karma-jasmine": "0.3.8",
     "karma-phantomjs-launcher": "1.0.0",
-    "karma-sauce-launcher": "0.3.1",
+    "karma-sauce-launcher": "https://github.com/matteofigus/karma-sauce-launcher",
     "karma-sinon": "1.0.4",
     "load-grunt-tasks": "0.6.0",
     "mocha": "2.4.5",
