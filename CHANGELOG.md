@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.30.5
+- [#238](https://github.com/opentable/oc/pull/238) Logo path fixed in web interface
+
 ### v0.30.4
 - [#236](https://github.com/opentable/oc/pull/236) Refactoring tasks code
 - [#237](https://github.com/opentable/oc/pull/237) Upgrade and fix jshinting
