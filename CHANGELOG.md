@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.30.4
+- [#236](https://github.com/opentable/oc/pull/236) Refactoring tasks code
+- [#237](https://github.com/opentable/oc/pull/237) Upgrade and fix jshinting
+
 ### v0.30.3
 - [#235](https://github.com/opentable/oc/pull/235) Moved things around
 
