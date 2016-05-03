@@ -2,7 +2,7 @@
 
 module.exports = {
   options: {
-    jshintrc: 'grunt-tasks/support/.jshintrc',
+    jshintrc: 'tasks/support/.jshintrc',
     ignores: [
       'node_modules', 
       'client/src/oc-client.min.js', 

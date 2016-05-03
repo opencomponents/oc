@@ -5,13 +5,15 @@ var fs = require('fs-extra');
 var path = require('path');
 var uglifyJs = require('uglify-js');
 
-module.exports = function(grunt, taskObject){
+var packageJson = require('../package');
 
-  return function(){
+module.exports = function(grunt){
+
+  grunt.registerTask('build', 'Builds and minifies the oc-client component', function(){
 
     var done = this.async(),
-        version = taskObject.pkg.version,
-        clientComponentDir = '../../src/components/oc-client/',
+        version = packageJson.version,
+        clientComponentDir = '../src/components/oc-client/',
         licenseRow = '/*! OpenComponents client v{0} | (c) 2015-{1} OpenTable, Inc. | {2} */',
         licenseLink = 'https://github.com/opentable/oc/tree/master/src/components/oc-client/LICENSES',
         license = format(licenseRow, version, new Date().getFullYear(), licenseLink),
@@ -32,14 +34,14 @@ module.exports = function(grunt, taskObject){
 
     fs.writeFileSync(path.join(__dirname, clientComponentDir, 'src/oc-client.min.js'), compressedCode);
     fs.writeFileSync(path.join(__dirname, clientComponentDir, 'src/oc-client.min.map'), compressed.map);
-    fs.writeFileSync(path.join(__dirname, '../../client/src/oc-client.min.js'), compressedCode);
+    fs.writeFileSync(path.join(__dirname, '../client/src/oc-client.min.js'), compressedCode);
 
-    var Local = require('../../src/cli/domain/local'),
+    var Local = require('../src/cli/domain/local'),
         local = new Local({ logger: { log: grunt.log.writeln }});
 
     local.package(path.join(__dirname, clientComponentDir), function(err, res){
       grunt.log[!!err ? 'error' : 'ok'](!!err ? err : 'Client has been built and packaged');
       done();
     });
-  };
+  });
 };
