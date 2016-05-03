@@ -12,6 +12,41 @@ module.exports = function(conf, cdn){
   var cachedComponentsList,
       refreshLoop;
 
+  var getFromJson = function(cb){
+    cdn.getFile(conf.s3.componentsDir + '/components.json', true, function(err, res){
+      var result; 
+      
+      if(!err){
+        try {
+          result = JSON.parse(res);
+        } catch(e){
+          return cb(e);
+        }
+      }
+
+      cb(err, result);
+    });
+  };
+
+  var updateCachedData = function(newData){
+    eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
+    if(newData.lastEdit > cachedComponentsList.lastEdit){
+      cachedComponentsList = newData;
+    }
+  };
+
+  var refreshCachedData = function(){
+    refreshLoop = setInterval(function(){
+      getFromJson(function(err, data){
+        if(err){
+          eventsHandler.fire('error', { code: 'components_list_get', message: err });
+        } else {
+          updateCachedData(data);
+        }
+      });
+    }, conf.pollingInterval * 1000);
+  };
+
   var cacheDataAndStartRefresh = function(data, cb){
     eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
     cachedComponentsList = data;
@@ -19,13 +54,10 @@ module.exports = function(conf, cdn){
     cb(null, data);
   };
 
-  var getAndSaveFromDirectories = function(cb){ 
-    getFromDirectories(function(err, components){
-      if(!!err){ return cb(err); }
-      saveData(components, function(err, res){
-        if(!!err){ return cb(err); }
-        cb(err, components);
-      }); 
+  var getVersionsForComponent  = function(componentName, cb){
+    cdn.listSubDirectories(conf.s3.componentsDir + '/' + componentName, function(err, versions){
+      if(err){ return cb(err); }
+      cb(null, versions.sort(semver.compare));
     });
   };
 
@@ -60,41 +92,6 @@ module.exports = function(conf, cdn){
     });
   };
 
-  var getFromJson = function(cb){
-    cdn.getFile(conf.s3.componentsDir + '/components.json', true, function(err, res){
-      var result; 
-      
-      if(!err){
-        try {
-          result = JSON.parse(res);
-        } catch(e){
-          return cb(e);
-        }
-      }
-
-      cb(err, result);
-    });
-  };
-
-  var getVersionsForComponent  = function(componentName, cb){
-    cdn.listSubDirectories(conf.s3.componentsDir + '/' + componentName, function(err, versions){
-      if(err){ return cb(err); }
-      cb(null, versions.sort(semver.compare));
-    });
-  };
-
-  var refreshCachedData = function(){
-    refreshLoop = setInterval(function(){
-      getFromJson(function(err, data){
-        if(err){
-          eventsHandler.fire('error', { code: 'components_list_get', message: err });
-        } else {
-          updateCachedData(data);
-        }
-      });
-    }, conf.pollingInterval * 1000);
-  };
-
   var returnError = function(errorCode, errorMessage, callback){
     eventsHandler.fire('error', { code: errorCode, message: errorMessage });
     return callback(errorCode);
@@ -104,11 +101,14 @@ module.exports = function(conf, cdn){
     cdn.putFileContent(JSON.stringify(data), conf.s3.componentsDir + '/components.json', true, callback);
   };
 
-  var updateCachedData = function(newData){
-    eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
-    if(newData.lastEdit > cachedComponentsList.lastEdit){
-      cachedComponentsList = newData;
-    }
+  var getAndSaveFromDirectories = function(cb){ 
+    getFromDirectories(function(err, components){
+      if(!!err){ return cb(err); }
+      saveData(components, function(err, res){
+        if(!!err){ return cb(err); }
+        cb(err, components);
+      }); 
+    });
   };
 
   return {
