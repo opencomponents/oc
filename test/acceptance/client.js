@@ -336,7 +336,7 @@ describe('The node.js OC client', function(){
         });
 
         it('should contain the hashed view\'s key', function(){
-          expect($component.data('hash')).to.equal('46ee85c314b371cac60471cef5b2e2e6c443dccf');
+          expect($component.data('hash')).to.equal('c6fcae4d23d07fd9a7e100508caf8119e998d7a9');
         });
 
         it('should return expected html', function(){

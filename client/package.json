@@ -14,7 +14,7 @@
   },
   "homepage": "https://github.com/opentable/oc/tree/master/oc-client",
   "dependencies": {
-    "handlebars": "3.0.1",
+    "handlebars": "4.0.5",
     "jade": "1.11.0",
     "minimal-request": "2.0.0",
     "nice-cache": "0.0.5",

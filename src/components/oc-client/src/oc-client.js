@@ -19,7 +19,7 @@ var oc = oc || {};
   // Constants
   var CDNJS_BASEURL = 'https://cdnjs.cloudflare.com/ajax/libs/',
       IE89_AJAX_POLYFILL_URL = CDNJS_BASEURL + 'jquery-ajaxtransport-xdomainrequest/1.0.3/jquery.xdomainrequest.min.js',
-      HANDLEBARS_URL = CDNJS_BASEURL + 'handlebars.js/3.0.1/handlebars.runtime.js',
+      HANDLEBARS_URL = CDNJS_BASEURL + 'handlebars.js/4.0.5/handlebars.runtime.js',
       JADE_URL = CDNJS_BASEURL + 'jade/1.11.0/runtime.min.js',
       JQUERY_URL = CDNJS_BASEURL + 'jquery/1.11.2/jquery.min.js',
       RETRY_INTERVAL = oc.conf.retryInterval || 5000,
