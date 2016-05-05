@@ -20,7 +20,7 @@ describe('oc-client : renderUnloadedComponents', function(){
       },
       renderMode: 'unrendered'
     },
-    view: 'oc.components=oc.components||{},oc.components["46ee85c314b371cac60471cef5b2e2e6c443dccf"]={compiler:[6,">= 2.0.0-beta.1"],main:function(){return"Hello world!"},useData:!0};'
+    view: 'oc.components=oc.components||{},oc.components["46ee85c314b371cac60471cef5b2e2e6c443dccf"]={compiler:[7,">= 4.0.0"],main:function(){return"Hello world!"},useData:!0};'
   };
 
   var anotherComponent = {
