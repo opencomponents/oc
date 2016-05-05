@@ -16,7 +16,7 @@ module.exports.data = function(context, callback){
     callback(null, {
       username: context.params.username,
       repos: body.sort(function(a, b){
-        return a.stargazers_count - b.stargazers_count;
+        return a['stargazers_count'] - b['stargazers_count'];
       })
     });
   });
