@@ -1,21 +1,20 @@
 ![oc](https://raw.github.com/opentable/oc/master/docs/logo.png)
 =============
 
-OpenComponents is a framework to develop and deploy robust and distributed html components.
+OpenComponents, **microservices in the front-end world**.
 
-The goal is to own a system that allows big corporations (that may involve hundreds of engineers on a number of projects) to have tools to facilitate code sharing, reduce dependencies, and easily approach new features and experiments.
+First, **you create your component**. It can contain logic to get some data (using node.js) and then the view, including css and js. It can be what you want, including *React* or *Angular* components or whatever you like.
+
+Then, **you publish it** to the OpenComponents registry and you wait a couple of seconds while the registry prepares your stuff to be production-ready.
+
+Now, every web app in your private or public network can **consume the component** via its own HTTP endpoint during server-side rendering or just in the browser.
+
+We have been using for more than a year in production at OpenTable, for shared components, third party widgets, and more. [Learn more about OC](http://tech.opentable.co.uk/blog/2016/04/27/opencomponents-microservices-in-the-front-end-world/).
 
 [![npm version](https://img.shields.io/npm/v/oc.svg)](https://npmjs.org/package/oc)
 [![node version](https://img.shields.io/node/v/oc.svg)](https://npmjs.org/package/oc)
 [![downloads](https://img.shields.io/npm/dm/oc.svg?label=downloads+from+npm)](https://npmjs.org/package/oc)
 [![Join the chat at https://gitter.im/opentable/oc](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/opentable/oc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-[![linux build](https://img.shields.io/travis/opentable/oc/master.svg?label=linux+build)](http://travis-ci.org/opentable/oc)
-[![windows build](https://img.shields.io/appveyor/ci/matteofigus/oc/master.svg?label=windows+build)](https://ci.appveyor.com/project/matteofigus/oc)
-
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/matteofigus.svg)](https://saucelabs.com/u/matteofigus)
-
-Disclaimer: This project is still under heavy development and the API is likely to change at any time. In case you would find any issues, check the [troubleshooting page](CONTRIBUTING.md#troubleshooting).
 
 # Index
 1. [Introduction](#introduction)
@@ -29,7 +28,8 @@ Disclaimer: This project is still under heavy development and the API is likely 
 4. [Install the cli](#install-the-cli)
 5. [Setup a library](#setup-a-library)
 6. [Setup a registry](#setup-a-registry)
-7. [Contacts](#contacts)
+7. [Tests](#tests)
+8. [Contacts](#contacts)
 
 # Introduction
 OpenComponents involves two parts:
@@ -220,6 +220,15 @@ registry.start(function(err, app){
 ```
 
 For the registry configuration's documentation, [look at this page](docs/registry.md).
+
+# Tests
+
+[![linux build](https://img.shields.io/travis/opentable/oc/master.svg?label=linux+build)](http://travis-ci.org/opentable/oc)
+[![windows build](https://img.shields.io/appveyor/ci/matteofigus/oc/master.svg?label=windows+build)](https://ci.appveyor.com/project/matteofigus/oc)
+
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/matteofigus.svg)](https://saucelabs.com/u/matteofigus)
+
+Disclaimer: This project is still under heavy development and the API is likely to change at any time. In case you would find any issues, check the [troubleshooting page](CONTRIBUTING.md#troubleshooting).
 
 # Contacts
 
