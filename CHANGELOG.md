@@ -1,5 +1,18 @@
 ## Change Log
 
+### v0.30.6
+- [#242](https://github.com/opentable/oc/pull/242) Upgrade npm
+- [#241](https://github.com/opentable/oc/pull/241) adds dependencies badge in readme
+- [#240](https://github.com/opentable/oc/pull/240) add some basic example components
+- [#239](https://github.com/opentable/oc/pull/239) Update README
+
+### v0.30.5
+- [#238](https://github.com/opentable/oc/pull/238) Logo path fixed in web interface
+
+### v0.30.4
+- [#236](https://github.com/opentable/oc/pull/236) Refactoring tasks code
+- [#237](https://github.com/opentable/oc/pull/237) Upgrade and fix jshinting
+
 ### v0.30.3
 - [#235](https://github.com/opentable/oc/pull/235) Moved things around
 
