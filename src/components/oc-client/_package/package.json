@@ -1,1 +1,31 @@
-{"name":"oc-client","description":"The OpenComponents client-side javascript client","version":"0.30.6","repository":"https://github.com/opentable/oc/tree/master/components/oc-client","author":"Matteo Figus <matteofigus@gmail.com>","oc":{"container":false,"renderInfo":false,"minify":false,"parameters":{},"files":{"template":{"type":"handlebars","hashKey":"bb774de6a2b7280c2b66103bd36d7e708a1b7541","src":"template.js"},"static":["src"],"dataProvider":{"type":"node.js","hashKey":"ffb0e43eaf72f55fa13dc1e7262019c14c3dfc81","src":"server.js"}},"version":"0.30.6","packaged":true,"date":1462463634179}}
+{
+  "name": "oc-client",
+  "description": "The OpenComponents client-side javascript client",
+  "version": "0.30.7",
+  "repository": "https://github.com/opentable/oc/tree/master/components/oc-client",
+  "author": "Matteo Figus <matteofigus@gmail.com>",
+  "oc": {
+    "container": false,
+    "renderInfo": false,
+    "minify": false,
+    "parameters": {},
+    "files": {
+      "template": {
+        "type": "handlebars",
+        "hashKey": "bb774de6a2b7280c2b66103bd36d7e708a1b7541",
+        "src": "template.js"
+      },
+      "static": [
+        "src"
+      ],
+      "dataProvider": {
+        "type": "node.js",
+        "hashKey": "ffb0e43eaf72f55fa13dc1e7262019c14c3dfc81",
+        "src": "server.js"
+      }
+    },
+    "version": "0.30.7",
+    "packaged": true,
+    "date": 1463733890165
+  }
+}
