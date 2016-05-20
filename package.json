@@ -48,17 +48,17 @@
     "sinon": "1.14.1"
   },
   "dependencies": {
-    "accept-language-parser": "1.0.2",
+    "accept-language-parser": "1.1.0",
     "async": "1.5.2",
-    "aws-sdk": "2.1.43",
+    "aws-sdk": "2.3.14",
     "clean-css": "3.4.9",
-    "colors": "1.0.3",
+    "colors": "1.1.2",
     "dependency-graph": "0.4.1",
     "detective": "4.0.0",
     "express": "3.21.2",
     "falafel": "1.2.0",
     "form-data": "0.1.4",
-    "fs-extra": "0.12.0",
+    "fs-extra": "0.30.0",
     "handlebars": "3.0.1",
     "jade": "1.11.0",
     "minimal-request": "2.0.0",
@@ -74,8 +74,8 @@
     "semver": "5.1.0",
     "stringformat": "0.0.5",
     "tar.gz": "0.1.1",
-    "uglify-js": "2.6.1",
-    "underscore": "1.8.1",
+    "uglify-js": "2.6.2",
+    "underscore": "1.8.3",
     "watch": "0.13.0"
   }
 }
