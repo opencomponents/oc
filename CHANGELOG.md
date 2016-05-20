@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.30.7
+- [#245](https://github.com/opentable/oc/pull/245) Cache jade view (for web interface)
+- [#246](https://github.com/opentable/oc/pull/246) Upgraded some dependencies
+
 ### v0.30.6
 - [#242](https://github.com/opentable/oc/pull/242) Upgrade npm
 - [#241](https://github.com/opentable/oc/pull/241) adds dependencies badge in readme
