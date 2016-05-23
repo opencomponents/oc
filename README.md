@@ -247,6 +247,7 @@ Contributors/Maintainers:
 * [@antwhite](https://github.com/antwhite)
 * [@char1e5](https://github.com/char1e5)
 * [@federicomaffei](https://github.com/federicomaffei)
+* [@Hobbit71](https://github.com/Hobbit71)
 * [@jankowiakmaria](https://github.com/jankowiakmaria)
 * [@matteofigus](https://github.com/matteofigus)
 * [@mattiaerre](https://github.com/mattiaerre)
