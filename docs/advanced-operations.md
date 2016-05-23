@@ -98,13 +98,13 @@ Context aggregates request data, and the registry's context. It consists of the 
 
 |Parameter|Type|Description|
 |---------|----|-----------|
-|`acceptLanguage`|`array of objects`|represents parsed `accept-language` part of the request header sorted by quality. More details [here](https://github.com/opentable/accept-language-parser).|
-|`baseUrl`|`string`|represents Url to the registry where the components are stored. This is particularly useful when we want to nest components that are hosted in the same registry.|
-|`env`|`object`|represents the registry environment variables. The registry's admin [can share here arbitrary data](registry.md#registry-configuration).|
-|`params`|`object`|represents parameters extracted from the query string.|
+|`acceptLanguage`|`array of objects`|represents parsed `accept-language` part of the request header sorted by quality. More details [here](https://github.com/opentable/accept-language-parser)|
+|`baseUrl`|`string`|represents public registry base url. This is required when we want to nest components that are hosted in the same registry for client-side rendering|
+|`env`|`object`|represents the registry environment variables. The registry's admin [can share here arbitrary data](registry.md#registry-configuration)|
+|`params`|`object`|represents parameters extracted from the query string|
 |`plugins`|`array of functions`|[custom functionalities that extend the registry](registry.md#plugins). Note: if a component needs a plugin, [it needs to be declared in the component's package.json](getting-started.md#structure-of-the-package)|
-|`staticPath`|`string`|represents the path to static resources i.e. images, styles, javascript files. This is particularly useful when we want to [reference static resources to the view](#add-static-resource-to-the-component).|
-|`requestHeaders`|`object`|represents the original request headers. When component is rendered client side this will be what is sent from the browser, when rendered server side, using oc-client, this will contain whatever the client has been configured to forward |
+|`staticPath`|`string`|represents the path to static resources i.e. images, styles, javascript files. This is required to [reference static resources to the view](#add-static-resource-to-the-component)|
+|`requestHeaders`|`object`|represents the original request headers. When component is rendered client side this will be what is sent from the browser, when rendered server side, using oc-client, this will contain whatever the client has been configured to forward|
 
 # Add static resource to the component
 
