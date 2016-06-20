@@ -34,7 +34,7 @@ module.exports = function(conf){
     getComponents: function(){ 
 
       var validComponents = fs.readdirSync(conf.path).filter(function(file){
-        var isDir = file.indexOf('.') === -1,
+        var isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory(),
             isValidComponent = isDir ? (fs.readdirSync(path.join(conf.path, file)).filter(function(file){
               return file === '_package';
             }).length === 1) : false;
