@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.30.9
+- [#251](https://github.com/opentable/oc/pull/251) check is dir with lstatSync
+
 ### v0.30.8
 - [#248](https://github.com/opentable/oc/pull/248) Amd Support for client-side library
 - [#244](https://github.com/opentable/oc/pull/244) Docs updated
