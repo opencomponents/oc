@@ -2,14 +2,27 @@
 
 var oc = oc || {};
 
-(function(head, $document, $window){
-
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module
+    define(['exports', 'jquery'], function(exports, $) {
+      factory((root.oc = exports), $, root.head, root.document, root.window);
+    });
+  } else if (typeof exports === 'object' && typeof exports.nodeName !== 'string') {
+    // Common JS
+    factory(exports, require('jquery'), root.head, root.document, root.window);
+  } else {
+    // Browser globals
+    factory((root.oc = oc), root.$, root.head, root.document, root.window);
+  }
+}(this, function (exports, $, head, $document, $window) { // jshint ignore:line
+  // public variables
   oc.conf = oc.conf || {};
   oc.cmd = oc.cmd || [];
   oc.renderedComponents = oc.renderedComponents || {};
   oc.status = oc.status || false;
 
-  // If oc client is already inside the page, we do nothing. 
+  // If oc client is already inside the page, we do nothing.
   if(!!oc.status){
     return oc;
   } else {
@@ -74,7 +87,7 @@ var oc = oc || {};
     }, RETRY_INTERVAL);
     retries[component]--;
   };
-  
+
   var addParametersToHref = function (href, parameters) {
     if(href && parameters) {
       var param = oc.$.param(parameters);
@@ -269,7 +282,7 @@ var oc = oc || {};
             // jQuery was already there. The client shares the same instance.
             oc.$ = jQuery;
           } else {
-            // jQuery wasn't there. The client dynamically downloads it and 
+            // jQuery wasn't there. The client dynamically downloads it and
             // it tries to avoid sharing it by freeing the $ symbol.
             oc.$ = jQuery.noConflict();
           }
@@ -334,7 +347,7 @@ var oc = oc || {};
   oc.renderByHref = function(href, retryNumberOrCallback, cb){
     var callback = cb,
         retryNumber = retryNumberOrCallback;
-    
+
     if(typeof retryNumberOrCallback === 'function') {
       callback = retryNumberOrCallback;
       retryNumber = 0;
@@ -407,14 +420,14 @@ var oc = oc || {};
       var selector = (is8 ? 'div[data-oc-component=true]' : OC_TAG),
           $unloadedComponents = oc.$(selector + '[data-rendered!=true]'),
           toDo = $unloadedComponents.length;
-      
+
       var done = function(cb){
         toDo--;
         if(!toDo){
           oc.renderUnloadedComponents();
         }
       };
-      
+
       if(toDo > 0){
         for(var i = 0; i < $unloadedComponents.length; i++){
           oc.renderNestedComponent(oc.$($unloadedComponents[i]), done);
@@ -439,6 +452,9 @@ var oc = oc || {};
     });
   };
 
+  // render the components
   oc.ready(oc.renderUnloadedComponents);
 
-})(head, document, window); // jshint ignore:line
+  // expose public variables and methods
+  exports = oc;
+}));
