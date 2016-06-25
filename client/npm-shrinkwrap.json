@@ -1,0 +1,36 @@
+{
+  "name": "oc-client",
+  "version": "1.6.1",
+  "dependencies": {
+    "handlebars": {
+      "version": "3.0.1",
+      "dependencies": {
+        "uglify-js": {
+          "version": "2.6.2"
+        }
+      }
+    },
+    "jade": {
+      "version": "1.11.0",
+      "dependencies": {
+        "transformers": {
+          "version": "2.1.0",
+          "dependencies": {
+            "uglify-js": {
+              "version": "2.6.2"
+            }
+          }
+        }
+      }
+    },
+    "minimal-request": {
+      "version": "2.0.0"
+    },
+    "nice-cache": {
+      "version": "0.0.5"
+    },
+    "stringformat": {
+      "version": "0.0.5"
+    }
+  }
+}
