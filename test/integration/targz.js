@@ -38,7 +38,7 @@ describe('The Targz dependency', function(){
       });
 
       it('should throw no error', function(){
-        expect(error).to.be.null;
+        expect(!!error).to.be.false;
       });
 
       it('should contain the files', function(){
