@@ -27,7 +27,7 @@ module.exports = function(grunt){
     ocClientPackageInfo.version = version;
     shrinkwrap.version = version;
     fs.writeJsonSync(path.join(__dirname, clientComponentDir, 'package.json'), ocClientPackageInfo, jsonConfig);
-    fs.writeJsonSync(path.join(__dirname, '../npm-shrinkwrap.json'), shrinkwrap, jsonConfig)
+    fs.writeJsonSync(path.join(__dirname, '../npm-shrinkwrap.json'), shrinkwrap, jsonConfig);
 
     var compressed = uglifyJs.minify(bundle, {
       fromString: true,
