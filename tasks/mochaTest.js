@@ -7,11 +7,14 @@ module.exports = {
   acceptance: {
     src: ['test/acceptance/**/*.js']
   },
+  integration: {
+    src: ['test/integration/**/*.js']
+  },
   unit: {
     src: ['test/unit/**/*.js']
   },
   silent: {
-    src: ['test/unit/**/*.js', 'test/acceptance/**/*.js'],
+    src: ['test/unit/**/*.js', 'test/integration/**/*.js', 'test/acceptance/**/*.js'],
     options: {
       reporter: 'progress'
     }
