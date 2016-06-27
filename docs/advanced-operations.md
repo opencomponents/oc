@@ -108,7 +108,7 @@ Context aggregates request data, and the registry's context. It consists of the 
 
 # Add static resource to the component
 
-In this example an image (`src/static_resource.png`) will be our static resource.
+In this example an image (`public/static_resource.png`) will be our static resource.
 
 ## Prepare package file
 First step is to prepare `package.json` file. It is necessary to add `static` property in `oc.files` object:
@@ -125,18 +125,18 @@ First step is to prepare `package.json` file. It is necessary to add `static` pr
         "src": "template.html",
         "type": "handlebars"
       },
-      "static": ["src"]
+      "static": ["public"]
     }
   }
 }
 ```
-It is an array of names of directories. In the above example the `src` directory will be included inside the package.
+It is an array of names of directories. In the above example the `public` directory will be included inside the package.
 
 ## Add image in the view template
 
 We can add image to the component view template using `img` tag in which `src` attribute is bound to `img` viewModel property.
 ```html
-<img src="{{path}}src/static_resource.png" />
+<img src="{{path}}public/static_resource.png" />
 ```
 
 ## Update server file
