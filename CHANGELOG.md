@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.31.0
+- [#254](https://github.com/opentable/oc/pull/254) Dependencies upgrade
+- [#255](https://github.com/opentable/oc/pull/255) Renamed src to public
+- [#253](https://github.com/opentable/oc/pull/253) Updated instructions of how to add static resource to the file
+
 ### v0.30.9
 - [#251](https://github.com/opentable/oc/pull/251) check is dir with lstatSync
 
