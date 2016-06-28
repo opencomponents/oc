@@ -1437,9 +1437,9 @@
       "resolved": "https://registry.npmjs.org/nice-cache/-/nice-cache-0.0.5.tgz"
     },
     "node-dir": {
-      "version": "0.1.12",
-      "from": "node-dir@0.1.12",
-      "resolved": "https://registry.npmjs.org/node-dir/-/node-dir-0.1.12.tgz",
+      "version": "0.1.14",
+      "from": "node-dir@latest",
+      "resolved": "https://registry.npmjs.org/node-dir/-/node-dir-0.1.14.tgz",
       "dependencies": {
         "minimatch": {
           "version": "3.0.2",
