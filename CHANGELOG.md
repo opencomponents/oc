@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.31.1
+- [#256](https://github.com/opentable/oc/pull/256) More dependencies upgrade
+
 ### v0.31.0
 - [#254](https://github.com/opentable/oc/pull/254) Dependencies upgrade
 - [#255](https://github.com/opentable/oc/pull/255) Renamed src to public
