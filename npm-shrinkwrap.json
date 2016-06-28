@@ -13,9 +13,9 @@
       "resolved": "https://registry.npmjs.org/async/-/async-1.5.2.tgz"
     },
     "aws-sdk": {
-      "version": "2.3.14",
-      "from": "aws-sdk@2.3.14",
-      "resolved": "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.3.14.tgz",
+      "version": "2.4.2",
+      "from": "aws-sdk@latest",
+      "resolved": "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.4.2.tgz",
       "dependencies": {
         "sax": {
           "version": "1.1.5",
