@@ -2788,9 +2788,9 @@
           "resolved": "https://registry.npmjs.org/rimraf/-/rimraf-2.5.2.tgz"
         },
         "semver": {
-          "version": "5.1.0",
+          "version": "5.1.1",
           "from": "semver@>=5.1.0 <5.2.0",
-          "resolved": "https://registry.npmjs.org/semver/-/semver-5.1.0.tgz"
+          "resolved": "https://registry.npmjs.org/semver/-/semver-5.1.1.tgz"
         },
         "sha": {
           "version": "2.0.1",
@@ -3010,9 +3010,9 @@
       }
     },
     "semver": {
-      "version": "5.1.0",
-      "from": "semver@5.1.0",
-      "resolved": "https://registry.npmjs.org/semver/-/semver-5.1.0.tgz"
+      "version": "5.1.1",
+      "from": "semver@5.1.1",
+      "resolved": "https://registry.npmjs.org/semver/-/semver-5.1.1.tgz"
     },
     "stringformat": {
       "version": "0.0.5",

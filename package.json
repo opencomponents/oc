@@ -71,7 +71,7 @@
     "opn": "1.0.1",
     "parse-author": "0.2.1",
     "read": "1.0.7",
-    "semver": "5.1.0",
+    "semver": "^5.1.1",
     "stringformat": "0.0.5",
     "tar.gz": "1.0.5",
     "uglify-js": "^2.6.4",
