@@ -2986,16 +2986,9 @@
       "resolved": "https://registry.npmjs.org/opn/-/opn-1.0.1.tgz"
     },
     "parse-author": {
-      "version": "0.2.1",
-      "from": "parse-author@0.2.1",
-      "resolved": "https://registry.npmjs.org/parse-author/-/parse-author-0.2.1.tgz",
-      "dependencies": {
-        "author-regex": {
-          "version": "0.2.1",
-          "from": "author-regex@>=0.2.1 <0.3.0",
-          "resolved": "https://registry.npmjs.org/author-regex/-/author-regex-0.2.1.tgz"
-        }
-      }
+      "version": "1.0.0",
+      "from": "parse-author@latest",
+      "resolved": "https://registry.npmjs.org/parse-author/-/parse-author-1.0.0.tgz"
     },
     "read": {
       "version": "1.0.7",
