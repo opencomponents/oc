@@ -966,9 +966,9 @@
           }
         },
         "uglify-js": {
-          "version": "2.6.2",
-          "from": "uglify-js@2.6.2",
-          "resolved": "https://registry.npmjs.org/uglify-js/-/uglify-js-2.6.2.tgz",
+          "version": "2.6.4",
+          "from": "uglify-js@latest",
+          "resolved": "https://registry.npmjs.org/uglify-js/-/uglify-js-2.6.4.tgz",
           "dependencies": {
             "async": {
               "version": "0.2.10",
@@ -1198,9 +1198,9 @@
               }
             },
             "uglify-js": {
-              "version": "2.6.2",
-              "from": "uglify-js@2.6.2",
-              "resolved": "https://registry.npmjs.org/uglify-js/-/uglify-js-2.6.2.tgz",
+              "version": "2.6.4",
+              "from": "uglify-js@latest",
+              "resolved": "https://registry.npmjs.org/uglify-js/-/uglify-js-2.6.4.tgz",
               "dependencies": {
                 "async": {
                   "version": "0.2.10",
@@ -3167,9 +3167,9 @@
       }
     },
     "uglify-js": {
-      "version": "2.6.2",
-      "from": "uglify-js@2.6.2",
-      "resolved": "https://registry.npmjs.org/uglify-js/-/uglify-js-2.6.2.tgz",
+      "version": "2.6.4",
+      "from": "uglify-js@latest",
+      "resolved": "https://registry.npmjs.org/uglify-js/-/uglify-js-2.6.4.tgz",
       "dependencies": {
         "async": {
           "version": "0.2.10",
