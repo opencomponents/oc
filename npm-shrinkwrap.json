@@ -3,9 +3,9 @@
   "version": "0.31.0",
   "dependencies": {
     "accept-language-parser": {
-      "version": "1.1.0",
-      "from": "accept-language-parser@1.1.0",
-      "resolved": "https://registry.npmjs.org/accept-language-parser/-/accept-language-parser-1.1.0.tgz"
+      "version": "1.1.2",
+      "from": "accept-language-parser@latest",
+      "resolved": "https://registry.npmjs.org/accept-language-parser/-/accept-language-parser-1.1.2.tgz"
     },
     "async": {
       "version": "1.5.2",

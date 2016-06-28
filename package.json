@@ -48,7 +48,7 @@
     "sinon": "1.14.1"
   },
   "dependencies": {
-    "accept-language-parser": "1.1.2",
+    "accept-language-parser": "^1.1.2",
     "async": "1.5.2",
     "aws-sdk": "^2.4.2",
     "clean-css": "3.4.9",
