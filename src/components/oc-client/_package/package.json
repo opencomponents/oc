@@ -1,7 +1,7 @@
 {
   "name": "oc-client",
   "description": "The OpenComponents client-side javascript client",
-  "version": "0.31.0",
+  "version": "0.31.1",
   "repository": "https://github.com/opentable/oc/tree/master/components/oc-client",
   "author": "Matteo Figus <matteofigus@gmail.com>",
   "oc": {
@@ -24,8 +24,8 @@
         "src": "server.js"
       }
     },
-    "version": "0.31.0",
+    "version": "0.31.1",
     "packaged": true,
-    "date": 1467020083789
+    "date": 1467117694916
   }
 }
