@@ -6,14 +6,9 @@ lib-cov
 *.out
 *.pid
 *.gz
-
 pids
 logs
 results
-
-npm-debug.log
-
-node_modules
 .idea
 *.swp
 *.swo
@@ -21,9 +16,14 @@ node_modules
 *.swm
 *.orig
 *.local
-
 .DS_Store
+
+npm-debug.log
+node_modules
 
 src/components/oc.json
 src/components/base-component-handlebars/_package
 src/components/base-component-jade/_package
+
+test/fixtures/test.tar.gz
+test/fixtures/targz-test
