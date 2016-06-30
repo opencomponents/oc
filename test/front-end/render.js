@@ -1,5 +1,6 @@
 'use strict';
 
+var handlebars3CompiledView = 'oc.components=oc.components||{},oc.components["46ee85c314b371cac60471cef5b2e2e6c443dccf"]={compiler:[6,">= 2.0.0-beta.1"],main:function(){return"Hello world!"},useData:!0};';
 var handlebarsCompiledView = 'oc.components=oc.components||{},oc.components["46ee85c314b371cac60471cef5b2e2e6c443dccf"]={compiler:[7,">= 4.0.0"],main:function(){return"Hello world!"},useData:!0};';
 var jadeCompiledView = 'oc.components=oc.components||{},oc.components["09227309bca0b1ec1866c547ebb76c74921e85d2"]=function(n){var e,o=[],c=n||{};return function(n){o.push("<span>hello "+jade.escape(null==(e=n)?"":e)+"</span>")}.call(this,"name"in c?c.name:"undefined"!=typeof name?name:void 0),o.join("")};';
 
@@ -29,19 +30,31 @@ describe('oc-client : render', function(){
   });
   
   describe('when rendering handlebars component', function(){
-    
+   
     describe('when handlebars runtime not loaded', function(){
 
       var originalHandlebars, originalHeadLoad, callback, headSpy;
+      var originalHb3, originalHb4;
+
       beforeEach(function(){
-        originalHandlebars = Handlebars;
+        //originalHandlebars = Handlebars;
+        originalHb3 = handlebars3;
+        originalHb4 = handlebars4;
         originalHeadLoad = head.load;
         headSpy = sinon.spy();
-        Handlebars = undefined;
+        //Handlebars = undefined;
+        handlebars3 = undefined;
+        handlebars4 = undefined;
 
         head.load = function(url, cb){
           headSpy(url, cb);
-          Handlebars = originalHandlebars;
+          //Handlebars = originalHandlebars;
+          if(url.indexOf('3\.0\.3') >= 0){
+            handlebars3 = originalHb3;
+          } else if(url.indexOf('4\.0\.5') >= 0){
+            handlebars4 = originalHb4;
+          }
+
           cb();
         };
 
@@ -62,7 +75,8 @@ describe('oc-client : render', function(){
 
       it('should require and wait for it', function(){
         expect(headSpy.called).toBe(true);
-        expect(headSpy.args[0][0]).toEqual('https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.runtime.js');
+        expect(headSpy.args[0][0]).toEqual('https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.runtime.min.js');
+        expect(headSpy.args[1][0]).toEqual('https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.runtime.min.js');
       });
 
       it('should render the component', function(){
@@ -92,6 +106,26 @@ describe('oc-client : render', function(){
 
       it('should not require it', function(){
         expect(headSpy.called).toBe(false);
+      });
+
+      it('should render the component', function(){
+        expect(callback.called).toBe(true);
+        expect(callback.args[0][0]).toBe(null);
+        expect(callback.args[0][1]).toEqual('Hello world!');
+      });
+    });
+    
+    describe('when handlebars runtime loaded and rendering a handlebars3 component', function(){
+
+      var callback;
+      beforeEach(function(){
+        callback = sinon.spy();
+        eval(handlebars3CompiledView);            
+        oc.render({
+          src: 'https://my-cdn.com/components/a-component/1.2.123/template.js', 
+          type: 'handlebars', 
+          key: '46ee85c314b371cac60471cef5b2e2e6c443dccf'
+        }, {}, callback);
       });
 
       it('should render the component', function(){

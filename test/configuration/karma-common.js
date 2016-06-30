@@ -8,8 +8,13 @@ module.exports = {
     // Dynamically loaded via oc-client, alredy loaded to speed-up tests
     'jquery-1.11.2.js',
     'jQuery.XDomainRequest.js',
-    '../../node_modules/handlebars/dist/handlebars.runtime.js',
     '../../node_modules/jade/runtime.js',
+
+    // Both versions of Handlebars in noConflict mode
+    '../../node_modules/handlebars3/node_modules/handlebars/dist/handlebars.runtime.js',
+    'handlebars3.noconflict.js',
+    '../../node_modules/handlebars/dist/handlebars.runtime.js',
+    'handlebars4.noconflict.js',
 
     // The tests settings
     'test-settings.js',
