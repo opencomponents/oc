@@ -86,7 +86,7 @@ registry.register({
 
 |Parameter|Type|Description|
 |---------|------|-------|
-|`baseUrl`|`string`|sets the URL which will be used to compose the components' URLs|
+|`baseUrl`|`string`|sets the URL which will be used to compose the components' URLs. This needs to be the registry's public url|
 |`dependencies`|`array`|the npm modules available for components logic|
 |`env`|`object`|sets the registry environment|
 |`env.name`|`string`|sets the environment name|
