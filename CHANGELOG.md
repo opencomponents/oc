@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.32.0
+- [#243](https://github.com/opentable/oc/pull/243) [careful] handlebars 3+4
+
 ### v0.31.2
 - [#258](https://github.com/opentable/oc/pull/258) added support for serving svg
 
