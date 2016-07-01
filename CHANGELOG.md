@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.31.2
+- [#258](https://github.com/opentable/oc/pull/258) added support for serving svg
+
 ### v0.31.1
 - [#256](https://github.com/opentable/oc/pull/256) More dependencies upgrade
 
