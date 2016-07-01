@@ -2968,9 +2968,28 @@
       "resolved": "https://registry.npmjs.org/omelette/-/omelette-0.3.1.tgz"
     },
     "opn": {
-      "version": "1.0.1",
-      "from": "opn@1.0.1",
-      "resolved": "https://registry.npmjs.org/opn/-/opn-1.0.1.tgz"
+      "version": "4.0.2",
+      "from": "opn@latest",
+      "resolved": "https://registry.npmjs.org/opn/-/opn-4.0.2.tgz",
+      "dependencies": {
+        "object-assign": {
+          "version": "4.1.0",
+          "from": "object-assign@>=4.0.1 <5.0.0",
+          "resolved": "https://registry.npmjs.org/object-assign/-/object-assign-4.1.0.tgz"
+        },
+        "pinkie-promise": {
+          "version": "2.0.1",
+          "from": "pinkie-promise@>=2.0.0 <3.0.0",
+          "resolved": "https://registry.npmjs.org/pinkie-promise/-/pinkie-promise-2.0.1.tgz",
+          "dependencies": {
+            "pinkie": {
+              "version": "2.0.4",
+              "from": "pinkie@>=2.0.0 <3.0.0",
+              "resolved": "https://registry.npmjs.org/pinkie/-/pinkie-2.0.4.tgz"
+            }
+          }
+        }
+      }
     },
     "parse-author": {
       "version": "1.0.0",
