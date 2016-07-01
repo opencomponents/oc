@@ -678,7 +678,9 @@ describe('registry : domain : validator', function(){
         }}).isValid).to.be.false;
       });
     });
-/*
+
+    
+    /*
     describe('when custom validation provided', function(){
       var registryConf = {
         publishValidation: function(p, callback){

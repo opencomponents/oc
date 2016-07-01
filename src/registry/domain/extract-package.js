@@ -22,7 +22,7 @@ module.exports = function(files, callback){
     getPackageJsonFromTempDir(packageUntarOutput, function(err, packageJson){
       callback(err, {
         outputFolder: packageOutput,
-        componentDetails: packageJson
+        packageJson: packageJson
       });
     });
   });
