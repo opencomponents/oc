@@ -679,18 +679,49 @@ describe('registry : domain : validator', function(){
       });
     });
 
-    
-    /*
     describe('when custom validation provided', function(){
-      var registryConf = {
-        publishValidation: function(p, callback){
-          var isValid = !!p.description;
-          callback(isValid ? null, 'description param missing');
-        }
+      
+      var validate = function(obj){ return validator.validatePackageJson(obj); };
+
+      var customValidator = function(pkg){
+        var isValid = !!pkg.author && !!pkg.repository;
+        return isValid ? isValid : { isValid: false, error: 'author and repository are required' };
       };
 
-      
-    });*/
+      describe('when package.json does not contain mandatory fields', function(){
+        var result;
+        beforeEach(function(){
+          result = validate({
+            packageJson: { name: 'my-component'},
+            componentName: 'my-component',
+            customValidator: customValidator
+          });
+        });
+
+        it('should not be valid', function(){
+          expect(result.isValid).to.be.false;
+        });
+
+        it('should return the error', function(){
+          expect(result.error).to.be.equal('author and repository are required');
+        });
+      });
+
+      describe('when package.json contains mandatory fields', function(){
+        var result;
+        beforeEach(function(){
+          result = validate({
+            packageJson: { name: 'my-component', author: 'somebody', repository: 'https://github.com/somebody/my-component'},
+            componentName: 'my-component',
+            customValidator: customValidator
+          });
+        });
+
+        it('should be valid', function(){
+          expect(result.isValid).to.be.true;
+        });
+      });
+    });
 
     describe('when package is valid', function(){
       var _package = {
