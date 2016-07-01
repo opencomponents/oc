@@ -638,7 +638,7 @@ describe('registry : domain : validator', function(){
 
   describe('when validating component package for new candidate', function(){
 
-    var validate = function(a){ return validator.validatePackage(a); };
+    var validate = function(a, b){ return validator.validatePackage(a, b || {}); };
 
     describe('when package not valid', function(){
 
@@ -678,6 +678,17 @@ describe('registry : domain : validator', function(){
         }}).isValid).to.be.false;
       });
     });
+/*
+    describe('when custom validation provided', function(){
+      var registryConf = {
+        publishValidation: function(p, callback){
+          var isValid = !!p.description;
+          callback(isValid ? null, 'description param missing');
+        }
+      };
+
+      
+    });*/
 
     describe('when package is valid', function(){
       var _package = {
