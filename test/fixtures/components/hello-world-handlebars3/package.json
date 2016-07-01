@@ -1,0 +1,14 @@
+{
+  "name": "hello-world-handlebars3",
+  "description": "",
+  "version": "1.0.0",
+  "repository": "",
+  "oc": {
+    "files": {
+      "template": {
+        "src": "template.html",
+        "type": "handlebars"
+      }
+    }
+  }
+}

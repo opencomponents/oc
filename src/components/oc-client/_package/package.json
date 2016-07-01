@@ -11,8 +11,8 @@
     "parameters": {},
     "files": {
       "template": {
-        "type": "handlebars",
-        "hashKey": "bb774de6a2b7280c2b66103bd36d7e708a1b7541",
+        "type": "jade",
+        "hashKey": "c60b583d891562c155c240ef38f9174b3aee0b94",
         "src": "template.js"
       },
       "static": [
@@ -26,6 +26,6 @@
     },
     "version": "0.31.2",
     "packaged": true,
-    "date": 1467381302533
+    "date": 1467384219621
   }
 }
