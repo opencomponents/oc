@@ -59,7 +59,7 @@ describe('cli : domain : package-server-script', function(){
       });
 
       it('should throw an error with error details', function(){
-        expect(error.toString()).to.equal('Error: Javascript error found in myserver.js [3,19]: Unexpected token punc «;», expected punc «,»]');
+        expect(error.toString()).to.equal('Error: Javascript error found in myserver.js [3,19]: SyntaxError: Unexpected token punc «;», expected punc «,»]');
       });
     });
 
@@ -245,15 +245,15 @@ describe('cli : domain : package-server-script', function(){
       });
 
       it('should wrap the while loop with an iterator limit (and convert it to a for loop)', function(){
-        expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var r,a,t,i=1e9;;){if(0>=i)throw new Error(\"loop exceeded maximum allowed iterations\");r=234,i--}');
+        expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var r,a,t,i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");r=234,i--}');
       });
 
       it('should wrap the for loop with an iterator limit', function(){
-        expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var i=1e9;;){if(0>=i)throw new Error(\"loop exceeded maximum allowed iterations\");a=546,i--}');
+        expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");a=546,i--}');
       });
 
       it('should wrap the do loop with an iterator limit (and convert it to a for loop)', function(){
-        expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var i=1e9;;){if(0>=i)throw new Error(\"loop exceeded maximum allowed iterations\");t=342,i--}');
+        expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");t=342,i--}');
       });
     });
   });

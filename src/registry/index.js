@@ -69,6 +69,7 @@ module.exports = function(options){
 
     app.set('views', path.join(__dirname, 'views'));
     app.set('view engine', 'jade');
+    app.set('view cache', true);
 
     if(withLogging){
       app.use(express.logger('dev'));

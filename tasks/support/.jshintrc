@@ -74,6 +74,7 @@
         "before",
         "beforeEach",
         "after",
-        "afterEach"
+        "afterEach",
+        "define"
     ]
 }

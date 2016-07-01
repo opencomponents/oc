@@ -20,10 +20,14 @@ module.exports = function(grunt){
         headLoad = fs.readFileSync(path.join(__dirname, clientComponentDir, 'src/head.load.js')).toString(),
         ocClient = fs.readFileSync(path.join(__dirname, clientComponentDir, 'src/oc-client.js')).toString(),
         bundle = format('{0}\n;\n{1}\n;\noc.clientVersion=\'{2}\';', headLoad, ocClient, version),
-        ocClientPackageInfo = require(clientComponentDir + 'package.json');
+        ocClientPackageInfo = require(clientComponentDir + 'package.json'),
+        shrinkwrap = require('../npm-shrinkwrap'),
+        jsonConfig = {spaces: 2};
 
     ocClientPackageInfo.version = version;
-    fs.writeJsonSync(path.join(__dirname, clientComponentDir, 'package.json'), ocClientPackageInfo, {spaces: 2});
+    shrinkwrap.version = version;
+    fs.writeJsonSync(path.join(__dirname, clientComponentDir, 'package.json'), ocClientPackageInfo, jsonConfig);
+    fs.writeJsonSync(path.join(__dirname, '../npm-shrinkwrap.json'), shrinkwrap, jsonConfig);
 
     var compressed = uglifyJs.minify(bundle, {
       fromString: true,
