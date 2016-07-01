@@ -53,7 +53,7 @@
     "aws-sdk": "^2.4.2",
     "clean-css": "^3.4.18",
     "colors": "1.1.2",
-    "dependency-graph": "0.4.1",
+    "dependency-graph": "^0.5.0",
     "detective": "^4.3.1",
     "express": "3.21.2",
     "falafel": "1.2.0",
