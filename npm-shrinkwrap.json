@@ -3285,13 +3285,25 @@
       "resolved": "https://registry.npmjs.org/underscore/-/underscore-1.8.3.tgz"
     },
     "watch": {
-      "version": "0.13.0",
-      "from": "watch@0.13.0",
-      "resolved": "https://registry.npmjs.org/watch/-/watch-0.13.0.tgz",
+      "version": "0.19.1",
+      "from": "watch@latest",
+      "resolved": "https://registry.npmjs.org/watch/-/watch-0.19.1.tgz",
       "dependencies": {
+        "exec-sh": {
+          "version": "0.2.0",
+          "from": "exec-sh@>=0.2.0 <0.3.0",
+          "resolved": "https://registry.npmjs.org/exec-sh/-/exec-sh-0.2.0.tgz",
+          "dependencies": {
+            "merge": {
+              "version": "1.2.0",
+              "from": "merge@>=1.1.3 <2.0.0",
+              "resolved": "https://registry.npmjs.org/merge/-/merge-1.2.0.tgz"
+            }
+          }
+        },
         "minimist": {
           "version": "1.2.0",
-          "from": "minimist@>=1.1.0 <2.0.0",
+          "from": "minimist@>=1.2.0 <2.0.0",
           "resolved": "https://registry.npmjs.org/minimist/-/minimist-1.2.0.tgz"
         }
       }
