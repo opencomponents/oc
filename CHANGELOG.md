@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.32.2
+- [#261](https://github.com/opentable/oc/pull/261) Client rendering fix
+
 ### v0.32.1
 - [#260](https://github.com/opentable/oc/pull/260) Client fix
 
