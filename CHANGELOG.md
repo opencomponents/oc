@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.32.1
+- [#260](https://github.com/opentable/oc/pull/260) Client fix
+
 ### v0.32.0
 - [#243](https://github.com/opentable/oc/pull/243) [careful] handlebars 3+4
 
