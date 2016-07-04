@@ -310,18 +310,18 @@ var oc = oc || {};
                 gracefully migrate to the new version (supporting only v4). 
               */
 
-              oc.require('handlebars3', HANDLEBARS3_URL, function(Handlebars){
+              oc.require('handlebars3', HANDLEBARS3_URL, function(){
 
-                $window.handlebars3 = $window.handlebars3 || Handlebars;
-                if(!!Handlebars){
-                  Handlebars.noConflict();
+                $window.handlebars3 = $window.handlebars3 || $window.Handlebars;
+                if(!!$window.Handlebars){
+                  $window.Handlebars.noConflict();
                 }
 
-                oc.require('handlebars4', HANDLEBARS_URL, function(Handlebars){
+                oc.require('handlebars4', HANDLEBARS_URL, function(){
 
-                  $window.handlebars4 = $window.handlebars4 || Handlebars;
-                  if(!!Handlebars){
-                    Handlebars.noConflict();
+                  $window.handlebars4 = $window.handlebars4 || $window.Handlebars;
+                  if(!!$window.Handlebars){
+                    $window.Handlebars.noConflict();
                   }
                   
                   var needs3 = compiledView.compiler[0] < 7,
