@@ -14,34 +14,35 @@ var validatePlugins = function(plugins){
     c++;
     if(!_.isObject(plugin.register) || !_.isFunction(plugin.register.register) ||
        !_.isFunction(plugin.register.execute) || !_.isString(plugin.name)){
+      
       throw new Error(format(strings.errors.registry.PLUGIN_NOT_VALID, plugin.name || c));
     }
   });
 };
 
 var checkDependencies = function(plugins){
-    var graph = new DepGraph();
+  var graph = new DepGraph();
 
-    plugins.forEach(function(p){
-      graph.addNode(p.name);
-    });
+  plugins.forEach(function(p){
+    graph.addNode(p.name);
+  });
 
-    plugins.forEach(function(p){
-      if(!p.register.dependencies){
-        return;
+  plugins.forEach(function(p){
+    if(!p.register.dependencies){
+      return;
+    }
+
+    p.register.dependencies.forEach(function(d){
+      try {
+        graph.addDependency(p.name, d);
       }
-
-      p.register.dependencies.forEach(function(d){
-          try {
-            graph.addDependency(p.name, d);
-          }
-          catch(err) {
-            throw new Error('unknown plugin dependency: ' + d);
-          }
-      });
+      catch(err) {
+        throw new Error('unknown plugin dependency: ' + d);
+      }
     });
+  });
 
-    return graph.overallOrder();
+  return graph.overallOrder();
 };
 
 var deferredLoads = [];
@@ -55,11 +56,11 @@ module.exports.init = function(pluginsToRegister, callback){
   var registered = {};
 
   try {
-      validatePlugins(pluginsToRegister);
-      checkDependencies(pluginsToRegister);
+    validatePlugins(pluginsToRegister);
+    checkDependencies(pluginsToRegister);
   }
   catch(err){
-      return callback(err);
+    return callback(err);
   }
 
   var dependenciesRegistered = function(dependencies){
@@ -83,7 +84,7 @@ module.exports.init = function(pluginsToRegister, callback){
     }
 
     if(!plugin.register.dependencies){
-        plugin.register.dependencies = [];
+      plugin.register.dependencies = [];
     }
 
     if(!dependenciesRegistered(plugin.register.dependencies)){
