@@ -61,7 +61,6 @@ describe('registry', function(){
     it('should list the components', function(){
       expect(result.components).to.eql([
         'http://localhost:3030/hello-world',
-        'http://localhost:3030/hello-world-handlebars3',
         'http://localhost:3030/language',
         'http://localhost:3030/no-containers',
         'http://localhost:3030/welcome', 
@@ -139,28 +138,6 @@ describe('registry', function(){
 
       it('should respond with proper render type', function(){
         expect(result.renderMode).to.equal('unrendered');
-      });
-    });
-  });
-
-  describe('GET /hello-world-handlebars3', function(){
-
-    describe('when Accept header not specified', function(){
-
-      before(function(done){
-        request({
-          url: 'http://localhost:3030/hello-world-handlebars3',
-          json: true
-        }, next(done));
-      });
-
-      it('should respond with the rendered template', function(){
-        expect(result.html).to.exist;
-        expect(result.html).to.match(/<oc-component (.*?)>Hello world!<script>(.*?)<\/script><\/oc-component>/g);
-      });
-
-      it('should respond with render type = rendered', function(){
-        expect(result.renderMode).to.equal('rendered');
       });
     });
   });

@@ -33,7 +33,6 @@ var oc = oc || {};
   var CDNJS_BASEURL = 'https://cdnjs.cloudflare.com/ajax/libs/',
       IE89_AJAX_POLYFILL_URL = CDNJS_BASEURL + 'jquery-ajaxtransport-xdomainrequest/1.0.3/jquery.xdomainrequest.min.js',
       HANDLEBARS_URL = CDNJS_BASEURL + 'handlebars.js/4.0.5/handlebars.runtime.min.js',
-      HANDLEBARS3_URL = CDNJS_BASEURL + 'handlebars.js/3.0.3/handlebars.runtime.min.js',
       JADE_URL = CDNJS_BASEURL + 'jade/1.11.0/runtime.min.js',
       JQUERY_URL = CDNJS_BASEURL + 'jquery/1.11.2/jquery.min.js',
       RETRY_INTERVAL = oc.conf.retryInterval || 5000,
@@ -302,41 +301,12 @@ var oc = oc || {};
             callback(MESSAGES_ERRORS_LOADING_COMPILED_VIEW.replace('{0}', compiledViewInfo.src));
           } else {
             if(compiledViewInfo.type === 'handlebars'){
-              
-              /*  
-                The following code is required for rendering components
-                published with both Handlerbars V3 and V4. This polyfill
-                will be removed and kept only to allow OC mantainers to
-                gracefully migrate to the new version (supporting only v4). 
-              */
-
-              oc.require('handlebars3', HANDLEBARS3_URL, function(){
-
-                $window.handlebars3 = $window.handlebars3 || $window.Handlebars;
-                if(!!$window.Handlebars){
-                  $window.Handlebars.noConflict();
-                }
-
-                oc.require('handlebars4', HANDLEBARS_URL, function(){
-
-                  $window.handlebars4 = $window.handlebars4 || $window.Handlebars;
-                  if(!!$window.Handlebars){
-                    $window.Handlebars.noConflict();
-                  }
-                  
-                  var needs3 = compiledView.compiler[0] < 7,
-                      compiler = needs3 ? $window.handlebars3 : $window.handlebars4,
-                      linked = compiler.template(compiledView, []),
-                      html = linked(model);
-
-                  callback(null, html);
-                });
+              oc.require('Handlebars', HANDLEBARS_URL, function(){
+                var linked = $window.Handlebars.template(compiledView, []);
+                callback(null, linked(model));
               });
-
-              // End of the Handlebars "migrate" part
-
             } else if(compiledViewInfo.type === 'jade'){
-              oc.require('jade', JADE_URL, function(jade){
+              oc.require('jade', JADE_URL, function(){
                 callback(null, compiledView(model));
               });
             }
