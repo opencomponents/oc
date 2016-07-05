@@ -19,7 +19,6 @@ module.exports = function(grunt, taskObject){
 
     grunt.task.run([
       'test-local-silent',
-      'generate-cli-doc',
       'build',
       'git-stage'
     ]);
