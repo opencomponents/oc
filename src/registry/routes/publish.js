@@ -1,17 +1,12 @@
 'use strict';
 
 var format = require('stringformat');
-var path = require('path');
-var Targz = require('tar.gz');
-var _ = require('underscore');
 
-var RequireWrapper = require('../domain/require-wrapper');
+var extractPackage = require('../domain/extract-package');
 var strings = require('../../resources/index');
 var validator = require('../domain/validators');
 
 module.exports = function(repository){
-
-  var targz = new Targz();
 
   return function(req, res){
 
@@ -45,20 +40,14 @@ module.exports = function(repository){
       });
     }
 
-    var files = req.files,
-        packageFile = files[_.keys(files)[0]],
-        packagePath = path.resolve(packageFile.path),
-        packageUntarOutput = path.resolve(packageFile.path, '..', packageFile.name.replace('.tar.gz', '')),
-        packageOutput = path.resolve(packageUntarOutput, '_package');
-
-    targz.extract(packagePath, packageUntarOutput, function(err){
+    extractPackage(req.files, function(err, pkgDetails){
 
       if(!!err){
-        res.errorDetails = format('Package file is not valid: {0}', err);
-        return res.json(500, { error: 'package file is not valid', details: err });
+        res.errorDetails = format('Package is not valid: {0}', err);
+        return res.json(500, { error: 'package is not valid', details: err });
       }
 
-      repository.publishComponent(packageOutput, req.params.componentName, req.params.componentVersion, function(err, result){
+      repository.publishComponent(pkgDetails, req.params.componentName, req.params.componentVersion, function(err, result){
 
         if(err){
           if(err.code === 'not_allowed'){

@@ -4,6 +4,7 @@ var expect = require('chai').expect;
 var injectr = require('injectr');
 var path = require('path');
 var sinon = require('sinon');
+var _ = require('underscore');
 
 describe('registry : domain : repository', function(){
 
@@ -39,6 +40,10 @@ describe('registry : domain : repository', function(){
     var cdnConfiguration = {
       port: 3000,
       prefix: '/v2/',
+      publishValidation: function(pkg){
+        var ok = !!pkg.author && !!pkg.repository;
+        return ok ? ok : { isValid: false, error: 'forbidden!!!'};
+      },
       baseUrl: 'http://saymyname.com:3000/v2/',
       env: {
         name: 'prod'
@@ -156,7 +161,7 @@ describe('registry : domain : repository', function(){
       describe('when component has not a valid name', function(){
         
         before(function(done){
-          repository.publishComponent('', 'blue velvet', '1.0.0', saveResult(done));
+          repository.publishComponent({}, 'blue velvet', '1.0.0', saveResult(done));
         });
 
         it('should respond with an error', function(){
@@ -169,7 +174,7 @@ describe('registry : domain : repository', function(){
       describe('when component has a not valid version', function(){
 
         before(function(done){
-          repository.publishComponent('', 'hello-world', '1.0', saveResult(done));
+          repository.publishComponent({}, 'hello-world', '1.0', saveResult(done));
         });
 
         it('should respond with an error', function(){
@@ -181,11 +186,17 @@ describe('registry : domain : repository', function(){
 
       describe('when component has a valid name and version', function(){
 
+        var pkg = { packageJson: {
+          name: 'hello-world',
+          author: 'blargh',
+          repository: 'asdfa'
+        }};
+
         describe('when component with same name and version is already in library', function(){
 
           before(function(done){
             componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
-            repository.publishComponent('', 'hello-world', '1.0.0', saveResult(done));
+            repository.publishComponent(pkg, 'hello-world', '1.0.0', saveResult(done));
           });
 
           it('should respond with an error', function(){
@@ -208,7 +219,10 @@ describe('registry : domain : repository', function(){
             componentsCacheMock.refresh.yields(null, 'yay');
             s3Mock.putDir = sinon.stub();
             s3Mock.putDir.yields(null, 'done');
-            repository.publishComponent('/path/to/component', 'hello-world', '1.0.1', saveResult(done));
+            repository.publishComponent(_.extend(pkg, {
+              outputFolder: '/path/to/component',
+              componentName: 'hello-world'
+            }), 'hello-world', '1.0.1', saveResult(done));
           });
 
           it('should refresh cached components list', function(){

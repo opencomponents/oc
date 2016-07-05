@@ -5,6 +5,7 @@ var _ = require('underscore');
 
 var ocCliVersionValidator = require('./oc-cli-version');
 var componentParametersValidator = require('./component-parameters');
+var packageJsonValidator = require('./package-json-validator');
 var pluginsRequirementsValidator = require('./plugins-requirements');
 var registryConfigurationValidator = require('./registry-configuration');
 var uploadedPackageValidator = require('./uploaded-package');
@@ -18,6 +19,7 @@ module.exports = {
   validateNodeVersion: nodeVersionValidator,
   validateOcCliVersion: ocCliVersionValidator,
   validatePackage: uploadedPackageValidator,
+  validatePackageJson: packageJsonValidator,
   validatePluginsRequirements: pluginsRequirementsValidator,
   validateRegistryConfiguration: registryConfigurationValidator,
   validateTemplateType: function(templateType){

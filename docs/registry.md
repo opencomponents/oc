@@ -84,35 +84,56 @@ registry.register({
 
 # Registry configuration
 
-|Parameter|Type|Description|
-|---------|------|-------|
-|`baseUrl`|`string`|sets the URL which will be used to compose the components' URLs. This needs to be the registry's public url|
-|`dependencies`|`array`|the npm modules available for components logic|
-|`env`|`object`|sets the registry environment|
-|`env.name`|`string`|sets the environment name|
-|`executionTimeout`|`number` (seconds)|timeout for component's server execution time|
-|`pollingInterval`|`number` (seconds)|When the components' list cache will be refreshed. This is required for distributing the components on each registry instance. Given the polling mechanism is quite efficient, this number should be very low. Suggested is around 5-10 seconds.|
-|`port`|`number`|default `3000`, sets the port where to start the registry|
-|`prefix`|`string`|sets the href prefix, for example: `/v2/`|
-|`publishAuth`|`object`|sets the authentication parameters for publishing a component to the registry. When `undefined`, no authorisation is required.
-|`publishAuth.type`|`string`|The authorisation type. Only `basic` is supported at the moment.|
-|`publishAuth.username`|`string`|sets the user name|
-|`publishAuth.password`|`string`|sets the user password|
-|`refreshInterval`|`number` (seconds)|When the components' data cache will be refreshed. Given the data is immutable, this should be high and just for robustness.|
-|`routes`|`array of objects`|sets additional actions via URL mapping to specific action handlers|
-|`routes[index].route`|`string`|sets URL pattern|
-|`routes[index].method`|`string`|sets verb|
-|`routes[index].handler`|`function`|sets function handler for routed action [Look at the example](#routes-example)|
-|`s3`|`object`|sets the Amazon S3 credentials|
-|`s3.bucket`|`string`|sets S3 bucket|
-|`s3.componentsDir`|`string`|the path where the data will be saved inside the bucket|
-|`s3.key`|`string`|sets S3 access key|
-|`s3.path`|`string`|sets the path that will be used for composing static resources' urls. Can be the s3 url, or, when using cloudfront, it can be `//cloudfront-id.cloudfront.net/`. Signature should not include the protocol|
-|`s3.region`|`string`|sets S3 region|
-|`s3.secret`|`string`|sets S3 secret|
-|`s3.timeout`|`number` (milliseconds)|default `10000`, optionally sets the timeout for s3 requests.|
-|`tempDir`|`string`|default `./temp/`, sets the directory where the components' packages are temporarily stored during the publishing phase inside the registry box|
-|`verbosity`|`number`|default `0`, sets the `console.log` verbosity during the execution|
+|Parameter|Type|Mandatory|Description|
+|---------|----|---------|-----------|
+|`baseUrl`|`string`|`yes`|sets the URL which will be used to compose the components' URLs. This needs to be the registry's public url|
+|`dependencies`|`array`|`no`|the npm modules available for components logic|
+|`env`|`object`|`no`|sets the registry environment|
+|`env.name`|`string`|`no`|sets the environment name|
+|`executionTimeout`|`number` (seconds)|`no`|timeout for component's server execution time|
+|`pollingInterval`|`number` (seconds)|`no`|When the components' list cache will be refreshed. This is required for distributing the components on each registry instance. Given the polling mechanism is quite efficient, this number should be very low. Suggested is around 5-10 seconds.|
+|`port`|`number`|`no`|default `3000`, sets the port where to start the registry|
+|`prefix`|`string`|`no`|sets the href prefix, for example: `/v2/`|
+|`publishAuth`|`object`|`no`|sets the authentication parameters for publishing a component to the registry. When `undefined`, no authorisation is required.
+|`publishAuth.type`|`string`|`no`|The authorisation type. Only `basic` is supported at the moment.|
+|`publishAuth.username`|`string`|`no`|sets the user name|
+|`publishAuth.password`|`string`|`no`|sets the user password|
+|`publishValidation`|`function`|`no`|Used to validate package.json when components is published. [Look at the example](#publish-validation-example)|
+|`refreshInterval`|`number` (seconds)|`no`|When the components' data cache will be refreshed. Given the data is immutable, this should be high and just for robustness.|
+|`routes`|`array of objects`|`no`|sets additional actions via URL mapping to specific action handlers|
+|`routes[index].route`|`string`|`no`|sets URL pattern|
+|`routes[index].method`|`string`|`no`|sets verb|
+|`routes[index].handler`|`function`|`no`|sets function handler for routed action [Look at the example](#routes-example)|
+|`s3`|`object`|`yes`|sets the Amazon S3 credentials|
+|`s3.bucket`|`string`|`yes`|sets S3 bucket|
+|`s3.componentsDir`|`string`|`yes`|the path where the data will be saved inside the bucket|
+|`s3.key`|`string`|`yes`|sets S3 access key|
+|`s3.path`|`string`|`yes`|sets the path that will be used for composing static resources' urls. Can be the s3 url, or, when using cloudfront, it can be `//cloudfront-id.cloudfront.net/`. Signature should not include the protocol|
+|`s3.region`|`string`|`yes`|sets S3 region|
+|`s3.secret`|`string`|`yes`|sets S3 secret|
+|`s3.timeout`|`number` (milliseconds)|`no`|default `10000`, optionally sets the timeout for s3 requests.|
+|`tempDir`|`string`|`no`|default `./temp/`, sets the directory where the components' packages are temporarily stored during the publishing phase inside the registry box|
+|`verbosity`|`number`|`no`|default `0`, sets the `console.log` verbosity during the execution|
+
+## Publish validation example
+```js
+options.publishValidation = function(package){
+  var isValid = !!package.author &&
+                !!package.repository &&
+                !!package.description;
+
+  if(isValid){
+    // Can return boolean
+    return true;
+  } else {
+    // Can return object with error so that it will be propagated to the user
+    return {
+      isValid: false,
+      error: 'Package.json is missing mandatory params: author, repository, description'
+    };
+  }
+};
+```
 
 ## Routes example
 ```js
@@ -128,7 +149,7 @@ options.routes = [{
 # Registry events
 
 |Event name|Callback Data Type|Description|
-|---------|------|-------|
+|----------|------------------|-----------|
 |`cache-poll`|`object`|Fired when the components list is refreshed. The callback data contains the last edit unix utc timestamp.|
 |`component-retrieved`|`object`|Fired when the component is retrieved. This includes the component's validation,  data gathering and execution, view retrieving, and (when requested) rendering. The callback data contains the duration, component details, and, in case, the error details.|
 |`error`|`object`|Fired when an internal operation errors.|

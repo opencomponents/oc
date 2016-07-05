@@ -16,6 +16,12 @@ module.exports = function(input){
     options.beforePublish = auth.middleware(options.publishAuth);
   }
 
+  if(!options.publishValidation){
+    options.publishValidation = function(){
+      return { isValid: true };
+    };
+  }
+
   if(!options.prefix){
     options.prefix = '/';
   }
