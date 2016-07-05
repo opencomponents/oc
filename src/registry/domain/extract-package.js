@@ -19,7 +19,7 @@ module.exports = function(files, callback){
 
     if(err){ return callback(err); }
 
-    getPackageJsonFromTempDir(packageUntarOutput, function(err, packageJson){
+    getPackageJsonFromTempDir(packageOutput, function(err, packageJson){
       callback(err, {
         outputFolder: packageOutput,
         packageJson: packageJson
