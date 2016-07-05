@@ -4,6 +4,20 @@ var settings = require('./settings');
 var _ = require('./utils/helpers');
 
 module.exports = {
+  validateComponent: function(template, options){
+    var result = { isValid: true },
+        isHandlebars = options.templateType === 'handlebars',
+        isUnsupported = isHandlebars && template.compiler[0] < 7;
+
+    if(isUnsupported){
+      result = {
+        isValid: false,
+        error: settings.legacyComponent
+      };
+    }
+
+    return result;
+  },
   validateConfiguration: function(conf){
     var errorMessage = function(msg){
       return {

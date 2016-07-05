@@ -168,6 +168,17 @@ module.exports = function(conf, repository){
 
           var returnResult = function(template){
             client.renderTemplate(template, data, renderOptions, function(err, html){
+
+              if(err){
+                return callback({
+                  status: 500,
+                  response: {
+                    code: 'INTERNAL_SERVER_ERROR',
+                    error: err
+                  }
+                });
+              }
+
               callback({
                 status: 200, 
                 response: _.extend(response, { html: html })
