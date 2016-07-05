@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.32.3
+- [#257](https://github.com/opentable/oc/pull/257) Publish requirements
+- [#259](https://github.com/opentable/oc/pull/259) Upgrade more deps
+
 ### v0.32.2
 - [#261](https://github.com/opentable/oc/pull/261) Client rendering fix
 
