@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.32.5
+- [#266](https://github.com/opentable/oc/pull/266) Publish fix
+
 ### v0.32.4
 - [#263](https://github.com/opentable/oc/pull/263) oc-client publish fix
 
