@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.32.6
+- [#268](https://github.com/opentable/oc/pull/268) Strict shrinkwrapping
+- [#264](https://github.com/opentable/oc/pull/264) Docs cleanup
+
 ### v0.32.5
 - [#266](https://github.com/opentable/oc/pull/266) Publish fix
 
