@@ -302,8 +302,12 @@ var oc = oc || {};
           } else {
             if(compiledViewInfo.type === 'handlebars'){
               oc.require('Handlebars', HANDLEBARS_URL, function(){
-                var linked = $window.Handlebars.template(compiledView, []);
-                callback(null, linked(model));
+                try {
+                  var linked = $window.Handlebars.template(compiledView, []);
+                  callback(null, linked(model));
+                } catch(e){
+                  callback(e.toString());
+                }
               });
             } else if(compiledViewInfo.type === 'jade'){
               oc.require('jade', JADE_URL, function(){

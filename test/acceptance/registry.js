@@ -60,12 +60,31 @@ describe('registry', function(){
 
     it('should list the components', function(){
       expect(result.components).to.eql([
+        'http://localhost:3030/handlebars3-component',
         'http://localhost:3030/hello-world',
         'http://localhost:3030/language',
         'http://localhost:3030/no-containers',
         'http://localhost:3030/welcome', 
         'http://localhost:3030/oc-client'
       ]);
+    });
+  });
+
+  describe('GET /hello-world-handlebars3', function(){
+
+    before(function(done){
+      request({
+        url: 'http://localhost:3030/handlebars3-component',
+        json: true
+      }, next(done));
+    });
+
+    it('should respond with 500 status code', function(){
+      expect(error).to.equal(500);
+    });
+
+    it('should respond with error for unsupported handlebars version', function(){
+      expect(result.error).to.equal('The component can\'t be rendered because it was published with an older OC version');
     });
   });
 
