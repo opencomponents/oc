@@ -70,7 +70,7 @@ describe('registry', function(){
     });
   });
 
-  describe('GET /hello-world-handlebars3', function(){
+  describe('GET /handlebars3-component', function(){
 
     before(function(done){
       request({
