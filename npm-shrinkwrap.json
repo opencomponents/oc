@@ -4,7 +4,7 @@
   "dependencies": {
     "accept-language-parser": {
       "version": "1.1.2",
-      "from": "accept-language-parser@latest",
+      "from": "accept-language-parser@1.1.2",
       "resolved": "https://registry.npmjs.org/accept-language-parser/-/accept-language-parser-1.1.2.tgz"
     },
     "async": {
@@ -14,7 +14,7 @@
     },
     "aws-sdk": {
       "version": "2.4.2",
-      "from": "aws-sdk@latest",
+      "from": "aws-sdk@2.4.2",
       "resolved": "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.4.2.tgz",
       "dependencies": {
         "sax": {
@@ -48,7 +48,7 @@
     },
     "clean-css": {
       "version": "3.4.18",
-      "from": "clean-css@latest",
+      "from": "clean-css@3.4.18",
       "resolved": "https://registry.npmjs.org/clean-css/-/clean-css-3.4.18.tgz",
       "dependencies": {
         "commander": {
@@ -84,12 +84,12 @@
     },
     "dependency-graph": {
       "version": "0.5.0",
-      "from": "dependency-graph@latest",
+      "from": "dependency-graph@0.5.0",
       "resolved": "https://registry.npmjs.org/dependency-graph/-/dependency-graph-0.5.0.tgz"
     },
     "detective": {
       "version": "4.3.1",
-      "from": "detective@latest",
+      "from": "detective@4.3.1",
       "resolved": "https://registry.npmjs.org/detective/-/detective-4.3.1.tgz",
       "dependencies": {
         "acorn": {
@@ -933,7 +933,7 @@
     },
     "handlebars": {
       "version": "4.0.5",
-      "from": "handlebars@latest",
+      "from": "handlebars@4.0.5",
       "resolved": "https://registry.npmjs.org/handlebars/-/handlebars-4.0.5.tgz",
       "dependencies": {
         "async": {
@@ -1144,7 +1144,7 @@
             },
             "uglify-js": {
               "version": "2.6.4",
-              "from": "uglify-js@latest",
+              "from": "uglify-js@2.6.4",
               "resolved": "https://registry.npmjs.org/uglify-js/-/uglify-js-2.6.4.tgz",
               "dependencies": {
                 "async": {
@@ -1378,7 +1378,7 @@
             },
             "uglify-js": {
               "version": "2.6.4",
-              "from": "uglify-js@latest",
+              "from": "uglify-js@2.6.4",
               "resolved": "https://registry.npmjs.org/uglify-js/-/uglify-js-2.6.4.tgz",
               "dependencies": {
                 "async": {
@@ -1617,7 +1617,7 @@
     },
     "node-dir": {
       "version": "0.1.14",
-      "from": "node-dir@latest",
+      "from": "node-dir@0.1.14",
       "resolved": "https://registry.npmjs.org/node-dir/-/node-dir-0.1.14.tgz",
       "dependencies": {
         "minimatch": {
@@ -1682,7 +1682,7 @@
     },
     "npm": {
       "version": "3.10.3",
-      "from": "npm@latest",
+      "from": "npm@3.10.3",
       "resolved": "https://registry.npmjs.org/npm/-/npm-3.10.3.tgz",
       "dependencies": {
         "abbrev": {
@@ -1712,7 +1712,7 @@
         },
         "asap": {
           "version": "2.0.4",
-          "from": "asap@latest",
+          "from": "asap@2.0.4",
           "resolved": "https://unpm.uberinternal.com/asap/-/asap-2.0.4.tgz"
         },
         "chownr": {
@@ -1774,7 +1774,7 @@
         },
         "fs-vacuum": {
           "version": "1.2.9",
-          "from": "fs-vacuum@latest",
+          "from": "fs-vacuum@1.2.9",
           "resolved": "https://registry.npmjs.org/fs-vacuum/-/fs-vacuum-1.2.9.tgz"
         },
         "fs-write-stream-atomic": {
@@ -1788,7 +1788,7 @@
         },
         "fstream-npm": {
           "version": "1.1.0",
-          "from": "fstream-npm@latest",
+          "from": "fstream-npm@1.1.0",
           "resolved": "https://registry.npmjs.org/fstream-npm/-/fstream-npm-1.1.0.tgz",
           "dependencies": {
             "fstream-ignore": {
@@ -1877,7 +1877,7 @@
         },
         "hosted-git-info": {
           "version": "2.1.5",
-          "from": "hosted-git-info@latest",
+          "from": "hosted-git-info@2.1.5",
           "resolved": "https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-2.1.5.tgz"
         },
         "iferr": {
@@ -1887,7 +1887,7 @@
         },
         "inflight": {
           "version": "1.0.5",
-          "from": "inflight@latest",
+          "from": "inflight@1.0.5",
           "resolved": "https://registry.npmjs.org/inflight/-/inflight-1.0.5.tgz"
         },
         "inherits": {
@@ -1902,7 +1902,7 @@
         },
         "init-package-json": {
           "version": "1.9.4",
-          "from": "init-package-json@latest",
+          "from": "init-package-json@1.9.4",
           "resolved": "https://registry.npmjs.org/init-package-json/-/init-package-json-1.9.4.tgz",
           "dependencies": {
             "glob": {
@@ -1952,7 +1952,7 @@
         },
         "lodash._baseuniq": {
           "version": "4.6.0",
-          "from": "lodash._baseuniq@latest",
+          "from": "lodash._baseuniq@4.6.0",
           "resolved": "https://registry.npmjs.org/lodash._baseuniq/-/lodash._baseuniq-4.6.0.tgz",
           "dependencies": {
             "lodash._createset": {
@@ -1981,7 +1981,7 @@
         },
         "lodash.union": {
           "version": "4.4.0",
-          "from": "lodash.union@latest",
+          "from": "lodash.union@4.4.0",
           "resolved": "https://registry.npmjs.org/lodash.union/-/lodash.union-4.4.0.tgz",
           "dependencies": {
             "lodash._baseflatten": {
@@ -1998,12 +1998,12 @@
         },
         "lodash.uniq": {
           "version": "4.3.0",
-          "from": "lodash.uniq@latest",
+          "from": "lodash.uniq@4.3.0",
           "resolved": "https://registry.npmjs.org/lodash.uniq/-/lodash.uniq-4.3.0.tgz"
         },
         "lodash.without": {
           "version": "4.2.0",
-          "from": "lodash.without@latest",
+          "from": "lodash.without@4.2.0",
           "resolved": "https://registry.npmjs.org/lodash.without/-/lodash.without-4.2.0.tgz",
           "dependencies": {
             "lodash._basedifference": {
@@ -2283,7 +2283,7 @@
         },
         "npm-registry-client": {
           "version": "7.1.2",
-          "from": "npm-registry-client@latest",
+          "from": "npm-registry-client@7.1.2",
           "resolved": "https://registry.npmjs.org/npm-registry-client/-/npm-registry-client-7.1.2.tgz",
           "dependencies": {
             "concat-stream": {
@@ -2335,12 +2335,12 @@
         },
         "npm-user-validate": {
           "version": "0.1.4",
-          "from": "npm-user-validate@latest",
+          "from": "npm-user-validate@0.1.4",
           "resolved": "https://registry.npmjs.org/npm-user-validate/-/npm-user-validate-0.1.4.tgz"
         },
         "npmlog": {
           "version": "3.1.2",
-          "from": "npmlog@latest",
+          "from": "npmlog@3.1.2",
           "resolved": "https://registry.npmjs.org/npmlog/-/npmlog-3.1.2.tgz",
           "dependencies": {
             "are-we-there-yet": {
@@ -2543,7 +2543,7 @@
         },
         "readable-stream": {
           "version": "2.1.4",
-          "from": "readable-stream@latest",
+          "from": "readable-stream@2.1.4",
           "resolved": "https://registry.npmjs.org/readable-stream/-/readable-stream-2.1.4.tgz",
           "dependencies": {
             "buffer-shims": {
@@ -2582,7 +2582,7 @@
         },
         "request": {
           "version": "2.72.0",
-          "from": "request@latest",
+          "from": "request@2.72.0",
           "resolved": "https://registry.npmjs.org/request/-/request-2.72.0.tgz",
           "dependencies": {
             "aws-sign2": {
@@ -2945,7 +2945,7 @@
         },
         "retry": {
           "version": "0.9.0",
-          "from": "retry@latest",
+          "from": "retry@0.9.0",
           "resolved": "https://registry.npmjs.org/retry/-/retry-0.9.0.tgz"
         },
         "rimraf": {
@@ -2970,7 +2970,7 @@
         },
         "sorted-object": {
           "version": "2.0.0",
-          "from": "sorted-object@latest",
+          "from": "sorted-object@2.0.0",
           "resolved": "https://registry.npmjs.org/sorted-object/-/sorted-object-2.0.0.tgz"
         },
         "strip-ansi": {
@@ -3035,7 +3035,7 @@
         },
         "which": {
           "version": "1.2.10",
-          "from": "which@latest",
+          "from": "which@1.2.10",
           "resolved": "https://registry.npmjs.org/which/-/which-1.2.10.tgz",
           "dependencies": {
             "isexe": {
@@ -3047,7 +3047,7 @@
         },
         "wrappy": {
           "version": "1.0.2",
-          "from": "wrappy@latest",
+          "from": "wrappy@1.0.2",
           "resolved": "https://registry.npmjs.org/wrappy/-/wrappy-1.0.2.tgz"
         },
         "write-file-atomic": {
@@ -3148,7 +3148,7 @@
     },
     "opn": {
       "version": "4.0.2",
-      "from": "opn@latest",
+      "from": "opn@4.0.2",
       "resolved": "https://registry.npmjs.org/opn/-/opn-4.0.2.tgz",
       "dependencies": {
         "object-assign": {
@@ -3172,7 +3172,7 @@
     },
     "parse-author": {
       "version": "1.0.0",
-      "from": "parse-author@latest",
+      "from": "parse-author@1.0.0",
       "resolved": "https://registry.npmjs.org/parse-author/-/parse-author-1.0.0.tgz"
     },
     "read": {
@@ -3199,7 +3199,7 @@
     },
     "tar.gz": {
       "version": "1.0.5",
-      "from": "tar.gz@latest",
+      "from": "tar.gz@1.0.5",
       "resolved": "https://registry.npmjs.org/tar.gz/-/tar.gz-1.0.5.tgz",
       "dependencies": {
         "bluebird": {
@@ -3346,7 +3346,7 @@
     },
     "uglify-js": {
       "version": "2.6.4",
-      "from": "uglify-js@latest",
+      "from": "uglify-js@2.6.4",
       "resolved": "https://registry.npmjs.org/uglify-js/-/uglify-js-2.6.4.tgz",
       "dependencies": {
         "async": {
@@ -3484,7 +3484,7 @@
     },
     "watch": {
       "version": "0.19.1",
-      "from": "watch@latest",
+      "from": "watch@0.19.1",
       "resolved": "https://registry.npmjs.org/watch/-/watch-0.19.1.tgz",
       "dependencies": {
         "exec-sh": {

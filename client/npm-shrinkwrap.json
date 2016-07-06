@@ -4,7 +4,7 @@
   "dependencies": {
     "handlebars": {
       "version": "4.0.5",
-      "from": "handlebars@latest",
+      "from": "handlebars@4.0.5",
       "resolved": "https://registry.npmjs.org/handlebars/-/handlebars-4.0.5.tgz",
       "dependencies": {
         "async": {
@@ -215,7 +215,7 @@
             },
             "uglify-js": {
               "version": "2.6.4",
-              "from": "uglify-js@latest",
+              "from": "uglify-js@.6.4",
               "resolved": "https://registry.npmjs.org/uglify-js/-/uglify-js-2.6.4.tgz",
               "dependencies": {
                 "async": {
