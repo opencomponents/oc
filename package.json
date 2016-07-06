@@ -1,6 +1,6 @@
 {
   "name": "oc",
-  "version": "0.32.5",
+  "version": "0.32.6",
   "description": "A framework for developing and distributing html components",
   "main": "./src/index.js",
   "bin": {
@@ -48,13 +48,13 @@
     "sinon": "1.14.1"
   },
   "dependencies": {
-    "accept-language-parser": "^1.1.2",
+    "accept-language-parser": "1.1.2",
     "async": "1.5.2",
-    "aws-sdk": "^2.4.2",
-    "clean-css": "^3.4.18",
+    "aws-sdk": "2.4.2",
+    "clean-css": "3.4.18",
     "colors": "1.1.2",
-    "dependency-graph": "^0.5.0",
-    "detective": "^4.3.1",
+    "dependency-graph": "0.5.0",
+    "detective": "4.3.1",
     "express": "3.21.2",
     "falafel": "1.2.0",
     "form-data": "0.1.4",
@@ -64,18 +64,18 @@
     "minimal-request": "2.0.0",
     "multer": "0.1.4",
     "nice-cache": "0.0.5",
-    "node-dir": "^0.1.14",
+    "node-dir": "0.1.14",
     "nomnom": "1.8.1",
-    "npm": "^3.10.3",
+    "npm": "3.10.3",
     "omelette": "0.3.1",
-    "opn": "^4.0.2",
-    "parse-author": "^1.0.0",
+    "opn": "4.0.2",
+    "parse-author": "1.0.0",
     "read": "1.0.7",
-    "semver": "^5.1.1",
+    "semver": "5.1.1",
     "stringformat": "0.0.5",
     "tar.gz": "1.0.5",
-    "uglify-js": "^2.6.4",
+    "uglify-js": "2.6.4",
     "underscore": "1.8.3",
-    "watch": "^0.19.1"
+    "watch": "0.19.1"
   }
 }
