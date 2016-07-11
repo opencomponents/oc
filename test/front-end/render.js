@@ -34,7 +34,6 @@ describe('oc-client : render', function(){
     describe('when handlebars runtime not loaded', function(){
 
       var originalHandlebars, originalHeadLoad, callback, headSpy;
-      var originalHb3, originalHb4;
 
       beforeEach(function(){
         originalHandlebars = Handlebars;
