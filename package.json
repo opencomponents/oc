@@ -60,7 +60,6 @@
     "form-data": "0.1.4",
     "fs-extra": "0.30.0",
     "handlebars": "4.0.5",
-    "handlebars3": "3.0.3",
     "jade": "1.11.0",
     "minimal-request": "2.0.0",
     "multer": "0.1.4",

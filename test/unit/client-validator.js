@@ -32,4 +32,43 @@ describe('client : validator', function(){
       });
     });
   });
+
+  describe('when validating component', function(){
+
+    describe('when component\'s handlebars version is obsolete', function(){
+      var template = {compiler:[6,'>= 2.0.0-beta.1'],main:function(){return'Hello world!';},useData:!0};
+
+      var result = validator.validateComponent(template, {
+        templateType: 'handlebars'
+      });
+
+      it('should error', function(){
+        expect(result.isValid).to.be.false;
+        expect(result.error).to.be.equal('The component can\'t be rendered because it was published with an older OC version');
+      });
+    });
+
+    describe('when component\'s handlebars version is supported', function(){
+      var template = {compiler:[7,'>= 4.0.0'],main:function(){return'Hello world!';},useData:!0};
+
+      var result = validator.validateComponent(template, {
+        templateType: 'handlebars'
+      });
+
+      it('should be valid', function(){
+        expect(result.isValid).to.be.true;
+      });
+    });
+
+    describe('when component\'s template type is jade', function(){
+
+      var result = validator.validateComponent('', {
+        templateType: 'jade'
+      });
+
+      it('should be valid', function(){
+        expect(result.isValid).to.be.true;
+      });
+    });
+  });
 });
