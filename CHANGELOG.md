@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.0
+- [#265](https://github.com/opentable/oc/pull/265) [careful + breaking change] Removed Handlebars 3 support
+
 ### v0.32.6
 - [#268](https://github.com/opentable/oc/pull/268) Strict shrinkwrapping
 - [#264](https://github.com/opentable/oc/pull/264) Docs cleanup
