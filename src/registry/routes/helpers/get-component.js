@@ -11,6 +11,7 @@ var Client = require('../../../../client');
 var detective = require('../../domain/plugins-detective');
 var eventsHandler = require('../../domain/events-handler');
 var GetComponentRetrievingInfo = require('./get-component-retrieving-info');
+var NestedRenderer = require('./nested-renderer');
 var RequireWrapper = require('../../domain/require-wrapper');
 var sanitiser = require('../../domain/sanitiser');
 var strings = require('../../../resources');
@@ -25,9 +26,10 @@ module.exports = function(conf, repository){
         refreshInterval: conf.refreshInterval
       });
 
-  return function(options, cb){
+  var renderer = function(options, cb){
 
-    var retrievingInfo = new GetComponentRetrievingInfo(options);
+    var nestedRenderer = new NestedRenderer(renderer, options.conf),
+        retrievingInfo = new GetComponentRetrievingInfo(options);
 
     var getLanguage = function(){
       var paramOverride = !!options.parameters && options.parameters['__ocAcceptLanguage'];
@@ -213,8 +215,10 @@ module.exports = function(conf, repository){
               env: conf.env,
               params: params,
               plugins: conf.plugins,
-              staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', ''),
-              requestHeaders: options.headers
+              renderComponent: nestedRenderer.renderComponent,
+              renderComponents: nestedRenderer.renderComponents,
+              requestHeaders: options.headers,
+              staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', '')
             };
 
         var setCallbackTimeout = function(){
@@ -313,4 +317,6 @@ module.exports = function(conf, repository){
       }
     });
   };
+
+  return renderer;
 };
