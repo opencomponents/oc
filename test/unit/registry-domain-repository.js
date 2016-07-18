@@ -266,7 +266,7 @@ describe('registry : domain : repository', function(){
       });
 
       it('should list the components', function(){
-        expect(response.result).to.eql(['handlebars3-component', 'hello-world', 'language', 'no-containers', 'welcome', 'oc-client']);
+        expect(response.result).to.eql(['container-with-nested', 'handlebars3-component', 'hello-world', 'language', 'no-containers', 'welcome', 'oc-client']);
       });
     });
 
