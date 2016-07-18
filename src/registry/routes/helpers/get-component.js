@@ -14,6 +14,7 @@ var GetComponentRetrievingInfo = require('./get-component-retrieving-info');
 var NestedRenderer = require('../../domain/nested-renderer');
 var RequireWrapper = require('../../domain/require-wrapper');
 var sanitiser = require('../../domain/sanitiser');
+var settings = require('../../../resources/settings');
 var strings = require('../../../resources');
 var urlBuilder = require('../../domain/url-builder');
 var validator = require('../../domain/validators');
@@ -119,8 +120,7 @@ module.exports = function(conf, repository){
           parameters: params
         }, conf.baseUrl);
 
-        var acceptH = options.headers.accept,
-            isUnrendered = acceptH === 'application/vnd.oc.unrendered+json',
+        var isUnrendered = options.headers.accept === settings.registry.acceptUnrenderedHeader,
             renderMode = isUnrendered ? 'unrendered' : 'rendered';
 
         var response = {

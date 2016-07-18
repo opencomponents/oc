@@ -3,6 +3,9 @@
 var async = require('async');
 var _ = require('underscore');
 
+var settings = require('../../resources/settings');
+var strings = require('../../resources');
+
 var sanitise = { 
   componentParams: function(component, options, callback){
     return _.extend(sanitise.options(options, callback), {
@@ -15,9 +18,7 @@ var sanitise = {
     });
   },
   headers: function(h){
-    return _.extend({}, h, {
-      accept: 'application/vnd.oc.rendered+json'
-    });
+    return _.extend({}, h, { accept: settings.registry.acceptRenderedHeader });
   },
   options: function(options, callback){
     if(!callback && _.isFunction(options)){
@@ -35,19 +36,19 @@ var sanitise = {
 var validate = {
   callback: function(c){
     if(!c || !_.isFunction(c)){
-      throw new Error('callback is not valid');
+      throw new Error(strings.errors.registry.NESTED_RENDERER_CALLBACK_IS_NOT_VALID);
     }
   },
   componentParams: function(params){
     if(!params.componentName){
-      throw new Error('component\'s name is not valid');
+      throw new Error(strings.errors.registry.NESTED_RENDERER_COMPONENT_NAME_IS_NOT_VALID);
     }
 
     validate.callback(params.callback);
   },
   componentsParams: function(params){
     if(_.isEmpty(params.components)){
-      throw new Error('components is not valid');
+      throw new Error(strings.errors.registry.NESTED_RENDERER_COMPONENTS_IS_NOT_VALID);
     }
 
     validate.callback(params.callback);
