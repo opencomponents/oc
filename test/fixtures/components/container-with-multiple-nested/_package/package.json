@@ -8,8 +8,8 @@
     "renderInfo": false,
     "files": {
       "template": {
-        "type": "handlebars",
-        "hashKey": "51a340081e1238232d6ae46959832fabcc3dfabd",
+        "type": "jade",
+        "hashKey": "59378b18799629ee3da81986c828eca534932ed2",
         "src": "template.js"
       },
       "dataProvider": {
@@ -21,6 +21,6 @@
     },
     "version": "0.33.0",
     "packaged": true,
-    "date": 1468945446376
+    "date": 1468947771215
   }
 }
