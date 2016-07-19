@@ -11,8 +11,18 @@ describe('registry : routes : helpers : nested-renderer', function(){
       nestedRenderer,
       renderer;
 
-  var initialise = function(rendererMock, conf){
-    renderer = sinon.stub().yields(rendererMock);
+  var initialise = function(rendererMocks, conf){
+
+    if(_.isArray(rendererMocks)){
+      renderer = sinon.stub();
+      
+      _.each(rendererMocks, function(rendererMock, i){
+        renderer.onCall(i).yields(rendererMock);
+      });
+    } else {
+      renderer = sinon.stub().yields(rendererMocks);
+    }
+    
     nestedRenderer = new NestedRenderer(renderer, conf || {});
   };
 
@@ -211,23 +221,26 @@ describe('registry : routes : helpers : nested-renderer', function(){
         beforeEach(function(){ initialise(); });
 
         it('should throw an error', function(){
-          var f = function(){ nestedRenderer.renderComponent('my-component', {}, 'blarg'); };
+          var f = function(){ nestedRenderer.renderComponents(['my-component'], {}, 'blarg'); };
           expect(f).to.throw('callback is not valid');
         });
       });
 
-      describe('when requesting a not existent component', function(){
+      describe('when requesting not existent components', function(){
         
         var result, error;
         beforeEach(function(done){
           initialise({
             status: 404,
             response: {
-              error: 'Component not found 404'
+              error: 'Component not found!'
             }
           });
 
-          nestedRenderer.renderComponents([{ name: '404-component' }], {}, function(err, res){
+          nestedRenderer.renderComponents([
+            { name: '404-component' },
+            { name: 'another-not-existent-component' }
+          ], {}, function(err, res){
             result = res;
             error = err;
             done();
@@ -239,7 +252,10 @@ describe('registry : routes : helpers : nested-renderer', function(){
         });
 
         it('should return error in result callback', function(){
-          expect(result).to.eql([new Error('Component not found 404')]);
+          expect(result).to.eql([
+            new Error('Component not found!'),
+            new Error('Component not found!')
+          ]);
         });
       });
     });
@@ -251,21 +267,33 @@ describe('registry : routes : helpers : nested-renderer', function(){
         var result, error;
         beforeEach(function(done){
           
-          initialise({
-            status: 200,
-            response: {
-              html: '<b>Some html</b>'
+          initialise([
+            {
+              status: 200,
+              response: { html: '<b>Some html</b>' }
+            },
+            {
+              status: 200,
+              response: { html: '<b>Some other html</b>' }
             }
-          }, { bla: 'blabla' });
+          ], { bla: 'blabla' });
 
           nestedRenderer.renderComponents([{
             name: 'my-component',
-            parameters: { a: 1234 },
+            parameters: { x: 123 },
             version: '1.2.X'
+          }, {
+            name: 'my-other-component',
+            parameters: { y: 456 },
+            version: '^1.4.6'
           }], {
             headers: {
               'accept-language': 'en-GB',
               'accept': 'blargh'
+            },
+            parameters: {
+              x: 456,
+              z: 789
             }
           }, function(err, res){
             result = res;
@@ -275,10 +303,16 @@ describe('registry : routes : helpers : nested-renderer', function(){
         });
 
         it('should get the html result', function(){
-          expect(result).to.eql(['<b>Some html</b>']);
+          expect(result).to.eql([
+            '<b>Some html</b>',
+            '<b>Some other html</b>'
+          ]);
         });
 
         it('should make correct request to renderer', function(){
+
+          expect(renderer.args.length).to.equal(2);
+
           expect(renderer.args[0][0]).to.eql({
             name: 'my-component',
             conf: { bla: 'blabla' },
@@ -286,8 +320,26 @@ describe('registry : routes : helpers : nested-renderer', function(){
               'accept-language': 'en-GB',
               'accept': 'application/vnd.oc.rendered+json'
             },
-            parameters: { a: 1234 },
+            parameters: {
+              x: 123,
+              z: 789
+            },
             version: '1.2.X'
+          });
+
+          expect(renderer.args[1][0]).to.eql({
+            name: 'my-other-component',
+            conf: { bla: 'blabla' },
+            headers: {
+              'accept-language': 'en-GB',
+              'accept': 'application/vnd.oc.rendered+json'
+            },
+            parameters: {
+              x: 456,
+              y: 456,
+              z: 789
+            },
+            version: '^1.4.6'
           });
         });
 
@@ -301,14 +353,18 @@ describe('registry : routes : helpers : nested-renderer', function(){
         var result, error;
         beforeEach(function(done){
           
-          initialise({
+          initialise([{
             status: 200,
-            response: {
-              html: '<b>Some html</b>'
-            }
-          }, { bla: 'blabla' });
+            response: { html: '<b>Some html</b>' }
+          },{
+            status: 200,
+            response: { html: '<b>Some other html</b>' }
+          }], { bla: 'blabla' });
 
-          nestedRenderer.renderComponents([{ name: 'my-component'}], function(err, res){
+          nestedRenderer.renderComponents([
+            { name: 'my-component' },
+            { name: 'my-other-component' }
+          ], function(err, res){
             result = res;
             error = err;
             done();
@@ -316,12 +372,26 @@ describe('registry : routes : helpers : nested-renderer', function(){
         });
 
         it('should get the html result', function(){
-          expect(result).to.eql(['<b>Some html</b>']);
+          expect(result).to.eql([
+            '<b>Some html</b>',
+            '<b>Some other html</b>'
+          ]);
         });
 
         it('should make correct request to renderer', function(){
+            
+          expect(renderer.args.length).to.equal(2);
+
           expect(renderer.args[0][0]).to.eql({
             name: 'my-component',
+            conf: { bla: 'blabla' },
+            headers: { 'accept': 'application/vnd.oc.rendered+json' },
+            parameters: {},
+            version: ''
+          });
+
+          expect(renderer.args[1][0]).to.eql({
+            name: 'my-other-component',
             conf: { bla: 'blabla' },
             headers: { 'accept': 'application/vnd.oc.rendered+json' },
             parameters: {},
