@@ -199,7 +199,7 @@ describe('registry', function(){
     });
 
     it('should respond with the rendered template including the nested rendered component', function(){
-      expect(result.html).to.equal('<div>Hi, these are nested components:<ul><li><span>hi Jane Doe </span></li><li><span>hi John Doe </span></li></ul></div>');
+      expect(result.html).to.equal('<div>Hi, these are nested components:<ul><li><span>hi Jane Doe  </span></li><li><span>hi John Doe  </span></li></ul></div>');
     });
 
     it('should respond with proper render type', function(){
