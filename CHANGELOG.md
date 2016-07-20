@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.1
+- [#270](https://github.com/opentable/oc/pull/270) server-side nested rendering
+
 ### v0.33.0
 - [#265](https://github.com/opentable/oc/pull/265) [careful + breaking change] Removed Handlebars 3 support
 
