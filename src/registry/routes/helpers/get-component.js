@@ -11,8 +11,10 @@ var Client = require('../../../../client');
 var detective = require('../../domain/plugins-detective');
 var eventsHandler = require('../../domain/events-handler');
 var GetComponentRetrievingInfo = require('./get-component-retrieving-info');
+var NestedRenderer = require('../../domain/nested-renderer');
 var RequireWrapper = require('../../domain/require-wrapper');
 var sanitiser = require('../../domain/sanitiser');
+var settings = require('../../../resources/settings');
 var strings = require('../../../resources');
 var urlBuilder = require('../../domain/url-builder');
 var validator = require('../../domain/validators');
@@ -25,9 +27,10 @@ module.exports = function(conf, repository){
         refreshInterval: conf.refreshInterval
       });
 
-  return function(options, cb){
+  var renderer = function(options, cb){
 
-    var retrievingInfo = new GetComponentRetrievingInfo(options);
+    var nestedRenderer = new NestedRenderer(renderer, options.conf),
+        retrievingInfo = new GetComponentRetrievingInfo(options);
 
     var getLanguage = function(){
       var paramOverride = !!options.parameters && options.parameters['__ocAcceptLanguage'];
@@ -117,8 +120,7 @@ module.exports = function(conf, repository){
           parameters: params
         }, conf.baseUrl);
 
-        var acceptH = options.headers.accept,
-            isUnrendered = acceptH === 'application/vnd.oc.unrendered+json',
+        var isUnrendered = options.headers.accept === settings.registry.acceptUnrenderedHeader,
             renderMode = isUnrendered ? 'unrendered' : 'rendered';
 
         var response = {
@@ -213,8 +215,10 @@ module.exports = function(conf, repository){
               env: conf.env,
               params: params,
               plugins: conf.plugins,
-              staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', ''),
-              requestHeaders: options.headers
+              renderComponent: nestedRenderer.renderComponent,
+              renderComponents: nestedRenderer.renderComponents,
+              requestHeaders: options.headers,
+              staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', '')
             };
 
         var setCallbackTimeout = function(){
@@ -313,4 +317,6 @@ module.exports = function(conf, repository){
       }
     });
   };
+
+  return renderer;
 };

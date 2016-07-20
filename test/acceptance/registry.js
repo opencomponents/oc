@@ -60,6 +60,8 @@ describe('registry', function(){
 
     it('should list the components', function(){
       expect(result.components).to.eql([
+        'http://localhost:3030/container-with-multiple-nested',
+        'http://localhost:3030/container-with-nested',
         'http://localhost:3030/handlebars3-component',
         'http://localhost:3030/hello-world',
         'http://localhost:3030/language',
@@ -158,6 +160,50 @@ describe('registry', function(){
       it('should respond with proper render type', function(){
         expect(result.renderMode).to.equal('unrendered');
       });
+    });
+  });
+
+  describe('GET /container-with-nested', function(){
+
+    before(function(done){
+      request({
+        url: 'http://localhost:3030/container-with-nested',
+        json: true
+      }, next(done));
+    });
+
+    it('should respond with the correct href', function(){
+      expect(result.href).to.eql('http://localhost:3030/container-with-nested');
+    });
+
+    it('should respond with the rendered template including the nested rendered component', function(){
+      expect(result.html).to.equal('<div>Hi, this is a nested component: Hello world!</div>');
+    });
+
+    it('should respond with proper render type', function(){
+      expect(result.renderMode).to.equal('rendered');
+    });
+  });
+
+  describe('GET /container-with-multiple-nested', function(){
+
+    before(function(done){
+      request({
+        url: 'http://localhost:3030/container-with-multiple-nested',
+        json: true
+      }, next(done));
+    });
+
+    it('should respond with the correct href', function(){
+      expect(result.href).to.eql('http://localhost:3030/container-with-multiple-nested');
+    });
+
+    it('should respond with the rendered template including the nested rendered component', function(){
+      expect(result.html).to.equal('<div>Hi, these are nested components:<ul><li><span>hi Jane Doe  </span></li><li><span>hi John Doe  </span></li></ul></div>');
+    });
+
+    it('should respond with proper render type', function(){
+      expect(result.renderMode).to.equal('rendered');
     });
   });
 
