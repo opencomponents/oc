@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.2
+- [#274](https://github.com/opentable/oc/pull/274) Revert tar.gz upgrade
+
 ### v0.33.1
 - [#270](https://github.com/opentable/oc/pull/270) server-side nested rendering
 
