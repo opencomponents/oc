@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.33.3
+- [#278](https://github.com/opentable/oc/pull/278) Container client override
+- [#279](https://github.com/opentable/oc/pull/279) Update safari configs
+- [#280](https://github.com/opentable/oc/pull/280) Respect dependency versions for components
+
 ### v0.33.2
 - [#274](https://github.com/opentable/oc/pull/274) Revert tar.gz upgrade
 
