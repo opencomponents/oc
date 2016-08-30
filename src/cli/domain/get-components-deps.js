@@ -10,7 +10,7 @@ module.exports = function(components){
     var pkg = fs.readJsonSync(path.join(c, 'package.json'));
     _.forEach(_.keys(pkg.dependencies), function(d){
       if(!_.contains(deps, d)){
-        deps.push(d);
+        deps.push(d + '@' + pkg.dependencies[d]);
       }
     });
   });
