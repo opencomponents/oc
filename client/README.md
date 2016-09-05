@@ -1,6 +1,5 @@
 oc-client
 =========
-//测试
 Node.js client for [OpenComponents](https://github.com/opentable/oc)
 
 [![NPM](https://nodei.co/npm/oc-client.png?downloads=true)](https://npmjs.org/package/oc-client)
