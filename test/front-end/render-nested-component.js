@@ -4,7 +4,14 @@ describe('oc-client : renderNestedComponent', function(){
 
   var originalConsoleLog = console.log,
       originalRenderByHref = oc.renderByHref,
-      htmlBeforeRendering;
+      htmlBeforeRendering,
+      nav = window.navigator.userAgent,
+      isIe8 = !!(nav.match(/MSIE 8/)),
+      componentHref = '//oc-registry.com/my-component/';
+
+  var componentContainer = isIe8 ? 
+    '<div data-oc-component="true" href="' + componentHref + '"></div>' :
+    '<oc-component href="' + componentHref + '"></oc-component>';
 
   var initialise = function($component, fail){
     htmlBeforeRendering = '';
@@ -14,7 +21,7 @@ describe('oc-client : renderNestedComponent', function(){
     oc.renderByHref = function(href, cb){
       htmlBeforeRendering = $component.html();
       cb(fail, {
-        html: '<div>content</div>',
+        html: '<div>this is the component content</div>',
         version: '1.0.0',
         name: 'my-component',
         key: '12345678901234567890'
@@ -35,7 +42,7 @@ describe('oc-client : renderNestedComponent', function(){
     var $component;
 
     beforeEach(function(done){
-      $component = $('<oc-component href="//oc-registry.com/my-component/"></oc-component>');
+      $component = $(componentContainer);
       initialise($component);
       oc.renderNestedComponent($component, done);
     });
@@ -47,7 +54,7 @@ describe('oc-client : renderNestedComponent', function(){
     });
 
     it('should inject component html when rendering is done', function(){
-      expect($component.html()).toEqual('<div>content</div>');
+      expect($component.html()).toContain('this is the component content');
     });
   });
 
@@ -56,7 +63,7 @@ describe('oc-client : renderNestedComponent', function(){
     var $component;
 
     beforeEach(function(done){
-      $component = $('<oc-component href="//oc-registry.com/my-component/"></oc-component>');
+      $component = $(componentContainer);
       initialise($component, 'An error!');
       oc.renderNestedComponent($component, done);
     });
