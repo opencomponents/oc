@@ -49,23 +49,24 @@ var customLaunchers = {
   },
   'safari': {
     base: 'SauceLabs',
-    browserName: 'safari',
+    browserName: 'Safari',
     platform: 'OS X 10.10',
     version: '8'
   },
   'ipad': {
     base: 'SauceLabs',
-    browserName: 'ipad',
-    platform: 'OS X 10.10',
-    version: '8',
+    browserName: 'Safari',
+    deviceName: 'iPad Simulator',
+    platform: 'iOS',
+    version: '9.3',
     'device-orientation': 'portrait'
   },
   'iphone': {
     base: 'SauceLabs',
-    browserName: 'iphone',
+    browserName: 'Safari',
     deviceName: 'iPhone Simulator',
-    platform: 'OS X 10.10',
-    version: '8',
+    platform: 'iOS',
+    version: '9.3',
     'device-orientation': 'portrait'
   } 
 };

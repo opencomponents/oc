@@ -25,6 +25,7 @@ module.exports = function(config, renderTemplate){
       component.version = component.version || config.components[component.name];
       toDo.push({
         component: component,
+        container: component.container || options.container,
         pos: i,
         render: component.render || options.render || 'server',
         result: {}

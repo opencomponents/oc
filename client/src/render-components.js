@@ -20,7 +20,7 @@ module.exports = function(cache, renderTemplate){
       if(!!err){ return cb(err); }
 
       var renderOptions = {
-        container: options.container,
+        container: component.container,
         href: component.href,
         key: component.template.key,
         name: component.name,
@@ -48,6 +48,9 @@ module.exports = function(cache, renderTemplate){
     }
 
     _.eachAsync(toRender, function(action, next){
+
+      action.apiResponse.container = action.container;
+
       fetchTemplateAndRender(action.apiResponse, options, function(err, html){
         if(!!err){
           var errorDetails = format('{0} ({1})', (err.response && err.response.error), err.status);

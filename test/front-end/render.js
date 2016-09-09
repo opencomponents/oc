@@ -34,27 +34,16 @@ describe('oc-client : render', function(){
     describe('when handlebars runtime not loaded', function(){
 
       var originalHandlebars, originalHeadLoad, callback, headSpy;
-      var originalHb3, originalHb4;
 
       beforeEach(function(){
-        //originalHandlebars = Handlebars;
-        originalHb3 = handlebars3;
-        originalHb4 = handlebars4;
+        originalHandlebars = Handlebars;
         originalHeadLoad = head.load;
         headSpy = sinon.spy();
-        //Handlebars = undefined;
-        handlebars3 = undefined;
-        handlebars4 = undefined;
+        Handlebars = undefined;
 
         head.load = function(url, cb){
           headSpy(url, cb);
-          //Handlebars = originalHandlebars;
-          if(url.indexOf('3\.0\.3') >= 0){
-            handlebars3 = originalHb3;
-          } else if(url.indexOf('4\.0\.5') >= 0){
-            handlebars4 = originalHb4;
-          }
-
+          Handlebars = originalHandlebars;
           cb();
         };
 
@@ -75,8 +64,7 @@ describe('oc-client : render', function(){
 
       it('should require and wait for it', function(){
         expect(headSpy.called).toBe(true);
-        expect(headSpy.args[0][0]).toEqual('https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.runtime.min.js');
-        expect(headSpy.args[1][0]).toEqual('https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.runtime.min.js');
+        expect(headSpy.args[0][0]).toEqual('https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.runtime.min.js');
       });
 
       it('should render the component', function(){
@@ -114,28 +102,27 @@ describe('oc-client : render', function(){
         expect(callback.args[0][1]).toEqual('Hello world!');
       });
     });
-    
-    describe('when handlebars runtime loaded and rendering a handlebars3 component', function(){
+  });
 
-      var callback;
-      beforeEach(function(){
-        callback = sinon.spy();
-        eval(handlebars3CompiledView);            
-        oc.render({
-          src: 'https://my-cdn.com/components/a-component/1.2.123/template.js', 
-          type: 'handlebars', 
-          key: '46ee85c314b371cac60471cef5b2e2e6c443dccf'
-        }, {}, callback);
-      });
+  describe('when handlebars runtime loaded and rendering a handlebars3 component', function(){
 
-      it('should render the component', function(){
-        expect(callback.called).toBe(true);
-        expect(callback.args[0][0]).toBe(null);
-        expect(callback.args[0][1]).toEqual('Hello world!');
-      });
+    var callback;
+    beforeEach(function(){
+      callback = sinon.spy();
+      eval(handlebars3CompiledView);            
+      oc.render({
+        src: 'https://my-cdn.com/components/a-component/1.2.123/template.js', 
+        type: 'handlebars', 
+        key: '46ee85c314b371cac60471cef5b2e2e6c443dccf'
+      }, {}, callback);
+    });
+
+    it('should return the error', function(){ console.log(callback.args);
+      expect(callback.called).toBe(true);
+      expect(callback.args[0][0]).toContain('Template was precompiled with an older version of Handlebars than the current runtime');
     });
   });
-  
+
   describe('when rendering jade component', function(){
     
     describe('when jade runtime not loaded', function(){

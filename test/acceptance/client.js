@@ -123,6 +123,34 @@ describe('The node.js OC client', function(){
         });
       });
 
+      describe('when rendering one with container, one without container', function(){
+        var $components;
+        before(function(done){
+          client.renderComponents([{
+            name: 'hello-world',
+            container: true
+          }, {
+            name: 'hello-world',
+            container: false
+          }], { renderInfo: false }, function(err, html){
+            $components = {
+              'with': html[0],
+              'without': html[1]
+            };
+            done();
+          });
+        });
+
+        it('should return first component with container', function(){
+          var $component = cheerio.load($components.with)('oc-component');
+          expect($component.text()).to.equal('Hello world!');
+        });
+
+        it('should return second component without container', function(){
+          expect($components.without).to.equal('Hello world!');
+        });
+      });
+
       describe('when there\'s error in one of them', function(){
         var $errs;
         before(function(done){

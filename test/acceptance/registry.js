@@ -60,13 +60,33 @@ describe('registry', function(){
 
     it('should list the components', function(){
       expect(result.components).to.eql([
+        'http://localhost:3030/container-with-multiple-nested',
+        'http://localhost:3030/container-with-nested',
+        'http://localhost:3030/handlebars3-component',
         'http://localhost:3030/hello-world',
-        'http://localhost:3030/hello-world-handlebars3',
         'http://localhost:3030/language',
         'http://localhost:3030/no-containers',
         'http://localhost:3030/welcome', 
         'http://localhost:3030/oc-client'
       ]);
+    });
+  });
+
+  describe('GET /handlebars3-component', function(){
+
+    before(function(done){
+      request({
+        url: 'http://localhost:3030/handlebars3-component',
+        json: true
+      }, next(done));
+    });
+
+    it('should respond with 500 status code', function(){
+      expect(error).to.equal(500);
+    });
+
+    it('should respond with error for unsupported handlebars version', function(){
+      expect(result.error).to.equal('The component can\'t be rendered because it was published with an older OC version');
     });
   });
 
@@ -143,25 +163,47 @@ describe('registry', function(){
     });
   });
 
-  describe('GET /hello-world-handlebars3', function(){
+  describe('GET /container-with-nested', function(){
 
-    describe('when Accept header not specified', function(){
+    before(function(done){
+      request({
+        url: 'http://localhost:3030/container-with-nested',
+        json: true
+      }, next(done));
+    });
 
-      before(function(done){
-        request({
-          url: 'http://localhost:3030/hello-world-handlebars3',
-          json: true
-        }, next(done));
-      });
+    it('should respond with the correct href', function(){
+      expect(result.href).to.eql('http://localhost:3030/container-with-nested');
+    });
 
-      it('should respond with the rendered template', function(){
-        expect(result.html).to.exist;
-        expect(result.html).to.match(/<oc-component (.*?)>Hello world!<script>(.*?)<\/script><\/oc-component>/g);
-      });
+    it('should respond with the rendered template including the nested rendered component', function(){
+      expect(result.html).to.equal('<div>Hi, this is a nested component: Hello world!</div>');
+    });
 
-      it('should respond with render type = rendered', function(){
-        expect(result.renderMode).to.equal('rendered');
-      });
+    it('should respond with proper render type', function(){
+      expect(result.renderMode).to.equal('rendered');
+    });
+  });
+
+  describe('GET /container-with-multiple-nested', function(){
+
+    before(function(done){
+      request({
+        url: 'http://localhost:3030/container-with-multiple-nested',
+        json: true
+      }, next(done));
+    });
+
+    it('should respond with the correct href', function(){
+      expect(result.href).to.eql('http://localhost:3030/container-with-multiple-nested');
+    });
+
+    it('should respond with the rendered template including the nested rendered component', function(){
+      expect(result.html).to.equal('<div>Hi, these are nested components:<ul><li><span>hi Jane Doe  </span></li><li><span>hi John Doe  </span></li></ul></div>');
+    });
+
+    it('should respond with proper render type', function(){
+      expect(result.renderMode).to.equal('rendered');
     });
   });
 
