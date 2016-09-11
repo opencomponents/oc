@@ -39,7 +39,7 @@ module.exports = function(dependencies){
       if(_.isEmpty(missing)){ return cb(); }
 
       log.warn(format(strings.messages.cli.INSTALLING_DEPS, missing.join(', ')));
-      npmInstaller(missing, componentsDir, function(err, result){
+      npmInstaller(missing, function(err, result){
         if(!!err){
           log.err(err.toString());
           throw err;
