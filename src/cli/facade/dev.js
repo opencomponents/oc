@@ -95,11 +95,11 @@ module.exports = function(dependencies){
       log.warn(strings.messages.cli.CHECKING_DEPENDENCIES, true);
 
       var dependencies = getComponentsDependencies(components),
-          missing = getMissingDeps(dependencies, components);
+          missing = getMissingDeps(dependencies.withVersions, components);
 
       if(_.isEmpty(missing)){
         log.ok('OK');
-        return cb(dependencies);
+        return cb(dependencies.modules);
       }
 
       log.err('FAIL');
