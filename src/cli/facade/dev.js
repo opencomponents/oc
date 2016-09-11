@@ -31,7 +31,10 @@ module.exports = function(dependencies){
         port = opts.port || 3000,
         baseUrl = opts.baseUrl || format('http://localhost:{0}/', port),
         packaging = false,
-        errors = strings.errors.cli;
+        errors = strings.errors.cli,
+        hotReload = _.isUndefined(opts.hotReload) ? true : opts.hotReload;
+
+    log.ok('Starting local registry with hot reload set to: ' + hotReload);
         
     callback = wrapCliCallback(callback);
 
@@ -146,6 +149,7 @@ module.exports = function(dependencies){
 
           var registry = new oc.Registry({
             local: true,
+            hotReload: hotReload,
             discovery: true,
             verbosity: 1,
             path: path.resolve(componentsDir),

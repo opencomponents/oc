@@ -4,7 +4,7 @@ var _ = require('underscore');
 
 var strings = require('../../resources');
 
-module.exports = function(injectedDependencies){
+module.exports = function(injectedDependencies){ console.log(injectedDependencies);
   return function(moduleName){
     if(!!injectedDependencies && _.has(injectedDependencies, moduleName)){
       return injectedDependencies[moduleName];

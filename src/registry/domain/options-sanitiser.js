@@ -34,5 +34,9 @@ module.exports = function(input){
     options.dependencies = dependenciesResolver(options);
   }
 
+  if(!_.isBoolean(options.hotReload)){
+    options.hotReload = false;
+  }
+
   return options;
 };
