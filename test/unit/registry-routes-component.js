@@ -342,7 +342,8 @@ describe('registry : routes : component', function(){
           params: { componentName: 'npm-component' }
         }, {
           conf: {
-            local: true, //needed to invalidate the cache
+            local: true,
+            hotReloading: true, //needed to invalidate the cache
             baseUrl: 'http://components.com/',
             plugins: {},
             dependencies: {}

@@ -230,7 +230,7 @@ module.exports = function(conf, repository){
             }, conf.executionTimeout * 1000);
           }
         };
-
+        
         if(!!cached && !conf.hotReloading){
           domain.on('error', returnComponent);
 
