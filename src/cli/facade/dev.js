@@ -32,9 +32,7 @@ module.exports = function(dependencies){
         baseUrl = opts.baseUrl || format('http://localhost:{0}/', port),
         packaging = false,
         errors = strings.errors.cli,
-        hotReload = _.isUndefined(opts.hotReload) ? true : opts.hotReload;
-
-    log.ok('Starting local registry with hot reload set to: ' + hotReload);
+        hotReloading = _.isUndefined(opts.hotReloading) ? true : opts.hotReloading;
         
     callback = wrapCliCallback(callback);
 
@@ -57,7 +55,11 @@ module.exports = function(dependencies){
           log.err(format(strings.errors.generic, err));
         } else {
           log.warn(format(strings.messages.cli.CHANGES_DETECTED, changedFile));
-          cb(components);
+          if(!hotReloading){
+            log.warn(strings.messages.cli.HOT_RELOADING_DISABLED);
+          } else {
+            cb(components);
+          }
         }
       });
     };
@@ -149,7 +151,7 @@ module.exports = function(dependencies){
 
           var registry = new oc.Registry({
             local: true,
-            hotReload: hotReload,
+            hotReloading: hotReloading,
             discovery: true,
             verbosity: 1,
             path: path.resolve(componentsDir),

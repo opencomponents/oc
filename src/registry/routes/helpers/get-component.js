@@ -188,7 +188,7 @@ module.exports = function(conf, repository){
             });
           };
 
-          if(!!cached && !conf.hotReload){
+          if(!!cached && !conf.hotReloading){
             returnResult(cached);
           } else {
             repository.getCompiledView(component.name, component.version, function(err, templateText){
@@ -231,7 +231,7 @@ module.exports = function(conf, repository){
           }
         };
 
-        if(!!cached && !conf.hotReload){
+        if(!!cached && !conf.hotReloading){
           domain.on('error', returnComponent);
 
           try {
