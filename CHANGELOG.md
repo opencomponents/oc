@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.33.4
+- [#286](https://github.com/opentable/oc/pull/286) Hot reload
+- [#285](https://github.com/opentable/oc/pull/285) npm install and dep resolvement needs to happen in the same dir
+- [#269](https://github.com/opentable/oc/pull/269) Removing the loading... indicator when we have an error
+
 ### v0.33.3
 - [#278](https://github.com/opentable/oc/pull/278) Container client override
 - [#279](https://github.com/opentable/oc/pull/279) Update safari configs
