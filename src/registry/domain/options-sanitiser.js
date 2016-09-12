@@ -34,5 +34,9 @@ module.exports = function(input){
     options.dependencies = dependenciesResolver(options);
   }
 
+  if(!_.isBoolean(options.hotReloading)){
+    options.hotReloading = !!options.local;
+  }
+
   return options;
 };
