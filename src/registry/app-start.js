@@ -5,7 +5,7 @@ var format = require('stringformat');
 var path = require('path');
 var _ = require('underscore');
 
-var packageInfo = require('../../package.json');
+var packageInfo = require('../components/oc-client/_package/package');
 
 module.exports = function(repository, options, callback){
 
@@ -29,9 +29,12 @@ module.exports = function(repository, options, callback){
 
       logger.log(colors.yellow('Component not found. Publishing it...'));
 
-      var componentPath = path.resolve(__dirname, '../components/oc-client/_package');
+      var pkgInfo = {
+        outputFolder: path.resolve(__dirname, '../components/oc-client/_package'),
+        packageJson: packageInfo
+      };
       
-      repository.publishComponent(componentPath, 'oc-client', packageInfo.version, function(err, res){
+      repository.publishComponent(pkgInfo, 'oc-client', packageInfo.version, function(err, res){
         if(!err){
           logger.log(colors.green('Component published.'));
         } else {

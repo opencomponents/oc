@@ -36,7 +36,7 @@ module.exports = function(conf){
   if(!!publishAuth){
     var res = auth.validate(publishAuth);
     if(!res.isValid){
-        return returnError(res.message);
+      return returnError(res.message);
     }
   }
 

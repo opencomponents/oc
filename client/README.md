@@ -123,6 +123,7 @@ Components parameter:
 |`components[index].name`|`string`|yes|The component's name|
 |`components[index].version`|`string`|no|The component's version. When not speficied, it will use globally specified one (doing client initialisation); when not specified and not globally specified, it will default to "" (latest)|
 |`components[index].parameters`|`object`|no|The component's parameters|
+|`components[index].container`|`boolean`|no|The component's container option. When not specified, it will be the one specified in the options (for all components); if none is specified in options, it will default to `true`. When false, renders a component without its <oc-component> container|
 |`components[index].render`|`string`|no|The component's render mode. When not specified, it will be the one specified in the options (for all components); if none is specified in options, it will default to `server`. When `server`, the rendering will be performed on the server-side and the result will be component's html. If `client`, the html will contain a promise to do the rendering on the browser.|
 
 Options:

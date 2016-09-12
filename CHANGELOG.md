@@ -1,5 +1,50 @@
 ## Change Log
 
+### v0.33.4
+- [#286](https://github.com/opentable/oc/pull/286) Hot reload
+- [#285](https://github.com/opentable/oc/pull/285) npm install and dep resolvement needs to happen in the same dir
+- [#269](https://github.com/opentable/oc/pull/269) Removing the loading... indicator when we have an error
+
+### v0.33.3
+- [#278](https://github.com/opentable/oc/pull/278) Container client override
+- [#279](https://github.com/opentable/oc/pull/279) Update safari configs
+- [#280](https://github.com/opentable/oc/pull/280) Respect dependency versions for components
+
+### v0.33.2
+- [#274](https://github.com/opentable/oc/pull/274) Revert tar.gz upgrade
+
+### v0.33.1
+- [#270](https://github.com/opentable/oc/pull/270) server-side nested rendering
+
+### v0.33.0
+- [#265](https://github.com/opentable/oc/pull/265) [careful + breaking change] Removed Handlebars 3 support
+
+### v0.32.6
+- [#268](https://github.com/opentable/oc/pull/268) Strict shrinkwrapping
+- [#264](https://github.com/opentable/oc/pull/264) Docs cleanup
+
+### v0.32.5
+- [#266](https://github.com/opentable/oc/pull/266) Publish fix
+
+### v0.32.4
+- [#263](https://github.com/opentable/oc/pull/263) oc-client publish fix
+
+### v0.32.3
+- [#257](https://github.com/opentable/oc/pull/257) Publish requirements
+- [#259](https://github.com/opentable/oc/pull/259) Upgrade more deps
+
+### v0.32.2
+- [#261](https://github.com/opentable/oc/pull/261) Client rendering fix
+
+### v0.32.1
+- [#260](https://github.com/opentable/oc/pull/260) Client fix
+
+### v0.32.0
+- [#243](https://github.com/opentable/oc/pull/243) [careful] handlebars 3+4
+
+### v0.31.2
+- [#258](https://github.com/opentable/oc/pull/258) added support for serving svg
+
 ### v0.31.1
 - [#256](https://github.com/opentable/oc/pull/256) More dependencies upgrade
 

@@ -638,7 +638,7 @@ describe('registry : domain : validator', function(){
 
   describe('when validating component package for new candidate', function(){
 
-    var validate = function(a){ return validator.validatePackage(a); };
+    var validate = function(a, b){ return validator.validatePackage(a, b || {}); };
 
     describe('when package not valid', function(){
 
@@ -676,6 +676,50 @@ describe('registry : domain : validator', function(){
           size: 3707,
           truncated: true
         }}).isValid).to.be.false;
+      });
+    });
+
+    describe('when custom validation provided', function(){
+      
+      var validate = function(obj){ return validator.validatePackageJson(obj); };
+
+      var customValidator = function(pkg){
+        var isValid = !!pkg.author && !!pkg.repository;
+        return isValid ? isValid : { isValid: false, error: 'author and repository are required' };
+      };
+
+      describe('when package.json does not contain mandatory fields', function(){
+        var result;
+        beforeEach(function(){
+          result = validate({
+            packageJson: { name: 'my-component'},
+            componentName: 'my-component',
+            customValidator: customValidator
+          });
+        });
+
+        it('should not be valid', function(){
+          expect(result.isValid).to.be.false;
+        });
+
+        it('should return the error', function(){
+          expect(result.error).to.be.equal('author and repository are required');
+        });
+      });
+
+      describe('when package.json contains mandatory fields', function(){
+        var result;
+        beforeEach(function(){
+          result = validate({
+            packageJson: { name: 'my-component', author: 'somebody', repository: 'https://github.com/somebody/my-component'},
+            componentName: 'my-component',
+            customValidator: customValidator
+          });
+        });
+
+        it('should be valid', function(){
+          expect(result.isValid).to.be.true;
+        });
       });
     });
 

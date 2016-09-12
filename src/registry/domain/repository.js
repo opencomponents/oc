@@ -182,7 +182,7 @@ module.exports = function(conf){
 
       componentsCache.load(callback);
     },
-    publishComponent: function(componentDir, componentName, componentVersion, callback){
+    publishComponent: function(pkgDetails, componentName, componentVersion, callback){
       if(conf.local){
         return callback({
           code: strings.errors.registry.LOCAL_PUBLISH_NOT_ALLOWED_CODE,
@@ -204,6 +204,18 @@ module.exports = function(conf){
         });
       }
 
+      var validationResult = validator.validatePackageJson(_.extend(pkgDetails, {
+        componentName: componentName,
+        customValidator: conf.publishValidation
+      }));
+
+      if(!validationResult.isValid){
+        return callback({
+          code: strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL_CODE,
+          msg: format(strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL, validationResult.error)
+        });
+      }
+
       this.getComponentVersions(componentName, function(err, componentVersions){
         
         if(!versionHandler.validateNewVersion(componentVersion, componentVersions)){
@@ -213,7 +225,7 @@ module.exports = function(conf){
           });
         }
 
-        cdn.putDir(componentDir, conf.s3.componentsDir + '/' + componentName + '/' + componentVersion, function(err, res){
+        cdn.putDir(pkgDetails.outputFolder, conf.s3.componentsDir + '/' + componentName + '/' + componentVersion, function(err, res){
           if(!!err){ return callback(err); }
           componentsCache.refresh(callback);
         });

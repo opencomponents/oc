@@ -31,7 +31,8 @@ module.exports = function(dependencies){
         port = opts.port || 3000,
         baseUrl = opts.baseUrl || format('http://localhost:{0}/', port),
         packaging = false,
-        errors = strings.errors.cli;
+        errors = strings.errors.cli,
+        hotReloading = _.isUndefined(opts.hotReloading) ? true : opts.hotReloading;
         
     callback = wrapCliCallback(callback);
 
@@ -39,7 +40,7 @@ module.exports = function(dependencies){
       if(_.isEmpty(missing)){ return cb(); }
 
       log.warn(format(strings.messages.cli.INSTALLING_DEPS, missing.join(', ')));
-      npmInstaller(missing, componentsDir, function(err, result){
+      npmInstaller(missing, function(err, result){
         if(!!err){
           log.err(err.toString());
           throw err;
@@ -54,7 +55,11 @@ module.exports = function(dependencies){
           log.err(format(strings.errors.generic, err));
         } else {
           log.warn(format(strings.messages.cli.CHANGES_DETECTED, changedFile));
-          cb(components);
+          if(!hotReloading){
+            log.warn(strings.messages.cli.HOT_RELOADING_DISABLED);
+          } else {
+            cb(components);
+          }
         }
       });
     };
@@ -95,11 +100,11 @@ module.exports = function(dependencies){
       log.warn(strings.messages.cli.CHECKING_DEPENDENCIES, true);
 
       var dependencies = getComponentsDependencies(components),
-          missing = getMissingDeps(dependencies, components);
+          missing = getMissingDeps(dependencies.withVersions, components);
 
       if(_.isEmpty(missing)){
         log.ok('OK');
-        return cb(dependencies);
+        return cb(dependencies.modules);
       }
 
       log.err('FAIL');
@@ -146,6 +151,7 @@ module.exports = function(dependencies){
 
           var registry = new oc.Registry({
             local: true,
+            hotReloading: hotReloading,
             discovery: true,
             verbosity: 1,
             path: path.resolve(componentsDir),

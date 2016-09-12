@@ -1,12 +1,17 @@
 {
   "name": "oc-client",
-  "version": "1.6.2",
+  "version": "1.9.1",
   "dependencies": {
     "handlebars": {
-      "version": "3.0.1",
-      "from": "handlebars@3.0.1",
-      "resolved": "https://registry.npmjs.org/handlebars/-/handlebars-3.0.1.tgz",
+      "version": "4.0.5",
+      "from": "handlebars@4.0.5",
+      "resolved": "https://registry.npmjs.org/handlebars/-/handlebars-4.0.5.tgz",
       "dependencies": {
+        "async": {
+          "version": "1.5.2",
+          "from": "async@>=1.4.0 <2.0.0",
+          "resolved": "https://registry.npmjs.org/async/-/async-1.5.2.tgz"
+        },
         "optimist": {
           "version": "0.6.1",
           "from": "optimist@>=0.6.1 <0.7.0",
@@ -25,9 +30,9 @@
           }
         },
         "source-map": {
-          "version": "0.1.43",
-          "from": "source-map@>=0.1.40 <0.2.0",
-          "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.1.43.tgz",
+          "version": "0.4.4",
+          "from": "source-map@>=0.4.4 <0.5.0",
+          "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.4.4.tgz",
           "dependencies": {
             "amdefine": {
               "version": "1.0.0",
@@ -37,9 +42,9 @@
           }
         },
         "uglify-js": {
-          "version": "2.6.2",
-          "from": "uglify-js@2.6.2",
-          "resolved": "https://registry.npmjs.org/uglify-js/-/uglify-js-2.6.2.tgz",
+          "version": "2.6.4",
+          "from": "uglify-js@>=2.6.0 <3.0.0",
+          "resolved": "https://registry.npmjs.org/uglify-js/-/uglify-js-2.6.4.tgz",
           "dependencies": {
             "async": {
               "version": "0.2.10",

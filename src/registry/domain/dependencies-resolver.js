@@ -14,8 +14,13 @@ module.exports = function(options){
   logger.log(strings.messages.registry.RESOLVING_DEPENDENCIES.yellow);
 
   _.forEach(options.dependencies, function(dependency){
+    var dependencyName = dependency,
+        ix = dependency.indexOf('@');
+    if (ix > 0) {
+      dependencyName = dependency.substr(0, ix);
+    }
     var dependenciesBasePath = path.resolve('.', 'node_modules'),
-        dependencyPath = path.resolve(dependenciesBasePath, dependency),
+        dependencyPath = path.resolve(dependenciesBasePath, dependencyName),
         packagePath = path.resolve(dependencyPath, 'package.json');
 
     if(!fs.existsSync(packagePath)){
@@ -24,7 +29,7 @@ module.exports = function(options){
     } else {
       try {
         depObj[dependency] = require(dependencyPath);
-        logger.log('├── '.green + dependency + '@' + fs.readJsonSync(packagePath).version);
+        logger.log('├── '.green + dependencyName + '@' + fs.readJsonSync(packagePath).version);
       } catch(e){
         logger.log((dependency + ' => ').yellow + strings.errors.registry.GENERIC_ERROR.red);
         throw e;

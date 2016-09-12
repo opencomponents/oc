@@ -32,7 +32,7 @@ var oc = oc || {};
   // Constants
   var CDNJS_BASEURL = 'https://cdnjs.cloudflare.com/ajax/libs/',
       IE89_AJAX_POLYFILL_URL = CDNJS_BASEURL + 'jquery-ajaxtransport-xdomainrequest/1.0.3/jquery.xdomainrequest.min.js',
-      HANDLEBARS_URL = CDNJS_BASEURL + 'handlebars.js/3.0.1/handlebars.runtime.js',
+      HANDLEBARS_URL = CDNJS_BASEURL + 'handlebars.js/4.0.5/handlebars.runtime.min.js',
       JADE_URL = CDNJS_BASEURL + 'jade/1.11.0/runtime.min.js',
       JQUERY_URL = CDNJS_BASEURL + 'jquery/1.11.2/jquery.min.js',
       RETRY_INTERVAL = oc.conf.retryInterval || 5000,
@@ -301,12 +301,16 @@ var oc = oc || {};
             callback(MESSAGES_ERRORS_LOADING_COMPILED_VIEW.replace('{0}', compiledViewInfo.src));
           } else {
             if(compiledViewInfo.type === 'handlebars'){
-              oc.require('Handlebars', HANDLEBARS_URL, function(Handlebars){
-                var linkedComponent = Handlebars.template(compiledView, []);
-                callback(null, linkedComponent(model));
+              oc.require('Handlebars', HANDLEBARS_URL, function(){
+                try {
+                  var linked = $window.Handlebars.template(compiledView, []);
+                  callback(null, linked(model));
+                } catch(e){
+                  callback(e.toString());
+                }
               });
             } else if(compiledViewInfo.type === 'jade'){
-              oc.require('jade', JADE_URL, function(jade){
+              oc.require('jade', JADE_URL, function(){
                 callback(null, compiledView(model));
               });
             }
@@ -332,6 +336,7 @@ var oc = oc || {};
 
         oc.renderByHref($component.attr('href'), function(err, data){
           if(err || !data){
+            $component.html('');
             logger.error(err);
             return callback();
           }
