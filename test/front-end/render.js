@@ -106,15 +106,20 @@ describe('oc-client : render', function(){
 
   describe('when handlebars runtime loaded and rendering a handlebars3 component', function(){
 
-    var callback;
+    var callback, originalConsolelog = console.log;
     beforeEach(function(){
+      console.log = function(){};
       callback = sinon.spy();
-      eval(handlebars3CompiledView);            
+      eval(handlebars3CompiledView);
       oc.render({
         src: 'https://my-cdn.com/components/a-component/1.2.123/template.js', 
         type: 'handlebars', 
         key: '46ee85c314b371cac60471cef5b2e2e6c443dccf'
       }, {}, callback);
+    });
+
+    afterEach(function(){
+      console.log = originalConsolelog;
     });
 
     it('should return the error', function(){ console.log(callback.args);
