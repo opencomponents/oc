@@ -336,6 +336,7 @@ var oc = oc || {};
 
         oc.renderByHref($component.attr('href'), function(err, data){
           if(err || !data){
+            $component.html('');
             logger.error(err);
             return callback();
           }

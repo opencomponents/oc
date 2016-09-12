@@ -1,13 +1,13 @@
 'use strict';
 
-var nav = window.navigator.userAgent,
-    isIe8 = !!(nav.match(/MSIE 8/));
-
-var execute = function(parameters){
-  return oc.build(parameters);
-};
-
 describe('oc-client : build', function(){
+
+  var nav = window.navigator.userAgent,
+      isIe8 = !!(nav.match(/MSIE 8/));
+
+  var execute = function(parameters){
+    return oc.build(parameters);
+  };
 
   describe('when not providing the mandatory parameters', function(){
 
