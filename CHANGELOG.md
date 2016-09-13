@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.5
+- [#287](https://github.com/opentable/oc/pull/287) Node 6
+
 ### v0.33.4
 - [#286](https://github.com/opentable/oc/pull/286) Hot reload
 - [#285](https://github.com/opentable/oc/pull/285) npm install and dep resolvement needs to happen in the same dir
