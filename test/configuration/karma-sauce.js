@@ -7,12 +7,13 @@ module.exports = function(config) {
     reporters: ['dots', 'saucelabs'],
     colors: true,
     logLevel: config.LOG_INFO,
-    autoWatch: true,
+    autoWatch: false,
+    singleRun: true,
 
     sauceLabs: {
       testName: 'oc front-end tests',
       build: 'local',
-      startConnect: true
+      startConnect: false
     },
     captureTimeout: 180000,
     browserNoActivityTimeout: 180000,
