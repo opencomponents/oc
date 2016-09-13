@@ -19,9 +19,6 @@ script:
 
 notifications:
   email: false
-  
-addons:
-  sauce_connect: true
 
 env:
   global:

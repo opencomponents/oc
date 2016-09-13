@@ -13,7 +13,7 @@ module.exports = function(config) {
     sauceLabs: {
       testName: 'oc front-end tests',
       build: 'local',
-      startConnect: false
+      startConnect: true
     },
     captureTimeout: 180000,
     browserNoActivityTimeout: 180000,
@@ -23,7 +23,7 @@ module.exports = function(config) {
   if (process.env.TRAVIS)
   {
     //config.logLevel = config.LOG_DEBUG;
-    config.transports = ['xhr-polling'];
+    //config.transports = ['xhr-polling'];
     config.sauceLabs.build = 'TRAVIS #' + process.env.TRAVIS_BUILD_NUMBER + ' (' + process.env.TRAVIS_BUILD_ID + ')';
     config.sauceLabs.tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
   }
