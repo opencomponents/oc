@@ -17,12 +17,12 @@ var _ = {
   eachAsync: function(obj, fn, cb){
     var c = obj.length;
     
-    var next = function(){
+    var next = function(err){
       c--;
-      if(c === 0){ 
+      if(c === 0 || !!err){ 
         var a = cb;
         cb = _.noop;
-        return a();
+        return a(err);
       }
     };
 

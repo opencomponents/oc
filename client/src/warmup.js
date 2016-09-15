@@ -3,7 +3,7 @@
 var format = require('stringformat');
 var request = require('minimal-request');
 
-var packageInfo = require('../package');
+var settings = require('./settings');
 var _ = require('./utils/helpers');
 
 module.exports = function(config, renderComponents){
@@ -29,18 +29,23 @@ module.exports = function(config, renderComponents){
         toWarmup = [];
 
     _.each(config.components, function(version, name){
-      urls.push(config.registries.serverRendering + name + '/' + version + '/~info');
+      var versionSegment = version ? (version + '/') : '';
+      urls.push(config.registries.serverRendering + name + '/' + versionSegment + '~info');
     });
 
     _.eachAsync(urls, function(url, next){
-      request({
+
+      var requestDetails = {
         url: url,
         json: true,
         headers: options.headers,
+        method: 'GET',
         timeout: options.timeout
-      }, function(err, componentInfo){
+      };
+
+      request(requestDetails, function(err, componentInfo){
         if(err){
-          return cb(new Error(format('Error warming up oc-client: request to {0} failed ({1})', url, err)));
+          return next(new Error(format(settings.warmupFailed, JSON.stringify(requestDetails), err)));
         }
 
         var parameters = componentInfo.oc.parameters,
@@ -61,7 +66,8 @@ module.exports = function(config, renderComponents){
         toWarmup.push(componentToWarmup);
         next();
       });
-    }, function(){
+    }, function(err){
+      if(err){ return cb(err); }
       options.renderInfo = false;
       options.container = false;
 
