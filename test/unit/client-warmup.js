@@ -141,10 +141,15 @@ describe('client : warmup', function(){
 
     it('should return an error with all the details', function(){
 
-      var expectedError = 'Error: Error warming up oc-client: request ' +
-                          '{"url":"https://my-registry.com/component1/~info",' +
-                          '"json":true,"headers":{"Accept-Language":"en-US"},"method":' + 
-                          '"GET","timeout":5} failed (timeout)';
+      var expectedRequest = {
+        url: 'https://my-registry.com/component1/~info',
+        json: true,
+        headers: { 'Accept-Language': 'en-US' },
+        method: 'GET',
+        timeout: 5
+      };
+
+      var expectedError = 'Error: Error warming up oc-client: request ' + JSON.stringify(expectedRequest) + ' failed (timeout)';
 
       expect(error.toString()).to.be.equal(expectedError);
     });

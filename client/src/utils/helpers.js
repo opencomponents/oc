@@ -15,14 +15,16 @@ var _ = {
     }
   },
   eachAsync: function(obj, fn, cb){
-    var c = obj.length;
+    var callbacksLeft = obj.length;
     
     var next = function(err){
-      c--;
-      if(c === 0 || !!err){ 
-        var a = cb;
+      callbacksLeft--;
+      if(callbacksLeft === 0 || !!err){
+
+        var cbCopy = cb;
         cb = _.noop;
-        return a(err);
+
+        return cbCopy(err);
       }
     };
 
