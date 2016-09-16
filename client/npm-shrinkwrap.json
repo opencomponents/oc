@@ -440,9 +440,9 @@
       }
     },
     "minimal-request": {
-      "version": "2.0.0",
-      "from": "minimal-request@2.0.0",
-      "resolved": "https://registry.npmjs.org/minimal-request/-/minimal-request-2.0.0.tgz"
+      "version": "2.1.0",
+      "from": "minimal-request@2.1.0",
+      "resolved": "https://registry.npmjs.org/minimal-request/-/minimal-request-2.1.0.tgz"
     },
     "nice-cache": {
       "version": "0.0.5",
