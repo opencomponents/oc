@@ -1,6 +1,6 @@
 {
   "name": "oc",
-  "version": "0.33.5",
+  "version": "0.33.6",
   "description": "A framework for developing and distributing html components",
   "main": "./src/index.js",
   "bin": {
@@ -61,7 +61,7 @@
     "fs-extra": "0.30.0",
     "handlebars": "4.0.5",
     "jade": "1.11.0",
-    "minimal-request": "2.0.0",
+    "minimal-request": "2.1.0",
     "multer": "0.1.4",
     "nice-cache": "0.0.5",
     "node-dir": "0.1.14",

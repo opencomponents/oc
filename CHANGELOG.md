@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.6
+- [#289](https://github.com/opentable/oc/pull/289) Upgrade dependency
+
 ### v0.33.5
 - [#287](https://github.com/opentable/oc/pull/287) Node 6
 
