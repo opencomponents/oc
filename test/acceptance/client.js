@@ -271,7 +271,7 @@ describe('The node.js OC client', function(){
         it('should contain the error details', function(){
 
           var exp = getRegExpFromJson(expectedRequest),
-              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED 127.0.0.1:1234\\)');
+              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
 
           expect(error.toString()).to.match(expected);
         });
@@ -308,7 +308,7 @@ describe('The node.js OC client', function(){
         it('should contain the error details', function(){
 
           var exp = getRegExpFromJson(expectedRequest),
-              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED 127.0.0.1:1234\\)');
+              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
 
           expect(error.toString()).to.match(expected);
         });
@@ -372,7 +372,7 @@ describe('The node.js OC client', function(){
           };
 
           var exp = getRegExpFromJson(expectedRequestWithExtraParams),
-              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED 127.0.0.1:1234\\)');
+              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
 
           expect(error.toString()).to.match(expected);
         });
@@ -409,7 +409,7 @@ describe('The node.js OC client', function(){
 
         it('should contain the error details', function(){
           var exp = getRegExpFromJson(expectedRequest),
-              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED 127.0.0.1:1234\\)');
+              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
 
           expect(error.toString()).to.match(expected);
         });
