@@ -1,0 +1,26 @@
+{
+  "name": "errors-component",
+  "description": "",
+  "version": "1.0.0",
+  "repository": "",
+  "oc": {
+    "container": false,
+    "renderInfo": false,
+    "files": {
+      "template": {
+        "type": "jade",
+        "hashKey": "884851aea70e65c9aed7f2f4f40e91566a24404c",
+        "src": "template.js"
+      },
+      "dataProvider": {
+        "type": "node.js",
+        "hashKey": "0e0d89b101d9b2fe133f8f90567b3669d9e84ccb",
+        "src": "server.js"
+      },
+      "static": []
+    },
+    "version": "0.33.6",
+    "packaged": true,
+    "date": 1474290462546
+  }
+}
