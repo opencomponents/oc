@@ -62,6 +62,7 @@ describe('registry', function(){
       expect(result.components).to.eql([
         'http://localhost:3030/container-with-multiple-nested',
         'http://localhost:3030/container-with-nested',
+        'http://localhost:3030/errors-component',
         'http://localhost:3030/handlebars3-component',
         'http://localhost:3030/hello-world',
         'http://localhost:3030/language',

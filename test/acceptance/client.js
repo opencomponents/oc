@@ -158,22 +158,38 @@ describe('The node.js OC client', function(){
         });
       });
 
-      describe('when there\'s error in one of them', function(){
+      describe('when there are errors in some of them', function(){
         var $errs;
         before(function(done){
           client.renderComponents([{
             name: 'hello-world-i-dont-exist'
           }, {
             name: 'no-containers'
-          }], { container: false, renderInfo: false }, function(err, html){
+          }, {
+            name: 'errors-component',
+            parameters: {
+              errorType: '500'
+            }, {
+              name: 'errors-component',
+              parameters: {
+                errorType: 'timeout',
+                timeout: 1000
+              }
+            }
+          }], {
+            container: false,
+            renderInfo: false,
+            timeout: 0.01
+          }, function(err, html){
             $errs = err;
             done();
           });
         });
 
-        it('should return an error for the component with error', function(){
+        it('should return an error for each component with error', function(){
           expect($errs[0].toString()).to.be.equal('Error: Server-side rendering failed: Component "hello-world-i-dont-exist" not found on local repository (404)');
           expect($errs[1]).to.be.null;
+          expect($errs[2].toString()).to.be.equal('Error: Server-side rendering failed: Component execution error: (500)');
         });
       });
     });
@@ -407,6 +423,55 @@ describe('The node.js OC client', function(){
     });
 
     describe('when server-side rendering an existing component linked to a responsive registry', function(){
+
+      describe('when the component times-out', function(){
+
+        var error, result;
+
+        var expectedRequest = {
+          url: 'http://localhost:3030',
+          method: 'post',
+          headers: { 
+            accept: 'application/vnd.oc.unrendered+json',
+            'user-agent': 'oc-client-(.*?)'
+          },
+          timeout: 0.01,
+          json: true,
+          body: {
+            components: [{
+              name: 'errors-component',
+              parameters: {
+                errorType: 'timeout',
+                timeout: 1000
+              }
+            }]
+          }
+        };
+
+        before(function(done){
+          client.renderComponent('errors-component', {
+            parameters: { errorType: 'timeout', timeout: 1000 },
+            timeout: 0.01,
+            disableFailoverRendering: true
+          }, function(err, html){
+            error = err;
+            result = html
+            done();
+          });
+        });
+
+        it('should contain a blank html response', function(){
+          expect(result).to.eql('');
+        });
+
+        it('should contain the error details', function(){
+
+          var exp = getRegExpFromJson(expectedRequest),
+              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(timeout\\)');
+
+          expect(error.toString()).to.match(expected);
+        });
+      });
 
       describe('when container option = true', function(){
         var error;

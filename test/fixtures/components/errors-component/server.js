@@ -10,7 +10,7 @@ module.exports.data = function(context, callback){
 			});
 		}, context.params.timeout || 2000);
 	} else if(context.params.errorType === '500'){
-		callback(500);
+		callback('An error happened');
 	} else {
 
 	  callback(null, {
