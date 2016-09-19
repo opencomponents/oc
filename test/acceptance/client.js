@@ -3,6 +3,7 @@
 var cheerio = require('cheerio');
 var expect = require('chai').expect;
 var path = require('path');
+var _ = require('underscore');
 
 describe('The node.js OC client', function(){
 
@@ -32,6 +33,12 @@ describe('The node.js OC client', function(){
         'no-containers': ''
       }
     };
+  };
+
+  var getRegExpFromJson = function(x){
+    return JSON.stringify(x)
+      .replace(/\+/g, '\\+')
+      .replace(/\[/g, '\\[');
   };
 
   describe('when initialised providing registries properties', function(){
@@ -216,6 +223,23 @@ describe('The node.js OC client', function(){
 
     describe('when server-side rendering an existing component linked to a non responsive registry', function(){
 
+      var expectedRequest = {
+        url: 'http://localhost:1234',
+        method: 'post',
+        headers: { 
+          accept: 'application/vnd.oc.unrendered+json',
+          'user-agent': 'oc-client-(.*?)'
+        },
+        timeout: 5,
+        json: true,
+        body: {
+          components: [{
+            name: 'hello-world',
+            version: '~1.0.0'
+          }]
+        }
+      };
+
       describe('when client-side failover rendering disabled', function(){
 
         var error;
@@ -235,7 +259,11 @@ describe('The node.js OC client', function(){
         });
 
         it('should contain the error details', function(){
-          expect(error.toString()).to.match(/Error\: Server-side rendering failed: Error: (.*?) when connecting to http\:\/\/localhost\:1234 \(500\)/g);
+
+          var exp = getRegExpFromJson(expectedRequest),
+              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED 127.0.0.1:1234\\)');
+
+          expect(error.toString()).to.match(expected);
         });
       });
 
@@ -268,7 +296,11 @@ describe('The node.js OC client', function(){
         });
 
         it('should contain the error details', function(){
-          expect(error.toString()).to.match(/Error\: Server-side rendering failed: Error: (.*?) when connecting to http\:\/\/localhost\:1234 \(500\)/g);
+
+          var exp = getRegExpFromJson(expectedRequest),
+              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED 127.0.0.1:1234\\)');
+
+          expect(error.toString()).to.match(expected);
         });
       });
 
@@ -307,7 +339,32 @@ describe('The node.js OC client', function(){
         });
 
         it('should contain the error details', function(){
-          expect(error.toString()).to.match(/Error\: Server-side rendering failed: Error: (.*?) when connecting to http\:\/\/localhost\:1234 \(500\)/g);
+
+          var expectedRequestWithExtraParams = {
+            url: 'http://localhost:1234',
+            method: 'post',
+            headers: {
+              'accept-language': 'da, en-gb;q=0.8, en;q=0.7',
+              accept: 'application/vnd.oc.unrendered+json',
+              'user-agent': 'oc-client-(.*?)'
+            },
+            timeout: 5,
+            json: true,
+            body: {
+              components: [{
+                name: 'hello-world',
+                version: '~1.0.0',
+                parameters: {
+                  hi: 'john'
+                }
+              }]
+            }
+          };
+
+          var exp = getRegExpFromJson(expectedRequestWithExtraParams),
+              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED 127.0.0.1:1234\\)');
+
+          expect(error.toString()).to.match(expected);
         });
       });
 
@@ -341,7 +398,10 @@ describe('The node.js OC client', function(){
         });
 
         it('should contain the error details', function(){
-          expect(error.toString()).to.match(/Error\: Server-side rendering failed: Error: (.*?) when connecting to http\:\/\/localhost\:1234 \(500\)/g);
+          var exp = getRegExpFromJson(expectedRequest),
+              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED 127.0.0.1:1234\\)');
+
+          expect(error.toString()).to.match(expected);
         });
       });
     });
