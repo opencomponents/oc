@@ -71,7 +71,13 @@ module.exports = function(config){
             if(!response.status && response.response.error){
               errorDetails = response.response.error;
             } else {
-              errorDetails = format('{0} ({1})', (response.response && response.response.error) || '', response.status);
+              
+              var errorDescription = (response.response && response.response.error);
+              if(errorDescription && response.response.details && response.response.details.originalError){
+                errorDescription += response.response.details.originalError;
+              }
+
+              errorDetails = format('{0} ({1})', errorDescription || '', response.status);
             }
 
             action.result.error = new Error(format(serverRenderingFail, errorDetails));

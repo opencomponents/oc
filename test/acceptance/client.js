@@ -169,17 +169,11 @@ describe('The node.js OC client', function(){
             name: 'errors-component',
             parameters: {
               errorType: '500'
-            }, {
-              name: 'errors-component',
-              parameters: {
-                errorType: 'timeout',
-                timeout: 1000
-              }
             }
           }], {
             container: false,
             renderInfo: false,
-            timeout: 0.01
+            disableFailoverRendering: true
           }, function(err, html){
             $errs = err;
             done();
@@ -189,7 +183,7 @@ describe('The node.js OC client', function(){
         it('should return an error for each component with error', function(){
           expect($errs[0].toString()).to.be.equal('Error: Server-side rendering failed: Component "hello-world-i-dont-exist" not found on local repository (404)');
           expect($errs[1]).to.be.null;
-          expect($errs[2].toString()).to.be.equal('Error: Server-side rendering failed: Component execution error: (500)');
+          expect($errs[2].toString()).to.be.equal('Error: Server-side rendering failed: Component execution error: An error happened (500)');
         });
       });
     });
@@ -455,7 +449,7 @@ describe('The node.js OC client', function(){
             disableFailoverRendering: true
           }, function(err, html){
             error = err;
-            result = html
+            result = html;
             done();
           });
         });
