@@ -1,0 +1,17 @@
+{
+  "name": "errors-component",
+  "description": "",
+  "version": "1.0.0",
+  "repository": "",
+  "oc": {
+    "container": false,
+    "renderInfo": false,
+    "files": {
+      "data": "server.js",
+      "template": {
+        "src": "template.jade",
+        "type": "jade"
+      }
+    }
+  }
+}

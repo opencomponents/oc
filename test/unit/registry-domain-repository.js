@@ -269,6 +269,7 @@ describe('registry : domain : repository', function(){
         expect(response.result).to.eql([
           'container-with-multiple-nested',
           'container-with-nested',
+          'errors-component',
           'handlebars3-component',
           'hello-world',
           'language',
