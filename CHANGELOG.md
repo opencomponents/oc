@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.33.7
+- [#291](https://github.com/opentable/oc/pull/291) Client errors
+- [#290](https://github.com/opentable/oc/pull/290) Update minimal-request@2.1.1
+- [#288](https://github.com/opentable/oc/pull/288) oc-client warmup improvements
+
 ### v0.33.6
 - [#289](https://github.com/opentable/oc/pull/289) Upgrade dependency
 
