@@ -58,7 +58,7 @@ module.exports = function(repository){
                 state: (!!component.oc && !!component.oc.state) ? component.oc.state : ''
               }; 
             }),
-            q: req.query.q
+            q: req.query.q || ''
           }));
         });
       } else {
