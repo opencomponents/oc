@@ -47,19 +47,37 @@ module.exports = function(repository){
             return componentInfo.name;
           });
 
-          return res.render('list-components', _.extend(baseResponse, {
+          var deprecated = 0,
+              experimental = 0;
+
+          var vm = _.extend(baseResponse, {
             availableDependencies: res.conf.dependencies,
             availablePlugins: res.conf.plugins,
             components: componentsInfo,
             componentsReleases: componentsReleases,
             componentsList: _.map(componentsInfo, function(component){ 
-              return {
+              var mapped = {
                 name: component.name,
                 state: (!!component.oc && !!component.oc.state) ? component.oc.state : ''
-              }; 
+              };
+
+              if(mapped.state === 'deprecated'){
+                deprecated++;
+              } else if(mapped.state === 'experimental'){
+                experimental++;
+              }
+
+              return mapped;
             }),
             q: req.query.q || ''
-          }));
+          });
+
+          vm.counts = {
+            deprecated: deprecated,
+            experimental: experimental
+          };
+
+          return res.render('list-components', vm);
         });
       } else {
         res.json(200, _.extend(baseResponse, {
