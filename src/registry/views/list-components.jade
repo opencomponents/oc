@@ -3,7 +3,7 @@ extends layout
 mixin selectedCheckbox(name)
   input(type="checkbox", name=name, checked)
   .state
-    span(class="component-state-" + name) #{name} (#{counts[name]})
+    span(class="component-state-" + name) #{name} (#{stateCounts[name]})
 
 block content
   - var isLocal = (type !== 'oc-registry');

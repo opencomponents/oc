@@ -53,7 +53,6 @@ oc.cmd.push(function(){
 
   if(!!q){
     $('.search').val(q);
-    componentsListChanged();
   }
 
   componentsListChanged();
