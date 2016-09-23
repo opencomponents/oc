@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.8
+- [#293](https://github.com/opentable/oc/pull/293) Ui improvements
+
 ### v0.33.7
 - [#291](https://github.com/opentable/oc/pull/291) Client errors
 - [#290](https://github.com/opentable/oc/pull/290) Update minimal-request@2.1.1
