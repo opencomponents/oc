@@ -59,7 +59,7 @@ module.exports = function(repository){
 
               if(!!state){
                 stateCounts[state] = stateCounts[state] || 0;
-                stateCounts[state]++;
+                stateCounts[state] += 1;
               }
 
               return {

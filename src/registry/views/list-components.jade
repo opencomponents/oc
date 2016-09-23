@@ -3,13 +3,14 @@ extends layout
 mixin selectedCheckbox(name)
   input(type="checkbox", name=name, checked)
   .state
-    span(class="component-state-" + name) #{name} (#{stateCounts[name]})
+    span(class="component-state-" + name) #{name} (#{getCount(name)})
 
 block content
+  - var getCount = function(state){ return stateCounts[state] || 0; };
   - var isLocal = (type !== 'oc-registry');
   +property('Base url', href, true)
   +property('Version', ocVersion)
-  +property('Components', components.length)
+  +property('Components', components.length + ' (' + getCount('experimental') + ' experimental, ' + getCount('deprecated') + ' deprecated)')
   if !isLocal
     +property('Components releases', componentsReleases)
   +property('Registry type', isLocal ? 'Local dev registry' : 'On-line registry')

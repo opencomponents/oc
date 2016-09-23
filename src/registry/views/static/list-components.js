@@ -32,7 +32,7 @@ oc.cmd.push(function(){
       var show = matches && !isHidden;
       selector[show ? 'removeClass' : 'addClass']('hide');
       if(!show){
-        hidden++;
+        hidden += 1;
       }
     }
 
