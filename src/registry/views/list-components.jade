@@ -49,5 +49,5 @@ block content
 
 block scripts
   script
-    | var componentsList = !{JSON.stringify(componentsList)};
+    | var q = "#{encodeURIComponent(q)}", componentsList = !{JSON.stringify(componentsList)};
     include:uglify-js static/list-components.js

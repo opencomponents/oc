@@ -37,4 +37,9 @@ oc.cmd.push(function(){
 
   $('#filter-components').submit(componentsListChanged).keyup(componentsListChanged);
   $('#filter-components input[type=checkbox').change(componentsListChanged);
+
+  if(q){
+    $('.search').val(q);
+    componentsListChanged();
+  }
 });
