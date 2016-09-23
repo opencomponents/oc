@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.9
+- [#294](https://github.com/opentable/oc/pull/294) Upgrade npm dependency
+
 ### v0.33.8
 - [#293](https://github.com/opentable/oc/pull/293) Ui improvements
 
