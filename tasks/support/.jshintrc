@@ -68,6 +68,7 @@
         "$",
         "window",
         "componentsList",
+        "q",
         "thisComponentHref",
         "describe",
         "it",
