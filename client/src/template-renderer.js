@@ -3,13 +3,15 @@
 var Handlebars = require('./renderers/handlebars');
 var htmlRenderer = require('./html-renderer');
 var Jade = require('./renderers/jade');
+var Pug = require('./renderers/pug');
 var validator = require('./validator');
 
 module.exports = function(){
   
   var renderers = {
     handlebars: new Handlebars(),
-    jade: new Jade()
+    jade: new Jade(),
+    pug: new Pug()
   };
 
   return function(template, data, options, callback){
