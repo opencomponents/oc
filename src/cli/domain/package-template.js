@@ -25,7 +25,7 @@ var compileView = function(viewPath, type) {
         hashView,
         compiledView;
 
-  if(type === 'pug'){ console.log(viewPath);
+  if(type === 'pug'){
     preCompiledView = pug.compileClient(template, {
       filename: viewPath,
       compileDebug: false,
