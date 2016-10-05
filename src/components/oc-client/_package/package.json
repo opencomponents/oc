@@ -11,8 +11,8 @@
     "parameters": {},
     "files": {
       "template": {
-        "type": "jade",
-        "hashKey": "c60b583d891562c155c240ef38f9174b3aee0b94",
+        "type": "pug",
+        "hashKey": "99c471e13831a6efa534c5c77398f01fb64ad94c",
         "src": "template.js"
       },
       "static": [
@@ -26,6 +26,6 @@
     },
     "version": "0.33.9",
     "packaged": true,
-    "date": 1474637687631
+    "date": 1475621897447
   }
 }

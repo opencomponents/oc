@@ -61,6 +61,8 @@
     "fs-extra": "0.30.0",
     "handlebars": "4.0.5",
     "jade": "1.11.0",
+    "jstransformer-clean-css": "^1.1.1",
+    "jstransformer-uglify-js": "^1.1.1",
     "minimal-request": "2.1.1",
     "multer": "0.1.4",
     "nice-cache": "0.0.5",
@@ -70,11 +72,12 @@
     "omelette": "0.3.1",
     "opn": "4.0.2",
     "parse-author": "1.0.0",
+    "pug": "2.0.0-beta6",
     "read": "1.0.7",
     "semver": "5.1.1",
     "stringformat": "0.0.5",
     "tar.gz": "0.1.1",
-    "uglify-js": "2.6.4",
+    "uglify-js": "^2.7.3",
     "underscore": "1.8.3",
     "watch": "0.19.1"
   }

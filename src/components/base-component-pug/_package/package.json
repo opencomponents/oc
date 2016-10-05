@@ -1,13 +1,13 @@
 {
-  "name": "base-component-handlebars",
+  "name": "base-component-pug",
   "description": "",
   "version": "1.0.0",
   "repository": "",
   "oc": {
     "files": {
       "template": {
-        "type": "handlebars",
-        "hashKey": "737b5c8ac8536a42972facd7f2bbfc945326df42",
+        "type": "pug",
+        "hashKey": "0e197319ba63d5737c448324a08b48cdca5a55c7",
         "src": "template.js"
       },
       "dataProvider": {
@@ -19,6 +19,6 @@
     },
     "version": "0.33.9",
     "packaged": true,
-    "date": 1475621897312
+    "date": 1475621897356
   }
 }

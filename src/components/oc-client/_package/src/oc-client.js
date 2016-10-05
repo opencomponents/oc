@@ -295,7 +295,7 @@ var oc = oc || {};
 
   oc.render = function(compiledViewInfo, model, callback){
     oc.ready(function(){
-      if(!!compiledViewInfo.type.match(/jade|handlebars/g)){
+      if(!!compiledViewInfo.type.match(/jade|handlebars|pug/g)){
         oc.require(['oc', 'components', compiledViewInfo.key], compiledViewInfo.src, function(compiledView){
           if(!compiledView){
             callback(MESSAGES_ERRORS_LOADING_COMPILED_VIEW.replace('{0}', compiledViewInfo.src));
@@ -313,6 +313,8 @@ var oc = oc || {};
               oc.require('jade', JADE_URL, function(){
                 callback(null, compiledView(model));
               });
+            } else if(compiledViewInfo.type === 'pug'){
+              callback(null, compiledView(model));
             }
           }
         });
