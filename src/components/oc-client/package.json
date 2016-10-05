@@ -12,8 +12,8 @@
     "files": {
       "data": "server.js",
       "template": {
-        "src": "template.jade",
-        "type": "jade"
+        "src": "template.pug",
+        "type": "pug"
       },
       "static": [
         "src"
