@@ -23,7 +23,7 @@ module.exports = {
   validatePluginsRequirements: pluginsRequirementsValidator,
   validateRegistryConfiguration: registryConfigurationValidator,
   validateTemplateType: function(templateType){
-    return _.contains(['handlebars', 'jade'], templateType);
+    return _.contains(['handlebars', 'jade', 'pug'], templateType);
   },
   validateVersion: function(version){
     return !!semver.valid(version);
