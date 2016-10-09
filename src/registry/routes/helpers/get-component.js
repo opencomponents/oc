@@ -43,6 +43,11 @@ module.exports = function(conf, repository){
         retrievingInfo.extend(result.response);
       }
 
+      _.extend(result.response, {
+        name: options.name,
+        requestVersion: options.version || ''
+      });
+
       eventsHandler.fire('component-retrieved', retrievingInfo.getData());
       return cb(result);
     };
