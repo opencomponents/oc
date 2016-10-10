@@ -27,6 +27,9 @@
 - [#279](https://github.com/opentable/oc/pull/279) Update safari configs
 - [#280](https://github.com/opentable/oc/pull/280) Respect dependency versions for components
 
+### v0.33.11
+- [#302](https://github.com/opentable/oc/pull/302) Added name and reqest version to each response
+
 ### v0.33.10
 - [#301](https://github.com/opentable/oc/pull/301) Oc client jadeless
 - [#294](https://github.com/opentable/oc/pull/294) Upgrade npm dependency
