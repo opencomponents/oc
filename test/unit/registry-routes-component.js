@@ -35,7 +35,7 @@ describe('registry : routes : component', function(){
 
       componentRoute({
         headers: {},
-        params: { componentName: 'timeout-component' }
+        params: { componentName: 'timeout-component', componentVersion: '1.X.X' }
       }, {
         conf: {
           baseUrl: 'http://component.com/',
@@ -51,6 +51,11 @@ describe('registry : routes : component', function(){
 
     it('should respond with error message', function(){
       expect(response.error).to.equal('Component execution error: timeout (100ms)');
+    });
+
+    it('should return component\'s name and request version', function(){
+      expect(response.name).to.equal('timeout-component');
+      expect(response.requestVersion).to.equal('1.X.X');
     });
   });
 
@@ -77,6 +82,11 @@ describe('registry : routes : component', function(){
 
     it('should respond with error message for undefined data', function(){
       expect(resJsonStub.args[0][1].error).to.equal('Component execution error: data object is undefined');
+    });
+
+    it('should return component\'s name and request version', function(){
+      expect(resJsonStub.args[0][1].name).to.equal('undefined-component');
+      expect(resJsonStub.args[0][1].requestVersion).to.equal('');
     });
   });
 
@@ -106,6 +116,11 @@ describe('registry : routes : component', function(){
 
     it('should respond with error message including missing plugin', function(){
       expect(resJsonStub.args[0][1].error).to.equal('Component execution error: c is not defined');
+    });
+
+    it('should return component\'s name and request version', function(){
+      expect(resJsonStub.args[0][1].name).to.equal('error-component');
+      expect(resJsonStub.args[0][1].requestVersion).to.equal('');
     });
   });
 
@@ -142,6 +157,11 @@ describe('registry : routes : component', function(){
 
       it('should respond with error message for component execution error', function(){
         expect(response.error).to.equal('Component execution error: thisDoesnotExist is not defined');
+      });
+
+      it('should return component\'s name and request version', function(){
+        expect(response.name).to.equal('async-error-component');
+        expect(response.requestVersion).to.equal('');
       });
     });
 
@@ -200,6 +220,13 @@ describe('registry : routes : component', function(){
       it('should respond with error message for component execution error', function(){
         expect(responses[1].error).to.equal('Component execution error: thisDoesnotExist is not defined');
       });
+
+      it('should return component\'s name and request version for both requests', function(){
+        expect(responses[0].name).to.equal('async-error2-component');
+        expect(responses[0].requestVersion).to.equal('');
+        expect(responses[1].name).to.equal('async-error2-component');
+        expect(responses[1].requestVersion).to.equal('');
+      });
     });
   });
 
@@ -233,6 +260,11 @@ describe('registry : routes : component', function(){
 
       it('should respond with error message including missing plugin', function(){
         expect(resJsonStub.args[0][1].error).to.equal('Component is trying to use un-registered plugins: doSomething');
+      });
+
+      it('should return component\'s name and request version', function(){
+        expect(resJsonStub.args[0][1].name).to.equal('plugin-component');
+        expect(resJsonStub.args[0][1].requestVersion).to.equal('');
       });
     });
 
@@ -269,6 +301,11 @@ describe('registry : routes : component', function(){
         it('should use plugin inside compiledView', function(){
           expect(resJsonStub.args[0][1].html).to.contain('hello hello hello my friend John');
         });
+
+        it('should return component\'s name and request version', function(){
+          expect(resJsonStub.args[0][1].name).to.equal('plugin-component');
+          expect(resJsonStub.args[0][1].requestVersion).to.equal('');
+        });
       });
 
       describe('when registry does not implement plugin', function(){
@@ -293,6 +330,11 @@ describe('registry : routes : component', function(){
 
         it('should respond with error message including missing plugin', function(){
           expect(resJsonStub.args[0][1].error).to.equal('registry does not implement plugins: doSomething');
+        });
+
+        it('should return component\'s name and request version', function(){
+          expect(resJsonStub.args[0][1].name).to.equal('plugin-component');
+          expect(resJsonStub.args[0][1].requestVersion).to.equal('');
         });
       });
     });
@@ -329,6 +371,11 @@ describe('registry : routes : component', function(){
       it('should use plugin inside compiledView', function(){
         expect(resJsonStub.args[0][1].html).to.contain('bye John');
       });
+
+      it('should return component\'s name and request version', function(){
+        expect(resJsonStub.args[0][1].name).to.equal('npm-component');
+        expect(resJsonStub.args[0][1].requestVersion).to.equal('');
+      });
     });
 
     describe('when registry does not implement dependency', function(){
@@ -362,6 +409,11 @@ describe('registry : routes : component', function(){
 
       it('should respond with error message including missing dependency', function(){
         expect(resJsonStub.args[0][1].error).to.equal('Component is trying to use unavailable dependencies: underscore');
+      });
+
+      it('should return component\'s name and request version', function(){
+        expect(resJsonStub.args[0][1].name).to.equal('npm-component');
+        expect(resJsonStub.args[0][1].requestVersion).to.equal('');
       });
     });
   });
