@@ -27,6 +27,9 @@
 - [#279](https://github.com/opentable/oc/pull/279) Update safari configs
 - [#280](https://github.com/opentable/oc/pull/280) Respect dependency versions for components
 
+### v0.33.12
+- [#303](https://github.com/opentable/oc/pull/303) Client#renderComponents accepts global parameters
+
 ### v0.33.11
 - [#302](https://github.com/opentable/oc/pull/302) Added name and reqest version to each response
 
