@@ -134,6 +134,7 @@ Options:
 |`disableFailoverRendering`|`boolean`|no|Disables the automatic failover rendering in case the registry times-out (in case configuration.registries.clientRendering contains a valid value.) Default false|
 |`headers`|`object`|no|An object containing all the headers that must be forwarded to the component|
 |`ie8`|`boolean`|no|Default false, if true puts in place the necessary polyfills to make all the stuff work with ie8|
+|`parameters`|`object`|no|Global parameters for all components to retrieve. When component has its own parameters, globals will be overwritten|
 |`render`|`string`|no|Default `server`. When `server`, it will return html. When `client` will produce the html to put in the page for post-poning the rendering to the browser|
 |`timeout`|`number` (seconds)|no|Default 5. When request times-out, the callback will be fired with a timeout error and a client-side rendering response (unless `disableFailoverRendering` is set to `true`)|
 

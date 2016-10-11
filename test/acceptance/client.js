@@ -53,6 +53,111 @@ describe('The node.js OC client', function(){
     after(function(done){ registry.close(done); });
 
     describe('when rendering 2 components', function(){
+      describe('when components require params', function(){
+        describe('when each component requires different params', function(){
+          var $components;
+          var $errs;
+          before(function(done){
+            client.renderComponents([{
+              name: 'welcome',
+              parameters: {
+                firstName: 'Jane',
+                lastName: 'Marple'
+              }
+            }, {
+              name: 'welcome',
+              parameters: {
+                firstName: 'Hercule',
+                lastName: 'Poirot'
+              }
+            }], { container: false, renderInfo: false }, function(err, html){
+              $errs = err;
+              $components = html;
+              done();
+            });
+          });
+
+          it('should return rendered contents', function(){
+            expect($components[0]).to.contain('hi Jane Marple');
+            expect($components[1]).to.contain('hi Hercule Poirot');
+          });
+
+          it('should return null errors', function () {
+            expect($errs).to.be.null;
+          });
+        });
+
+        describe('when each component requires the same params', function(){
+          var $components;
+          var $errs;
+          before(function(done){
+            client.renderComponents([{
+              name: 'welcome'
+            }, {
+              name: 'welcome'
+            }], {
+              container: false,
+              parameters: {
+                firstName: 'Jane',
+                lastName: 'Marple'
+              },
+              renderInfo: false
+            }, function(err, html){
+              $errs = err;
+              $components = html;
+              done();
+            });
+          });
+
+          it('should return rendered contents', function(){
+            expect($components[0]).to.contain('hi Jane Marple');
+            expect($components[1]).to.contain('hi Jane Marple');
+          });
+
+          it('should return null errors', function () {
+            expect($errs).to.be.null;
+          });
+        });
+
+        describe('when components have some common parameters and some different', function(){
+          var $components;
+          var $errs;
+          before(function(done){
+            client.renderComponents([{
+              name: 'welcome',
+              parameters: {
+                lastName: 'Poirot'
+              }
+            }, {
+              name: 'welcome',
+              parameters: {
+                firstName: 'Jane'
+              }
+            }], {
+              container: false,
+              parameters: {
+                firstName: 'Hercule',
+                lastName: 'Marple'
+              },
+              renderInfo: false
+            }, function(err, html){
+              $errs = err;
+              $components = html;
+              done();
+            });
+          });
+
+          it('should return rendered contents', function(){
+            expect($components[0]).to.contain('hi Hercule Poirot');
+            expect($components[1]).to.contain('hi Jane Marple');
+          });
+
+          it('should return null errors', function () {
+            expect($errs).to.be.null;
+          });
+        });
+      });
+
       describe('when rendering both on the server-side', function(){
         var $components;
         var $errs;
@@ -246,7 +351,8 @@ describe('The node.js OC client', function(){
           components: [{
             name: 'hello-world',
             version: '~1.0.0'
-          }]
+          }],
+          parameters: {}
         }
       };
 
@@ -367,7 +473,10 @@ describe('The node.js OC client', function(){
                 parameters: {
                   hi: 'john'
                 }
-              }]
+              }],
+              parameters: {
+                hi: 'john'
+              }
             }
           };
 
@@ -438,7 +547,11 @@ describe('The node.js OC client', function(){
                 errorType: 'timeout',
                 timeout: 1000
               }
-            }]
+            }],
+            parameters: {
+              errorType: 'timeout',
+              timeout: 1000
+            }
           }
         };
 

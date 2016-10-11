@@ -44,7 +44,8 @@ module.exports = function(config){
       timeout: options.timeout,
       json: true,
       body: {
-        components: serverRendering.components
+        components: serverRendering.components,
+        parameters: options.parameters || {}
       }
     };
 
