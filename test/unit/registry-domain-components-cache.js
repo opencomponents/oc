@@ -13,8 +13,8 @@ describe('registry : domain : components-cache', function(){
     putFileContent: sinon.stub()
   };
 
-  var setIntervalStub,
-      clearIntervalStub,
+  var setTimeoutStub,
+      clearTimeoutStub,
       componentsCache,
       eventsHandlerStub,
       baseOptions = { pollingInterval: 5, s3: { componentsDir: 'component'}},
@@ -27,8 +27,8 @@ describe('registry : domain : components-cache', function(){
       });
 
   var initialise = function(){
-    clearIntervalStub = sinon.stub();
-    setIntervalStub = sinon.stub();
+    clearTimeoutStub = sinon.stub();
+    setTimeoutStub = sinon.stub();
     eventsHandlerStub = { fire: sinon.stub() };
     var ComponentsCache = injctr('../../src/registry/domain/components-cache.js', {
       '../../utils/get-unix-utc-timestamp': function(){
@@ -36,8 +36,8 @@ describe('registry : domain : components-cache', function(){
       },
       './events-handler': eventsHandlerStub
     }, { 
-      setInterval: setIntervalStub,
-      clearInterval: clearIntervalStub
+      setTimeout: setTimeoutStub,
+      clearTimeout: clearTimeoutStub
     });
 
     componentsCache = new ComponentsCache(baseOptions, mockedCdn);
@@ -62,7 +62,6 @@ describe('registry : domain : components-cache', function(){
         mockedCdn.listSubDirectories.onCall(1).yields(null, ['1.0.0', '1.0.2']);
         mockedCdn.putFileContent = sinon.stub();
         mockedCdn.putFileContent.yields(null, 'ok');
-        setInterval = sinon.stub();
         initialise();
         componentsCache.load(saveCallbackResult(done));
       });
@@ -88,8 +87,8 @@ describe('registry : domain : components-cache', function(){
       });
 
       it('should start the refresh loop', function(){
-        expect(setIntervalStub.called).to.be.true;
-        expect(setIntervalStub.args[0][1]).to.equal(5000);
+        expect(setTimeoutStub.called).to.be.true;
+        expect(setTimeoutStub.args[0][1]).to.equal(5000);
       });
     });
   });
@@ -106,7 +105,6 @@ describe('registry : domain : components-cache', function(){
         mockedCdn.listSubDirectories.onCall(1).yields(null, ['1.0.0', '1.0.2', '2.0.0']);
         mockedCdn.putFileContent = sinon.stub();
         mockedCdn.putFileContent.yields(null, 'ok');
-        setInterval = sinon.stub();
         initialise();
         componentsCache.load(saveCallbackResult(done));
       });
@@ -132,8 +130,8 @@ describe('registry : domain : components-cache', function(){
       });
 
       it('should start the refresh loop', function(){
-        expect(setIntervalStub.called).to.be.true;
-        expect(setIntervalStub.args[0][1]).to.equal(5000);
+        expect(setTimeoutStub.called).to.be.true;
+        expect(setTimeoutStub.args[0][1]).to.equal(5000);
       });
     });
   });
@@ -143,7 +141,6 @@ describe('registry : domain : components-cache', function(){
     describe('when initialising the cache', function(){
 
       before(function(done){
-        setInterval = sinon.stub();
         mockedCdn.getFile = sinon.stub();
         mockedCdn.getFile.yields(null, baseResponse);
         mockedCdn.listSubDirectories = sinon.stub();
@@ -180,8 +177,8 @@ describe('registry : domain : components-cache', function(){
       });
 
       it('should start the refresh loop', function(){
-        expect(setIntervalStub.called).to.be.true;
-        expect(setIntervalStub.args[0][1]).to.equal(5000);
+        expect(setTimeoutStub.called).to.be.true;
+        expect(setTimeoutStub.args[0][1]).to.equal(5000);
       });
     });
 
@@ -196,8 +193,6 @@ describe('registry : domain : components-cache', function(){
       describe('when refresh errors', function(){
 
         before(function(done){
-          clearInterval = sinon.stub();
-          setInterval = sinon.stub();
           mockedCdn.getFile = sinon.stub();
           mockedCdn.getFile.yields(null, baseResponse);
           mockedCdn.putFileContent = sinon.stub();
@@ -227,8 +222,6 @@ describe('registry : domain : components-cache', function(){
       describe('when refresh does not generate errors', function(){
 
         before(function(done){
-          clearInterval = sinon.stub();
-          setInterval = sinon.stub();
           mockedCdn.getFile = sinon.stub();
           mockedCdn.getFile.yields(null, baseResponse);
           mockedCdn.putFileContent = sinon.stub();
@@ -247,8 +240,8 @@ describe('registry : domain : components-cache', function(){
         });
 
         it('should have started, stopped and restarted the refresh loop', function(){
-          expect(setIntervalStub.calledTwice).to.be.true;
-          expect(clearIntervalStub.calledOnce).to.be.true;
+          expect(setTimeoutStub.calledTwice).to.be.true;
+          expect(clearTimeoutStub.calledOnce).to.be.true;
         });
 
         it('should do list requests to cdn', function(){

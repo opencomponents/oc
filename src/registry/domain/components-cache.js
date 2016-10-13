@@ -36,13 +36,14 @@ module.exports = function(conf, cdn){
   };
 
   var refreshCachedData = function(){
-    refreshLoop = setInterval(function(){
+    refreshLoop = setTimeout(function(){
       getFromJson(function(err, data){
         if(err){
           eventsHandler.fire('error', { code: 'components_list_get', message: err });
         } else {
           updateCachedData(data);
         }
+        refreshLoop = refreshCachedData();
       });
     }, conf.pollingInterval * 1000);
   };
@@ -135,7 +136,7 @@ module.exports = function(conf, cdn){
       });
     },
     refresh: function(callback){
-      clearInterval(refreshLoop);
+      clearTimeout(refreshLoop);
       getAndSaveFromDirectories(function(err, components){
         if(!!err){ return returnError('components_cache_refresh', err, callback); }
         cacheDataAndStartRefresh(components, callback);
