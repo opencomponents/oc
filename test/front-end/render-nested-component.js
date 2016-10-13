@@ -50,7 +50,7 @@ describe('oc-client : renderNestedComponent', function(){
     afterEach(cleanup);
 
     it('should show loading message first', function(){
-      expect(htmlBeforeRendering).toContain('Loading...');
+      expect(htmlBeforeRendering).toContain('Loading');
     });
 
     it('should inject component html when rendering is done', function(){
@@ -71,7 +71,7 @@ describe('oc-client : renderNestedComponent', function(){
     afterEach(cleanup);
 
     it('should show loading message first', function(){
-      expect(htmlBeforeRendering).toContain('Loading...');
+      expect(htmlBeforeRendering).toContain('Loading');
     });
 
     it('should remove loading message then', function(){
