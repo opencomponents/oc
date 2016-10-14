@@ -27,6 +27,10 @@
 - [#279](https://github.com/opentable/oc/pull/279) Update safari configs
 - [#280](https://github.com/opentable/oc/pull/280) Respect dependency versions for components
 
+### v0.33.13
+- [#305](https://github.com/opentable/oc/pull/305) Switch to setTimeout for polling mechanism
+- [#306](https://github.com/opentable/oc/pull/306) Default Loading... to blank
+
 ### v0.33.12
 - [#303](https://github.com/opentable/oc/pull/303) Client#renderComponents accepts global parameters
 
