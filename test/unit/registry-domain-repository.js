@@ -275,6 +275,7 @@ describe('registry : domain : repository', function(){
           'language',
           'no-containers',
           'welcome',
+          'welcome-with-optional-parameters',
           'oc-client'
         ]);
       });
