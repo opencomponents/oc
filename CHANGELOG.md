@@ -1,5 +1,18 @@
 ## Change Log
 
+### v0.33.13
+- [#305](https://github.com/opentable/oc/pull/305) Switch to setTimeout for polling mechanism
+- [#306](https://github.com/opentable/oc/pull/306) Default Loading... to blank
+
+### v0.33.12
+- [#303](https://github.com/opentable/oc/pull/303) Client#renderComponents accepts global parameters
+
+### v0.33.11
+- [#302](https://github.com/opentable/oc/pull/302) Added name and reqest version to each response
+
+### v0.33.10
+- [#301](https://github.com/opentable/oc/pull/301) Oc client jadeless
+
 ### v0.33.9
 - [#294](https://github.com/opentable/oc/pull/294) Upgrade npm dependency
 
@@ -27,31 +40,7 @@
 - [#279](https://github.com/opentable/oc/pull/279) Update safari configs
 - [#280](https://github.com/opentable/oc/pull/280) Respect dependency versions for components
 
-### v0.33.13
-- [#305](https://github.com/opentable/oc/pull/305) Switch to setTimeout for polling mechanism
-- [#306](https://github.com/opentable/oc/pull/306) Default Loading... to blank
-
-### v0.33.12
-- [#303](https://github.com/opentable/oc/pull/303) Client#renderComponents accepts global parameters
-
-### v0.33.11
-- [#302](https://github.com/opentable/oc/pull/302) Added name and reqest version to each response
-
-### v0.33.10
-- [#301](https://github.com/opentable/oc/pull/301) Oc client jadeless
-- [#294](https://github.com/opentable/oc/pull/294) Upgrade npm dependency
-- [#293](https://github.com/opentable/oc/pull/293) Ui improvements
-- [#291](https://github.com/opentable/oc/pull/291) Client errors
-- [#290](https://github.com/opentable/oc/pull/290) Update minimal-request@2.1.1
-- [#288](https://github.com/opentable/oc/pull/288) oc-client warmup improvements
-- [#289](https://github.com/opentable/oc/pull/289) Upgrade dependency
-- [#287](https://github.com/opentable/oc/pull/287) Node 6
-- [#286](https://github.com/opentable/oc/pull/286) Hot reload
-- [#285](https://github.com/opentable/oc/pull/285) npm install and dep resolvement needs to happen in the same dir
-- [#269](https://github.com/opentable/oc/pull/269) Removing the loading... indicator when we have an error
-- [#278](https://github.com/opentable/oc/pull/278) Container client override
-- [#279](https://github.com/opentable/oc/pull/279) Update safari configs
-- [#280](https://github.com/opentable/oc/pull/280) Respect dependency versions for components
+### v0.33.2
 - [#274](https://github.com/opentable/oc/pull/274) Revert tar.gz upgrade
 
 ### v0.33.1

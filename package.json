@@ -45,6 +45,7 @@
     "load-grunt-tasks": "^3.5.2",
     "mocha": "^3.0.2",
     "phantomjs-prebuilt": "^2.1.12",
+    "semver-sort": "0.0.4",
     "sinon": "^1.17.5"
   },
   "dependencies": {
