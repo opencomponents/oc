@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.33.14
+- [#309](https://github.com/opentable/oc/pull/309) Default value for optional parameters
+- [#308](https://github.com/opentable/oc/pull/308) Fixed tags order in changelog
+
 ### v0.33.13
 - [#305](https://github.com/opentable/oc/pull/305) Switch to setTimeout for polling mechanism
 - [#306](https://github.com/opentable/oc/pull/306) Default Loading... to blank
