@@ -524,17 +524,17 @@ describe('registry', function(){
               body: {
                 parameters: { firstName: 'John' },
                 components: [
-                  {name:'welcome-with-optional-parameters', parameters: { lastName: 'Smith', nick: 'fatty'}},
+                  {name:'welcome-with-optional-parameters', parameters: { lastName: 'Smith', nick: 'smithy'}},
                   {name:'welcome-with-optional-parameters', parameters: { lastName: 'Smith'}},
-                  {name:'welcome-with-optional-parameters', parameters: { nick: 'fatty'}}
+                  {name:'welcome-with-optional-parameters', parameters: { nick: 'smithy'}}
                 ]
               }
             }, next(done));
           });
 
           it('should render first component with provided parameters', function(){
-            expect(result[0].response.html).to.equal('<span>hi John Smith (fatty)</span>');
-            expect(result[0].response.href).to.equal('http://localhost:3030/welcome-with-optional-parameters?firstName=John&lastName=Smith&nick=fatty');
+            expect(result[0].response.html).to.equal('<span>hi John Smith (smithy)</span>');
+            expect(result[0].response.href).to.equal('http://localhost:3030/welcome-with-optional-parameters?firstName=John&lastName=Smith&nick=smithy');
           });
 
           it('should render second component with default value of nick', function(){
@@ -543,8 +543,8 @@ describe('registry', function(){
           });
 
           it('should render third component without value of lastName', function(){
-            expect(result[2].response.html).to.equal('<span>hi John  (fatty)</span>');
-            expect(result[2].response.href).to.equal('http://localhost:3030/welcome-with-optional-parameters?firstName=John&nick=fatty');
+            expect(result[2].response.html).to.equal('<span>hi John  (smithy)</span>');
+            expect(result[2].response.href).to.equal('http://localhost:3030/welcome-with-optional-parameters?firstName=John&nick=smithy');
           });
         });
       });

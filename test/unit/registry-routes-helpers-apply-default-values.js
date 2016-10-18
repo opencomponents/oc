@@ -70,20 +70,20 @@ describe('registry : routes : helpers : apply-default-values', function(){
           default: 'default value of optional parameter'
         },
         optional2: {
-          type: 'string',
+          type: 'boolean',
           mandatory: false,
-          example: 'example value of optional parameter 2',
-          default: 'default value of optional parameter 2'
+          example: false,
+          default: false
         }
       };
 
       describe('when request specify values of optional parameters', function(){
         before(function(){
-          parameters = apply({ mandatory: 'request value', optional: 'custom value', optional2: 'custom' }, componentParameters);
+          parameters = apply({ mandatory: 'request value', optional: 'custom value', optional2: true }, componentParameters);
         });
 
         it('should return requestParameters', function(){
-          expect(parameters).to.eql({ mandatory: 'request value', optional: 'custom value', optional2: 'custom' });
+          expect(parameters).to.eql({ mandatory: 'request value', optional: 'custom value', optional2: true });
         });
       });
 
@@ -93,7 +93,7 @@ describe('registry : routes : helpers : apply-default-values', function(){
         });
 
         it('should return requestParameters', function(){
-          expect(parameters).to.eql({ mandatory: 'request value', optional: 'custom value', optional2: 'default value of optional parameter 2' });
+          expect(parameters).to.eql({ mandatory: 'request value', optional: 'custom value', optional2: false });
         });
       });
 
@@ -103,7 +103,7 @@ describe('registry : routes : helpers : apply-default-values', function(){
         });
 
         it('should return requestParameters with default values of optional parameters', function(){
-          expect(parameters).to.eql({ mandatory: 'request value', optional: 'default value of optional parameter', optional2: 'default value of optional parameter 2'
+          expect(parameters).to.eql({ mandatory: 'request value', optional: 'default value of optional parameter', optional2: false
          });
         });
       });
