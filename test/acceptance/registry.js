@@ -67,7 +67,8 @@ describe('registry', function(){
         'http://localhost:3030/hello-world',
         'http://localhost:3030/language',
         'http://localhost:3030/no-containers',
-        'http://localhost:3030/welcome', 
+        'http://localhost:3030/welcome',
+        'http://localhost:3030/welcome-with-optional-parameters',
         'http://localhost:3030/oc-client'
       ]);
     });
@@ -510,6 +511,40 @@ describe('registry', function(){
           it('should render components with expected parameters', function(){
             expect(result[0].response.href).to.equal('http://localhost:3030/welcome?firstName=Donald&lastName=Mouse');
             expect(result[1].response.href).to.equal('http://localhost:3030/welcome?firstName=Donald&lastName=Duck');
+          });
+        });
+
+        describe('when components accept optional parameters', function(){
+
+          before(function(done){
+            request({
+              url: 'http://localhost:3030/',
+              method: 'post',
+              json: true,
+              body: {
+                parameters: { firstName: 'John' },
+                components: [
+                  {name:'welcome-with-optional-parameters', parameters: { lastName: 'Smith', nick: 'smithy'}},
+                  {name:'welcome-with-optional-parameters', parameters: { lastName: 'Smith'}},
+                  {name:'welcome-with-optional-parameters', parameters: { nick: 'smithy'}}
+                ]
+              }
+            }, next(done));
+          });
+
+          it('should render first component with provided parameters', function(){
+            expect(result[0].response.html).to.equal('<span>hi John Smith (smithy)</span>');
+            expect(result[0].response.href).to.equal('http://localhost:3030/welcome-with-optional-parameters?firstName=John&lastName=Smith&nick=smithy');
+          });
+
+          it('should render second component with default value of nick', function(){
+            expect(result[1].response.html).to.equal('<span>hi John Smith (Johnny)</span>');
+            expect(result[1].response.href).to.equal('http://localhost:3030/welcome-with-optional-parameters?firstName=John&lastName=Smith&nick=Johnny');
+          });
+
+          it('should render third component without value of lastName', function(){
+            expect(result[2].response.html).to.equal('<span>hi John  (smithy)</span>');
+            expect(result[2].response.href).to.equal('http://localhost:3030/welcome-with-optional-parameters?firstName=John&nick=smithy');
           });
         });
       });

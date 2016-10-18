@@ -7,6 +7,7 @@ var format = require('stringformat');
 var vm = require('vm');
 var _ = require('underscore');
 
+var applyDefaultValues = require('./apply-default-values');
 var Client = require('../../../../client');
 var detective = require('../../domain/plugins-detective');
 var eventsHandler = require('../../domain/events-handler');
@@ -89,7 +90,8 @@ module.exports = function(conf, repository){
       }
 
       // sanitise and check params
-      var params = sanitiser.sanitiseComponentParameters(requestedComponent.parameters, component.oc.parameters),
+      var appliedParams = applyDefaultValues(requestedComponent.parameters, component.oc.parameters),
+          params = sanitiser.sanitiseComponentParameters(appliedParams, component.oc.parameters),
           validationResult = validator.validateComponentParameters(params, component.oc.parameters);
 
       if(!validationResult.isValid){
