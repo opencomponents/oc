@@ -34,7 +34,7 @@ module.exports = function(conf){
     listSubDirectories: function(dir, callback){
 
       var normalisedPath = dir.lastIndexOf('/') === (dir.length - 1) && dir.length > 0 ? dir : dir + '/',
-          listObjects = async.timeout(client.listObjects, timeout);
+          listObjects = async.timeout(client.listObjects.bind(client), timeout);
 
       listObjects({
         Bucket: bucket,
@@ -64,7 +64,7 @@ module.exports = function(conf){
         force = false;
       }
 
-      var getObject = async.timeout(client.getObject, timeout);
+      var getObject = async.timeout(client.getObject.bind(client), timeout);
 
       var getFromAws = function(callback){
         getObject({
@@ -135,7 +135,7 @@ module.exports = function(conf){
     putFileContent: function(fileContent, fileName, isPrivate, callback){
 
       var fileInfo = getFileInfo(fileName),
-          putObject = async.timeout(client.putObject, timeout),
+          putObject = async.timeout(client.putObject.bind(client), timeout),
           obj = {
             Bucket: bucket,
             Key: fileName,
