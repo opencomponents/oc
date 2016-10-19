@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.15
+- [#310](https://github.com/opentable/oc/pull/310) Upgrade async + wrap s3 calls to timeout
+
 ### v0.33.14
 - [#309](https://github.com/opentable/oc/pull/309) Default value for optional parameters
 - [#308](https://github.com/opentable/oc/pull/308) Fixed tags order in changelog
