@@ -1,5 +1,6 @@
 'use strict';
 
+var async = require('async');
 var colors = require('colors');
 var express = require('express');
 var format = require('stringformat');
@@ -55,51 +56,52 @@ module.exports = function(options){
 
     router.create(this.app, options, repository);
 
-    pluginsInitialiser.init(plugins, function(err, plugins){
-
+    async.waterfall([
+      function(cb){
+        pluginsInitialiser.init(plugins, cb);
+      },
+      function(plugins, cb){
+        options.plugins = plugins;
+        repository.init(cb);
+      },
+      function(componentsInfo, cb){
+        appStart(repository, options, function(err){
+          cb(!!err ? err.msg : null, componentsInfo);
+        });
+      }
+    ],
+    function(err, componentsInfo){
       if(!!err){ return callback(err); }
-      
-      options.plugins = plugins;
 
-      repository.init(function(err, componentsInfo){
+      server = http.createServer(self.app);
 
+      server.listen(options.port, function(err){
+        
         if(!!err){ return callback(err); }
 
-        appStart(repository, options, function(err, res){
+        eventsHandler.fire('start', {});
+        
+        if(!!options.verbosity){
 
-          if(!!err){ return callback(err.msg); }
+          console.log(format('Registry started at port {0}'.green, self.app.get('port')));
+          
+          if(_.isObject(componentsInfo)){
 
-          server = http.createServer(self.app);
+            var componentsNumber = _.keys(componentsInfo.components).length,
+                componentsReleases = _.reduce(componentsInfo.components, function(memo, component){
+                  return (parseInt(memo, 10) + component.length);
+                });
 
-          server.listen(options.port, function(err){
-            
-            if(!!err){ return callback(err); }
+            console.log(format('Registry serving {0} components for a total of {1} releases.', componentsNumber, componentsReleases).green);
+          }
+        }
 
-            eventsHandler.fire('start', {});
-            
-            if(!!options.verbosity){
+        callback(null, { app: self.app, server: server });
+      });
 
-              console.log(format('Registry started at port {0}'.green, self.app.get('port')));
-              
-              if(_.isObject(componentsInfo)){
-
-                var componentsNumber = _.keys(componentsInfo.components).length,
-                    componentsReleases = _.reduce(componentsInfo.components, function(memo, component){
-                      return (parseInt(memo, 10) + component.length);
-                    });
-
-                console.log(format('Registry serving {0} components for a total of {1} releases.', componentsNumber, componentsReleases).green);
-              }
-            }
-
-            callback(null, { app: self.app, server: server });
-          });
-
-          server.on('error', function(e){
-            eventsHandler.fire('error', { code: 'EXPRESS_ERROR', message: e });
-            callback(e);
-          });
-        });
+      server.on('error', function(e){
+        eventsHandler.fire('error', { code: 'EXPRESS_ERROR', message: e });
+        callback(e);
       });
     });
   };
