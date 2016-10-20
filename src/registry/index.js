@@ -4,18 +4,12 @@ var colors = require('colors');
 var express = require('express');
 var format = require('stringformat');
 var http = require('http');
-var path = require('path');
 var _ = require('underscore');
 
 var appStart = require('./app-start');
-var baseUrlHandler = require('./middleware/base-url-handler');
-var cors = require('./middleware/cors');
-var discoveryHandler = require('./middleware/discovery-handler');
-var eventsHandler = require('./domain/events-handler');
-var fileUploads = require('./middleware/file-uploads');
+var middleware = require('./middleware');
 var pluginsInitialiser = require('./domain/plugins-initialiser');
 var Repository = require('./domain/repository');
-var requestHandler = require('./middleware/request-handler');
 var Router = require('./router');
 var sanitiseOptions = require('./domain/options-sanitiser');
 var settings = require('../resources/settings');
@@ -45,41 +39,9 @@ module.exports = function(options){
     }
   };
 
-  this.init = function(callback){
-    var app = express();
-
+  this.init = function(){
+    self.app = middleware.bind(express(), options);
     repository = new Repository(options);
-
-    // middleware
-    app.set('port', process.env.PORT || options.port);
-    app.set('json spaces', 0);
-
-    app.use(function(req, res, next){
-      res.conf = options;
-      next();
-    });
-
-    app.use(requestHandler());
-    app.use(express.json());
-    app.use(express.urlencoded());
-    app.use(cors);
-    app.use(fileUploads);
-    app.use(baseUrlHandler);
-    app.use(discoveryHandler);
-
-    app.set('views', path.join(__dirname, 'views'));
-    app.set('view engine', 'jade');
-    app.set('view cache', true);
-
-    if(withLogging){
-      app.use(express.logger('dev'));
-    }
-
-    if(options.local){
-      app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-    }
-
-    self.app = app;
   };
 
   this.register = function(plugin, cb){
@@ -133,33 +95,43 @@ module.exports = function(options){
     app.set('etag', 'strong');
 
     pluginsInitialiser.init(plugins, function(err, plugins){
+
       if(!!err){ return callback(err); }
+      
       options.plugins = plugins;
 
       repository.init(function(err, componentsInfo){
+
+        if(!!err){ return callback(err); }
+
         appStart(repository, options, function(err, res){
 
           if(!!err){ return callback(err.msg); }
 
           server = http.createServer(self.app);
 
-          server.listen(self.app.get('port'), function(){
+          server.listen(self.app.get('port'), function(err){
+            
+            if(!!err){ return callback(err); }
+
             eventsHandler.fire('start', {});
+            
             if(withLogging){
+
               console.log(format('Registry started at port {0}'.green, self.app.get('port')));
+              
               if(_.isObject(componentsInfo)){
-                var componentsNumber = _.keys(componentsInfo.components).length;
-                var componentsReleases = _.reduce(componentsInfo.components, function(memo, component){
-                  return (parseInt(memo, 10) + component.length);
-                });
+
+                var componentsNumber = _.keys(componentsInfo.components).length,
+                    componentsReleases = _.reduce(componentsInfo.components, function(memo, component){
+                      return (parseInt(memo, 10) + component.length);
+                    });
 
                 console.log(format('Registry serving {0} components for a total of {1} releases.', componentsNumber, componentsReleases).green);
               }
             }
-            callback(null, {
-              app: self.app,
-              server: server
-            });
+
+            callback(null, { app: self.app, server: server });
           });
 
           server.on('error', function(e){
