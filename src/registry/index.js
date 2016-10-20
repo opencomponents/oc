@@ -71,7 +71,7 @@ module.exports = function(options){
 
           server = http.createServer(self.app);
 
-          server.listen(self.app.get('port'), function(err){
+          server.listen(options.port, function(err){
             
             if(!!err){ return callback(err); }
 

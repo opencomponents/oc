@@ -12,7 +12,7 @@ var requestHandler = require('./request-handler');
 
 module.exports.bind = function(app, options){
 
-  app.set('port', process.env.PORT || options.port);
+  app.set('port', options.port);
   app.set('json spaces', 0);
 
   app.use(function(req, res, next){

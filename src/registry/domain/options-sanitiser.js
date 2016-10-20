@@ -42,5 +42,7 @@ module.exports = function(input){
     options.verbosity = 0;
   }
 
+  options.port = process.env.PORT || options.port;
+
   return options;
 };
