@@ -7,12 +7,12 @@ var http = require('http');
 var _ = require('underscore');
 
 var appStart = require('./app-start');
+var eventsHandler = require('./domain/events-handler');
 var middleware = require('./middleware');
 var pluginsInitialiser = require('./domain/plugins-initialiser');
 var Repository = require('./domain/repository');
-var Router = require('./router');
+var router = require('./router');
 var sanitiseOptions = require('./domain/options-sanitiser');
-var settings = require('../resources/settings');
 var validator = require('./domain/validators');
 
 module.exports = function(options){
@@ -54,45 +54,7 @@ module.exports = function(options){
       callback = _.noop;
     }
 
-    var app = this.app;
-
-    // routes
-    app.use(app.router);
-    var router = new Router(options, repository);
-
-    if(options.prefix !== '/'){
-      app.get('/', function(req, res){ res.redirect(options.prefix); });
-      app.get(options.prefix.substr(0, options.prefix.length - 1), router.listComponents);
-    }
-
-    app.get(options.prefix + 'oc-client/client.js', router.staticRedirector);
-    app.get(options.prefix + 'oc-client/oc-client.min.map', router.staticRedirector);
-
-    if(options.local){
-      app.get(format('{0}:componentName/:componentVersion/{1}*', options.prefix, settings.registry.localStaticRedirectorPath), router.staticRedirector);
-    } else {
-      app.put(options.prefix + ':componentName/:componentVersion', options.beforePublish, router.publish);
-    }
-
-    app.get(options.prefix, router.listComponents);
-    app.post(options.prefix, router.components);
-
-    app.get(format('{0}:componentName/:componentVersion{1}', options.prefix, settings.registry.componentInfoPath), router.componentInfo);
-    app.get(format('{0}:componentName{1}', options.prefix, settings.registry.componentInfoPath), router.componentInfo);
-
-    app.get(format('{0}:componentName/:componentVersion{1}', options.prefix, settings.registry.componentPreviewPath), router.componentPreview);
-    app.get(format('{0}:componentName{1}', options.prefix, settings.registry.componentPreviewPath), router.componentPreview);
-
-    app.get(options.prefix + ':componentName/:componentVersion', router.component);
-    app.get(options.prefix + ':componentName', router.component);
-
-    if(!!options.routes){
-      _.forEach(options.routes, function(route){
-        app[route.method.toLowerCase()](route.route, route.handler);
-      });
-    }
-
-    app.set('etag', 'strong');
+    router.create(this.app, options, repository);
 
     pluginsInitialiser.init(plugins, function(err, plugins){
 
