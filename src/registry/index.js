@@ -20,7 +20,6 @@ module.exports = function(options){
   var repository,
       self = this,
       server,
-      withLogging = !_.has(options, 'verbosity') || options.verbosity > 0,
       validationResult = validator.validateRegistryConfiguration(options),
       plugins = [];
 
@@ -78,7 +77,7 @@ module.exports = function(options){
 
             eventsHandler.fire('start', {});
             
-            if(withLogging){
+            if(!!options.verbosity){
 
               console.log(format('Registry started at port {0}'.green, self.app.get('port')));
               

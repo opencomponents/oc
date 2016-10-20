@@ -12,8 +12,6 @@ var requestHandler = require('./request-handler');
 
 module.exports.bind = function(app, options){
 
-	var withLogging = !_.has(options, 'verbosity') || options.verbosity > 0;
-
   app.set('port', process.env.PORT || options.port);
   app.set('json spaces', 0);
 
@@ -34,7 +32,7 @@ module.exports.bind = function(app, options){
   app.set('view engine', 'jade');
   app.set('view cache', true);
 
-  if(withLogging){
+  if(!!options.verbosity){
     app.use(express.logger('dev'));
   }
 

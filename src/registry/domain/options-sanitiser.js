@@ -38,5 +38,9 @@ module.exports = function(input){
     options.hotReloading = !!options.local;
   }
 
+  if(!_.isUndefined(options.verbosity)){
+    options.verbosity = 0;
+  }
+
   return options;
 };
