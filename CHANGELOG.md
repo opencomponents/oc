@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.16
+- [#311](https://github.com/opentable/oc/pull/311) Refactoring, cleanup, test coverage
+
 ### v0.33.15
 - [#310](https://github.com/opentable/oc/pull/310) Upgrade async + wrap s3 calls to timeout
 
