@@ -38,7 +38,7 @@ module.exports = function(input){
     options.hotReloading = !!options.local;
   }
 
-  if(!_.isUndefined(options.verbosity)){
+  if(_.isUndefined(options.verbosity)){
     options.verbosity = 0;
   }
 
