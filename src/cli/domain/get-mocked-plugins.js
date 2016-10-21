@@ -1,8 +1,7 @@
 'use strict';
 
 var colors = require('colors/safe');
-var fsExtra = require('fs-extra');
-var fs = require('fs');
+var fs = require('fs-extra');
 var path = require('path');
 var _ = require('underscore');
 
@@ -54,31 +53,35 @@ var registerDynamicMocks = function(mocks, logger){
   }).filter(function(p){ return p; });
 };
 
-var findOcJsonPath = function (plugins, pathToResolve) {
+var findPath = function(pathToResolve, fileName) {
 
-  var parentDir,
-      rootDir = fs.realpathSync('.') + '/oc.json';
+  var rootDir = fs.realpathSync('.'),
+      fileToResolve = path.join(pathToResolve, fileName);
 
-  if (!fsExtra.existsSync(pathToResolve)) {
+  if (!fs.existsSync(fileToResolve)) {
     if (pathToResolve === rootDir) {
-      return plugins;
+      return undefined;
     } else {
-      parentDir = pathToResolve ? pathToResolve.split('/').slice(0,-2).join('/') + '/oc.json' : rootDir;
-      return findOcJsonPath(parentDir);
-    }
-  } else {
-    return pathToResolve;
-  }
+      var getParent = function(x){ return x.split('/').slice(0, -1).join('/'); },
+          parentDir = pathToResolve ? getParent(pathToResolve) : rootDir;
 
+      return findPath(parentDir, fileName);
+    }
+  }
+  
+  return fileToResolve;
 };
 
 module.exports = function(logger, componentsDir){
   var plugins = [],
-      componentsDir = componentsDir || '',
-      componentsPath = path.resolve(componentsDir, settings.configFile.src),
-      ocJsonPath = findOcJsonPath(plugins, componentsPath);
+      componentsDir = path.resolve(componentsDir || ''),
+      ocJsonPath = findPath(componentsDir, settings.configFile.src.replace('./', ''));
 
-  var content = fsExtra.readJsonSync(ocJsonPath);
+  if(!ocJsonPath){
+    return plugins;
+  }
+
+  var content = fs.readJsonSync(ocJsonPath);
   if(!content.mocks || !content.mocks.plugins){
     return plugins;
   }
