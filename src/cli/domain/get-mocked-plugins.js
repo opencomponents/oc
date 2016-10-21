@@ -27,7 +27,7 @@ var registerStaticMocks = function(mocks, logger){
 
 var registerDynamicMocks = function(mocks, ocJsonPath, logger){
   return _.map(mocks, function(source, pluginName){
-    
+
     var p;
     try {
       p = require(path.resolve(ocJsonPath, source));
@@ -74,8 +74,9 @@ var findPath = function(pathToResolve, fileName) {
 };
 
 module.exports = function(logger, componentsDir){
+  componentsDir = path.resolve(componentsDir || '.');
+
   var plugins = [],
-      componentsDir = path.resolve(componentsDir || ''),
       ocJsonFileName = settings.configFile.src.replace('./', ''),
       ocJsonPath = findPath(componentsDir, ocJsonFileName);
 
