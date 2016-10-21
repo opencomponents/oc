@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.17
+- [#312](https://github.com/opentable/oc/pull/312) Options bugfix
+
 ### v0.33.16
 - [#311](https://github.com/opentable/oc/pull/311) Refactoring, cleanup, test coverage
 
