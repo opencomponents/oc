@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.20
+- [#315](https://github.com/opentable/oc/pull/315) aws-sdk upgrade
+
 ### v0.33.19
 - [#314](https://github.com/opentable/oc/pull/314) Revert async upgrade + timeout wrapping
 
