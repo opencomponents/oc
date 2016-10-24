@@ -12,7 +12,7 @@ describe('cli : domain : get-mocked-plugins', function(){
       fsMock,
       getMockedPlugins;
 
-  var initialise = function(fs){
+  var initialise = function(fs, pathJoinStub){
 
     fsMock = _.extend({
       existsSync: sinon.stub().returns(true),
@@ -33,7 +33,7 @@ describe('cli : domain : get-mocked-plugins', function(){
     getMockedPlugins = injectr('../../src/cli/domain/get-mocked-plugins.js', {
       'fs-extra': fsMock,
       path: {
-        join: fakePathFunc,
+        join: pathJoinStub || fakePathFunc,
         resolve: fakePathFunc
       },
       '/root/components/dynamic-plugin.js': dynamicPluginModule,
@@ -42,6 +42,34 @@ describe('cli : domain : get-mocked-plugins', function(){
   };
 
   describe('when setting up mocked plugins', function(){
+
+    describe('when componentsDir parameter is undefined', function(){
+
+      var joinStub = sinon.stub();
+
+      beforeEach(function(){
+        initialise({}, joinStub);
+        getMockedPlugins({ log: _.noop }, undefined);
+      });
+
+      it('should use . as default', function(){
+        expect(joinStub.args[0][0]).to.equal('.');
+      });
+    });
+
+    describe('when componentsDir parameter is omitted', function(){
+
+      var joinStub = sinon.stub();
+
+      beforeEach(function(){
+        initialise({}, joinStub);
+        getMockedPlugins({ log: _.noop });
+      });
+
+      it('should use . as default', function(){
+        expect(joinStub.args[0][0]).to.equal('.');
+      });
+    });
 
     describe('when oc.json is in both root and component folder', function(){
 

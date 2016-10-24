@@ -25,12 +25,12 @@ var registerStaticMocks = function(mocks, logger){
   });
 };
 
-var registerDynamicMocks = function(mocks, ocJsonPath, logger){
+var registerDynamicMocks = function(ocJsonLocation, mocks, logger){
   return _.map(mocks, function(source, pluginName){
 
     var p;
     try {
-      p = require(path.resolve(ocJsonPath, source));
+      p = require(path.resolve(ocJsonLocation, source));
     } catch(er) {
       logger.log(colors.red(er.toString()));
       return;
@@ -94,7 +94,7 @@ module.exports = function(logger, componentsDir){
   logger.log(colors.yellow(strings.messages.cli.REGISTERING_MOCKED_PLUGINS));
 
   plugins = plugins.concat(registerStaticMocks(content.mocks.plugins.static, logger));
-  plugins = plugins.concat(registerDynamicMocks(content.mocks.plugins.dynamic, ocJsonLocation, logger));
+  plugins = plugins.concat(registerDynamicMocks(ocJsonLocation, content.mocks.plugins.dynamic,logger));
 
   return plugins;
 };
