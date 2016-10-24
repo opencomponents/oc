@@ -8,9 +8,9 @@
       "resolved": "https://registry.npmjs.org/accept-language-parser/-/accept-language-parser-1.1.2.tgz"
     },
     "async": {
-      "version": "2.1.2",
-      "from": "async@2.1.2",
-      "resolved": "https://registry.npmjs.org/async/-/async-2.1.2.tgz"
+      "version": "1.5.2",
+      "from": "async@1.5.2",
+      "resolved": "https://registry.npmjs.org/async/-/async-1.5.2.tgz"
     },
     "aws-sdk": {
       "version": "2.4.2",
