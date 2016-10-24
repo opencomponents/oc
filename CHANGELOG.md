@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.18
+- [#313](https://github.com/opentable/oc/pull/313) Recursively look for oc.json, starting from componentsDir
+
 ### v0.33.17
 - [#312](https://github.com/opentable/oc/pull/312) Options bugfix
 
