@@ -1,24 +1,19 @@
 'use strict';
 
+var async = require('async');
 var colors = require('colors');
 var express = require('express');
 var format = require('stringformat');
 var http = require('http');
-var path = require('path');
 var _ = require('underscore');
 
 var appStart = require('./app-start');
-var baseUrlHandler = require('./middleware/base-url-handler');
-var cors = require('./middleware/cors');
-var discoveryHandler = require('./middleware/discovery-handler');
 var eventsHandler = require('./domain/events-handler');
-var fileUploads = require('./middleware/file-uploads');
+var middleware = require('./middleware');
 var pluginsInitialiser = require('./domain/plugins-initialiser');
 var Repository = require('./domain/repository');
-var requestHandler = require('./middleware/request-handler');
-var Router = require('./router');
+var router = require('./router');
 var sanitiseOptions = require('./domain/options-sanitiser');
-var settings = require('../resources/settings');
 var validator = require('./domain/validators');
 
 module.exports = function(options){
@@ -26,7 +21,6 @@ module.exports = function(options){
   var repository,
       self = this,
       server,
-      withLogging = !_.has(options, 'verbosity') || options.verbosity > 0,
       validationResult = validator.validateRegistryConfiguration(options),
       plugins = [];
 
@@ -45,41 +39,9 @@ module.exports = function(options){
     }
   };
 
-  this.init = function(callback){
-    var app = express();
-
+  this.init = function(){
+    self.app = middleware.bind(express(), options);
     repository = new Repository(options);
-
-    // middleware
-    app.set('port', process.env.PORT || options.port);
-    app.set('json spaces', 0);
-
-    app.use(function(req, res, next){
-      res.conf = options;
-      next();
-    });
-
-    app.use(requestHandler());
-    app.use(express.json());
-    app.use(express.urlencoded());
-    app.use(cors);
-    app.use(fileUploads);
-    app.use(baseUrlHandler);
-    app.use(discoveryHandler);
-
-    app.set('views', path.join(__dirname, 'views'));
-    app.set('view engine', 'jade');
-    app.set('view cache', true);
-
-    if(withLogging){
-      app.use(express.logger('dev'));
-    }
-
-    if(options.local){
-      app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-    }
-
-    self.app = app;
   };
 
   this.register = function(plugin, cb){
@@ -92,81 +54,54 @@ module.exports = function(options){
       callback = _.noop;
     }
 
-    var app = this.app;
+    router.create(this.app, options, repository);
 
-    // routes
-    app.use(app.router);
-    var router = new Router(options, repository);
-
-    if(options.prefix !== '/'){
-      app.get('/', function(req, res){ res.redirect(options.prefix); });
-      app.get(options.prefix.substr(0, options.prefix.length - 1), router.listComponents);
-    }
-
-    app.get(options.prefix + 'oc-client/client.js', router.staticRedirector);
-    app.get(options.prefix + 'oc-client/oc-client.min.map', router.staticRedirector);
-
-    if(options.local){
-      app.get(format('{0}:componentName/:componentVersion/{1}*', options.prefix, settings.registry.localStaticRedirectorPath), router.staticRedirector);
-    } else {
-      app.put(options.prefix + ':componentName/:componentVersion', options.beforePublish, router.publish);
-    }
-
-    app.get(options.prefix, router.listComponents);
-    app.post(options.prefix, router.components);
-
-    app.get(format('{0}:componentName/:componentVersion{1}', options.prefix, settings.registry.componentInfoPath), router.componentInfo);
-    app.get(format('{0}:componentName{1}', options.prefix, settings.registry.componentInfoPath), router.componentInfo);
-
-    app.get(format('{0}:componentName/:componentVersion{1}', options.prefix, settings.registry.componentPreviewPath), router.componentPreview);
-    app.get(format('{0}:componentName{1}', options.prefix, settings.registry.componentPreviewPath), router.componentPreview);
-
-    app.get(options.prefix + ':componentName/:componentVersion', router.component);
-    app.get(options.prefix + ':componentName', router.component);
-
-    if(!!options.routes){
-      _.forEach(options.routes, function(route){
-        app[route.method.toLowerCase()](route.route, route.handler);
-      });
-    }
-
-    app.set('etag', 'strong');
-
-    pluginsInitialiser.init(plugins, function(err, plugins){
+    async.waterfall([
+      function(cb){
+        pluginsInitialiser.init(plugins, cb);
+      },
+      function(plugins, cb){
+        options.plugins = plugins;
+        repository.init(cb);
+      },
+      function(componentsInfo, cb){
+        appStart(repository, options, function(err){
+          cb(!!err ? err.msg : null, componentsInfo);
+        });
+      }
+    ],
+    function(err, componentsInfo){
       if(!!err){ return callback(err); }
-      options.plugins = plugins;
 
-      repository.init(function(err, componentsInfo){
-        appStart(repository, options, function(err, res){
+      server = http.createServer(self.app);
 
-          if(!!err){ return callback(err.msg); }
+      server.listen(options.port, function(err){
+        
+        if(!!err){ return callback(err); }
 
-          server = http.createServer(self.app);
+        eventsHandler.fire('start', {});
+        
+        if(!!options.verbosity){
 
-          server.listen(self.app.get('port'), function(){
-            eventsHandler.fire('start', {});
-            if(withLogging){
-              console.log(format('Registry started at port {0}'.green, self.app.get('port')));
-              if(_.isObject(componentsInfo)){
-                var componentsNumber = _.keys(componentsInfo.components).length;
-                var componentsReleases = _.reduce(componentsInfo.components, function(memo, component){
+          console.log(format('Registry started at port {0}'.green, self.app.get('port')));
+          
+          if(_.isObject(componentsInfo)){
+
+            var componentsNumber = _.keys(componentsInfo.components).length,
+                componentsReleases = _.reduce(componentsInfo.components, function(memo, component){
                   return (parseInt(memo, 10) + component.length);
                 });
 
-                console.log(format('Registry serving {0} components for a total of {1} releases.', componentsNumber, componentsReleases).green);
-              }
-            }
-            callback(null, {
-              app: self.app,
-              server: server
-            });
-          });
+            console.log(format('Registry serving {0} components for a total of {1} releases.', componentsNumber, componentsReleases).green);
+          }
+        }
 
-          server.on('error', function(e){
-            eventsHandler.fire('error', { code: 'EXPRESS_ERROR', message: e });
-            callback(e);
-          });
-        });
+        callback(null, { app: self.app, server: server });
+      });
+
+      server.on('error', function(e){
+        eventsHandler.fire('error', { code: 'EXPRESS_ERROR', message: e });
+        callback(e);
       });
     });
   };

@@ -4,6 +4,7 @@ var async = require('async');
 var format = require('stringformat');
 var fs = require('fs');
 var path = require('path');
+var semverSort = require('semver-sort');
 var _ = require('underscore');
 
 module.exports = function(grunt){
@@ -88,6 +89,8 @@ module.exports = function(grunt){
 
     get.tags(function(err, tags){
       if(err){ return grunt.fatal(err); }
+
+      semverSort.asc(tags);
 
       get.allPrs(tags, function(err, changes){
         if(err){ return grunt.fatal(err); }

@@ -104,6 +104,7 @@ module.exports = {
       ENTER_USERNAME: 'Enter username:',
       USING_CREDS: 'Using specified credentials',
       HELP_HINT: 'Hint: Run -h with any command to show the help',
+      HOT_RELOADING_DISABLED: 'OC dev is running with hot reloading disabled so changes will be ignored',
       INSTALLING_DEPS: 'Trying to install missing modules: {0}\nIf you aren\'t connected to the internet, or npm isn\'t configured then this step will fail',
       MOCKED_PLUGIN: 'Mock for plugin has been registered: {0} () => {1}',
       PACKAGING: 'Packaging -> {0}',

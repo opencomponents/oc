@@ -48,7 +48,7 @@ var oc = oc || {};
       MESSAGES_ERRORS_RENDERING = 'Error rendering component: {0}, error: {1}',
       MESSAGES_ERRORS_RETRIEVING = 'Failed to retrieve the component. Retrying in {0} seconds...'.replace('{0}', RETRY_INTERVAL/1000),
       MESSAGES_ERRORS_VIEW_ENGINE_NOT_SUPPORTED = 'Error loading component: view engine "{0}" not supported',
-      MESSAGES_LOADING_COMPONENT = 'Loading...',
+      MESSAGES_LOADING_COMPONENT = oc.conf.loadingMessage || '',
       MESSAGES_RENDERED = 'Component \'{0}\' correctly rendered',
       MESSAGES_RETRIEVING = 'Unrendered component found. Trying to retrieve it...';
 
@@ -336,6 +336,7 @@ var oc = oc || {};
 
         oc.renderByHref($component.attr('href'), function(err, data){
           if(err || !data){
+            $component.html('');
             logger.error(err);
             return callback();
           }

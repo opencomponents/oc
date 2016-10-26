@@ -42,6 +42,7 @@ describe('registry : routes : components', function(){
       makeRequest({
         components: [{
           name: 'async-error2-component',
+          version: '1.X.X',
           parameters: { error: true }
         }, {
           name: 'async-error2-component',
@@ -63,7 +64,7 @@ describe('registry : routes : components', function(){
       expect(response[1].response.href).to.be.equal('http://components.com/async-error2-component/1.0.0');
     });
 
-    it('should return a response with error code and description for first component', function(){
+    it('should return a response with error code and description for the first component', function(){
       expect(response[0].response.code).to.be.equal('GENERIC_ERROR');
       expect(response[0].response.error).to.be.equal('Component execution error: thisDoesnotExist is not defined');
     });
@@ -78,6 +79,13 @@ describe('registry : routes : components', function(){
 
     it('should include 200 status code for second component', function(){
       expect(response[1].status).to.equal(200);
+    });
+
+    it('should return name and request version for both components', function(){
+      expect(response[0].response.name).to.be.equal('async-error2-component');
+      expect(response[0].response.requestVersion).to.be.equal('1.X.X');
+      expect(response[1].response.name).to.be.equal('async-error2-component');
+      expect(response[1].response.requestVersion).to.be.equal('1.0.0');
     });
   });
 

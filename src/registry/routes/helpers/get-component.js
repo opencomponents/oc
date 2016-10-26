@@ -7,6 +7,7 @@ var format = require('stringformat');
 var vm = require('vm');
 var _ = require('underscore');
 
+var applyDefaultValues = require('./apply-default-values');
 var Client = require('../../../../client');
 var detective = require('../../domain/plugins-detective');
 var eventsHandler = require('../../domain/events-handler');
@@ -42,6 +43,11 @@ module.exports = function(conf, repository){
       if(!!result.response.error){
         retrievingInfo.extend(result.response);
       }
+
+      _.extend(result.response, {
+        name: options.name,
+        requestVersion: options.version || ''
+      });
 
       eventsHandler.fire('component-retrieved', retrievingInfo.getData());
       return cb(result);
@@ -84,7 +90,8 @@ module.exports = function(conf, repository){
       }
 
       // sanitise and check params
-      var params = sanitiser.sanitiseComponentParameters(requestedComponent.parameters, component.oc.parameters),
+      var appliedParams = applyDefaultValues(requestedComponent.parameters, component.oc.parameters),
+          params = sanitiser.sanitiseComponentParameters(appliedParams, component.oc.parameters),
           validationResult = validator.validateComponentParameters(params, component.oc.parameters);
 
       if(!validationResult.isValid){
@@ -188,7 +195,7 @@ module.exports = function(conf, repository){
             });
           };
 
-          if(!!cached && !conf.local){
+          if(!!cached && !conf.hotReloading){
             returnResult(cached);
           } else {
             repository.getCompiledView(component.name, component.version, function(err, templateText){
@@ -230,8 +237,8 @@ module.exports = function(conf, repository){
             }, conf.executionTimeout * 1000);
           }
         };
-
-        if(!!cached && !conf.local){
+        
+        if(!!cached && !conf.hotReloading){
           domain.on('error', returnComponent);
 
           try {

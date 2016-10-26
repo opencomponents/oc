@@ -8,6 +8,7 @@ module.exports = {
       'examples/node_modules', 
       'examples/**/_package/',
       'client/src/oc-client.min.js', 
+      'client/src/renderers/support/jade-runtime.js', 
       'src/components/oc-client/src/head.load.js', 
       'src/components/oc-client/src/oc-client.min.js', 
       'src/components/oc-client/_package/**/*', 

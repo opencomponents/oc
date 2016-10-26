@@ -25,11 +25,12 @@ var registerStaticMocks = function(mocks, logger){
   });
 };
 
-var registerDynamicMocks = function(mocks, logger){
+var registerDynamicMocks = function(ocJsonLocation, mocks, logger){
   return _.map(mocks, function(source, pluginName){
+
     var p;
     try {
-      p = require(path.resolve(source));
+      p = require(path.resolve(ocJsonLocation, source));
     } catch(er) {
       logger.log(colors.red(er.toString()));
       return;
@@ -53,15 +54,39 @@ var registerDynamicMocks = function(mocks, logger){
   }).filter(function(p){ return p; });
 };
 
-module.exports = function(logger){
-  var plugins = [],
-      ocJsonPath = path.resolve(settings.configFile.src);
+var findPath = function(pathToResolve, fileName) {
 
-  if(!fs.existsSync(ocJsonPath)){
+  var rootDir = fs.realpathSync('.'),
+      fileToResolve = path.join(pathToResolve, fileName);
+
+  if (!fs.existsSync(fileToResolve)) {
+    if (pathToResolve === rootDir) {
+      return undefined;
+    } else {
+      var getParent = function(x){ return x.split('/').slice(0, -1).join('/'); },
+          parentDir = pathToResolve ? getParent(pathToResolve) : rootDir;
+
+      return findPath(parentDir, fileName);
+    }
+  }
+  
+  return fileToResolve;
+};
+
+module.exports = function(logger, componentsDir){
+  componentsDir = path.resolve(componentsDir || '.');
+
+  var plugins = [],
+      ocJsonFileName = settings.configFile.src.replace('./', ''),
+      ocJsonPath = findPath(componentsDir, ocJsonFileName);
+
+  if(!ocJsonPath){
     return plugins;
   }
 
-  var content = fs.readJsonSync(ocJsonPath);
+  var content = fs.readJsonSync(ocJsonPath),
+      ocJsonLocation = ocJsonPath.slice(0, -ocJsonFileName.length);
+
   if(!content.mocks || !content.mocks.plugins){
     return plugins;
   }
@@ -69,7 +94,7 @@ module.exports = function(logger){
   logger.log(colors.yellow(strings.messages.cli.REGISTERING_MOCKED_PLUGINS));
 
   plugins = plugins.concat(registerStaticMocks(content.mocks.plugins.static, logger));
-  plugins = plugins.concat(registerDynamicMocks(content.mocks.plugins.dynamic, logger));
+  plugins = plugins.concat(registerDynamicMocks(ocJsonLocation, content.mocks.plugins.dynamic,logger));
 
   return plugins;
 };

@@ -7,7 +7,8 @@ module.exports = function(config) {
     reporters: ['dots', 'saucelabs'],
     colors: true,
     logLevel: config.LOG_INFO,
-    autoWatch: true,
+    autoWatch: false,
+    singleRun: true,
 
     sauceLabs: {
       testName: 'oc front-end tests',
@@ -22,7 +23,6 @@ module.exports = function(config) {
   if (process.env.TRAVIS)
   {
     //config.logLevel = config.LOG_DEBUG;
-    config.transports = ['xhr-polling'];
     config.sauceLabs.build = 'TRAVIS #' + process.env.TRAVIS_BUILD_NUMBER + ' (' + process.env.TRAVIS_BUILD_ID + ')';
     config.sauceLabs.tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
   }

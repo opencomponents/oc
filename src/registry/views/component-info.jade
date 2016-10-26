@@ -4,7 +4,7 @@ mixin showArray(title, arr)
   +property(title, !!arr && arr.length > 0 ? arr.join(', ') : 'none')
 
 mixin author(a)
-  div.field
+  .field
     p Author:
     if !a.name && !a.email && !a.url
       span not available
@@ -62,16 +62,21 @@ block content
               br
             span.bold Example:
             span=p.example
+            if !p.mandatory && p.default
+              br
+              br
+              span.bold Default:
+              span=p.default
 
   h3 Code
   p 
     | You can edit the following area and then 
     a.refresh-preview(href="#refresh") refresh 
     | to apply the change into the preview window.
-  div.field
+  .field
     p Component's href:
   textarea.search#href(placeholder="Insert component href here") #{href + component.name + '/' + component.version + '/' + sandBoxDefaultQs}
-  div.field
+  .field
     p Accept-Language header:
   input.search#lang(value="*")
   h3

@@ -26,7 +26,8 @@ module.exports = function(repository){
       if(isHtmlRequest && !!res.conf.discovery){
 
         var componentsInfo = [],
-            componentsReleases = 0;
+            componentsReleases = 0,
+            stateCounts = {};
 
         async.each(components, function(component, callback){
           return repository.getComponent(component, function(err, result){
@@ -52,12 +53,22 @@ module.exports = function(repository){
             availablePlugins: res.conf.plugins,
             components: componentsInfo,
             componentsReleases: componentsReleases,
-            componentsList: _.map(componentsInfo, function(component){ 
+            componentsList: _.map(componentsInfo, function(component){
+
+              var state = (!!component.oc && !!component.oc.state) ? component.oc.state : '';
+
+              if(!!state){
+                stateCounts[state] = stateCounts[state] || 0;
+                stateCounts[state] += 1;
+              }
+
               return {
                 name: component.name,
-                state: (!!component.oc && !!component.oc.state) ? component.oc.state : ''
-              }; 
-            })
+                state: state
+              };
+            }),
+            q: req.query.q || '',
+            stateCounts: stateCounts
           }));
         });
       } else {

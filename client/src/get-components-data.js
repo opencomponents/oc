@@ -8,17 +8,6 @@ var _ = require('./utils/helpers');
 
 module.exports = function(config){
 
-  var makePostRequest = function(components, options, cb){
-    request({
-      url: config.registries.serverRendering,
-      method: 'post',
-      headers: options.headers,
-      timeout: options.timeout,
-      json: true,
-      body: { components: components }
-    }, cb);
-  };
-
   return function(toDo, options, cb){
 
     var serverRenderingFail = settings.serverSideRenderingFail,
@@ -48,14 +37,27 @@ module.exports = function(config){
       return cb(serverRenderingFail);
     }
 
-    makePostRequest(serverRendering.components, options, function(error, responses){
+    var requestDetails = {
+      url: config.registries.serverRendering,
+      method: 'post',
+      headers: options.headers,
+      timeout: options.timeout,
+      json: true,
+      body: {
+        components: serverRendering.components,
+        parameters: options.parameters || {}
+      }
+    };
+
+    request(requestDetails, function(error, responses){
       if(!!error || !responses || _.isEmpty(responses)){
         responses = [];
         var errorDetails = !!error ? error.toString() : settings.emptyResponse;
         _.each(serverRendering.components, function(){
           responses.push({
-            response: { error: format(settings.connectionError, errorDetails, config.registries.serverRendering) },
-            status: 500
+            response: {
+              error: format(settings.connectionError, JSON.stringify(requestDetails), errorDetails)
+            }
           });
         });
       }
@@ -65,7 +67,20 @@ module.exports = function(config){
 
         if(action.render === 'server'){
           if(response.status !== 200){
-            var errorDetails = format('{0} ({1})', (response.response && response.response.error) || '', response.status);
+            
+            var errorDetails;
+            if(!response.status && response.response.error){
+              errorDetails = response.response.error;
+            } else {
+              
+              var errorDescription = (response.response && response.response.error);
+              if(errorDescription && response.response.details && response.response.details.originalError){
+                errorDescription += response.response.details.originalError;
+              }
+
+              errorDetails = format('{0} ({1})', errorDescription || '', response.status);
+            }
+
             action.result.error = new Error(format(serverRenderingFail, errorDetails));
             if(!!options.disableFailoverRendering){
               action.result.html = '';

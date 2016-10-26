@@ -18,9 +18,7 @@ module.exports = function(conf){
     accessKeyId: conf.s3.key,
     secretAccessKey: conf.s3.secret,
     region: conf.s3.region,
-    httpOptions: {
-      timeout: conf.s3.timeout || 10000
-    }
+    httpOptions: { timeout: conf.s3.timeout || 10000 }
   });
 
   var client = new AWS.S3(),

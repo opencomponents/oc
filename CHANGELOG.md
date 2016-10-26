@@ -1,5 +1,62 @@
 ## Change Log
 
+### v0.33.20
+- [#315](https://github.com/opentable/oc/pull/315) aws-sdk upgrade
+
+### v0.33.19
+- [#314](https://github.com/opentable/oc/pull/314) Revert async upgrade + timeout wrapping
+
+### v0.33.18
+- [#313](https://github.com/opentable/oc/pull/313) Recursively look for oc.json, starting from componentsDir
+
+### v0.33.17
+- [#312](https://github.com/opentable/oc/pull/312) Options bugfix
+
+### v0.33.16
+- [#311](https://github.com/opentable/oc/pull/311) Refactoring, cleanup, test coverage
+
+### v0.33.15
+- [#310](https://github.com/opentable/oc/pull/310) Upgrade async + wrap s3 calls to timeout
+
+### v0.33.14
+- [#309](https://github.com/opentable/oc/pull/309) Default value for optional parameters
+- [#308](https://github.com/opentable/oc/pull/308) Fixed tags order in changelog
+
+### v0.33.13
+- [#305](https://github.com/opentable/oc/pull/305) Switch to setTimeout for polling mechanism
+- [#306](https://github.com/opentable/oc/pull/306) Default Loading... to blank
+
+### v0.33.12
+- [#303](https://github.com/opentable/oc/pull/303) Client#renderComponents accepts global parameters
+
+### v0.33.11
+- [#302](https://github.com/opentable/oc/pull/302) Added name and reqest version to each response
+
+### v0.33.10
+- [#301](https://github.com/opentable/oc/pull/301) Oc client jadeless
+
+### v0.33.9
+- [#294](https://github.com/opentable/oc/pull/294) Upgrade npm dependency
+
+### v0.33.8
+- [#293](https://github.com/opentable/oc/pull/293) Ui improvements
+
+### v0.33.7
+- [#291](https://github.com/opentable/oc/pull/291) Client errors
+- [#290](https://github.com/opentable/oc/pull/290) Update minimal-request@2.1.1
+- [#288](https://github.com/opentable/oc/pull/288) oc-client warmup improvements
+
+### v0.33.6
+- [#289](https://github.com/opentable/oc/pull/289) Upgrade dependency
+
+### v0.33.5
+- [#287](https://github.com/opentable/oc/pull/287) Node 6
+
+### v0.33.4
+- [#286](https://github.com/opentable/oc/pull/286) Hot reload
+- [#285](https://github.com/opentable/oc/pull/285) npm install and dep resolvement needs to happen in the same dir
+- [#269](https://github.com/opentable/oc/pull/269) Removing the loading... indicator when we have an error
+
 ### v0.33.3
 - [#278](https://github.com/opentable/oc/pull/278) Container client override
 - [#279](https://github.com/opentable/oc/pull/279) Update safari configs

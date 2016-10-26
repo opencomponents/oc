@@ -1,7 +1,11 @@
-![oc](https://raw.github.com/opentable/oc/master/logo.png)
+![oc](https://raw.githubusercontent.com/opentable/oc/master/logo.png)
 =============
 
 OpenComponents, **serverless in the front-end world**.
+
+OpenComponents is an open-source framework that allows fast-moving teams to easily build and deploy front-end components. It abstracts away complicated infrastructure and leaves developers with very simple, but powerful building blocks that handle scale transparently.
+
+#### How does it work?
 
 First, **you create your component**. It can contain logic to get some data (using node.js) and then the view, including css and js. It can be what you want, including *React* or *Angular* components or whatever you like.
 
