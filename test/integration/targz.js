@@ -3,22 +3,28 @@
 var expect = require('chai').expect;
 var fs = require('fs-extra');
 var path = require('path');
-var Targz = require('tar.gz');
+var targz = require('targz');
+var _ = require('underscore');
 
-describe('The Targz dependency', function(){
-  var targz;
+describe('The targz dependency', function(){
 
-  beforeEach(function(){
-    targz = new Targz();
-  });
-
-  describe('when compressing a folder', function(){
+  describe('when compressing a folder with targz', function(){
     
     var file = path.resolve(__dirname, '../fixtures/test.tar.gz');
 
     beforeEach(function(done){
-      var from = path.resolve(__dirname, '../fixtures/components/hello-world');
-      targz.compress(from, file, done);
+     var from = path.resolve(__dirname, '../fixtures/components/hello-world');
+      targz.compress({
+        src: from,
+        dest: file,
+        tar: {
+          map: function(fileName) {
+            return _.extend(fileName, {
+              name: 'hello-world/' + fileName.name
+            });
+          }
+        }
+      }, done);
     });
 
     it('should create the file', function(){
@@ -31,7 +37,10 @@ describe('The Targz dependency', function(){
           to = path.resolve(__dirname, '../fixtures/targz-test'); 
 
       beforeEach(function(done){ 
-        targz.extract(file, to, function(err){
+        targz.decompress({
+          src: file,
+          dest: to
+        }, function(err){
           error = err;
           done();
         });
