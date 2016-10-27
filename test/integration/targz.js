@@ -13,7 +13,7 @@ describe('The targz dependency', function(){
     var file = path.resolve(__dirname, '../fixtures/test.tar.gz');
 
     beforeEach(function(done){
-     var from = path.resolve(__dirname, '../fixtures/components/hello-world');
+      var from = path.resolve(__dirname, '../fixtures/components/hello-world');
       targz.compress({
         src: from,
         dest: file,
