@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.21
+- [#316](https://github.com/opentable/oc/pull/316) Migrate tar.gz to targz
+
 ### v0.33.20
 - [#315](https://github.com/opentable/oc/pull/315) aws-sdk upgrade
 
