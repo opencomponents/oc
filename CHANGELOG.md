@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.22
+- [#317](https://github.com/opentable/oc/pull/317) Client dynamic hrefs
+
 ### v0.33.21
 - [#316](https://github.com/opentable/oc/pull/316) Migrate tar.gz to targz
 
