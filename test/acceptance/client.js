@@ -308,6 +308,52 @@ describe('The node.js OC client', function(){
       });
     });
 
+    describe('when server-side rendering an existing component overriding registry urls', function(){
+
+      before(function(done){
+        var options = {
+          container: true,
+          registries: {
+            clientRendering: 'http://localhost:3030',
+            serverRendering: 'http://localhost:3030'
+          }
+        };
+
+        clientOfflineRegistry.renderComponent('hello-world', options, function(err, html){
+          $component = cheerio.load(html)('oc-component');
+          done();
+        });
+      });
+
+      it('should use the overwritten serverRendering url', function(){
+        expect($component.attr('href')).to.equal('http://localhost:3030/hello-world/~1.0.0');
+        expect($component.data('rendered')).to.equal(true);
+      });
+    });
+
+    describe('when client-side rendering an existing component overriding registry urls', function(){
+
+      before(function(done){
+        var options = {
+          container: true,
+          registries: {
+            clientRendering: 'http://localhost:3030',
+            serverRendering: 'http://localhost:3030'
+          },
+          render: 'client'
+        };
+
+        clientOfflineRegistry.renderComponent('hello-world', options, function(err, html){
+          $component = cheerio.load(html)('oc-component');
+          done();
+        });
+      });
+
+      it('should use the overwritten clientRendering url', function(){
+        expect($component.attr('href')).to.equal('http://localhost:3030/hello-world/~1.0.0');
+      });
+    });
+
     describe('when client-side rendering an existing component', function(){
 
       before(function(done){
