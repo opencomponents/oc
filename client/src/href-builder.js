@@ -7,7 +7,14 @@ module.exports = function(config){
 
   return {
     client: function(component, options){
-      if(!config.registries.clientRendering){
+
+      var clientRenderingEndpoint;
+
+      if(!!options && !!options.registries && !!options.registries.clientRendering){
+        clientRenderingEndpoint = options.registries.clientRendering;
+      } else if(!!config && !!config.registries && !!config.registries.clientRendering){
+        clientRenderingEndpoint = config.registries.clientRendering;
+      } else {
         return null;
       }
 
@@ -24,7 +31,7 @@ module.exports = function(config){
       }
 
       var versionSegment = !!component.version ? ('/' + component.version) : '',
-          registryUrl = config.registries.clientRendering,
+          registryUrl = clientRenderingEndpoint,
           registrySegment = registryUrl.slice(-1) === '/' ? registryUrl : (registryUrl + '/'),
           qs = !!component.parameters ? ('/?' + querystring.stringify(component.parameters)) : '';
 

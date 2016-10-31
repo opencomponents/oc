@@ -11,7 +11,14 @@ module.exports = function(config){
   return function(toDo, options, cb){
 
     var serverRenderingFail = settings.serverSideRenderingFail,
-        serverRendering = { components: [], positions: [] };
+        serverRendering = { components: [], positions: [] },
+        serverRenderingEndpoint;
+
+    if(!!options && !!options.registries && !!options.registries.serverRendering){
+      serverRenderingEndpoint = options.registries.serverRendering;
+    } else if(!!config && !!config.registries){
+      serverRenderingEndpoint = config.registries.serverRendering;
+    }
 
     _.each(toDo, function(action){
       if(action.render === 'server'){
@@ -22,7 +29,7 @@ module.exports = function(config){
 
     if(_.isEmpty(serverRendering.components)){
       return cb();
-    } else if(!config.registries.serverRendering){
+    } else if(!serverRenderingEndpoint){
       _.each(toDo, function(action){
         action.result.error = serverRenderingFail;
         if(!!options.disableFailoverRendering){
@@ -38,7 +45,7 @@ module.exports = function(config){
     }
 
     var requestDetails = {
-      url: config.registries.serverRendering,
+      url: serverRenderingEndpoint,
       method: 'post',
       headers: options.headers,
       timeout: options.timeout,
