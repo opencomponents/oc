@@ -2,7 +2,7 @@
 
 var fs = require('fs-extra');
 var path = require('path');
-var Targz = require('tar.gz');
+var targz = require('targz');
 var _ = require('underscore');
 
 var getComponentsByDir = require('./get-components-by-dir');
@@ -13,14 +13,23 @@ var validator = require('../../registry/domain/validators');
 
 module.exports = function(dependencies){
   var logger = dependencies.logger;
-  var targz = new Targz();
 
   return _.extend(this, {
     cleanup: function(compressedPackagePath, callback){
       return fs.unlink(compressedPackagePath, callback);
     },
     compress: function(input, output, callback){
-      return targz.compress(input, output, callback);
+      return targz.compress({
+        src: input,
+        dest: output,
+        tar: {
+          map: function(file){
+            return _.extend(file, {
+              name: '_package/' + file.name
+            });
+          }
+        }
+      }, callback);
     },
     getComponentsByDir: getComponentsByDir(dependencies),
     getLocalNpmModules: getLocalNpmModules(),

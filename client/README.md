@@ -90,6 +90,9 @@ Options:
 |`headers`|`object`|no|An object containing all the headers that must be forwarded to the component|
 |`ie8`|`boolean`|no|Default false, if true puts in place the necessary polyfills to make all the stuff work with ie8|
 |`parameters`|`object`|no|An object containing the parameters for component's request|
+|`registries`|`object`|no|The registries' endpoints (overrides the parameters defined during instantiation)|
+|`registries.serverRendering`|`string`|no|The baseUrl for server-side rendering requests (overrides the parameter defined during instantiation)|
+|`registries.clientRendering`|`string`|no|The baseUrl for client-side rendering requests (overrides the parameter defined during instantiation)|
 |`render`|`string`|no|Default `server`. When `server`, it will return html. When `client` will produce the html to put in the page for post-poning the rendering to the browser|
 |`timeout`|`number` (seconds)|no|Default 5. When request times-out, the callback will be fired with a timeout error and a client-side rendering response (unless `disableFailoverRendering` is set to `true`)|
 
@@ -132,9 +135,13 @@ Options:
 |---------|----|---------|-----------|
 |`container`|`boolean`|no|Default true, when false, renders a component without its <oc-component> container|
 |`disableFailoverRendering`|`boolean`|no|Disables the automatic failover rendering in case the registry times-out (in case configuration.registries.clientRendering contains a valid value.) Default false|
+|`forwardAcceptLanguageToClient`|`boolean`|no|When not specified in config, defaults to false. When true, when doing client-side requests (normal or failover) appends a custom parameter to the browser's component hrefs so that the framework will ignore the browser's Accept-Language in favour of the query-string value|
 |`headers`|`object`|no|An object containing all the headers that must be forwarded to the component|
 |`ie8`|`boolean`|no|Default false, if true puts in place the necessary polyfills to make all the stuff work with ie8|
 |`parameters`|`object`|no|Global parameters for all components to retrieve. When component has its own parameters, globals will be overwritten|
+|`registries`|`object`|no|The registries' endpoints (overrides the parameters defined during instantiation)|
+|`registries.serverRendering`|`string`|no|The baseUrl for server-side rendering requests (overrides the parameter defined during instantiation)|
+|`registries.clientRendering`|`string`|no|The baseUrl for client-side rendering requests (overrides the parameter defined during instantiation)|
 |`render`|`string`|no|Default `server`. When `server`, it will return html. When `client` will produce the html to put in the page for post-poning the rendering to the browser|
 |`timeout`|`number` (seconds)|no|Default 5. When request times-out, the callback will be fired with a timeout error and a client-side rendering response (unless `disableFailoverRendering` is set to `true`)|
 
