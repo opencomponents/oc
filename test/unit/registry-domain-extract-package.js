@@ -15,7 +15,7 @@ describe('registry : domain : extract-package', function(){
     './get-package-json-from-temp-dir': sinon.stub().yields(null, { package: 'hello' })
   }, { console: console});
 
-  describe('when extracting package', function(){
+  describe('when successfully extracting package', function(){
 
     var error, response;
 
@@ -51,6 +51,34 @@ describe('registry : domain : extract-package', function(){
         outputFolder: '/some-path/registry/temp/1478279453422/_package/',
         packageJson: { package: 'hello' }
       });
+    });
+  });
+
+  describe('when extracting package fails', function(){
+
+    var error, response;
+
+    beforeEach(function(done){
+      pathResolveStub.reset();
+      pathResolveStub.onCall(0).returns('/some-path/registry/temp/1478279453422.tar.gz');
+      pathResolveStub.onCall(1).returns('/some-path/registry/temp/1478279453422/');
+      pathResolveStub.onCall(2).returns('/some-path/registry/temp/1478279453422/_package/');
+
+      decompressStub.yields('error!');
+
+      extractPackage({
+        '1478279453422.tar.gz': {
+          name: '1478279453422.tar.gz',
+          path: '/some-path/registry/temp/1478279453422.tar.gz'
+        }
+      }, function(err, res){
+        error = err;
+        done();
+      });
+    });
+
+    it('should respond with error', function(){
+      expect(error).to.equal('error!');
     });
   });
 });
