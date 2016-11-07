@@ -13,7 +13,7 @@ module.exports = function(files, callback){
       packageUntarOutput = path.resolve(packageFile.path, '..', packageFile.name.replace('.tar.gz', '')),
       packageOutput = path.resolve(packageUntarOutput, '_package');
 
-  targz.extract({
+  targz.decompress({
     src: packagePath,
     dest: packageUntarOutput
   }, function(err){
