@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.23
+- [#319](https://github.com/opentable/oc/pull/319) Extract package bugfix
+
 ### v0.33.22
 - [#317](https://github.com/opentable/oc/pull/317) Client dynamic hrefs
 
