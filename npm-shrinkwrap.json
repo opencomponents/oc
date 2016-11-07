@@ -1,6 +1,6 @@
 {
   "name": "oc",
-  "version": "0.33.22",
+  "version": "0.33.23",
   "dependencies": {
     "accept-language-parser": {
       "version": "1.1.2",
