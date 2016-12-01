@@ -26,7 +26,8 @@ module.exports = function(conf, repository){
       cache = new Cache({
         verbose: !!conf.verbosity,
         refreshInterval: conf.refreshInterval
-      });
+      }),
+      responseHeaders;
 
   var renderer = function(options, cb){
 
@@ -188,6 +189,10 @@ module.exports = function(conf, repository){
                 });
               }
 
+              if (responseHeaders) {
+                response.headers = responseHeaders;
+              }
+
               callback({
                 status: 200, 
                 response: _.extend(response, { html: html })
@@ -225,7 +230,11 @@ module.exports = function(conf, repository){
               renderComponent: nestedRenderer.renderComponent,
               renderComponents: nestedRenderer.renderComponents,
               requestHeaders: options.headers,
-              staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', '')
+              staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', ''),
+              setHeader: function(header, value) {
+                responseHeaders = responseHeaders || {};
+                responseHeaders[header] = value;
+              }
             };
 
         var setCallbackTimeout = function(){
