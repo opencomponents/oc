@@ -19,6 +19,10 @@ module.exports = function(conf, repository){
         res.errorDetails = result.response.error;
       }
 
+      if (result.response.headers) {
+        res.set(result.response.headers);
+      }
+
       return res.json(result.status, result.response);
     });
   };
