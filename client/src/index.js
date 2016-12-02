@@ -1,6 +1,8 @@
 'use strict';
 
 var ComponentsRenderer = require('./components-renderer');
+var GetComponentsInfo = require('./get-components-info');
+
 var sanitiser = require('./sanitiser');
 var TemplateRenderer = require('./template-renderer');
 var validator = require('./validator');
@@ -12,7 +14,8 @@ module.exports = function(conf){
   var config = sanitiser.sanitiseConfiguration(conf),
       validationResult = validator.validateConfiguration(config),
       renderTemplate = new TemplateRenderer(),
-      renderComponents = new ComponentsRenderer(config, renderTemplate);
+      renderComponents = new ComponentsRenderer(config, renderTemplate),
+      getComponentsInfo = new GetComponentsInfo(config);
 
   if(!validationResult.isValid){
     throw new Error(validationResult.error);
@@ -48,6 +51,9 @@ module.exports = function(conf){
       }
       
       renderComponents(components, options, callback);
+    },
+    getComponentsInfo: function(components, callback) {
+      getComponentsInfo(components, callback);
     },
     renderTemplate: renderTemplate
   };

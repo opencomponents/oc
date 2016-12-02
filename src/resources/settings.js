@@ -8,6 +8,7 @@ module.exports = {
   registry: {
     acceptRenderedHeader: 'application/vnd.oc.rendered+json',
     acceptUnrenderedHeader: 'application/vnd.oc.unrendered+json',
+    acceptInfoHeader: 'application/vnd.oc.info+json',
     componentInfoPath: '/~info',
     componentPreviewPath: '/~preview',
     defaultTempPath: './temp/',

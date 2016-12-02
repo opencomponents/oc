@@ -129,6 +129,7 @@ module.exports = function(conf, repository){
         }, conf.baseUrl);
 
         var isUnrendered = options.headers.accept === settings.registry.acceptUnrenderedHeader,
+            skipRendering = options.headers.accept === settings.registry.acceptInfoHeader,
             renderMode = isUnrendered ? 'unrendered' : 'rendered';
 
         var response = {
@@ -149,7 +150,12 @@ module.exports = function(conf, repository){
           renderMode: renderMode
         });
 
-        if(isUnrendered){
+        if (skipRendering) {
+          callback({
+            status: 200,
+            response: response
+          });
+        } else if (isUnrendered) {
           callback({
             status: 200,
             response: _.extend(response, {
