@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.24
+- [#326](https://github.com/opentable/oc/pull/326) Add optional cache headers for components (#325)
+
 ### v0.33.23
 - [#319](https://github.com/opentable/oc/pull/319) Extract package bugfix
 
