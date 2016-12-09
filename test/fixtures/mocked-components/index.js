@@ -8,5 +8,7 @@ module.exports = {
   'plugin-component': require('./plugin'),
   'timeout-component': require('./timeout'),
   'undefined-component': require('./undefined'),
-  'response-headers-component': require('./response-headers')
+  'simple-component': require('./simple'),
+  'response-headers-component': require('./response-headers'),
+  'another-response-headers-component': require('./another-response-headers')
 };
