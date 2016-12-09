@@ -26,13 +26,13 @@ module.exports = function(conf, repository){
       cache = new Cache({
         verbose: !!conf.verbosity,
         refreshInterval: conf.refreshInterval
-      }),
-      responseHeaders;
+      });
 
   var renderer = function(options, cb){
 
     var nestedRenderer = new NestedRenderer(renderer, options.conf),
-        retrievingInfo = new GetComponentRetrievingInfo(options);
+        retrievingInfo = new GetComponentRetrievingInfo(options),
+        responseHeaders;
 
     var getLanguage = function(){
       var paramOverride = !!options.parameters && options.parameters['__ocAcceptLanguage'];
