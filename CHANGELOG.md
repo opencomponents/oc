@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.25
+- [#328](https://github.com/opentable/oc/pull/328) Fix for Custom eaders of one component can appear to another.
+
 ### v0.33.24
 - [#326](https://github.com/opentable/oc/pull/326) Add optional cache headers for components (#325)
 
