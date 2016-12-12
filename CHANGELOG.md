@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.26
+- [#329](https://github.com/opentable/oc/pull/329) Cleanup npm-shrinkwrap
+
 ### v0.33.25
 - [#328](https://github.com/opentable/oc/pull/328) Fix for Custom eaders of one component can appear to another.
 
