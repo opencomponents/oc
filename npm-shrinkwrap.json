@@ -2232,7 +2232,7 @@
             "are-we-there-yet": {
               "version": "1.1.2",
               "from": "are-we-there-yet@>=1.1.2 <1.2.0",
-              "resolved": "http://registry.npmjs.org/are-we-there-yet/-/are-we-there-yet-1.1.2.tgz",
+              "resolved": "https://registry.npmjs.org/are-we-there-yet/-/are-we-there-yet-1.1.2.tgz",
               "dependencies": {
                 "delegates": {
                   "version": "1.0.0",
@@ -2291,7 +2291,7 @@
                         "number-is-nan": {
                           "version": "1.0.0",
                           "from": "number-is-nan@^1.0.0",
-                          "resolved": "http://registry.npmjs.org/number-is-nan/-/number-is-nan-1.0.0.tgz"
+                          "resolved": "https://registry.npmjs.org/number-is-nan/-/number-is-nan-1.0.0.tgz"
                         }
                       }
                     }
