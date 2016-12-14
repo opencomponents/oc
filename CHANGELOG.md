@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.27
+- [#331](https://github.com/opentable/oc/pull/331) Client fixes and some tests
+
 ### v0.33.26
 - [#329](https://github.com/opentable/oc/pull/329) Cleanup npm-shrinkwrap
 
