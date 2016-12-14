@@ -54,7 +54,7 @@ module.exports = function(cache, renderTemplate){
       fetchTemplateAndRender(action.apiResponse, options, function(err, html){
         if(!!err){
           var errorDetails = format('{0} ({1})', (err.response && err.response.error), err.status);
-          action.result.error = new Error(format(settings.serverRenderingFail, errorDetails));
+          action.result.error = new Error(format(settings.serverSideRenderingFail, errorDetails));
           if(!!options.disableFailoverRendering){
             action.result.html = '';
             action.done = true;

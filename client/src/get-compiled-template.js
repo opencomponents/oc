@@ -1,8 +1,10 @@
 'use strict';
 
+var format = require('stringformat');
 var request = require('minimal-request');
 
 var executor = require('./executor');
+var settings = require('./settings');
 var TryGetCached = require('./try-get-cached');
 
 module.exports = function(cache){
@@ -16,7 +18,15 @@ module.exports = function(cache){
         url: template.src,
         timeout: timeout
       }, function(err, templateText){
-        if(!!err){ return cb(err); }
+        if(!!err){
+          return cb({
+            status: err,
+            response: {
+              error: format(settings.connectionError, template.src, templateText)
+            }
+          });
+        }
+
         cb(null, executor.template(templateText, template));
        });
     };
