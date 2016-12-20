@@ -7,6 +7,7 @@ var path = require('path');
 var uglifyJs = require('uglify-js');
 var falafel = require('falafel');
 var _ = require('underscore');
+var requirePackageName = require('require-package-name');
 
 var config = require('../../resources/settings');
 var hashBuilder = require('../../utils/hash-builder');
@@ -75,7 +76,8 @@ var getLocalDependencies = function(componentPath, serverContent, fileName){
     if(isLocalFile(required)) {
       requires.files[required] = getRequiredContent(componentPath, required);
     } else {
-      requires.modules.push(required);
+      var packageName = requirePackageName(required);
+      requires.modules.push(packageName);
     }
   });
 

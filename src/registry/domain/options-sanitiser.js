@@ -3,7 +3,6 @@
 var express = require('express');
 var _ = require('underscore');
 
-var dependenciesResolver = require('./dependencies-resolver');
 var settings = require('../../resources/settings');
 var auth = require('./authentication');
 
@@ -28,10 +27,6 @@ module.exports = function(input){
 
   if(!options.tempDir){
     options.tempDir = settings.registry.defaultTempPath;
-  }
-
-  if(!!options.dependencies){
-    options.dependencies = dependenciesResolver(options);
   }
 
   if(!_.isBoolean(options.hotReloading)){

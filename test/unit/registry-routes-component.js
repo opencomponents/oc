@@ -356,9 +356,9 @@ describe('registry : routes : component', function(){
             local: true, //needed to invalidate the cache
             baseUrl: 'http://components.com/',
             plugins: {},
-            dependencies: {
-              underscore: require('underscore')
-            }
+            dependencies: [
+              'underscore'
+            ]
           },
           json: resJsonStub
         });

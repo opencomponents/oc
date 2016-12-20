@@ -72,6 +72,7 @@
     "opn": "4.0.2",
     "parse-author": "1.0.0",
     "read": "1.0.7",
+    "require-package-name": "2.0.1",
     "semver": "5.1.1",
     "stringformat": "0.0.5",
     "targz": "1.0.1",
