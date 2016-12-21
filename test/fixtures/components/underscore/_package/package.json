@@ -9,7 +9,7 @@
     "files": {
       "template": {
         "type": "jade",
-        "hashKey": "91ceb091e8306096a95197985506cc43aa3857fe",
+        "hashKey": "37dc765b8d01c74a0a9b9f36a2827c1d0c86ef07",
         "src": "template.js"
       },
       "dataProvider": {
@@ -21,7 +21,7 @@
     },
     "version": "0.33.27",
     "packaged": true,
-    "date": 1482338310829
+    "date": 1482338406173
   },
   "dependencies": {
     "underscore": "1.8.3"
