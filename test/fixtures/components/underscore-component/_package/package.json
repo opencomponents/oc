@@ -1,5 +1,5 @@
 {
-  "name": "underscore",
+  "name": "underscore-component",
   "description": "",
   "version": "1.0.0",
   "repository": "",
@@ -21,7 +21,7 @@
     },
     "version": "0.33.27",
     "packaged": true,
-    "date": 1482338406173
+    "date": 1482342133712
   },
   "dependencies": {
     "underscore": "1.8.3"
