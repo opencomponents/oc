@@ -127,7 +127,7 @@ describe('cli : domain : package-server-script', function(){
       });
     });
 
-    describe('when component requires a module', function(){
+    describe('when component requires an npm module', function(){
 
       var error,
           serverjs = 'var data=require(\'request\');module.exports.data=function(context,cb){return cb(null,data); };';
@@ -152,6 +152,34 @@ describe('cli : domain : package-server-script', function(){
 
       it('should throw an error when the dependency is not present in the package.json', function(){
         expect(error.toString()).to.equal('Error: Missing dependencies from package.json => ["request"]');
+      });
+    });
+
+    describe('when component requires a relative path from an npm module', function(){
+
+      var error,
+          serverjs = 'var data=require(\'react-dom/server\');module.exports.data=function(context,cb){return cb(null,data); };';
+
+      beforeEach(function(done){
+
+        initialise({ readFileSync: sinon.stub().returns(serverjs) });
+
+        packageServerScript({
+          componentPath: '/path/to/component/',
+          ocOptions: {
+            files: {
+              data: 'server.js'
+            }
+          },
+          publishPath: '/path/to/component/_package/'
+        }, function(e, r){
+          error = e;
+          done();
+        });
+      });
+
+      it('should throw an error when the dependency is not present in the package.json', function(){
+        expect(error.toString()).to.equal('Error: Missing dependencies from package.json => ["react-dom"]');
       });
     });
 

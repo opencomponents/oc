@@ -3066,6 +3066,11 @@
         }
       }
     },
+    "require-package-name": {
+      "version": "2.0.1",
+      "from": "require-package-name@latest",
+      "resolved": "https://registry.npmjs.org/require-package-name/-/require-package-name-2.0.1.tgz"
+    },
     "semver": {
       "version": "5.1.1",
       "from": "semver@5.1.1",

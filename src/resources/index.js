@@ -27,7 +27,6 @@ module.exports = {
       COMPONENT_VERSION_NOT_VALID: 'Version "{0}" is not a valid semantic version.',
       COMPONENT_VERSION_NOT_VALID_CODE: 'version_not_valid',
       CONFIGURATION_DEPENDENCIES_MUST_BE_ARRAY: 'Registry configuration is not valid: dependencies must be an array',
-      CONFIGURATION_A_DEPENDENCY_NOT_FOUND: 'Registry configuration is not valid: a dependency is not valid.',
       CONFIGURATION_EMPTY: 'Registry configuration is empty',
       CONFIGURATION_ONREQUEST_MUST_BE_FUNCTION: 'Registry configuration is not valid: registry.on\'s callback must be a function',
       CONFIGURATION_PUBLISH_BASIC_AUTH_CREDENTIALS_MISSING: 'Registry configuration is not valid: basic auth requires username and password',
@@ -44,7 +43,6 @@ module.exports = {
       LOCAL_PUBLISH_NOT_ALLOWED: 'Components can\'t be published to local repository',
       LOCAL_PUBLISH_NOT_ALLOWED_CODE: 'not_allowed',
       GENERIC_ERROR: 'error!',
-      GENERIC_NOT_FOUND: 'not found!',
       MANDATORY_PARAMETER_MISSING: 'Expected mandatory parameters are missing: {0}',
       MANDATORY_PARAMETER_MISSING_CODE: 'missing',
       NESTED_RENDERER_CALLBACK_IS_NOT_VALID: 'callback is not valid',
@@ -120,9 +118,6 @@ module.exports = {
       REGISTRY_STARTING: 'Starting dev registry on {0} ...',
       RETRYING_10_SECONDS: 'Retrying in 10 seconds...',
       SCANNING_COMPONENTS: 'Looking for components...'
-    },
-    registry: {
-      RESOLVING_DEPENDENCIES: 'Resolving dependencies...'
     }
   }
 };
