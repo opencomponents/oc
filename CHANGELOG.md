@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.33.28
+- [#323](https://github.com/opentable/oc/pull/323) Fix for #322
+- [#334](https://github.com/opentable/oc/pull/334) Acceptance extra test
+
 ### v0.33.27
 - [#331](https://github.com/opentable/oc/pull/331) Client fixes and some tests
 
