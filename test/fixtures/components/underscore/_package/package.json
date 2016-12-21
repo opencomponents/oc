@@ -4,6 +4,8 @@
   "version": "1.0.0",
   "repository": "",
   "oc": {
+    "renderInfo": false,
+    "container": false,
     "files": {
       "template": {
         "type": "jade",
@@ -19,7 +21,7 @@
     },
     "version": "0.33.27",
     "packaged": true,
-    "date": 1482337449802
+    "date": 1482338310829
   },
   "dependencies": {
     "underscore": "1.8.3"
