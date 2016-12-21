@@ -274,6 +274,7 @@ describe('registry : domain : repository', function(){
           'hello-world',
           'language',
           'no-containers',
+          'underscore-component',
           'welcome',
           'welcome-with-optional-parameters',
           'oc-client'
