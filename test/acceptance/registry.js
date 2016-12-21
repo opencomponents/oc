@@ -68,7 +68,7 @@ describe('registry', function(){
         'http://localhost:3030/hello-world',
         'http://localhost:3030/language',
         'http://localhost:3030/no-containers',
-        'http://localhost:3030/underscore',
+        'http://localhost:3030/underscore-component',
         'http://localhost:3030/welcome',
         'http://localhost:3030/welcome-with-optional-parameters',
         'http://localhost:3030/oc-client'
@@ -297,17 +297,17 @@ describe('registry', function(){
     });
   });
 
-  describe.only('GET /underscore', function(){
+  describe.only('GET /underscore-component', function(){
 
     before(function(done){
       request({
-        url: 'http://localhost:3030/underscore',
+        url: 'http://localhost:3030/underscore-component',
         json: true
       }, next(done));
     });
 
     it('should respond with the correct href', function(){
-      expect(result.href).to.eql('http://localhost:3030/underscore');
+      expect(result.href).to.eql('http://localhost:3030/underscore-component');
     });
 
     it('should respond correctly after using underscore server dependency', function(){
