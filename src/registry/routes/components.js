@@ -46,7 +46,8 @@ module.exports = function(conf, repository){
         conf: res.conf,
         headers: req.headers,
         omitHref: !!req.body.omitHref,
-        parameters: _.extend(_.clone(req.body.parameters) || {}, component.parameters || {})
+        parameters: _.extend(_.clone(req.body.parameters) || {}, component.parameters || {}),
+        skipRendering: !req.accepts('*') && req.accepts('application/vnd.oc.info+json')
       }), function(result){
         callback(null, result);
       });

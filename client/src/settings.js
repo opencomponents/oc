@@ -10,5 +10,6 @@ module.exports = {
   registriesEmpty: 'registries must contain at least one endpoint',
   registriesIsNotObject: 'registries must be an object',
   serverSideRenderingFail: 'Server-side rendering failed: {0}',
+  componentGetInfoFail: 'Getting component info failed: {0}',
   warmupFailed: 'Error warming up oc-client: request {0} failed ({1})'
 };
