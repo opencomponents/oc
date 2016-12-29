@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.29
+- [#337](https://github.com/opentable/oc/pull/337) Fix for #336 - Make S3 Key/Secret optional to allow support for "IAM role based access to s3 from EC2"
+
 ### v0.33.28
 - [#323](https://github.com/opentable/oc/pull/323) Fix for #322
 - [#334](https://github.com/opentable/oc/pull/334) Acceptance extra test
