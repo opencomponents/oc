@@ -201,6 +201,20 @@ describe('registry : domain : validator', function(){
             expect(validate(conf).message).to.equal(errorMessage);
           });
         });
+        
+        describe('when s3 setting do not use key/secret - EC2 IAM Role use case', function() {
+          var conf = {
+            publishAuth: false,
+            s3: {
+              bucket: 'oc-registry',
+              region: 'us-west2'
+            }
+          };
+
+          it('should be valid', function() {
+            expect(validate(conf).isValid).to.be.true;
+          });
+        });
 
         describe('when s3 setting contains all properties', function(){
           var conf = { publishAuth: false, s3: baseS3Conf};
