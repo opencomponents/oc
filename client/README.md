@@ -14,6 +14,12 @@ Disclaimer: This project is still under heavy development and the API is likely 
 
 # API
 
+* [new Client()](#new-clientoptions)
+* [Client#init()](#clientinitoptions-callback)
+* [Client#getComponentsInfo()](#clientgetcomponentsinfocomponents-callback)
+* [Client#renderComponent()](#clientrendercomponentcomponentname--options-callback)
+* [Client#renderComponents()](#clientrendercomponentscomponents--options-callback)
+
 ### new Client(options)
 
 It will create an instance of the client. Options:
@@ -73,6 +79,31 @@ client.init({
 
   console.log(responses);
   // => something like { hello: '<b>hello</b>'}
+});
+```
+
+### Client#getComponentsInfo(components, callback)
+
+It will get the components' resolved versions for given requested versions. Useful for polling mechanism and caches management.
+
+Example:
+```js
+...
+client.getComponentsInfo([{
+  name: 'header',
+  version: '1.X.X'
+}], function(error, infos){
+  console.log(infos);
+  /* => [{
+    componentName: 'header',
+    requestedVersion: '1.X.X',
+    apiResponse: {
+      name: 'header',
+      requestVersion: '1.X.X',
+      type: 'oc-component',
+      version: '1.2.4'
+    }
+  }] */
 });
 ```
 
