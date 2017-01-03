@@ -391,9 +391,7 @@ describe('The node.js OC client', function(){
         componentName: 'hello-world',
         requestedVersion: undefined,
         apiResponse: {
-          href: 'http://localhost:3030/hello-world',
           name: 'hello-world',
-          renderMode: 'rendered',
           requestVersion: '',
           type: 'oc-component-local',
           version: '1.0.0'
@@ -402,9 +400,7 @@ describe('The node.js OC client', function(){
         componentName: 'no-containers',
         requestedVersion: '1.x.x',
         apiResponse: {
-          href: 'http://localhost:3030/no-containers/1.x.x',
           name: 'no-containers',
-          renderMode: 'rendered',
           requestVersion: '1.x.x',
           type: 'oc-component-local',
           version: '1.0.0'
@@ -453,9 +449,7 @@ describe('The node.js OC client', function(){
           componentName: 'hello-world',
           requestedVersion: undefined,
           apiResponse: {
-            href: 'http://localhost:3030/hello-world',
             name: 'hello-world',
-            renderMode: 'rendered',
             requestVersion: '',
             type: 'oc-component-local',
             version: '1.0.0'

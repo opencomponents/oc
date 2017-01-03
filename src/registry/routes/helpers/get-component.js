@@ -76,6 +76,19 @@ module.exports = function(conf, repository){
         });
       }
 
+      // Skip rendering and return only the component info in case of 'accept: application/vnd.oc.info+json'
+      if (options.headers.accept === settings.registry.acceptInfoHeader) {
+        return callback({
+          status: 200,
+          response: {
+            type: conf.local ? 'oc-component-local' : 'oc-component',
+            version: component.version,
+            requestVersion: requestedComponent.version,
+            name: requestedComponent.name,
+          }
+        });
+      }
+
       // check component requirements are satisfied by registry      
       var pluginsCompatibility = validator.validatePluginsRequirements(component.oc.plugins, conf.plugins);
 
@@ -129,7 +142,6 @@ module.exports = function(conf, repository){
         }, conf.baseUrl);
 
         var isUnrendered = options.headers.accept === settings.registry.acceptUnrenderedHeader,
-            skipRendering = options.headers.accept === settings.registry.acceptInfoHeader,
             renderMode = isUnrendered ? 'unrendered' : 'rendered';
 
         var response = {
@@ -150,12 +162,7 @@ module.exports = function(conf, repository){
           renderMode: renderMode
         });
 
-        if (skipRendering) {
-          callback({
-            status: 200,
-            response: response
-          });
-        } else if (isUnrendered) {
+        if (isUnrendered) {
           callback({
             status: 200,
             response: _.extend(response, {

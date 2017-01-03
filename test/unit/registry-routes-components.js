@@ -124,8 +124,7 @@ describe('registry : routes : components', function(){
       makeInfoRequest({
         components: [{
           name: 'async-error2-component',
-          version: '1.X.X',
-          parameters: { error: true }
+          version: '1.X.X'
         }, {
           name: 'async-error2-component',
           version: '1.0.0'
@@ -141,37 +140,26 @@ describe('registry : routes : components', function(){
       expect(response.length).to.be.equal(2);
     });
 
+    var expectedResponse = [{
+        status: 200,
+        response: {
+          name: 'async-error2-component',
+          type: 'oc-component',
+          requestVersion: '1.X.X',
+          version: '1.0.0',
+        }
+      }, {
+        status: 200,
+        response: {
+          name: 'async-error2-component',
+          type: 'oc-component',
+          requestVersion: '1.0.0',
+          version: '1.0.0',
+        }
+      }];
+
     it('should return a response containing components in the correct order', function(){
-      expect(response[0].response.href).to.be.undefined;
-      expect(response[1].response.href).to.be.equal('http://components.com/async-error2-component/1.0.0');
-    });
-
-    it('should return a response with error code and description for the first component', function(){
-      expect(response[0].response.code).to.be.equal('GENERIC_ERROR');
-      expect(response[0].response.error).to.be.equal('Component execution error: thisDoesnotExist is not defined');
-    });
-
-    it('should not return a response with rendered html for the second component', function(){
-      expect(response[1].response.html).to.be.undefined;
-    });
-
-    it('should include 500 status code for first component', function(){
-      expect(response[0].status).to.equal(500);
-    });
-
-    it('should include 200 status code for second component', function(){
-      expect(response[1].status).to.equal(200);
-    });
-
-    it('should return name and request version for both components', function(){
-      expect(response[0].response.name).to.be.equal('async-error2-component');
-      expect(response[0].response.requestVersion).to.be.equal('1.X.X');
-      expect(response[1].response.name).to.be.equal('async-error2-component');
-      expect(response[1].response.requestVersion).to.be.equal('1.0.0');
-    });
-
-    it('should rerurn the actual version for the second component', function() {
-      expect(response[1].response.version).to.be.equal('1.0.0');
+      expect(response).to.be.eql(expectedResponse);
     });
   });
 

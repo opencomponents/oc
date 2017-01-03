@@ -1,7 +1,6 @@
 'use strict';
 
 var GetComponentHelper = require('./helpers/get-component');
-var Settings = require('../../resources/settings');
 
 module.exports = function(conf, repository){
 
