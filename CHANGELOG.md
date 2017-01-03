@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.33.30
+- [#335](https://github.com/opentable/oc/pull/335) Add endpoint for getting list of components with their versions (#324)
+
 ### v0.33.29
 - [#337](https://github.com/opentable/oc/pull/337) Fix for #336 - Make S3 Key/Secret optional to allow support for "IAM role based access to s3 from EC2"
 
