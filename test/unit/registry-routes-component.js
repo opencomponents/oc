@@ -565,4 +565,53 @@ describe('registry : routes : component', function(){
     });
   });
 
+  describe('when getting a component info for a component that sets custom headers', function() {
+    var code, response, headers;
+
+    before(function(done) {
+      initialise(mockedComponents['response-headers-component']);
+      componentRoute = new ComponentRoute({}, mockedRepository);
+
+      var resJson = function(calledCode, calledResponse) {
+        code = calledCode;
+        response = calledResponse;
+        done();
+      };
+
+      var resSet = function(calledHeaders) {
+        headers = calledHeaders;
+      };
+
+      componentRoute({
+        headers: { accept: 'application/vnd.oc.info+json' },
+        params: { componentName: 'response-headers-component', componentVersion: '1.0.0' }
+      }, {
+        conf: {
+          baseUrl: 'http://component.com/',
+          executionTimeout: 0.1
+        },
+        json: resJson,
+        set: resSet
+      });
+    });
+
+    it('should return 200 status code', function() {
+      expect(code).to.be.equal(200);
+    });
+
+    it('should return no custom headers', function() {
+      expect(response.headers).to.be.undefined;
+      expect(headers).to.be.undefined;
+    });
+
+    it('should return component\'s name and request version', function() {
+      expect(response.name).to.equal('response-headers-component');
+      expect(response.requestVersion).to.equal('1.0.0');
+    });
+
+    it('should not return rendered HTML', function() {
+      expect(response.html).to.be.undefined;
+    });
+  });
+
 });

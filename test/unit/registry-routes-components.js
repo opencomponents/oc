@@ -33,6 +33,17 @@ describe('registry : routes : components', function(){
     });
   };
 
+  var makeInfoRequest = function(body, cb){
+    componentsRoute({ headers: { accept: 'application/vnd.oc.info+json' }, body: body }, {
+      conf: { baseUrl: 'http://components.com/' },
+      json: function(jsonCode, jsonResponse){
+        response = jsonResponse;
+        code = jsonCode;
+        cb();
+      }
+    });
+  };
+
   describe('when making valid request for two components', function(){
 
     before(function(done){
@@ -93,6 +104,69 @@ describe('registry : routes : components', function(){
 
     before(function(done){
       makeRequest({ components: []}, done);
+    });
+
+    it('should return 200 status code', function(){
+      expect(code).to.be.equal(200);
+    });
+
+    it('should return a response containing empty array', function(){
+      expect(response).to.be.eql([]);
+    });
+  });
+
+  describe('when making valid info request for two components', function(){
+
+    before(function(done){
+      initialise(mockedComponents['async-error2-component']);
+      componentsRoute = new ComponentsRoute({}, mockedRepository);
+
+      makeInfoRequest({
+        components: [{
+          name: 'async-error2-component',
+          version: '1.X.X'
+        }, {
+          name: 'async-error2-component',
+          version: '1.0.0'
+        }]
+      }, done);
+    });
+
+    it('should return 200 status code', function(){
+      expect(code).to.be.equal(200);
+    });
+
+    it('should return a response containing both components', function(){
+      expect(response.length).to.be.equal(2);
+    });
+
+    var expectedResponse = [{
+        status: 200,
+        response: {
+          name: 'async-error2-component',
+          type: 'oc-component',
+          requestVersion: '1.X.X',
+          version: '1.0.0',
+        }
+      }, {
+        status: 200,
+        response: {
+          name: 'async-error2-component',
+          type: 'oc-component',
+          requestVersion: '1.0.0',
+          version: '1.0.0',
+        }
+      }];
+
+    it('should return a response containing components in the correct order', function(){
+      expect(response).to.be.eql(expectedResponse);
+    });
+  });
+
+  describe('when making info request for 0 components', function(){
+
+    before(function(done){
+      makeInfoRequest({ components: []}, done);
     });
 
     it('should return 200 status code', function(){
