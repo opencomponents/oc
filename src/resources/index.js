@@ -37,6 +37,7 @@ module.exports = {
       CONFIGURATION_ROUTES_NOT_VALID: 'Registry configuration is not valid: each route should contain route, method and handler',
       CONFIGURATION_ROUTES_MUST_BE_ARRAY: 'Registry configuration is not valid: routes must be an array',
       CONFIGURATION_S3_NOT_VALID: 'Registry configuration is not valid: S3 configuration is not valid',
+      CONFIGURATION_HEADERS_TO_SKIP_MUST_BE_STRING_ARRAY: 'Registry configuration is not valid: customHeadersToSkipOnWeakVersion must be an array of strings',
       DATA_OBJECT_IS_UNDEFINED: 'data object is undefined',
       DEPENDENCY_NOT_FOUND: 'Component is trying to use unavailable dependencies: {0}',
       DEPENDENCY_NOT_FOUND_CODE: 'DEPENDENCY_MISSING_FROM_REGISTRY',

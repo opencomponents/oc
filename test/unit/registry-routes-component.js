@@ -418,7 +418,7 @@ describe('registry : routes : component', function(){
     });
   });
 
-  describe('when getting a component with server.js that sets custom headers', function() {
+  describe('when getting a component with server.js that sets custom headers with empty customHeadersToSkipOnWeakVersion', function() {
     var code, response, headers;
 
     before(function(done) {
@@ -457,6 +457,53 @@ describe('registry : routes : component', function(){
       expect(response.headers['test-header']).to.equal('test-value');
       expect(headers).to.not.be.null;      
       expect(headers['test-header']).to.equal('test-value');
+    });
+
+    it('should return component\'s name and request version', function() {
+      expect(response.name).to.equal('response-headers-component');
+      expect(response.requestVersion).to.equal('1.X.X');
+    });
+  });
+
+  describe('when getting a component with server.js that sets custom headers with empty customHeadersToSkipOnWeakVersion', function() {
+    var code, response, headers;
+
+    before(function(done) {
+      initialise(mockedComponents['response-headers-component']);
+      componentRoute = new ComponentRoute({}, mockedRepository);
+
+      var resJson = function(calledCode, calledResponse) {
+        code = calledCode;
+        response = calledResponse;
+        done();
+      };
+
+      var resSet = function(calledHeaders) {
+        headers = calledHeaders;
+      };
+
+      componentRoute({
+        headers: {},
+        params: { componentName: 'response-headers-component', componentVersion: '1.X.X' }
+      }, {
+        conf: {
+          baseUrl: 'http://component.com/',
+          executionTimeout: 0.1,
+          customHeadersToSkipOnWeakVersion: ['test-header']
+        },
+        json: resJson,
+        set: resSet
+      });
+    });
+
+    it('should return 200 status code', function() {
+      expect(code).to.be.equal(200);
+    });
+
+    it('should not set the HTTP response test-headers', function() {
+      expect(response.headers).to.not.be.null;      
+      expect(response.headers['test-header']).to.equal('test-value');
+      expect(headers).to.be.undefined;      
     });
 
     it('should return component\'s name and request version', function() {
