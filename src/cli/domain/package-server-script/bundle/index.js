@@ -5,11 +5,11 @@ var MemoryFS = require('memory-fs');
 
 var memoryFs = new MemoryFS();
 
-function bundle(serverContent, fileName, callBack) {
-  memoryFs.writeFileSync(path.join('/', fileName), serverContent);
+function bundle(dataPath, fileName, callBack) {
+  // memoryFs.writeFileSync(path.join('/', fileName), serverContent);
 
   var webpackConfig = {
-    entry: path.join('/', fileName),
+    entry: dataPath,
     output: {
       path: "/build",
       filename: fileName
@@ -18,9 +18,9 @@ function bundle(serverContent, fileName, callBack) {
 
   var compiler = webpack(webpackConfig);
 
-  compiler.inputFileSystem = memoryFs;
-  compiler.resolvers.normal.fileSystem = compiler.inputFileSystem;
-  compiler.resolvers.context.fileSystem = compiler.inputFileSystem;
+  // compiler.inputFileSystem = memoryFs;
+  // compiler.resolvers.normal.fileSystem = compiler.inputFileSystem;
+  // compiler.resolvers.context.fileSystem = compiler.inputFileSystem;
   compiler.outputFileSystem = memoryFs;
 
   compiler.run(function(err, stats){
