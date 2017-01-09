@@ -2,7 +2,7 @@
 
 var uglifyJs = require('uglify-js');
 var format = require('stringformat');
-var strings = require('../../../../resources');
+var strings = require('../../../resources');
 
 var compress = function(code, fileName){
   try {

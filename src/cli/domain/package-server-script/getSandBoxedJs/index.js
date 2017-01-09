@@ -1,9 +1,8 @@
 'use strict';
 
 var _ = require('underscore');
-var utils = require('./utils');
-var compress = utils.compress;
-var wrapLoops = utils.wrapLoops;
+var wrapLoops = require('./wrapLoops');
+var compress = require('../compress');
 
 
 var getSandBoxedJs = function(wrappedRequires, serverContent, fileName, maxLoopIterations){
