@@ -10,6 +10,7 @@ var hashBuilder = require('../../../src/utils/hash-builder');
 var serverName = 'server.js';
 var componentName = 'component';
 var componentPath = path.resolve(__dirname, componentName);
+var publishPath = path.resolve(componentPath, '_package');
 
 describe('cli : domain : package-server-script', function(){
   beforeEach(function(done){
@@ -22,7 +23,7 @@ describe('cli : domain : package-server-script', function(){
 
   afterEach(function(done){
     if(fs.existsSync(componentPath)) {
-      rimraf.sync(componentPath);
+      // rimraf.sync(componentPath);
     }
     done();
   });
@@ -37,8 +38,6 @@ describe('cli : domain : package-server-script', function(){
       });
 
       it('should save compiled data provider', function(done){
-        var publishPath = path.resolve(componentPath, '_package');
-
         packageServerScript(
           {
             componentPath: componentPath,
@@ -58,8 +57,36 @@ describe('cli : domain : package-server-script', function(){
             done();
           }
         )
-      })
-    })
+      });
+    });
+
+    describe.only('when component implements not-valid javascript', function(){
+      var serverContent = 'var data=require(\'request\');\nmodule.exports.data=function(context,cb){\nreturn cb(null,data; };';
+
+      beforeEach(function(done){
+        fs.writeFileSync(path.resolve(componentPath, serverName), serverContent)
+        done();
+      });
+
+      it('should throw an error with error details', function(done){
+        packageServerScript(
+          {
+            componentPath: componentPath,
+            ocOptions: {
+              files: {
+                data: serverName
+              }
+            },
+            publishPath: publishPath
+          },
+          function(err, res){
+            expect(err.toString().match(/Unexpected token \(3:19\)/)).to.be.ok;
+            done();
+          }
+        )
+      });
+    });
+
   });
 })
 
