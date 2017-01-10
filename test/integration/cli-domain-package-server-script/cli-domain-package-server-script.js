@@ -1,8 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var rimraf = require('rimraf');
-var fs = require('fs');
+var fs = require('fs-extra');
 var path = require('path');
 var packageServerScript = require('../../../src/cli/domain/package-server-script/index.js');
 var hashBuilder = require('../../../src/utils/hash-builder');
@@ -23,7 +22,7 @@ describe('cli : domain : package-server-script', function(){
 
   afterEach(function(done){
     if(fs.existsSync(componentPath)) {
-      // rimraf.sync(componentPath);
+      fs.removeSync(componentPath);
     }
     done();
   });
