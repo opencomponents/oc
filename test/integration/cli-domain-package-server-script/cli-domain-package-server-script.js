@@ -60,7 +60,7 @@ describe('cli : domain : package-server-script', function(){
       });
     });
 
-    describe.only('when component implements not-valid javascript', function(){
+    describe('when component implements not-valid javascript', function(){
       var serverContent = 'var data=require(\'request\');\nmodule.exports.data=function(context,cb){\nreturn cb(null,data; };';
 
       beforeEach(function(done){
@@ -86,6 +86,7 @@ describe('cli : domain : package-server-script', function(){
         )
       });
     });
+
 
   });
 })
