@@ -25,7 +25,7 @@ describe('cli : domain : package-server-script', function(){
 
   afterEach(function(done){
     if(fs.existsSync(componentPath)) {
-      // fs.removeSync(componentPath);
+      fs.removeSync(componentPath);
     }
     done();
   });
@@ -73,7 +73,7 @@ describe('cli : domain : package-server-script', function(){
     });
 
     describe('when component does not require any json', function(){
-      var serverContent = 'module.exports.data=function(context,cb){return cb(null, {name:\'John\'}); };'
+      var serverContent = 'module.exports.data=function(context,cb){return cb(null, {name:\'John\'}); };';
 
       beforeEach(function(done){
         fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
