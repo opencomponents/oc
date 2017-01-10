@@ -28,7 +28,9 @@ describe('cli : domain : package-server-script', function(){
   });
 
   describe('when packaging component\'s server.js', function(){
+    this.timeout(10000);
     describe('when component does not require any json', function(){
+
       var serverContent = 'module.exports.data=function(context,cb){return cb(null, {name:\'John\'}); };'
 
       beforeEach(function(done){
@@ -79,7 +81,7 @@ describe('cli : domain : package-server-script', function(){
             publishPath: publishPath
           },
           function(err, res){
-            expect(err.toString().match(/Unexpected token \(3:19\)/)).to.be.ok;
+            expect(err.toString().match(/Unexpected token,.*\(3:19\)/)).to.be.ok;
             done();
           }
         )
