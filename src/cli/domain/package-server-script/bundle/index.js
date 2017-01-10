@@ -6,7 +6,6 @@ var MemoryFS = require('memory-fs');
 var memoryFs = new MemoryFS();
 
 function bundle(dataPath, fileName, callBack) {
-  // memoryFs.writeFileSync(path.join('/', fileName), serverContent);
 
   var webpackConfig = {
     entry: dataPath,
@@ -17,13 +16,10 @@ function bundle(dataPath, fileName, callBack) {
   };
 
   var compiler = webpack(webpackConfig);
-
-  // compiler.inputFileSystem = memoryFs;
-  // compiler.resolvers.normal.fileSystem = compiler.inputFileSystem;
-  // compiler.resolvers.context.fileSystem = compiler.inputFileSystem;
   compiler.outputFileSystem = memoryFs;
 
   compiler.run(function(err, stats){
+    var error = err;
     if (err) {
       console.error(err.stack || err);
       if (err.details) {
@@ -35,6 +31,7 @@ function bundle(dataPath, fileName, callBack) {
     var info = stats.toJson();
 
     if (stats.hasErrors()) {
+      error = info.errors;
       console.error(info.errors);
     }
     if (stats.hasWarnings()) {
@@ -47,7 +44,7 @@ function bundle(dataPath, fileName, callBack) {
     }));
 
     var serverContentBundled = memoryFs.readFileSync('/build/server.js', 'UTF8');
-    callBack(serverContentBundled);
+    callBack(error, serverContentBundled);
   });
 }
 

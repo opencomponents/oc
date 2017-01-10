@@ -10,13 +10,17 @@ module.exports = function(params, callback){
   var fileName = 'server.js';
   // var serverContent = fs.readFileSync(dataPath).toString();
 
-  bundle(dataPath, fileName, function(bundledServer){
-    fs.writeFile(path.join(params.publishPath, fileName), bundledServer, function(err, res){
-      callback(err, {
-        type: 'node.js',
-        hashKey: hashBuilder.fromString(bundledServer),
-        src: fileName
+  bundle(dataPath, fileName, function(err, bundledServer){
+    if (err) {
+      callback(err)
+    } else {
+      fs.writeFile(path.join(params.publishPath, fileName), bundledServer, function(err, res){
+        callback(err, {
+          type: 'node.js',
+          hashKey: hashBuilder.fromString(bundledServer),
+          src: fileName
+        });
       });
-    });
+    }
   });
 };
