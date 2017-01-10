@@ -12,6 +12,21 @@ function bundle(dataPath, fileName, callBack) {
     output: {
       path: "/build",
       filename: fileName
+    },
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          exclude: [
+            path.resolve(dataPath, "_package"),
+            path.resolve(dataPath, "node_modules")
+          ],
+          loader: "babel-loader",
+          options: {
+            presets: [["env", {"targets": {"node":  "current"}}]]
+          }
+        }
+      ]
     }
   };
 
@@ -19,28 +34,23 @@ function bundle(dataPath, fileName, callBack) {
   compiler.outputFileSystem = memoryFs;
 
   compiler.run(function(err, stats){
+
+    // handleFatalError
     var error = err;
-    if (err) {
-      console.error(err.stack || err);
-      if (err.details) {
-        console.error(err.details);
-      }
-      return;
-    }
+    if (error) return callBack(error);
 
     var info = stats.toJson();
 
-    if (stats.hasErrors()) {
-      error = info.errors;
-      console.error(info.errors);
-    }
-    if (stats.hasWarnings()) {
-      console.warn(info.warnings)
-    }
+    // handleSoftErrors
+    if (stats.hasErrors()) error = info.errors;
+    // handleWarnings
+    if (stats.hasWarnings()) error = info.warnings;
 
     console.log(stats.toString({
       chunks: false,
-      colors: true
+      colors: true,
+      version: false,
+      hash: false
     }));
 
     var serverContentBundled = memoryFs.readFileSync('/build/server.js', 'UTF8');
