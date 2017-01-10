@@ -70,7 +70,7 @@
 /* 0 */
 /***/ function(module, exports) {
 
-throw new Error("Module parse failed: /Users/nbalestra/dev/oc/test/unit/cli-domain-package-server-script/component/server.js Unexpected token (3:19)\nYou may need an appropriate loader to handle this file type.\n| var data=require('request');\n| module.exports.data=function(context,cb){\n| return cb(null,data; };");
+module.exports.data=function(context,cb){return cb(null, {name:'John'}); };
 
 /***/ }
 /******/ ]);
