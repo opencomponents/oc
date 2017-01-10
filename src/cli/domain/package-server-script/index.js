@@ -12,7 +12,7 @@ module.exports = function(params, callback){
 
   bundle(dataPath, fileName, params.bundler, function(err, bundledServer){
     if (err) {
-      callback(err)
+      return callback(err);
     } else {
       fs.writeFile(path.join(params.publishPath, fileName), bundledServer, function(err, res){
         callback(err, {

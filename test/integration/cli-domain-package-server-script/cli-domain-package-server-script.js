@@ -10,31 +10,32 @@ var serverName = 'server.js';
 var componentName = 'component';
 var componentPath = path.resolve(__dirname, componentName);
 var publishPath = path.resolve(componentPath, '_package');
-var bundlerOptions = { stats: "errors-only" }
+var bundlerOptions = { stats: 'errors-only' };
 
 describe('cli : domain : package-server-script', function(){
   beforeEach(function(done){
     if(!fs.existsSync(componentPath)) {
-      fs.mkdirSync(componentPath)
-      fs.mkdirSync(path.resolve(componentPath, '_package'))
+      fs.mkdirSync(componentPath);
+      fs.mkdirSync(path.resolve(componentPath, '_package'));
     }
     done();
   });
 
   afterEach(function(done){
     if(fs.existsSync(componentPath)) {
-      // fs.removeSync(componentPath);
+      fs.removeSync(componentPath);
     }
     done();
   });
 
   describe('when packaging component\'s server.js', function(){
     this.timeout(10000);
+
     describe('when component does not require any json', function(){
-      var serverContent = 'module.exports.data=function(context,cb){return cb(null, {name:\'John\'}); };'
+      var serverContent = 'module.exports.data=function(context,cb){return cb(null, {name:\'John\'}); };';
 
       beforeEach(function(done){
-        fs.writeFileSync(path.resolve(componentPath, serverName), serverContent)
+        fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
         done();
       });
 
@@ -51,14 +52,16 @@ describe('cli : domain : package-server-script', function(){
             bundler: bundlerOptions
           },
           function(err, res){
-            if (err) throw err
-            expect(res.type).to.equal('node.js')
-            expect(res.src).to.equal('server.js')
-            var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'})
-            expect(res.hashKey).to.equal(hashBuilder.fromString(compiledContent))
+            if (err) {
+              throw err;
+            }
+            expect(res.type).to.equal('node.js');
+            expect(res.src).to.equal('server.js');
+            var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
+            expect(res.hashKey).to.equal(hashBuilder.fromString(compiledContent));
             done();
           }
-        )
+        );
       });
     });
 
@@ -66,7 +69,7 @@ describe('cli : domain : package-server-script', function(){
       var serverContent = 'var data=require(\'request\');\nmodule.exports.data=function(context,cb){\nreturn cb(null,data; };';
 
       beforeEach(function(done){
-        fs.writeFileSync(path.resolve(componentPath, serverName), serverContent)
+        fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
         done();
       });
 
@@ -86,15 +89,15 @@ describe('cli : domain : package-server-script', function(){
             expect(err.toString().match(/Unexpected token,.*\(3:19\)/)).to.be.ok;
             done();
           }
-        )
+        );
       });
     });
 
-    describe.only('when component uses es2015 javascript syntax', function(){
+    describe('when component uses es2015 javascript syntax', function(){
       var serverContent = 'const {first, last} = {first: "John", last: "Doe"};\nexport const data = (context,cb) => cb(null, context, first, last)';
 
       beforeEach(function(done){
-        fs.writeFileSync(path.resolve(componentPath, serverName), serverContent)
+        fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
         done();
       });
 
@@ -111,17 +114,17 @@ describe('cli : domain : package-server-script', function(){
             bundler: bundlerOptions
           },
           function(err, res){
-            console.log(res)
+            console.log(res);
             // expect(err.toString().match(/Unexpected token,.*\(3:19\)/)).to.be.ok;
             done();
           }
-        )
+        );
       });
     });
 
 
   });
-})
+});
 
 
 // OLD SPEC
@@ -400,7 +403,7 @@ describe('cli : domain : package-server-script', function(){
 //       });
 
 //       it('should wrap the while loop with an iterator limit (and convert it to a for loop)', function(){
-//         expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var r,a,t,i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");r=234,i--}');
+// expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var r,a,t,i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");r=234,i--}');
 //       });
 
 //       it('should wrap the for loop with an iterator limit', function(){

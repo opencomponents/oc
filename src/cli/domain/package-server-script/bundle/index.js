@@ -1,5 +1,7 @@
+'use strict';
+
 var console = require('console');
-var webpack = require("webpack");
+var webpack = require('webpack');
 var path = require('path');
 var MemoryFS = require('memory-fs');
 
@@ -16,14 +18,14 @@ function bundle(dataPath, fileName, options, callBack) {
         version: false,
         hash: false
       }
-    }
+    };
   }
 
 
   var webpackConfig = {
     entry: dataPath,
     output: {
-      path: "/build",
+      path: '/build',
       filename: fileName
     },
     module: {
@@ -31,12 +33,12 @@ function bundle(dataPath, fileName, options, callBack) {
         {
           test: /\.js$/,
           exclude: [
-            path.resolve(dataPath, "_package"),
-            path.resolve(dataPath, "node_modules")
+            path.resolve(dataPath, '_package'),
+            path.resolve(dataPath, 'node_modules')
           ],
-          loader: "babel-loader",
+          loader: 'babel-loader',
           options: {
-            presets: [["env", {"targets": {"node":  "current"}}]]
+            presets: [['env', {'targets': {'node':  'current'}}]]
           }
         }
       ]
@@ -50,14 +52,20 @@ function bundle(dataPath, fileName, options, callBack) {
 
     // handleFatalError
     var error = err;
-    if (error) return callBack(error);
+    if (error) {
+      return callBack(error);
+    }
 
     var info = stats.toJson();
 
     // handleSoftErrors
-    if (stats.hasErrors()) error = info.errors;
+    if (stats.hasErrors()) {
+      error = info.errors;
+    }
     // handleWarnings
-    if (stats.hasWarnings()) error = info.warnings;
+    if (stats.hasWarnings()) {
+      error = info.warnings;
+    }
 
     console.log(stats.toString(options.stats));
 
@@ -66,4 +74,4 @@ function bundle(dataPath, fileName, options, callBack) {
   });
 }
 
-module.exports = bundle
+module.exports = bundle;
