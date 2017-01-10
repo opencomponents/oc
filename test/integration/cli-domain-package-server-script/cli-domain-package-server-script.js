@@ -23,7 +23,7 @@ describe('cli : domain : package-server-script', function(){
 
   afterEach(function(done){
     if(fs.existsSync(componentPath)) {
-      fs.removeSync(componentPath);
+      // fs.removeSync(componentPath);
     }
     done();
   });
@@ -31,7 +31,6 @@ describe('cli : domain : package-server-script', function(){
   describe('when packaging component\'s server.js', function(){
     this.timeout(10000);
     describe('when component does not require any json', function(){
-
       var serverContent = 'module.exports.data=function(context,cb){return cb(null, {name:\'John\'}); };'
 
       beforeEach(function(done){
@@ -85,6 +84,35 @@ describe('cli : domain : package-server-script', function(){
           },
           function(err, res){
             expect(err.toString().match(/Unexpected token,.*\(3:19\)/)).to.be.ok;
+            done();
+          }
+        )
+      });
+    });
+
+    describe.only('when component uses es2015 javascript syntax', function(){
+      var serverContent = 'const {first, last} = {first: "John", last: "Doe"};\nexport const data = (context,cb) => cb(null, context, first, last)';
+
+      beforeEach(function(done){
+        fs.writeFileSync(path.resolve(componentPath, serverName), serverContent)
+        done();
+      });
+
+      it('should throw an error with error details', function(done){
+        packageServerScript(
+          {
+            componentPath: componentPath,
+            ocOptions: {
+              files: {
+                data: serverName
+              }
+            },
+            publishPath: publishPath,
+            bundler: bundlerOptions
+          },
+          function(err, res){
+            console.log(res)
+            // expect(err.toString().match(/Unexpected token,.*\(3:19\)/)).to.be.ok;
             done();
           }
         )
