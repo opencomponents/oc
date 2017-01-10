@@ -10,7 +10,7 @@ module.exports = function(params, callback){
   var fileName = 'server.js';
   // var serverContent = fs.readFileSync(dataPath).toString();
 
-  bundle(dataPath, fileName, function(err, bundledServer){
+  bundle(dataPath, fileName, params.bundler, function(err, bundledServer){
     if (err) {
       callback(err)
     } else {

@@ -10,6 +10,7 @@ var serverName = 'server.js';
 var componentName = 'component';
 var componentPath = path.resolve(__dirname, componentName);
 var publishPath = path.resolve(componentPath, '_package');
+var bundlerOptions = { stats: "errors-only" }
 
 describe('cli : domain : package-server-script', function(){
   beforeEach(function(done){
@@ -47,7 +48,8 @@ describe('cli : domain : package-server-script', function(){
                 data: serverName
               }
             },
-            publishPath: publishPath
+            publishPath: publishPath,
+            bundler: bundlerOptions
           },
           function(err, res){
             if (err) throw err
@@ -78,7 +80,8 @@ describe('cli : domain : package-server-script', function(){
                 data: serverName
               }
             },
-            publishPath: publishPath
+            publishPath: publishPath,
+            bundler: bundlerOptions
           },
           function(err, res){
             expect(err.toString().match(/Unexpected token,.*\(3:19\)/)).to.be.ok;

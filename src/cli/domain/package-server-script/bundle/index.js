@@ -5,7 +5,20 @@ var MemoryFS = require('memory-fs');
 
 var memoryFs = new MemoryFS();
 
-function bundle(dataPath, fileName, callBack) {
+function bundle(dataPath, fileName, options, callBack) {
+
+  if (typeof options === 'function') {
+    callBack = options;
+    options = {
+      stats: {
+        chunks: false,
+        colors: true,
+        version: false,
+        hash: false
+      }
+    }
+  }
+
 
   var webpackConfig = {
     entry: dataPath,
@@ -46,12 +59,7 @@ function bundle(dataPath, fileName, callBack) {
     // handleWarnings
     if (stats.hasWarnings()) error = info.warnings;
 
-    console.log(stats.toString({
-      chunks: false,
-      colors: true,
-      version: false,
-      hash: false
-    }));
+    console.log(stats.toString(options.stats));
 
     var serverContentBundled = memoryFs.readFileSync('/build/server.js', 'UTF8');
     callBack(error, serverContentBundled);
