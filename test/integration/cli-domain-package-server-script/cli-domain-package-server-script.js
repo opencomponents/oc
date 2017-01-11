@@ -72,7 +72,7 @@ describe('cli : domain : package-server-script', function(){
       });
     });
 
-    describe('when component does not require any json', function(){
+    describe('when component does not require any module', function(){
       var serverContent = 'module.exports.data=function(context,cb){return cb(null, {name:\'John\'}); };';
 
       beforeEach(function(done){
@@ -187,7 +187,7 @@ describe('cli : domain : package-server-script', function(){
         done();
       });
 
-      it('should save compiled data provider encapsulating js module content', function(done){
+      it('should transpile it to es2015 through Babel', function(done){
         packageServerScript(
           {
             componentPath: componentPath,
