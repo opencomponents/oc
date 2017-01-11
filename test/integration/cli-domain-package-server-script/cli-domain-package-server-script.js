@@ -11,7 +11,7 @@ var componentName = 'component';
 var componentPath = path.resolve(__dirname, componentName);
 var publishPath = path.resolve(componentPath, '_package');
 var bundlerOptions = {
-  stats: 'none'
+  stats: 'errors-only'
 };
 
 describe('cli : domain : package-server-script', function(){
@@ -31,9 +31,9 @@ describe('cli : domain : package-server-script', function(){
   });
 
   describe('when packaging component\'s server.js', function(){
-    this.timeout(10000);
+    this.timeout(15000);
 
-    describe('when component does not require any json', function(){
+    describe('when component does not require any module', function(){
       var serverContent = 'module.exports.data=function(context,cb){return cb(null, {name:\'John\'}); };';
 
       beforeEach(function(done){
@@ -103,7 +103,7 @@ describe('cli : domain : package-server-script', function(){
         done();
       });
 
-      it('should throw an error with error details', function(done){
+      it('should transpile it to es2015 through Babel', function(done){
         packageServerScript(
           {
             componentPath: componentPath,
@@ -116,6 +116,7 @@ describe('cli : domain : package-server-script', function(){
             bundler: bundlerOptions
           },
           function(err, res){
+            // check for const and arrow function being removed/replaced
             // console.log(res);
             // expect(err.toString().match(/Unexpected token,.*\(3:19\)/)).to.be.ok;
             done();
@@ -123,6 +124,41 @@ describe('cli : domain : package-server-script', function(){
         );
       });
     });
+
+    describe('when component require a json file', function(){
+      var user = {first: 'John',last:'Doe'};
+      var jsonContent = JSON.stringify(user);
+      var serverContent = 'var user = require(\'./user\');\nmodule.exports.data=function(){return user.first;};';
+
+      beforeEach(function(done){
+        fs.writeFileSync(path.resolve(componentPath, 'user.json'), jsonContent);
+        fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
+        done();
+      });
+
+      it('should save compiled and minified data provider encapsulating json content', function(done){
+        packageServerScript(
+          {
+            componentPath: componentPath,
+            ocOptions: {
+              files: {
+                data: serverName
+              }
+            },
+            publishPath: publishPath,
+            bundler: bundlerOptions
+          },
+          function(err, res){
+            var name = user.first;
+            var bundle = require(path.resolve(publishPath, res.src));
+            expect(bundle.data()).to.be.equal(name);
+            done();
+          }
+        );
+      });
+    });
+
+
 
 
   });

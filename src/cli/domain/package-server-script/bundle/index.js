@@ -27,7 +27,8 @@ function bundle(dataPath, fileName, options, callBack) {
       entry: dataPath,
       output: {
         path: '/build',
-        filename: fileName
+        filename: fileName,
+        libraryTarget: 'commonjs2'
       }
     },
     config

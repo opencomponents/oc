@@ -4,14 +4,15 @@ var webpack = require('webpack');
 
 var config = {
   module: {
+    externals: /^[a-z@][a-z\-\/0-9]+$/,
     loaders: [
       {
         test: /\.json$/,
-        loader: 'json-loader',
-        exclude: /node_modules/
+        exclude: /node_modules/,
+        loader: 'json-loader'
       },
       {
-        test: /\.jsx?$/,
+        test: /\.js?$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
         query: {

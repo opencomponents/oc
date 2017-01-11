@@ -65,6 +65,7 @@
     "fs-extra": "0.30.0",
     "handlebars": "4.0.5",
     "jade": "1.11.0",
+    "json-loader": "0.5.4",
     "memory-fs": "0.4.1",
     "minimal-request": "2.2.0",
     "multer": "0.1.4",

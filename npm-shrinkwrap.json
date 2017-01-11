@@ -1427,6 +1427,11 @@
         }
       }
     },
+    "json-loader": {
+      "version": "0.5.4",
+      "from": "json-loader@0.5.4",
+      "resolved": "https://registry.npmjs.org/json-loader/-/json-loader-0.5.4.tgz"
+    },
     "memory-fs": {
       "version": "0.4.1",
       "from": "memory-fs@0.4.1",
