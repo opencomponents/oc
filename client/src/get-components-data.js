@@ -5,11 +5,103 @@ var request = require('minimal-request');
 
 var settings = require('./settings');
 var _ = require('./utils/helpers');
+var url = require('url');
 
 module.exports = function(config){
 
-  return function(toDo, options, cb){
+  var handleErrorResponse = function(requestDetails, error, response, components) {
+    var errorDetails = error ? error.toString() : undefined;
 
+    if (response && response.error) {
+      if (errorDetails) {
+        errorDetails = format('{0} {1}', errorDetails, response.error); 
+      } else {
+        errorDetails = response.error;
+      }
+    }
+    
+    if (!errorDetails) {
+      errorDetails = settings.emptyResponse;
+    }
+
+    var responses = [];
+    _.each(components, function(){
+      responses.push({
+        response: {
+          error: format(settings.connectionError, JSON.stringify(requestDetails), errorDetails)
+        }
+      });
+    });
+    
+    return responses;
+  };
+
+  var performPost = function(endpoint, serverRendering, options, callback) {
+    var requestDetails = {
+      url: endpoint,
+      method: 'post',
+      headers: options.headers,
+      timeout: options.timeout,
+      json: true,
+      body: {
+        components: serverRendering.components,
+        parameters: options.parameters || {}
+      }
+    };
+
+    request(requestDetails, function(error, responses) {
+      if(!!error || !responses || _.isEmpty(responses)){
+        responses = handleErrorResponse(requestDetails, error, responses, serverRendering.components);
+      }
+
+      callback(responses);
+    });
+  };
+
+  var performGet = function(endpoint, serverRendering, options, callback) {
+    var component = serverRendering.components[0];
+    var urlPath = component.name + (component.version ? '/' + component.version : '');
+    var queryString;
+
+    if (options.parameters) {
+      queryString = Object
+        .keys(options.parameters)
+        .map(function(key) {
+          return format('{0}={1}', key, encodeURIComponent(options.parameters[key]));
+        })
+        .reduce(function(a, b) {
+          if (!a) {
+            return b;
+          } else {
+            return format('{0}&{1}', a, b);
+          }
+        }, null);
+    }
+
+    var requestDetails = {
+      url: url.resolve(endpoint, urlPath + (queryString ? '?' + queryString : '')),
+      method: 'get',
+      headers: options.headers,
+      timeout: options.timeout,
+      json: true
+    };
+
+    request(requestDetails, function(error, responses) {
+      if(!!error || !responses || _.isEmpty(responses)) {
+        responses = handleErrorResponse(requestDetails, error, responses, serverRendering.components);
+      } else {
+        //Prepare the response in case the request is a GET for a single component
+        responses = [{
+          response: responses,
+          status: 200
+        }];
+      }
+
+      callback(responses);
+    });
+  };
+
+  return function(toDo, options, cb){
     var serverRenderingFail = settings.serverSideRenderingFail,
         serverRendering = { components: [], positions: [] },
         serverRenderingEndpoint;
@@ -44,31 +136,9 @@ module.exports = function(config){
       return cb(serverRenderingFail);
     }
 
-    var requestDetails = {
-      url: serverRenderingEndpoint,
-      method: 'post',
-      headers: options.headers,
-      timeout: options.timeout,
-      json: true,
-      body: {
-        components: serverRendering.components,
-        parameters: options.parameters || {}
-      }
-    };
-
-    request(requestDetails, function(error, responses){
-      if(!!error || !responses || _.isEmpty(responses)){
-        responses = [];
-        var errorDetails = !!error ? error.toString() : settings.emptyResponse;
-        _.each(serverRendering.components, function(){
-          responses.push({
-            response: {
-              error: format(settings.connectionError, JSON.stringify(requestDetails), errorDetails)
-            }
-          });
-        });
-      }
-
+    var performRequest = (serverRendering.components.length === 1) ? performGet : performPost;
+    
+    performRequest(serverRenderingEndpoint, serverRendering, options, function(responses) {
       _.each(responses, function(response, i){
         var action = toDo[serverRendering.positions[i]];
 

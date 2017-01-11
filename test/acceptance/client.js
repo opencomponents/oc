@@ -38,7 +38,8 @@ describe('The node.js OC client', function(){
   var getRegExpFromJson = function(x){
     return JSON.stringify(x)
       .replace(/\+/g, '\\+')
-      .replace(/\[/g, '\\[');
+      .replace(/\[/g, '\\[')
+      .replace(/\?\?/g, '\\?'); //In our json regexp in order to preserve a single ? we are escaping it  with ??
   };
 
   describe('when initialised providing registries properties', function(){
@@ -185,6 +186,54 @@ describe('The node.js OC client', function(){
         
         it('should return null errors', function () {
           expect($errs).to.be.null;
+        });
+      });
+
+      describe('when the request body is malformed', function(){
+        var error, result;
+
+        before(function(done){
+          client.renderComponents([{
+            //Empty
+          }, {
+            //Empty
+          }], {disableFailoverRendering: true}, function(err, res){
+            error = err;
+            result = res;
+            done();
+          });
+        });
+
+        var expectedRequest = {
+          url: 'http://localhost:3030',
+          method: 'post',
+          headers: {
+            'user-agent': 'oc-client-(.*?)',
+            'accept': 'application/vnd.oc.unrendered+json'
+          },
+          timeout: 5,
+          json: true,
+          body: {
+            components: [{},{}],
+            parameters: {}
+          }
+        };
+
+        it('should contain a blank html response', function() {
+          expect(result).to.deep.equal(['', '']);
+        });
+        
+        it('should contain the error details', function() {
+          expect(error).to.be.Array;
+          expect(error.length).to.be.equal(2);
+
+          var exp = getRegExpFromJson(expectedRequest),
+              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\' + 
+                         '(400 The request body is malformed: component 0 must have name property, ' + 
+                         'component 1 must have name property\\)');
+
+          expect(error[0].toString()).to.match(expected);
+          expect(error[1].toString()).to.match(expected);
         });
       });
 
@@ -493,21 +542,14 @@ describe('The node.js OC client', function(){
     describe('when server-side rendering an existing component linked to a non responsive registry', function(){
 
       var expectedRequest = {
-        url: 'http://localhost:1234',
-        method: 'post',
+        url: 'http://localhost:1234/hello-world/~1.0.0',
+        method: 'get',
         headers: {
           'user-agent': 'oc-client-(.*?)',
           'accept': 'application/vnd.oc.unrendered+json'
         },
         timeout: 5,
-        json: true,
-        body: {
-          components: [{
-            name: 'hello-world',
-            version: '~1.0.0'
-          }],
-          parameters: {}
-        }
+        json: true
       };
 
       describe('when client-side failover rendering disabled', function(){
@@ -612,27 +654,15 @@ describe('The node.js OC client', function(){
         it('should contain the error details', function(){
 
           var expectedRequestWithExtraParams = {
-            url: 'http://localhost:1234',
-            method: 'post',
+            url: 'http://localhost:1234/hello-world/~1.0.0??hi=john',
+            method: 'get',
             headers: {
               'accept-language': 'da, en-gb;q=0.8, en;q=0.7',
               'user-agent': 'oc-client-(.*?)',
               'accept': 'application/vnd.oc.unrendered+json',
             },
             timeout: 5,
-            json: true,
-            body: {
-              components: [{
-                name: 'hello-world',
-                version: '~1.0.0',
-                parameters: {
-                  hi: 'john'
-                }
-              }],
-              parameters: {
-                hi: 'john'
-              }
-            }
+            json: true
           };
 
           var exp = getRegExpFromJson(expectedRequestWithExtraParams),
@@ -645,32 +675,56 @@ describe('The node.js OC client', function(){
 
     describe('when server-side rendering an existing component linked to a responsive registry', function(){
 
+      describe('when the component is missing', function() {
+        var error, result;
+
+        before(function(done){
+          client.renderComponent('non-existing-component', {
+            disableFailoverRendering: true
+          }, function(err, html){
+            error = err;
+            result = html;
+            done();
+          });
+        });
+
+        var expectedRequest = {
+          url: 'http://localhost:3030/non-existing-component',
+          method: 'get',
+          headers: {
+            'user-agent': 'oc-client-(.*?)',
+            'accept': 'application/vnd.oc.unrendered+json',
+          },
+          timeout: 5,
+          json: true
+        };
+
+        it('should contain a blank html response', function(){
+          expect(result).to.eql('');
+        });
+
+        it('should contain the error details', function(){
+          var exp = getRegExpFromJson(expectedRequest),
+              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed ' + 
+                         '\\(404 Component "non-existing-component" not found on local repository\\)');
+
+          expect(error.toString()).to.match(expected);
+        });
+      });
+
       describe('when the component times-out', function(){
 
         var error, result;
 
         var expectedRequest = {
-          url: 'http://localhost:3030',
-          method: 'post',
+          url: 'http://localhost:3030/errors-component??errorType=timeout&timeout=1000',
+          method: 'get',
           headers: {
             'user-agent': 'oc-client-(.*?)',
             'accept': 'application/vnd.oc.unrendered+json',
           },
           timeout: 0.01,
-          json: true,
-          body: {
-            components: [{
-              name: 'errors-component',
-              parameters: {
-                errorType: 'timeout',
-                timeout: 1000
-              }
-            }],
-            parameters: {
-              errorType: 'timeout',
-              timeout: 1000
-            }
-          }
+          json: true
         };
 
         before(function(done){

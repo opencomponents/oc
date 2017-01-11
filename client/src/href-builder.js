@@ -34,8 +34,8 @@ module.exports = function(config){
           registryUrl = clientRenderingEndpoint,
           registrySegment = registryUrl.slice(-1) === '/' ? registryUrl : (registryUrl + '/'),
           qs = !!component.parameters ? ('/?' + querystring.stringify(component.parameters)) : '';
-
-      return url.resolve(registrySegment, component.name) + versionSegment + qs;
+      
+      return url.resolve(registrySegment, component.name || '') + versionSegment + qs;
     }
   };
 };
