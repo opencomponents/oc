@@ -90,6 +90,21 @@
         }
       }
     },
+    "babel-core": {
+      "version": "6.21.0",
+      "from": "babel-core@6.21.0",
+      "resolved": "https://registry.npmjs.org/babel-core/-/babel-core-6.21.0.tgz"
+    },
+    "babel-loader": {
+      "version": "6.21.0",
+      "from": "babel-loader@6.2.10",
+      "resolved": "https://registry.npmjs.org/babel-loader/-/babel-loader-6.2.10.tgz"
+    },
+     "babel-preset-env": {
+      "version": "1.1.8",
+      "from": "babel-preset-env@1.1.8",
+      "resolved": "https://registry.npmjs.org/babel-preset-env/-/babel-preset-env-1.1.8.tgz"
+    },
     "clean-css": {
       "version": "3.4.18",
       "from": "clean-css@3.4.18",
@@ -1411,6 +1426,11 @@
           }
         }
       }
+    },
+    "memory-fs": {
+      "version": "0.4.1",
+      "from": "memory-fs@0.4.1",
+      "resolved": "https://registry.npmjs.org/memory-fs/-/memory-fs-0.4.1.tgz"
     },
     "minimal-request": {
       "version": "2.2.0",
@@ -3423,6 +3443,11 @@
           "resolved": "https://registry.npmjs.org/minimist/-/minimist-1.2.0.tgz"
         }
       }
+    },
+    "webpack": {
+      "version": "1.14.0",
+      "from": "webpack@1.14.0",
+      "resolved": "https://registry.npmjs.org/webpack/-/webpack-1.14.0.tgz"
     }
   }
 }

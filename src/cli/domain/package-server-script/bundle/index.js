@@ -29,16 +29,19 @@ function bundle(dataPath, fileName, options, callBack) {
       filename: fileName
     },
     module: {
-      rules: [
+      loaders: [
         {
-          test: /\.js$/,
-          exclude: [
-            path.resolve(dataPath, '_package'),
-            path.resolve(dataPath, 'node_modules')
-          ],
-          loader: 'babel-loader',
-          options: {
-            presets: [['env', {'targets': {'node':  'current'}}]]
+          test: /\.jsx?$/,
+          exclude: /node_modules/,
+          loader: 'babel',
+          query: {
+            'presets': [
+              ['env', {
+                'targets': {
+                  'node': 'current'
+                }
+              }]
+            ]
           }
         }
       ]
