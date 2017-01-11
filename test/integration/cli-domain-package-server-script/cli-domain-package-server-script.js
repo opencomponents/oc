@@ -73,7 +73,7 @@ describe('cli : domain : package-server-script', function(){
     });
 
     describe('when component does not require any module', function(){
-      var serverContent = 'module.exports.data=function(context,cb){return cb(null, {name:\'John\'}); };';
+      var serverContent = 'module.exports.data=function(context,cb){\nreturn cb(null, {name:\'John\'});\n};';
 
       beforeEach(function(done){
         fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
