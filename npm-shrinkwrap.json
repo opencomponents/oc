@@ -835,32 +835,10 @@
         }
       }
     },
-    "falafel": {
-      "version": "1.2.0",
-      "from": "falafel@1.2.0",
-      "resolved": "https://registry.npmjs.org/falafel/-/falafel-1.2.0.tgz",
-      "dependencies": {
-        "acorn": {
-          "version": "1.2.2",
-          "from": "acorn@>=1.0.3 <2.0.0",
-          "resolved": "https://registry.npmjs.org/acorn/-/acorn-1.2.2.tgz"
-        },
-        "foreach": {
-          "version": "2.0.5",
-          "from": "foreach@>=2.0.5 <3.0.0",
-          "resolved": "https://registry.npmjs.org/foreach/-/foreach-2.0.5.tgz"
-        },
-        "isarray": {
-          "version": "0.0.1",
-          "from": "isarray@0.0.1",
-          "resolved": "https://registry.npmjs.org/isarray/-/isarray-0.0.1.tgz"
-        },
-        "object-keys": {
-          "version": "1.0.9",
-          "from": "object-keys@>=1.0.6 <2.0.0",
-          "resolved": "https://registry.npmjs.org/object-keys/-/object-keys-1.0.9.tgz"
-        }
-      }
+    "falafel-loader": {
+      "version": "0.0.3",
+      "from": "falafel-loader@0.0.3",
+      "resolved": "https://registry.npmjs.org/falafel-loader/-/falafel-loader-0.0.3.tgz"
     },
     "form-data": {
       "version": "0.1.4",

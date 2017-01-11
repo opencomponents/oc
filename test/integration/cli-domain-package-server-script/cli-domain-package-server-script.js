@@ -11,7 +11,7 @@ var componentName = 'component';
 var componentPath = path.resolve(__dirname, componentName);
 var publishPath = path.resolve(componentPath, '_package');
 var bundlerOptions = {
-  stats: 'errors-only'
+  stats: 'none'
 };
 
 describe('cli : domain : package-server-script', function(){
@@ -34,7 +34,7 @@ describe('cli : domain : package-server-script', function(){
     this.timeout(15000);
 
     describe('when component does not require any module', function(){
-      var serverContent = 'module.exports.data=function(context,cb){return cb(null, {name:\'John\'}); };';
+      var serverContent = 'module.exports.data=function(context,cb){\nreturn cb(null, {name:\'John\'});\n};';
 
       beforeEach(function(done){
         fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
@@ -96,7 +96,7 @@ describe('cli : domain : package-server-script', function(){
     });
 
     describe('when component uses es2015 javascript syntax', function(){
-      var serverContent = 'const {first, last} = {first: "John", last: "Doe"};\nexport const data = (context,cb) => cb(null, context, first, last)';
+      var serverContent = 'const {first, last} = {first: "John", last: "Doe"};\nconst data = (context,cb) => cb(null, context, first, last)\nexport {data}';
 
       beforeEach(function(done){
         fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
@@ -157,6 +157,89 @@ describe('cli : domain : package-server-script', function(){
         );
       });
     });
+
+    describe.only('when component code includes a loop', function(){
+        var serverContent = 'module.exports.data=function(context,cb){ var x,y,z;'
+        + 'while(true){ x = 234; }'
+        + 'for(var i=1e12;;){ y = 546; }'
+        + 'do { z = 342; } while(true);'
+        + '}';
+
+      beforeEach(function(done){
+        fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
+        done();
+      });
+
+      it('should wrap while/do/for;; loops with an iterator limit', function(done){
+        packageServerScript(
+          {
+            componentPath: componentPath,
+            ocOptions: {
+              files: {
+                data: serverName
+              }
+            },
+            publishPath: publishPath,
+            bundler: bundlerOptions
+          },
+          function(err, res){
+            if (err) {
+              throw err;
+            }
+            // expect(res.type).to.equal('node.js');
+            // expect(res.src).to.equal('server.js');
+            // var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
+            // expect(res.hashKey).to.equal(hashBuilder.fromString(compiledContent));
+            done();
+          }
+        );
+      });
+    });
+
+
+
+//     describe('when component code includes a loop', function(){
+
+//       var serverjs = 'module.exports.data=function(context,cb){ var x,y,z;'
+//           + 'while(true){ x = 234; } '
+//           + 'for(var i=1e12;;){ y = 546; }'
+//           + 'do { z = 342; } while(true);'
+//           + 'return cb(null,data); };',
+//           result;
+
+//       beforeEach(function(done){
+
+//         initialise({
+//           readFileSync: sinon.stub().returns(serverjs),
+//           existsSync: sinon.stub().returns(false)
+//         });
+
+//         packageServerScript({
+//           componentPath: '/path/to/component/',
+//           ocOptions: {
+//             files: {
+//               data: 'server.js'
+//             }
+//           },
+//           publishPath: '/path/to/component/_package/'
+//         }, function(e, r){
+//           result = r;
+//           done();
+//         });
+//       });
+
+//       it('should wrap the while loop with an iterator limit (and convert it to a for loop)', function(){
+// expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var r,a,t,i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");r=234,i--}');
+//       });
+
+//       it('should wrap the for loop with an iterator limit', function(){
+//         expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");a=546,i--}');
+//       });
+
+//       it('should wrap the do loop with an iterator limit (and convert it to a for loop)', function(){
+//         expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");t=342,i--}');
+//       });
+//     });
 
 
 

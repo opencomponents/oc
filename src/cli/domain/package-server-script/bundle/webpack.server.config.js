@@ -1,6 +1,7 @@
 /*jshint camelcase:false */
 'use strict';
 var webpack = require('webpack');
+var wrapLoops = require('./wrapLoops');
 
 var config = {
   module: {
@@ -14,16 +15,19 @@ var config = {
       {
         test: /\.js?$/,
         exclude: /node_modules/,
-        loader: 'babel-loader',
-        query: {
-          'presets': [
-            ['env', {
-              'targets': {
-                'node': 0.10
-              }
-            }]
-          ]
-        }
+        loaders: [
+          'falafel-loader',
+          'babel-loader?' + JSON.stringify({
+            cacheDirectory: true,
+            'presets': [
+              ['env', {
+                'targets': {
+                  'node': 0.10
+                }
+              }]
+            ]
+          })
+        ],
       }
     ]
   },
@@ -39,7 +43,8 @@ var config = {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
     })
-  ]
+  ],
+  falafel: wrapLoops
 };
 
 module.exports = config;

@@ -8,7 +8,6 @@ var bundle = require('./bundle');
 module.exports = function(params, callback){
   var dataPath = path.join(params.componentPath, params.ocOptions.files.data);
   var fileName = 'server.js';
-  // var serverContent = fs.readFileSync(dataPath).toString();
 
   bundle(dataPath, fileName, params.bundler, function(err, bundledServer){
     if (err) {

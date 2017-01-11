@@ -60,7 +60,7 @@
     "dependency-graph": "0.5.0",
     "detective": "4.3.1",
     "express": "3.21.2",
-    "falafel": "1.2.0",
+    "falafel-loader": "0.0.3",
     "form-data": "0.1.4",
     "fs-extra": "0.30.0",
     "handlebars": "4.0.5",
