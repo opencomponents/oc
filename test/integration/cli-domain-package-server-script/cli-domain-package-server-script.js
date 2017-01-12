@@ -10,7 +10,7 @@ var serverName = 'server.js';
 var componentName = 'component';
 var componentPath = path.resolve(__dirname, componentName);
 var publishPath = path.resolve(componentPath, '_package');
-var bundlerOptions = {
+var webpackOptions = {
   stats: 'none'
 };
 
@@ -51,11 +51,47 @@ describe('cli : domain : package-server-script', function(){
               }
             },
             publishPath: publishPath,
-            bundler: bundlerOptions
+            webpack: webpackOptions
           },
           function(err, res){
             if (err) {
               throw err;
+            }
+            expect(res.type).to.equal('node.js');
+            expect(res.src).to.equal('server.js');
+            var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
+            expect(res.hashKey).to.equal(hashBuilder.fromString(compiledContent));
+            done();
+          }
+        );
+      });
+    });
+
+
+    describe.only('when component does require a module', function(){
+      var serverContent = 'var _=require(\'underscore\');\nmodule.exports.data=function(context,cb){\nreturn cb(null, {name:\'John\'});\n};';
+
+      beforeEach(function(done){
+        fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
+        done();
+      });
+
+      it('should save compiled data provider', function(done){
+        packageServerScript(
+          {
+            componentPath: componentPath,
+            ocOptions: {
+              files: {
+                data: serverName
+              }
+            },
+            publishPath: publishPath,
+            webpack: webpackOptions
+          },
+          function(err, res){
+            if (err) {
+              console.log(err);
+              done(err);
             }
             expect(res.type).to.equal('node.js');
             expect(res.src).to.equal('server.js');
@@ -85,7 +121,7 @@ describe('cli : domain : package-server-script', function(){
               }
             },
             publishPath: publishPath,
-            bundler: bundlerOptions
+            webpack: webpackOptions
           },
           function(err, res){
             expect(err.toString().match(/Unexpected token,.*\(3:19\)/)).to.be.ok;
@@ -113,7 +149,7 @@ describe('cli : domain : package-server-script', function(){
               }
             },
             publishPath: publishPath,
-            bundler: bundlerOptions
+            webpack: webpackOptions
           },
           function(err, res){
             // check for const and arrow function being removed/replaced
@@ -146,7 +182,7 @@ describe('cli : domain : package-server-script', function(){
               }
             },
             publishPath: publishPath,
-            bundler: bundlerOptions
+            webpack: webpackOptions
           },
           function(err, res){
             var name = user.first;
@@ -158,7 +194,7 @@ describe('cli : domain : package-server-script', function(){
       });
     });
 
-    describe.only('when component code includes a loop', function(){
+    describe('when component code includes a loop', function(){
         var serverContent = 'module.exports.data=function(context,cb){ var x,y,z;'
         + 'while(true){ x = 234; }'
         + 'for(var i=1e12;;){ y = 546; }'
@@ -180,7 +216,7 @@ describe('cli : domain : package-server-script', function(){
               }
             },
             publishPath: publishPath,
-            bundler: bundlerOptions
+            webpack: webpackOptions
           },
           function(err, res){
             if (err) {

@@ -1,7 +1,7 @@
 /*jshint camelcase:false */
 'use strict';
 var _ = require('underscore');
-var config = require('./webpack.server.config');
+var webpackConfig = require('./config');
 var console = require('console');
 var MemoryFS = require('memory-fs');
 var path = require('path');
@@ -9,32 +9,9 @@ var webpack = require('webpack');
 
 var memoryFs = new MemoryFS();
 
-function bundle(dataPath, fileName, options, callBack) {
-  if (typeof options === 'function') {
-    callBack = options;
-    options = {
-      stats: {
-        chunks: false,
-        colors: true,
-        version: false,
-        hash: false
-      }
-    };
-  }
-
-  var webpackConfig = _.extend(
-    {
-      entry: dataPath,
-      output: {
-        path: '/build',
-        filename: fileName,
-        libraryTarget: 'commonjs2'
-      }
-    },
-    config
-  );
-
-  var compiler = webpack(webpackConfig);
+module.exports = function bundle(params, callBack) {
+  var config = webpackConfig(params)
+  var compiler = webpack(config);
   compiler.outputFileSystem = memoryFs;
 
   compiler.run(function(err, stats){
@@ -47,18 +24,16 @@ function bundle(dataPath, fileName, options, callBack) {
     var info = stats.toJson();
     // handleSoftErrors
     if (stats.hasErrors()) {
-      error = info.errors;
+      error = info.errors.toString();
     }
     // handleWarnings
     if (stats.hasWarnings()) {
-      error = info.warnings;
+      error = info.warnings.toString();
     }
 
-    console.log(stats.toString(options.stats));
+    console.log(stats.toString('normal'));
 
     var serverContentBundled = memoryFs.readFileSync('/build/server.js', 'UTF8');
     callBack(error, serverContentBundled);
   });
 }
-
-module.exports = bundle;

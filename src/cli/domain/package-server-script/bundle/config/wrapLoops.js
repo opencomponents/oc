@@ -1,8 +1,9 @@
 'use strict';
 
-var CONST_MAX_ITERATIONS = require('../../../../resources/settings').maxLoopIterations;
 
-var wrapLoops = function (node) {
+var CONST_MAX_ITERATIONS = require('../../../../../resources/settings').maxLoopIterations;
+
+module.exports = function wrapLoops(node){
   var loopKeywords = ['WhileStatement', 'ForStatement', 'DoWhileStatement'];
 
   if(loopKeywords.indexOf(node.type) > -1){
@@ -24,5 +25,3 @@ var wrapLoops = function (node) {
     );
   }
 };
-
-module.exports = wrapLoops;
