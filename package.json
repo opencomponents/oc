@@ -62,6 +62,7 @@
     "fs-extra": "0.30.0",
     "handlebars": "4.0.5",
     "jade": "1.11.0",
+    "memory-fs": "^0.4.1",
     "minimal-request": "2.1.1",
     "multer": "0.1.4",
     "nice-cache": "0.0.5",
@@ -78,6 +79,7 @@
     "targz": "1.0.1",
     "uglify-js": "2.6.4",
     "underscore": "1.8.3",
-    "watch": "0.19.1"
+    "watch": "0.19.1",
+    "webpack": "^2.2.0-rc.3"
   }
 }
