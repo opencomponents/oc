@@ -12,27 +12,27 @@ var strings = require('../../../../../resources');
 
 
 module.exports = function externalDependenciesHandlers(dependencies){
-  var deps = dependencies || {}
+  var deps = dependencies || {};
 
   var missingExternalDependecy = function(dep, dependencies) {
     return !_.contains(_.keys(dependencies), dep);
-  }
+  };
 
   return [
     function(context, req, callback) {
       if (/^[a-z@][a-z\-\/0-9]+$/.test(req)) {
         var dependencyName = req;
         if (/\//g.test(dependencyName)) {
-          dependencyName = dependencyName.substring(0, dependencyName.indexOf("/"));
+          dependencyName = dependencyName.substring(0, dependencyName.indexOf('/'));
         }
         if (missingExternalDependecy(dependencyName, deps)) {
           return callback(new Error(format(strings.errors.cli.SERVERJS_DEPENDENCY_NOT_DECLARED, JSON.stringify(dependencyName))));
         }
       }
-      callback()
+      callback();
     },
     /^[a-z@][a-z\-\/0-9]+$/
-  ]
+  ];
 };
 
 

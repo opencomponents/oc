@@ -10,7 +10,7 @@ var webpack = require('webpack');
 var memoryFs = new MemoryFS();
 
 module.exports = function bundle(params, callBack) {
-  var config = webpackConfig(params)
+  var config = webpackConfig(params);
   var compiler = webpack(config);
   compiler.outputFileSystem = memoryFs;
 
@@ -39,4 +39,4 @@ module.exports = function bundle(params, callBack) {
     var serverContentBundled = memoryFs.readFileSync('/build/server.js', 'UTF8');
     callBack(warning, serverContentBundled);
   });
-}
+};

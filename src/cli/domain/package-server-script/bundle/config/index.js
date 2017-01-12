@@ -28,7 +28,7 @@ module.exports = function webpackConfigGenerator(params){
           loaders: [
             'falafel-loader',
             'babel-loader?' + JSON.stringify({
-              cacheDirectory: false,
+              cacheDirectory: true,
               'presets': [
                 ['env', {
                   'targets': {
@@ -43,13 +43,13 @@ module.exports = function webpackConfigGenerator(params){
     },
     plugins: [
       new webpack.optimize.OccurenceOrderPlugin(),
-      // new webpack.optimize.UglifyJsPlugin({
-      //   compressor: {
-      //     warnings: false,
-      //     screw_ie8: true
-      //   },
-      //   sourceMap: false
-      // }),
+      new webpack.optimize.UglifyJsPlugin({
+        compressor: {
+          warnings: false,
+          screw_ie8: true
+        },
+        sourceMap: false
+      }),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
       })

@@ -15,7 +15,7 @@ var webpackDefaults =  {
 };
 
 module.exports = function packageServerScript(params, callback){
-  var fileName = 'server.js'
+  var fileName = 'server.js';
   var publishPath = params.publishPath;
 
   var bundleParams = {

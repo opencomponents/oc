@@ -33,78 +33,9 @@ describe('cli : domain : package-server-script', function(){
   describe('when packaging component\'s server.js', function(){
     this.timeout(15000);
 
-    describe('when component does not require any module', function(){
-      var serverContent = 'module.exports.data=function(context,cb){\nreturn cb(null, {name:\'John\'});\n};';
-
-      beforeEach(function(done){
-        fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
-        done();
-      });
-
-      it('should save compiled data provider', function(done){
-        packageServerScript(
-          {
-            componentPath: componentPath,
-            ocOptions: {
-              files: {
-                data: serverName
-              }
-            },
-            publishPath: publishPath,
-            webpack: webpackOptions
-          },
-          function(err, res){
-            if (err) {
-              throw err;
-            }
-            expect(res.type).to.equal('node.js');
-            expect(res.src).to.equal('server.js');
-            var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
-            expect(res.hashKey).to.equal(hashBuilder.fromString(compiledContent));
-            done();
-          }
-        );
-      });
-    });
-
-
-    describe.only('when component does require a module', function(){
-      var serverContent = 'var _=require(\'underscore\');\nmodule.exports.data=function(context,cb){\nreturn cb(null, {name:\'John\'});\n};';
-
-      beforeEach(function(done){
-        fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
-        done();
-      });
-
-      it('should save compiled data provider', function(done){
-        packageServerScript(
-          {
-            componentPath: componentPath,
-            ocOptions: {
-              files: {
-                data: serverName
-              }
-            },
-            publishPath: publishPath,
-            webpack: webpackOptions
-          },
-          function(err, res){
-            if (err) {
-              console.log(err);
-              done(err);
-            }
-            expect(res.type).to.equal('node.js');
-            expect(res.src).to.equal('server.js');
-            var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
-            expect(res.hashKey).to.equal(hashBuilder.fromString(compiledContent));
-            done();
-          }
-        );
-      });
-    });
 
     describe('when component implements not-valid javascript', function(){
-      var serverContent = 'var data=require(\'request\');\nmodule.exports.data=function(context,cb){\nreturn cb(null,data; };';
+      var serverContent = '\nmodule.exports.data=function(context,cb){\nreturn cb(null,data; };';
 
       beforeEach(function(done){
         fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
@@ -124,22 +55,27 @@ describe('cli : domain : package-server-script', function(){
             webpack: webpackOptions
           },
           function(err, res){
-            expect(err.toString().match(/Unexpected token,.*\(3:19\)/)).to.be.ok;
-            done();
+            try {
+              expect(err.toString()).to.contain.contain('Unexpected token, expected , (3:19)');
+              return done();
+            } catch(e) {
+              return done(e);
+            }
+            return done('error');
           }
         );
       });
     });
 
-    describe('when component uses es2015 javascript syntax', function(){
-      var serverContent = 'const {first, last} = {first: "John", last: "Doe"};\nconst data = (context,cb) => cb(null, context, first, last)\nexport {data}';
+    describe('when component does not require any json', function(){
+      var serverContent = '\nmodule.exports.data=function(context,cb){\nreturn cb(null, {name:\'John\'});\n};';
 
       beforeEach(function(done){
         fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
         done();
       });
 
-      it('should transpile it to es2015 through Babel', function(done){
+      it('should save compiled data provider and return a hash for the script', function(done){
         packageServerScript(
           {
             componentPath: componentPath,
@@ -152,10 +88,19 @@ describe('cli : domain : package-server-script', function(){
             webpack: webpackOptions
           },
           function(err, res){
-            // check for const and arrow function being removed/replaced
-            // console.log(res);
-            // expect(err.toString().match(/Unexpected token,.*\(3:19\)/)).to.be.ok;
-            done();
+            if (err) {
+              return done(err);
+            }
+            try {
+              expect(res.type).to.equal('node.js');
+              expect(res.src).to.equal('server.js');
+
+              var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
+              expect(res.hashKey).to.equal(hashBuilder.fromString(compiledContent));
+              return done();
+            } catch(e) {
+              return done(e);
+            }
           }
         );
       });
@@ -185,10 +130,205 @@ describe('cli : domain : package-server-script', function(){
             webpack: webpackOptions
           },
           function(err, res){
-            var name = user.first;
-            var bundle = require(path.resolve(publishPath, res.src));
-            expect(bundle.data()).to.be.equal(name);
-            done();
+            if (err) {
+              return done(err);
+            }
+            try {
+              var name = user.first;
+              var bundle = require(path.resolve(publishPath, res.src));
+              expect(bundle.data()).to.be.equal(name);
+
+              var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
+              expect(compiledContent).to.not.contain('user');
+              return done();
+            } catch(e) {
+              return done(e);
+            }
+          }
+        );
+      });
+    });
+
+    describe('when component does require an npm module', function(){
+      var serverContent = 'var _ =require(\'underscore\');'
+        + '\nvar user = {name:\'John\'};\nmodule.exports.data=function(context,cb){'
+        + '\nreturn cb(null, _.has(user, \'name\'));\n};';
+
+      beforeEach(function(done){
+        fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
+        done();
+      });
+
+      it('should save compiled data provider', function(done){
+        var dependencies = {underscore: '1.8.3'};
+
+        packageServerScript(
+          {
+            componentPath: componentPath,
+            ocOptions: {
+              files: {
+                data: serverName
+              }
+            },
+            publishPath: publishPath,
+            webpack: webpackOptions,
+            dependencies: dependencies
+          },
+          function(err, res){
+            if (err) {
+              return done(err);
+            }
+            try {
+              expect(res.type).to.equal('node.js');
+              expect(res.src).to.equal('server.js');
+
+              var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
+              expect(res.hashKey).to.equal(hashBuilder.fromString(compiledContent));
+              return done();
+            } catch(e) {
+              return done(e);
+            }
+          }
+        );
+      });
+
+      describe('end required depenencies is not present in the package.json', function(){
+        it('should throw an error with details', function(done){
+          var dependencies = {lodash: '1.0.0'};
+
+          packageServerScript(
+            {
+              componentPath: componentPath,
+              ocOptions: {
+                files: {
+                  data: serverName
+                }
+              },
+              publishPath: publishPath,
+              webpack: webpackOptions,
+              dependencies: dependencies
+            },
+            function(err, res){
+              try {
+                expect(/Missing depenencies drom package.json => \"underscore\"/ig.test(err));
+                return done();
+              } catch(e) {
+                return done(e);
+              }
+            }
+          );
+        });
+      });
+    });
+
+    describe('when component does require a relative path from an npm module', function(){
+      var serverContent = 'var data=require(\'react-dom/server\');module.exports.data=function(context,cb){return cb(null,data); };';
+
+      beforeEach(function(done){
+        fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
+        done();
+      });
+
+      it('should throw an error when the dependency is not present in the package.json', function(done){
+        var dependencies = {'react': '15.4.2'};
+
+        packageServerScript(
+          {
+            componentPath: componentPath,
+            ocOptions: {
+              files: {
+                data: serverName
+              }
+            },
+            publishPath: publishPath,
+            webpack: webpackOptions,
+            dependencies: dependencies
+          },
+          function(err, res){
+            try {
+              expect(err.toString()).to.contain('Missing dependencies from package.json => \"react-dom\"');
+              return done();
+            } catch(e) {
+              return done(e);
+            }
+          }
+        );
+      });
+    });
+
+    describe('when component require a local js module', function(){
+      var jsContent = 'var user = {first: \'John\',last:\'Doe\'};\nmodule.exports = user';
+      var serverContent = 'var user = require(\'./user\');\nmodule.exports.data=function(){return user.first;};';
+
+      beforeEach(function(done){
+        fs.writeFileSync(path.resolve(componentPath, 'user.js'), jsContent);
+        fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
+        done();
+      });
+
+      it('should save compiled data provider encapsulating js module content', function(done){
+        packageServerScript(
+          {
+            componentPath: componentPath,
+            ocOptions: {
+              files: {
+                data: serverName
+              }
+            },
+            publishPath: publishPath,
+            webpack: webpackOptions
+          },
+          function(err, res){
+            if (err) {
+              return done(err);
+            }
+            try {
+              var name = 'John';
+              var bundle = require(path.resolve(publishPath, res.src));
+              expect(bundle.data()).to.be.equal(name);
+              return done();
+            } catch(e) {
+              return done(e);
+            }
+          }
+        );
+      });
+    });
+
+    describe('when component uses es2015 javascript syntax', function(){
+      var serverContent = 'const {first, last} = {first: "John", last: "Doe"};\nconst data = (context,cb) => cb(null, first, last)\nexport {data}';
+
+      beforeEach(function(done){
+        fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
+        done();
+      });
+
+      it('should transpile it to es2015 through Babel', function(done){
+        packageServerScript(
+          {
+            componentPath: componentPath,
+            ocOptions: {
+              files: {
+                data: serverName
+              }
+            },
+            publishPath: publishPath,
+            webpack: webpackOptions
+          },
+          function(err, res){
+            if (err) {
+              return done(err);
+            }
+            try {
+              var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
+              expect(compiledContent).to.not.contain('=>');
+              expect(compiledContent).to.not.contain('const');
+              expect(compiledContent).to.contain('var');
+              expect(compiledContent).to.contain('function');
+              return done();
+            } catch(e) {
+              return done(e);
+            }
           }
         );
       });
@@ -220,356 +360,20 @@ describe('cli : domain : package-server-script', function(){
           },
           function(err, res){
             if (err) {
-              throw err;
+              return done(err);
             }
-            // expect(res.type).to.equal('node.js');
-            // expect(res.src).to.equal('server.js');
-            // var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
-            // expect(res.hashKey).to.equal(hashBuilder.fromString(compiledContent));
-            done();
+            try {
+              var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
+              expect(compiledContent).to.contain('for(var r,a,t,i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");r=234,i--}');
+              expect(compiledContent).to.contain('for(var i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");a=546,i--}');
+              expect(compiledContent).to.contain('for(var i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");t=342,i--}');
+              done();
+            } catch(e) {
+              return done();
+            }
           }
         );
       });
     });
-
-
-
-//     describe('when component code includes a loop', function(){
-
-//       var serverjs = 'module.exports.data=function(context,cb){ var x,y,z;'
-//           + 'while(true){ x = 234; } '
-//           + 'for(var i=1e12;;){ y = 546; }'
-//           + 'do { z = 342; } while(true);'
-//           + 'return cb(null,data); };',
-//           result;
-
-//       beforeEach(function(done){
-
-//         initialise({
-//           readFileSync: sinon.stub().returns(serverjs),
-//           existsSync: sinon.stub().returns(false)
-//         });
-
-//         packageServerScript({
-//           componentPath: '/path/to/component/',
-//           ocOptions: {
-//             files: {
-//               data: 'server.js'
-//             }
-//           },
-//           publishPath: '/path/to/component/_package/'
-//         }, function(e, r){
-//           result = r;
-//           done();
-//         });
-//       });
-
-//       it('should wrap the while loop with an iterator limit (and convert it to a for loop)', function(){
-// expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var r,a,t,i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");r=234,i--}');
-//       });
-
-//       it('should wrap the for loop with an iterator limit', function(){
-//         expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");a=546,i--}');
-//       });
-
-//       it('should wrap the do loop with an iterator limit (and convert it to a for loop)', function(){
-//         expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");t=342,i--}');
-//       });
-//     });
-
-
-
-
   });
 });
-
-
-// OLD SPEC
-// ======================================
-
-// var expect = require('chai').expect;
-// var injectr = require('injectr');
-// var path = require('path');
-// var sinon = require('sinon');
-// var uglifyJs = require('uglify-js');
-// var _ = require('underscore');
-
-// var fsMock,
-//     packageServerScript;
-
-// var initialise = function(fs){
-
-//   fsMock = _.extend({
-//     existsSync: sinon.stub().returns(true),
-//     readFileSync: sinon.stub().returns('file content'),
-//     readJsonSync: sinon.stub().returns({ content: true }),
-//     writeFile: sinon.stub().yields(null, 'ok')
-//   }, fs || {});
-
-//   packageServerScript = injectr('../../src/cli/domain/package-server-script/index.js', {
-//     'fs-extra': fsMock,
-//     path: {
-//       extname: path.extname,
-//       join: path.join,
-//       resolve: function(){
-//         return _.toArray(arguments).join('/');
-//       }
-//     }
-//   });
-// };
-
-// describe.skip('cli : domain : package-server-script', function(){
-
-//   describe('when packaging component\'s server.js', function(){
-
-//     describe('when component implements not-valid javascript', function(){
-
-//       var error;
-//       var serverjs = 'var data=require(\'request\');\nmodule.exports.data=function(context,cb){\nreturn cb(null,data; };';
-
-//       beforeEach(function(done){
-
-//         initialise({ readFileSync: sinon.stub().returns(serverjs) });
-
-//         packageServerScript({
-//           componentPath: '/path/to/component/',
-//           ocOptions: {
-//             files: {
-//               data: 'myserver.js'
-//             }
-//           },
-//           publishPath: '/path/to/component/_package/'
-//         }, function(e, r){
-//           error = e;
-//           done();
-//         });
-//       });
-
-//       it('should throw an error with error details', function(){
-//         expect(error.toString()).to.equal('Error: Javascript error found in myserver.js [3,19]: SyntaxError: Unexpected token punc «;», expected punc «,»]');
-//       });
-//     });
-
-//     describe('when component does not require any json', function(){
-
-//       var result,
-//           serverjs = 'module.exports.data=function(context,cb){return cb(null, {name:\'John\'}); };';
-
-//       beforeEach(function(done){
-
-//         initialise({ readFileSync: sinon.stub().returns(serverjs) });
-
-//         packageServerScript({
-//           componentPath: '/path/to/component/',
-//           ocOptions: {
-//             files: {
-//               data: 'server.js'
-//             }
-//           },
-//           publishPath: '/path/to/component/_package/'
-//         }, function(e, r){
-//           result = r;
-//           done();
-//         });
-//       });
-
-//       it('should save compiled data provider', function(){
-//         expect(fsMock.writeFile.args[0][1]).to.equal('module.exports.data=function(n,e){return e(null,{name:"John"})};');
-//       });
-
-//       it('should return hash for script', function(){
-//         expect(result.hashKey).not.be.empty;
-//       });
-//     });
-
-//     describe('when component requires a json', function(){
-
-//       var requiredJson = { hello: 'world' },
-//           serverjs = 'var data = require(\'./someJson\'); module.exports.data=function(context,cb){return cb(null,{}); };';
-
-//       beforeEach(function(done){
-
-//         initialise({
-//           readFileSync: sinon.stub().returns(serverjs),
-//           readJsonSync: sinon.stub().returns(requiredJson)
-//         });
-
-//         packageServerScript({
-//           componentPath: '/path/to/component/',
-//           ocOptions: {
-//             files: {
-//               data: 'server.js'
-//             }
-//           },
-//           publishPath: '/path/to/component/_package/'
-//         }, done);
-//       });
-
-//       it('should save compiled and minified data provider encapsulating json content', function(){
-//         var written = fsMock.writeFile.args[0][1];
-
-//         expect(written).to.contain('var __sandboxedRequire=require,__localRequires={"./someJson":{hello:"world"}};'
-//           + 'require=function(e){return __localRequires[e]?__localRequires[e]:__sandboxedRequire(e)};var data=require("./someJson");'
-//           + 'module.exports.data=function(e,r){return r(null,{})};');
-//       });
-//     });
-
-//     describe('when component requires an npm module', function(){
-
-//       var error,
-//           serverjs = 'var data=require(\'request\');module.exports.data=function(context,cb){return cb(null,data); };';
-
-//       beforeEach(function(done){
-
-//         initialise({ readFileSync: sinon.stub().returns(serverjs) });
-
-//         packageServerScript({
-//           componentPath: '/path/to/component/',
-//           ocOptions: {
-//             files: {
-//               data: 'server.js'
-//             }
-//           },
-//           publishPath: '/path/to/component/_package/'
-//         }, function(e, r){
-//           error = e;
-//           done();
-//         });
-//       });
-
-//       it('should throw an error when the dependency is not present in the package.json', function(){
-//         expect(error.toString()).to.equal('Error: Missing dependencies from package.json => ["request"]');
-//       });
-//     });
-
-//     describe('when component requires a relative path from an npm module', function(){
-
-//       var error,
-//           serverjs = 'var data=require(\'react-dom/server\');module.exports.data=function(context,cb){return cb(null,data); };';
-
-//       beforeEach(function(done){
-
-//         initialise({ readFileSync: sinon.stub().returns(serverjs) });
-
-//         packageServerScript({
-//           componentPath: '/path/to/component/',
-//           ocOptions: {
-//             files: {
-//               data: 'server.js'
-//             }
-//           },
-//           publishPath: '/path/to/component/_package/'
-//         }, function(e, r){
-//           error = e;
-//           done();
-//         });
-//       });
-
-//       it('should throw an error when the dependency is not present in the package.json', function(){
-//         expect(error.toString()).to.equal('Error: Missing dependencies from package.json => ["react-dom"]');
-//       });
-//     });
-
-//     describe('when component requires a js file', function(){
-
-//       var serverjs = 'var data=require(\'./hi.js\');module.exports.data=function(context,cb){return cb(null,data); };',
-//           error;
-
-//       beforeEach(function(done){
-
-//         initialise({ readFileSync: sinon.stub().returns(serverjs) });
-
-//         packageServerScript({
-//           componentPath: '/path/to/component/',
-//           ocOptions: {
-//             files: {
-//               data: 'server.js'
-//             }
-//           },
-//           publishPath: '/path/to/component/_package/'
-//         }, function(e, r){
-//           error = e;
-//           done();
-//         });
-//       });
-
-//       it('should not package component and respond with error', function(){
-//         expect(error.toString()).to.equal('Error: Requiring local js files is not allowed. Keep it small.');
-//       });
-//     });
-
-//     describe('when component requires a file without extension that is not found as json', function(){
-
-//       var serverjs = 'var data=require(\'./hi\');module.exports.data=function(context,cb){return cb(null,data); };',
-//           error;
-
-//       beforeEach(function(done){
-
-//         initialise({
-//           readFileSync: sinon.stub().returns(serverjs),
-//           existsSync: sinon.stub().returns(false)
-//         });
-
-//         packageServerScript({
-//           componentPath: '/path/to/component/',
-//           ocOptions: {
-//             files: {
-//               data: 'server.js'
-//             }
-//           },
-//           publishPath: '/path/to/component/_package/'
-//         }, function(e, r){
-//           error = e;
-//           done();
-//         });
-//       });
-
-//       it('should not package component and respond with error', function(){
-//         expect(error.toString()).to.equal('Error: ./hi.json not found. Only json files are require-able.');
-//       });
-//     });
-
-//     describe('when component code includes a loop', function(){
-
-//       var serverjs = 'module.exports.data=function(context,cb){ var x,y,z;'
-//           + 'while(true){ x = 234; } '
-//           + 'for(var i=1e12;;){ y = 546; }'
-//           + 'do { z = 342; } while(true);'
-//           + 'return cb(null,data); };',
-//           result;
-
-//       beforeEach(function(done){
-
-//         initialise({
-//           readFileSync: sinon.stub().returns(serverjs),
-//           existsSync: sinon.stub().returns(false)
-//         });
-
-//         packageServerScript({
-//           componentPath: '/path/to/component/',
-//           ocOptions: {
-//             files: {
-//               data: 'server.js'
-//             }
-//           },
-//           publishPath: '/path/to/component/_package/'
-//         }, function(e, r){
-//           result = r;
-//           done();
-//         });
-//       });
-
-//       it('should wrap the while loop with an iterator limit (and convert it to a for loop)', function(){
-// expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var r,a,t,i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");r=234,i--}');
-//       });
-
-//       it('should wrap the for loop with an iterator limit', function(){
-//         expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");a=546,i--}');
-//       });
-
-//       it('should wrap the do loop with an iterator limit (and convert it to a for loop)', function(){
-//         expect(fsMock.writeFile.firstCall.args[1]).to.contain('for(var i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");t=342,i--}');
-//       });
-//     });
-//   });
-// });

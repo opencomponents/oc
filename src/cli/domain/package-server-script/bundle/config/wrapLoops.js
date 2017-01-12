@@ -18,7 +18,7 @@ module.exports = function wrapLoops(node){
   }
 
   if(loopKeywords.indexOf(node.parent.type) > -1 && node.type === 'BlockStatement'){
-    node.update('{ if(__ITER <=0){ throw new Error("loop exceeded maximum '
+    node.update('{ if(__ITER <=0){ throw new Error("Loop exceeded maximum '
       + 'allowed iterations"); } '
       + node.source().substr(1).slice(0, -1)
       + ' __ITER--; }'
