@@ -8,22 +8,16 @@ module.exports = function(conf, repository){
   var getComponent = new GetComponentHelper(conf, repository);
 
   var setCustomHeaders = function(req, res, componentResponse) {
-    if (req.params.componentVersion === componentResponse.version) {
-      //strong version request
-      res.set(componentResponse.headers);
-    } else {
-      //weak version request, therefore skip the blacklisted headers if any
-      if (_.isEmpty(res.conf.customHeadersToSkipOnWeakVersion || [])) {
-          res.set(componentResponse.headers);
-      } else {
-        var headersToSkip = new Set(res.conf.customHeadersToSkipOnWeakVersion);
+    var headersToSet = componentResponse.headers;
 
-        _.forEach(Object.keys(componentResponse.headers), function(header) {
-          if (!headersToSkip.has(header.toLowerCase())) {
-            res.set(header, componentResponse.headers[header]);
-          }
-        });
-      }
+    if (req.params.componentVersion !== componentResponse.version && 
+        !_.isEmpty(res.conf.customHeadersToSkipOnWeakVersion)) 
+    {
+      headersToSet = _.omit(headersToSet, res.conf.customHeadersToSkipOnWeakVersion);
+    }
+    
+    if (!_.isEmpty(headersToSet)) {
+      res.set(headersToSet);
     }
   };
 

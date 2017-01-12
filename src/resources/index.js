@@ -26,6 +26,7 @@ module.exports = {
       COMPONENT_VERSION_ALREADY_FOUND_CODE: 'already_exists',
       COMPONENT_VERSION_NOT_VALID: 'Version "{0}" is not a valid semantic version.',
       COMPONENT_VERSION_NOT_VALID_CODE: 'version_not_valid',
+      COMPONENT_SET_HEADER_PARAMETERS_NOT_VALID: 'context.setHeader parameters must be strings',
       CONFIGURATION_DEPENDENCIES_MUST_BE_ARRAY: 'Registry configuration is not valid: dependencies must be an array',
       CONFIGURATION_EMPTY: 'Registry configuration is empty',
       CONFIGURATION_ONREQUEST_MUST_BE_FUNCTION: 'Registry configuration is not valid: registry.on\'s callback must be a function',

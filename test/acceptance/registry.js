@@ -103,7 +103,7 @@ describe('registry', function(){
       it('should return the component with custom headers', function() {
         expect(result.version).to.equal('1.0.0');
         expect(result.name).to.equal('hello-world-custom-headers');
-        expect(result.headers).to.eql({'Cache-Control': 'public max-age=3600', 'Test-Header': 'Test-Value'});
+        expect(result.headers).to.eql({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
         expect(headers).to.have.property('cache-control', 'public max-age=3600');
         expect(headers).to.have.property('test-header', 'Test-Value');
       });
@@ -120,7 +120,7 @@ describe('registry', function(){
       it('should return the component with custom headers', function() {
         expect(result.version).to.equal('1.0.0');
         expect(result.name).to.equal('hello-world-custom-headers');
-        expect(result.headers).to.eql({'Cache-Control': 'public max-age=3600', 'Test-Header': 'Test-Value'});
+        expect(result.headers).to.eql({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
         expect(headers).to.have.property('cache-control', 'public max-age=3600');
         expect(headers).to.have.property('test-header', 'Test-Value');
       });
@@ -156,7 +156,7 @@ describe('registry', function(){
         it('should return the component with the custom headers', function() {
           expect(result.version).to.equal('1.0.0');
           expect(result.name).to.equal('hello-world-custom-headers');
-          expect(result.headers).to.eql({'Cache-Control': 'public max-age=3600', 'Test-Header': 'Test-Value'});
+          expect(result.headers).to.eql({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
           expect(headers).to.have.property('cache-control', 'public max-age=3600');
           expect(headers).to.have.property('test-header', 'Test-Value');
         });
@@ -173,7 +173,7 @@ describe('registry', function(){
         it('should skip Cache-Control header', function() {
           expect(result.version).to.equal('1.0.0');
           expect(result.name).to.equal('hello-world-custom-headers');
-          expect(result.headers).to.eql({'Cache-Control': 'public max-age=3600', 'Test-Header': 'Test-Value'});
+          expect(result.headers).to.eql({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
           expect(headers).to.not.have.property('cache-control');
           expect(headers).to.have.property('test-header', 'Test-Value');
         });

@@ -245,8 +245,14 @@ module.exports = function(conf, repository){
               requestHeaders: options.headers,
               staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', ''),
               setHeader: function(header, value) {
-                responseHeaders = responseHeaders || {};
-                responseHeaders[header] = value;
+                if (!(typeof(header) === 'string' && typeof(value) === 'string')) {
+                  throw strings.errors.registry.COMPONENT_SET_HEADER_PARAMETERS_NOT_VALID;
+                }
+
+                if (header && value) {
+                  responseHeaders = responseHeaders || {};
+                  responseHeaders[header.toLowerCase()] = value;
+                }
               }
             };
 
