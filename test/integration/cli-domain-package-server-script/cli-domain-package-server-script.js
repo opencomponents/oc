@@ -43,6 +43,7 @@ describe('cli : domain : package-server-script', function(){
       });
 
       it('should throw an error with error details', function(done){
+<<<<<<< 139682f91d4265cf5a425a2e232c0e52a16f09f9
         try {
           packageServerScript(
             {
@@ -74,6 +75,118 @@ describe('cli : domain : package-server-script', function(){
 
     describe('when component does not require any module', function(){
       var serverContent = 'module.exports.data=function(context,cb){\nreturn cb(null, {name:\'John\'});\n};';
+=======
+        packageServerScript(
+          {
+            componentPath: componentPath,
+            ocOptions: {
+              files: {
+                data: serverName
+              }
+            },
+            publishPath: publishPath,
+            webpack: webpackOptions
+          },
+          function(err, res){
+            try {
+              expect(err.toString()).to.contain.contain('Unexpected token, expected , (3:19)');
+              return done();
+            } catch(e) {
+              return done(e);
+            }
+            return done('error');
+          }
+        );
+      });
+    });
+
+    describe('when component does not require any json', function(){
+      var serverContent = '\nmodule.exports.data=function(context,cb){\nreturn cb(null, {name:\'John\'});\n};';
+
+      beforeEach(function(done){
+        fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
+        done();
+      });
+
+      it('should save compiled data provider and return a hash for the script', function(done){
+        packageServerScript(
+          {
+            componentPath: componentPath,
+            ocOptions: {
+              files: {
+                data: serverName
+              }
+            },
+            publishPath: publishPath,
+            webpack: webpackOptions
+          },
+          function(err, res){
+            if (err) {
+              return done(err);
+            }
+            try {
+              expect(res.type).to.equal('node.js');
+              expect(res.src).to.equal('server.js');
+
+              var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
+              expect(res.hashKey).to.equal(hashBuilder.fromString(compiledContent));
+              return done();
+            } catch(e) {
+              return done(e);
+            }
+          }
+        );
+      });
+    });
+
+    describe('when component require a json file', function(){
+      var user = {first: 'John',last:'Doe'};
+      var jsonContent = JSON.stringify(user);
+      var serverContent = 'var user = require(\'./user\');\nmodule.exports.data=function(){return user.first;};';
+
+      beforeEach(function(done){
+        fs.writeFileSync(path.resolve(componentPath, 'user.json'), jsonContent);
+        fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
+        done();
+      });
+
+      it('should save compiled and minified data provider encapsulating json content', function(done){
+        packageServerScript(
+          {
+            componentPath: componentPath,
+            ocOptions: {
+              files: {
+                data: serverName
+              }
+            },
+            publishPath: publishPath,
+            webpack: webpackOptions
+          },
+          function(err, res){
+            if (err) {
+              return done(err);
+            }
+            try {
+              var name = user.first;
+              var bundle = require(path.resolve(publishPath, res.src));
+              expect(bundle.data()).to.be.equal(name);
+
+              var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
+              expect(compiledContent).to.not.contain('user');
+              return done();
+            } catch(e) {
+              return done(e);
+            }
+          }
+        );
+      });
+    });
+
+    describe('when component does require an npm module', function(){
+      var serverContent = 'var _ =require(\'underscore\');'
+        + '\nvar user = {name:\'John\'};\nmodule.exports.data=function(context,cb){'
+        + '\nreturn cb(null, _.has(user, \'name\'));\n};';
+>>>>>>> integration tests
 
       beforeEach(function(done){
         fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
@@ -187,7 +300,7 @@ describe('cli : domain : package-server-script', function(){
         done();
       });
 
-      it('should transpile it to es2015 through Babel', function(done){
+      it('should save compiled data provider encapsulating js module content', function(done){
         packageServerScript(
           {
             componentPath: componentPath,
