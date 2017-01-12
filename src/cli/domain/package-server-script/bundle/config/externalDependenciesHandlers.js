@@ -6,30 +6,33 @@
  *
 */
 'use strict';
-
+var format = require('stringformat');
 var _ = require('underscore');
+var strings = require('../../../../../resources');
 
 
 module.exports = function externalDependenciesHandlers(dependencies){
-  dependencies = dependencies || {}
+  var deps = dependencies || {}
 
   var missingExternalDependecy = function(dep, dependencies) {
     return !_.contains(_.keys(dependencies), dep);
   }
 
   return [
-    function(context, request, callback) {
-      console.log(request)
-      if (/^[a-z@][a-z\-\/0-9]+$/.test(request)) {
-        if(missingExternalDependecy(request, dependencies)) {
-          console.log('BOOM, ' + request + ' doesnt exist on package.json')
-        } else {
-          console.log('coool')
+    function(context, req, callback) {
+      if (/^[a-z@][a-z\-\/0-9]+$/.test(req)) {
+        var dependencyName = req;
+        if (/\//g.test(dependencyName)) {
+          dependencyName = dependencyName.substring(0, dependencyName.indexOf("/"));
         }
-
+        if (missingExternalDependecy(dependencyName, deps)) {
+          return callback(new Error(format(strings.errors.cli.SERVERJS_DEPENDENCY_NOT_DECLARED, JSON.stringify(dependencyName))));
+        }
       }
       callback()
     },
     /^[a-z@][a-z\-\/0-9]+$/
   ]
 };
+
+
