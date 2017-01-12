@@ -14,9 +14,11 @@ module.exports = function bundle(params, callBack) {
   var compiler = webpack(config);
   compiler.outputFileSystem = memoryFs;
 
-  compiler.run(function(err, stats){
+  compiler.run(function(error, stats){
+    var sofError;
+    var warning;
+
     // handleFatalError
-    var error = err;
     if (error) {
       return callBack(error);
     }
@@ -24,16 +26,17 @@ module.exports = function bundle(params, callBack) {
     var info = stats.toJson();
     // handleSoftErrors
     if (stats.hasErrors()) {
-      error = info.errors.toString();
+      sofError = info.errors.toString();
+      return callBack(sofError);
     }
     // handleWarnings
     if (stats.hasWarnings()) {
-      error = info.warnings.toString();
+      warning = info.warnings.toString();
     }
 
-    console.log(stats.toString('normal'));
+    console.log(stats.toString(params.webpack.stats));
 
     var serverContentBundled = memoryFs.readFileSync('/build/server.js', 'UTF8');
-    callBack(error, serverContentBundled);
+    callBack(warning, serverContentBundled);
   });
 }
