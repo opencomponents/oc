@@ -10,7 +10,7 @@ describe('registry', function(){
       result,
       error,
       oc = require('../../src/index'),
-      conf = {          
+      conf = {
         local: true,
         path: path.resolve('test/fixtures/components'),
         port: 3030,
@@ -112,7 +112,7 @@ describe('registry', function(){
       it('should respond with requested version', function(){
         expect(result.requestVersion).to.eql('');
       });
-	
+
       it('should respond with resolved version', function(){
         expect(result.version).to.eql('1.0.0');
       });
@@ -148,7 +148,7 @@ describe('registry', function(){
       it('should respond with requested version', function(){
         expect(result.requestVersion).to.eql('');
       });
-  
+
       it('should respond with resolved version', function(){
         expect(result.version).to.eql('1.0.0');
       });
@@ -297,7 +297,7 @@ describe('registry', function(){
     });
   });
 
-  describe.only('GET /underscore-component', function(){
+  describe('GET /underscore-component', function(){
 
     before(function(done){
       request({
@@ -416,7 +416,7 @@ describe('registry', function(){
           });
         });
       });
-      
+
       describe('when Accept header set to application/vnd.oc.unrendered+json', function(){
 
         before(function(done){
@@ -568,6 +568,6 @@ describe('registry', function(){
           });
         });
       });
-    });   
+    });
   });
 });
