@@ -43,7 +43,6 @@ describe('cli : domain : package-server-script', function(){
       });
 
       it('should throw an error with error details', function(done){
-<<<<<<< 139682f91d4265cf5a425a2e232c0e52a16f09f9
         try {
           packageServerScript(
             {
@@ -68,35 +67,8 @@ describe('cli : domain : package-server-script', function(){
           );
         } catch (e) {
           expect(e).to.contain.contain('Unexpected token, expected , (3:19)');
-          return done();
+          done();
         }
-      });
-    });
-
-    describe('when component does not require any module', function(){
-      var serverContent = 'module.exports.data=function(context,cb){\nreturn cb(null, {name:\'John\'});\n};';
-=======
-        packageServerScript(
-          {
-            componentPath: componentPath,
-            ocOptions: {
-              files: {
-                data: serverName
-              }
-            },
-            publishPath: publishPath,
-            webpack: webpackOptions
-          },
-          function(err, res){
-            try {
-              expect(err.toString()).to.contain.contain('Unexpected token, expected , (3:19)');
-              return done();
-            } catch(e) {
-              return done(e);
-            }
-            return done('error');
-          }
-        );
       });
     });
 
@@ -186,7 +158,6 @@ describe('cli : domain : package-server-script', function(){
       var serverContent = 'var _ =require(\'underscore\');'
         + '\nvar user = {name:\'John\'};\nmodule.exports.data=function(context,cb){'
         + '\nreturn cb(null, _.has(user, \'name\'));\n};';
->>>>>>> integration tests
 
       beforeEach(function(done){
         fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
