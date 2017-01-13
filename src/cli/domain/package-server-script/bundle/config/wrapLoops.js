@@ -8,7 +8,7 @@ module.exports = function wrapLoops(node){
 
   if(loopKeywords.indexOf(node.type) > -1){
     node.update(
-      'var __ITER = ' + CONST_MAX_ITERATIONS + ';\n'
+      'var __ITER = ' + CONST_MAX_ITERATIONS + ';'
       + node.source()
     );
   }

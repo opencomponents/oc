@@ -43,27 +43,32 @@ describe('cli : domain : package-server-script', function(){
       });
 
       it('should throw an error with error details', function(done){
-        packageServerScript(
-          {
-            componentPath: componentPath,
-            ocOptions: {
-              files: {
-                data: serverName
-              }
+        try {
+          packageServerScript(
+            {
+              componentPath: componentPath,
+              ocOptions: {
+                files: {
+                  data: serverName
+                }
+              },
+              publishPath: publishPath,
+              webpack: webpackOptions
             },
-            publishPath: publishPath,
-            webpack: webpackOptions
-          },
-          function(err, res){
-            try {
-              expect(err.toString()).to.contain.contain('Unexpected token, expected , (3:19)');
-              return done();
-            } catch(e) {
-              return done(e);
+            function(err, res){
+              try {
+                expect(err.toString()).to.contain.contain('Unexpected token, expected , (3:19)');
+                return done();
+              } catch(e) {
+                return done(e);
+              }
+              return done('error');
             }
-            return done('error');
-          }
-        );
+          );
+        } catch (e) {
+          expect(e).to.contain.contain('Unexpected token, expected , (3:19)');
+          done();
+        }
       });
     });
 

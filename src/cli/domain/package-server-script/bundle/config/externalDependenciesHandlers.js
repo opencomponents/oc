@@ -20,7 +20,7 @@ module.exports = function externalDependenciesHandlers(dependencies){
 
   return [
     function(context, req, callback) {
-      if (/^[a-z@][a-z\-\/0-9]+$/.test(req)) {
+      if (/^[a-z@][a-z\-\/0-9]+$/i.test(req)) {
         var dependencyName = req;
         if (/\//g.test(dependencyName)) {
           dependencyName = dependencyName.substring(0, dependencyName.indexOf('/'));
@@ -31,7 +31,7 @@ module.exports = function externalDependenciesHandlers(dependencies){
       }
       callback();
     },
-    /^[a-z@][a-z\-\/0-9]+$/
+    /^[a-z@][a-z\-\/0-9]+$/i
   ];
 };
 
