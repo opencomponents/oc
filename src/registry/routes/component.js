@@ -7,20 +7,6 @@ module.exports = function(conf, repository){
 
   var getComponent = new GetComponentHelper(conf, repository);
 
-  var setCustomHeaders = function(req, res, componentResponse) {
-    var headersToSet = componentResponse.headers;
-
-    if (req.params.componentVersion !== componentResponse.version && 
-        !_.isEmpty(res.conf.customHeadersToSkipOnWeakVersion)) 
-    {
-      headersToSet = _.omit(headersToSet, res.conf.customHeadersToSkipOnWeakVersion);
-    }
-    
-    if (!_.isEmpty(headersToSet)) {
-      res.set(headersToSet);
-    }
-  };
-
   return function(req, res){
     getComponent({
       conf: res.conf,
@@ -34,8 +20,12 @@ module.exports = function(conf, repository){
         res.errorDetails = result.response.error;
       }
 
-      if (result.response.headers) {
-        setCustomHeaders(req, res, result.response);
+      if (!_.isEmpty(result.response.headers)) {
+        res.set(result.response.headers);
+        
+        if (req.method === 'GET') {
+          delete result.response.headers;
+        }
       }
 
       return res.json(result.status, result.response);

@@ -465,7 +465,7 @@ describe('registry : routes : component', function(){
     });
   });
 
-  describe('when getting a component with server.js that sets custom headers with empty customHeadersToSkipOnWeakVersion', function() {
+  describe('when getting a component with server.js that sets custom headers with non-empty customHeadersToSkipOnWeakVersion', function() {
     var code, response, headers;
 
     before(function(done) {
@@ -500,9 +500,8 @@ describe('registry : routes : component', function(){
       expect(code).to.be.equal(200);
     });
 
-    it('should not set the HTTP response test-headers', function() {
-      expect(response.headers).to.not.be.null;      
-      expect(response.headers['test-header']).to.equal('test-value');
+    it('should not set response headers', function() {
+      expect(response.headers).to.be.undefined;
       expect(headers).to.be.undefined;      
     });
 

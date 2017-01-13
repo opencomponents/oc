@@ -4,6 +4,7 @@ var expect = require('chai').expect;
 var path = require('path');
 var request = require('minimal-request');
 var url = require('url');
+var _ = require('underscore');
 
 describe('registry', function(){
 
@@ -15,16 +16,16 @@ describe('registry', function(){
       conf;
 
   var next = function(done){
-    return function(e, r, h){
+    return function(e, r, d){
       error = e;
       result = r;
-      headers = h;
+      headers = d.response.headers;
       done();
     };
   };
 
-  before(function(done){
-    conf = {
+  var getDefaultTestConfiguration = function() {
+    return {
       local: true,
       path: path.resolve('test/fixtures/components'),
       port: 3030,
@@ -33,9 +34,15 @@ describe('registry', function(){
       verbosity: 0,
       dependencies: ['underscore']
     };
+  };
 
-    registry = new oc.Registry(conf);
-    registry.start(done);
+  var initializeRegistry = function(configuration, cb) {
+    registry = new oc.Registry(configuration);
+    registry.start(cb);
+  };
+
+  before(function(done){
+    initializeRegistry(getDefaultTestConfiguration(), done);
   });
 
   after(function(done){ registry.close(done); });
@@ -53,48 +60,9 @@ describe('registry', function(){
 
   describe('GET /hello-world-custom-headers', function() {
 
-    var httpGetRequest = function(options, callback) {
-      var callbackDone = false;
-      var requestData = url.parse(options.url);
-      requestData.headers = options.headers || {};
-      requestData.method = 'get';
-
-      var req = require('http').request(requestData).on('response', function(response) {
-        var body = [];
-
-        response.on('data', function(chunk){
-          body.push(chunk);
-        }).on('end', function(){
-          body = Buffer.concat(body);
-
-          if(!callbackDone){
-            callbackDone = true;
-            var error = response.statusCode !== 200 ? response.statusCode : null;
-
-            if (options.json) {
-              try {
-                callback(error, JSON.parse(body), response.headers);
-              } catch(e){
-                return callback('json parsing error');
-              }
-            } else {
-              callback(error, body, response.headers);
-            }
-          }
-        });
-      }).on('error', function(e){
-        if(!callbackDone){
-          callbackDone = true;
-          callback(e);
-        }
-      });
-
-      req.end();
-    };
-
     describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and strong version 1.0.0', function() {
       before(function(done) {
-        httpGetRequest({
+        request({
           url: 'http://localhost:3030/hello-world-custom-headers/1.0.0',
           json: true
         }, next(done));
@@ -103,7 +71,7 @@ describe('registry', function(){
       it('should return the component with custom headers', function() {
         expect(result.version).to.equal('1.0.0');
         expect(result.name).to.equal('hello-world-custom-headers');
-        expect(result.headers).to.eql({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
+        expect(result.headers).to.be.undefined;
         expect(headers).to.have.property('cache-control', 'public max-age=3600');
         expect(headers).to.have.property('test-header', 'Test-Value');
       });
@@ -111,7 +79,7 @@ describe('registry', function(){
 
     describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and weak version 1.x.x', function() {
       before(function(done) {
-        httpGetRequest({
+        request({
           url: 'http://localhost:3030/hello-world-custom-headers/1.x.x',
           json: true
         }, next(done));
@@ -120,7 +88,7 @@ describe('registry', function(){
       it('should return the component with custom headers', function() {
         expect(result.version).to.equal('1.0.0');
         expect(result.name).to.equal('hello-world-custom-headers');
-        expect(result.headers).to.eql({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
+        expect(result.headers).to.be.undefined;
         expect(headers).to.have.property('cache-control', 'public max-age=3600');
         expect(headers).to.have.property('test-header', 'Test-Value');
       });
@@ -129,25 +97,18 @@ describe('registry', function(){
     describe('with a custom configuration with customHeadersToSkipOnWeakVersion defined', function() {
       before(function(done) {
         registry.close();
+        initializeRegistry(_.extend(getDefaultTestConfiguration(), {customHeadersToSkipOnWeakVersion: ['Cache-Control']}), done);
+      });
 
-        conf = {          
-          local: true,
-          path: path.resolve('test/fixtures/components'),
-          port: 3030,
-          baseUrl: 'http://localhost:3030/',
-          env: { name: 'local' },
-          verbosity: 0,
-          dependencies: ['underscore'],
-          customHeadersToSkipOnWeakVersion: ['Cache-Control']
-        };
-
-        registry = new oc.Registry(conf);
-        registry.start(done);
+      after(function(done){ 
+        registry.close(function() {
+          initializeRegistry(getDefaultTestConfiguration(), done);
+        });
       });
 
       describe('when strong version is requested 1.0.0', function() {
         before(function(done) {
-          httpGetRequest({
+          request({
             url: 'http://localhost:3030/hello-world-custom-headers/1.0.0',
             json: true
           }, next(done));
@@ -156,7 +117,7 @@ describe('registry', function(){
         it('should return the component with the custom headers', function() {
           expect(result.version).to.equal('1.0.0');
           expect(result.name).to.equal('hello-world-custom-headers');
-          expect(result.headers).to.eql({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
+          expect(result.headers).to.be.undefined;
           expect(headers).to.have.property('cache-control', 'public max-age=3600');
           expect(headers).to.have.property('test-header', 'Test-Value');
         });
@@ -164,7 +125,7 @@ describe('registry', function(){
 
       describe('when weak version is requested 1.x.x', function() {
         before(function(done) {
-          httpGetRequest({
+          request({
             url: 'http://localhost:3030/hello-world-custom-headers/1.x.x',
             json: true
           }, next(done));
@@ -173,9 +134,133 @@ describe('registry', function(){
         it('should skip Cache-Control header', function() {
           expect(result.version).to.equal('1.0.0');
           expect(result.name).to.equal('hello-world-custom-headers');
-          expect(result.headers).to.eql({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
+          expect(result.headers).to.be.undefined;
           expect(headers).to.not.have.property('cache-control');
           expect(headers).to.have.property('test-header', 'Test-Value');
+        });
+      });
+    });
+  });
+
+  describe('POST /hello-world-custom-headers', function() {
+
+    describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and strong version 1.0.0', function() {
+      before(function(done) {
+        request({
+          url: 'http://localhost:3030',
+          json: true,
+          method: 'post',
+          body: {
+            components: [{
+              name: 'hello-world-custom-headers',
+              version: '1.0.0'
+            }]
+          }
+        }, next(done));
+      });
+
+      it('should not set HTTP custom headers', function() {
+        expect(headers).to.not.have.property('cache-control');
+        expect(headers).to.not.have.property('test-header');
+      });
+
+      it('should return the component with custom headers', function() {
+        expect(result[0].response.version).to.equal('1.0.0');
+        expect(result[0].response.name).to.equal('hello-world-custom-headers');
+        expect(result[0].response.headers).to.be.deep.equal({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
+      });
+    });
+
+    describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and weak version 1.x.x', function() {
+      before(function(done) {
+        request({
+          url: 'http://localhost:3030',
+          json: true,
+          method: 'post',
+          body: {
+            components: [{
+              name: 'hello-world-custom-headers',
+              version: '1.x.x'
+            }]
+          }
+        }, next(done));
+      });
+
+      it('should not set HTTP custom headers', function() {
+        expect(headers).to.not.have.property('cache-control');
+        expect(headers).to.not.have.property('test-header');
+      });
+
+      it('should return the component with custom headers in the response body', function() {
+        expect(result[0].response.version).to.equal('1.0.0');
+        expect(result[0].response.name).to.equal('hello-world-custom-headers');
+        expect(result[0].response.headers).to.be.deep.equal({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
+      });
+    });
+
+    describe('with a custom configuration with customHeadersToSkipOnWeakVersion defined', function() {
+      before(function(done) {
+        registry.close();
+        initializeRegistry(_.extend(getDefaultTestConfiguration(), {customHeadersToSkipOnWeakVersion: ['Cache-Control']}), done);
+      });
+
+      after(function(done){ 
+        registry.close(function() {
+          initializeRegistry(getDefaultTestConfiguration(), done);
+        });
+      });
+
+      describe('when strong version is requested 1.0.0', function() {
+        before(function(done) {
+          request({
+            url: 'http://localhost:3030',
+            json: true,
+            method: 'post',
+            body: {
+              components: [{
+                name: 'hello-world-custom-headers',
+                version: '1.0.0'
+              }]
+            }
+          }, next(done));
+        });
+
+        it('should not set HTTP custom headers', function() {
+          expect(headers).to.not.have.property('cache-control');
+          expect(headers).to.not.have.property('test-header');
+        });
+
+        it('should return the component with the custom headers', function() {
+          expect(result[0].response.version).to.equal('1.0.0');
+          expect(result[0].response.name).to.equal('hello-world-custom-headers');
+          expect(result[0].response.headers).to.be.deep.equal({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
+        });
+      });
+
+      describe('when weak version is requested 1.x.x', function() {
+        before(function(done) {
+          request({
+            url: 'http://localhost:3030',
+            json: true,
+            method: 'post',
+            body: {
+              components: [{
+                name: 'hello-world-custom-headers',
+                version: '1.x.x'
+              }]
+            }
+          }, next(done));
+        });
+
+        it('should not set HTTP custom headers', function() {
+          expect(headers).to.not.have.property('cache-control');
+          expect(headers).to.not.have.property('test-header');
+        });
+
+        it('should skip Cache-Control header', function() {
+          expect(result[0].response.version).to.equal('1.0.0');
+          expect(result[0].response.name).to.equal('hello-world-custom-headers');
+          expect(result[0].response.headers).to.be.deep.equal({'test-header': 'Test-Value'});
         });
       });
     });
