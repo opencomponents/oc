@@ -62,7 +62,7 @@
     "fs-extra": "0.30.0",
     "handlebars": "4.0.5",
     "jade": "1.11.0",
-    "minimal-request": "2.1.1",
+    "minimal-request": "2.2.0",
     "multer": "0.1.4",
     "nice-cache": "0.0.5",
     "node-dir": "0.1.14",
