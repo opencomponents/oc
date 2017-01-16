@@ -2,9 +2,9 @@
 'use strict';
 
 var webpack = require('webpack');
+var path = require('path');
 var wrapLoops = require('./wrapLoops');
 var externalDependenciesHandlers = require('./externalDependenciesHandlers');
-
 
 module.exports = function webpackConfigGenerator(params){
   return {
@@ -30,7 +30,7 @@ module.exports = function webpackConfigGenerator(params){
             'babel-loader?' + JSON.stringify({
               cacheDirectory: true,
               'presets': [
-                ['env', {
+                [require.resolve('babel-preset-env'), {
                   'targets': {
                     'node': 0.10
                   }
@@ -54,6 +54,9 @@ module.exports = function webpackConfigGenerator(params){
         'process.env.NODE_ENV': JSON.stringify('production')
       })
     ],
-    falafel: wrapLoops
+    falafel: wrapLoops,
+    resolveLoader: {
+      root: path.resolve(__dirname, '../../../../../../node_modules')
+    }
   };
 };

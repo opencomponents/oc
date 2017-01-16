@@ -67,7 +67,7 @@ describe('cli : domain : package-server-script', function(){
           );
         } catch (e) {
           expect(e).to.contain.contain('Unexpected token, expected , (3:19)');
-          done();
+          return done();
         }
       });
     });
