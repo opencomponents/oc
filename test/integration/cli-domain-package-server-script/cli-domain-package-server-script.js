@@ -340,7 +340,7 @@ describe('cli : domain : package-server-script', function(){
     });
 
     describe('when component code includes a loop', function(){
-        var serverContent = 'module.exports.data=function(context,cb){ var x,y,z;'
+      var serverContent = 'module.exports.data=function(context,cb){ var x,y,z;'
         + 'while(true){ x = 234; }'
         + 'for(var i=1e12;;){ y = 546; }'
         + 'do { z = 342; } while(true);'
