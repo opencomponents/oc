@@ -118,6 +118,16 @@ module.exports = function(conf, repository){
         });
       }
 
+      var filterCustomHeaders = function(headers, requestedVersion, actualVersion) {
+        if (!_.isEmpty(headers) &&
+            !_.isEmpty(conf.customHeadersToSkipOnWeakVersion) &&
+            requestedVersion !== actualVersion) 
+        {
+          headers = _.omit(headers, conf.customHeadersToSkipOnWeakVersion);
+        }
+        return headers;
+      };
+
       var returnComponent = function(err, data){
 
         if(componentCallbackDone){ return; }
@@ -162,6 +172,13 @@ module.exports = function(conf, repository){
           renderMode: renderMode
         });
 
+        if (responseHeaders) {
+          responseHeaders = filterCustomHeaders(responseHeaders, requestedComponent.version, component.version);
+          if (!_.isEmpty(responseHeaders)) {
+            response.headers = responseHeaders;
+          }
+        }
+
         if (isUnrendered) {
           callback({
             status: 200,
@@ -200,10 +217,6 @@ module.exports = function(conf, repository){
                     error: err
                   }
                 });
-              }
-
-              if (responseHeaders) {
-                response.headers = responseHeaders;
               }
 
               callback({
@@ -245,8 +258,14 @@ module.exports = function(conf, repository){
               requestHeaders: options.headers,
               staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', ''),
               setHeader: function(header, value) {
-                responseHeaders = responseHeaders || {};
-                responseHeaders[header] = value;
+                if (!(typeof(header) === 'string' && typeof(value) === 'string')) {
+                  throw strings.errors.registry.COMPONENT_SET_HEADER_PARAMETERS_NOT_VALID;
+                }
+
+                if (header && value) {
+                  responseHeaders = responseHeaders || {};
+                  responseHeaders[header.toLowerCase()] = value;
+                }
               }
             };
 

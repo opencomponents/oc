@@ -272,6 +272,7 @@ describe('registry : domain : repository', function(){
           'errors-component',
           'handlebars3-component',
           'hello-world',
+          'hello-world-custom-headers',
           'language',
           'no-containers',
           'underscore-component',

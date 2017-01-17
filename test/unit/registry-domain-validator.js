@@ -289,6 +289,46 @@ describe('registry : domain : validator', function(){
         });
       });
     });
+
+    describe('customHeadersToSkipOnWeakVersion', function() {
+      describe('when customHeadersToSkipOnWeakVersion is not an array', function() {
+        var conf = { 
+          customHeadersToSkipOnWeakVersion: 'test', 
+          publishAuth: false, 
+          s3: baseS3Conf 
+        };
+
+        it('should not be valid', function() {
+          expect(validate(conf).isValid).to.be.false;
+          expect(validate(conf).message).to.equal('Registry configuration is not valid: customHeadersToSkipOnWeakVersion must be an array of strings');
+        });
+      });
+
+      describe('when customHeadersToSkipOnWeakVersion is an array but contains non-string elements', function() {
+        var conf = { 
+          customHeadersToSkipOnWeakVersion: ['header1', 'header2', 3, 4], 
+          publishAuth: false, 
+          s3: baseS3Conf
+        };
+
+        it('should not be valid', function() {
+          expect(validate(conf).isValid).to.be.false;
+          expect(validate(conf).message).to.equal('Registry configuration is not valid: customHeadersToSkipOnWeakVersion must be an array of strings');
+        });
+      });
+
+      describe('when customHeadersToSkipOnWeakVersion is a non-empty array of strings', function() {
+        var conf = { 
+          customHeadersToSkipOnWeakVersion: ['header1', 'header2', 'header3'],
+          publishAuth: false, 
+          s3: baseS3Conf
+        };
+
+        it('should be valid', function() {
+          expect(validate(conf).isValid).to.be.true;
+        });
+      });
+    });
   });
 
   describe('when validating component request by parameter', function(){
