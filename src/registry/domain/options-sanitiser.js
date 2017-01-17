@@ -37,6 +37,9 @@ module.exports = function(input){
     options.verbosity = 0;
   }
 
+  options.customHeadersToSkipOnWeakVersion = (options.customHeadersToSkipOnWeakVersion || [])
+    .map(function(s) { return s.toLowerCase(); });
+
   options.port = process.env.PORT || options.port;
 
   return options;

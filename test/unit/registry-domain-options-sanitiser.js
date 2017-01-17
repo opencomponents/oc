@@ -23,4 +23,23 @@ describe('registry : domain : options-sanitiser', function(){
       expect(sanitise(options).verbosity).to.equal(3);
     });
   });
+
+  describe('customHeadersToSkipOnWeakVersion', function() {
+
+    describe('when customHeadersToSkipOnWeakVersion is undefined', function() {
+      var options = {};
+
+      it('should set it to an empty array', function() {
+        expect(sanitise(options).customHeadersToSkipOnWeakVersion).to.be.eql([]);
+      });
+    });
+
+    describe('when customHeadersToSkipOnWeakVersion contains valid elements', function() {
+      var options = {customHeadersToSkipOnWeakVersion: ['header1', 'HeAdEr-TwO', 'HEADER3']};
+
+      it('should convert the array elements to lower case', function() {
+        expect(sanitise(options).customHeadersToSkipOnWeakVersion).to.be.eql(['header1', 'header-two', 'header3']);
+      });
+    });
+  });
 });
