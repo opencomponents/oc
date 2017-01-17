@@ -1,5 +1,11 @@
 ## Change Log
 
+### v0.33.31
+- [#343](https://github.com/opentable/oc/pull/343) 333 - Implement customHeadersToSkipOnWeakVersion functionality
+- [#349](https://github.com/opentable/oc/pull/349) Upgrade minimal-request
+- [#348](https://github.com/opentable/oc/pull/348) [acceptance/registry] remove .only
+- [#344](https://github.com/opentable/oc/pull/344) Package server script cleanup
+
 ### v0.33.30
 - [#335](https://github.com/opentable/oc/pull/335) Add endpoint for getting list of components with their versions (#324)
 
