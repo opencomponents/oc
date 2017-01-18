@@ -9,10 +9,11 @@ var externalDependenciesHandlers = require('./externalDependenciesHandlers');
 module.exports = function webpackConfigGenerator(params){
   return {
     entry: params.dataPath,
+    target: 'node',
     output: {
       path: '/build',
       filename: params.fileName,
-      libraryTarget: 'commonjs2'
+      libraryTarget: 'commonjs2',
     },
     externals: externalDependenciesHandlers(params.dependencies),
     module: {
