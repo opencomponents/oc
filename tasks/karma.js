@@ -7,13 +7,13 @@ var customLaunchers = {
     base: 'SauceLabs',
     browserName: 'chrome',
     platform: 'Linux',
-    version: '47'
+    version: '48'
   },
   'ff': {
     base: 'SauceLabs',
     browserName: 'firefox',
     platform: 'Linux',
-    version: '43'
+    version: '45'
   },
   'android': {
     base: 'SauceLabs',
@@ -22,6 +22,12 @@ var customLaunchers = {
     version: '5.1',
     deviceName: 'Android Emulator',
     'device-orientation': 'portrait'
+  },
+  'edge14': {
+    base: 'SauceLabs',
+    browserName: 'MicrosoftEdge',
+    platform: 'Windows 10',
+    version: '14'
   },
   'ie11': {
     base: 'SauceLabs',
@@ -80,8 +86,8 @@ module.exports = {
     browsers: ['chrome', 'ff', 'android']
   },
   'sauce-windows': {
-    customLaunchers: _.pick(customLaunchers, 'ie11', 'ie10', 'ie9'),
-    browsers: ['ie11', 'ie10', 'ie9']
+    customLaunchers: _.pick(customLaunchers, 'edge14', 'ie11', 'ie10', 'ie9'),
+    browsers: ['edge14', 'ie11', 'ie10', 'ie9']
   },
   'sauce-ie9': {
     customLaunchers: _.pick(customLaunchers, 'ie9'),
