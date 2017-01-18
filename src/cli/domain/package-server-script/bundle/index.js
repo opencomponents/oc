@@ -1,10 +1,8 @@
 /*jshint camelcase:false */
 'use strict';
-var _ = require('underscore');
 var webpackConfig = require('./config');
 var console = require('console');
 var MemoryFS = require('memory-fs');
-var path = require('path');
 var webpack = require('webpack');
 
 var memoryFs = new MemoryFS();

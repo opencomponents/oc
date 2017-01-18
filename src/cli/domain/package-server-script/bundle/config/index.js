@@ -33,7 +33,7 @@ module.exports = function webpackConfigGenerator(params){
               'presets': [
                 [require.resolve('babel-preset-env'), {
                   'targets': {
-                    'node': 0.10
+                    'node': 4
                   }
                 }]
               ]
