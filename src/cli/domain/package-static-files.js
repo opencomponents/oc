@@ -16,8 +16,7 @@ var minifyFile = function(fileType, fileContent, ocOptions){
   if(fileType === '.js'){
     return uglifyJs.minify(fileContent, { fromString: true }).code;
   } else if(fileType === '.css'){
-    var options = (ocOptions.ie8css === true) ? { compatibility:'ie8' } : null;
-    return new CleanCss(options).minify(fileContent).styles;
+    return new CleanCss().minify(fileContent).styles;
   }
 
   return fileContent;
