@@ -119,7 +119,6 @@ Options:
 |`disableFailoverRendering`|`boolean`|no|Disables the automatic failover rendering in case the registry times-out (in case configuration.registries.clientRendering contains a valid value.) Default false|
 |`forwardAcceptLanguageToClient`|`boolean`|no|When not specified in config, defaults to false. When true, when doing client-side requests (normal or failover) appends a custom parameter to the browser's component hrefs so that the framework will ignore the browser's Accept-Language in favour of the query-string value|
 |`headers`|`object`|no|An object containing all the headers that must be forwarded to the component|
-|`ie8`|`boolean`|no|Default false, if true puts in place the necessary polyfills to make all the stuff work with ie8|
 |`parameters`|`object`|no|An object containing the parameters for component's request|
 |`registries`|`object`|no|The registries' endpoints (overrides the parameters defined during instantiation)|
 |`registries.serverRendering`|`string`|no|The baseUrl for server-side rendering requests (overrides the parameter defined during instantiation)|
