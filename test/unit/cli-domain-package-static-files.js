@@ -327,27 +327,6 @@ describe('cli : domain : packageStaticFiles', function(){
           expect(mocks['fs-extra'].writeFileSync.args[0][0]).to.equal('/path/to/component/_package/css/file.css');
         });
       });
-
-      describe('when minify=true and oc.ie8css=true', function(){
-        beforeEach(function(done){
-          initialise(mocks, {
-            componentPath: '/path/to/component',
-            minify: true,
-            ocOptions: { ie8css: true, files: { static: [ 'css' ]}},
-            publishPath: '/path/to/component/_package'
-          }, done);
-        });
-
-        afterEach(cleanup);
-
-        it('should not get an error', function(){
-          expect(error).to.be.null;
-        });
-
-        it('should minify the file with compatibility=ie8', function(){
-          expect(mocks['clean-css'].args[0][0]).to.be.eql({ compatibility: 'ie8' });
-        });
-      });
     });
   });
 });

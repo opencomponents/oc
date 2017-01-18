@@ -641,43 +641,6 @@ describe('The node.js OC client', function(){
           expect(error.toString()).to.match(expected);
         });
       });
-
-      describe('when client-side failover rendering enabled with ie8=true', function(){
-
-        var $componentScript,
-            $clientScript,
-            error,
-            options = { ie8: true };
-
-        before(function(done){
-          clientOfflineRegistry.renderComponent('hello-world', options, function(err, html){
-            error = err;
-            var $ = cheerio.load(html);
-            $componentScript = $('script.ocComponent');
-            $clientScript = $('script.ocClientScript');
-            done();
-          });
-        });
-
-        it('should include the client-side rendering script', function(){
-          expect($clientScript).to.have.length.above(0);
-        });
-
-        it('should include the non rendered scripted component', function(){
-          expect($componentScript).to.have.length.above(0);
-        });
-
-        it('should contain the component url', function(){
-          expect($componentScript.toString()).to.contain('http://localhost:1234/hello-world/~1.0.0');
-        });
-
-        it('should contain the error details', function(){
-          var exp = getRegExpFromJson(expectedRequest),
-              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
-
-          expect(error.toString()).to.match(expected);
-        });
-      });
     });
 
     describe('when server-side rendering an existing component linked to a responsive registry', function(){

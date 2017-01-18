@@ -2,9 +2,6 @@
 
 describe('oc-client : build', function(){
 
-  var nav = window.navigator.userAgent,
-      isIe8 = !!(nav.match(/MSIE 8/));
-
   var execute = function(parameters){
     return oc.build(parameters);
   };
@@ -44,10 +41,7 @@ describe('oc-client : build', function(){
       });
 
       it('should build the correct Href', function(){
-        var expectedHref = 'http://www.components.com/v2/myComponent/',
-            expected = isIe8 ? '<div data-oc-component="true" href="' + expectedHref + '"></div>' : 
-                             '<oc-component href="' + expectedHref + '"></oc-component>';
-
+        var expected = '<oc-component href="http://www.components.com/v2/myComponent/"></oc-component>';
         expect(result).toEqual(expected);
       });
     });
@@ -60,10 +54,7 @@ describe('oc-client : build', function(){
       });
 
       it('should build the correct Href', function(){
-        var expectedHref = 'http://www.components.com/v2/myComponent/',
-            expected = isIe8 ? '<div data-oc-component="true" href="' + expectedHref + '"></div>' : 
-                             '<oc-component href="' + expectedHref + '"></oc-component>';
-
+        var expected = '<oc-component href="http://www.components.com/v2/myComponent/"></oc-component>';
         expect(result).toEqual(expected);
       });
     });
@@ -82,8 +73,7 @@ describe('oc-client : build', function(){
 
       it('should build the correct Href', function(){
         var expectedHref = 'http://www.components.com/v2/myComponent/?hello=world&integer=123&boo=true',
-            expected = isIe8 ? '<div data-oc-component="true" href="' + expectedHref + '"></div>' : 
-                             '<oc-component href="' + expectedHref + '"></oc-component>';
+            expected = '<oc-component href="' + expectedHref + '"></oc-component>';
 
         expect(result).toEqual(expected);
       });
@@ -99,8 +89,7 @@ describe('oc-client : build', function(){
 
       it('should build the correct Href', function(){
         var expectedHref = 'http://www.components.com/v2/myComponent/1.0.X/',
-            expected = isIe8 ? '<div data-oc-component="true" href="' + expectedHref + '"></div>' : 
-                             '<oc-component href="' + expectedHref + '"></oc-component>';
+            expected = '<oc-component href="' + expectedHref + '"></oc-component>';
 
         expect(result).toEqual(expected);
       });
@@ -121,8 +110,7 @@ describe('oc-client : build', function(){
 
       it('should build the correct Href', function(){
         var expectedHref = 'http://www.components.com/v2/myComponent/1.2.3/?hello=world&integer=123&boo=true',
-            expected = isIe8 ? '<div data-oc-component="true" href="' + expectedHref + '"></div>' : 
-                             '<oc-component href="' + expectedHref + '"></oc-component>';
+            expected = '<oc-component href="' + expectedHref + '"></oc-component>';
 
         expect(result).toEqual(expected);
       });

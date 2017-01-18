@@ -31,7 +31,7 @@ var oc = oc || {};
 
   // Constants
   var CDNJS_BASEURL = 'https://cdnjs.cloudflare.com/ajax/libs/',
-      IE89_AJAX_POLYFILL_URL = CDNJS_BASEURL + 'jquery-ajaxtransport-xdomainrequest/1.0.3/jquery.xdomainrequest.min.js',
+      IE9_AJAX_POLYFILL_URL = CDNJS_BASEURL + 'jquery-ajaxtransport-xdomainrequest/1.0.3/jquery.xdomainrequest.min.js',
       HANDLEBARS_URL = CDNJS_BASEURL + 'handlebars.js/4.0.5/handlebars.runtime.min.js',
       JADE_URL = CDNJS_BASEURL + 'jade/1.11.0/runtime.min.js',
       JQUERY_URL = CDNJS_BASEURL + 'jquery/1.11.2/jquery.min.js',
@@ -57,7 +57,6 @@ var oc = oc || {};
       headScripts = [],
       noop = function(){},
       nav = $window.navigator.userAgent,
-      is8 = !!(nav.match(/MSIE 8/)),
       is9 = !!(nav.match(/MSIE 9/)),
       initialised = false,
       initialising = false,
@@ -216,7 +215,7 @@ var oc = oc || {};
       href = href.slice(0, -1);
     }
 
-    return is8 ? '<div data-oc-component="true" href="' + href + '"></div>' : '<' + OC_TAG + ' href="' + href + '"></' + OC_TAG + '>';
+    return '<' + OC_TAG + ' href="' + href + '"></' + OC_TAG + '>';
   };
 
   oc.events = {};
@@ -232,8 +231,8 @@ var oc = oc || {};
       initialising = true;
 
       var requirePolyfills = function($, cb){
-        if((is8 || is9) && !$.IE_POLYFILL_LOADED){
-          oc.require(IE89_AJAX_POLYFILL_URL, cb);
+        if(is9 && !$.IE_POLYFILL_LOADED){
+          oc.require(IE9_AJAX_POLYFILL_URL, cb);
         } else {
           cb();
         }
@@ -422,8 +421,7 @@ var oc = oc || {};
 
   oc.renderUnloadedComponents = function(){
     oc.ready(function(){
-      var selector = (is8 ? 'div[data-oc-component=true]' : OC_TAG),
-          $unloadedComponents = oc.$(selector + '[data-rendered!=true]'),
+      var $unloadedComponents = oc.$(OC_TAG + '[data-rendered!=true]'),
           toDo = $unloadedComponents.length;
 
       var done = function(cb){

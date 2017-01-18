@@ -18,11 +18,6 @@ module.exports = {
     return data.html;
   },
   unrenderedComponent: function(href, options){
-    if(!href){ return ''; }
-
-    var youCareAboutIe8 = !!options && !!options.ie8,
-        template = templates['componentUnrenderedTag' + (youCareAboutIe8 ? 'Ie8' : '')];
-
-    return format(template, href);
+    return href ? format(templates.componentUnrenderedTag, href) : '';
   }
 };
