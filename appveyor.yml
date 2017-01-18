@@ -15,8 +15,7 @@ environment:
 # Get the stable version of node
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm install -g npm@2.11.3
-  - set PATH=%APPDATA%\npm;%PATH%
+  - npm install -g npm@3
   - node --version
   - npm --version
   - npm install
