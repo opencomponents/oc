@@ -102,9 +102,9 @@ describe('cli : domain : package-server-script', function(){
 
               var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
               expect(res.hashKey).to.equal(hashBuilder.fromString(compiledContent));
-              return done();
+              done();
             } catch(e) {
-              return done(e);
+              done(e);
             }
           }
         );
@@ -145,9 +145,9 @@ describe('cli : domain : package-server-script', function(){
 
               var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
               expect(compiledContent).to.not.contain('user');
-              return done();
+              done();
             } catch(e) {
-              return done(e);
+              done(e);
             }
           }
         );
@@ -189,9 +189,9 @@ describe('cli : domain : package-server-script', function(){
 
               var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
               expect(res.hashKey).to.equal(hashBuilder.fromString(compiledContent));
-              return done();
+              done();
             } catch(e) {
-              return done(e);
+              done(e);
             }
           }
         );
@@ -214,12 +214,9 @@ describe('cli : domain : package-server-script', function(){
               dependencies: dependencies
             },
             function(err, res){
-              try {
-                expect(/Missing depenencies drom package.json => \"underscore\"/ig.test(err));
-                return done();
-              } catch(e) {
-                return done(e);
-              }
+              expect(err).to.not.be.null;
+              expect(err).to.contain('Missing dependencies from package.json => "underscore"');
+              done();
             }
           );
         });
@@ -250,12 +247,9 @@ describe('cli : domain : package-server-script', function(){
             dependencies: dependencies
           },
           function(err, res){
-            try {
-              expect(err.toString()).to.contain('Missing dependencies from package.json => \"react-dom\"');
-              return done();
-            } catch(e) {
-              return done(e);
-            }
+            expect(err).to.not.be.null;
+            expect(err.toString()).to.contain('Missing dependencies from package.json => "react-dom"');
+            done();
           }
         );
       });
@@ -291,9 +285,9 @@ describe('cli : domain : package-server-script', function(){
               var name = 'John';
               var bundle = require(path.resolve(publishPath, res.src));
               expect(bundle.data()).to.be.equal(name);
-              return done();
+              done();
             } catch(e) {
-              return done(e);
+              done(e);
             }
           }
         );
@@ -330,9 +324,9 @@ describe('cli : domain : package-server-script', function(){
               expect(compiledContent).to.not.contain('const');
               expect(compiledContent).to.contain('var');
               expect(compiledContent).to.contain('function');
-              return done();
+              done();
             } catch(e) {
-              return done(e);
+              done(e);
             }
           }
         );
@@ -374,7 +368,7 @@ describe('cli : domain : package-server-script', function(){
               expect(compiledContent).to.contain('for(var i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");t=342,i--}');
               done();
             } catch(e) {
-              return done();
+              done();
             }
           }
         );
