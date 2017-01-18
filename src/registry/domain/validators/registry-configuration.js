@@ -71,5 +71,19 @@ module.exports = function(conf){
     }
   }
 
+  if (conf.customHeadersToSkipOnWeakVersion) {
+    if (!_.isArray(conf.customHeadersToSkipOnWeakVersion)) {
+      return returnError(strings.errors.registry.CONFIGURATION_HEADERS_TO_SKIP_MUST_BE_STRING_ARRAY);
+    }
+
+    var hasNonStringElements = conf.customHeadersToSkipOnWeakVersion.find(function(element) {
+      return typeof(element) !== 'string';
+    });
+
+    if (hasNonStringElements) {
+      return returnError(strings.errors.registry.CONFIGURATION_HEADERS_TO_SKIP_MUST_BE_STRING_ARRAY);
+    }
+  }
+
   return response;
 };
