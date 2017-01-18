@@ -10,7 +10,7 @@
     "test": "grunt test"
   },
   "engines": {
-    "node": ">=0.10.35"
+    "node": ">=4"
   },
   "repository": {
     "type": "git",

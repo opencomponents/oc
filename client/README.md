@@ -5,7 +5,7 @@ Node.js client for [OpenComponents](https://github.com/opentable/oc)
 
 [![NPM](https://nodei.co/npm/oc-client.png?downloads=true)](https://npmjs.org/package/oc-client)
 
-Node.js version: **0.10.0** required
+Node.js version: **4** required
 
 Build status: Linux: [![Build Status](https://secure.travis-ci.org/opentable/oc.png?branch=master)](http://travis-ci.org/opentable/oc) | Windows: [![Build status](https://ci.appveyor.com/api/projects/status/8cklgw4hymutqrsg?svg=true)](https://ci.appveyor.com/project/matteofigus/oc)
 
@@ -196,8 +196,8 @@ client.renderComponents([{
   timeout: 3.0
 }, function(errors, htmls){
   console.log(html);
-  // => ["<div>Header</div>", 
-  //     "<p>Footer</p>", 
+  // => ["<div>Header</div>",
+  //     "<p>Footer</p>",
   //     "<oc-component href=\"\/\/registry.com\/advert\/?position=left\"><\/oc-component>"]
 });
 ```
