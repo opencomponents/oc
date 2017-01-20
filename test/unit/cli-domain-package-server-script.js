@@ -107,11 +107,11 @@ describe('cli : domain : package-server-script ', function(){
         webpack: { stats: 'none' },
         dependencies: {},
         fileName: 'server.js',
-        dataPath: '/Users/nbalestra/dev/oc/test/integration/cli-domain-package-server-script/component/server.js'
+        dataPath: '/path/to/server.js'
       });
 
-      it('should return a proper confifuration options for webpack', function(){
-        expect(config.entry).to.be.equal('/Users/nbalestra/dev/oc/test/integration/cli-domain-package-server-script/component/server.js');
+      it('should return a proper configuration options for webpack', function(){
+        expect(config.entry).to.be.equal('/path/to/server.js');
         expect(config.output.filename).to.be.equal('server.js');
         expect(config.externals).to.be.an('array');
       });

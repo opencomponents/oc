@@ -13,7 +13,7 @@ module.exports = function bundle(params, callBack) {
   compiler.outputFileSystem = memoryFs;
 
   compiler.run(function(error, stats){
-    var sofError;
+    var softError;
     var warning;
 
     // handleFatalError
@@ -24,8 +24,8 @@ module.exports = function bundle(params, callBack) {
     var info = stats.toJson();
     // handleSoftErrors
     if (stats.hasErrors()) {
-      sofError = info.errors.toString();
-      return callBack(sofError);
+      softError = info.errors.toString();
+      return callBack(softError);
     }
     // handleWarnings
     if (stats.hasWarnings()) {

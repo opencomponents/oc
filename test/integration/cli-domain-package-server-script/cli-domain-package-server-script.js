@@ -122,6 +122,11 @@ describe('cli : domain : package-server-script', function(){
         done();
       });
 
+      afterEach(function(done){
+        require.cache[path.resolve(publishPath, serverName)] = null;
+        done();
+      });
+
       it('should save compiled and minified data provider encapsulating json content', function(done){
         packageServerScript(
           {
@@ -197,7 +202,7 @@ describe('cli : domain : package-server-script', function(){
         );
       });
 
-      describe('end required depenencies is not present in the package.json', function(){
+      describe('and required dependencies are not present in the package.json', function(){
         it('should throw an error with details', function(done){
           var dependencies = {lodash: '1.0.0'};
 
@@ -231,27 +236,29 @@ describe('cli : domain : package-server-script', function(){
         done();
       });
 
-      it('should throw an error when the dependency is not present in the package.json', function(done){
-        var dependencies = {'react': '15.4.2'};
+      describe('and required dependencies are not present in the package.json', function(){
+        it('should throw an error with details', function(done){
+          var dependencies = {'react': '15.4.2'};
 
-        packageServerScript(
-          {
-            componentPath: componentPath,
-            ocOptions: {
-              files: {
-                data: serverName
-              }
+          packageServerScript(
+            {
+              componentPath: componentPath,
+              ocOptions: {
+                files: {
+                  data: serverName
+                }
+              },
+              publishPath: publishPath,
+              webpack: webpackOptions,
+              dependencies: dependencies
             },
-            publishPath: publishPath,
-            webpack: webpackOptions,
-            dependencies: dependencies
-          },
-          function(err, res){
-            expect(err).to.not.be.null;
-            expect(err.toString()).to.contain('Missing dependencies from package.json => "react-dom"');
-            done();
-          }
-        );
+            function(err, res){
+              expect(err).to.not.be.null;
+              expect(err.toString()).to.contain('Missing dependencies from package.json => "react-dom"');
+              done();
+            }
+          );
+        });
       });
     });
 
@@ -262,6 +269,11 @@ describe('cli : domain : package-server-script', function(){
       beforeEach(function(done){
         fs.writeFileSync(path.resolve(componentPath, 'user.js'), jsContent);
         fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
+        done();
+      });
+
+      afterEach(function(done){
+        require.cache[path.resolve(publishPath, serverName)] = null;
         done();
       });
 
