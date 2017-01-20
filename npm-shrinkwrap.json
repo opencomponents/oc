@@ -1,6 +1,6 @@
 {
   "name": "oc",
-  "version": "0.33.31",
+  "version": "0.34.0",
   "dependencies": {
     "accept-language-parser": {
       "version": "1.1.2",
@@ -100,7 +100,7 @@
       "from": "babel-loader@6.2.10",
       "resolved": "https://registry.npmjs.org/babel-loader/-/babel-loader-6.2.10.tgz"
     },
-     "babel-preset-env": {
+    "babel-preset-env": {
       "version": "1.1.8",
       "from": "babel-preset-env@1.1.8",
       "resolved": "https://registry.npmjs.org/babel-preset-env/-/babel-preset-env-1.1.8.tgz"
