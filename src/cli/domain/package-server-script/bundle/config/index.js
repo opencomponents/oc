@@ -3,7 +3,6 @@
 
 var webpack = require('webpack');
 var path = require('path');
-var wrapLoops = require('./wrapLoops');
 var externalDependenciesHandlers = require('./externalDependenciesHandlers');
 
 module.exports = function webpackConfigGenerator(params){
@@ -27,7 +26,7 @@ module.exports = function webpackConfigGenerator(params){
           test: /\.js?$/,
           exclude: /node_modules/,
           loaders: [
-            'falafel-loader',
+            'infinite-loop-loader',
             'babel-loader?' + JSON.stringify({
               cacheDirectory: true,
               'presets': [
@@ -55,7 +54,6 @@ module.exports = function webpackConfigGenerator(params){
         'process.env.NODE_ENV': JSON.stringify('production')
       })
     ],
-    falafel: wrapLoops,
     resolveLoader: {
       root: path.resolve(__dirname, '../../../../../../node_modules')
     }
