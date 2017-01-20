@@ -1,5 +1,12 @@
 ## Change Log
 
+### v0.34.0
+- [#346](https://github.com/opentable/oc/pull/346) [GPT-432] Package server webpack
+- [#356](https://github.com/opentable/oc/pull/356) Appveyor cleanup
+- [#355](https://github.com/opentable/oc/pull/355) drop support for node 0.10, 0.12 and io
+- [#352](https://github.com/opentable/oc/pull/352) Update sauce versions matrix
+- [#353](https://github.com/opentable/oc/pull/353) Remove IE8 support
+
 ### v0.33.31
 - [#343](https://github.com/opentable/oc/pull/343) 333 - Implement customHeadersToSkipOnWeakVersion functionality
 - [#349](https://github.com/opentable/oc/pull/349) Upgrade minimal-request
