@@ -840,6 +840,11 @@
       "from": "infinite-loop-loader@1.0.0",
       "resolved": "https://registry.npmjs.org/infinite-loop-loader/-/infinite-loop-loader-1.0.0.tgz"
     },
+    "babili-webpack-plugin": {
+      "version": "0.0.7",
+      "from": "babili-webpack-plugin@0.0.7",
+      "resolved": "https://registry.npmjs.org/babili-webpack-plugin/-/babili-webpack-plugin-0.0.7.tgz"
+    },
     "form-data": {
       "version": "0.1.4",
       "from": "form-data@0.1.4",
