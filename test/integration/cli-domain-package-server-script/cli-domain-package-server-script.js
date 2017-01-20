@@ -277,7 +277,7 @@ describe('cli : domain : package-server-script', function(){
         done();
       });
 
-      it('should save compiled data provider encapsulating js module content', function(done){
+      it('should save compiled non-minified data provider encapsulating js module content', function(done){
         packageServerScript(
           {
             componentPath: componentPath,
