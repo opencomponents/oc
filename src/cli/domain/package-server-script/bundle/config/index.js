@@ -23,7 +23,7 @@ module.exports = function webpackConfigGenerator(params){
           loader: 'json-loader'
         },
         {
-          test: /\.js?$/,
+          test: /\.js$/,
           exclude: /node_modules/,
           loaders: [
             'infinite-loop-loader',
@@ -43,13 +43,6 @@ module.exports = function webpackConfigGenerator(params){
     },
     plugins: [
       new webpack.optimize.OccurenceOrderPlugin(),
-      new webpack.optimize.UglifyJsPlugin({
-        compressor: {
-          warnings: false,
-          screw_ie8: true
-        },
-        sourceMap: false
-      }),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production')
       })

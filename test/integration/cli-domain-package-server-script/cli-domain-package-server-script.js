@@ -127,7 +127,7 @@ describe('cli : domain : package-server-script', function(){
         done();
       });
 
-      it('should save compiled and minified data provider encapsulating json content', function(done){
+      it('should save compiled data provider encapsulating json content', function(done){
         packageServerScript(
           {
             componentPath: componentPath,
@@ -149,7 +149,7 @@ describe('cli : domain : package-server-script', function(){
               expect(bundle.data()).to.be.equal(name);
 
               var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
-              expect(compiledContent).to.not.contain('user');
+              expect(compiledContent).to.contain('user');
               done();
             } catch(e) {
               done(e);
