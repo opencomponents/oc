@@ -6,12 +6,9 @@ var path = require('path');
 var sinon = require('sinon');
 var uglifyJs = require('uglify-js');
 var _ = require('underscore');
-var falafelLoader = require('falafel-loader');
 
 var externalDependenciesHandlers =
   require('../../src/cli/domain/package-server-script/bundle/config/externalDependenciesHandlers');
-var wrapLoops =
-  require('../../src/cli/domain/package-server-script/bundle/config/wrapLoops');
 var webpackConfigGenerator =
   require('../../src/cli/domain/package-server-script/bundle/config');
 
@@ -54,48 +51,6 @@ describe('cli : domain : package-server-script ', function(){
           expect(err).to.be.an('undefined');
           return done();
         });
-      });
-    });
-  });
-
-  describe('bundle/config/wrapLoops', function (){
-
-    it('should be a function with arity 1', function() {
-      expect(wrapLoops).to.be.a('function');
-      expect(wrapLoops.length).to.be.equal(1);
-    });
-
-    describe('when component code includes a loop', function(){
-      var mockFalafel = function(){
-        this.options = {
-          falafel: wrapLoops
-        };
-        this.cacheable = function(){};
-        this.loader = falafelLoader;
-      };
-      var falafel = new mockFalafel();
-
-      var serverjs = 'module.exports.data=function(context,cb){ var x,y,z;'
-        + 'while(true){ x = 234; } '
-        + 'for(var i=1e12;;){ y = 546; }'
-        + 'do { z = 342; } while(true);'
-        + 'return cb(null,data); };';
-
-      var result = falafel.loader(serverjs);
-
-      it('should wrap the while loop with an iterator limit', function() {
-        expect(result).to.contain('var x,y,z;var __ITER = 1000000000;while(true){ if(__ITER <=0)'
-          + '{ throw new Error("Loop exceeded maximum allowed iterations"); }  x = 234;  __ITER--; }');
-      });
-
-      it('should wrap the for loop with an iterator limit', function(){
-        expect(result).to.contain('for(var i=1e12;;){ if(__ITER <=0)'
-          + '{ throw new Error("Loop exceeded maximum allowed iterations"); }  y = 546;  __ITER--; }');
-      });
-
-      it('should wrap the do loop with an iterator limit (and convert it to a for loop)', function(){
-        expect(result).to.contain('var __ITER = 1000000000;do { if(__ITER <=0)'
-          + '{ throw new Error("Loop exceeded maximum allowed iterations"); }  z = 342;  __ITER--; } while(true)');
       });
     });
   });

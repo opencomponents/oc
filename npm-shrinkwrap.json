@@ -835,10 +835,10 @@
         }
       }
     },
-    "falafel-loader": {
-      "version": "0.0.3",
-      "from": "falafel-loader@0.0.3",
-      "resolved": "https://registry.npmjs.org/falafel-loader/-/falafel-loader-0.0.3.tgz"
+    "infinite-loop-loader": {
+      "version": "1.0.0",
+      "from": "infinite-loop-loader@1.0.0",
+      "resolved": "https://registry.npmjs.org/infinite-loop-loader/-/infinite-loop-loader-1.0.0.tgz"
     },
     "form-data": {
       "version": "0.1.4",
