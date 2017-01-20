@@ -52,16 +52,21 @@
     "accept-language-parser": "1.1.2",
     "async": "1.5.2",
     "aws-sdk": "2.6.11",
+    "babel-core": "6.21.0",
+    "babel-loader": "6.2.10",
+    "babel-preset-env": "1.1.8",
     "clean-css": "3.4.18",
     "colors": "1.1.2",
     "dependency-graph": "0.5.0",
     "detective": "4.3.1",
     "express": "3.21.2",
-    "falafel": "1.2.0",
+    "falafel-loader": "0.0.3",
     "form-data": "0.1.4",
     "fs-extra": "0.30.0",
     "handlebars": "4.0.5",
     "jade": "1.11.0",
+    "json-loader": "0.5.4",
+    "memory-fs": "0.4.1",
     "minimal-request": "2.2.0",
     "multer": "0.1.4",
     "nice-cache": "0.0.5",
@@ -78,6 +83,7 @@
     "targz": "1.0.1",
     "uglify-js": "2.6.4",
     "underscore": "1.8.3",
-    "watch": "0.19.1"
+    "watch": "0.19.1",
+    "webpack": "1.14.0"
   }
 }
