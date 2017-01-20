@@ -4,6 +4,7 @@
 var webpack = require('webpack');
 var path = require('path');
 var externalDependenciesHandlers = require('./externalDependenciesHandlers');
+var BabiliPlugin = require('babili-webpack-plugin');
 
 module.exports = function webpackConfigGenerator(params){
   return {
@@ -43,13 +44,7 @@ module.exports = function webpackConfigGenerator(params){
     },
     plugins: [
       new webpack.optimize.OccurenceOrderPlugin(),
-      new webpack.optimize.UglifyJsPlugin({
-        compressor: {
-          warnings: false,
-          screw_ie8: true
-        },
-        sourceMap: false
-      }),
+      new BabiliPlugin(),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production')
       })
