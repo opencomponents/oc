@@ -84,6 +84,6 @@
     "uglify-js": "2.6.4",
     "underscore": "1.8.3",
     "watch": "0.19.1",
-    "webpack": "1.14.0"
+    "webpack": "2.2.0"
   }
 }

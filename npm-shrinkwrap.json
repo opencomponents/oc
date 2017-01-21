@@ -3428,9 +3428,9 @@
       }
     },
     "webpack": {
-      "version": "1.14.0",
-      "from": "webpack@1.14.0",
-      "resolved": "https://registry.npmjs.org/webpack/-/webpack-1.14.0.tgz"
+      "version": "2.2.0",
+      "from": "webpack@2.2.0",
+      "resolved": "https://registry.npmjs.org/webpack/-/webpack-2.2.0.tgz"
     }
   }
 }

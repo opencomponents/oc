@@ -1,10 +1,6 @@
 'use strict';
 
 var expect = require('chai').expect;
-var injectr = require('injectr');
-var path = require('path');
-var sinon = require('sinon');
-var uglifyJs = require('uglify-js');
 var _ = require('underscore');
 
 var externalDependenciesHandlers =
