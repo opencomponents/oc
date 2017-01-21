@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.34.2
+- [#357](https://github.com/opentable/oc/pull/357) Webpack 2
+
 ### v0.34.1
 - [#361](https://github.com/opentable/oc/pull/361) removed uglify
 - [#359](https://github.com/opentable/oc/pull/359) swapped falafel loader with infinite-loop-loader
