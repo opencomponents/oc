@@ -6,6 +6,7 @@ matrix:
       env: SAUCE=true
     - node_js: "5"
     - node_js: "6"
+    - node_js: "7"
 
 before_script:
 - npm install -g grunt-cli
