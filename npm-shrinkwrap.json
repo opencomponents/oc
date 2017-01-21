@@ -1405,11 +1405,6 @@
         }
       }
     },
-    "json-loader": {
-      "version": "0.5.4",
-      "from": "json-loader@0.5.4",
-      "resolved": "https://registry.npmjs.org/json-loader/-/json-loader-0.5.4.tgz"
-    },
     "memory-fs": {
       "version": "0.4.1",
       "from": "memory-fs@0.4.1",
@@ -3428,9 +3423,9 @@
       }
     },
     "webpack": {
-      "version": "1.14.0",
-      "from": "webpack@1.14.0",
-      "resolved": "https://registry.npmjs.org/webpack/-/webpack-1.14.0.tgz"
+      "version": "2.2.0",
+      "from": "webpack@2.2.0",
+      "resolved": "https://registry.npmjs.org/webpack/-/webpack-2.2.0.tgz"
     }
   }
 }

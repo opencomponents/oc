@@ -16,39 +16,39 @@ module.exports = function webpackConfigGenerator(params){
     },
     externals: externalDependenciesHandlers(params.dependencies),
     module: {
-      loaders: [
-        {
-          test: /\.json$/,
-          exclude: /node_modules/,
-          loader: 'json-loader'
-        },
+      rules: [
         {
           test: /\.js$/,
           exclude: /node_modules/,
-          loaders: [
-            'infinite-loop-loader',
-            'babel-loader?' + JSON.stringify({
-              cacheDirectory: true,
-              'presets': [
-                [require.resolve('babel-preset-env'), {
-                  'targets': {
-                    'node': 4
-                  }
-                }]
-              ]
-            })
+          use: [
+            {
+              loader:  'infinite-loop-loader'
+            },
+            {
+              loader:  'babel-loader',
+              options: {
+                cacheDirectory: true,
+                'presets': [
+                  [require.resolve('babel-preset-env'), {
+                    'modules': false,
+                    'targets': {
+                      'node': 4
+                    }
+                  }]
+                ]
+              }
+            }
           ],
         }
       ]
     },
     plugins: [
-      new webpack.optimize.OccurenceOrderPlugin(),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production')
       })
     ],
     resolveLoader: {
-      root: path.resolve(__dirname, '../../../../../../node_modules')
+      modules: ['node_modules', path.resolve(__dirname, '../../../../../../node_modules')]
     }
   };
 };
