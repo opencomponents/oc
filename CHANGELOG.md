@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.34.1
+- [#361](https://github.com/opentable/oc/pull/361) removed uglify
+- [#359](https://github.com/opentable/oc/pull/359) swapped falafel loader with infinite-loop-loader
+
 ### v0.34.0
 - [#346](https://github.com/opentable/oc/pull/346) [GPT-432] Package server webpack
 - [#356](https://github.com/opentable/oc/pull/356) Appveyor cleanup
