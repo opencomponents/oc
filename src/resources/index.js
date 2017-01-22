@@ -37,6 +37,7 @@ module.exports = {
       CONFIGURATION_ROUTES_HANDLER_MUST_BE_FUNCTION: 'Registry configuration is not valid: handler should be a function',
       CONFIGURATION_ROUTES_NOT_VALID: 'Registry configuration is not valid: each route should contain route, method and handler',
       CONFIGURATION_ROUTES_MUST_BE_ARRAY: 'Registry configuration is not valid: routes must be an array',
+      CONFIGURATION_ROUTES_ROUTE_CONTAINS_PREFIX: 'Registry configuration is not valid: route url can\'t contain "{0}"',
       CONFIGURATION_S3_NOT_VALID: 'Registry configuration is not valid: S3 configuration is not valid',
       CONFIGURATION_HEADERS_TO_SKIP_MUST_BE_STRING_ARRAY: 'Registry configuration is not valid: customHeadersToSkipOnWeakVersion must be an array of strings',
       DATA_OBJECT_IS_UNDEFINED: 'data object is undefined',

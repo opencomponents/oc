@@ -1,9 +1,10 @@
 'use strict';
 
+var format = require('stringformat');
 var _ = require('underscore');
 
-var strings = require('../../../resources');
 var auth = require('../authentication');
+var strings = require('../../../resources');
 
 module.exports = function(conf){
 
@@ -58,6 +59,10 @@ module.exports = function(conf){
 
       if(!_.isFunction(route.handler)){
         return returnError(strings.errors.registry.CONFIGURATION_ROUTES_HANDLER_MUST_BE_FUNCTION);
+      }
+
+      if(route.route.indexOf(prefix) === 0){
+        return returnError(format(strings.errors.registry.CONFIGURATION_ROUTES_ROUTE_CONTAINS_PREFIX, prefix));
       }
     });
   }
