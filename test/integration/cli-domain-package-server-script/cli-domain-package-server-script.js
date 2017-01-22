@@ -3,6 +3,7 @@
 var expect = require('chai').expect;
 var fs = require('fs-extra');
 var path = require('path');
+var sinon = require('sinon');
 var packageServerScript = require('../../../src/cli/domain/package-server-script/index.js');
 var hashBuilder = require('../../../src/utils/hash-builder');
 
@@ -384,6 +385,86 @@ describe('cli : domain : package-server-script', function(){
             }
           }
         );
+      });
+    });
+
+    describe('when component uses es2015', function(){
+      describe('and requires a local js module', function(){
+        describe('and requires a json file', function(){
+          describe('and includes for loops', function(){
+            var someJsonContent = JSON.stringify({firstName: 'John', lastName: 'Doe'});
+            var someJsModuleContent = 'const infiniteLoops = () => {' +
+              'let x, y, z;' +
+              'while(true){ x = 234; }' +
+              'for(var i=1e12;;){ y = 546; }' +
+              'do { z = 342; } while(true);' +
+              '};' +
+              'const sayHello = (name) => `Hello ${name}`;' +
+              'export default sayHello;';
+
+            var serverContent = 'import sayHello from \'./someModule\';' +
+              'import user from \'./someData\';' +
+              'const {firstName: first, lastName: last} = user;' +
+              'const hello = sayHello(`${first} ${last}`);' +
+              'const data = (context, callback) => callback(null, { hello });' +
+              'export {data}';
+
+            var error, result;
+
+            beforeEach(function(done){
+              fs.writeFileSync(path.resolve(componentPath, 'someModule.js'), someJsModuleContent);
+              fs.writeFileSync(path.resolve(componentPath, 'someData.json'), someJsonContent);
+              fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
+              packageServerScript(
+                {
+                  componentPath: componentPath,
+                  ocOptions: {
+                    files: {
+                      data: serverName
+                    }
+                  },
+                  publishPath: publishPath,
+                  webpack: webpackOptions
+                },
+                function(err, res){
+                  error = err;
+                  result = res;
+                  done();
+                }
+              );
+            });
+
+            afterEach(function(done){
+              require.cache[path.resolve(publishPath, serverName)] = null;
+              done();
+            });
+
+            it('should save compiled data provider', function(){
+              expect(error).to.be.null;
+            });
+
+            it('save compiled data provide should work as expected', function(){
+              var bundle = require(path.resolve(publishPath, result.src));
+              var callback = sinon.spy();
+              bundle.data({}, callback);
+              expect(callback.args[0][0]).to.be.null;
+              expect(callback.args[0][1]).to.deep.equal({ hello: 'Hello John Doe' });
+            });
+
+            it('should wrap while/do/for;; loops with an iterator limit', function(){
+              var compiledContent = fs.readFileSync(path.resolve(publishPath, result.src), {encoding: 'utf8'});
+              expect(compiledContent).to.contain('var __ITER = 1000000000;while (true) { if(__ITER <=0){ throw new Error' +
+              '("Loop exceeded maximum allowed iterations"); } \n' +
+              '    x = 234;\n   __ITER--; }');
+              expect(compiledContent).to.contain('var __ITER = 1000000000;for (var i = 1e12;;) { if(__ITER <=0){ throw new Error' +
+              '("Loop exceeded maximum allowed iterations"); } \n' +
+              '    y = 546;\n   __ITER--; }');
+              expect(compiledContent).to.contain('var __ITER = 1000000000;do { if(__ITER <=0){ throw new Error' +
+              '("Loop exceeded maximum allowed iterations"); } \n' +
+              '    z = 342;\n   __ITER--; } while (true);');
+            });
+          });
+        });
       });
     });
   });
