@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.34.3
+- [#362](https://github.com/opentable/oc/pull/362) Node 7
+- [#363](https://github.com/opentable/oc/pull/363) Extending Integration tests
+
 ### v0.34.2
 - [#357](https://github.com/opentable/oc/pull/357) Webpack 2
 
