@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.34.4
+- [#364](https://github.com/opentable/oc/pull/364) Don't allow routes that contain prefix
+
 ### v0.34.3
 - [#362](https://github.com/opentable/oc/pull/362) Node 7
 - [#363](https://github.com/opentable/oc/pull/363) Extending Integration tests
