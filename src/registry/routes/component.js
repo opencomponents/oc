@@ -28,7 +28,7 @@ module.exports = function(conf, repository){
         }
       }
 
-      return res.json(result.status, result.response);
+      return res.status(result.status).json(result.response);
     });
   };
 };

@@ -1,6 +1,9 @@
 'use strict';
 
+var bodyParser = require('body-parser');
+var errorhandler = require('errorhandler');
 var express = require('express');
+var morgan = require('morgan');
 var path = require('path');
 var _ = require('underscore');
 
@@ -21,8 +24,8 @@ module.exports.bind = function(app, options){
   });
 
   app.use(requestHandler());
-  app.use(express.json());
-  app.use(express.urlencoded());
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded());
   app.use(cors);
   app.use(fileUploads);
   app.use(baseUrlHandler);
@@ -33,11 +36,11 @@ module.exports.bind = function(app, options){
   app.set('view cache', true);
 
   if(!!options.verbosity){
-    app.use(express.logger('dev'));
+    app.use(morgan('dev'));
   }
 
   if(options.local){
-    app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+    app.use(errorhandler({ dumpExceptions: true, showStack: true }));
   }
 
   return app;

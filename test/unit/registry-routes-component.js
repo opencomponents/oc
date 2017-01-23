@@ -27,10 +27,14 @@ describe('registry : routes : component', function(){
       initialise(mockedComponents['timeout-component']);
       componentRoute = new ComponentRoute({}, mockedRepository);
 
-      var resJson = function(calledCode, calledResponse){
+      var resStatus = function(calledCode){
         code = calledCode;
-        response = calledResponse;
-        done();
+        return {
+          json: function(calledResponse){
+            response = calledResponse;
+            done();
+          }
+        }
       };
 
       componentRoute({
@@ -41,7 +45,7 @@ describe('registry : routes : component', function(){
           baseUrl: 'http://component.com/',
           executionTimeout: 0.1
         },
-        json: resJson
+        status: resStatus
       });
     });
 

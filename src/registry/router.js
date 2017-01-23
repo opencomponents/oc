@@ -23,8 +23,6 @@ module.exports.create = function(app, conf, repository){
     staticRedirector: new StaticRedirectorRoute(repository)
   };
 
-  app.use(app.router);
-
   if(conf.prefix !== '/'){
     app.get('/', function(req, res){ res.redirect(conf.prefix); });
     app.get(conf.prefix.substr(0, conf.prefix.length - 1), routes.listComponents);
