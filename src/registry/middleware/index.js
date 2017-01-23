@@ -24,8 +24,8 @@ module.exports.bind = function(app, options){
   });
 
   app.use(requestHandler());
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded());
+  app.use(bodyParser.json({ inflate: true }));
+  app.use(bodyParser.urlencoded({ extended: true }));
   app.use(cors);
   app.use(fileUploads);
   app.use(baseUrlHandler);
