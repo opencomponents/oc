@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.34.5
+- [#365](https://github.com/opentable/oc/pull/365) Publish bugfix
+
 ### v0.34.4
 - [#364](https://github.com/opentable/oc/pull/364) Don't allow routes that contain prefix
 
