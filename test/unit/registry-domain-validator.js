@@ -287,6 +287,24 @@ describe('registry : domain : validator', function(){
             expect(validate(conf).message).to.be.eql('Registry configuration is not valid: handler should be a function');
           });
         });
+
+        describe('when route overrides prefix namespace', function(){
+
+          var conf = {
+            prefix: '/components/',
+            s3: baseS3Conf,
+            routes: [{
+              route: '/components/hello',
+              method: 'get',
+              handler: function(){}
+            }]
+          };
+
+          it('should not be valid', function(){
+            expect(validate(conf).isValid).to.be.false;
+            expect(validate(conf).message).to.be.eql('Registry configuration is not valid: route url can\'t contain "/components/"');
+          });
+        });
       });
     });
 
