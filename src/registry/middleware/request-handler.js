@@ -11,7 +11,7 @@ module.exports = function(){
 
     var data = {
       body: req.body,
-      duration: time*1000,
+      duration: parseInt(time * 1000, 10),
       headers: req.headers,
       method: req.method,
       path: req.path,
