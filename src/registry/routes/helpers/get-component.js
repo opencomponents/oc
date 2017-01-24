@@ -32,7 +32,7 @@ module.exports = function(conf, repository){
 
     var nestedRenderer = new NestedRenderer(renderer, options.conf),
         retrievingInfo = new GetComponentRetrievingInfo(options),
-        responseHeaders;
+        responseHeaders = [];
 
     var getLanguage = function(){
       var paramOverride = !!options.parameters && options.parameters['__ocAcceptLanguage'];
@@ -123,9 +123,10 @@ module.exports = function(conf, repository){
             !_.isEmpty(conf.customHeadersToSkipOnWeakVersion) &&
             requestedVersion !== actualVersion) 
         {
-          headers = _.omit(headers, conf.customHeadersToSkipOnWeakVersion);
+          return _.omit(headers, conf.customHeadersToSkipOnWeakVersion);
         }
-        return headers;
+
+        return [];
       };
 
       var returnComponent = function(err, data){
@@ -172,18 +173,14 @@ module.exports = function(conf, repository){
           renderMode: renderMode
         });
 
-        if (responseHeaders) {
-          responseHeaders = filterCustomHeaders(responseHeaders, requestedComponent.version, component.version);
-          if (!_.isEmpty(responseHeaders)) {
-            response.headers = responseHeaders;
-          }
-        }
-
+        responseHeaders = filterCustomHeaders(responseHeaders, requestedComponent.version, component.version);
+        
         if (isUnrendered) {
           callback({
             status: 200,
             response: _.extend(response, {
               data: data,
+              headers: responseHeaders,
               template: {
                 src: repository.getStaticFilePath(component.name, component.version, 'template.js'),
                 type: component.oc.files.template.type,

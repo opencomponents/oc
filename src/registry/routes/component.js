@@ -23,8 +23,8 @@ module.exports = function(conf, repository){
       if (!_.isEmpty(result.response.headers)) {
         res.set(result.response.headers);
         
-        if (req.method === 'GET') {
-          delete result.response.headers;
+        if (req.method.toLowerCase() !== 'get') {
+          result.response.headers = result.headers;
         }
       }
 
