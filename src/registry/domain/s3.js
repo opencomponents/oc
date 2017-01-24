@@ -21,8 +21,7 @@ module.exports = function(conf){
     httpOptions: { timeout: conf.s3.timeout || 10000 }
   });
 
-  var client = new AWS.S3(),
-      bucket = conf.s3.bucket,
+  var bucket = conf.s3.bucket,
       cache = new Cache({
         verbose: !!conf.verbosity,
         refreshInterval: conf.refreshInterval
@@ -32,6 +31,7 @@ module.exports = function(conf){
     listSubDirectories: function(dir, callback){
 
       var normalisedPath = dir.lastIndexOf('/') === (dir.length - 1) && dir.length > 0 ? dir : dir + '/';
+      var client = new AWS.S3();
 
       client.listObjects({
         Bucket: bucket,
@@ -62,6 +62,8 @@ module.exports = function(conf){
       }
 
       var getFromAws = function(callback){
+        var client = new AWS.S3();
+
         client.getObject({
           Bucket: bucket,
           Key: filePath
@@ -147,6 +149,7 @@ module.exports = function(conf){
         obj.ContentEncoding = 'gzip';
       }
 
+      var client = new AWS.S3();
       client.putObject(obj, callback);
     }
   };
