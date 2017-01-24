@@ -20,12 +20,8 @@ module.exports = function(conf, repository){
         res.errorDetails = result.response.error;
       }
 
-      if (!_.isEmpty(result.response.headers)) {
-        res.set(result.response.headers);
-        
-        if (req.method.toLowerCase() !== 'get') {
-          result.response.headers = result.headers;
-        }
+      if (!_.isEmpty(result.headers)) {
+        res.set(result.headers);
       }
 
       return res.json(result.status, result.response);

@@ -453,8 +453,7 @@ describe('registry : routes : component', function(){
     });
 
     it('should set response headers', function() {
-      expect(response.headers).to.not.be.null;      
-      expect(response.headers['test-header']).to.equal('test-value');
+      expect(response.headers).to.be.undefined;
       expect(headers).to.not.be.null;      
       expect(headers['test-header']).to.equal('test-value');
     });
@@ -588,8 +587,7 @@ describe('registry : routes : component', function(){
     });
 
     it('should set response headers for the first component', function() {
-      expect(response[0].headers).to.not.be.null;      
-      expect(response[0].headers['another-test-header']).to.equal('another-test-value');
+      expect(response[0].headers).to.be.undefined;
       expect(headers[0]).to.not.be.null;      
       expect(headers[0]['another-test-header']).to.equal('another-test-value');
     });
