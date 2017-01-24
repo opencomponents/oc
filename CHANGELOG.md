@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.34.6
+- [#367](https://github.com/opentable/oc/pull/367) Always create new S3 client before use
+
 ### v0.34.5
 - [#365](https://github.com/opentable/oc/pull/365) Publish bugfix
 
