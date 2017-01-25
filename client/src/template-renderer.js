@@ -15,8 +15,7 @@ module.exports = function(){
     renderers[options.templateType].render(
       {
         template,
-        model,
-        templateType: options.templateType
+        model
       },
       function(err, html){
         options.html = html;
