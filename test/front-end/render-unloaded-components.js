@@ -2,9 +2,6 @@
 
 describe('oc-client : renderUnloadedComponents', function(){
 
-  var nav = window.navigator.userAgent,
-      isIe8 = !!(nav.match(/MSIE 8/));
-
   var aComponent = {
     response: {
       href: 'http://my-registry.com/v3/a-component/1.2.X/?name=John',
@@ -52,14 +49,9 @@ describe('oc-client : renderUnloadedComponents', function(){
 
     sinon.stub(head, 'load').yields(null, 'ok');
     console.log = function(){};
-
-    var aComponentHtml = isIe8 ?
-      '<div data-oc-component="true" href="' + aComponent.response.href + '"></div>' :
-      '<oc-component href="' + aComponent.response.href + '"></oc-component>';
-
-    var anotherComponentHtml = isIe8 ?
-      '<div data-oc-component="true" href="' + anotherComponent.response.href + '"></div>' :
-      '<oc-component href="' + anotherComponent.response.href + '"></oc-component>';
+    
+    var aComponentHtml = '<oc-component href="' + aComponent.response.href + '"></oc-component>',
+        anotherComponentHtml = '<oc-component href="' + anotherComponent.response.href + '"></oc-component>';
 
     oc.$('body').append(aComponentHtml);
     oc.$('body').append(anotherComponentHtml);

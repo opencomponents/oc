@@ -1,5 +1,63 @@
 ## Change Log
 
+### v0.34.6
+- [#367](https://github.com/opentable/oc/pull/367) Always create new S3 client before use
+
+### v0.34.5
+- [#365](https://github.com/opentable/oc/pull/365) Publish bugfix
+
+### v0.34.4
+- [#364](https://github.com/opentable/oc/pull/364) Don't allow routes that contain prefix
+
+### v0.34.3
+- [#362](https://github.com/opentable/oc/pull/362) Node 7
+- [#363](https://github.com/opentable/oc/pull/363) Extending Integration tests
+
+### v0.34.2
+- [#357](https://github.com/opentable/oc/pull/357) Webpack 2
+
+### v0.34.1
+- [#361](https://github.com/opentable/oc/pull/361) removed uglify
+- [#359](https://github.com/opentable/oc/pull/359) swapped falafel loader with infinite-loop-loader
+
+### v0.34.0
+- [#346](https://github.com/opentable/oc/pull/346) [GPT-432] Package server webpack
+- [#356](https://github.com/opentable/oc/pull/356) Appveyor cleanup
+- [#355](https://github.com/opentable/oc/pull/355) drop support for node 0.10, 0.12 and io
+- [#352](https://github.com/opentable/oc/pull/352) Update sauce versions matrix
+- [#353](https://github.com/opentable/oc/pull/353) Remove IE8 support
+
+### v0.33.31
+- [#343](https://github.com/opentable/oc/pull/343) 333 - Implement customHeadersToSkipOnWeakVersion functionality
+- [#349](https://github.com/opentable/oc/pull/349) Upgrade minimal-request
+- [#348](https://github.com/opentable/oc/pull/348) [acceptance/registry] remove .only
+- [#344](https://github.com/opentable/oc/pull/344) Package server script cleanup
+
+### v0.33.30
+- [#335](https://github.com/opentable/oc/pull/335) Add endpoint for getting list of components with their versions (#324)
+
+### v0.33.29
+- [#337](https://github.com/opentable/oc/pull/337) Fix for #336 - Make S3 Key/Secret optional to allow support for "IAM role based access to s3 from EC2"
+
+### v0.33.28
+- [#323](https://github.com/opentable/oc/pull/323) Fix for #322
+- [#334](https://github.com/opentable/oc/pull/334) Acceptance extra test
+
+### v0.33.27
+- [#331](https://github.com/opentable/oc/pull/331) Client fixes and some tests
+
+### v0.33.26
+- [#329](https://github.com/opentable/oc/pull/329) Cleanup npm-shrinkwrap
+
+### v0.33.25
+- [#328](https://github.com/opentable/oc/pull/328) Fix for Custom eaders of one component can appear to another.
+
+### v0.33.24
+- [#326](https://github.com/opentable/oc/pull/326) Add optional cache headers for components (#325)
+
+### v0.33.23
+- [#319](https://github.com/opentable/oc/pull/319) Extract package bugfix
+
 ### v0.33.22
 - [#317](https://github.com/opentable/oc/pull/317) Client dynamic hrefs
 

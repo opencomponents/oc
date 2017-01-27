@@ -1,9 +1,10 @@
 'use strict';
 
+var format = require('stringformat');
 var _ = require('underscore');
 
-var strings = require('../../../resources');
 var auth = require('../authentication');
+var strings = require('../../../resources');
 
 module.exports = function(conf){
 
@@ -59,12 +60,33 @@ module.exports = function(conf){
       if(!_.isFunction(route.handler)){
         return returnError(strings.errors.registry.CONFIGURATION_ROUTES_HANDLER_MUST_BE_FUNCTION);
       }
+
+      if(route.route.indexOf(prefix) === 0){
+        return returnError(format(strings.errors.registry.CONFIGURATION_ROUTES_ROUTE_CONTAINS_PREFIX, prefix));
+      }
     });
   }
 
   if(!conf.local){
-    if(!conf.s3 || !conf.s3.bucket || !conf.s3.key || !conf.s3.region || !conf.s3.secret){
+    // S3 settings should either specify both key/secret or 
+    // skip both when leveraging IAM Role based S3 access from EC2
+    if (!conf.s3 || !conf.s3.bucket || !conf.s3.region ||
+      (conf.s3.key && !conf.s3.secret) || (!conf.s3.key && conf.s3.secret)) {
       return returnError(strings.errors.registry.CONFIGURATION_S3_NOT_VALID);
+    }
+  }
+
+  if (conf.customHeadersToSkipOnWeakVersion) {
+    if (!_.isArray(conf.customHeadersToSkipOnWeakVersion)) {
+      return returnError(strings.errors.registry.CONFIGURATION_HEADERS_TO_SKIP_MUST_BE_STRING_ARRAY);
+    }
+
+    var hasNonStringElements = conf.customHeadersToSkipOnWeakVersion.find(function(element) {
+      return typeof(element) !== 'string';
+    });
+
+    if (hasNonStringElements) {
+      return returnError(strings.errors.registry.CONFIGURATION_HEADERS_TO_SKIP_MUST_BE_STRING_ARRAY);
     }
   }
 

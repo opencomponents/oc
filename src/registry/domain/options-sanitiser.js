@@ -3,7 +3,6 @@
 var express = require('express');
 var _ = require('underscore');
 
-var dependenciesResolver = require('./dependencies-resolver');
 var settings = require('../../resources/settings');
 var auth = require('./authentication');
 
@@ -30,10 +29,6 @@ module.exports = function(input){
     options.tempDir = settings.registry.defaultTempPath;
   }
 
-  if(!!options.dependencies){
-    options.dependencies = dependenciesResolver(options);
-  }
-
   if(!_.isBoolean(options.hotReloading)){
     options.hotReloading = !!options.local;
   }
@@ -41,6 +36,9 @@ module.exports = function(input){
   if(_.isUndefined(options.verbosity)){
     options.verbosity = 0;
   }
+
+  options.customHeadersToSkipOnWeakVersion = (options.customHeadersToSkipOnWeakVersion || [])
+    .map(function(s) { return s.toLowerCase(); });
 
   options.port = process.env.PORT || options.port;
 

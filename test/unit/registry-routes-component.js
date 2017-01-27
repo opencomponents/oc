@@ -356,9 +356,9 @@ describe('registry : routes : component', function(){
             local: true, //needed to invalidate the cache
             baseUrl: 'http://components.com/',
             plugins: {},
-            dependencies: {
-              underscore: require('underscore')
-            }
+            dependencies: [
+              'underscore'
+            ]
           },
           json: resJsonStub
         });
@@ -417,4 +417,247 @@ describe('registry : routes : component', function(){
       });
     });
   });
+
+  describe('when getting a component with server.js that sets custom headers with empty customHeadersToSkipOnWeakVersion', function() {
+    var code, response, headers;
+
+    before(function(done) {
+      initialise(mockedComponents['response-headers-component']);
+      componentRoute = new ComponentRoute({}, mockedRepository);
+
+      var resJson = function(calledCode, calledResponse) {
+        code = calledCode;
+        response = calledResponse;
+        done();
+      };
+
+      var resSet = function(calledHeaders) {
+        headers = calledHeaders;
+      };
+
+      componentRoute({
+        headers: {},
+        params: { componentName: 'response-headers-component', componentVersion: '1.X.X' }
+      }, {
+        conf: {
+          baseUrl: 'http://component.com/',
+          executionTimeout: 0.1
+        },
+        json: resJson,
+        set: resSet
+      });
+    });
+
+    it('should return 200 status code', function() {
+      expect(code).to.be.equal(200);
+    });
+
+    it('should set response headers', function() {
+      expect(response.headers).to.not.be.null;      
+      expect(response.headers['test-header']).to.equal('test-value');
+      expect(headers).to.not.be.null;      
+      expect(headers['test-header']).to.equal('test-value');
+    });
+
+    it('should return component\'s name and request version', function() {
+      expect(response.name).to.equal('response-headers-component');
+      expect(response.requestVersion).to.equal('1.X.X');
+    });
+  });
+
+  describe('when getting a component with server.js that sets custom headers with non-empty customHeadersToSkipOnWeakVersion', function() {
+    var code, response, headers;
+
+    before(function(done) {
+      initialise(mockedComponents['response-headers-component']);
+      componentRoute = new ComponentRoute({}, mockedRepository);
+
+      var resJson = function(calledCode, calledResponse) {
+        code = calledCode;
+        response = calledResponse;
+        done();
+      };
+
+      var resSet = function(calledHeaders) {
+        headers = calledHeaders;
+      };
+
+      componentRoute({
+        headers: {},
+        params: { componentName: 'response-headers-component', componentVersion: '1.X.X' }
+      }, {
+        conf: {
+          baseUrl: 'http://component.com/',
+          executionTimeout: 0.1,
+          customHeadersToSkipOnWeakVersion: ['test-header']
+        },
+        json: resJson,
+        set: resSet
+      });
+    });
+
+    it('should return 200 status code', function() {
+      expect(code).to.be.equal(200);
+    });
+
+    it('should not set response headers', function() {
+      expect(response.headers).to.be.undefined;
+      expect(headers).to.be.undefined;      
+    });
+
+    it('should return component\'s name and request version', function() {
+      expect(response.name).to.equal('response-headers-component');
+      expect(response.requestVersion).to.equal('1.X.X');
+    });
+  });
+
+  describe('when getting a simple component with server.js after headers component no custom headers should be set', function() {
+    var code={}, 
+      response={}, 
+      headers={};
+
+    before(function(done) {
+      var headersComponent = mockedComponents['another-response-headers-component'];
+      var simpleComponent = mockedComponents['simple-component'];
+
+      mockedRepository = {
+        getCompiledView: sinon.stub(),
+        getComponent: sinon.stub(),
+        getDataProvider: sinon.stub(),
+        getStaticFilePath: sinon.stub().returns('//my-cdn.com/files/')
+      };
+
+      //Custom repository initialization to give us two components when invoked twice...
+      //...the firts one with custom headers and the second - without.
+      mockedRepository.getCompiledView.onCall(0).yields(null, headersComponent.view);
+      mockedRepository.getCompiledView.onCall(1).yields(null, simpleComponent.view);
+
+      mockedRepository.getComponent.onCall(0).yields(null, headersComponent.package);
+      mockedRepository.getComponent.onCall(1).yields(null, simpleComponent.package);
+
+      mockedRepository.getDataProvider.onCall(0).yields(null, headersComponent.data);
+      mockedRepository.getDataProvider.onCall(1).yields(null, simpleComponent.data);
+
+      componentRoute = new ComponentRoute({}, mockedRepository);
+      resJsonStub = sinon.stub();
+
+      var resJson = function(index, callback) { 
+        return function(calledCode, calledResponse) {
+          code[index] = calledCode;
+          response[index] = calledResponse;
+          callback && callback();
+        };
+      };
+
+      var resSet = function(index) { 
+        return function(calledHeaders) {
+          headers[index] = calledHeaders;
+        };
+      };
+
+      var requestComponent = function(componentName, resultIndex) {
+        return new Promise(function(resolve, reject) {
+          componentRoute({
+            headers: {},
+            params: { componentName: componentName, componentVersion: '1.X.X' }
+          }, {
+            conf: {
+              baseUrl: 'http://component.com/',
+              executionTimeout: 0.1
+            },
+            json: resJson(resultIndex, function() { resolve(); }),
+            set: resSet(resultIndex)
+          });
+        });
+      };
+
+      requestComponent('another-response-headers-component', 0)
+      .then(requestComponent('simple-component', 1))
+      .then(function() { done(); });
+    });
+
+    //The first part of the test - checking that another-response-headers-component 
+    //should return a response with custom headers
+    it('should return 200 status code for the first component', function() {
+      expect(code[0]).to.be.equal(200);
+    });
+
+    it('should return "response-headers-component" name for the first component\'s name and request version', function() {
+      expect(response[0].name).to.equal('another-response-headers-component');
+      expect(response[0].requestVersion).to.equal('1.X.X');
+    });
+
+    it('should set response headers for the first component', function() {
+      expect(response[0].headers).to.not.be.null;      
+      expect(response[0].headers['another-test-header']).to.equal('another-test-value');
+      expect(headers[0]).to.not.be.null;      
+      expect(headers[0]['another-test-header']).to.equal('another-test-value');
+    });
+
+    //The second part of the test - validating that simple-component should not return 
+    //the custom headers previously set by another-headers-component.
+    it('should return 200 status code for the first component', function() {
+      expect(code[1]).to.be.equal(200);
+    });
+
+    it('should return "simple-component" name for the first component\'s name and request version', function() {
+      expect(response[1].name).to.equal('simple-component');
+      expect(response[1].requestVersion).to.equal('1.X.X');
+    });
+
+    it('should not set custom response', function() {
+      expect(response[1].headers).to.be.undefined;      
+      expect(headers[1]).to.be.undefined;      
+    });
+  });
+
+  describe('when getting a component info for a component that sets custom headers', function() {
+    var code, response, headers;
+
+    before(function(done) {
+      initialise(mockedComponents['response-headers-component']);
+      componentRoute = new ComponentRoute({}, mockedRepository);
+
+      var resJson = function(calledCode, calledResponse) {
+        code = calledCode;
+        response = calledResponse;
+        done();
+      };
+
+      var resSet = function(calledHeaders) {
+        headers = calledHeaders;
+      };
+
+      componentRoute({
+        headers: { accept: 'application/vnd.oc.info+json' },
+        params: { componentName: 'response-headers-component', componentVersion: '1.0.0' }
+      }, {
+        conf: {
+          baseUrl: 'http://component.com/',
+          executionTimeout: 0.1
+        },
+        json: resJson,
+        set: resSet
+      });
+    });
+
+    it('should return 200 status code', function() {
+      expect(code).to.be.equal(200);
+    });
+
+    it('should return no custom headers', function() {
+      expect(response.headers).to.be.undefined;
+      expect(headers).to.be.undefined;
+    });
+
+    it('should return component\'s name and request version', function() {
+      expect(response.name).to.equal('response-headers-component');
+      expect(response.requestVersion).to.equal('1.0.0');
+    });
+
+    it('should not return rendered HTML', function() {
+      expect(response.html).to.be.undefined;
+    });
+  });
+
 });

@@ -31,7 +31,8 @@ module.exports = function(conf, repository){
   var renderer = function(options, cb){
 
     var nestedRenderer = new NestedRenderer(renderer, options.conf),
-        retrievingInfo = new GetComponentRetrievingInfo(options);
+        retrievingInfo = new GetComponentRetrievingInfo(options),
+        responseHeaders;
 
     var getLanguage = function(){
       var paramOverride = !!options.parameters && options.parameters['__ocAcceptLanguage'];
@@ -75,6 +76,19 @@ module.exports = function(conf, repository){
         });
       }
 
+      // Skip rendering and return only the component info in case of 'accept: application/vnd.oc.info+json'
+      if (options.headers.accept === settings.registry.acceptInfoHeader) {
+        return callback({
+          status: 200,
+          response: {
+            type: conf.local ? 'oc-component-local' : 'oc-component',
+            version: component.version,
+            requestVersion: requestedComponent.version,
+            name: requestedComponent.name,
+          }
+        });
+      }
+
       // check component requirements are satisfied by registry      
       var pluginsCompatibility = validator.validatePluginsRequirements(component.oc.plugins, conf.plugins);
 
@@ -103,6 +117,16 @@ module.exports = function(conf, repository){
           }
         });
       }
+
+      var filterCustomHeaders = function(headers, requestedVersion, actualVersion) {
+        if (!_.isEmpty(headers) &&
+            !_.isEmpty(conf.customHeadersToSkipOnWeakVersion) &&
+            requestedVersion !== actualVersion) 
+        {
+          headers = _.omit(headers, conf.customHeadersToSkipOnWeakVersion);
+        }
+        return headers;
+      };
 
       var returnComponent = function(err, data){
 
@@ -148,7 +172,14 @@ module.exports = function(conf, repository){
           renderMode: renderMode
         });
 
-        if(isUnrendered){
+        if (responseHeaders) {
+          responseHeaders = filterCustomHeaders(responseHeaders, requestedComponent.version, component.version);
+          if (!_.isEmpty(responseHeaders)) {
+            response.headers = responseHeaders;
+          }
+        }
+
+        if (isUnrendered) {
           callback({
             status: 200,
             response: _.extend(response, {
@@ -225,7 +256,17 @@ module.exports = function(conf, repository){
               renderComponent: nestedRenderer.renderComponent,
               renderComponents: nestedRenderer.renderComponents,
               requestHeaders: options.headers,
-              staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', '')
+              staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', ''),
+              setHeader: function(header, value) {
+                if (!(typeof(header) === 'string' && typeof(value) === 'string')) {
+                  throw strings.errors.registry.COMPONENT_SET_HEADER_PARAMETERS_NOT_VALID;
+                }
+
+                if (header && value) {
+                  responseHeaders = responseHeaders || {};
+                  responseHeaders[header.toLowerCase()] = value;
+                }
+              }
             };
 
         var setCallbackTimeout = function(){

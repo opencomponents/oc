@@ -26,8 +26,8 @@ module.exports = {
       COMPONENT_VERSION_ALREADY_FOUND_CODE: 'already_exists',
       COMPONENT_VERSION_NOT_VALID: 'Version "{0}" is not a valid semantic version.',
       COMPONENT_VERSION_NOT_VALID_CODE: 'version_not_valid',
+      COMPONENT_SET_HEADER_PARAMETERS_NOT_VALID: 'context.setHeader parameters must be strings',
       CONFIGURATION_DEPENDENCIES_MUST_BE_ARRAY: 'Registry configuration is not valid: dependencies must be an array',
-      CONFIGURATION_A_DEPENDENCY_NOT_FOUND: 'Registry configuration is not valid: a dependency is not valid.',
       CONFIGURATION_EMPTY: 'Registry configuration is empty',
       CONFIGURATION_ONREQUEST_MUST_BE_FUNCTION: 'Registry configuration is not valid: registry.on\'s callback must be a function',
       CONFIGURATION_PUBLISH_BASIC_AUTH_CREDENTIALS_MISSING: 'Registry configuration is not valid: basic auth requires username and password',
@@ -37,14 +37,15 @@ module.exports = {
       CONFIGURATION_ROUTES_HANDLER_MUST_BE_FUNCTION: 'Registry configuration is not valid: handler should be a function',
       CONFIGURATION_ROUTES_NOT_VALID: 'Registry configuration is not valid: each route should contain route, method and handler',
       CONFIGURATION_ROUTES_MUST_BE_ARRAY: 'Registry configuration is not valid: routes must be an array',
+      CONFIGURATION_ROUTES_ROUTE_CONTAINS_PREFIX: 'Registry configuration is not valid: route url can\'t contain "{0}"',
       CONFIGURATION_S3_NOT_VALID: 'Registry configuration is not valid: S3 configuration is not valid',
+      CONFIGURATION_HEADERS_TO_SKIP_MUST_BE_STRING_ARRAY: 'Registry configuration is not valid: customHeadersToSkipOnWeakVersion must be an array of strings',
       DATA_OBJECT_IS_UNDEFINED: 'data object is undefined',
       DEPENDENCY_NOT_FOUND: 'Component is trying to use unavailable dependencies: {0}',
       DEPENDENCY_NOT_FOUND_CODE: 'DEPENDENCY_MISSING_FROM_REGISTRY',
       LOCAL_PUBLISH_NOT_ALLOWED: 'Components can\'t be published to local repository',
       LOCAL_PUBLISH_NOT_ALLOWED_CODE: 'not_allowed',
       GENERIC_ERROR: 'error!',
-      GENERIC_NOT_FOUND: 'not found!',
       MANDATORY_PARAMETER_MISSING: 'Expected mandatory parameters are missing: {0}',
       MANDATORY_PARAMETER_MISSING_CODE: 'missing',
       NESTED_RENDERER_CALLBACK_IS_NOT_VALID: 'callback is not valid',
@@ -80,9 +81,6 @@ module.exports = {
       PUBLISHING_FAIL: 'An error happened when publishing the component: {0}',
       REGISTRY_NOT_FOUND: 'oc registries not found. Run "oc registry add <registry href>"',
       SERVERJS_DEPENDENCY_NOT_DECLARED: 'Missing dependencies from package.json => {0}',
-      SERVERJS_PARSING_ERROR: 'Javascript error found in {0} [{1},{2}]: {3}]',
-      SERVERJS_REQUIRE_JS_NOT_ALLOWED: 'Requiring local js files is not allowed. Keep it small.',
-      SERVERJS_REQUIRE_JSON_NOT_FOUND: '{0} not found. Only json files are require-able.',
       TEMPLATE_NOT_FOUND: 'file {0} not found',
       TEMPLATE_TYPE_NOT_VALID: 'the template is not valid. Allowed values are handlebars and jade'
     },
@@ -120,9 +118,6 @@ module.exports = {
       REGISTRY_STARTING: 'Starting dev registry on {0} ...',
       RETRYING_10_SECONDS: 'Retrying in 10 seconds...',
       SCANNING_COMPONENTS: 'Looking for components...'
-    },
-    registry: {
-      RESOLVING_DEPENDENCIES: 'Resolving dependencies...'
     }
   }
 };

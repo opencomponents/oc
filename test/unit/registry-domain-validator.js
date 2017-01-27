@@ -201,6 +201,20 @@ describe('registry : domain : validator', function(){
             expect(validate(conf).message).to.equal(errorMessage);
           });
         });
+        
+        describe('when s3 setting do not use key/secret - EC2 IAM Role use case', function() {
+          var conf = {
+            publishAuth: false,
+            s3: {
+              bucket: 'oc-registry',
+              region: 'us-west2'
+            }
+          };
+
+          it('should be valid', function() {
+            expect(validate(conf).isValid).to.be.true;
+          });
+        });
 
         describe('when s3 setting contains all properties', function(){
           var conf = { publishAuth: false, s3: baseS3Conf};
@@ -272,6 +286,64 @@ describe('registry : domain : validator', function(){
             expect(validate(conf).isValid).to.be.false;
             expect(validate(conf).message).to.be.eql('Registry configuration is not valid: handler should be a function');
           });
+        });
+
+        describe('when route overrides prefix namespace', function(){
+
+          var conf = {
+            prefix: '/components/',
+            s3: baseS3Conf,
+            routes: [{
+              route: '/components/hello',
+              method: 'get',
+              handler: function(){}
+            }]
+          };
+
+          it('should not be valid', function(){
+            expect(validate(conf).isValid).to.be.false;
+            expect(validate(conf).message).to.be.eql('Registry configuration is not valid: route url can\'t contain "/components/"');
+          });
+        });
+      });
+    });
+
+    describe('customHeadersToSkipOnWeakVersion', function() {
+      describe('when customHeadersToSkipOnWeakVersion is not an array', function() {
+        var conf = { 
+          customHeadersToSkipOnWeakVersion: 'test', 
+          publishAuth: false, 
+          s3: baseS3Conf 
+        };
+
+        it('should not be valid', function() {
+          expect(validate(conf).isValid).to.be.false;
+          expect(validate(conf).message).to.equal('Registry configuration is not valid: customHeadersToSkipOnWeakVersion must be an array of strings');
+        });
+      });
+
+      describe('when customHeadersToSkipOnWeakVersion is an array but contains non-string elements', function() {
+        var conf = { 
+          customHeadersToSkipOnWeakVersion: ['header1', 'header2', 3, 4], 
+          publishAuth: false, 
+          s3: baseS3Conf
+        };
+
+        it('should not be valid', function() {
+          expect(validate(conf).isValid).to.be.false;
+          expect(validate(conf).message).to.equal('Registry configuration is not valid: customHeadersToSkipOnWeakVersion must be an array of strings');
+        });
+      });
+
+      describe('when customHeadersToSkipOnWeakVersion is a non-empty array of strings', function() {
+        var conf = { 
+          customHeadersToSkipOnWeakVersion: ['header1', 'header2', 'header3'],
+          publishAuth: false, 
+          s3: baseS3Conf
+        };
+
+        it('should be valid', function() {
+          expect(validate(conf).isValid).to.be.true;
         });
       });
     });

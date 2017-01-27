@@ -5,7 +5,7 @@ Node.js client for [OpenComponents](https://github.com/opentable/oc)
 
 [![NPM](https://nodei.co/npm/oc-client.png?downloads=true)](https://npmjs.org/package/oc-client)
 
-Node.js version: **0.10.0** required
+Node.js version: **4** required
 
 Build status: Linux: [![Build Status](https://secure.travis-ci.org/opentable/oc.png?branch=master)](http://travis-ci.org/opentable/oc) | Windows: [![Build status](https://ci.appveyor.com/api/projects/status/8cklgw4hymutqrsg?svg=true)](https://ci.appveyor.com/project/matteofigus/oc)
 
@@ -13,6 +13,12 @@ Build status: Linux: [![Build Status](https://secure.travis-ci.org/opentable/oc.
 Disclaimer: This project is still under heavy development and the API is likely to change at any time. In case you would find any issues, check the [troubleshooting page](../CONTRIBUTING.md#troubleshooting).
 
 # API
+
+* [new Client()](#new-clientoptions)
+* [Client#init()](#clientinitoptions-callback)
+* [Client#getComponentsInfo()](#clientgetcomponentsinfocomponents-callback)
+* [Client#renderComponent()](#clientrendercomponentcomponentname--options-callback)
+* [Client#renderComponents()](#clientrendercomponentscomponents--options-callback)
 
 ### new Client(options)
 
@@ -76,6 +82,31 @@ client.init({
 });
 ```
 
+### Client#getComponentsInfo(components, callback)
+
+It will get the components' resolved versions for given requested versions. Useful for polling mechanism and caches management.
+
+Example:
+```js
+...
+client.getComponentsInfo([{
+  name: 'header',
+  version: '1.X.X'
+}], function(error, infos){
+  console.log(infos);
+  /* => [{
+    componentName: 'header',
+    requestedVersion: '1.X.X',
+    apiResponse: {
+      name: 'header',
+      requestVersion: '1.X.X',
+      type: 'oc-component',
+      version: '1.2.4'
+    }
+  }] */
+});
+```
+
 ### Client#renderComponent(componentName [, options], callback)
 
 It will resolve a component href, will make a request to the registry, and will render the component. The callback will contain an error (if present) and rendered html.
@@ -88,7 +119,6 @@ Options:
 |`disableFailoverRendering`|`boolean`|no|Disables the automatic failover rendering in case the registry times-out (in case configuration.registries.clientRendering contains a valid value.) Default false|
 |`forwardAcceptLanguageToClient`|`boolean`|no|When not specified in config, defaults to false. When true, when doing client-side requests (normal or failover) appends a custom parameter to the browser's component hrefs so that the framework will ignore the browser's Accept-Language in favour of the query-string value|
 |`headers`|`object`|no|An object containing all the headers that must be forwarded to the component|
-|`ie8`|`boolean`|no|Default false, if true puts in place the necessary polyfills to make all the stuff work with ie8|
 |`parameters`|`object`|no|An object containing the parameters for component's request|
 |`registries`|`object`|no|The registries' endpoints (overrides the parameters defined during instantiation)|
 |`registries.serverRendering`|`string`|no|The baseUrl for server-side rendering requests (overrides the parameter defined during instantiation)|
@@ -166,8 +196,8 @@ client.renderComponents([{
   timeout: 3.0
 }, function(errors, htmls){
   console.log(html);
-  // => ["<div>Header</div>", 
-  //     "<p>Footer</p>", 
+  // => ["<div>Header</div>",
+  //     "<p>Footer</p>",
   //     "<oc-component href=\"\/\/registry.com\/advert\/?position=left\"><\/oc-component>"]
 });
 ```

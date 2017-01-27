@@ -50,7 +50,9 @@ describe('The node.js OC client', function(){
       registry.start(done);
     });
 
-    after(function(done){ registry.close(done); });
+    after(function(done){ 
+      registry.close(done); 
+    });
 
     describe('when rendering 2 components', function(){
       describe('when components require params', function(){
@@ -367,6 +369,112 @@ describe('The node.js OC client', function(){
         expect($component.attr('href')).to.equal('http://localhost:1234/hello-world/~1.0.0');
       });
     });
+
+    describe('when getting components info for 2 existing component', function() {
+      var error;
+      var info;
+
+      before(function(done){
+        client.getComponentsInfo([{
+          name: 'hello-world'
+        }, {
+          name: 'no-containers',
+          version: '1.x.x'
+        }], function($error, $info) {
+          error = $error;
+          info = $info;
+          done();
+        });
+      });
+
+      var expectedInfo = [{
+        componentName: 'hello-world',
+        requestedVersion: undefined,
+        apiResponse: {
+          name: 'hello-world',
+          requestVersion: '',
+          type: 'oc-component-local',
+          version: '1.0.0'
+        }
+      }, {
+        componentName: 'no-containers',
+        requestedVersion: '1.x.x',
+        apiResponse: {
+          name: 'no-containers',
+          requestVersion: '1.x.x',
+          type: 'oc-component-local',
+          version: '1.0.0'
+        }
+      }];
+
+      it('should return valid info', function() {
+        expect(error).to.be.null();
+        expect(info).to.be.deep.equal(expectedInfo);
+      });
+
+    });
+
+    describe('when getting components info for 1 existing, 1 with higher version and 1 non-existing components', function() {
+      var error;
+      var info;
+
+      before(function(done){
+        client.getComponentsInfo([{
+          name: 'hello-world'
+        }, {
+          name: 'no-containers',
+          version: '3.5.7'
+        }, {
+          name: 'non-existing',
+          version: '1.x.x'
+        }], function($error, $info) {
+          error = $error;
+          info = $info;
+          done();
+        });
+      });
+
+      it('should return both valid info and error', function() {
+        expect(error).to.be.ok;
+        expect(error).to.be.instanceof(Array);
+        expect(error.length).to.be.equal(3);
+
+        expect(info).to.be.ok;
+        expect(info).to.be.instanceof(Array);
+        expect(info.length).to.be.equal(3);
+      });
+
+      it('should return correct info for the 1st component', function() {
+        var expectedFirstComponentInfo = [{
+          componentName: 'hello-world',
+          requestedVersion: undefined,
+          apiResponse: {
+            name: 'hello-world',
+            requestVersion: '',
+            type: 'oc-component-local',
+            version: '1.0.0'
+          }
+        }];
+
+        expect(info[0]).to.be.deep.equal(expectedFirstComponentInfo[0]);
+      });
+
+      it('should return info with errors for the 2nd and 3rd component', function(){
+        expect(info[1].componentName).to.be.equal('no-containers');
+        expect(info[1].requestedVersion).to.be.equal('3.5.7');
+        expect(info[1].error.message).to.be.equal('Getting component info failed: Component "no-containers" with version "3.5.7" not found on local repository (404)');
+
+        expect(info[2].componentName).to.be.equal('non-existing');
+        expect(info[2].requestedVersion).to.be.equal('1.x.x');
+        expect(info[2].error.message).to.be.equal('Getting component info failed: Component "non-existing" not found on local repository (404)');
+      });
+
+      it('should return error array with errors for the 2nd and 3rd components', function() {
+        expect(error[0]).to.not.be.ok;
+        expect(error[1].message).to.be.equal('Getting component info failed: Component "no-containers" with version "3.5.7" not found on local repository (404)');
+        expect(error[2].message).to.be.equal('Getting component info failed: Component "non-existing" not found on local repository (404)');
+      });
+    });
   });
 
   describe('when correctly initialised', function(){
@@ -387,9 +495,9 @@ describe('The node.js OC client', function(){
       var expectedRequest = {
         url: 'http://localhost:1234',
         method: 'post',
-        headers: { 
-          accept: 'application/vnd.oc.unrendered+json',
-          'user-agent': 'oc-client-(.*?)'
+        headers: {
+          'user-agent': 'oc-client-(.*?)',
+          'accept': 'application/vnd.oc.unrendered+json'
         },
         timeout: 5,
         json: true,
@@ -425,7 +533,8 @@ describe('The node.js OC client', function(){
           var exp = getRegExpFromJson(expectedRequest),
               expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
 
-          expect(error.toString()).to.match(expected);
+          var actual = error.toString();
+          expect(actual).to.match(expected);
         });
       });
 
@@ -507,8 +616,8 @@ describe('The node.js OC client', function(){
             method: 'post',
             headers: {
               'accept-language': 'da, en-gb;q=0.8, en;q=0.7',
-              accept: 'application/vnd.oc.unrendered+json',
-              'user-agent': 'oc-client-(.*?)'
+              'user-agent': 'oc-client-(.*?)',
+              'accept': 'application/vnd.oc.unrendered+json',
             },
             timeout: 5,
             json: true,
@@ -532,43 +641,6 @@ describe('The node.js OC client', function(){
           expect(error.toString()).to.match(expected);
         });
       });
-
-      describe('when client-side failover rendering enabled with ie8=true', function(){
-
-        var $componentScript,
-            $clientScript,
-            error,
-            options = { ie8: true };
-
-        before(function(done){
-          clientOfflineRegistry.renderComponent('hello-world', options, function(err, html){
-            error = err;
-            var $ = cheerio.load(html);
-            $componentScript = $('script.ocComponent');
-            $clientScript = $('script.ocClientScript');
-            done();
-          });
-        });
-
-        it('should include the client-side rendering script', function(){
-          expect($clientScript).to.have.length.above(0);
-        });
-
-        it('should include the non rendered scripted component', function(){
-          expect($componentScript).to.have.length.above(0);
-        });
-
-        it('should contain the component url', function(){
-          expect($componentScript.toString()).to.contain('http://localhost:1234/hello-world/~1.0.0');
-        });
-
-        it('should contain the error details', function(){
-          var exp = getRegExpFromJson(expectedRequest),
-              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
-
-          expect(error.toString()).to.match(expected);
-        });
-      });
     });
 
     describe('when server-side rendering an existing component linked to a responsive registry', function(){
@@ -580,9 +652,9 @@ describe('The node.js OC client', function(){
         var expectedRequest = {
           url: 'http://localhost:3030',
           method: 'post',
-          headers: { 
-            accept: 'application/vnd.oc.unrendered+json',
-            'user-agent': 'oc-client-(.*?)'
+          headers: {
+            'user-agent': 'oc-client-(.*?)',
+            'accept': 'application/vnd.oc.unrendered+json',
           },
           timeout: 0.01,
           json: true,
@@ -671,5 +743,69 @@ describe('The node.js OC client', function(){
         });
       });
     });
+
+    describe('when getting components info with a non responsive registry', function() {
+      var error;
+      var info;
+
+      before(function(done){
+        clientOfflineRegistry.getComponentsInfo([{
+          name: 'hello-world'
+        },{
+          name: 'other-component',
+          version: '1.0.0'
+        }], function($error, $info) {
+          error = $error;
+          info = $info;
+          done();
+        });
+      });
+
+      var expectedRequest = {
+        url: 'http://localhost:1234',
+        method: 'post',
+        headers: {
+          'user-agent': 'oc-client-(.*?)',
+          'accept': 'application/vnd.oc.info+json'
+        },
+        timeout: 5,
+        json: true,
+        body: {
+          components: [{
+            name: 'hello-world'
+          },{
+            name: 'other-component',
+            version: '1.0.0'
+          }]
+        }
+      };
+
+      var exp = getRegExpFromJson(expectedRequest);
+      var expectedError = new RegExp('Getting component info failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
+
+      it('should fail and return an errors array with an error corresponding to every component requested', function() {
+        expect(error).to.not.be.undefined();
+        expect(error).to.be.instanceof(Array);
+        expect(error.length).to.be.equal(2);
+        
+        expect(error[0]).to.match(expectedError);
+        expect(error[1]).to.match(expectedError);
+      });
+
+      it('return an info array with components requested together with an error for every component', function() {
+        expect(info).to.not.be.undefined();
+        expect(info).to.be.instanceof(Array);
+        expect(info.length).to.be.equal(2);
+
+        expect(info[0].componentName).to.be.equal('hello-world');
+        expect(info[0].requestedVersion).to.be.undefined();
+        expect(info[0].error).to.match(expectedError);
+
+        expect(info[1].componentName).to.be.equal('other-component');
+        expect(info[1].requestedVersion).to.be.equal('1.0.0');
+        expect(info[1].error).to.match(expectedError);
+      });
+    });
+
   });
 });

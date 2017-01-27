@@ -7,5 +7,8 @@ module.exports = {
   'npm-component': require('./npm'),
   'plugin-component': require('./plugin'),
   'timeout-component': require('./timeout'),
-  'undefined-component': require('./undefined')
+  'undefined-component': require('./undefined'),
+  'simple-component': require('./simple'),
+  'response-headers-component': require('./response-headers'),
+  'another-response-headers-component': require('./another-response-headers')
 };

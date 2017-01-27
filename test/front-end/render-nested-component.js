@@ -5,13 +5,8 @@ describe('oc-client : renderNestedComponent', function(){
   var originalConsoleLog = console.log,
       originalRenderByHref = oc.renderByHref,
       htmlBeforeRendering,
-      nav = window.navigator.userAgent,
-      isIe8 = !!(nav.match(/MSIE 8/)),
-      componentHref = '//oc-registry.com/my-component/';
-
-  var componentContainer = isIe8 ? 
-    '<div data-oc-component="true" href="' + componentHref + '"></div>' :
-    '<oc-component href="' + componentHref + '"></oc-component>';
+      componentHref = '//oc-registry.com/my-component/',
+      componentContainer = '<oc-component href="' + componentHref + '"></oc-component>';
 
   var initialise = function($component, fail){
     htmlBeforeRendering = '';
