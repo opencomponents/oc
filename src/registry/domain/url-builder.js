@@ -42,7 +42,7 @@ var build = {
       qs += '?';
 
       _.forEach(parameters, function(parameter, key){
-        qs += key + '=' + encodeURIComponent(parameter) + '&';
+        qs += key.replace(/\s/g, '') + '=' + encodeURIComponent(parameter) + '&';
       });
 
       if(_.keys(parameters).length > 0){
