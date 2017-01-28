@@ -1,6 +1,8 @@
 ## Change Log
 
-### v0.34.6
+### v0.34.7
+- [#372](https://github.com/opentable/oc/pull/372) optional fallbackRegistryUrl configuration parameter
+- [#374](https://github.com/opentable/oc/pull/374) Es2015 base-component server
 - [#367](https://github.com/opentable/oc/pull/367) Always create new S3 client before use
 
 ### v0.34.5
