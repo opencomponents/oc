@@ -12,6 +12,7 @@ var Client = require('../../../../client');
 var detective = require('../../domain/plugins-detective');
 var eventsHandler = require('../../domain/events-handler');
 var GetComponentRetrievingInfo = require('./get-component-retrieving-info');
+var getComponentFallback = require('./get-component-fallback');
 var NestedRenderer = require('../../domain/nested-renderer');
 var RequireWrapper = require('../../domain/require-wrapper');
 var sanitiser = require('../../domain/sanitiser');
@@ -67,6 +68,10 @@ module.exports = function(conf, repository){
 
       // check route exist for component and version
       if(err){
+        if(conf.fallbackRegistryUrl) {
+          return getComponentFallback(conf.fallbackRegistryUrl, options.headers, requestedComponent, callback);
+        }
+
         return callback({
           status: 404,
           response: {

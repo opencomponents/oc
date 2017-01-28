@@ -42,4 +42,23 @@ describe('registry : domain : options-sanitiser', function(){
       });
     });
   });
+
+  describe('fallbackRegistryUrl', function() {
+
+    describe('when fallbackRegistryUrl doesn\'t contain / at the end of url', function() {
+      var options = {fallbackRegistryUrl: 'http://test-url.com'};
+
+      it('should add `/` at the end of url', function() {
+        expect(sanitise(options).fallbackRegistryUrl).to.be.eql('http://test-url.com/');
+      });
+    });
+
+    describe('when fallbackRegistryUrl contains `/` at the end of url', function() {
+      var options = {fallbackRegistryUrl: 'http://test-url.com/'};
+
+      it('should not modify fallbackRegistryUrl url', function() {
+        expect(sanitise(options).fallbackRegistryUrl).to.be.eql('http://test-url.com/');
+      });
+    });
+  });
 });
