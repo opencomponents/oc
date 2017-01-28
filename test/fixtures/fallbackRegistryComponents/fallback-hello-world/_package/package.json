@@ -1,0 +1,1 @@
+{"name":"fallback-hello-world","description":"","version":"1.0.0","repository":"","oc":{"renderInfo":false,"container": false,"files":{"template":{"type":"handlebars","hashKey":"c6fcae4d23d07fd9a7e100508caf8119e998d7a9","src":"template.js"},"static":[]},"version":"0.30.6","packaged":true,"date":1462464333369}}

@@ -32,8 +32,9 @@ module.exports = function(dependencies){
         baseUrl = opts.baseUrl || format('http://localhost:{0}/', port),
         packaging = false,
         errors = strings.errors.cli,
+        fallbackRegistryUrl = opts.fallbackRegistryUrl,
         hotReloading = _.isUndefined(opts.hotReloading) ? true : opts.hotReloading;
-        
+
     callback = wrapCliCallback(callback);
 
     var installMissingDeps = function(missing, cb){
@@ -152,6 +153,7 @@ module.exports = function(dependencies){
           var registry = new oc.Registry({
             local: true,
             hotReloading: hotReloading,
+            fallbackRegistryUrl: fallbackRegistryUrl,
             discovery: true,
             verbosity: 1,
             path: path.resolve(componentsDir),
