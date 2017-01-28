@@ -1,3 +1,4 @@
+/* jshint maxlen: false */
 'use strict';
 
 module.exports = {
@@ -15,6 +16,10 @@ module.exports = {
         },
         baseUrl:{
           help: 'The base url the component is hosted from. Default http://localhost:port/',
+          required: false
+        },
+        fallbackRegistryUrl: {
+          help: 'Url to another registry which will be used by dev registry when component cannot be found in local registry. Example: --fallbackRegistryUrl=http://anotherhost:anotherport/',
           required: false
         }
       }

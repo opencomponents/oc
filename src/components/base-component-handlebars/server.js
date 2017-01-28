@@ -1,5 +1,1 @@
-'use strict';
-
-module.exports.data = function(context, callback){
-  callback(null, {});
-};
+export const data = (context, callback) => callback(null, {});
