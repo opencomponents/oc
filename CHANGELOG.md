@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.34.8
+- [#370](https://github.com/opentable/oc/pull/370) Cleanup on headers handling
+
 ### v0.34.7
 - [#372](https://github.com/opentable/oc/pull/372) optional fallbackRegistryUrl configuration parameter
 - [#374](https://github.com/opentable/oc/pull/374) Es2015 base-component server
