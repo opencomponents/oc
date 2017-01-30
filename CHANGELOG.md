@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.35.1
+- [#371](https://github.com/opentable/oc/pull/371) oc-template-handlebars module
+
 ### v0.35.0
 - [#366](https://github.com/opentable/oc/pull/366) Express 4
 
