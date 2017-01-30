@@ -25,10 +25,14 @@ describe('registry : routes : components', function(){
   var makeRequest = function(body, cb){
     componentsRoute({ headers: {}, body: body }, {
       conf: { baseUrl: 'http://components.com/' },
-      json: function(jsonCode, jsonResponse){
-        response = jsonResponse;
+      status: function(jsonCode){
         code = jsonCode;
-        cb();
+        return {
+          json: function(jsonResponse){
+            response = jsonResponse;
+            cb();
+          }
+        };
       }
     });
   };
@@ -36,10 +40,14 @@ describe('registry : routes : components', function(){
   var makeInfoRequest = function(body, cb){
     componentsRoute({ headers: { accept: 'application/vnd.oc.info+json' }, body: body }, {
       conf: { baseUrl: 'http://components.com/' },
-      json: function(jsonCode, jsonResponse){
-        response = jsonResponse;
+      status: function(jsonCode){
         code = jsonCode;
-        cb();
+        return {
+          json: function(jsonResponse){
+            response = jsonResponse;
+            cb();
+          }
+        };
       }
     });
   };

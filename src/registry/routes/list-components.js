@@ -13,7 +13,7 @@ module.exports = function(repository){
     repository.getComponents(function(err, components){
       if(err){
         res.errorDetails = 'cdn not available';
-        return res.json(404, { error: res.errorDetails });
+        return res.status(404).json({ error: res.errorDetails });
       }
 
       var isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0,
@@ -72,7 +72,7 @@ module.exports = function(repository){
           }));
         });
       } else {
-        res.json(200, _.extend(baseResponse, {
+        res.status(200).json(_.extend(baseResponse, {
           components: _.map(components, function(component){
             return urlBuilder.component(component, res.conf.baseUrl);
           })

@@ -12,7 +12,7 @@ module.exports = function(repository){
       if(err){
         res.errorDetails = err;
         res.errorCode = 'NOT_FOUND';
-        return res.json(404, { err: err });
+        return res.status(404).json({ err: err });
       }
 
       var isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
@@ -27,7 +27,7 @@ module.exports = function(repository){
         });
 
       } else {
-        res.json(200, _.extend(component, {
+        res.status(200).json(_.extend(component, {
           requestVersion: req.params.componentVersion || ''
         }));
       }

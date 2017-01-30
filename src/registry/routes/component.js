@@ -24,7 +24,7 @@ module.exports = function(conf, repository){
         res.set(result.headers);
       }
 
-      return res.json(result.status, result.response);
+      return res.status(result.status).json(result.response);
     });
   };
 };

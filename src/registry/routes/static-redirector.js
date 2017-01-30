@@ -33,7 +33,7 @@ module.exports = function(repository){
 
     if(!fs.existsSync(filePath)){
       res.errorDetails = format('File {0} not found', filePath);
-      return res.json(404, { err: res.errorDetails });
+      return res.status(404).json({ err: res.errorDetails });
     }
 
     var fileStream = fs.createReadStream(filePath),
