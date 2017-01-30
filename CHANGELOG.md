@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.35.0
+- [#366](https://github.com/opentable/oc/pull/366) Express 4
+
 ### v0.34.8
 - [#370](https://github.com/opentable/oc/pull/370) Cleanup on headers handling
 
