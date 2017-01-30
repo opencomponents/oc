@@ -445,8 +445,7 @@ describe('registry : routes : component', function(){
     });
 
     it('should set response headers', function() {
-      expect(resJsonStub.args[0][0].headers).to.not.be.null;      
-      expect(resJsonStub.args[0][0].headers['test-header']).to.equal('test-value');
+      expect(resJsonStub.args[0][0].headers).to.be.undefined;      
       expect(resSetStub.args[0][0]).to.not.be.null;      
       expect(resSetStub.args[0][0]['test-header']).to.equal('test-value');
     });
@@ -573,8 +572,7 @@ describe('registry : routes : component', function(){
     });
 
     it('should set response headers for the first component', function() {
-      expect(resJsonStub.args[0][0].headers).to.not.be.null;      
-      expect(resJsonStub.args[0][0].headers['another-test-header']).to.equal('another-test-value');
+      expect(resJsonStub.args[0][0].headers).to.be.undefined;      
       expect(resSetStub.args[0][0]).to.not.be.null;      
       expect(resSetStub.args[0][0]['another-test-header']).to.equal('another-test-value');
     });
