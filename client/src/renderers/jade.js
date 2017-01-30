@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function(){
-  this.render = function(template, model, callback){
-    return callback(null, template(model).toString());
+  this.render = function(options, callback){
+    return callback(null, options.template(options.model).toString());
   };
 };

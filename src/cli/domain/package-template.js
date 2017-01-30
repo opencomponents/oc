@@ -2,7 +2,7 @@
 
 var format = require('stringformat');
 var fs = require('fs-extra');
-var handlebars = require('handlebars');
+var handlebars = require('oc-template-handlebars');
 var jade = require('jade');
 var path = require('path');
 var uglifyJs = require('uglify-js');

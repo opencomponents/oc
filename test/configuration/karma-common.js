@@ -9,7 +9,7 @@ module.exports = {
     'jquery-1.11.2.js',
     'jQuery.XDomainRequest.js',
     '../../node_modules/jade/runtime.js',
-    '../../node_modules/handlebars/dist/handlebars.runtime.js',
+    'handlebars.runtime.js',
 
     // The tests settings
     'test-settings.js',
