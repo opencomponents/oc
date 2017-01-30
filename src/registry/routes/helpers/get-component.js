@@ -33,7 +33,7 @@ module.exports = function(conf, repository){
 
     var nestedRenderer = new NestedRenderer(renderer, options.conf),
         retrievingInfo = new GetComponentRetrievingInfo(options),
-        responseHeaders;
+        responseHeaders = {};
 
     var getLanguage = function(){
       var paramOverride = !!options.parameters && options.parameters['__ocAcceptLanguage'];
@@ -124,13 +124,12 @@ module.exports = function(conf, repository){
       }
 
       var filterCustomHeaders = function(headers, requestedVersion, actualVersion) {
-        if (!_.isEmpty(headers) &&
-            !_.isEmpty(conf.customHeadersToSkipOnWeakVersion) &&
-            requestedVersion !== actualVersion) 
-        {
-          headers = _.omit(headers, conf.customHeadersToSkipOnWeakVersion);
-        }
-        return headers;
+
+        var needFiltering = !_.isEmpty(headers) &&
+          !_.isEmpty(conf.customHeadersToSkipOnWeakVersion) &&
+          requestedVersion !== actualVersion;
+
+        return needFiltering ? _.omit(headers, conf.customHeadersToSkipOnWeakVersion) : headers;
       };
 
       var returnComponent = function(err, data){
@@ -177,16 +176,12 @@ module.exports = function(conf, repository){
           renderMode: renderMode
         });
 
-        if (responseHeaders) {
-          responseHeaders = filterCustomHeaders(responseHeaders, requestedComponent.version, component.version);
-          if (!_.isEmpty(responseHeaders)) {
-            response.headers = responseHeaders;
-          }
-        }
-
+        responseHeaders = filterCustomHeaders(responseHeaders, requestedComponent.version, component.version);
+        
         if (isUnrendered) {
           callback({
             status: 200,
+            headers: responseHeaders,
             response: _.extend(response, {
               data: data,
               template: {
@@ -225,7 +220,8 @@ module.exports = function(conf, repository){
               }
 
               callback({
-                status: 200, 
+                status: 200,
+                headers: responseHeaders,
                 response: _.extend(response, { html: html })
               });
             });

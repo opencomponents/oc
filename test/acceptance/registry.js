@@ -167,7 +167,7 @@ describe('registry', function(){
       it('should return the component with custom headers', function() {
         expect(result[0].response.version).to.equal('1.0.0');
         expect(result[0].response.name).to.equal('hello-world-custom-headers');
-        expect(result[0].response.headers).to.be.deep.equal({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
+        expect(result[0].headers).to.be.deep.equal({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
       });
     });
 
@@ -194,7 +194,7 @@ describe('registry', function(){
       it('should return the component with custom headers in the response body', function() {
         expect(result[0].response.version).to.equal('1.0.0');
         expect(result[0].response.name).to.equal('hello-world-custom-headers');
-        expect(result[0].response.headers).to.be.deep.equal({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
+        expect(result[0].headers).to.be.deep.equal({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
       });
     });
 
@@ -233,7 +233,7 @@ describe('registry', function(){
         it('should return the component with the custom headers', function() {
           expect(result[0].response.version).to.equal('1.0.0');
           expect(result[0].response.name).to.equal('hello-world-custom-headers');
-          expect(result[0].response.headers).to.be.deep.equal({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
+          expect(result[0].headers).to.be.deep.equal({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
         });
       });
 
@@ -260,7 +260,7 @@ describe('registry', function(){
         it('should skip Cache-Control header', function() {
           expect(result[0].response.version).to.equal('1.0.0');
           expect(result[0].response.name).to.equal('hello-world-custom-headers');
-          expect(result[0].response.headers).to.be.deep.equal({'test-header': 'Test-Value'});
+          expect(result[0].headers).to.be.deep.equal({'test-header': 'Test-Value'});
         });
       });
     });
