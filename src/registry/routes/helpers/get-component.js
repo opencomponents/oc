@@ -21,6 +21,7 @@ var strings = require('../../../resources');
 var urlBuilder = require('../../domain/url-builder');
 var validator = require('../../domain/validators');
 var handlebars = require('oc-template-handlebars');
+var jade = require('oc-template-jade');
 
 module.exports = function(conf, repository){
 
@@ -235,9 +236,7 @@ module.exports = function(conf, repository){
               var template;
 
               if (component.oc.files.template.type === 'jade') {
-                var context = { jade: require('jade/runtime.js')};
-                vm.runInNewContext(templateText, context);
-                template = context.oc.components[key];
+                template = jade.getPrecompiledTemplate(templateText, key);
               } else if (component.oc.files.template.type === 'handlebars') {
                 template = handlebars.getPrecompiledTemplate(templateText, key);
               } else {

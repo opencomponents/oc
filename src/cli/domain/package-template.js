@@ -3,7 +3,7 @@
 var format = require('stringformat');
 var fs = require('fs-extra');
 var handlebars = require('oc-template-handlebars');
-var jade = require('jade');
+var jade = require('oc-template-jade');
 var path = require('path');
 var uglifyJs = require('uglify-js');
 
@@ -20,11 +20,7 @@ var compileView = function(viewPath, type) {
         preCompiledView;
 
   if(type === 'jade'){
-    preCompiledView = jade.compileClient(template, {
-      filename: viewPath,
-      compileDebug: false,
-      name: 't'
-    }).toString().replace('function t(locals) {', 'function(locals){');
+    preCompiledView = jade.precompile(template, { filename: viewPath });
   } else if(type === 'handlebars'){
     preCompiledView = handlebars.precompile(template);
   } else {

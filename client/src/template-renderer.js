@@ -2,13 +2,13 @@
 
 var handlebars = require('oc-template-handlebars');
 var htmlRenderer = require('./html-renderer');
-var Jade = require('./renderers/jade');
+var jade = require('oc-template-jade');
 var validator = require('./validator');
 
 module.exports = function(){
   var renderers = {
     handlebars,
-    jade: new Jade()
+    jade
   };
 
   return function(template, model, options, callback){

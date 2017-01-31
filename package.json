@@ -75,6 +75,7 @@
     "nomnom": "1.8.1",
     "npm": "3.10.8",
     "oc-template-handlebars": "1.0.0",
+    "oc-template-jade": "1.0.0",
     "omelette": "0.3.1",
     "opn": "4.0.2",
     "parse-author": "1.0.0",

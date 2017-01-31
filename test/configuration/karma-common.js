@@ -8,7 +8,7 @@ module.exports = {
     // Dynamically loaded via oc-client, alredy loaded to speed-up tests
     'jquery-1.11.2.js',
     'jQuery.XDomainRequest.js',
-    '../../node_modules/jade/runtime.js',
+    'jade.runtime.js',
     'handlebars.runtime.js',
 
     // The tests settings
