@@ -23,6 +23,11 @@ var validator = require('../../domain/validators');
 var handlebars = require('oc-template-handlebars');
 var jade = require('oc-template-jade');
 
+var templateEngines = {
+  handlebars,
+  jade
+};
+
 module.exports = function(conf, repository){
 
   var client = new Client(),
@@ -233,16 +238,13 @@ module.exports = function(conf, repository){
             returnResult(cached);
           } else {
             repository.getCompiledView(component.name, component.version, function(err, templateText){
-              var template;
 
-              if (component.oc.files.template.type === 'jade') {
-                template = jade.getPrecompiledTemplate(templateText, key);
-              } else if (component.oc.files.template.type === 'handlebars') {
-                template = handlebars.getPrecompiledTemplate(templateText, key);
-              } else {
+              var type = component.oc.files.template.type;
+              if (!templateEngines[type]) {
                 throw strings.errors.cli.TEMPLATE_TYPE_NOT_VALID;
               }
 
+              var template = templateEngines[type].getPrecompiledTemplate(templateText, key);
               cache.set('file-contents', cacheKey, template);
               returnResult(template);
             });

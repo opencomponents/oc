@@ -11,23 +11,24 @@ var hashBuilder = require('../../utils/hash-builder');
 var strings = require('../../resources');
 var validator = require('../../registry/domain/validators');
 
+var templateEngines = {
+  handlebars,
+  jade
+};
+
 var javaScriptizeTemplate = function(functionName, data){
   return format('var {0}={0}||{};{0}.components={0}.components||{};{0}.components[\'{1}\']={2}', 'oc', functionName, data.toString());
 };
 
 var compileView = function(viewPath, type) {
-    var template = fs.readFileSync(viewPath).toString(),
-        preCompiledView;
+  var template = fs.readFileSync(viewPath).toString();
 
-  if(type === 'jade'){
-    preCompiledView = jade.precompile(template, { filename: viewPath });
-  } else if(type === 'handlebars'){
-    preCompiledView = handlebars.precompile(template);
-  } else {
+  if(!templateEngines[type]){
     throw strings.errors.cli.TEMPLATE_TYPE_NOT_VALID;
   }
 
-  var hashView = hashBuilder.fromString(preCompiledView.toString()),
+  var preCompiledView = templateEngines[type].precompile(template, { viewPath }),
+      hashView = hashBuilder.fromString(preCompiledView.toString()),
       compiledView = javaScriptizeTemplate(hashView, preCompiledView);
 
   return {
