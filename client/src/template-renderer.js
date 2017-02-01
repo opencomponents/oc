@@ -6,13 +6,13 @@ var jade = require('oc-template-jade');
 var validator = require('./validator');
 
 module.exports = function(){
-  var renderers = {
+  var templateEngines = {
     handlebars,
     jade
   };
 
   return function(template, model, options, callback){
-    renderers[options.templateType].render(
+    templateEngines[options.templateType].render(
       {
         template,
         model

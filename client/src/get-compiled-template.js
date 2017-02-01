@@ -10,7 +10,7 @@ var TryGetCached = require('./try-get-cached');
 
 module.exports = function(cache){
 
-  var renderers = {
+  var templateEngines = {
     handlebars,
     jade
   };
@@ -33,7 +33,7 @@ module.exports = function(cache){
           });
         }
 
-        cb(null, renderers[template.type].getPrecompiledTemplate(templateText, template.key));
+        cb(null, templateEngines[template.type].getPrecompiledTemplate(templateText, template.key));
        });
     };
 
