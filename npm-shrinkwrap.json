@@ -1,6 +1,6 @@
 {
   "name": "oc",
-  "version": "0.35.1",
+  "version": "0.35.2",
   "dependencies": {
     "accept-language-parser": {
       "version": "1.1.2",
@@ -6119,7 +6119,7 @@
         }
       }
     },
-     "oc-template-jade": {
+    "oc-template-jade": {
       "version": "1.0.0",
       "from": "oc-template-jade@1.0.0",
       "resolved": "https://registry.npmjs.org/oc-template-jade/-/oc-template-jade-1.0.0.tgz",
