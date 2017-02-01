@@ -16,7 +16,8 @@
   "dependencies": {
     "minimal-request": "2.2.0",
     "nice-cache": "0.0.5",
-    "oc-template-handlebars": "1.0.0",
+    "oc-template-handlebars": "1.0.1",
+    "oc-template-jade": "1.0.0",
     "stringformat": "0.0.5"
   },
   "engines": {
