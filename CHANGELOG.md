@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.35.2
+- [#375](https://github.com/opentable/oc/pull/375) oc-template-jade module
+
 ### v0.35.1
 - [#371](https://github.com/opentable/oc/pull/371) oc-template-handlebars module
 
