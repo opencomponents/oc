@@ -1,13 +1,19 @@
 'use strict';
 
 var format = require('stringformat');
+var handlebars = require('oc-template-handlebars');
+var jade = require('oc-template-jade');
 var request = require('minimal-request');
 
-var executor = require('./executor');
 var settings = require('./settings');
 var TryGetCached = require('./try-get-cached');
 
 module.exports = function(cache){
+
+  var templateEngines = {
+    handlebars,
+    jade
+  };
 
   var tryGetCached = new TryGetCached(cache);
   
@@ -27,7 +33,7 @@ module.exports = function(cache){
           });
         }
 
-        cb(null, executor.template(templateText, template));
+        cb(null, templateEngines[template.type].getPrecompiledTemplate(templateText, template.key));
        });
     };
 
