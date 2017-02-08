@@ -2,6 +2,7 @@
 
 var querystring = require('querystring');
 var url = require('url');
+var settings = require('./settings');
 
 module.exports = function(config){
 
@@ -10,12 +11,16 @@ module.exports = function(config){
 
       var clientRenderingEndpoint;
 
+      if (!component.name) {
+        throw settings.missingComponentName;
+      }
+
       if(!!options && !!options.registries && !!options.registries.clientRendering){
         clientRenderingEndpoint = options.registries.clientRendering;
       } else if(!!config && !!config.registries && !!config.registries.clientRendering){
         clientRenderingEndpoint = config.registries.clientRendering;
       } else {
-        return null;
+        throw settings.clientRenderingOptionsNotSet;
       }
 
       var lang = options.headers['accept-language'],
@@ -35,7 +40,7 @@ module.exports = function(config){
           registrySegment = registryUrl.slice(-1) === '/' ? registryUrl : (registryUrl + '/'),
           qs = !!component.parameters ? ('/?' + querystring.stringify(component.parameters)) : '';
       
-      return url.resolve(registrySegment, component.name || '') + versionSegment + qs;
+      return url.resolve(registrySegment, component.name) + versionSegment + qs;
     }
   };
 };
