@@ -34,7 +34,10 @@ module.exports = {
     return request({
       method: 'get',
       url: fallbackRegistryUrl + originalUrl.substr(1, originalUrl.length - 1),
-      headers: _.extend({}, headers, {'host': url.parse(fallbackRegistryUrl).host})
+      headers: _.extend({}, headers, {
+        'host': url.parse(fallbackRegistryUrl).host,
+        'accept': 'application/json'
+      })
     }, callback);
   }
 };
