@@ -2,12 +2,14 @@
 
 var format = require('stringformat');
 var request = require('minimal-request');
-
-var settings = require('./settings');
-var _ = require('./utils/helpers');
 var url = require('url');
 
+var settings = require('./settings');
+var HrefBuilder = require('./href-builder');
+var _ = require('./utils/helpers');
+
 module.exports = function(config){
+  var hrefBuilder = new HrefBuilder(config);
 
   var handleErrorResponse = function(requestDetails, error, response, components) {
     var errorDetails = error ? error.toString() : undefined;
@@ -60,26 +62,10 @@ module.exports = function(config){
 
   var performGet = function(endpoint, serverRendering, options, callback) {
     var component = serverRendering.components[0];
-    var urlPath = component.name + (component.version ? '/' + component.version : '');
-    var queryString;
-
-    if (options.parameters) {
-      queryString = Object
-        .keys(options.parameters)
-        .map(function(key) {
-          return format('{0}={1}', key, encodeURIComponent(options.parameters[key]));
-        })
-        .reduce(function(a, b) {
-          if (!a) {
-            return b;
-          } else {
-            return format('{0}&{1}', a, b);
-          }
-        }, null);
-    }
+    var requestUrl = hrefBuilder.prepareServerGet(endpoint, component, options); 
 
     var requestDetails = {
-      url: url.resolve(endpoint, urlPath + (queryString ? '?' + queryString : '')),
+      url: requestUrl,
       method: 'get',
       headers: options.headers,
       timeout: options.timeout,
@@ -104,13 +90,7 @@ module.exports = function(config){
   return function(toDo, options, cb){
     var serverRenderingFail = settings.serverSideRenderingFail,
         serverRendering = { components: [], positions: [] },
-        serverRenderingEndpoint;
-
-    if(!!options && !!options.registries && !!options.registries.serverRendering){
-      serverRenderingEndpoint = options.registries.serverRendering;
-    } else if(!!config && !!config.registries){
-      serverRenderingEndpoint = config.registries.serverRendering;
-    }
+        serverRenderingEndpoint = hrefBuilder.server(options);
 
     _.each(toDo, function(action){
       if(action.render === 'server'){

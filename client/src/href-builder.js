@@ -1,26 +1,25 @@
 'use strict';
 
 var querystring = require('querystring');
+var format = require('stringformat');
 var url = require('url');
 var settings = require('./settings');
 
 module.exports = function(config){
-
   return {
     client: function(component, options){
-
       var clientRenderingEndpoint;
-
-      if (!component.name) {
-        throw settings.missingComponentName;
-      }
-
+      
       if(!!options && !!options.registries && !!options.registries.clientRendering){
         clientRenderingEndpoint = options.registries.clientRendering;
       } else if(!!config && !!config.registries && !!config.registries.clientRendering){
         clientRenderingEndpoint = config.registries.clientRendering;
       } else {
         throw settings.clientRenderingOptionsNotSet;
+      }
+
+      if (!component.name) {
+        throw settings.missingComponentName;
       }
 
       var lang = options.headers['accept-language'],
@@ -41,6 +40,36 @@ module.exports = function(config){
           qs = !!component.parameters ? ('/?' + querystring.stringify(component.parameters)) : '';
       
       return url.resolve(registrySegment, component.name) + versionSegment + qs;
+    },
+
+    server: function(options) {
+      if(!!options && !!options.registries && !!options.registries.serverRendering){
+        return options.registries.serverRendering;
+      } else if(!!config && !!config.registries){
+        return config.registries.serverRendering;
+      }
+    },
+
+    prepareServerGet: function(baseUrl, component, options) {
+      var urlPath = component.name + (component.version ? '/' + component.version : '');
+      var queryString;
+
+      if (options.parameters) {
+        queryString = Object
+          .keys(options.parameters)
+          .map(function(key) {
+            return format('{0}={1}', key, encodeURIComponent(options.parameters[key]));
+          })
+          .reduce(function(a, b) {
+            if (!a) {
+              return b;
+            } else {
+              return format('{0}&{1}', a, b);
+            }
+          }, null);
+      }
+
+      return url.resolve(baseUrl, urlPath + (queryString ? '?' + queryString : ''));
     }
   };
 };
