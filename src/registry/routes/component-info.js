@@ -4,35 +4,10 @@ var parseAuthor = require('parse-author');
 var _ = require('underscore');
 
 var urlBuilder = require('../domain/url-builder');
-var getComponentInfoFallback = require('./helpers/get-component-fallback').componentInfo;
+var handleGetComponentFromLocalRepositoryError = require('./helpers/get-component-fallback').handleGetComponentFromLocalRepositoryError;
 
-function handleError(conf, req, res, err, component, callback) {
-  if(!err) return callback(null, component);
-
-  if(conf.fallbackRegistryUrl) {
-    return getComponentInfoFallback(conf.fallbackRegistryUrl, req.originalUrl, req.headers, function(fallbackErr, fallbackResponse) {
-      if(fallbackErr === 304) {
-        return res.status(304).send('');
-      }
-
-      if(fallbackErr) return res.status(404).json({ err: err, fallbackErr: fallbackErr});
-      try{
-        return callback(null, JSON.parse(fallbackResponse));
-      } catch (parseError) {
-        return res.status(404).json({ err: err, fallbackErr: 'Could not parse fallback response: ' + fallbackResponse});
-      }
-    });
-  }
-
-  res.errorDetails = err;
-  return res.status(404).json({ err: err });
-}
-
-function extendComponent(component) {
-  var params = {},
-    author = component.author || {},
-    parsedAuthor = _.isString(author) ? parseAuthor(author) : author;
-
+function getParams(component) {
+  var params = {};
   if(!!component.oc.parameters){
     var mandatoryParams = _.filter(_.keys(component.oc.parameters), function(paramName){
       var param = component.oc.parameters[paramName];
@@ -44,6 +19,15 @@ function extendComponent(component) {
     });
   }
 
+  return params;
+}
+
+function getParsedAuthor(component) {
+  var author = component.author || {};
+  return _.isString(author) ? parseAuthor(author) : author;
+}
+
+function addGetRepositoryUrlFunction(component) {
   component.getRepositoryUrl = function() {
     if (_.isObject(this.repository)) {
       if (this.repository.url) {
@@ -61,14 +45,16 @@ module.exports = function(conf, repository){
   return function(req, res){
 
     repository.getComponent(req.params.componentName, req.params.componentVersion, function(err, localComponent){
-
-      handleError(conf, req, res, err, localComponent, function(__, component) {
+      
+      handleGetComponentFromLocalRepositoryError(conf, req, res, err, localComponent, function(__, component) {
 
         var isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
 
         if(isHtmlRequest && !!res.conf.discovery){
 
-          extendComponent(component);
+          var params = getParams(component);
+          var parsedAuthor = getParsedAuthor(component);
+          addGetRepositoryUrlFunction(component);
 
           return res.render('component-info', {
             component: component,
@@ -83,7 +69,7 @@ module.exports = function(conf, repository){
             requestVersion: req.params.componentVersion || ''
           }));
         }
-      })
+      });
 
     });
   };
