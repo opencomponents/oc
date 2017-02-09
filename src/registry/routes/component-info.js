@@ -4,7 +4,7 @@ var parseAuthor = require('parse-author');
 var _ = require('underscore');
 
 var urlBuilder = require('../domain/url-builder');
-var handleGetComponentFromLocalRepositoryError = require('./helpers/get-component-fallback').handleGetComponentFromLocalRepositoryError;
+var getComponentInfoOrPreviewFallback = require('./helpers/get-component-fallback').getComponentInfoOrPreviewFallback;
 
 function getParams(component) {
   var params = {};
@@ -44,9 +44,13 @@ function addGetRepositoryUrlFunction(component) {
 module.exports = function(conf, repository){
   return function(req, res){
 
-    repository.getComponent(req.params.componentName, req.params.componentVersion, function(err, localComponent){
-      
-      handleGetComponentFromLocalRepositoryError(conf, req, res, err, localComponent, function(__, component) {
+    repository.getComponent(req.params.componentName, req.params.componentVersion, function(localRegistryError, localComponent){
+
+      getComponentInfoOrPreviewFallback(conf, req, res, localRegistryError, localComponent, function(err, component) {
+        if(err) {
+          res.errorDetails = err.localError;
+          return res.status(404).json(err);
+        }
 
         var isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
 

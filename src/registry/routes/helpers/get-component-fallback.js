@@ -4,23 +4,6 @@ var request = require('minimal-request');
 var url = require('url');
 var _ = require('underscore');
 
-function respondWithError(res, err, fallbackErr) {
-  res.errorDetails = err;
-  res.errorCode = 'NOT_FOUND';
-  return res.status(404).json({err: err, fallbackErr: fallbackErr});
-}
-
-function getComponentInfoOrPreviewFallback(fallbackRegistryUrl, originalUrl, headers, callback) {
-  return request({
-    method: 'get',
-    url: fallbackRegistryUrl + originalUrl.substr(1, originalUrl.length - 1),
-    headers: _.extend({}, headers, {
-      'host': url.parse(fallbackRegistryUrl).host,
-      'accept': 'application/json'
-    })
-  }, callback);
-}
-
 module.exports = {
   getComponent: function (fallbackRegistryUrl, headers, component, callback) {
     return request({
@@ -47,33 +30,37 @@ module.exports = {
       return callback(res[0]);
     });
   },
-  handleGetComponentFromLocalRepositoryError: function (conf, req, res, err, component, callback) {
-    if (!err) {
+  getComponentInfoOrPreviewFallback: function (conf, req, res, localRegistryError, component, callback) {
+    if (!localRegistryError) {
       return callback(null, component);
     }
 
     if (!conf.fallbackRegistryUrl) {
-      return respondWithError(res, err);
+      return callback({localError: localRegistryError});
     }
 
-    return getComponentInfoOrPreviewFallback(
-      conf.fallbackRegistryUrl,
-      req.originalUrl,
-      req.headers,
-      function (fallbackErr, fallbackResponse) {
-        if (fallbackErr === 304) {
-          return res.status(304).send('');
-        }
+    var path = req.originalUrl;
+    return request({
+      method: 'get',
+      url: conf.fallbackRegistryUrl + path.substr(1, path.length - 1),
+      headers: _.extend({}, req.headers, {
+        'host': url.parse(conf.fallbackRegistryUrl).host,
+        'accept': 'application/json'
+      })
+    }, function (fallbackErr, fallbackResponse) {
+      if (fallbackErr === 304) {
+        return res.status(304).send('');
+      }
 
-        if (fallbackErr) {
-          return respondWithError(res, err, fallbackErr);
-        }
+      if (fallbackErr) {
+        return callback({localError: localRegistryError, fallbackError: fallbackErr});
+      }
 
-        try {
-          return callback(null, JSON.parse(fallbackResponse));
-        } catch (parseError) {
-          return respondWithError(res, err, 'Could not parse fallback response: ' + fallbackResponse);
-        }
-      });
+      try {
+        return callback(null, JSON.parse(fallbackResponse));
+      } catch (parseError) {
+        return callback({localError: localRegistryError, fallbackError: 'Could not parse fallback response: ' + fallbackResponse});
+      }
+    });
   }
 };

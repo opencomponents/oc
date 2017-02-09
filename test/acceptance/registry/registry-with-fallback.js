@@ -112,7 +112,6 @@ describe('registry', function(){
       });
 
       it('should respond with requested component', function(){
-        console.log(result);
         expect(result.name).to.eql('fallback-welcome-with-optional-parameters');
       });
 
