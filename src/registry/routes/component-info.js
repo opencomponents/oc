@@ -4,13 +4,42 @@ var parseAuthor = require('parse-author');
 var _ = require('underscore');
 
 var urlBuilder = require('../domain/url-builder');
+var getComponentInfoFallback = require('./helpers/get-component-fallback').componentInfo;
 
-module.exports = function(repository){
+module.exports = function(conf, repository){
   return function(req, res){
 
     repository.getComponent(req.params.componentName, req.params.componentVersion, function(err, component){
 
+      // var GetComponentHelper = require('./helpers/get-component');
+      // var getComponent = new GetComponentHelper(conf, repository);
+      // getComponent({
+      //   conf: res.conf,
+      //   headers: req.headers,
+      //   name: req.params.componentName,
+      //   parameters: req.query,
+      //   version: req.params.componentVersion
+      // }, function(result){
+      //   console.log('///////////////////');
+      //   console.log(result);
+      //   console.log('///////////////////');
+      //   console.log(component);
+      //   console.log('///////////////////');
+      // });
+
       if(err){
+        if(conf.fallbackRegistryUrl) {
+          return getComponentInfoFallback(conf.fallbackRegistryUrl, req.originalUrl, req.headers, function(fallbackErr, fallbackResponse) {
+            if(fallbackErr === 304) {
+              return res.status(304).send('');
+            }
+
+            if(fallbackErr) return res.status(404).json({ err: err, fallbackErr: fallbackErr});
+            console.log(req.headers);
+            return res.send(fallbackResponse);
+          });
+        }
+
         res.errorDetails = err;
         return res.status(404).json({ err: err });
       }

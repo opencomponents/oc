@@ -16,8 +16,8 @@ module.exports.create = function(app, conf, repository){
   var routes = {
     component: new ComponentRoute(conf, repository),
     components: new ComponentsRoute(conf, repository),
-    componentInfo: new ComponentInfoRoute(repository),
-    componentPreview: new ComponentPreviewRoute(repository),
+    componentInfo: new ComponentInfoRoute(conf, repository),
+    componentPreview: new ComponentPreviewRoute(conf, repository),
     listComponents: new ListComponentsRoute(repository),
     publish: new PublishRoute(repository),
     staticRedirector: new StaticRedirectorRoute(repository)
