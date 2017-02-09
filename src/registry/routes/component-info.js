@@ -28,6 +28,35 @@ function handleError(conf, req, res, err, component, callback) {
   return res.status(404).json({ err: err });
 }
 
+function extendComponent(component) {
+  var params = {},
+    author = component.author || {},
+    parsedAuthor = _.isString(author) ? parseAuthor(author) : author;
+
+  if(!!component.oc.parameters){
+    var mandatoryParams = _.filter(_.keys(component.oc.parameters), function(paramName){
+      var param = component.oc.parameters[paramName];
+      return !!param.mandatory && !!param.example;
+    });
+
+    params = _.mapObject(_.pick(component.oc.parameters, mandatoryParams), function(param){
+      return param.example;
+    });
+  }
+
+  component.getRepositoryUrl = function() {
+    if (_.isObject(this.repository)) {
+      if (this.repository.url) {
+        return this.repository.url;
+      }
+    }
+    if (_.isString(this.repository)) {
+      return this.repository;
+    }
+    return null;
+  };
+}
+
 module.exports = function(conf, repository){
   return function(req, res){
 
@@ -39,32 +68,7 @@ module.exports = function(conf, repository){
 
         if(isHtmlRequest && !!res.conf.discovery){
 
-          var params = {},
-            author = component.author || {},
-            parsedAuthor = _.isString(author) ? parseAuthor(author) : author;
-
-          if(!!component.oc.parameters){
-            var mandatoryParams = _.filter(_.keys(component.oc.parameters), function(paramName){
-              var param = component.oc.parameters[paramName];
-              return !!param.mandatory && !!param.example;
-            });
-
-            params = _.mapObject(_.pick(component.oc.parameters, mandatoryParams), function(param){
-              return param.example;
-            });
-          }
-
-          component.getRepositoryUrl = function() {
-            if (_.isObject(this.repository)) {
-              if (this.repository.url) {
-                return this.repository.url;
-              }
-            }
-            if (_.isString(this.repository)) {
-              return this.repository;
-            }
-            return null;
-          };
+          extendComponent(component);
 
           return res.render('component-info', {
             component: component,
