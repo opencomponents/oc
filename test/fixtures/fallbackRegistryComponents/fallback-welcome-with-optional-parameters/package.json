@@ -1,0 +1,35 @@
+{
+  "name": "fallback-welcome-with-optional-parameters",
+  "description": "",
+  "version": "1.0.0",
+  "repository": "",
+  "oc": {
+    "container": false,
+    "files": {
+      "data": "server.js",
+      "template": {
+        "src": "template.jade",
+        "type": "jade"
+      }
+    },
+    "parameters": {
+      "firstName": {
+        "type": "string",
+        "mandatory": true,
+        "example": "John"
+      },
+      "lastName": {
+        "type": "string",
+        "mandatory": false,
+        "example": "Smith"
+      },
+      "nick": {
+        "type": "string",
+        "mandatory": false,
+        "example": "Smith",
+        "default": "Johnny"
+      }
+    },
+    "renderInfo": false
+  }
+}
