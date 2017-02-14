@@ -36,7 +36,7 @@ describe('registry', function(){
 
     before(function(done){
       registry = new oc.Registry(retrieveRegistryConfiguration(3030, 'test/fixtures/components', 'http://localhost:3031'));
-      fallbackRegistry = new oc.Registry(retrieveRegistryConfiguration(3031, 'test/fixtures/fallbackRegistryComponents'));
+      fallbackRegistry = new oc.Registry(retrieveRegistryConfiguration(3031, 'test/fixtures/fallback-registry-components'));
       registry.start(function(){
         fallbackRegistry.start(done);
       });
