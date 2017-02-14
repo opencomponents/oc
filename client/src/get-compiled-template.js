@@ -16,7 +16,7 @@ module.exports = function(cache){
   };
 
   var tryGetCached = new TryGetCached(cache);
-  
+
   return function(template, useCache, timeout, callback){
 
     var getTemplateFromS3 = function(cb){
@@ -33,7 +33,7 @@ module.exports = function(cache){
           });
         }
 
-        cb(null, templateEngines[template.type].getPrecompiledTemplate(templateText, template.key));
+        cb(null, templateEngines[template.type].getCompiledTemplate(templateText, template.key));
        });
     };
 

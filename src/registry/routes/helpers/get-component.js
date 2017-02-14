@@ -244,7 +244,7 @@ module.exports = function(conf, repository){
                 throw strings.errors.cli.TEMPLATE_TYPE_NOT_VALID;
               }
 
-              var template = templateEngines[type].getPrecompiledTemplate(templateText, key);
+              var template = templateEngines[type].getCompiledTemplate(templateText, key);
               cache.set('file-contents', cacheKey, template);
               returnResult(template);
             });
