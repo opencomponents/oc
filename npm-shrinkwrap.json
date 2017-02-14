@@ -5939,9 +5939,9 @@
       }
     },
     "oc-template-handlebars": {
-      "version": "1.0.1",
-      "from": "oc-template-handlebars@1.0.1",
-      "resolved": "https://registry.npmjs.org/oc-template-handlebars/-/oc-template-handlebars-1.0.1.tgz",
+      "version": "2.0.0",
+      "from": "oc-template-handlebars@2.0.0",
+      "resolved": "https://registry.npmjs.org/oc-template-handlebars/-/oc-template-handlebars-2.0.0.tgz",
       "dependencies": {
         "handlebars": {
           "version": "4.0.6",
@@ -6120,9 +6120,9 @@
       }
     },
     "oc-template-jade": {
-      "version": "1.0.0",
-      "from": "oc-template-jade@1.0.0",
-      "resolved": "https://registry.npmjs.org/oc-template-jade/-/oc-template-jade-1.0.0.tgz",
+      "version": "2.0.0",
+      "from": "oc-template-jade@2.0.0",
+      "resolved": "https://registry.npmjs.org/oc-template-jade/-/oc-template-jade-2.0.0.tgz",
       "dependencies": {
         "jade": {
           "version": "1.11.0",

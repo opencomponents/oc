@@ -27,13 +27,13 @@ var compileView = function(viewPath, type) {
     throw strings.errors.cli.TEMPLATE_TYPE_NOT_VALID;
   }
 
-  var preCompiledView = templateEngines[type].precompile(template, { viewPath }),
-      hashView = hashBuilder.fromString(preCompiledView.toString()),
-      compiledView = javaScriptizeTemplate(hashView, preCompiledView);
+  var compiledView = templateEngines[type].compile(template, { viewPath }),
+      hashView = hashBuilder.fromString(compiledView.toString()),
+      javaScriptizedView = javaScriptizeTemplate(hashView, compiledView);
 
   return {
     hash: hashView,
-    view: uglifyJs.minify(compiledView, {fromString: true}).code
+    view: uglifyJs.minify(javaScriptizedView, {fromString: true}).code
   };
 };
 
