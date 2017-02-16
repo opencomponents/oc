@@ -654,7 +654,7 @@ describe('The node.js OC client', function(){
         it('should contain the error details', function(){
 
           var expectedRequestWithExtraParams = {
-            url: 'http://localhost:1234/hello-world/~1.0.0??hi=john',
+            url: 'http://localhost:1234/hello-world/~1.0.0/??hi=john',
             method: 'get',
             headers: {
               'accept-language': 'da, en-gb;q=0.8, en;q=0.7',
@@ -717,7 +717,7 @@ describe('The node.js OC client', function(){
         var error, result;
 
         var expectedRequest = {
-          url: 'http://localhost:3030/errors-component??errorType=timeout&timeout=1000',
+          url: 'http://localhost:3030/errors-component/??errorType=timeout&timeout=1000',
           method: 'get',
           headers: {
             'user-agent': 'oc-client-(.*?)',

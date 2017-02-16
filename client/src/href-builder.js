@@ -52,24 +52,9 @@ module.exports = function(config){
 
     prepareServerGet: function(baseUrl, component, options) {
       var urlPath = component.name + (component.version ? '/' + component.version : '');
-      var queryString;
+      var qs = options.parameters ? ('/?' + querystring.stringify(options.parameters)) : '';
 
-      if (options.parameters) {
-        queryString = Object
-          .keys(options.parameters)
-          .map(function(key) {
-            return format('{0}={1}', key, encodeURIComponent(options.parameters[key]));
-          })
-          .reduce(function(a, b) {
-            if (!a) {
-              return b;
-            } else {
-              return format('{0}&{1}', a, b);
-            }
-          }, null);
-      }
-
-      return url.resolve(baseUrl, urlPath + (queryString ? '?' + queryString : ''));
+      return url.resolve(baseUrl, urlPath + qs);
     }
   };
 };
