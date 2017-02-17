@@ -34,24 +34,27 @@ module.exports = function(cache, config){
             action.result.error = settings.genericError;
             action.result.html = '';
           } else {
-            var componentClientHref = buildHref.client(action.component, options);
-
-            if(!componentClientHref){
-              action.result.error = settings.clientSideRenderingFail;
+            var componentClientHref;
+            try {
+              componentClientHref = buildHref.client(action.component, options);
+            } catch (err) {
+              action.result.error = err;
               action.result.html = '';
-            } else {
-              var unrenderedComponentTag = htmlRenderer.unrenderedComponent(componentClientHref, options);
+              return;
+            }
+            
+            var unrenderedComponentTag = htmlRenderer.unrenderedComponent(componentClientHref, options);
 
-              if(action.failover){
-                action.result.html = format(templates.clientScript, clientJs, unrenderedComponentTag);
-              } else {
-                action.result.error = null;
-                action.result.html = unrenderedComponentTag;
-              }
+            if(action.failover){
+              action.result.html = format(templates.clientScript, clientJs, unrenderedComponentTag);
+            } else {
+              action.result.error = null;
+              action.result.html = unrenderedComponentTag;
             }
           }
         }
       });
+
       cb();
     });
   };

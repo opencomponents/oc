@@ -12,7 +12,7 @@ module.exports = function(cache){
       if(!!err){ return callback(err); }
 
       cache.set(type, key, res);
-      callback(err, res);
+      callback(null, res);
     });
   };
 };

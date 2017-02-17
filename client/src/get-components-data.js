@@ -2,23 +2,95 @@
 
 var format = require('stringformat');
 var request = require('minimal-request');
+var url = require('url');
 
 var settings = require('./settings');
+var HrefBuilder = require('./href-builder');
 var _ = require('./utils/helpers');
 
 module.exports = function(config){
+  var hrefBuilder = new HrefBuilder(config);
+
+  var handleErrorResponse = function(requestDetails, error, response, components) {
+    var errorDetails = error ? error.toString() : undefined;
+
+    if (response && response.error) {
+      if (errorDetails) {
+        errorDetails = format('{0} {1}', errorDetails, response.error); 
+      } else {
+        errorDetails = response.error;
+      }
+    }
+    
+    if (!errorDetails) {
+      errorDetails = settings.emptyResponse;
+    }
+
+    var responses = [];
+    _.each(components, function(){
+      responses.push({
+        response: {
+          error: format(settings.connectionError, JSON.stringify(requestDetails), errorDetails)
+        }
+      });
+    });
+    
+    return responses;
+  };
+
+  var performPost = function(endpoint, serverRendering, options, callback) {
+    var requestDetails = {
+      url: endpoint,
+      method: 'post',
+      headers: options.headers,
+      timeout: options.timeout,
+      json: true,
+      body: {
+        components: serverRendering.components,
+        parameters: options.parameters || {}
+      }
+    };
+
+    request(requestDetails, function(error, responses) {
+      if(!!error || !responses || _.isEmpty(responses)){
+        responses = handleErrorResponse(requestDetails, error, responses, serverRendering.components);
+      }
+
+      callback(responses);
+    });
+  };
+
+  var performGet = function(endpoint, serverRendering, options, callback) {
+    var component = serverRendering.components[0];
+    var requestUrl = hrefBuilder.prepareServerGet(endpoint, component, options); 
+
+    var requestDetails = {
+      url: requestUrl,
+      method: 'get',
+      headers: options.headers,
+      timeout: options.timeout,
+      json: true
+    };
+
+    request(requestDetails, function(error, responses) {
+      if(!!error || !responses || _.isEmpty(responses)) {
+        responses = handleErrorResponse(requestDetails, error, responses, serverRendering.components);
+      } else {
+        //Prepare the response in case the request is a GET for a single component
+        responses = [{
+          response: responses,
+          status: 200
+        }];
+      }
+
+      callback(responses);
+    });
+  };
 
   return function(toDo, options, cb){
-
     var serverRenderingFail = settings.serverSideRenderingFail,
         serverRendering = { components: [], positions: [] },
-        serverRenderingEndpoint;
-
-    if(!!options && !!options.registries && !!options.registries.serverRendering){
-      serverRenderingEndpoint = options.registries.serverRendering;
-    } else if(!!config && !!config.registries){
-      serverRenderingEndpoint = config.registries.serverRendering;
-    }
+        serverRenderingEndpoint = hrefBuilder.server(options);
 
     _.each(toDo, function(action){
       if(action.render === 'server'){
@@ -44,31 +116,9 @@ module.exports = function(config){
       return cb(serverRenderingFail);
     }
 
-    var requestDetails = {
-      url: serverRenderingEndpoint,
-      method: 'post',
-      headers: options.headers,
-      timeout: options.timeout,
-      json: true,
-      body: {
-        components: serverRendering.components,
-        parameters: options.parameters || {}
-      }
-    };
-
-    request(requestDetails, function(error, responses){
-      if(!!error || !responses || _.isEmpty(responses)){
-        responses = [];
-        var errorDetails = !!error ? error.toString() : settings.emptyResponse;
-        _.each(serverRendering.components, function(){
-          responses.push({
-            response: {
-              error: format(settings.connectionError, JSON.stringify(requestDetails), errorDetails)
-            }
-          });
-        });
-      }
-
+    var performRequest = (serverRendering.components.length === 1) ? performGet : performPost;
+    
+    performRequest(serverRenderingEndpoint, serverRendering, options, function(responses) {
       _.each(responses, function(response, i){
         var action = toDo[serverRendering.positions[i]];
 
