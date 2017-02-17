@@ -1,5 +1,12 @@
 ## Change Log
 
+### v0.35.3
+- [#347](https://github.com/opentable/oc/pull/347) 342 - (OC Client) Perform GET instead of POST for single component
+- [#342](https://github.com/opentable/oc/pull/342) Change the OC Client to perform GET instead of POST when requesting just one component
+- [#385](https://github.com/opentable/oc/pull/385) updated to templates 2.0
+- [#382](https://github.com/opentable/oc/pull/382) Consistency
+- [#376](https://github.com/opentable/oc/pull/376) Cleanup un-needed files
+
 ### v0.35.2
 - [#375](https://github.com/opentable/oc/pull/375) oc-template-jade module
 
@@ -15,6 +22,8 @@
 ### v0.34.7
 - [#372](https://github.com/opentable/oc/pull/372) optional fallbackRegistryUrl configuration parameter
 - [#374](https://github.com/opentable/oc/pull/374) Es2015 base-component server
+
+### v0.34.6
 - [#367](https://github.com/opentable/oc/pull/367) Always create new S3 client before use
 
 ### v0.34.5
