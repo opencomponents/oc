@@ -76,7 +76,7 @@ describe('registry : domain : s3', function(){
   var initialiseAndExecutePutDir = function(callback){
     initialise();
     mockedS3Client.putObject.yields(null, 'ok');
-    s3.putDir('/absolute-path-to-dir', 'components/componentName/1.0.0', function(err, res){
+    s3.putDir('/absolute-path-to-dir', 'components\\componentName\\1.0.0', function(err, res){
       error = err;
       response = res;
       callback();
