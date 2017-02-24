@@ -5,89 +5,83 @@ module.exports = {
   oc: {
 
     dev: {
+      cmd: 'dev <dirName>',   //should be dirPath imho
       help: 'Runs a local oc test registry in order to develop and test components',
       options: {
-        dirName: {
-          help: 'The name of the directory to watch, where the components are stored'
-        },
         port: {
-          help: 'The port where to start a local oc instance. Default 3000',
-          required: false
+          describe: 'The port where to start a local oc instance',
+          default: 3000
         },
         baseUrl:{
-          help: 'The base url the component is hosted from. Default http://localhost:port/',
-          required: false
+          describe: 'The base url the component is hosted from', default: 'http://localhost:port/'
         },
         fallbackRegistryUrl: {
-          help: 'Url to another registry which will be used by dev registry when component cannot be found in local registry. Example: --fallbackRegistryUrl=http://anotherhost:anotherport/',
-          required: false
+          describe: 'Url to another registry which will be used by dev registry when component cannot be found in local registry. Example: --fallbackRegistryUrl=http://anotherhost:anotherport/',
         }
       }
     },
 
     init: {
+      cmd: 'init <componentName>',
       help: 'Creates a new empty component in the current folder',
       options: {
-        componentName: {
-          help: 'The name of the component to create'
-        },
         templateType: {
-          help: 'The component\'s template type. Options are jade or handlebars (default).',
-          required: false,
+          describe: 'The component\'s template type. Options are jade or handlebars',
           default: 'handlebars'
         }
       }
     },
 
     mock: {
-      help: 'Allows to mock configuration in order to facilitate local development',
-      options: {
-        targetType: {
-          help: 'The type of item to mock',
-          choices: ['plugin']
-        },
-        targetName: {
-          help: 'The item to mock'
-        },
-        targetValue: {
-          help: 'The mocked value (static plugin) or the file to read (dynamic plugin)'
-        }
-      }
+      cmd: 'mock <targetType> <targetName> <targetValue>',
+      help: 'Allows to mock configuration in order to facilitate local development'
     },
 
     preview: {
-      help: 'Runs a test page consuming a component',
-      options: {
-        componentHref: {
-          help: 'The name of the component to preview'
-        }
-      }
+      cmd: 'preview <componentHref>',
+      example: {
+        cmd: '$0 preview "http://localhost:3000/my-new-component/1.0.0/?param1=hello&name=Arthur"'
+      },
+      help: 'Runs a test page consuming a component'
     },
 
     publish: {
-      help: 'Publish a component',
-      options: {
-        componentPath: { help: 'The path of the component to publish' }
-      }
+      cmd: 'publish <componentPath>',
+      example: {
+        cmd: '$0 publish my-new-component/'
+      },
+      help: 'Publish a component'
     },
 
     registry: {
-      help: 'Shows, adds, removes oc registries to the current project',
-      options: {
-        command: {
-          help: 'Action: add, ls, or remove',
-          choices: ['add', 'ls', 'remove']
+      cmd: 'registry <command>',
+      help: 'Manages oc registries in the current project',
+      commands: {
+        add: {
+          cmd: 'add <registryUrl>',
+          example: {
+            cmd: '$0 registry add http://my-registry.in.my.domain/'
+          },
+          help: 'Adds oc registries to the current project'
         },
-        parameter: {
-          help: 'Parameter to perform the action',
-          required: false
+        ls: {
+          example: {
+            cmd: '$0 registry ls'
+          },
+          help: 'Shows oc registries added to the current project'
+        },
+        remove: {
+          cmd: 'remove <registryUrl>',
+          example: {
+            cmd: '$0 registry remove http://my-registry.in.my.domain/'
+          },
+          help: 'Removes oc registries from the current project'
         }
       }
     },
 
     version: {
-      help: 'Shows the cli version',
-      flag: true
+      help: 'Shows the cli version'
     }
   }
 };

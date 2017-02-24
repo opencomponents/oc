@@ -19,10 +19,19 @@ module.exports = function(dependencies){
   };
 
   return function(opts, callback){
-    console.log('I`m in registry');
+
+    console.log('hello, I`m removing');
 
     callback = wrapCliCallback(callback);
     
-    
+    registry.remove(opts.registryUrl, function(err, res){
+      if(err){
+        log.err(err);
+        return callback(err);
+      }
+
+      log.ok(strings.messages.cli.REGISTRY_REMOVED);
+      callback(null, 'ok');
+    });
   };
 };

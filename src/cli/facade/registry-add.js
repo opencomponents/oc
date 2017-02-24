@@ -19,10 +19,17 @@ module.exports = function(dependencies){
   };
 
   return function(opts, callback){
-    console.log('I`m in registry');
 
     callback = wrapCliCallback(callback);
     
-    
+    registry.add(opts.registryUrl, function(err, res){
+      if(err){
+        log.err(err);
+        return callback(err);
+      }
+
+      log.ok(strings.messages.cli.REGISTRY_ADDED);
+      callback(null, 'ok');
+    });
   };
 };

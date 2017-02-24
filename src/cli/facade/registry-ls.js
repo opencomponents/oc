@@ -19,10 +19,28 @@ module.exports = function(dependencies){
   };
 
   return function(opts, callback){
-    console.log('I`m in registry');
 
     callback = wrapCliCallback(callback);
     
-    
+    registry.get(function(err, registries){
+      if(err){
+        log.err(format(strings.errors.generic, err));
+        return callback(err);
+      } else {
+        log.warn(strings.messages.cli.REGISTRY_LIST);
+
+        if(registries.length === 0){
+          err = strings.errors.cli.REGISTRY_NOT_FOUND;
+          log.err(err);
+          return callback(err);
+        }
+
+        _.forEach(registries, function(registryLocation){
+          log.ok(registryLocation);       
+        });
+
+        callback(null, registries);
+      }
+    });
   };
 };
