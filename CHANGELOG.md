@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.35.4
+- [#388](https://github.com/opentable/oc/pull/388) Fixing deps on the node client
+
 ### v0.35.3
 - [#347](https://github.com/opentable/oc/pull/347) 342 - (OC Client) Perform GET instead of POST for single component
 - [#342](https://github.com/opentable/oc/pull/342) Change the OC Client to perform GET instead of POST when requesting just one component
