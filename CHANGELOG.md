@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.35.5
+- [#389](https://github.com/opentable/oc/pull/389) Fix regex on win paths normalisation
+
 ### v0.35.4
 - [#388](https://github.com/opentable/oc/pull/388) Fixing deps on the node client
 
