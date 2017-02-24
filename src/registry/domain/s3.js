@@ -109,7 +109,7 @@ module.exports = function(conf){
 
         async.each(files, function(file, cb){
           var relativeFile = file.substr(dirInput.length),
-              url = (dirOutput + relativeFile).replace(/\\/, '/');
+              url = (dirOutput + relativeFile).replace(/\\/g, '/');
 
           self.putFile(file, url, relativeFile === '/server.js', cb);
         }, function(errors){
