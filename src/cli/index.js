@@ -39,7 +39,9 @@ function processCommand(command, commandName, cli, prefix){
       command.cmd || commandName,
       command.help,
       function(yargs){
-        yargs.usage(command.usage);
+        yargs
+          .usage(command.usage)
+          .epilogue(strings.messages.cli.HELP_HINT);                              // or when only there is any command?
         if(!!command.options){
           yargs.options(command.options);
         }
@@ -59,8 +61,7 @@ function processCommand(command, commandName, cli, prefix){
         }
 
         return yargs;
-      },
-      !!command.commands ? undefined : facade       ///add throwing error - not valid, or whatever
+      }, facade
     );
 
   
@@ -81,6 +82,7 @@ _.forEach(commands.commands, function(command, commandName) {
 
 var argv = cli
   .usage(commands.usage)
+  .epilogue(strings.messages.cli.HELP_HINT)
   .help('h')
   .alias('h', 'help')
   .wrap(cli.terminalWidth())
@@ -90,21 +92,14 @@ if(argv._.length === 0 ) {
   cli.showHelp();
 }
 
-//cli.help(strings.messages.cli.HELP_HINT).parse();
-
-
 //todo:
 // autocomplete
-// npm i --save
-// shrinkwrap
+// shrinkwrap <- how to?
 // check whether all the functions work (validation of parameters)
 // check feature parity with the current parser
 //  -> if there is a difference - note it - ask in PR if whether it's acceptable
 // refactor maybe help/describe to description (like for options)
 // types of options can be provided in help
 // current form of version might be changed (?)
-
-// to restructure:
-//  registry functions (+ handling wrong not accpetable command passed)
-// custom .check could handle validation of options
+// clean up callbacks - it's undefined anyway
 

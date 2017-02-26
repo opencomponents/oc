@@ -19,10 +19,13 @@ module.exports = function(dependencies){
   };
 
   return function(opts, callback){
-    console.log('I`m in registry');
-
+    
     callback = wrapCliCallback(callback);
     
-    
+    if(!_.contains(['add', 'ls', 'remove'], opts.command)){
+      throw new Error(format(strings.messages.cli.NOT_VALID_REGISTRY_COMMAND, opts.command));
+    }
+
+    callback(null, 'ok');
   };
 };

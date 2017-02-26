@@ -6,25 +6,17 @@ module.exports = {
   commands: {
 
     dev: {
-      cmd: 'dev <dirName>',   //should be dirPath imho
+      cmd: 'dev <dirName> [port] [baseUrl]',   //should be dirPath imho
       example: {
-        cmd: '$0 dev ../all-components --port 3001 --baseUrl 127.0.0.1 --fallbackRegistryUrl=http://anotherhost:anotherport/'
+        cmd: '$0 dev ../all-components 3001 127.0.0.1 --fallbackRegistryUrl=http://anotherhost:anotherport/'
       },
       help: 'Runs a local oc test registry in order to develop and test components',
       options: {
-        port: {
-          describe: 'The port where to start a local oc instance',
-          default: 3000
-        },
-        baseUrl:{
-          describe: 'The base url the component is hosted from',
-          default: 'http://localhost:port/'
-        },
         fallbackRegistryUrl: {
           describe: 'Url to another registry which will be used by dev registry when component cannot be found in local registry',
         }
       },
-      usage: 'Usage: $0 dev <dirName> [options]'
+      usage: 'Usage: $0 dev <dirName> [port] [baseUrl] [options]'
     },
 
     init: {
