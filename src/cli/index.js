@@ -39,6 +39,7 @@ function processCommand(command, commandName, cli, prefix){
       command.cmd || commandName,
       command.help,
       function(yargs){
+        yargs.usage(command.usage);
         if(!!command.options){
           yargs.options(command.options);
         }
@@ -74,17 +75,15 @@ function processCommand(command, commandName, cli, prefix){
 
 }
 
-_.forEach(commands, function(commandsConfiguration, commandsConfigurationName){
-  _.forEach(commandsConfiguration, function(command, commandName) {
-    processCommand(command, commandName, cli);
-  });
+_.forEach(commands.commands, function(command, commandName) {
+  processCommand(command, commandName, cli);
 });
 
 var argv = cli
+  .usage(commands.usage)
   .help('h')
   .alias('h', 'help')
   .wrap(cli.terminalWidth())
-  .locale('pirate')
   .argv;
 
 if(argv._.length === 0 ) {
@@ -98,14 +97,12 @@ if(argv._.length === 0 ) {
 // autocomplete
 // npm i --save
 // shrinkwrap
-// print usage information
 // check whether all the functions work (validation of parameters)
 // check feature parity with the current parser
 //  -> if there is a difference - note it - ask in PR if whether it's acceptable
 // refactor maybe help/describe to description (like for options)
 // types of options can be provided in help
 // current form of version might be changed (?)
-// add example to each command (see publish and preview)
 
 // to restructure:
 //  registry functions (+ handling wrong not accpetable command passed)

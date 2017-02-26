@@ -2,7 +2,8 @@
 'use strict';
 
 module.exports = {
-  oc: {
+  usage: 'Usage: $0 <command> [options]',
+  commands: {
 
     dev: {
       cmd: 'dev <dirName>',   //should be dirPath imho
@@ -20,9 +21,10 @@ module.exports = {
           default: 'http://localhost:port/'
         },
         fallbackRegistryUrl: {
-          describe: 'Url to another registry which will be used by dev registry when component cannot be found in local registry. Example: --fallbackRegistryUrl=http://anotherhost:anotherport/',
+          describe: 'Url to another registry which will be used by dev registry when component cannot be found in local registry',
         }
-      }
+      },
+      usage: 'Usage: $0 dev <dirName> [options]'
     },
 
     init: {
@@ -36,7 +38,8 @@ module.exports = {
           describe: 'The component\'s template type. Options are jade or handlebars',
           default: 'handlebars'
         }
-      }
+      },
+      usage: 'Usage: $0 init <componentName> [options]'
     },
 
     mock: {
@@ -45,7 +48,8 @@ module.exports = {
         cmd: '$0 mock plugin hash "always-returned-value"',
         description: 'Creates static mock for a "hash" plugin which always returns "always-returned-value" value'
       },
-      help: 'Allows to mock configuration in order to facilitate local development'
+      help: 'Allows to mock configuration in order to facilitate local development',
+      usage: 'Usage: $0 mock <targetType> <targetName> <targetValue>'
     },
 
     preview: {
@@ -53,7 +57,8 @@ module.exports = {
       example: {
         cmd: '$0 preview "http://localhost:3000/my-new-component/1.0.0/?param1=hello&name=Arthur"'
       },
-      help: 'Runs a test page consuming a component'
+      help: 'Runs a test page consuming a component',
+      usage: 'Usage: $0 preview <componentHref>'
     },
 
     publish: {
@@ -61,7 +66,8 @@ module.exports = {
       example: {
         cmd: '$0 publish my-new-component/'
       },
-      help: 'Publish a component'
+      help: 'Publish a component',
+      usage: 'Usage: $0 publish <componentPath>'
     },
 
     registry: {
@@ -73,22 +79,26 @@ module.exports = {
           example: {
             cmd: '$0 registry add http://my-registry.in.my.domain/'
           },
-          help: 'Adds oc registries to the current project'
+          help: 'Adds oc registries to the current project',
+          usage: 'Usage: $0 registry add <registryUrl>'
         },
         ls: {
           example: {
             cmd: '$0 registry ls'
           },
-          help: 'Shows oc registries added to the current project'
+          help: 'Shows oc registries added to the current project',
+          usage: 'Usage: $0 registry ls'
         },
         remove: {
           cmd: 'remove <registryUrl>',
           example: {
             cmd: '$0 registry remove http://my-registry.in.my.domain/'
           },
-          help: 'Removes oc registries from the current project'
+          help: 'Removes oc registries from the current project',
+          usage: 'Usage: $0 registry remove <registryUrl>'
         }
-      }
+      },
+      usage: 'Usage: $0 registry <command>'
     },
 
     version: {
