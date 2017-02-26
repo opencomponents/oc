@@ -6,6 +6,9 @@ module.exports = {
 
     dev: {
       cmd: 'dev <dirName>',   //should be dirPath imho
+      example: {
+        cmd: '$0 dev ../all-components --port 3001 --baseUrl 127.0.0.1 --fallbackRegistryUrl=http://anotherhost:anotherport/'
+      },
       help: 'Runs a local oc test registry in order to develop and test components',
       options: {
         port: {
@@ -13,7 +16,8 @@ module.exports = {
           default: 3000
         },
         baseUrl:{
-          describe: 'The base url the component is hosted from', default: 'http://localhost:port/'
+          describe: 'The base url the component is hosted from',
+          default: 'http://localhost:port/'
         },
         fallbackRegistryUrl: {
           describe: 'Url to another registry which will be used by dev registry when component cannot be found in local registry. Example: --fallbackRegistryUrl=http://anotherhost:anotherport/',
@@ -23,6 +27,9 @@ module.exports = {
 
     init: {
       cmd: 'init <componentName>',
+      example: {
+        cmd: '$0 init test-component --templateType=jade'
+      },
       help: 'Creates a new empty component in the current folder',
       options: {
         templateType: {
@@ -34,6 +41,10 @@ module.exports = {
 
     mock: {
       cmd: 'mock <targetType> <targetName> <targetValue>',
+      example: {
+        cmd: '$0 mock plugin hash "always-returned-value"',
+        description: 'Creates static mock for a "hash" plugin which always returns "always-returned-value" value'
+      },
       help: 'Allows to mock configuration in order to facilitate local development'
     },
 

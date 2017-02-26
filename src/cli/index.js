@@ -80,13 +80,16 @@ _.forEach(commands, function(commandsConfiguration, commandsConfigurationName){
   });
 });
 
-cli
+var argv = cli
   .help('h')
   .alias('h', 'help')
   .wrap(cli.terminalWidth())
   .locale('pirate')
   .argv;
 
+if(argv._.length === 0 ) {
+  cli.showHelp();
+}
 
 //cli.help(strings.messages.cli.HELP_HINT).parse();
 
@@ -95,7 +98,6 @@ cli
 // autocomplete
 // npm i --save
 // shrinkwrap
-// print help when none command has been provided
 // print usage information
 // check whether all the functions work (validation of parameters)
 // check feature parity with the current parser
@@ -107,4 +109,5 @@ cli
 
 // to restructure:
 //  registry functions (+ handling wrong not accpetable command passed)
+// custom .check could handle validation of options
 
