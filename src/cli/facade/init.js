@@ -13,8 +13,8 @@ module.exports = function(dependencies){
 
   return function(opts, callback){
 
-    var componentName = opts.componentName;
-    var templateType = opts.templateType,
+    var componentName = opts.componentName,
+        templateType = opts.templateType,
         errors = strings.errors.cli;
 
     callback = wrapCliCallback(callback);

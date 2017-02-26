@@ -91,10 +91,6 @@ module.exports = {
         }
       },
       usage: 'Usage: $0 registry <command>'
-    },
-
-    version: {
-      description: 'Shows the cli version'
     }
   }
 };

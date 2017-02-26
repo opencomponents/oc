@@ -5,6 +5,7 @@ var _ = require('underscore');
 
 var autocomplete = require('./autocomplete');
 var commands = require('./commands');
+var format = require('stringformat');
 var Local = require('./domain/local');
 var Registry = require('./domain/registry');
 var strings = require('../resources');
@@ -81,10 +82,19 @@ _.forEach(commands.commands, function(command, commandName) {
 });
 
 var argv = cli
+  .check(function(argv){
+    if(argv._.length > 0 &&
+      !_.contains(_.keys(commands.commands), argv._[0])) {
+        throw new Error(format(strings.messages.cli.NO_SUCH_COMMAND, argv._[0]));
+      }
+
+    return true;
+  })
   .usage(commands.usage)
   .epilogue(strings.messages.cli.HELP_HINT)
   .help('h')
   .alias('h', 'help')
+  .version()
   .wrap(cli.terminalWidth())
   .argv;
 
@@ -98,6 +108,4 @@ if(argv._.length === 0 ) {
 // check whether all the functions work (validation of parameters)
 // check feature parity with the current parser
 //  -> if there is a difference - note it - ask in PR if whether it's acceptable
-// current form of version might be changed (?)
 // clean up callbacks - it's undefined anyway
-
