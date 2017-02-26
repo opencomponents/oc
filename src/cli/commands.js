@@ -10,10 +10,10 @@ module.exports = {
       example: {
         cmd: '$0 dev ../all-components 3001 127.0.0.1 --fallbackRegistryUrl=http://anotherhost:anotherport/'
       },
-      help: 'Runs a local oc test registry in order to develop and test components',
+      description: 'Runs a local oc test registry in order to develop and test components',
       options: {
         fallbackRegistryUrl: {
-          describe: 'Url to another registry which will be used by dev registry when component cannot be found in local registry',
+          description: 'Url to another registry which will be used by dev registry when component cannot be found in local registry',
         }
       },
       usage: 'Usage: $0 dev <dirName> [port] [baseUrl] [options]'
@@ -24,10 +24,10 @@ module.exports = {
       example: {
         cmd: '$0 init test-component --templateType=jade'
       },
-      help: 'Creates a new empty component in the current folder',
+      description: 'Creates a new empty component in the current folder',
       options: {
         templateType: {
-          describe: 'The component\'s template type. Options are jade or handlebars',
+          description: 'The component\'s template type. Options are jade or handlebars',
           default: 'handlebars'
         }
       },
@@ -40,7 +40,7 @@ module.exports = {
         cmd: '$0 mock plugin hash "always-returned-value"',
         description: 'Creates static mock for a "hash" plugin which always returns "always-returned-value" value'
       },
-      help: 'Allows to mock configuration in order to facilitate local development',
+      description: 'Allows to mock configuration in order to facilitate local development',
       usage: 'Usage: $0 mock <targetType> <targetName> <targetValue>'
     },
 
@@ -49,7 +49,7 @@ module.exports = {
       example: {
         cmd: '$0 preview "http://localhost:3000/my-new-component/1.0.0/?param1=hello&name=Arthur"'
       },
-      help: 'Runs a test page consuming a component',
+      description: 'Runs a test page consuming a component',
       usage: 'Usage: $0 preview <componentHref>'
     },
 
@@ -58,27 +58,27 @@ module.exports = {
       example: {
         cmd: '$0 publish my-new-component/'
       },
-      help: 'Publish a component',
+      description: 'Publish a component',
       usage: 'Usage: $0 publish <componentPath>'
     },
 
     registry: {
       cmd: 'registry <command>',
-      help: 'Manages oc registries in the current project',
+      description: 'Manages oc registries in the current project',
       commands: {
         add: {
           cmd: 'add <registryUrl>',
           example: {
             cmd: '$0 registry add http://my-registry.in.my.domain/'
           },
-          help: 'Adds oc registries to the current project',
+          description: 'Adds oc registries to the current project',
           usage: 'Usage: $0 registry add <registryUrl>'
         },
         ls: {
           example: {
             cmd: '$0 registry ls'
           },
-          help: 'Shows oc registries added to the current project',
+          description: 'Shows oc registries added to the current project',
           usage: 'Usage: $0 registry ls'
         },
         remove: {
@@ -86,7 +86,7 @@ module.exports = {
           example: {
             cmd: '$0 registry remove http://my-registry.in.my.domain/'
           },
-          help: 'Removes oc registries from the current project',
+          description: 'Removes oc registries from the current project',
           usage: 'Usage: $0 registry remove <registryUrl>'
         }
       },
@@ -94,7 +94,7 @@ module.exports = {
     },
 
     version: {
-      help: 'Shows the cli version'
+      description: 'Shows the cli version'
     }
   }
 };

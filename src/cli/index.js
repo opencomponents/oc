@@ -37,7 +37,7 @@ function processCommand(command, commandName, cli, prefix){
   cli
     .command(
       command.cmd || commandName,
-      command.help,
+      command.description,
       function(yargs){
         yargs
           .usage(command.usage)
@@ -98,8 +98,6 @@ if(argv._.length === 0 ) {
 // check whether all the functions work (validation of parameters)
 // check feature parity with the current parser
 //  -> if there is a difference - note it - ask in PR if whether it's acceptable
-// refactor maybe help/describe to description (like for options)
-// types of options can be provided in help
 // current form of version might be changed (?)
 // clean up callbacks - it's undefined anyway
 
