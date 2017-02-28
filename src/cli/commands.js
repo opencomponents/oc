@@ -8,7 +8,7 @@ module.exports = {
     dev: {
       cmd: 'dev <dirName> [port] [baseUrl]',   //should be dirPath imho
       example: {
-        cmd: '$0 dev ../all-components 3001 127.0.0.1 --fallbackRegistryUrl=http://anotherhost:anotherport/'
+        cmd: '$0 dev ../all-components 3001 127.0.0.1:3001 --fallbackRegistryUrl=http://anotherhost:anotherport/'
       },
       description: 'Runs a local oc test registry in order to develop and test components',
       options: {

@@ -13,12 +13,7 @@ module.exports = function(dependencies){
       logger = dependencies.logger;
 
   return function(opts, callback){
-    
     callback = wrapCliCallback(callback);
-    
-    if(!_.contains(['add', 'ls', 'remove'], opts.command)){
-      throw new Error(format(strings.messages.cli.NOT_VALID_REGISTRY_COMMAND, opts.command));
-    }
 
     callback(null, 'ok');
   };

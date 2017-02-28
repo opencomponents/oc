@@ -31,8 +31,18 @@ var dependencies = {
   flag: true
 });*/
 
-function processCommand(command, commandName, cli, prefix){
+function validate(argv, level){
+  if(argv._.length > level &&
+    !_.contains(_.keys(commands.commands), argv._[level])) {
+      throw new Error(format(strings.messages.cli.NO_SUCH_COMMAND, argv._[level]));
+    }
+
+  return true;
+}
+
+function processCommand(command, commandName, cli, level, prefix){
   prefix = prefix || '';
+  level = (level || 0) + 1;
   var facade = require('./facade/' + prefix + commandName)(dependencies);
 
   cli
@@ -40,17 +50,21 @@ function processCommand(command, commandName, cli, prefix){
       command.cmd || commandName,
       command.description,
       function(yargs){
-        yargs
-          .usage(command.usage)
-          .epilogue(strings.messages.cli.HELP_HINT);                              // or when only there is any command?
+        yargs.usage(command.usage);
+
         if(!!command.options){
           yargs.options(command.options);
         }
 
         if(!!command.commands){
-          var newPrefix = (!!prefix ? prefix + '-' : '') + commandName + '-';         // too complicated - should be simplified
+          yargs
+            .check(function(argv){
+              return validate(argv, level);
+            })
+            .epilogue(strings.messages.cli.HELP_HINT);
+          var newPrefix = (!!prefix ? prefix + '-' : '') + commandName + '-';
           _.mapObject(command.commands, function(commandConfiguration, commandName){
-            processCommand(commandConfiguration, commandName, yargs, newPrefix);
+            processCommand(commandConfiguration, commandName, yargs, level, newPrefix);
           });
         }
 
@@ -83,12 +97,7 @@ _.forEach(commands.commands, function(command, commandName) {
 
 var argv = cli
   .check(function(argv){
-    if(argv._.length > 0 &&
-      !_.contains(_.keys(commands.commands), argv._[0])) {
-        throw new Error(format(strings.messages.cli.NO_SUCH_COMMAND, argv._[0]));
-      }
-
-    return true;
+    return validate(argv, 0);
   })
   .usage(commands.usage)
   .epilogue(strings.messages.cli.HELP_HINT)
@@ -108,4 +117,3 @@ if(argv._.length === 0 ) {
 // check whether all the functions work (validation of parameters)
 // check feature parity with the current parser
 //  -> if there is a difference - note it - ask in PR if whether it's acceptable
-// clean up callbacks - it's undefined anyway
