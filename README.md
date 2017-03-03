@@ -1,9 +1,12 @@
 ![oc](https://raw.githubusercontent.com/opentable/oc/master/logo.png)
 =============
 
-OpenComponents, **serverless in the front-end world**.
-
 OpenComponents is an open-source framework that allows fast-moving teams to easily build and deploy front-end components. It abstracts away complicated infrastructure and leaves developers with very simple, but powerful building blocks that handle scale transparently.
+
+Imagine something **as simple as an iframe, that is not an actual iframe**:
+```html
+<oc-component href="//oc-registry.com/hello/1.x.x?name=John"></oc-component>
+```
 
 #### How does it work?
 
