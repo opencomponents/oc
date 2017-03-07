@@ -2,21 +2,12 @@
 
 var format = require('stringformat');
 var fs = require('fs-extra');
-var handlebars = require('oc-template-handlebars');
-var jade = require('oc-template-jade');
-var react = require('oc-template-react');
 var path = require('path');
 var uglifyJs = require('uglify-js');
 
 var hashBuilder = require('../../utils/hash-builder');
 var strings = require('../../resources');
 var validator = require('../../registry/domain/validators');
-
-var templateEngines = {
-  handlebars,
-  jade,
-  react
-};
 
 var javaScriptizeTemplate = function(functionName, data){
   return format('var {0}={0}||{};{0}.components={0}.components||{};{0}.components[\'{1}\']={2}', 'oc', functionName, data.toString());
@@ -25,11 +16,18 @@ var javaScriptizeTemplate = function(functionName, data){
 var compileView = function(viewPath, type, cb) {
   var template = fs.readFileSync(viewPath).toString();
 
-  if(!templateEngines[type]){
+  try {
+    // Support for old component.type convention (jade & handlebars only)
+    if (type === 'jade') type = 'oc-template-jade';
+    if (type === 'handlebars') type = 'oc-template-handlebars';
+
+    // dynamically require oc-templates
+    var ocTemplate = require(type);
+  } catch (err) {
     throw strings.errors.cli.TEMPLATE_TYPE_NOT_VALID;
   }
 
-  templateEngines[type].compile({ template, viewPath}, (compiledView) => {
+  ocTemplate.compile({ template, viewPath}, (compiledView) => {
     var hashView = hashBuilder.fromString(compiledView.toString()),
         javaScriptizedView = javaScriptizeTemplate(hashView, compiledView);
 
