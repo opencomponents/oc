@@ -9,6 +9,7 @@ module.exports = {
   emptyResponse: 'Empty response',
   genericError: 'Internal client error',
   legacyComponent: 'The component can\'t be rendered because it was published with an older OC version',
+  templateNotSupported : 'Error loading component: template "{0}" not supported',
   missingComponentName: 'The component name is missing',
   registriesEmpty: 'registries must contain at least one endpoint',
   registriesIsNotObject: 'registries must be an object',

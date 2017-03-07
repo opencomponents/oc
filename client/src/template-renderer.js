@@ -1,20 +1,25 @@
 'use strict';
 
-var handlebars = require('oc-template-handlebars');
 var htmlRenderer = require('./html-renderer');
-var jade = require('oc-template-jade');
-var react = require('oc-template-react');
-var validator = require('./validator');
+var format = require('stringformat');
+var settings = require('./settings');
 
-module.exports = function(){
-  var templateEngines = {
-    handlebars,
-    jade,
-    react
-  };
+module.exports = function () {
 
-  return function(template, model, options, callback){
-    templateEngines[options.templateType].render(
+  return function (template, model, options, callback) {
+    try {
+      // Support for old component.type convention (jade & handlebars only)
+      var type = options.templateType;
+      if (type === 'jade') type = 'oc-template-jade';
+      if (type === 'handlebars') type = 'oc-template-handlebars';
+
+      // dynamically require oc-templates
+      var ocTemplate = require(type);
+    } catch (err) {
+      throw format(settings.templateNotSupported, type);
+    }
+
+    ocTemplate.render(
       {
         template,
         model
