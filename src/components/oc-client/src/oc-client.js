@@ -295,9 +295,9 @@ var oc = oc || {};
   };
 
   var templateEngines = {
-    jade: true,
-    handlebars: true,
-    react: true
+    'oc-template-jade': true,
+    'oc-template-handlebars': true,
+    'oc-template-react': true
   };
 
   oc.render = function(compiledViewInfo, model, callback){
@@ -307,7 +307,7 @@ var oc = oc || {};
           if(!compiledView){
             callback(MESSAGES_ERRORS_LOADING_COMPILED_VIEW.replace('{0}', compiledViewInfo.src));
           } else {
-            if(compiledViewInfo.type === 'handlebars'){
+            if(compiledViewInfo.type === 'oc-template-handlebars'){
               oc.require('Handlebars', HANDLEBARS_URL, function(){
                 try {
                   var linked = $window.Handlebars.template(compiledView, []);
@@ -316,11 +316,11 @@ var oc = oc || {};
                   callback(e.toString());
                 }
               });
-            } else if (compiledViewInfo.type === 'jade') {
+            } else if (compiledViewInfo.type === 'oc-template-jade') {
               oc.require('jade', JADE_URL, function(){
                 callback(null, compiledView(model));
               });
-            } else if (compiledViewInfo.type === 'react') {
+            } else if (compiledViewInfo.type === 'oc-template-react') {
               oc.require('React', REACT_URL, function(){
                 oc.require('ReactDOM', REACTDOM_URL, function(){
                   callback(null, compiledView(model));
