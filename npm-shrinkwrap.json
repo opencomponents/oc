@@ -3292,6 +3292,11 @@
         }
       }
     },
+    "basic-auth-connect": {
+      "version": "1.0.0",
+      "from": "basic-auth-connect@latest",
+      "resolved": "https://registry.npmjs.org/basic-auth-connect/-/basic-auth-connect-1.0.0.tgz"
+    },
     "body-parser": {
       "version": "1.16.0",
       "from": "body-parser@>=1.16.0 <2.0.0",
