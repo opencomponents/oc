@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.35.6
+- [#397](https://github.com/opentable/oc/pull/397) Fix basicAuth
+
 ### v0.35.5
 - [#389](https://github.com/opentable/oc/pull/389) Fix regex on win paths normalisation
 
