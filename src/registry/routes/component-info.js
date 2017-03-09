@@ -72,9 +72,7 @@ function componentInfo(err, req, res, component) {
 
 module.exports = function(conf, repository){
   return function(req, res){
-
     repository.getComponent(req.params.componentName, req.params.componentVersion, function(localRegistryError, localComponent){
-
       if(localRegistryError && conf.fallbackRegistryUrl) {
         return getComponentFallback.getComponentInfo(conf, req, res, localRegistryError, function(error, component){
           componentInfo(error, req, res, component);
