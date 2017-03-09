@@ -2,7 +2,38 @@
 
 var request = require('minimal-request');
 var url = require('url');
+var urlBuilder = require('../../domain/url-builder');
 var _ = require('underscore');
+
+function getComponentFallbackForViewType(buildUrl, conf, req, res, localRegistryError, callback) {
+  var path = buildUrl({
+    name: req.params.componentName,
+    version: req.params.componentVersion
+  }, conf.fallbackRegistryUrl);
+
+  return request({
+    method: 'get',
+    url: path,
+    headers: _.extend({}, req.headers, {
+      'host': url.parse(conf.fallbackRegistryUrl).host,
+      'accept': 'application/json'
+    })
+  }, function (fallbackErr, fallbackResponse) {
+    if (fallbackErr === 304) {
+      return res.status(304).send('');
+    }
+
+    if (fallbackErr) {
+      return callback({localError: localRegistryError, fallbackError: fallbackErr});
+    }
+
+    try {
+      return callback(null, JSON.parse(fallbackResponse));
+    } catch (parseError) {
+      return callback({localError: localRegistryError, fallbackError: 'Could not parse fallback response: ' + fallbackResponse});
+    }
+  });
+}
 
 module.exports = {
   getComponent: function (fallbackRegistryUrl, headers, component, callback) {
@@ -30,37 +61,10 @@ module.exports = {
       return callback(res[0]);
     });
   },
-  getComponentInfoOrPreviewFallback: function (conf, req, res, localRegistryError, component, callback) {
-    if (!localRegistryError) {
-      return callback(null, component);
-    }
-
-    if (!conf.fallbackRegistryUrl) {
-      return callback({localError: localRegistryError});
-    }
-
-    var path = req.originalUrl;
-    return request({
-      method: 'get',
-      url: conf.fallbackRegistryUrl + path.substr(1, path.length - 1),
-      headers: _.extend({}, req.headers, {
-        'host': url.parse(conf.fallbackRegistryUrl).host,
-        'accept': 'application/json'
-      })
-    }, function (fallbackErr, fallbackResponse) {
-      if (fallbackErr === 304) {
-        return res.status(304).send('');
-      }
-
-      if (fallbackErr) {
-        return callback({localError: localRegistryError, fallbackError: fallbackErr});
-      }
-
-      try {
-        return callback(null, JSON.parse(fallbackResponse));
-      } catch (parseError) {
-        return callback({localError: localRegistryError, fallbackError: 'Could not parse fallback response: ' + fallbackResponse});
-      }
-    });
+  getComponentPreview: function (conf, req, res, localRegistryError, callback) {
+    getComponentFallbackForViewType(urlBuilder.componentPreview, conf, req, res, localRegistryError, callback);
+  },
+  getComponentInfo: function (conf, req, res, localRegistryError, callback) {
+    getComponentFallbackForViewType(urlBuilder.componentInfo, conf, req, res, localRegistryError, callback);
   }
 };
