@@ -79,8 +79,6 @@ function processCommand(command, commandName, cli, level, prefix){
       }, facade
     );
 
-  
-
   /*if(!!command.options){
     cliCommand.options(_.object(_.keys(command.options), _.map(command.options, function(option){
       return _.extend(option, {
@@ -114,6 +112,3 @@ if(argv._.length === 0 ) {
 //todo:
 // autocomplete
 // shrinkwrap <- how to?
-// check whether all the functions work (validation of parameters)
-// check feature parity with the current parser
-//  -> if there is a difference - note it - ask in PR if whether it's acceptable

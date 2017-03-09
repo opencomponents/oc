@@ -14,6 +14,11 @@ module.exports = {
       options: {
         fallbackRegistryUrl: {
           description: 'Url to another registry which will be used by dev registry when component cannot be found in local registry',
+        },
+        hotReloading: {
+          boolean: true,
+          description: 'Enables hot reloading. Note: when hot reloading is set to true, each request to the component will make the registry to create a new instance for the javascript closures to be loaded, while when false the instance will be recycled between components executions',
+          default: true
         }
       },
       usage: 'Usage: $0 dev <dirName> [port] [baseUrl] [options]'
@@ -57,6 +62,14 @@ module.exports = {
       cmd: 'publish <componentPath>',
       example: {
         cmd: '$0 publish my-new-component/'
+      },
+      options: {
+        password: {
+          description: 'password used to authenticate when publishing to registry'
+        },
+        username: {
+          description: 'username used to authenticate when publishing to registry'
+        }
       },
       description: 'Publish a component',
       usage: 'Usage: $0 publish <componentPath>'
