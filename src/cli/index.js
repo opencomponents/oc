@@ -3,7 +3,6 @@
 var cli = require('yargs');
 var _ = require('underscore');
 
-var autocomplete = require('./autocomplete');
 var commands = require('./commands');
 var format = require('stringformat');
 var Local = require('./domain/local');
@@ -22,14 +21,6 @@ var dependencies = {
   logger: logger,
   registry: new Registry()
 };
-
-//autocomplete.init(_.keys(commands.oc));
-
-/*cli.option('completion', {
-  hidden: true,
-  callback: autocomplete.setup,
-  flag: true
-});*/
 
 function validate(argv, level){
   if(argv._.length > level &&
@@ -78,15 +69,6 @@ function processCommand(command, commandName, cli, level, prefix){
         return yargs;
       }, facade
     );
-
-  /*if(!!command.options){
-    cliCommand.options(_.object(_.keys(command.options), _.map(command.options, function(option){
-      return _.extend(option, {
-        list: false
-      });
-    })));
-  }*/
-
 }
 
 _.forEach(commands.commands, function(command, commandName) {
@@ -94,6 +76,7 @@ _.forEach(commands.commands, function(command, commandName) {
 });
 
 var argv = cli
+  .completion()
   .check(function(argv){
     return validate(argv, 0);
   })
@@ -108,7 +91,3 @@ var argv = cli
 if(argv._.length === 0 ) {
   cli.showHelp();
 }
-
-//todo:
-// autocomplete
-// shrinkwrap <- how to?
