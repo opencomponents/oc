@@ -20,13 +20,6 @@ var settings = require('../../../resources/settings');
 var strings = require('../../../resources');
 var urlBuilder = require('../../domain/url-builder');
 var validator = require('../../domain/validators');
-var handlebars = require('oc-template-handlebars');
-var jade = require('oc-template-jade');
-
-var templateEngines = {
-  handlebars,
-  jade
-};
 
 module.exports = function(conf, repository){
 
@@ -240,11 +233,19 @@ module.exports = function(conf, repository){
             repository.getCompiledView(component.name, component.version, function(err, templateText){
 
               var type = component.oc.files.template.type;
-              if (!templateEngines[type]) {
+
+              try {
+                // Support for old component.type convention (jade & handlebars only)
+                if (type === 'jade') type = 'oc-template-jade';
+                if (type === 'handlebars') type = 'oc-template-handlebars';
+
+                // dynamically require oc-templates
+                var ocTemplate = require(type);
+              } catch (err) {
                 throw strings.errors.cli.TEMPLATE_TYPE_NOT_VALID;
               }
 
-              var template = templateEngines[type].getCompiledTemplate(templateText, key);
+              var template = ocTemplate.getCompiledTemplate(templateText, key);
               cache.set('file-contents', cacheKey, template);
               returnResult(template);
             });

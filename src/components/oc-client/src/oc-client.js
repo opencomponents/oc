@@ -34,6 +34,8 @@ var oc = oc || {};
       IE9_AJAX_POLYFILL_URL = CDNJS_BASEURL + 'jquery-ajaxtransport-xdomainrequest/1.0.3/jquery.xdomainrequest.min.js',
       HANDLEBARS_URL = CDNJS_BASEURL + 'handlebars.js/4.0.5/handlebars.runtime.min.js',
       JADE_URL = CDNJS_BASEURL + 'jade/1.11.0/runtime.min.js',
+      REACT_URL = CDNJS_BASEURL + 'react/15.4.2/react.min.js',
+      REACTDOM_URL = CDNJS_BASEURL + 'react/15.4.2/react-dom.min.js',
       JQUERY_URL = CDNJS_BASEURL + 'jquery/1.11.2/jquery.min.js',
       RETRY_INTERVAL = oc.conf.retryInterval || 5000,
       RETRY_LIMIT = oc.conf.retryLimit || 30,
@@ -292,14 +294,20 @@ var oc = oc || {};
     }
   };
 
+  var templateEngines = {
+    'oc-template-jade': true,
+    'oc-template-handlebars': true,
+    'oc-template-react': true
+  };
+
   oc.render = function(compiledViewInfo, model, callback){
     oc.ready(function(){
-      if(!!compiledViewInfo.type.match(/jade|handlebars/g)){
+      if(!!templateEngines[compiledViewInfo.type]){
         oc.require(['oc', 'components', compiledViewInfo.key], compiledViewInfo.src, function(compiledView){
           if(!compiledView){
             callback(MESSAGES_ERRORS_LOADING_COMPILED_VIEW.replace('{0}', compiledViewInfo.src));
           } else {
-            if(compiledViewInfo.type === 'handlebars'){
+            if(compiledViewInfo.type === 'oc-template-handlebars'){
               oc.require('Handlebars', HANDLEBARS_URL, function(){
                 try {
                   var linked = $window.Handlebars.template(compiledView, []);
@@ -308,9 +316,15 @@ var oc = oc || {};
                   callback(e.toString());
                 }
               });
-            } else if(compiledViewInfo.type === 'jade'){
+            } else if (compiledViewInfo.type === 'oc-template-jade') {
               oc.require('jade', JADE_URL, function(){
                 callback(null, compiledView(model));
+              });
+            } else if (compiledViewInfo.type === 'oc-template-react') {
+              oc.require('React', REACT_URL, function(){
+                oc.require('ReactDOM', REACTDOM_URL, function(){
+                  callback(null, compiledView(model));
+                });
               });
             }
           }

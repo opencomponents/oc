@@ -1,20 +1,12 @@
 'use strict';
 
 var format = require('stringformat');
-var handlebars = require('oc-template-handlebars');
-var jade = require('oc-template-jade');
 var request = require('minimal-request');
 
 var settings = require('./settings');
 var TryGetCached = require('./try-get-cached');
 
 module.exports = function(cache){
-
-  var templateEngines = {
-    handlebars,
-    jade
-  };
-
   var tryGetCached = new TryGetCached(cache);
 
   return function(template, useCache, timeout, callback){
@@ -32,7 +24,17 @@ module.exports = function(cache){
             }
           });
         }
+        try {
+          // Support for old component.type convention (jade & handlebars only)
+          var type = template.type;
+          if (type === 'jade') type = 'oc-template-jade';
+          if (type === 'handlebars') type = 'oc-template-handlebars';
 
+          // dynamically require oc-templates
+          var ocTemplate = require(type);
+        } catch (err) {
+          throw format(settings.templateNotSupported, type);
+        }
         cb(null, templateEngines[template.type].getCompiledTemplate(templateText, template.key));
        });
     };
