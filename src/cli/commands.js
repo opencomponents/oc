@@ -6,7 +6,7 @@ module.exports = {
   commands: {
 
     dev: {
-      cmd: 'dev <dirName> [port] [baseUrl]',   //should be dirPath imho
+      cmd: 'dev <dirPath> [port] [baseUrl]',
       example: {
         cmd: '$0 dev ../all-components 3001 127.0.0.1:3001 --fallbackRegistryUrl=http://anotherhost:anotherport/'
       },
