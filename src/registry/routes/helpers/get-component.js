@@ -76,7 +76,7 @@ module.exports = function(conf, repository){
       // check route exist for component and version
       if(err){
         if(conf.fallbackRegistryUrl) {
-          return getComponentFallback(conf.fallbackRegistryUrl, options.headers, requestedComponent, callback);
+          return getComponentFallback.getComponent(conf.fallbackRegistryUrl, options.headers, requestedComponent, callback);
         }
 
         return callback({

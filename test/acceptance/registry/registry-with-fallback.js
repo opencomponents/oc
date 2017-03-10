@@ -83,5 +83,41 @@ describe('registry', function(){
         expect(result.html).to.equal('Hello world!');
       });
     });
+
+    describe('GET /fallback-hello-world/~info', function(){
+
+      before(function(done){
+        request({
+          url: 'http://localhost:3030/fallback-welcome-with-optional-parameters/~info',
+          json: true
+        }, next(done));
+      });
+
+      it('should respond with requested component', function(){
+        expect(result.name).to.eql('fallback-welcome-with-optional-parameters');
+      });
+
+      it('should respond with components parameters', function(){
+        expect(Object.keys(result.oc.parameters).length).to.equal(3);
+      });
+    });
+
+    describe('GET /fallback-hello-world/~preview', function(){
+
+      before(function(done){
+        request({
+          url: 'http://localhost:3030/fallback-welcome-with-optional-parameters/~preview',
+          json: true
+        }, next(done));
+      });
+
+      it('should respond with requested component', function(){
+        expect(result.name).to.eql('fallback-welcome-with-optional-parameters');
+      });
+
+      it('should respond with components parameters', function(){
+        expect(Object.keys(result.oc.parameters).length).to.equal(3);
+      });
+    });
   });
 });
