@@ -2,10 +2,13 @@
 
 var fs = require('fs-extra');
 var path = require('path');
-var hashBuilder = require('../../../utils/hash-builder');
-var bundle = require('./bundle');
 
-var webpackDefaults =  {
+var bundle = require('./bundle');
+var hashBuilder = require('../../../utils/hash-builder');
+
+var webpackDefault =  { stats: 'errors-only' };
+
+var webpackVerbose =  {
   stats: {
     chunks: false,
     colors: true,
@@ -17,9 +20,10 @@ var webpackDefaults =  {
 module.exports = function packageServerScript(params, callback){
   var fileName = 'server.js';
   var publishPath = params.publishPath;
+  var webpackParams = params.verbose ? webpackVerbose : webpackDefault;
 
   var bundleParams = {
-    webpack: params.webpack || webpackDefaults,
+    webpack: params.webpack || webpackParams,
     dependencies: params.dependencies || {},
     fileName: fileName,
     dataPath: path.join(params.componentPath, params.ocOptions.files.data)

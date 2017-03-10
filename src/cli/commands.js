@@ -19,6 +19,11 @@ module.exports = {
           boolean: true,
           description: 'Enables hot reloading. Note: when hot reloading is set to true, each request to the component will make the registry to create a new instance for the javascript closures to be loaded, while when false the instance will be recycled between components executions',
           default: true
+        },
+        verbose: {
+          boolean: true,
+          description: 'Verbosity',
+          default: false
         }
       },
       usage: 'Usage: $0 dev <dirName> [port] [baseUrl] [options]'
