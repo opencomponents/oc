@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.36.1
+- [#380](https://github.com/opentable/oc/pull/380) Handle fallbackRegistryUrl for ~info and ~preview
+
 ### v0.36.0
 - [#399](https://github.com/opentable/oc/pull/399) Changed option parser for cli
 - [#400](https://github.com/opentable/oc/pull/400) Fixing typo on registry UI for filtering.
