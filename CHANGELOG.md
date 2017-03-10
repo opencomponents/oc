@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.36.0
+- [#399](https://github.com/opentable/oc/pull/399) Changed option parser for cli
+- [#400](https://github.com/opentable/oc/pull/400) Fixing typo on registry UI for filtering.
+
 ### v0.35.6
 - [#397](https://github.com/opentable/oc/pull/397) Fix basicAuth
 
