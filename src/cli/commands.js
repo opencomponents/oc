@@ -25,18 +25,12 @@ module.exports = {
     },
 
     init: {
-      cmd: 'init <componentName>',
+      cmd: 'init <componentName> [templateType]',
       example: {
-        cmd: '$0 init test-component --templateType=jade'
+        cmd: '$0 init test-component jade'
       },
-      description: 'Creates a new empty component in the current folder',
-      options: {
-        templateType: {
-          description: 'The component\'s template type. Options are jade or handlebars',
-          default: 'handlebars'
-        }
-      },
-      usage: 'Usage: $0 init <componentName> [options]'
+      description: 'Creates a new empty component [of either jade or handlebars template type] in the current folder',
+      usage: 'Usage: $0 init <componentName> [templateType]'
     },
 
     mock: {
