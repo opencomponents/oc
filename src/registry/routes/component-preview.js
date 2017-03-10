@@ -7,7 +7,7 @@ var getComponentFallback = require('./helpers/get-component-fallback');
 
 function componentPreview(err, req, res, component) {
     if(err) {
-        res.errorDetails = err.localError;
+        res.errorDetails = err.registryError || err;
         res.errorCode = 'NOT_FOUND';
         return res.status(404).json(err);
     }
@@ -33,15 +33,15 @@ function componentPreview(err, req, res, component) {
 module.exports = function(conf, repository){
   return function(req, res){
     
-    repository.getComponent(req.params.componentName, req.params.componentVersion, function(localRegistryError, localComponent){
+    repository.getComponent(req.params.componentName, req.params.componentVersion, function(registryError, component){
 
-      if(localRegistryError && conf.fallbackRegistryUrl) {
-        return getComponentFallback.getComponentPreview(conf, req, res, localRegistryError, function(error, component){
-            componentPreview(error, req, res, component);
+      if(registryError && conf.fallbackRegistryUrl) {
+        return getComponentFallback.getComponentPreview(conf, req, res, registryError, function(fallbackError, fallbackComponent){
+            componentPreview(fallbackError, req, res, fallbackComponent);
         });
       }
 
-      componentPreview(localRegistryError, req, res, localComponent);
+      componentPreview(registryError, req, res, component);
 
     });
   };

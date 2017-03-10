@@ -43,7 +43,7 @@ function addGetRepositoryUrlFunction(component) {
 
 function componentInfo(err, req, res, component) {
   if(err) {
-    res.errorDetails = err.localError;
+    res.errorDetails = err.registryError || err;
     return res.status(404).json(err);
   }
 
@@ -72,14 +72,14 @@ function componentInfo(err, req, res, component) {
 
 module.exports = function(conf, repository){
   return function(req, res){
-    repository.getComponent(req.params.componentName, req.params.componentVersion, function(localRegistryError, localComponent){
-      if(localRegistryError && conf.fallbackRegistryUrl) {
-        return getComponentFallback.getComponentInfo(conf, req, res, localRegistryError, function(error, component){
-          componentInfo(error, req, res, component);
+    repository.getComponent(req.params.componentName, req.params.componentVersion, function(registryError, component){
+      if(registryError && conf.fallbackRegistryUrl) {
+        return getComponentFallback.getComponentInfo(conf, req, res, registryError, function(fallbackError, fallbackComponent){
+          componentInfo(fallbackError, req, res, fallbackComponent);
         });
       }
 
-      componentInfo(localRegistryError, req, res, localComponent);
+      componentInfo(registryError, req, res, component);
     });
   };
 };

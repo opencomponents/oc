@@ -5,7 +5,7 @@ var url = require('url');
 var urlBuilder = require('../../domain/url-builder');
 var _ = require('underscore');
 
-function getComponentFallbackForViewType(buildUrl, conf, req, res, localRegistryError, callback) {
+function getComponentFallbackForViewType(buildUrl, conf, req, res, registryError, callback) {
   var path = buildUrl({
     name: req.params.componentName,
     version: req.params.componentVersion
@@ -24,13 +24,13 @@ function getComponentFallbackForViewType(buildUrl, conf, req, res, localRegistry
     }
 
     if (fallbackErr) {
-      return callback({localError: localRegistryError, fallbackError: fallbackErr});
+      return callback({registryError: registryError, fallbackError: fallbackErr});
     }
 
     try {
       return callback(null, JSON.parse(fallbackResponse));
     } catch (parseError) {
-      return callback({localError: localRegistryError, fallbackError: 'Could not parse fallback response: ' + fallbackResponse});
+      return callback({registryError: registryError, fallbackError: 'Could not parse fallback response: ' + fallbackResponse});
     }
   });
 }
@@ -61,10 +61,10 @@ module.exports = {
       return callback(res[0]);
     });
   },
-  getComponentPreview: function (conf, req, res, localRegistryError, callback) {
-    getComponentFallbackForViewType(urlBuilder.componentPreview, conf, req, res, localRegistryError, callback);
+  getComponentPreview: function (conf, req, res, registryError, callback) {
+    getComponentFallbackForViewType(urlBuilder.componentPreview, conf, req, res, registryError, callback);
   },
-  getComponentInfo: function (conf, req, res, localRegistryError, callback) {
-    getComponentFallbackForViewType(urlBuilder.componentInfo, conf, req, res, localRegistryError, callback);
+  getComponentInfo: function (conf, req, res, registryError, callback) {
+    getComponentFallbackForViewType(urlBuilder.componentInfo, conf, req, res, registryError, callback);
   }
 };
