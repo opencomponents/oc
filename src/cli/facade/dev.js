@@ -27,7 +27,7 @@ module.exports = function(dependencies){
 
   return function(opts, callback){
 
-    var componentsDir = opts.dirName,
+    var componentsDir = opts.dirPath,
         port = opts.port || 3000,
         baseUrl = opts.baseUrl || format('http://localhost:{0}/', port),
         packaging = false,

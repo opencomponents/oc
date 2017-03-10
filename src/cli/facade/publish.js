@@ -31,7 +31,7 @@ module.exports = function(dependencies){
         errorMessage;
 
     callback = wrapCliCallback(callback);
-    
+
     var getCredentials = function(cb){
       if(opts.username && opts.password){
         log.ok(strings.messages.cli.USING_CREDS);

@@ -105,6 +105,8 @@ module.exports = {
       HOT_RELOADING_DISABLED: 'OC dev is running with hot reloading disabled so changes will be ignored',
       INSTALLING_DEPS: 'Trying to install missing modules: {0}\nIf you aren\'t connected to the internet, or npm isn\'t configured then this step will fail',
       MOCKED_PLUGIN: 'Mock for plugin has been registered: {0} () => {1}',
+      NO_SUCH_COMMAND: 'No such command \'{0}\'',
+      NOT_VALID_REGISTRY_COMMAND: 'Not valid command: got {0}, allowed values: add, ls, remove',
       PACKAGING: 'Packaging -> {0}',
       PACKAGING_COMPONENTS: 'Packaging components...',
       PREVIEW_STARTED_AT_URL: 'Component\'s preview started at url: {0}',

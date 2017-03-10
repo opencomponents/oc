@@ -73,11 +73,9 @@
     "multer": "0.1.4",
     "nice-cache": "0.0.5",
     "node-dir": "0.1.14",
-    "nomnom": "1.8.1",
     "npm": "3.10.8",
     "oc-template-handlebars": "2.0.0",
     "oc-template-jade": "2.0.0",
-    "omelette": "0.3.1",
     "opn": "4.0.2",
     "parse-author": "1.0.0",
     "read": "1.0.7",
@@ -89,6 +87,7 @@
     "uglify-js": "2.6.4",
     "underscore": "1.8.3",
     "watch": "0.19.1",
-    "webpack": "2.2.0"
+    "webpack": "2.2.0",
+    "yargs": "^6.6.0"
   }
 }
