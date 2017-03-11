@@ -6,21 +6,10 @@ var path = require('path');
 var bundle = require('./bundle');
 var hashBuilder = require('../../../utils/hash-builder');
 
-var webpackDefault =  { stats: 'errors-only' };
-
-var webpackVerbose =  {
-  stats: {
-    chunks: false,
-    colors: true,
-    version: false,
-    hash: false
-  }
-};
-
 module.exports = function packageServerScript(params, callback){
   var fileName = 'server.js';
   var publishPath = params.publishPath;
-  var webpackParams = params.verbose ? webpackVerbose : webpackDefault;
+  var webpackParams = { stats: params.verbose ? 'verbose' : 'errors-only' };
 
   var bundleParams = {
     webpack: params.webpack || webpackParams,
