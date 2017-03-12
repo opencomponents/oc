@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.36.2
+- [#401](https://github.com/opentable/oc/pull/401) Webpack verbose
+
 ### v0.36.1
 - [#380](https://github.com/opentable/oc/pull/380) Handle fallbackRegistryUrl for ~info and ~preview
 
