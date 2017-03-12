@@ -1,7 +1,6 @@
 /*jshint camelcase:false */
 'use strict';
 var webpackConfig = require('./config');
-var console = require('console');
 var MemoryFS = require('memory-fs');
 var webpack = require('webpack');
 
@@ -32,7 +31,11 @@ module.exports = function bundle(params, callBack) {
       warning = info.warnings.toString();
     }
 
-    console.log(stats.toString(params.webpack.stats));
+    var log = stats.toString(params.webpack.stats);
+
+    if(!!log){
+      console.log(log);
+    }
 
     var serverContentBundled = memoryFs.readFileSync('/build/server.js', 'UTF8');
     callBack(warning, serverContentBundled);

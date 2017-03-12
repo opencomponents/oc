@@ -48,7 +48,11 @@ var initialise = function(){
 };
 
 var executePackaging = function(local, callback){
-  return local('.', false, callback);
+  return local({
+    componentPath: '.',
+    minify: false,
+    verbose: false
+  }, callback);
 };
 
 describe('cli : domain : local', function(){

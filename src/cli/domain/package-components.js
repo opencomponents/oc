@@ -12,12 +12,10 @@ var getUnixUtcTimestamp = require('../../utils/get-unix-utc-timestamp');
 var validator = require('../../registry/domain/validators');
 
 module.exports = function(){
-  return function(componentPath, minify, callback){
+  return function(options, callback){
 
-    if(_.isFunction(minify)){
-      callback = minify;
-      minify = true;
-    }
+    var componentPath = options.componentPath;
+    var minify = options.minify || true;
 
     var files = fs.readdirSync(componentPath),
         publishPath = path.join(componentPath, '_package');
@@ -72,7 +70,8 @@ module.exports = function(){
           componentPath: componentPath,
           dependencies: component.dependencies,
           ocOptions: component.oc,
-          publishPath: publishPath
+          publishPath: publishPath,
+          verbose: options.verbose
         }, function(err, packagedServerScriptInfo){
           if(err){ return cb(err); }
 

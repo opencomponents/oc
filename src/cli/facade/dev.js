@@ -75,7 +75,14 @@ module.exports = function(dependencies){
         log.warn(strings.messages.cli.PACKAGING_COMPONENTS, true);
 
         async.eachSeries(componentsDirs, function(dir, cb){
-          local.package(dir, false, function(err){
+
+          var packageOptions = {
+            componentPath: dir,
+            minify: false,
+            verbose: opts.verbose
+          };
+
+          local.package(packageOptions, function(err){
             if(!err){ i++; }
             cb(err);
           });
