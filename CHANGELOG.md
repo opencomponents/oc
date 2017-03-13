@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.36.3
+- [#403](https://github.com/opentable/oc/pull/403) Fix for #391 - support pre-release versions of components
+- [#1](https://github.com/opentable/oc/pull/1) Thanks @matteofigus. I forgot about it.
+
 ### v0.36.2
 - [#401](https://github.com/opentable/oc/pull/401) Webpack verbose
 
