@@ -6490,6 +6490,18 @@
       "from": "semver@5.1.1",
       "resolved": "https://registry.npmjs.org/semver/-/semver-5.1.1.tgz"
     },
+    "semver-extra": {
+      "version": "2.0.1",
+      "from": "semver-extra@2.0.1",
+      "resolved": "https://registry.npmjs.org/semver-extra/-/semver-extra-2.0.1.tgz",
+      "dependencies": {
+        "semver": {
+          "version": "5.3.0",
+          "from": "semver@>=5.0.0 <6.0.0",
+          "resolved": "https://registry.npmjs.org/semver/-/semver-5.3.0.tgz"
+        }
+      }
+    },
     "stringformat": {
       "version": "0.0.5",
       "from": "stringformat@0.0.5",
