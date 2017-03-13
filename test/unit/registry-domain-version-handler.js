@@ -3,7 +3,7 @@
 var expect = require('chai').expect;
 
 describe('registry : domain : version-handler', function(){
-  
+
   var versionHandler = require('../../src/registry/domain/version-handler');
 
   describe('when getting component', function(){
@@ -65,6 +65,45 @@ describe('registry : domain : version-handler', function(){
         expect(get('1.X.X', availableVersions)).to.equal('1.2.3');
       });
     });
+    describe('when only pre release versions available', function(){
+
+      var availableVersions = ['1.0.0-120', '1.0.1-121', '2.0.1-122', '2.0.1-123'];
+
+      it('should return the latest when a version is not specified', function(){
+        expect(get(undefined, availableVersions)).to.equal('2.0.1-123');
+      });
+
+      it('should return undefined when not valid version specified', function(){
+        expect(get('hello!', availableVersions)).to.be.undefined;
+      });
+
+      it('should return the latest when latest version specified', function(){
+        expect(get('', availableVersions)).to.equal('2.0.1-123');
+      });
+
+      it('should return the version specified', function(){
+        expect(get('1.0.1-121', availableVersions)).to.equal('1.0.1-121');
+      });
+      
+    });
+    describe('when mix of release and pre-release versions available', function(){
+
+      var availableVersions = ['1.0.0', '1.0.1-121', '1.0.1', '2.0.1-122', '2.0.1-123'];
+
+      it('should return the latest release version when a version is not specified', function(){
+        expect(get(undefined, availableVersions)).to.equal('1.0.1');
+      });
+
+      it('should return the latest when latest version specified', function(){
+        expect(get('', availableVersions)).to.equal('1.0.1');
+      });
+
+      it('should return the version specified', function(){
+        expect(get('1.0.1-121', availableVersions)).to.equal('1.0.1-121');
+      });
+
+    });
+
   });
 
   describe('when publishing component', function(){
