@@ -51,7 +51,10 @@ module.exports = function(dependencies){
 
     var packageAndCompress = function(cb){
       log.warn(format(strings.messages.cli.PACKAGING, packageDir));
-      local.package(path.resolve(componentPath), function(err, component){
+      var packageOptions = {
+        componentPath: path.resolve(componentPath)
+      };
+      local.package(packageOptions, function(err, component){
         if(err){ return cb(err); }
 
         log.warn(format(strings.messages.cli.COMPRESSING, compressedPackagePath));
