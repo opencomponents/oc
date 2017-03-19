@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.36.5
+- [#396](https://github.com/opentable/oc/pull/396) Make oc-client.js supporting more templates via an extendable API
+
 ### v0.36.4
 - [#405](https://github.com/opentable/oc/pull/405) Publish bugfix
 - [#402](https://github.com/opentable/oc/pull/402) We don't autogenerate cli docs anymore
