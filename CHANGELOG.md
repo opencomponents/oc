@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.36.6
+- [#408](https://github.com/opentable/oc/pull/408) Ensuring we exit the domains in case of timeout
+
 ### v0.36.5
 - [#396](https://github.com/opentable/oc/pull/396) Make oc-client.js supporting more templates via an extendable API
 
