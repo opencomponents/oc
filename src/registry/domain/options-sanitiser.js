@@ -37,6 +37,11 @@ module.exports = function(input){
     options.verbosity = 0;
   }
 
+  if(!_.isUndefined(options.fallbackRegistryUrl) &&
+    _.last(options.fallbackRegistryUrl) !== '/'){
+    options.fallbackRegistryUrl += '/';
+  }
+
   options.customHeadersToSkipOnWeakVersion = (options.customHeadersToSkipOnWeakVersion || [])
     .map(function(s) { return s.toLowerCase(); });
 

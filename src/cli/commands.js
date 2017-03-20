@@ -1,88 +1,108 @@
+/* jshint maxlen: false */
 'use strict';
 
 module.exports = {
-  oc: {
+  usage: 'Usage: $0 <command> [options]',
+  commands: {
 
     dev: {
-      help: 'Runs a local oc test registry in order to develop and test components',
+      cmd: 'dev <dirPath> [port] [baseUrl]',
+      example: {
+        cmd: '$0 dev ../all-components 3001 127.0.0.1:3001 --fallbackRegistryUrl=http://anotherhost:anotherport/'
+      },
+      description: 'Runs a local oc test registry in order to develop and test components',
       options: {
-        dirName: {
-          help: 'The name of the directory to watch, where the components are stored'
+        fallbackRegistryUrl: {
+          description: 'Url to another registry which will be used by dev registry when component cannot be found in local registry',
         },
-        port: {
-          help: 'The port where to start a local oc instance. Default 3000',
-          required: false
+        hotReloading: {
+          boolean: true,
+          description: 'Enables hot reloading. Note: when hot reloading is set to true, each request to the component will make the registry to create a new instance for the javascript closures to be loaded, while when false the instance will be recycled between components executions',
+          default: true
         },
-        baseUrl:{
-          help: 'The base url the component is hosted from. Default http://localhost:port/',
-          required: false
+        verbose: {
+          boolean: true,
+          description: 'Verbosity',
+          default: false
         }
-      }
+      },
+      usage: 'Usage: $0 dev <dirName> [port] [baseUrl] [options]'
     },
 
     init: {
-      help: 'Creates a new empty component in the current folder',
-      options: {
-        componentName: {
-          help: 'The name of the component to create'
-        },
-        templateType: {
-          help: 'The component\'s template type. Options are jade or handlebars (default).',
-          required: false,
-          default: 'handlebars'
-        }
-      }
+      cmd: 'init <componentName> [templateType]',
+      example: {
+        cmd: '$0 init test-component jade'
+      },
+      description: 'Creates a new empty component [of either jade or handlebars template type] in the current folder',
+      usage: 'Usage: $0 init <componentName> [templateType]'
     },
 
     mock: {
-      help: 'Allows to mock configuration in order to facilitate local development',
-      options: {
-        targetType: {
-          help: 'The type of item to mock',
-          choices: ['plugin']
-        },
-        targetName: {
-          help: 'The item to mock'
-        },
-        targetValue: {
-          help: 'The mocked value (static plugin) or the file to read (dynamic plugin)'
-        }
-      }
+      cmd: 'mock <targetType> <targetName> <targetValue>',
+      example: {
+        cmd: '$0 mock plugin hash "always-returned-value"',
+        description: 'Creates static mock for a "hash" plugin which always returns "always-returned-value" value'
+      },
+      description: 'Allows to mock configuration in order to facilitate local development',
+      usage: 'Usage: $0 mock <targetType> <targetName> <targetValue>'
     },
 
     preview: {
-      help: 'Runs a test page consuming a component',
-      options: {
-        componentHref: {
-          help: 'The name of the component to preview'
-        }
-      }
+      cmd: 'preview <componentHref>',
+      example: {
+        cmd: '$0 preview "http://localhost:3000/my-new-component/1.0.0/?param1=hello&name=Arthur"'
+      },
+      description: 'Runs a test page consuming a component',
+      usage: 'Usage: $0 preview <componentHref>'
     },
 
     publish: {
-      help: 'Publish a component',
+      cmd: 'publish <componentPath>',
+      example: {
+        cmd: '$0 publish my-new-component/'
+      },
       options: {
-        componentPath: { help: 'The path of the component to publish' }
-      }
+        password: {
+          description: 'password used to authenticate when publishing to registry'
+        },
+        username: {
+          description: 'username used to authenticate when publishing to registry'
+        }
+      },
+      description: 'Publish a component',
+      usage: 'Usage: $0 publish <componentPath>'
     },
 
     registry: {
-      help: 'Shows, adds, removes oc registries to the current project',
-      options: {
-        command: {
-          help: 'Action: add, ls, or remove',
-          choices: ['add', 'ls', 'remove']
+      cmd: 'registry <command>',
+      description: 'Manages oc registries in the current project',
+      commands: {
+        add: {
+          cmd: 'add <registryUrl>',
+          example: {
+            cmd: '$0 registry add http://my-registry.in.my.domain/'
+          },
+          description: 'Adds oc registries to the current project',
+          usage: 'Usage: $0 registry add <registryUrl>'
         },
-        parameter: {
-          help: 'Parameter to perform the action',
-          required: false
+        ls: {
+          example: {
+            cmd: '$0 registry ls'
+          },
+          description: 'Shows oc registries added to the current project',
+          usage: 'Usage: $0 registry ls'
+        },
+        remove: {
+          cmd: 'remove <registryUrl>',
+          example: {
+            cmd: '$0 registry remove http://my-registry.in.my.domain/'
+          },
+          description: 'Removes oc registries from the current project',
+          usage: 'Usage: $0 registry remove <registryUrl>'
         }
-      }
-    },
-
-    version: {
-      help: 'Shows the cli version',
-      flag: true
+      },
+      usage: 'Usage: $0 registry <command>'
     }
   }
 };

@@ -1,7 +1,8 @@
 'use strict';
 
-var path = require('path');
+var basicAuth = require('basic-auth-connect');
 var format = require('stringformat');
+var path = require('path');
 
 var strings = require('../../resources/');
 
@@ -15,8 +16,7 @@ var builtin = {
       };
     },
     middleware: function(authConfig){
-      var express = require('express');
-      return express.basicAuth(authConfig.username, authConfig.password);
+      return basicAuth(authConfig.username, authConfig.password);
     }
   }
 };

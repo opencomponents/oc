@@ -27,13 +27,14 @@ module.exports = function(dependencies){
 
   return function(opts, callback){
 
-    var componentsDir = opts.dirName,
+    var componentsDir = opts.dirPath,
         port = opts.port || 3000,
         baseUrl = opts.baseUrl || format('http://localhost:{0}/', port),
         packaging = false,
         errors = strings.errors.cli,
+        fallbackRegistryUrl = opts.fallbackRegistryUrl,
         hotReloading = _.isUndefined(opts.hotReloading) ? true : opts.hotReloading;
-        
+
     callback = wrapCliCallback(callback);
 
     var installMissingDeps = function(missing, cb){
@@ -74,7 +75,14 @@ module.exports = function(dependencies){
         log.warn(strings.messages.cli.PACKAGING_COMPONENTS, true);
 
         async.eachSeries(componentsDirs, function(dir, cb){
-          local.package(dir, false, function(err){
+
+          var packageOptions = {
+            componentPath: dir,
+            minify: false,
+            verbose: opts.verbose
+          };
+
+          local.package(packageOptions, function(err){
             if(!err){ i++; }
             cb(err);
           });
@@ -152,6 +160,7 @@ module.exports = function(dependencies){
           var registry = new oc.Registry({
             local: true,
             hotReloading: hotReloading,
+            fallbackRegistryUrl: fallbackRegistryUrl,
             discovery: true,
             verbosity: 1,
             path: path.resolve(componentsDir),

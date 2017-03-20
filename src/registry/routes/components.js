@@ -17,7 +17,7 @@ module.exports = function(conf, repository){
         registryErrors = strings.errors.registry;
 
     var returnError = function(message){
-      return res.json(400, {
+      return res.status(400).json({
         code: registryErrors.BATCH_ROUTE_BODY_NOT_VALID_CODE,
         error: format(registryErrors.BATCH_ROUTE_BODY_NOT_VALID, message)
       });
@@ -51,7 +51,7 @@ module.exports = function(conf, repository){
         callback(null, result);
       });
     }, function(err, results){
-      return res.json(200, results);
+      return res.status(200).json(results);
     });
   };
 };

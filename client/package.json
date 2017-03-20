@@ -1,6 +1,6 @@
 {
   "name": "oc-client",
-  "version": "2.0.0",
+  "version": "2.1.2",
   "description": "Node.js oc client",
   "main": "index.js",
   "repository": {
@@ -14,9 +14,10 @@
   },
   "homepage": "https://github.com/opentable/oc/tree/master/oc-client",
   "dependencies": {
-    "handlebars": "4.0.5",
     "minimal-request": "2.2.0",
     "nice-cache": "0.0.5",
+    "oc-template-handlebars": "2.0.0",
+    "oc-template-jade": "2.0.0",
     "stringformat": "0.0.5"
   },
   "engines": {

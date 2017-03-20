@@ -1,5 +1,81 @@
 ## Change Log
 
+### v0.36.6
+- [#408](https://github.com/opentable/oc/pull/408) Ensuring we exit the domains in case of timeout
+
+### v0.36.5
+- [#396](https://github.com/opentable/oc/pull/396) Make oc-client.js supporting more templates via an extendable API
+
+### v0.36.4
+- [#405](https://github.com/opentable/oc/pull/405) Publish bugfix
+- [#402](https://github.com/opentable/oc/pull/402) We don't autogenerate cli docs anymore
+
+### v0.36.3
+- [#403](https://github.com/opentable/oc/pull/403) Fix for #391 - support pre-release versions of components
+- [#1](https://github.com/opentable/oc/pull/1) Thanks @matteofigus. I forgot about it.
+
+### v0.36.2
+- [#401](https://github.com/opentable/oc/pull/401) Webpack verbose
+
+### v0.36.1
+- [#380](https://github.com/opentable/oc/pull/380) Handle fallbackRegistryUrl for ~info and ~preview
+
+### v0.36.0
+- [#399](https://github.com/opentable/oc/pull/399) Changed option parser for cli
+- [#400](https://github.com/opentable/oc/pull/400) Fixing typo on registry UI for filtering.
+
+### v0.35.6
+- [#397](https://github.com/opentable/oc/pull/397) Fix basicAuth
+
+### v0.35.5
+- [#389](https://github.com/opentable/oc/pull/389) Fix regex on win paths normalisation
+
+### v0.35.4
+- [#388](https://github.com/opentable/oc/pull/388) Fixing deps on the node client
+
+### v0.35.3
+- [#347](https://github.com/opentable/oc/pull/347) 342 - (OC Client) Perform GET instead of POST for single component
+- [#342](https://github.com/opentable/oc/pull/342) Change the OC Client to perform GET instead of POST when requesting just one component
+- [#385](https://github.com/opentable/oc/pull/385) updated to templates 2.0
+- [#382](https://github.com/opentable/oc/pull/382) Consistency
+- [#376](https://github.com/opentable/oc/pull/376) Cleanup un-needed files
+
+### v0.35.2
+- [#375](https://github.com/opentable/oc/pull/375) oc-template-jade module
+
+### v0.35.1
+- [#371](https://github.com/opentable/oc/pull/371) oc-template-handlebars module
+
+### v0.35.0
+- [#366](https://github.com/opentable/oc/pull/366) Express 4
+
+### v0.34.8
+- [#370](https://github.com/opentable/oc/pull/370) Cleanup on headers handling
+
+### v0.34.7
+- [#372](https://github.com/opentable/oc/pull/372) optional fallbackRegistryUrl configuration parameter
+- [#374](https://github.com/opentable/oc/pull/374) Es2015 base-component server
+
+### v0.34.6
+- [#367](https://github.com/opentable/oc/pull/367) Always create new S3 client before use
+
+### v0.34.5
+- [#365](https://github.com/opentable/oc/pull/365) Publish bugfix
+
+### v0.34.4
+- [#364](https://github.com/opentable/oc/pull/364) Don't allow routes that contain prefix
+
+### v0.34.3
+- [#362](https://github.com/opentable/oc/pull/362) Node 7
+- [#363](https://github.com/opentable/oc/pull/363) Extending Integration tests
+
+### v0.34.2
+- [#357](https://github.com/opentable/oc/pull/357) Webpack 2
+
+### v0.34.1
+- [#361](https://github.com/opentable/oc/pull/361) removed uglify
+- [#359](https://github.com/opentable/oc/pull/359) swapped falafel loader with infinite-loop-loader
+
 ### v0.34.0
 - [#346](https://github.com/opentable/oc/pull/346) [GPT-432] Package server webpack
 - [#356](https://github.com/opentable/oc/pull/356) Appveyor cleanup

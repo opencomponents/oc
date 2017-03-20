@@ -1,28 +1,26 @@
 'use strict';
 
-var Handlebars = require('./renderers/handlebars');
+var handlebars = require('oc-template-handlebars');
 var htmlRenderer = require('./html-renderer');
-var Jade = require('./renderers/jade');
+var jade = require('oc-template-jade');
 var validator = require('./validator');
 
 module.exports = function(){
-  
-  var renderers = {
-    handlebars: new Handlebars(),
-    jade: new Jade()
+  var templateEngines = {
+    handlebars,
+    jade
   };
 
-  return function(template, data, options, callback){
-
-    var validationResult = validator.validateComponent(template, options);
-
-    if(!validationResult.isValid){
-      return callback(validationResult.error);
-    }
-
-    renderers[options.templateType].render(template, data, function(err, html){
-      options.html = html;
-      return callback(err, htmlRenderer.renderedComponent(options));
-    });
+  return function(template, model, options, callback){
+    templateEngines[options.templateType].render(
+      {
+        template,
+        model
+      },
+      function(err, html){
+        options.html = html;
+        return callback(err, htmlRenderer.renderedComponent(options));
+      }
+    );
   };
 };

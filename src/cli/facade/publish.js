@@ -31,7 +31,7 @@ module.exports = function(dependencies){
         errorMessage;
 
     callback = wrapCliCallback(callback);
-    
+
     var getCredentials = function(cb){
       if(opts.username && opts.password){
         log.ok(strings.messages.cli.USING_CREDS);
@@ -51,8 +51,10 @@ module.exports = function(dependencies){
 
     var packageAndCompress = function(cb){
       log.warn(format(strings.messages.cli.PACKAGING, packageDir));
-
-      local.package(componentPath, function(err, component){
+      var packageOptions = {
+        componentPath: path.resolve(componentPath)
+      };
+      local.package(packageOptions, function(err, component){
         if(err){ return cb(err); }
 
         log.warn(format(strings.messages.cli.COMPRESSING, compressedPackagePath));

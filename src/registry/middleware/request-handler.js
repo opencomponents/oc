@@ -1,15 +1,17 @@
 'use strict';
 
 var express = require('express');
+var responseTime = require('response-time');
 
 var eventsHandler = require('../domain/events-handler');
 
 module.exports = function(){
-  return express.logger(function(tokens, req, res){
+
+  return responseTime(function (req, res, time) {
 
     var data = {
       body: req.body,
-      duration: tokens['response-time'](req, res)*1000,
+      duration: parseInt(time * 1000, 10),
       headers: req.headers,
       method: req.method,
       path: req.path,

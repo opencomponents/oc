@@ -2,6 +2,7 @@
 
 var handlebars3CompiledView = 'oc.components=oc.components||{},oc.components["46ee85c314b371cac60471cef5b2e2e6c443dccf"]={compiler:[6,">= 2.0.0-beta.1"],main:function(){return"Hello world!"},useData:!0};';
 var handlebarsCompiledView = 'oc.components=oc.components||{},oc.components["46ee85c314b371cac60471cef5b2e2e6c443dccf"]={compiler:[7,">= 4.0.0"],main:function(){return"Hello world!"},useData:!0};';
+var emojiCompiledView = 'oc.components=oc.components||{},oc.components["46ee85c314b371cac60471cef5b2e2e6c443dccc"]=function(){return "😎";};';
 var jadeCompiledView = 'oc.components=oc.components||{},oc.components["09227309bca0b1ec1866c547ebb76c74921e85d2"]=function(n){var e,o=[],c=n||{};return function(n){o.push("<span>hello "+jade.escape(null==(e=n)?"":e)+"</span>")}.call(this,"name"in c?c.name:"undefined"!=typeof name?name:void 0),o.join("")};';
 
 describe('oc-client : render', function(){
@@ -28,9 +29,9 @@ describe('oc-client : render', function(){
       expect(callback.args[0][0]).toEqual('Error getting compiled view: https://my-cdn.com/components/a-component/1.2.123/template.js');
     });
   });
-  
+
   describe('when rendering handlebars component', function(){
-   
+
     describe('when handlebars runtime not loaded', function(){
 
       var originalHandlebars, originalHeadLoad, callback, headSpy;
@@ -49,10 +50,10 @@ describe('oc-client : render', function(){
 
         callback = sinon.spy();
         eval(handlebarsCompiledView);
-            
+
         oc.render({
-          src: 'https://my-cdn.com/components/a-component/1.2.123/template.js', 
-          type: 'handlebars', 
+          src: 'https://my-cdn.com/components/a-component/1.2.123/template.js',
+          type: 'handlebars',
           key: '46ee85c314b371cac60471cef5b2e2e6c443dccf'
         }, {}, callback);
       });
@@ -73,17 +74,17 @@ describe('oc-client : render', function(){
         expect(callback.args[0][1]).toEqual('Hello world!');
       });
     });
-    
+
     describe('when handlebars runtime loaded', function(){
 
       var callback, headSpy;
       beforeEach(function(){
         headSpy = sinon.spy(head, 'load');
         callback = sinon.spy();
-        eval(handlebarsCompiledView);            
+        eval(handlebarsCompiledView);
         oc.render({
-          src: 'https://my-cdn.com/components/a-component/1.2.123/template.js', 
-          type: 'handlebars', 
+          src: 'https://my-cdn.com/components/a-component/1.2.123/template.js',
+          type: 'handlebars',
           key: '46ee85c314b371cac60471cef5b2e2e6c443dccf'
         }, {}, callback);
       });
@@ -112,8 +113,8 @@ describe('oc-client : render', function(){
       callback = sinon.spy();
       eval(handlebars3CompiledView);
       oc.render({
-        src: 'https://my-cdn.com/components/a-component/1.2.123/template.js', 
-        type: 'handlebars', 
+        src: 'https://my-cdn.com/components/a-component/1.2.123/template.js',
+        type: 'handlebars',
         key: '46ee85c314b371cac60471cef5b2e2e6c443dccf'
       }, {}, callback);
     });
@@ -129,7 +130,7 @@ describe('oc-client : render', function(){
   });
 
   describe('when rendering jade component', function(){
-    
+
     describe('when jade runtime not loaded', function(){
 
       var originalJade, originalHeadLoad, callback, headSpy;
@@ -147,10 +148,10 @@ describe('oc-client : render', function(){
 
         callback = sinon.spy();
         eval(jadeCompiledView);
-            
+
         oc.render({
-          src: 'https://my-cdn.com/components/a-component/1.2.456/template.js', 
-          type: 'jade', 
+          src: 'https://my-cdn.com/components/a-component/1.2.456/template.js',
+          type: 'jade',
           key: '09227309bca0b1ec1866c547ebb76c74921e85d2'
         }, { name: 'Michael' }, callback);
       });
@@ -171,17 +172,17 @@ describe('oc-client : render', function(){
         expect(callback.args[0][1]).toEqual('<span>hello Michael</span>');
       });
     });
-    
+
     describe('when jade runtime loaded', function(){
 
       var callback, headSpy;
-      beforeEach(function(){  
+      beforeEach(function(){
         headSpy = sinon.spy(head, 'load');
         callback = sinon.spy();
-        eval(jadeCompiledView);            
+        eval(jadeCompiledView);
         oc.render({
-          src: 'https://my-cdn.com/components/a-component/1.2.456/template.js', 
-          type: 'jade', 
+          src: 'https://my-cdn.com/components/a-component/1.2.456/template.js',
+          type: 'jade',
           key: '09227309bca0b1ec1866c547ebb76c74921e85d2'
         }, { name: 'James' }, callback);
       });
@@ -201,17 +202,17 @@ describe('oc-client : render', function(){
       });
     });
   });
-  
+
   describe('when rendering unsupported component', function(){
 
     var callback, headSpy;
     beforeEach(function(){
       headSpy = sinon.spy(head, 'load');
       callback = sinon.spy();
-      eval(jadeCompiledView);            
+      eval(jadeCompiledView);
       oc.render({
-        src: 'https://my-cdn.com/components/a-component/1.2.789/template.js', 
-        type: 'hello!', 
+        src: 'https://my-cdn.com/components/a-component/1.2.789/template.js',
+        type: 'hello!',
         key: '123456789123456789123456789126456789'
       }, { param: 'blabla' }, callback);
     });
@@ -223,6 +224,52 @@ describe('oc-client : render', function(){
     it('should respond with error', function(){
       expect(callback.called).toBe(true);
       expect(callback.args[0][0]).toBe('Error loading component: view engine "hello!" not supported');
+    });
+  });
+
+  describe('when adding support to new template', function(){
+    describe('and the new template client-dependency is not loaded', function(){
+      var originalEmoji, jEmoji, originalHeadLoad, callback, headSpy;
+      beforeEach(function(){
+        originalHeadLoad = head.load;
+        headSpy = sinon.spy();
+
+        head.load = function(url, cb){
+          headSpy(url, cb);
+          cb();
+        };
+
+        callback = sinon.spy();
+        eval(emojiCompiledView);
+
+        oc.registerTemplates({
+          type:'emoji',
+          externals: [
+            { global: 'jEmoji', url: 'http://cdn.staticfile.org/emoji/0.2.2/emoji.js' }
+          ]
+        });
+
+        oc.render({
+          src: 'https://my-cdn.com/components/a-component/1.2.456/template.js',
+          type: 'emoji',
+          key: '46ee85c314b371cac60471cef5b2e2e6c443dccc'
+        }, {}, callback);
+      });
+
+      afterEach(function(){
+        head.load = originalHeadLoad;
+      });
+
+      it('should require and wait for it', function(){
+        expect(headSpy.called).toBe(true);
+        expect(headSpy.args[0][0]).toEqual('http://cdn.staticfile.org/emoji/0.2.2/emoji.js');
+      });
+
+      it('should render the component', function(){
+        expect(callback.called).toBe(true);
+        expect(callback.args[0][0]).toBe(null);
+        expect(callback.args[0][1]).toEqual('😎');
+      });
     });
   });
 });

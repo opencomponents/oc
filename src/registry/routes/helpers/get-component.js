@@ -12,6 +12,7 @@ var Client = require('../../../../client');
 var detective = require('../../domain/plugins-detective');
 var eventsHandler = require('../../domain/events-handler');
 var GetComponentRetrievingInfo = require('./get-component-retrieving-info');
+var getComponentFallback = require('./get-component-fallback');
 var NestedRenderer = require('../../domain/nested-renderer');
 var RequireWrapper = require('../../domain/require-wrapper');
 var sanitiser = require('../../domain/sanitiser');
@@ -19,6 +20,13 @@ var settings = require('../../../resources/settings');
 var strings = require('../../../resources');
 var urlBuilder = require('../../domain/url-builder');
 var validator = require('../../domain/validators');
+var handlebars = require('oc-template-handlebars');
+var jade = require('oc-template-jade');
+
+var templateEngines = {
+  handlebars,
+  jade
+};
 
 module.exports = function(conf, repository){
 
@@ -32,7 +40,7 @@ module.exports = function(conf, repository){
 
     var nestedRenderer = new NestedRenderer(renderer, options.conf),
         retrievingInfo = new GetComponentRetrievingInfo(options),
-        responseHeaders;
+        responseHeaders = {};
 
     var getLanguage = function(){
       var paramOverride = !!options.parameters && options.parameters['__ocAcceptLanguage'];
@@ -53,7 +61,7 @@ module.exports = function(conf, repository){
       eventsHandler.fire('component-retrieved', retrievingInfo.getData());
       return cb(result);
     };
-    
+
     var conf = options.conf,
         acceptLanguage = getLanguage(),
         componentCallbackDone = false,
@@ -67,6 +75,10 @@ module.exports = function(conf, repository){
 
       // check route exist for component and version
       if(err){
+        if(conf.fallbackRegistryUrl) {
+          return getComponentFallback.getComponent(conf.fallbackRegistryUrl, options.headers, requestedComponent, callback);
+        }
+
         return callback({
           status: 404,
           response: {
@@ -89,7 +101,7 @@ module.exports = function(conf, repository){
         });
       }
 
-      // check component requirements are satisfied by registry      
+      // check component requirements are satisfied by registry
       var pluginsCompatibility = validator.validatePluginsRequirements(component.oc.plugins, conf.plugins);
 
       if(!pluginsCompatibility.isValid){
@@ -97,7 +109,7 @@ module.exports = function(conf, repository){
           status: 501,
           response: {
             code: 'PLUGIN_MISSING_FROM_REGISTRY',
-            error: format(strings.errors.registry.PLUGIN_NOT_IMPLEMENTED, pluginsCompatibility.missing.join(', ')), 
+            error: format(strings.errors.registry.PLUGIN_NOT_IMPLEMENTED, pluginsCompatibility.missing.join(', ')),
             missingPlugins: pluginsCompatibility.missing
           }
         });
@@ -119,13 +131,12 @@ module.exports = function(conf, repository){
       }
 
       var filterCustomHeaders = function(headers, requestedVersion, actualVersion) {
-        if (!_.isEmpty(headers) &&
-            !_.isEmpty(conf.customHeadersToSkipOnWeakVersion) &&
-            requestedVersion !== actualVersion) 
-        {
-          headers = _.omit(headers, conf.customHeadersToSkipOnWeakVersion);
-        }
-        return headers;
+
+        var needFiltering = !_.isEmpty(headers) &&
+          !_.isEmpty(conf.customHeadersToSkipOnWeakVersion) &&
+          requestedVersion !== actualVersion;
+
+        return needFiltering ? _.omit(headers, conf.customHeadersToSkipOnWeakVersion) : headers;
       };
 
       var returnComponent = function(err, data){
@@ -139,7 +150,7 @@ module.exports = function(conf, repository){
             status: 500,
             response: {
               code: 'GENERIC_ERROR',
-              error: format(strings.errors.registry.COMPONENT_EXECUTION_ERROR, err.message || ''), 
+              error: format(strings.errors.registry.COMPONENT_EXECUTION_ERROR, err.message || ''),
               details: { message: err.message, stack: err.stack, originalError: err }
             }
           });
@@ -172,16 +183,12 @@ module.exports = function(conf, repository){
           renderMode: renderMode
         });
 
-        if (responseHeaders) {
-          responseHeaders = filterCustomHeaders(responseHeaders, requestedComponent.version, component.version);
-          if (!_.isEmpty(responseHeaders)) {
-            response.headers = responseHeaders;
-          }
-        }
+        responseHeaders = filterCustomHeaders(responseHeaders, requestedComponent.version, component.version);
 
         if (isUnrendered) {
           callback({
             status: 200,
+            headers: responseHeaders,
             response: _.extend(response, {
               data: data,
               template: {
@@ -220,7 +227,8 @@ module.exports = function(conf, repository){
               }
 
               callback({
-                status: 200, 
+                status: 200,
+                headers: responseHeaders,
                 response: _.extend(response, { html: html })
               });
             });
@@ -230,9 +238,13 @@ module.exports = function(conf, repository){
             returnResult(cached);
           } else {
             repository.getCompiledView(component.name, component.version, function(err, templateText){
-              var context = { jade: require('jade/runtime.js')};
-              vm.runInNewContext(templateText, context);
-              var template = context.oc.components[key];
+
+              var type = component.oc.files.template.type;
+              if (!templateEngines[type]) {
+                throw strings.errors.cli.TEMPLATE_TYPE_NOT_VALID;
+              }
+
+              var template = templateEngines[type].getCompiledTemplate(templateText, key);
               cache.set('file-contents', cacheKey, template);
               returnResult(template);
             });
@@ -275,10 +287,11 @@ module.exports = function(conf, repository){
               returnComponent({
                 message: format('timeout ({0}ms)', conf.executionTimeout * 1000)
               });
+              domain.exit();
             }, conf.executionTimeout * 1000);
           }
         };
-        
+
         if(!!cached && !conf.hotReloading){
           domain.on('error', returnComponent);
 
@@ -295,18 +308,18 @@ module.exports = function(conf, repository){
 
             if(err){
               componentCallbackDone = true;
-              
+
               return callback({
                 status: 502,
-                response: { 
+                response: {
                   code: 'DATA_RESOLVING_ERROR',
                   error: strings.errors.registry.RESOLVING_ERROR
                 }
               });
             }
 
-            var context = { 
-              require: new RequireWrapper(conf.dependencies), 
+            var context = {
+              require: new RequireWrapper(conf.dependencies),
               module: { exports: {}},
               console: conf.local ? console : { log: _.noop },
               setTimeout: setTimeout,
@@ -338,7 +351,7 @@ module.exports = function(conf, repository){
                   status: 501,
                   response: {
                     code: 'PLUGIN_MISSING_FROM_COMPONENT',
-                    error: format(strings.errors.registry.PLUGIN_NOT_FOUND, unRegisteredPlugins.join(' ,')), 
+                    error: format(strings.errors.registry.PLUGIN_NOT_FOUND, unRegisteredPlugins.join(' ,')),
                     missingPlugins: unRegisteredPlugins
                   }
                 });
@@ -347,7 +360,7 @@ module.exports = function(conf, repository){
               returnComponent(err);
             };
 
-            try {              
+            try {
               vm.runInNewContext(dataProcessorJs, context);
               var processData = context.module.exports.data;
               cache.set('file-contents', cacheKey, processData);
