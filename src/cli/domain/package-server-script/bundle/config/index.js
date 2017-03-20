@@ -42,11 +42,6 @@ module.exports = function webpackConfigGenerator(params){
         }
       ]
     },
-    plugins: [
-      new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify('production')
-      })
-    ],
     resolveLoader: {
       modules: ['node_modules', path.resolve(__dirname, '../../../../../../node_modules')]
     }
