@@ -287,6 +287,7 @@ module.exports = function(conf, repository){
               returnComponent({
                 message: format('timeout ({0}ms)', conf.executionTimeout * 1000)
               });
+              domain.exit();
             }, conf.executionTimeout * 1000);
           }
         };
