@@ -27,11 +27,15 @@ var compileView = function(viewPath, type, cb) {
     throw strings.errors.cli.TEMPLATE_TYPE_NOT_VALID;
   }
 
-  var compiledView = templateEngines[type].compile({ template, viewPath }, compiledView => {
+  var compiledView = templateEngines[type].compile({ template, viewPath }, (err, compiledView) => {
+    if (err) {
+      return cb(err);
+    }
+
     var hashView = hashBuilder.fromString(compiledView.toString()),
         javaScriptizedView = javaScriptizeTemplate(hashView, compiledView);
 
-    return cb({
+    return cb(null, {
       hash: hashView,
       view: uglifyJs.minify(javaScriptizedView, {fromString: true}).code
     });
@@ -49,7 +53,10 @@ module.exports = function(params, callback){
   }
 
   try {
-    compiled = compileView(viewPath, params.ocOptions.files.template.type, compiled => {
+    compiled = compileView(viewPath, params.ocOptions.files.template.type, (err, compiled) => {
+      if (err) {
+        return callback(format('{0} compilation failed - {1}', viewSrc, err));
+      }
       fs.writeFile(path.join(params.publishPath, 'template.js'), compiled.view, function(err, res){
         return callback(err, {
           type: params.ocOptions.files.template.type,
