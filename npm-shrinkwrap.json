@@ -5910,9 +5910,9 @@
       }
     },
     "oc-template-handlebars": {
-      "version": "2.0.0",
-      "from": "oc-template-handlebars@2.0.0",
-      "resolved": "https://registry.npmjs.org/oc-template-handlebars/-/oc-template-handlebars-2.0.0.tgz",
+      "version": "3.0.0",
+      "from": "oc-template-handlebars@3.0.0",
+      "resolved": "https://registry.npmjs.org/oc-template-handlebars/-/oc-template-handlebars-3.0.0.tgz",
       "dependencies": {
         "handlebars": {
           "version": "4.0.6",
@@ -6091,9 +6091,9 @@
       }
     },
     "oc-template-jade": {
-      "version": "2.0.0",
-      "from": "oc-template-jade@2.0.0",
-      "resolved": "https://registry.npmjs.org/oc-template-jade/-/oc-template-jade-2.0.0.tgz",
+      "version": "3.0.0",
+      "from": "oc-template-jade@3.0.0",
+      "resolved": "https://registry.npmjs.org/oc-template-jade/-/oc-template-jade-3.0.0.tgz",
       "dependencies": {
         "jade": {
           "version": "1.11.0",
