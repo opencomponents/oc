@@ -150,7 +150,7 @@ describe('cli : domain : package-server-script', function(){
               expect(bundle.data()).to.be.equal(name);
 
               var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
-              expect(compiledContent).to.contain('user');
+              expect(compiledContent).to.contain('John');
               done();
             } catch(e) {
               done(e);
@@ -399,7 +399,10 @@ describe('cli : domain : package-server-script', function(){
               'for(var i=1e12;;){ y = 546; }' +
               'do { z = 342; } while(true);' +
               '};' +
-              'const sayHello = (name) => `Hello ${name}`;' +
+              'const sayHello = (name) => {' +
+              '  if(name!=="John Doe") infiniteLoops();' +
+              '  return `Hello ${name}`;' +
+              '};' +
               'export default sayHello;';
 
             var serverContent = 'import sayHello from \'./someModule\';' +
@@ -453,15 +456,7 @@ describe('cli : domain : package-server-script', function(){
 
             it('should wrap while/do/for;; loops with an iterator limit', function(){
               var compiledContent = fs.readFileSync(path.resolve(publishPath, result.src), {encoding: 'utf8'});
-              expect(compiledContent).to.contain('var __ITER = 1000000000;while (true) { if(__ITER <=0){ throw new Error' +
-              '("Loop exceeded maximum allowed iterations"); } \n' +
-              '    x = 234;\n   __ITER--; }');
-              expect(compiledContent).to.contain('var __ITER = 1000000000;for (var i = 1e12;;) { if(__ITER <=0){ throw new Error' +
-              '("Loop exceeded maximum allowed iterations"); } \n' +
-              '    y = 546;\n   __ITER--; }');
-              expect(compiledContent).to.contain('var __ITER = 1000000000;do { if(__ITER <=0){ throw new Error' +
-              '("Loop exceeded maximum allowed iterations"); } \n' +
-              '    z = 342;\n   __ITER--; } while (true);');
+              expect(compiledContent.match(/Loop exceeded maximum allowed iterations/g).length).to.equal(3);
             });
           });
         });
