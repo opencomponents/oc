@@ -53,7 +53,7 @@ module.exports = function(params, callback){
   }
 
   try {
-    compiled = compileView(viewPath, params.ocOptions.files.template.type, (err, compiled) => {
+    compiled = compileView(viewPath, params.ocOptions.files.template.type, function(err, compiled){
       if (err) {
         return callback(format('{0} compilation failed - {1}', viewSrc, err));
       }

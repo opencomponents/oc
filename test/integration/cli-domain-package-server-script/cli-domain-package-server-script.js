@@ -58,7 +58,7 @@ describe('cli : domain : package-server-script', function(){
             },
             function(err, res){
               try {
-                expect(err.toString()).to.contain.contain('Unexpected token, expected , (3:19)');
+                expect(err.toString()).to.contain('Unexpected token, expected , (3:19)');
                 return done();
               } catch(e) {
                 return done(e);
