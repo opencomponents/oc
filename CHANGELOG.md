@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.36.8
+- [#412](https://github.com/opentable/oc/pull/412) Async compile api
+
 ### v0.36.7
 - [#411](https://github.com/opentable/oc/pull/411) Babili on server.js
 
