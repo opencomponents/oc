@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.36.7
+- [#411](https://github.com/opentable/oc/pull/411) Babili on server.js
+
 ### v0.36.6
 - [#408](https://github.com/opentable/oc/pull/408) Ensuring we exit the domains in case of timeout
 
