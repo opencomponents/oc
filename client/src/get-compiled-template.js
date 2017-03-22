@@ -1,24 +1,15 @@
 'use strict';
 
 var format = require('stringformat');
-var handlebars = require('oc-template-handlebars');
-var jade = require('oc-template-jade');
 var request = require('minimal-request');
 
 var settings = require('./settings');
 var TryGetCached = require('./try-get-cached');
 
 module.exports = function(cache){
-
-  var templateEngines = {
-    'oc-template-handlebars': handlebars,
-    'oc-template-jade': jade
-  };
-
   var tryGetCached = new TryGetCached(cache);
 
   return function(template, useCache, timeout, callback){
-
     var getTemplateFromS3 = function(cb){
       request({
         url: template.src,
@@ -32,11 +23,20 @@ module.exports = function(cache){
             }
           });
         }
-        var type = template.type;
-        if (type === 'jade') { type = 'oc-template-jade'; }
-        if (type === 'handlebars') { type = 'oc-template-handlebars'; }
 
-        cb(null, templateEngines[type].getCompiledTemplate(templateText, template.key));
+        var type = template.type;
+        var ocTemplate;
+        try {
+          if (type === 'jade') { type = 'oc-template-jade'; }
+          if (type === 'handlebars') { type = 'oc-template-handlebars'; }
+
+          // dynamically require specific oc-template
+          ocTemplate = require(type);
+        } catch (err) {
+          throw format(settings.templateNotSupported, type);
+        }
+        
+        cb(null, ocTemplate.getCompiledTemplate(templateText, template.key));
        });
     };
 

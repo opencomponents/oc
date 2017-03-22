@@ -20,16 +20,8 @@ var settings = require('../../../resources/settings');
 var strings = require('../../../resources');
 var urlBuilder = require('../../domain/url-builder');
 var validator = require('../../domain/validators');
-var handlebars = require('oc-template-handlebars');
-var jade = require('oc-template-jade');
-
-var templateEngines = {
-  'oc-template-handlebars': handlebars,
-  'oc-template-jade': jade
-};
 
 module.exports = function(conf, repository){
-
   var client = new Client(),
       cache = new Cache({
         verbose: !!conf.verbosity,
@@ -37,7 +29,6 @@ module.exports = function(conf, repository){
       });
 
   var renderer = function(options, cb){
-
     var nestedRenderer = new NestedRenderer(renderer, options.conf),
         retrievingInfo = new GetComponentRetrievingInfo(options),
         responseHeaders = {};
@@ -48,7 +39,6 @@ module.exports = function(conf, repository){
     };
 
     var callback = function(result){
-
       if(!!result.response.error){
         retrievingInfo.extend(result.response);
       }
@@ -240,14 +230,18 @@ module.exports = function(conf, repository){
             repository.getCompiledView(component.name, component.version, function(err, templateText){
 
               var type = component.oc.files.template.type;
-              if (type === 'jade') { type = 'oc-template-jade'; }
-              if (type === 'handlebars') { type = 'oc-template-handlebars'; }
+              var ocTemplate;
+              try {
+                if (type === 'jade') { type = 'oc-template-jade'; }
+                if (type === 'handlebars') { type = 'oc-template-handlebars'; }
 
-              if (!templateEngines[type]) {
+                // dynamically require specific oc-template
+                ocTemplate = require(type);
+              } catch (err) {
                 throw strings.errors.cli.TEMPLATE_TYPE_NOT_VALID;
               }
 
-              var template = templateEngines[type].getCompiledTemplate(templateText, key);
+              var template = ocTemplate.getCompiledTemplate(templateText, key);
               cache.set('file-contents', cacheKey, template);
               returnResult(template);
             });

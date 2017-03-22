@@ -1,22 +1,26 @@
 'use strict';
 
-var handlebars = require('oc-template-handlebars');
 var htmlRenderer = require('./html-renderer');
-var jade = require('oc-template-jade');
 var validator = require('./validator');
+var format = require('stringformat');
+var settings = require('./settings');
 
 module.exports = function(){
-  var templateEngines = {
-    'oc-template-handlebars': handlebars,
-    'oc-template-jade': jade
-  };
-
   return function(template, model, options, callback){
+
     var type = options.templateType;
-    if (type === 'jade') { type = 'oc-template-jade'; }
-    if (type === 'handlebars') { type = 'oc-template-handlebars'; }
+    var ocTemplate;
+    try {
+      if (type === 'jade') { type = 'oc-template-jade'; }
+      if (type === 'handlebars') { type = 'oc-template-handlebars'; }
+
+      // dynamically require specific oc-template
+      ocTemplate = require(type);
+    } catch (err) {
+      throw format(settings.templateNotSupported, type);
+    }
     
-    templateEngines[type].render(
+    ocTemplate.render(
       {
         template,
         model
