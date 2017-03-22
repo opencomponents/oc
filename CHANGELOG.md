@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.36.9
+- [#413](https://github.com/opentable/oc/pull/413) Fix ui preview with multiple discover strategies and endpoints
+- [#414](https://github.com/opentable/oc/pull/414) [GPT-525] Switch to new templates naming
+
 ### v0.36.8
 - [#412](https://github.com/opentable/oc/pull/412) Async compile api
 
