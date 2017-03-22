@@ -58,7 +58,7 @@ function componentInfo(err, req, res, component) {
     return res.render('component-info', {
       component: component,
       dependencies: _.keys(component.dependencies),
-      href: res.conf.baseUrl,
+      href: '//' + req.headers.host + res.conf.prefix,
       parsedAuthor: parsedAuthor,
       sandBoxDefaultQs: urlBuilder.queryString(params)
     });
