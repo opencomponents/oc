@@ -11,8 +11,8 @@ var TryGetCached = require('./try-get-cached');
 module.exports = function(cache){
 
   var templateEngines = {
-    handlebars,
-    jade
+    'oc-template-handlebars': handlebars,
+    'oc-template-jade': jade
   };
 
   var tryGetCached = new TryGetCached(cache);
@@ -32,8 +32,11 @@ module.exports = function(cache){
             }
           });
         }
+        var type = template.type;
+        if (type === 'jade') { type = 'oc-template-jade'; }
+        if (type === 'handlebars') { type = 'oc-template-handlebars'; }
 
-        cb(null, templateEngines[template.type].getCompiledTemplate(templateText, template.key));
+        cb(null, templateEngines[type].getCompiledTemplate(templateText, template.key));
        });
     };
 

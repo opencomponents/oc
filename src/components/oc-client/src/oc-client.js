@@ -71,12 +71,12 @@ var oc = oc || {};
   };
 
   var coreTemplates = {
-    'handlebars': {
+    'oc-template-handlebars': {
       externals: [
-        { global: 'Handlebars', url: 'https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.runtime.min.js' }
+        { global: 'Handlebars', url: 'https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.runtime.min.js' }
       ]
     },
-    'jade': {
+    'oc-template-jade': {
       externals: [
         { global: 'jade', url: 'https://cdnjs.cloudflare.com/ajax/libs/jade/1.11.0/runtime.min.js' }
       ]
@@ -319,7 +319,10 @@ var oc = oc || {};
 
   oc.render = function(compiledViewInfo, model, callback){
     oc.ready(function(){
-      var template = registeredTemplates[compiledViewInfo.type];
+      var type = compiledViewInfo.type;
+      if (type === 'jade') { type = 'oc-template-jade'; }
+      if (type === 'handlebars') { type = 'oc-template-handlebars'; }
+      var template = registeredTemplates[type];
 
       if(!!template){
         oc.require(['oc', 'components', compiledViewInfo.key], compiledViewInfo.src, function(compiledView){

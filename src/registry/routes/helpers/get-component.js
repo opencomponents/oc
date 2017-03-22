@@ -24,8 +24,8 @@ var handlebars = require('oc-template-handlebars');
 var jade = require('oc-template-jade');
 
 var templateEngines = {
-  handlebars,
-  jade
+  'oc-template-handlebars': handlebars,
+  'oc-template-jade': jade
 };
 
 module.exports = function(conf, repository){
@@ -240,6 +240,9 @@ module.exports = function(conf, repository){
             repository.getCompiledView(component.name, component.version, function(err, templateText){
 
               var type = component.oc.files.template.type;
+              if (type === 'jade') { type = 'oc-template-jade'; }
+              if (type === 'handlebars') { type = 'oc-template-handlebars'; }
+
               if (!templateEngines[type]) {
                 throw strings.errors.cli.TEMPLATE_TYPE_NOT_VALID;
               }

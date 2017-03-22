@@ -12,8 +12,8 @@ var strings = require('../../resources');
 var validator = require('../../registry/domain/validators');
 
 var templateEngines = {
-  handlebars,
-  jade
+  'oc-template-handlebars': handlebars,
+  'oc-template-jade': jade
 };
 
 var javaScriptizeTemplate = function(functionName, data){
@@ -22,6 +22,8 @@ var javaScriptizeTemplate = function(functionName, data){
 
 var compileView = function(viewPath, type, cb) {
   var template = fs.readFileSync(viewPath).toString();
+  if (type === 'jade') { type = 'oc-template-jade'; }
+  if (type === 'handlebars') { type = 'oc-template-handlebars'; }
 
   if(!templateEngines[type]){
     throw strings.errors.cli.TEMPLATE_TYPE_NOT_VALID;
