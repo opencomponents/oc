@@ -8,6 +8,7 @@ var uglifyJs = require('uglify-js');
 var hashBuilder = require('../../utils/hash-builder');
 var strings = require('../../resources');
 var validator = require('../../registry/domain/validators');
+var requireTemplate = require('../../utils/require-template');
 
 var javaScriptizeTemplate = function(functionName, data){
   return format('var {0}={0}||{};{0}.components={0}.components||{};{0}.components[\'{1}\']={2}', 'oc', functionName, data.toString());
@@ -15,18 +16,11 @@ var javaScriptizeTemplate = function(functionName, data){
 
 var compileView = function(viewPath, type, cb) {
   var template = fs.readFileSync(viewPath).toString();
-  var ocTemplate;
-  try {
-    if (type === 'jade') { type = 'oc-template-jade'; }
-    if (type === 'handlebars') { type = 'oc-template-handlebars'; }
 
-    // dynamically require specific oc-template
-    ocTemplate = require(type);
-  } catch (err) {
-    throw strings.errors.cli.TEMPLATE_TYPE_NOT_VALID;
-  }
+  if (type === 'jade') { type = 'oc-template-jade'; }
+  if (type === 'handlebars') { type = 'oc-template-handlebars'; }
 
-
+  var ocTemplate = requireTemplate(type); 
   ocTemplate.compile({ template, viewPath }, function(err, compiledView){
     if (err) { return cb(err);}
 
@@ -51,7 +45,7 @@ module.exports = function(params, callback){
   }
 
   try {
-    compiled = compileView(viewPath, params.ocOptions.files.template.type, function(err, compiled){
+    compiled = compileView(viewPath, params.ocOptions.files.template.type, (err, compiled) => {
       if (err) {
         return callback(format('{0} compilation failed - {1}', viewSrc, err));
       }

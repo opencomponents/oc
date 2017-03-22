@@ -5,6 +5,7 @@ var request = require('minimal-request');
 
 var settings = require('./settings');
 var TryGetCached = require('./try-get-cached');
+var requireTemplate = require('./utils/require-template');
 
 module.exports = function(cache){
   var tryGetCached = new TryGetCached(cache);
@@ -25,17 +26,10 @@ module.exports = function(cache){
         }
 
         var type = template.type;
-        var ocTemplate;
-        try {
-          if (type === 'jade') { type = 'oc-template-jade'; }
-          if (type === 'handlebars') { type = 'oc-template-handlebars'; }
+        if (type === 'jade') { type = 'oc-template-jade'; }
+        if (type === 'handlebars') { type = 'oc-template-handlebars'; }
 
-          // dynamically require specific oc-template
-          ocTemplate = require(type);
-        } catch (err) {
-          throw format(settings.templateNotSupported, type);
-        }
-        
+        var ocTemplate = requireTemplate(type); 
         cb(null, ocTemplate.getCompiledTemplate(templateText, template.key));
        });
     };
@@ -47,3 +41,5 @@ module.exports = function(cache){
     return getTemplateFromS3(callback);
   };
 };
+
+

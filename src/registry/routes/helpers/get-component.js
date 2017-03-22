@@ -20,6 +20,7 @@ var settings = require('../../../resources/settings');
 var strings = require('../../../resources');
 var urlBuilder = require('../../domain/url-builder');
 var validator = require('../../domain/validators');
+var requireTemplate = require('../../../utils/require-template');
 
 module.exports = function(conf, repository){
   var client = new Client(),
@@ -230,17 +231,10 @@ module.exports = function(conf, repository){
             repository.getCompiledView(component.name, component.version, function(err, templateText){
 
               var type = component.oc.files.template.type;
-              var ocTemplate;
-              try {
-                if (type === 'jade') { type = 'oc-template-jade'; }
-                if (type === 'handlebars') { type = 'oc-template-handlebars'; }
+              if (type === 'jade') { type = 'oc-template-jade'; }
+              if (type === 'handlebars') { type = 'oc-template-handlebars'; }
 
-                // dynamically require specific oc-template
-                ocTemplate = require(type);
-              } catch (err) {
-                throw strings.errors.cli.TEMPLATE_TYPE_NOT_VALID;
-              }
-
+              var ocTemplate = requireTemplate(type); 
               var template = ocTemplate.getCompiledTemplate(templateText, key);
               cache.set('file-contents', cacheKey, template);
               returnResult(template);
