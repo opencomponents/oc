@@ -7,12 +7,16 @@ var validator = require('./validator');
 
 module.exports = function(){
   var templateEngines = {
-    handlebars,
-    jade
+    'oc-template-handlebars': handlebars,
+    'oc-template-jade': jade
   };
 
   return function(template, model, options, callback){
-    templateEngines[options.templateType].render(
+    var type = options.templateType;
+    if (type === 'jade') { type = 'oc-template-jade'; }
+    if (type === 'handlebars') { type = 'oc-template-handlebars'; }
+    
+    templateEngines[type].render(
       {
         template,
         model

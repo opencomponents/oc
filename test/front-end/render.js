@@ -65,7 +65,7 @@ describe('oc-client : render', function(){
 
       it('should require and wait for it', function(){
         expect(headSpy.called).toBe(true);
-        expect(headSpy.args[0][0]).toEqual('https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.runtime.min.js');
+        expect(headSpy.args[0][0]).toEqual('https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.runtime.min.js');
       });
 
       it('should render the component', function(){
