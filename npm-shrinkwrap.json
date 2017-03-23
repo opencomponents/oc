@@ -4512,9 +4512,9 @@
       }
     },
     "infinite-loop-loader": {
-      "version": "1.0.0",
-      "from": "infinite-loop-loader@1.0.0",
-      "resolved": "https://registry.npmjs.org/infinite-loop-loader/-/infinite-loop-loader-1.0.0.tgz",
+      "version": "1.0.1",
+      "from": "infinite-loop-loader@1.0.1",
+      "resolved": "https://registry.npmjs.org/infinite-loop-loader/-/infinite-loop-loader-1.0.1.tgz",
       "dependencies": {
         "falafel": {
           "version": "2.0.0",
