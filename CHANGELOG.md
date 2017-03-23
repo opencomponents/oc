@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.36.11
+- [#417](https://github.com/opentable/oc/pull/417) support old and new handlebars type
+
 ### v0.36.10
 - [#415](https://github.com/opentable/oc/pull/415) [GPT-526] Dynamic requires of oc-templates
 - [#416](https://github.com/opentable/oc/pull/416) Updated infinite-loop-loader to fix #410
