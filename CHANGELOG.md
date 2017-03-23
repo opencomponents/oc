@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.36.10
+- [#415](https://github.com/opentable/oc/pull/415) [GPT-526] Dynamic requires of oc-templates
+- [#416](https://github.com/opentable/oc/pull/416) Updated infinite-loop-loader to fix #410
+
 ### v0.36.9
 - [#413](https://github.com/opentable/oc/pull/413) Fix ui preview with multiple discover strategies and endpoints
 - [#414](https://github.com/opentable/oc/pull/414) [GPT-525] Switch to new templates naming
