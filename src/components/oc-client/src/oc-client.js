@@ -337,7 +337,7 @@ var oc = oc || {};
               oc.require(library.global, library.url, function(){
                 externalsRequired++;
                 if(externalsRequired === externals.length) {
-                  if(compiledViewInfo.type === 'handlebars'){
+                  if(type === 'oc-template-handlebars'){
                     try {
                       var linked = $window.Handlebars.template(compiledView, []);
                       callback(null, linked(model));
