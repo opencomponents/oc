@@ -21,6 +21,11 @@ var initialise = function(mocks, params, cb){
 var cleanup = function(){
   error = null;
   mocks = {
+    'babel-core': {
+      transform: sinon.stub().returns({
+        code: 'this-is-transpiled'
+      })
+    },
     'clean-css': sinon.stub().returns({
       minify: function(){
         return { styles: 'this-is-minified'};
@@ -53,9 +58,11 @@ var cleanup = function(){
         return _.toArray(arguments).join('/');
       }
     },
-    'uglify-js': { minify: sinon.stub().returns({
-      code: 'this-is-minified'
-    })}
+    'uglify-js': {
+      minify: sinon.stub().returns({
+        code: 'this-is-minified'
+      })
+    }
   };
 };
 
@@ -242,8 +249,9 @@ describe('cli : domain : packageStaticFiles', function(){
           expect(error).to.be.null;
         });
 
-        it('should first minify the file', function(){
+        it('should first transpile and minify the file', function(){
           expect(mocks['fs-extra'].readFileSync.calledOnce).to.be.true;
+          expect(mocks['babel-core'].transform.calledOnce).to.be.true;
           expect(mocks['uglify-js'].minify.calledOnce).to.be.true;
         });
 
