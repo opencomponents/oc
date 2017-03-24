@@ -24,7 +24,7 @@ var minifyFile = function(fileType, fileContent, ocOptions){
     };
 
     var babelOptions = {
-      presets: [[babelPresetEnv, babelOptions]]
+      presets: [[babelPresetEnv, presetOptions]]
     };
 
     var es5 = babel.transform(fileContent, babelOptions).code;
