@@ -16,6 +16,8 @@ var strings = require('../../resources');
 var minifyFile = function(fileType, fileContent, ocOptions){
 
   if(fileType === '.js'){
+    /*
+    2017-02-24 Reverting #418
 
     var presetOptions = {
       targets: {
@@ -28,7 +30,9 @@ var minifyFile = function(fileType, fileContent, ocOptions){
     };
 
     var es5 = babel.transform(fileContent, babelOptions).code;
-    return uglifyJs.minify(es5, { fromString: true }).code;
+
+    */
+    return uglifyJs.minify(fileContent, { fromString: true }).code;
   } else if(fileType === '.css'){
     return new CleanCss().minify(fileContent).styles;
   }
