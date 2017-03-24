@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.36.13
+- [#420](https://github.com/opentable/oc/pull/420) revert #418
+
 ### v0.36.12
 - [#418](https://github.com/opentable/oc/pull/418) Transpile static js before minification
 
