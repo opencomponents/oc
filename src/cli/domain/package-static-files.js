@@ -16,23 +16,20 @@ var strings = require('../../resources');
 var minifyFile = function(fileType, fileContent, ocOptions){
 
   if(fileType === '.js'){
-    /*
-    2017-02-24 Reverting #418
 
     var presetOptions = {
       targets: {
-        browsers: 'not ie <= 8'
-      }
+        browsers: 'ie 8',
+        uglify: true
+      },
+      useBuiltIns: true,
+      modules: false
     };
 
-    var babelOptions = {
-      presets: [[babelPresetEnv, presetOptions]]
-    };
-
-    var es5 = babel.transform(fileContent, babelOptions).code;
-
-    */
-    return uglifyJs.minify(fileContent, { fromString: true }).code;
+    var babelOptions = { presets: [[babelPresetEnv, presetOptions]] },
+        es5 = babel.transform(fileContent, babelOptions).code;
+    
+    return uglifyJs.minify(es5, { fromString: true }).code;
   } else if(fileType === '.css'){
     return new CleanCss().minify(fileContent).styles;
   }
