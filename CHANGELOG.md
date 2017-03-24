@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.36.12
+- [#418](https://github.com/opentable/oc/pull/418) Transpile static js before minification
+
 ### v0.36.11
 - [#417](https://github.com/opentable/oc/pull/417) support old and new handlebars type
 
