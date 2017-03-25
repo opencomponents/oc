@@ -6,75 +6,75 @@ var path = require('path');
 var sinon = require('sinon');
 var _ = require('underscore');
 
-var packageStaticFiles,
-    error,
-    mocks,
-    minifyMocks;
+describe('cli : domain : package-static-files', function(){
 
-var initialise = function(mocks, params, cb){
-  packageStaticFiles = injectr('../../src/cli/domain/package-static-files/index.js', mocks, { console: console });
-  packageStaticFiles(params, function(e, r){
-    error = e;
-    cb();
-  });
-};
+  var packageStaticFiles,
+      error,
+      mocks,
+      minifyMocks;
 
-var cleanup = function(){
-  error = null;
-
-  minifyMocks = {
-    'babel-core': {
-      transform: sinon.stub().returns({
-        code: 'this-is-transpiled'
-      })
-    },
-    'clean-css': sinon.stub().returns({
-      minify: function(){
-        return { styles: 'this-is-minified'};
-      }
-    }),
-    'uglify-js': {
-      minify: sinon.stub().returns({
-        code: 'this-is-minified'
-      })
-    }
+  var initialise = function(mocks, params, cb){
+    packageStaticFiles = injectr('../../src/cli/domain/package-static-files/index.js', mocks, { console: console });
+    packageStaticFiles(params, function(e, r){
+      error = e;
+      cb();
+    });
   };
 
-  mocks = {
-    './minify-file': injectr('../../src/cli/domain/package-static-files/minify-file.js', minifyMocks),
-    'fs-extra': {
-      copySync: sinon.spy(),
-      ensureDirSync: sinon.spy(),
-      existsSync: sinon.stub().returns(true),
-      lstatSync: sinon.stub().returns({
-        isDirectory: function(){ return true; }
+  var cleanup = function(){
+    error = null;
+
+    minifyMocks = {
+      'babel-core': {
+        transform: sinon.stub().returns({
+          code: 'this-is-transpiled'
+        })
+      },
+      'clean-css': sinon.stub().returns({
+        minify: function(){
+          return { styles: 'this-is-minified'};
+        }
       }),
-      readFileSync: sinon.stub().returns('some content'),
-      writeFileSync: sinon.spy()
-    },
-    'node-dir': { paths: sinon.stub().yields(null, { files:[] })},
-    path: {
-      basename: path.basename,
-      dirname: function(){
-        return path.dirname.apply(this, _.toArray(arguments)).replace(/\\/g, '/');
-      },
-      extname: path.extname,
-      join: function(){
-        return path.join.apply(this, _.toArray(arguments)).replace(/\\/g, '/');
-      },
-      relative: function(){
-        return path.relative.apply(this, _.toArray(arguments)).replace(/\\/g, '/');
-      },
-      resolve: function(){
-        return _.toArray(arguments).join('/');
+      'uglify-js': {
+        minify: sinon.stub().returns({
+          code: 'this-is-minified'
+        })
       }
-    }
+    };
+
+    mocks = {
+      './minify-file': injectr('../../src/cli/domain/package-static-files/minify-file.js', minifyMocks),
+      'fs-extra': {
+        copySync: sinon.spy(),
+        ensureDirSync: sinon.spy(),
+        existsSync: sinon.stub().returns(true),
+        lstatSync: sinon.stub().returns({
+          isDirectory: function(){ return true; }
+        }),
+        readFileSync: sinon.stub().returns('some content'),
+        writeFileSync: sinon.spy()
+      },
+      'node-dir': { paths: sinon.stub().yields(null, { files:[] })},
+      path: {
+        basename: path.basename,
+        dirname: function(){
+          return path.dirname.apply(this, _.toArray(arguments)).replace(/\\/g, '/');
+        },
+        extname: path.extname,
+        join: function(){
+          return path.join.apply(this, _.toArray(arguments)).replace(/\\/g, '/');
+        },
+        relative: function(){
+          return path.relative.apply(this, _.toArray(arguments)).replace(/\\/g, '/');
+        },
+        resolve: function(){
+          return _.toArray(arguments).join('/');
+        }
+      }
+    };
   };
-};
 
-cleanup();
-
-describe('cli : domain : packageStaticFiles', function(){
+  cleanup();
 
   describe('when oc.files.static is empty', function(){
 
