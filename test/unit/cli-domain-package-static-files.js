@@ -250,8 +250,13 @@ describe('cli : domain : packageStaticFiles', function(){
         });
 
         it('should first transpile and minify the file', function(){
+          var transformMock = mocks['babel-core'].transform;
           expect(mocks['fs-extra'].readFileSync.calledOnce).to.be.true;
-          expect(mocks['babel-core'].transform.calledOnce).to.be.true;
+          expect(transformMock.calledOnce).to.be.true;
+          expect(transformMock.args[0][1].presets[0][1].targets.uglify).to.be.true;
+        });
+
+        it('should then minify the file', function(){
           expect(mocks['uglify-js'].minify.calledOnce).to.be.true;
         });
 
