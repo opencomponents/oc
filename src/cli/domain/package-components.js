@@ -15,7 +15,7 @@ module.exports = function(){
   return function(options, callback){
 
     var componentPath = options.componentPath;
-    var minify = options.minify || true;
+    var minify = options.minify === true;
 
     var files = fs.readdirSync(componentPath),
         publishPath = path.join(componentPath, '_package');
