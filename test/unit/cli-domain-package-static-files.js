@@ -8,10 +8,11 @@ var _ = require('underscore');
 
 var packageStaticFiles,
     error,
-    mocks;
+    mocks,
+    minifyMocks;
 
 var initialise = function(mocks, params, cb){
-  packageStaticFiles = injectr('../../src/cli/domain/package-static-files.js', mocks, { console: console });
+  packageStaticFiles = injectr('../../src/cli/domain/package-static-files/index.js', mocks, { console: console });
   packageStaticFiles(params, function(e, r){
     error = e;
     cb();
@@ -20,7 +21,8 @@ var initialise = function(mocks, params, cb){
 
 var cleanup = function(){
   error = null;
-  mocks = {
+
+  minifyMocks = {
     'babel-core': {
       transform: sinon.stub().returns({
         code: 'this-is-transpiled'
@@ -31,6 +33,15 @@ var cleanup = function(){
         return { styles: 'this-is-minified'};
       }
     }),
+    'uglify-js': {
+      minify: sinon.stub().returns({
+        code: 'this-is-minified'
+      })
+    }
+  };
+
+  mocks = {
+    './minify-file': injectr('../../src/cli/domain/package-static-files/minify-file.js', minifyMocks),
     'fs-extra': {
       copySync: sinon.spy(),
       ensureDirSync: sinon.spy(),
@@ -57,11 +68,6 @@ var cleanup = function(){
       resolve: function(){
         return _.toArray(arguments).join('/');
       }
-    },
-    'uglify-js': {
-      minify: sinon.stub().returns({
-        code: 'this-is-minified'
-      })
     }
   };
 };
@@ -250,14 +256,14 @@ describe('cli : domain : packageStaticFiles', function(){
         });
 
         it('should first transpile and minify the file', function(){
-          var transformMock = mocks['babel-core'].transform;
+          var transformMock = minifyMocks['babel-core'].transform;
           expect(mocks['fs-extra'].readFileSync.calledOnce).to.be.true;
           expect(transformMock.calledOnce).to.be.true;
           expect(transformMock.args[0][1].presets[0][1].targets.uglify).to.be.true;
         });
 
         it('should then minify the file', function(){
-          expect(mocks['uglify-js'].minify.calledOnce).to.be.true;
+          expect(minifyMocks['uglify-js'].minify.calledOnce).to.be.true;
         });
 
         it('should save the file in the folder', function(){
@@ -325,7 +331,7 @@ describe('cli : domain : packageStaticFiles', function(){
 
         it('should first minify the file', function(){
           expect(mocks['fs-extra'].readFileSync.calledOnce).to.be.true;
-          expect(mocks['clean-css'].calledOnce).to.be.true;
+          expect(minifyMocks['clean-css'].calledOnce).to.be.true;
         });
 
         it('should save the file in the folder', function(){

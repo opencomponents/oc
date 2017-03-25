@@ -1,41 +1,14 @@
 'use strict';
 
 var async = require('async');
-var babel = require('babel-core');
-var babelPresetEnv = require('babel-preset-env');
-var CleanCss = require('clean-css');
 var format = require('stringformat');
 var fs = require('fs-extra');
+var minifyFile = require('./minify-file');
 var nodeDir = require('node-dir');
 var path = require('path');
-var uglifyJs = require('uglify-js');
 var _ = require('underscore');
 
-var strings = require('../../resources');
-
-var minifyFile = function(fileType, fileContent, ocOptions){
-
-  if(fileType === '.js'){
-
-    var presetOptions = {
-      targets: {
-        browsers: 'ie 8',
-        uglify: true
-      },
-      useBuiltIns: true,
-      modules: false
-    };
-
-    var babelOptions = { presets: [[babelPresetEnv, presetOptions]] },
-        es5 = babel.transform(fileContent, babelOptions).code;
-    
-    return uglifyJs.minify(es5, { fromString: true }).code;
-  } else if(fileType === '.css'){
-    return new CleanCss().minify(fileContent).styles;
-  }
-
-  return fileContent;
-};
+var strings = require('../../../resources');
 
 var copyDir = function(params, cb){
   var staticPath = path.join(params.componentPath, params.staticDir),
