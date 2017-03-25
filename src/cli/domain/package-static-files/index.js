@@ -34,7 +34,7 @@ var copyDir = function(params, cb){
 
         if(params.minify && params.ocOptions.minify !== false && (fileExt === '.js' || fileExt === '.css')){
           var fileContent = fs.readFileSync(filePath).toString(),
-              minified = minifyFile(fileExt, fileContent, params.ocOptions);
+              minified = minifyFile(fileExt, fileContent);
 
           fs.writeFileSync(fileDestination, minified);
         } else {

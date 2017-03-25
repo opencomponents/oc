@@ -5,7 +5,7 @@ var babelPresetEnv = require('babel-preset-env');
 var CleanCss = require('clean-css');
 var uglifyJs = require('uglify-js');
 
-module.exports = function(fileType, fileContent, ocOptions){
+module.exports = function(fileType, fileContent){
 
   if(fileType === '.js'){
 
@@ -24,7 +24,7 @@ module.exports = function(fileType, fileContent, ocOptions){
     return uglifyJs.minify(es5, { fromString: true }).code;
 
   } else if(fileType === '.css'){
-    
+
     return new CleanCss().minify(fileContent).styles;
   }
 
