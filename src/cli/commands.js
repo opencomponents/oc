@@ -57,6 +57,22 @@ module.exports = {
       usage: 'Usage: $0 preview <componentHref>'
     },
 
+    package: {
+      cmd: 'package <componentPath>',
+      example: {
+        cmd: '$0 package my-new-component/'
+      },
+      options: {
+        compress: {
+          boolean: true,
+          description: 'Create zipped file',
+          default: false
+        }
+      },
+      description: 'Creates the packaged component ready to be published',
+      usage: 'Usage: $0 package <componentPath>'
+    },
+
     publish: {
       cmd: 'publish <componentPath>',
       example: {
