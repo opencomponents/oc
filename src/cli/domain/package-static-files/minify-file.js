@@ -5,9 +5,9 @@ var babelPresetEnv = require('babel-preset-env');
 var CleanCss = require('clean-css');
 var uglifyJs = require('uglify-js');
 
-module.exports = function(fileType, fileContent){
+module.exports = function(fileExt, fileContent){
 
-  if(fileType === '.js'){
+  if(fileExt === '.js'){
 
     var presetOptions = {
       targets: {
@@ -23,10 +23,8 @@ module.exports = function(fileType, fileContent){
     
     return uglifyJs.minify(es5, { fromString: true }).code;
 
-  } else if(fileType === '.css'){
-
+  } else if(fileExt === '.css'){
+    
     return new CleanCss().minify(fileContent).styles;
   }
-
-  return fileContent;
 };
