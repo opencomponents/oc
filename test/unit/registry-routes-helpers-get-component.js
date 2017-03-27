@@ -23,6 +23,7 @@ describe('registry : routes : helpers : get-component', function(){
       getCompiledView: sinon.stub().yields(null, params.view),
       getComponent: sinon.stub().yields(null, params.package),
       getDataProvider: sinon.stub().yields(null, params.data),
+      getTemplates: sinon.stub(),
       getStaticFilePath: sinon.stub().returns('//my-cdn.com/files/')
     };
   };

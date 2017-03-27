@@ -176,14 +176,17 @@ module.exports = function(conf){
       return this.getComponentPath(componentName, componentVersion) + (conf.local ? settings.registry.localStaticRedirectorPath : '') + filePath;
     },
     getTemplates: function(){
-      return conf.templates.map(function(template){
-        var info = require(template).getInfo();
-        return {
-          type: info.type,
-          version: info.version,
-          externals: info.externals
-        }
-      });
+      if (conf.templates) {
+        return conf.templates.map(function(template){
+          var info = require(template).getInfo();
+          return {
+            type: info.type,
+            version: info.version,
+            externals: info.externals
+          };
+        });
+      }
+      return [];
     },
     init: function(callback){
       if(conf.local){
