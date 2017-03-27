@@ -167,7 +167,8 @@ module.exports = function(dependencies){
             port: port,
             baseUrl: baseUrl,
             env: { name: 'local' },
-            dependencies: dependencies
+            dependencies: dependencies,
+            templates: ['oc-template-handlebars', 'oc-template-jade']
           });
 
           registerPlugins(registry);
