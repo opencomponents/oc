@@ -10,17 +10,10 @@ describe('cli : domain : package-static-files : minify-file', function(){
 		describe('when file contains es6', function(){
 
 			var content = 'const hi = (name) => `hello ${name}`;';
-			var minified;
-
-			before(function(){
-				minified = minifyFile('.js', content);
-			});
 
 			it('should minify it', function(){
-				expect(minified).to.be.a('string');
-				expect(minified).not.to.contain('const');
-				expect(minified).to.contain('var');
-				expect(minified).not.to.contain('name');
+				var minified = minifyFile('.js', content);
+				expect(minified).to.equal('var hi=function(n){return"hello "+n};');
 			});
 		});
 
