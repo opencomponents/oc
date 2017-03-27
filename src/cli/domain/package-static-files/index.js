@@ -1,44 +1,14 @@
 'use strict';
 
 var async = require('async');
-var babel = require('babel-core');
-var babelPresetEnv = require('babel-preset-env');
-var CleanCss = require('clean-css');
 var format = require('stringformat');
 var fs = require('fs-extra');
+var minifyFile = require('./minify-file');
 var nodeDir = require('node-dir');
 var path = require('path');
-var uglifyJs = require('uglify-js');
 var _ = require('underscore');
 
-var strings = require('../../resources');
-
-var minifyFile = function(fileType, fileContent, ocOptions){
-
-  if(fileType === '.js'){
-    /*
-    2017-02-24 Reverting #418
-
-    var presetOptions = {
-      targets: {
-        browsers: 'not ie <= 8'
-      }
-    };
-
-    var babelOptions = {
-      presets: [[babelPresetEnv, presetOptions]]
-    };
-
-    var es5 = babel.transform(fileContent, babelOptions).code;
-
-    */
-    return uglifyJs.minify(fileContent, { fromString: true }).code;
-  } else if(fileType === '.css'){
-    return new CleanCss().minify(fileContent).styles;
-  }
-
-  return fileContent;
-};
+var strings = require('../../../resources');
 
 var copyDir = function(params, cb){
   var staticPath = path.join(params.componentPath, params.staticDir),
@@ -64,7 +34,7 @@ var copyDir = function(params, cb){
 
         if(params.minify && params.ocOptions.minify !== false && (fileExt === '.js' || fileExt === '.css')){
           var fileContent = fs.readFileSync(filePath).toString(),
-              minified = minifyFile(fileExt, fileContent, params.ocOptions);
+              minified = minifyFile(fileExt, fileContent);
 
           fs.writeFileSync(fileDestination, minified);
         } else {
