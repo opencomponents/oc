@@ -168,7 +168,7 @@ module.exports = function(dependencies){
             baseUrl: baseUrl,
             env: { name: 'local' },
             dependencies: dependencies,
-            templates: ['oc-template-handlebars', 'oc-template-jade']
+            templates: []
           });
 
           registerPlugins(registry);
