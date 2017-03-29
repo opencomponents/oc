@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.36.14
+- [#421](https://github.com/opentable/oc/pull/421) Minify static content by transpiling it first
+
 ### v0.36.13
 - [#420](https://github.com/opentable/oc/pull/420) revert #418
 
