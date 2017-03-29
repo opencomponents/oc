@@ -22,6 +22,22 @@ module.exports = function(conf){
   var getFilePath = function(component, version, filePath){
     return format('{0}/{1}/{2}/{3}', conf.s3.componentsDir, component, version, filePath);
   };
+
+  var coreTemplates = ['oc-template-jade', 'oc-template-handlebars'];
+  var templates = _.union(coreTemplates, conf.templates)
+    .map(function(template){
+      var info;
+      try {
+        info = require(template).getInfo();
+      } catch (err) {
+        throw new Error(format(strings.errors.registry.TEMPLATE_NOT_FOUND, template));
+      }
+      return {
+        type: info.type,
+        version: info.version,
+        externals: info.externals
+      };
+    });
   
   var local = {
     getCompiledView: function(componentName, componentVersion){
@@ -64,6 +80,7 @@ module.exports = function(conf){
       return fs.readFileSync(path.join(conf.path, componentName + '/_package/server.js')).toString();
     }
   };
+  
 
   return {
     getCompiledView: function(componentName, componentVersion, callback){
@@ -176,17 +193,7 @@ module.exports = function(conf){
       return this.getComponentPath(componentName, componentVersion) + (conf.local ? settings.registry.localStaticRedirectorPath : '') + filePath;
     },
     getTemplates: function(){
-      if (conf.templates) {
-        return conf.templates.map(function(template){
-          var info = require(template).getInfo();
-          return {
-            type: info.type,
-            version: info.version,
-            externals: info.externals
-          };
-        });
-      }
-      return [];
+      return templates;
     },
     init: function(callback){
       if(conf.local){

@@ -90,6 +90,42 @@ describe('registry : domain : repository', function(){
       });
     });
 
+    describe('when getting the list of supported templates', function(){
+      describe('when no templates are specificed on the configuaration', function(){
+        it('should return core templates', function(){
+          expect(repository.getTemplates().length).to.equal(2);
+          expect(repository.getTemplates()[0].type).to.equal('oc-template-jade');
+          expect(repository.getTemplates()[1].type).to.equal('oc-template-handlebars');
+        });
+      });
+
+      describe('when the templates specificed on the configuaration are core-templates', function(){
+        it('should only return uniques templates', function(){
+           var conf = _.extend(
+            cdnConfiguration,
+            {templates: ['oc-template-jade']}
+          );
+          var repository = new Repository(conf);
+          expect(repository.getTemplates().length).to.equal(2);  
+        });
+      });
+
+      describe('when templates specificed on the configuaration are not installed', function(){
+        it('should throw an error', function(){
+          var conf = _.extend(
+            cdnConfiguration,
+            {templates: ['oc-template-react']}
+          );
+
+          try {
+            var repository = new Repository(conf);
+          } catch (err) {
+            expect(err).to.deep.equal(new Error('Template oc-template-react not found'));  
+          }
+        });
+      });
+    });
+
     describe('when trying to get a not valid component', function(){
 
       describe('when the component does not exist', function(){
