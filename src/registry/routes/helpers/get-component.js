@@ -269,7 +269,8 @@ module.exports = function(conf, repository){
                   responseHeaders = responseHeaders || {};
                   responseHeaders[header.toLowerCase()] = value;
                 }
-              }
+              },
+              templates: repository.getTemplates()
             };
 
         var setCallbackTimeout = function(){

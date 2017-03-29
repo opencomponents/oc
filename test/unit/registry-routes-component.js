@@ -18,6 +18,7 @@ describe('registry : routes : component', function(){
       getCompiledView: sinon.stub().yields(null, params.view),
       getComponent: sinon.stub().yields(null, params.package),
       getDataProvider: sinon.stub().yields(null, params.data),
+      getTemplates: sinon.stub(),
       getStaticFilePath: sinon.stub().returns('//my-cdn.com/files/')
     };
   };
@@ -508,6 +509,7 @@ describe('registry : routes : component', function(){
         getCompiledView: sinon.stub(),
         getComponent: sinon.stub(),
         getDataProvider: sinon.stub(),
+        getTemplates: sinon.stub(),
         getStaticFilePath: sinon.stub().returns('//my-cdn.com/files/')
       };
 
