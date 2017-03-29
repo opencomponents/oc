@@ -7,8 +7,7 @@ var format = require('stringformat');
 var path = require('path');
 
 module.exports = function(dependencies) {
-  var registry = dependencies.registry,
-      local = dependencies.local,
+  var local = dependencies.local,
       logger = dependencies.logger;
 
   var log = {
@@ -20,8 +19,7 @@ module.exports = function(dependencies) {
   return function(opts, callback) {
     var componentPath = opts.componentPath,
         packageDir = path.resolve(componentPath, '_package'),
-        compressedPackagePath = path.resolve(componentPath, 'package.tar.gz'),
-        errorMessage;
+        compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
 
     callback = wrapCliCallback(callback);
 
@@ -35,6 +33,8 @@ module.exports = function(dependencies) {
         return callback(err); 
       }
 
+      log.ok(format(strings.messages.cli.PACKAGED, packageDir));
+
       if (opts.compress) {
         log.warn(format(strings.messages.cli.COMPRESSING, compressedPackagePath));
 
@@ -43,6 +43,7 @@ module.exports = function(dependencies) {
             log.err(format(strings.errors.cli.PACKAGE_CREATION_FAIL, err)); 
             return callback(err); 
           }
+          log.ok(format(strings.messages.cli.COMPRESSED, compressedPackagePath));
           callback(null, component);
         });
       } else {
