@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.36.15
+- [#422](https://github.com/opentable/oc/pull/422) adding package cli command
+- [#423](https://github.com/opentable/oc/pull/423) [GPT-517] Exposing registry supported templates via context
+
 ### v0.36.14
 - [#421](https://github.com/opentable/oc/pull/421) Minify static content by transpiling it first
 
