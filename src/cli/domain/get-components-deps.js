@@ -15,16 +15,17 @@ module.exports = function(components){
   components.forEach(function(c){
     var pkg = fs.readJsonSync(path.join(c, 'package.json'));
     var type = pkg.oc.files.template.type;
-    var dependencies = _.keys(pkg.dependencies);
+    var dependencies = pkg.dependencies;
 
     if (!deps.templates[type] && !legacyTemplates[type]) {
       deps.templates[type] = true;
     }
 
-    dependencies.forEach(function(name){
+    _.keys(dependencies).forEach(function(name){
       var version = dependencies[name];
       var depToInstall = version.length > 0
-        ? (name + '@' + version): name;
+        ? (name + '@' + version)
+        : name;
 
       if (!deps.withVersions[depToInstall]) {
         deps.withVersions[depToInstall] = true;
@@ -37,8 +38,8 @@ module.exports = function(components){
   });
 
   return {
-    modules: Object.keys(deps.modules),
-    withVersions: Object.keys(deps.withVersions),
-    templates: Object.keys(deps.templates)
+    modules: _.keys(deps.modules),
+    withVersions: _.keys(deps.withVersions),
+    templates: _.keys(deps.templates)
   };
 };
