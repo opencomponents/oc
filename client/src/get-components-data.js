@@ -62,7 +62,7 @@ module.exports = function(config){
 
   var performGet = function(endpoint, serverRendering, options, callback) {
     var component = serverRendering.components[0];
-    var requestUrl = hrefBuilder.prepareServerGet(endpoint, component, options); 
+    var requestUrl = hrefBuilder.prepareServerGet(endpoint, component); 
 
     var requestDetails = {
       url: requestUrl,
