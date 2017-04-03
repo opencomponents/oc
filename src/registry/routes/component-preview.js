@@ -5,7 +5,7 @@ var _ = require('underscore');
 var urlBuilder = require('../domain/url-builder');
 var getComponentFallback = require('./helpers/get-component-fallback');
 
-function componentPreview(err, req, res, component) {
+function componentPreview(err, req, res, component, templates) {
     if(err) {
         res.errorDetails = err.registryError || err;
         res.errorCode = 'NOT_FOUND';
@@ -20,7 +20,8 @@ function componentPreview(err, req, res, component) {
             component: component,
             dependencies: _.keys(component.dependencies),
             href: res.conf.baseUrl,
-            qs: urlBuilder.queryString(req.query)
+            qs: urlBuilder.queryString(req.query),
+            templates: templates
         });
 
     } else {
@@ -37,11 +38,11 @@ module.exports = function(conf, repository){
 
       if(registryError && conf.fallbackRegistryUrl) {
         return getComponentFallback.getComponentPreview(conf, req, res, registryError, function(fallbackError, fallbackComponent){
-            componentPreview(fallbackError, req, res, fallbackComponent);
+            componentPreview(fallbackError, req, res, fallbackComponent, repository.getTemplates());
         });
       }
 
-      componentPreview(registryError, req, res, component);
+      componentPreview(registryError, req, res, component, repository.getTemplates());
 
     });
   };

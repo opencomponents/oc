@@ -6,3 +6,5 @@ html
     - var baseUrl = href.replace('http\:\/\/', '\/\/').replace('https\:\/\/', '\/\/');
     oc-component(href=baseUrl+component.name+'/'+component.version+'/'+qs)
     script(src=baseUrl+'oc-client/client.js')
+    script.
+      oc.registerTemplates(!{JSON.stringify(templates)});
