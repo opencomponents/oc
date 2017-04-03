@@ -65,7 +65,7 @@ describe('client : href-builder :', () => {
         let hrefBuilder = new hrefBuilderPrototype({});
 
         expect(hrefBuilder.prepareServerGet('http://localhost:3030', component, options))
-          .to.equal('http://localhost:3030/hello-world/1.0.0/?p1=v1&p2=v%202&message=hello');
+          .to.equal('http://localhost:3030/hello-world/1.0.0/?message=hello&p1=v1&p2=v%202');
       });
     });
   });
