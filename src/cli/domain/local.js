@@ -5,11 +5,12 @@ const path = require('path');
 const targz = require('targz');
 const _ = require('lodash');
 
-const getComponentsByDir = require('./get-components-by-dir');
-const getLocalNpmModules = require('./get-local-npm-modules');
-const packageComponents = require('./package-components');
-const mock = require('./mock');
-const validator = require('../../registry/domain/validators');
+var getComponentsByDir = require('./get-components-by-dir');
+var getLocalNpmModules = require('./get-local-npm-modules');
+var packageComponents = require('./package-components');
+var mock = require('./mock');
+var validator = require('../../registry/domain/validators');
+var initTemplate = require('./init-template');
 
 module.exports = function() {
   return _.extend(this, {
@@ -34,34 +35,39 @@ module.exports = function() {
     },
     getComponentsByDir: getComponentsByDir(),
     getLocalNpmModules: getLocalNpmModules(),
-    init: function(componentName, templateType, callback) {
-      if (!validator.validateComponentName(componentName)) {
+    init: function(componentName, templateType, options, callback){
+
+      if(!validator.validateComponentName(componentName)){
         return callback('name not valid');
       }
 
-      if (!validator.validateTemplateType(templateType)) {
-        return callback('template type not valid');
+      // LEGACY TEMPLATES
+      if(validator.validateTemplateType(templateType)){
+        try {
+          const pathDir = '../../components/base-component-' + templateType,
+              baseComponentDir = path.resolve(__dirname, pathDir),
+              npmIgnorePath = path.resolve(__dirname, pathDir + '/.npmignore');
+
+          fs.ensureDirSync(componentName);
+          fs.copySync(baseComponentDir, componentName);
+          fs.copySync(npmIgnorePath, componentName + '/.gitignore');
+
+          const componentPath = path.resolve(componentName, 'package.json'),
+            component = _.extend(fs.readJsonSync(componentPath), {
+              name: componentName
+            });
+
+          fs.outputJsonSync(componentPath, component);
+
+          return callback(null, { ok: true });
+        } catch(e){
+          return callback(e);
+        }
       }
-
       try {
-        const pathDir = '../../components/base-component-' + templateType,
-          baseComponentDir = path.resolve(__dirname, pathDir),
-          npmIgnorePath = path.resolve(__dirname, pathDir + '/.npmignore');
-
-        fs.ensureDirSync(componentName);
-        fs.copySync(baseComponentDir, componentName);
-        fs.copySync(npmIgnorePath, componentName + '/.gitignore');
-
-        const componentPath = path.resolve(componentName, 'package.json'),
-          component = _.extend(fs.readJsonSync(componentPath), {
-            name: componentName
-          });
-
-        fs.outputJsonSync(componentPath, component, { spaces: 2 });
-
-        return callback(null, { ok: true });
+        initTemplate(componentName, templateType, options, callback);
       } catch (e) {
-        return callback(e);
+        return callback('template type not valid');
       }
     },
     mock: mock(),
