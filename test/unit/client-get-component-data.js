@@ -54,7 +54,7 @@ describe('client : get-component-data', () => {
     it('href-builder prepareServerGet method is invoked', () => {
       sinon.assert.calledOnce(serverStub);
       sinon.assert.calledOnce(prepareServerGetStub);
-      sinon.assert.calledWith(prepareServerGetStub, baseUrl, { name: 'hello-world', version: '1.0.0'}, options);
+      sinon.assert.calledWith(prepareServerGetStub, baseUrl, {name: 'hello-world', version: '1.0.0'}, options);
     });
 
     it('a GET request is made with the URL returned by href-builder.prepareServerGet method', () => {
