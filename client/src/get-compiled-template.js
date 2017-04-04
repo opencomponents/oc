@@ -32,8 +32,8 @@ module.exports = function(cache){
         var ocTemplate;
         try {
           ocTemplate = requireTemplate(type); 
-        } catch (e) {
-          return callback(format(settings.gettingTemplateFailed, type));
+        } catch (err) {
+          return callback(err);
         }
 
         cb(null, ocTemplate.getCompiledTemplate(templateText, template.key));

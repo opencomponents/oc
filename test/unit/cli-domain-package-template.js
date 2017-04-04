@@ -93,7 +93,7 @@ describe('cli : domain : package-template', function(){
         });
 
         it('should show error', function(){
-          expect(error).to.equal('template.wha compilation failed - Error requiring the template "whazaaa": oc-template not found');
+          expect(error).to.equal('template.wha compilation failed - Error requiring oc-template: "whazaaa" not found');
         });
       });
     });

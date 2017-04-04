@@ -27,16 +27,16 @@ module.exports = function(conf){
   var coreTemplates = ['oc-template-jade', 'oc-template-handlebars'];
   var templates = _.union(coreTemplates, conf.templates)
     .map(function(template){
-      var ocTemplate = requireTemplate(template);
       try {
+        var ocTemplate = requireTemplate(template);
         var info = ocTemplate.getInfo();
         return {
           type: info.type,
           version: info.version,
           externals: info.externals
         };
-      } catch (e) {
-        throw new Error(format(strings.errors.registry.TEMPLATE_NOT_VALID, template));
+      } catch (err) {
+        throw err;
       }
       
       
