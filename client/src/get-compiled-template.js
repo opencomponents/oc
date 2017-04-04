@@ -29,7 +29,13 @@ module.exports = function(cache){
         if (type === 'jade') { type = 'oc-template-jade'; }
         if (type === 'handlebars') { type = 'oc-template-handlebars'; }
 
-        var ocTemplate = requireTemplate(type);
+        var ocTemplate;
+        try {
+          ocTemplate = requireTemplate(type); 
+        } catch (e) {
+          return callback(format(settings.gettingTemplateFailed, type));
+        }
+
         cb(null, ocTemplate.getCompiledTemplate(templateText, template.key));
        });
     };
