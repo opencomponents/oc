@@ -7,8 +7,7 @@
     "oc": "./src/oc-cli.js"
   },
   "scripts": {
-    "test": "grunt test",
-    "test:unit": "mocha test/unit"
+    "test": "grunt test"
   },
   "engines": {
     "node": ">=4"
