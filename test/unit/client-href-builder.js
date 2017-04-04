@@ -40,20 +40,22 @@ describe('client : href-builder :', () => {
 
     describe('when there is one component parameter set in the options', () => {
       it('it should return a valid request for the component with the parameter set as URL query param', () => {
-        let component = { name: 'hello-world', version: '1.0.0', parameters: { p1: 'v1' } };
+        let options = {parameters: {p1: 'v1'}};
+        let component = {name: 'hello-world', version: '1.0.0'};
         let hrefBuilder = new hrefBuilderPrototype({});
         
-        expect(hrefBuilder.prepareServerGet('http://localhost:3030', component))
+        expect(hrefBuilder.prepareServerGet('http://localhost:3030', component, options))
             .to.equal('http://localhost:3030/hello-world/1.0.0/?p1=v1');
       });
     });
 
     describe('when there are more than one component parameters set in the options', () => {
       it('it should return a valid request for the component with the parameters set as URL query params', () => {
-        let component = { name: 'hello-world', version: '1.0.0', parameters: { p1: 'v1', p2: 'v 2' } };
+        let options = {parameters: {p1: 'v1', p2: 'v 2'}};
+        let component = {name: 'hello-world', version: '1.0.0'};
         let hrefBuilder = new hrefBuilderPrototype({});
         
-        expect(hrefBuilder.prepareServerGet('http://localhost:3030', component))
+        expect(hrefBuilder.prepareServerGet('http://localhost:3030', component, options))
             .to.equal('http://localhost:3030/hello-world/1.0.0/?p1=v1&p2=v%202');
       });
     });

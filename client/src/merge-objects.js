@@ -1,9 +1,17 @@
 'use strict';
 
+function addProperties(source, destination) {
+  for (var key in source) {
+    if (source.hasOwnProperty(key)) {
+      destination[key] = source[key];
+    }
+  }
+}
+
 // info: use Object.assign() w/ ES6
 module.exports = function (obj1, obj2) {
   var obj3 = {};
-  for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
-  for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
+  addProperties(obj1, obj3);
+  addProperties(obj2, obj3);
   return obj3;
-}
+};
