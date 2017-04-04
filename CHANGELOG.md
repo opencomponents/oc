@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.36.16
+- [#432](https://github.com/opentable/oc/pull/432) prepare-server-get-component-parameters
+- [#428](https://github.com/opentable/oc/pull/428) registerTemplate API fix
+
 ### v0.36.15
 - [#422](https://github.com/opentable/oc/pull/422) adding package cli command
 - [#423](https://github.com/opentable/oc/pull/423) [GPT-517] Exposing registry supported templates via context
