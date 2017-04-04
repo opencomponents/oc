@@ -18,6 +18,9 @@ module.exports = function(components){
     var dependencies = pkg.dependencies;
 
     if (!deps.templates[type] && !legacyTemplates[type]) {
+      if (!dependencies[type]) {
+        throw new Error(`Template dependency missing. Run "$npm install --save ${type}" to fix it.`)
+      }
       deps.templates[type] = true;
     }
 
