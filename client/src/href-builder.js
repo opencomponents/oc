@@ -4,7 +4,7 @@ var querystring = require('querystring');
 var format = require('stringformat');
 var url = require('url');
 var settings = require('./settings');
-var mergeObjects = require('./merge-objects');
+var mergeObjects = require('./utils/merge-objects');
 
 module.exports = function(config){
   return {

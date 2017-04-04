@@ -1,7 +1,7 @@
 'use strict';
 
 const expect = require('chai').expect;
-const mergeObjects = require('../../client/src/merge-objects');
+const mergeObjects = require('../../client/src/utils/merge-objects');
 
 describe('client : merge-objects :', () => {
   const scenarios = [
