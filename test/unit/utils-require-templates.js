@@ -36,7 +36,6 @@ describe('utils : require-template', function(){
     var template = requireTemplate('oc-template-jade');
     var templateAPIs = _.keys(template);
   
-    expect(templateAPIs.length).to.equal(4);
     expect(_.contains(templateAPIs,
       'getInfo',
       'getCompiledTemplate',
