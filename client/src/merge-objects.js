@@ -2,7 +2,7 @@
 
 function addProperties(source, destination) {
   for (var key in source) {
-    if (source.hasOwnProperty(key)) {
+    if (source.hasOwnProperty(key) && !destination[key]) {
       destination[key] = source[key];
     }
   }
