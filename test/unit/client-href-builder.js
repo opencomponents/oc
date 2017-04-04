@@ -59,5 +59,27 @@ describe('client : href-builder :', () => {
             .to.equal('http://localhost:3030/hello-world/1.0.0/?p1=v1&p2=v%202');
       });
     });
+
+    describe('when there are parameters in both "options" and "component"', () => {
+      it('it should return a valid request for the component with the parameters set as URL query params', () => {
+        let options = { parameters: { p1: 'v1', p2: 'v 2' } };
+        let component = { name: 'hello-world', version: '1.0.0', parameters: { message: 'hello' } };
+        let hrefBuilder = new hrefBuilderPrototype({});
+
+        expect(hrefBuilder.prepareServerGet('http://localhost:3030', component, options))
+          .to.equal('http://localhost:3030/hello-world/1.0.0/?message=hello&p1=v1&p2=v%202');
+      });
+    });
+
+    describe('when there are common parameters in both "options" and "component"', () => {
+      it('it should return a valid request for the component with the parameters set as URL query params', () => {
+        let options = { parameters: { p1: 'v1', p2: 'v 2' } };
+        let component = { name: 'hello-world', version: '1.0.0', parameters: { message: 'hello', p1: 'v3' } };
+        let hrefBuilder = new hrefBuilderPrototype({});
+
+        expect(hrefBuilder.prepareServerGet('http://localhost:3030', component, options))
+          .to.equal('http://localhost:3030/hello-world/1.0.0/?message=hello&p1=v3&p2=v%202');
+      });
+    });
   });
 });

@@ -4,6 +4,7 @@ var querystring = require('querystring');
 var format = require('stringformat');
 var url = require('url');
 var settings = require('./settings');
+var mergeObjects = require('./utils/merge-objects');
 
 module.exports = function(config){
   return {
@@ -52,7 +53,11 @@ module.exports = function(config){
 
     prepareServerGet: function(baseUrl, component, options) {
       var urlPath = component.name + (component.version ? '/' + component.version : '');
-      var qs = options.parameters ? ('/?' + querystring.stringify(options.parameters)) : '';
+
+      var qs = '';
+      if (component.parameters || options.parameters) {
+        qs = '/?' + querystring.stringify(mergeObjects(component.parameters, options.parameters));
+      }
 
       return url.resolve(baseUrl, urlPath + qs);
     }
