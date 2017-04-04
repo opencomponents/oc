@@ -70,7 +70,7 @@ var oc = oc || {};
     }
   };
 
-  var coreTemplates = {
+  var registeredTemplates = {
     'oc-template-handlebars': {
       externals: [
         { global: 'Handlebars', url: 'https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.runtime.min.js' }
@@ -82,7 +82,21 @@ var oc = oc || {};
       ]
     }
   };
-  var registeredTemplates = oc.conf.templates ? oc.registerTemplates(oc.conf.templates) : coreTemplates;
+
+  function registerTemplates(templates) {
+    templates = Array.isArray(templates) ? templates : [templates];
+    templates.forEach(function(template){
+      if (!registeredTemplates[template.type]) {
+        registeredTemplates[template.type] = {
+          externals: template.externals
+        };
+      }
+    });
+  }
+
+  if (oc.conf.templates) {
+    registerTemplates(oc.conf.templates);
+  }
 
   var retry = function(component, cb, failedRetryCb){
     if(retries[component] === undefined){
@@ -113,16 +127,9 @@ var oc = oc || {};
   };
 
   oc.registerTemplates = function (templates) {
-    templates = Array.isArray(templates) ? templates : [templates];
-    templates.forEach(function(template){
-      if (!registeredTemplates[template.type]) {
-        registeredTemplates[template.type] = {
-          externals: template.externals
-        };
-      }
-    });
+    registerTemplates(templates);
     oc.ready(oc.renderUnloadedComponents);
-    return templates;
+    return registeredTemplates;
   };
 
   // A minimal require.js-ish that uses head.js
