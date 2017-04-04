@@ -3,6 +3,8 @@
 var fs = require('fs-extra');
 var path = require('path');
 var _ =  require('underscore');
+var format = require('stringformat');
+var settings = require('../../resources');
 
 module.exports = function(components){
   var deps = { modules: {}, withVersions: {}, templates: {} };
@@ -19,7 +21,7 @@ module.exports = function(components){
 
     if (!deps.templates[type] && !legacyTemplates[type]) {
       if (!dependencies[type]) {
-        throw new Error(`Template dependency missing. Run "$npm install --save ${type}" to fix it.`)
+        throw new Error(format(settings.errors.cli.TEMPLATE_DEP_MISSING, type));
       }
       deps.templates[type] = true;
     }
