@@ -1,7 +1,7 @@
 'use strict';
 
-var expect = require('chai').expect;
-var mergeObjects = require('../../client/src/merge-objects');
+const expect = require('chai').expect;
+const mergeObjects = require('../../client/src/merge-objects');
 
 describe('client : merge-objects :', () => {
   const scenarios = [
@@ -15,7 +15,7 @@ describe('client : merge-objects :', () => {
 
   scenarios.forEach((scenario) => {
     describe(`when ${scenario.describe}`, () => {
-      it(`then obj3 to equal ${JSON.stringify(scenario.obj3)}`, () => {
+      it(`then obj3 is equal to ${JSON.stringify(scenario.obj3)}`, () => {
         expect(mergeObjects(scenario.obj1, scenario.obj2)).to.deep.equal(scenario.obj3);
       });
     });

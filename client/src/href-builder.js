@@ -54,9 +54,6 @@ module.exports = function(config){
     prepareServerGet: function(baseUrl, component, options) {
       var urlPath = component.name + (component.version ? '/' + component.version : '');
 
-      component = component || {};
-      options = options || {};
-
       var qs = '';
       if (component.parameters || options.parameters) {
         qs = '/?' + querystring.stringify(mergeObjects(component.parameters, options.parameters));
