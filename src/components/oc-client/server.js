@@ -1,5 +1,6 @@
 'use strict';
 
-module.exports.data = function(context, callback){
-  callback(null, { staticPath: context.staticPath });
+export const data = (context, callback) => {
+  const { staticPath, templates } = context;
+  return callback(null, { staticPath, templates });
 };
