@@ -59,7 +59,8 @@ module.exports = {
       PLUGIN_NOT_IMPLEMENTED: 'registry does not implement plugins: {0}',
       PLUGIN_NOT_VALID: 'Plugin {0} is not valid',
       RESOLVING_ERROR: 'component resolving error',
-      TEMPLATE_NOT_FOUND: 'Template {0} not found'
+      TEMPLATE_NOT_FOUND: 'Template {0} not found',
+      TEMPLATE_NOT_VALID: '{0} is not a valid oc-template'
     },
     cli: {
       COMPONENT_HREF_NOT_FOUND: 'The specified path is not a valid component\'s url',
@@ -83,7 +84,8 @@ module.exports = {
       REGISTRY_NOT_FOUND: 'oc registries not found. Run "oc registry add <registry href>"',
       SERVERJS_DEPENDENCY_NOT_DECLARED: 'Missing dependencies from package.json => {0}',
       TEMPLATE_NOT_FOUND: 'file {0} not found',
-      TEMPLATE_TYPE_NOT_VALID: 'the template is not valid. Allowed values are handlebars and jade'
+      TEMPLATE_TYPE_NOT_VALID: 'the template is not valid. Allowed values are handlebars and jade',
+      TEMPLATE_DEP_MISSING: 'Template dependency missing. Run "$npm install --save {0}" to fix it.'
     },
     generic: 'An error occurred: {0}',
     s3: {

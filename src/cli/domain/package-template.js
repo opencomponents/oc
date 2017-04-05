@@ -16,11 +16,18 @@ var javaScriptizeTemplate = function(functionName, data){
 
 var compileView = function(viewPath, type, cb) {
   var template = fs.readFileSync(viewPath).toString();
+  var ocTemplate;
 
   if (type === 'jade') { type = 'oc-template-jade'; }
   if (type === 'handlebars') { type = 'oc-template-handlebars'; }
+  
 
-  var ocTemplate = requireTemplate(type); 
+  try {
+    ocTemplate = requireTemplate(type); 
+  } catch (err) {
+    return cb(err);
+  }
+
   ocTemplate.compile({ template, viewPath }, function(err, compiledView){
     if (err) { return cb(err);}
 

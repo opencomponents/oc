@@ -3,30 +3,48 @@
 var fs = require('fs-extra');
 var path = require('path');
 var _ =  require('underscore');
+var format = require('stringformat');
+var settings = require('../../resources');
 
 module.exports = function(components){
+  var deps = { modules: {}, withVersions: {}, templates: {} };
 
-  var deps = { modules: [], withVersions: [] };
+  var legacyTemplates = {
+    'jade': true,
+    'handlebars': true
+  };
 
-  _.forEach(components, function(c){
-
+  components.forEach(function(c){
     var pkg = fs.readJsonSync(path.join(c, 'package.json'));
+    var type = pkg.oc.files.template.type;
+    var dependencies = pkg.dependencies;
 
-    _.forEach(_.keys(pkg.dependencies), function(d){
+    if (!deps.templates[type] && !legacyTemplates[type]) {
+      if (!dependencies[type]) {
+        throw new Error(format(settings.errors.cli.TEMPLATE_DEP_MISSING, type));
+      }
+      deps.templates[type] = true;
+    }
 
-      var version = pkg.dependencies[d],
-          hasVersion = !_.isEmpty(version),
-          depToInstall = hasVersion ? (d + '@' + version) : d;
+    _.keys(dependencies).forEach(function(name){
+      var version = dependencies[name];
+      var depToInstall = version.length > 0
+        ? (name + '@' + version)
+        : name;
 
-      if(!_.contains(deps.withVersions, depToInstall)){
-        deps.withVersions.push(depToInstall);
+      if (!deps.withVersions[depToInstall]) {
+        deps.withVersions[depToInstall] = true;
       }
 
-      if(!_.contains(deps.modules, d)){
-        deps.modules.push(d);
+      if (!deps.modules[name]) {
+        deps.modules[name] = true;
       }
     });
   });
 
-  return deps;
+  return {
+    modules: _.keys(deps.modules),
+    withVersions: _.keys(deps.withVersions),
+    templates: _.keys(deps.templates)
+  };
 };

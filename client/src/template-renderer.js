@@ -13,7 +13,13 @@ module.exports = function(){
     if (type === 'jade') { type = 'oc-template-jade'; }
     if (type === 'handlebars') { type = 'oc-template-handlebars'; }
 
-    var ocTemplate = requireTemplate(type); 
+    var ocTemplate;
+    try {
+      ocTemplate = requireTemplate(type); 
+    } catch (err) {
+      return callback(err);
+    }
+    
     ocTemplate.render(
       {
         template,

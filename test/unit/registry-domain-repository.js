@@ -120,7 +120,7 @@ describe('registry : domain : repository', function(){
           try {
             var repository = new Repository(conf);
           } catch (err) {
-            expect(err).to.deep.equal(new Error('Template oc-template-react not found'));  
+            expect(err).to.equal('Error requiring oc-template: "oc-template-react" not found');  
           }
         });
       });

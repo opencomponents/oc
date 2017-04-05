@@ -106,13 +106,13 @@ module.exports = function(dependencies){
 
     var loadDependencies = function(components, cb){
       log.warn(strings.messages.cli.CHECKING_DEPENDENCIES, true);
-
+      
       var dependencies = getComponentsDependencies(components),
           missing = getMissingDeps(dependencies.withVersions, components);
 
       if(_.isEmpty(missing)){
         log.ok('OK');
-        return cb(dependencies.modules);
+        return cb(dependencies);
       }
 
       log.err('FAIL');
@@ -152,11 +152,11 @@ module.exports = function(dependencies){
       log.ok('OK');
       _.forEach(components, function(component){
         logger.log(colors.green('├── ') + component);
-      });
+    });
 
       loadDependencies(components, function(dependencies){
         packageComponents(components, function(){
-
+          
           var registry = new oc.Registry({
             local: true,
             hotReloading: hotReloading,
@@ -167,8 +167,8 @@ module.exports = function(dependencies){
             port: port,
             baseUrl: baseUrl,
             env: { name: 'local' },
-            dependencies: dependencies,
-            templates: []
+            dependencies: dependencies.modules,
+            templates: dependencies.templates
           });
 
           registerPlugins(registry);

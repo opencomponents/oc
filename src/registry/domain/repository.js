@@ -12,6 +12,7 @@ var settings = require('../../resources/settings');
 var strings = require('../../resources');
 var validator = require('./validators');
 var versionHandler = require('./version-handler');
+var requireTemplate = require('../../utils/require-template');
 
 module.exports = function(conf){
 
@@ -26,17 +27,21 @@ module.exports = function(conf){
   var coreTemplates = ['oc-template-jade', 'oc-template-handlebars'];
   var templates = _.union(coreTemplates, conf.templates)
     .map(function(template){
-      var info;
       try {
-        info = require(template).getInfo();
+        var ocTemplate = requireTemplate(template);
+        var info = ocTemplate.getInfo();
+        return {
+          type: info.type,
+          version: info.version,
+          externals: info.externals
+        };
       } catch (err) {
-        throw new Error(format(strings.errors.registry.TEMPLATE_NOT_FOUND, template));
+        throw err;
       }
-      return {
-        type: info.type,
-        version: info.version,
-        externals: info.externals
-      };
+      
+      
+
+      
     });
   
   var local = {

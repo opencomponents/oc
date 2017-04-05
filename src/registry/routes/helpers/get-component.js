@@ -229,12 +229,17 @@ module.exports = function(conf, repository){
             returnResult(cached);
           } else {
             repository.getCompiledView(component.name, component.version, function(err, templateText){
-
+              var ocTemplate;
               var type = component.oc.files.template.type;
               if (type === 'jade') { type = 'oc-template-jade'; }
               if (type === 'handlebars') { type = 'oc-template-handlebars'; }
 
-              var ocTemplate = requireTemplate(type); 
+              try {
+                ocTemplate = requireTemplate(type); 
+              } catch (err) {
+                throw err;
+              }
+
               var template = ocTemplate.getCompiledTemplate(templateText, key);
               cache.set('file-contents', cacheKey, template);
               returnResult(template);
