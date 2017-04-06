@@ -3,8 +3,9 @@
 var parseAuthor = require('parse-author');
 var _ = require('underscore');
 
-var urlBuilder = require('../domain/url-builder');
 var getComponentFallback = require('./helpers/get-component-fallback');
+var isUrlDiscoverable = require('./helpers/is-url-discoverable');
+var urlBuilder = require('../domain/url-builder');
 
 function getParams(component) {
   var params = {};
@@ -53,14 +54,22 @@ function componentInfo(err, req, res, component) {
 
     var params = getParams(component);
     var parsedAuthor = getParsedAuthor(component);
+    var href = res.conf.baseUrl;
+
     addGetRepositoryUrlFunction(component);
 
-    return res.render('component-info', {
-      component: component,
-      dependencies: _.keys(component.dependencies),
-      href: '//' + req.headers.host + res.conf.prefix,
-      parsedAuthor: parsedAuthor,
-      sandBoxDefaultQs: urlBuilder.queryString(params)
+    isUrlDiscoverable(href, function(err, result){
+      if(!result.isDiscoverable){
+        href = '//' + req.headers.host + res.conf.prefix;
+      }
+
+      res.render('component-info', {
+        component: component,
+        dependencies: _.keys(component.dependencies),       
+        href: href,
+        parsedAuthor: parsedAuthor,
+        sandBoxDefaultQs: urlBuilder.queryString(params)
+      });
     });
 
   } else {

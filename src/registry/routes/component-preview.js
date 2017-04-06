@@ -6,29 +6,29 @@ var urlBuilder = require('../domain/url-builder');
 var getComponentFallback = require('./helpers/get-component-fallback');
 
 function componentPreview(err, req, res, component, templates) {
-    if(err) {
-        res.errorDetails = err.registryError || err;
-        res.errorCode = 'NOT_FOUND';
-        return res.status(404).json(err);
-    }
+  if(err) {
+    res.errorDetails = err.registryError || err;
+    res.errorCode = 'NOT_FOUND';
+    return res.status(404).json(err);
+  }
 
-    var isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
+  var isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
 
-    if(isHtmlRequest && !!res.conf.discovery){
+  if(isHtmlRequest && !!res.conf.discovery){
 
-        return res.render('component-preview', {
-            component: component,
-            dependencies: _.keys(component.dependencies),
-            href: res.conf.baseUrl,
-            qs: urlBuilder.queryString(req.query),
-            templates: templates
-        });
+    return res.render('component-preview', {
+      component: component,
+      dependencies: _.keys(component.dependencies),
+      href: res.conf.baseUrl,
+      qs: urlBuilder.queryString(req.query),
+      templates: templates
+    });
 
-    } else {
-        res.status(200).json(_.extend(component, {
-            requestVersion: req.params.componentVersion || ''
-        }));
-    }
+  } else {
+    res.status(200).json(_.extend(component, {
+      requestVersion: req.params.componentVersion || ''
+    }));
+  }
 }
 
 module.exports = function(conf, repository){
@@ -43,7 +43,6 @@ module.exports = function(conf, repository){
       }
 
       componentPreview(registryError, req, res, component, repository.getTemplates());
-
     });
   };
 };
