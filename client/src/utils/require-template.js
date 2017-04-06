@@ -21,10 +21,9 @@ function isValidTemplate(template){
   });
 }
 
-
 module.exports = function(template) {
   var ocTemplate;
-  var localTemplate = path.join(__dirname, '../../', 'node_modules', template);
+  var localTemplate = path.join(__dirname, '../../../', 'node_modules', template);
   var relativeTemplate = path.resolve('.', 'node_modules', template);
   
   try {
