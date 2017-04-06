@@ -50,7 +50,7 @@ describe('registry : routes : helpers : is-url-discoverable', function(){
       });
     });
 
-    it('should not be discoverable', () => {
+    it('should be discoverable', () => {
       expect(result.isDiscoverable).to.be.true;
     });
   });
