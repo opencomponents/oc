@@ -38,10 +38,6 @@ module.exports = function(conf){
       } catch (err) {
         throw err;
       }
-      
-      
-
-      
     });
   
   var local = {
