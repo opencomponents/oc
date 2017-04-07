@@ -36,7 +36,7 @@ describe('registry', function(){
 			var init;
 			beforeEach(function(){
 				deps['./domain/validators'].validateRegistryConfiguration.returns({ isValid: false, message: 'blargh' });
-				init = function(){ var registry = new Registry({}); };
+				init = function(){ Registry({}); };
 			});
 
 			it('should throw an error', function(){
@@ -203,7 +203,7 @@ describe('registry', function(){
 										on: sinon.stub().yields('I failed for some reason')
 									});
 
-									registry.start(function(err, res){
+									registry.start(function(err){
 										error = err;
 										done();
 									});

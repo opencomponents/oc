@@ -34,7 +34,7 @@ describe('client : get-compiled-template', function(){
         src: 'https://cdn.com/components/1.3.5/template.js'
       };
 
-      getCompiledTemplate(template, false, 5, function(err, result){
+      getCompiledTemplate(template, false, 5, function(err){
         error = err;
         done();
       });

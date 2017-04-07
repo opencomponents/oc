@@ -2,10 +2,8 @@
 
 var expect = require('chai').expect;
 var injectr = require('injectr');
-var sinon = require('sinon');
 var path = require('path');
 var _ = require('underscore');
-
 
 describe('utils : require-template', function(){
   var globals = {
@@ -46,7 +44,7 @@ describe('utils : require-template', function(){
 
   it('should throw an error if the template found hasn\'t the right format', function(){
     try {
-    var template = requireTemplate('handlebars');
+    requireTemplate('handlebars');
     } catch (e) {
       expect(e).to.equal('Error requiring oc-template: "handlebars" is not a valid oc-template');
     }

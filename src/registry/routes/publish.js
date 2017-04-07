@@ -47,7 +47,7 @@ module.exports = function(repository){
         return res.status(500).json({ error: 'package is not valid', details: err });
       }
 
-      repository.publishComponent(pkgDetails, req.params.componentName, req.params.componentVersion, function(err, result){
+      repository.publishComponent(pkgDetails, req.params.componentName, req.params.componentVersion, function(err){
 
         if(err){
           if(err.code === 'not_allowed'){

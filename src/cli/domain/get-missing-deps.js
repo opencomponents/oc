@@ -3,7 +3,7 @@
 var path = require('path');
 var _ = require('underscore');
 
-module.exports = function(dependencies, components){
+module.exports = function(dependencies){
 
   var missing = [];
 
@@ -22,7 +22,7 @@ module.exports = function(dependencies, components){
         delete require.cache[pathToModule];
       }
 
-      var required = require(pathToModule);
+      require(pathToModule);
     } catch (exception) {
       missing.push(npmModule);
     }

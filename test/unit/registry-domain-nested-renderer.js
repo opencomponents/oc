@@ -1,7 +1,6 @@
 'use strict';
 
 var expect = require('chai').expect;
-var injectr = require('injectr');
 var sinon = require('sinon');
 var _ = require('underscore');
 

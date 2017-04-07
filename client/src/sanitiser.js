@@ -59,7 +59,7 @@ module.exports = {
     return options;
   },
 
-  sanitiseGlobalGetInfoOptions: function(options, config) {
+  sanitiseGlobalGetInfoOptions: function(options) {
     options = sanitiseDefaultOptions(options);
     options.headers.accept = 'application/vnd.oc.info+json';
     return options;

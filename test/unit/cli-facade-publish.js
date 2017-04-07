@@ -5,7 +5,6 @@ var expect = require('chai').expect;
 var injectr = require('injectr');
 var path = require('path');
 var sinon = require('sinon');
-var _ = require('underscore');
 
 describe('cli : facade : publish', function(){
 

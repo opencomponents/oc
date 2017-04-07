@@ -40,7 +40,7 @@ describe('registry : routes : helpers : get-component', function(){
         parameters: {},
         version: '1.X.X',
         conf: { baseUrl: 'http://components.com/' }
-      }, function(response){
+      }, function(){
         done();
       });
     });

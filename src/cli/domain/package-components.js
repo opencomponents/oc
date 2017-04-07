@@ -95,7 +95,7 @@ module.exports = function(){
           component.oc.files.static = [component.oc.files.static];
         }
 
-        fs.writeJson(path.join(publishPath, 'package.json'), component, function(err, res){
+        fs.writeJson(path.join(publishPath, 'package.json'), component, function(err){
           cb(err, component);
         });
       },
@@ -106,7 +106,7 @@ module.exports = function(){
           publishPath: publishPath,
           minify: minify,
           ocOptions: component.oc
-        }, function(err, res){
+        }, function(err){
           return cb(err, component);
         });
       }

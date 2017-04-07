@@ -8,7 +8,6 @@ describe('utils : dateStringify', function(){
   var dateStringified = require('../../src/utils/date-stringify');
 
   describe('when the date is provided', function(){
-    var anyValidDate = new Date(1442592664035);
     var dateString;
 
     before(function(){

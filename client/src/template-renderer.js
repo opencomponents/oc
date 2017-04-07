@@ -1,9 +1,6 @@
 'use strict';
 
 var htmlRenderer = require('./html-renderer');
-var validator = require('./validator');
-var format = require('stringformat');
-var settings = require('./settings');
 var requireTemplate = require('./utils/require-template');
 
 module.exports = function(){

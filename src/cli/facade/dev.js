@@ -41,7 +41,7 @@ module.exports = function(dependencies){
       if(_.isEmpty(missing)){ return cb(); }
 
       log.warn(format(strings.messages.cli.INSTALLING_DEPS, missing.join(', ')));
-      npmInstaller(missing, function(err, result){
+      npmInstaller(missing, function(err){
         if(!!err){
           log.err(err.toString());
           throw err;
@@ -174,7 +174,7 @@ module.exports = function(dependencies){
           registerPlugins(registry);
 
           log.warn(format(strings.messages.cli.REGISTRY_STARTING, baseUrl));
-          registry.start(function(err, app){
+          registry.start(function(err){
 
             if(err){
               if(err.code === 'EADDRINUSE'){

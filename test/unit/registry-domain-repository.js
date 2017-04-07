@@ -29,7 +29,7 @@ describe('registry : domain : repository', function(){
     };
 
     var Repository = injectr('../../src/registry/domain/repository.js', {
-      './s3': function(conf){
+      './s3': function(){
         return s3Mock;
       },
       './components-cache': function(){
@@ -118,7 +118,7 @@ describe('registry : domain : repository', function(){
           );
 
           try {
-            var repository = new Repository(conf);
+            Repository(conf);
           } catch (err) {
             expect(err).to.equal('Error requiring oc-template: "oc-template-react" not found');  
           }

@@ -12,7 +12,6 @@ var mock = require('./mock');
 var validator = require('../../registry/domain/validators');
 
 module.exports = function(dependencies){
-  var logger = dependencies.logger;
 
   return _.extend(this, {
     cleanup: function(compressedPackagePath, callback){

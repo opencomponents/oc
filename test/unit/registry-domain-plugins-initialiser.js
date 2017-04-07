@@ -181,7 +181,7 @@ describe('registry : domain : plugins-initialiser', function(){
             passedDeps = deps;
             cb();
           },
-          execute: function(key){},
+          execute: function(){},
           dependencies: ['isFlagged']
         },
         options: {}
@@ -201,7 +201,7 @@ describe('registry : domain : plugins-initialiser', function(){
 
   describe('when plugins have a circular dependency', function(){
 
-    var passedOptions, passedDeps, flag, error, result;
+    var passedDeps, flag, error, result;
     beforeEach(function(done){
 
       var plugins = [{
@@ -211,7 +211,7 @@ describe('registry : domain : plugins-initialiser', function(){
             passedDeps = deps;
             cb();
           },
-          execute: function(key){},
+          execute: function(){},
           dependencies: ['isFlagged']
         },
         options: {}
@@ -244,7 +244,7 @@ describe('registry : domain : plugins-initialiser', function(){
 
   describe('when plugin depends on a plugin that is not registered', function(){
 
-    var passedOptions, passedDeps, flag, error, result;
+    var passedDeps, error, result;
     beforeEach(function(done){
 
       var plugins = [{
@@ -254,7 +254,7 @@ describe('registry : domain : plugins-initialiser', function(){
             passedDeps = deps;
             cb();
           },
-          execute: function(key){},
+          execute: function(){},
           dependencies: ['isFlagged']
         },
         options: {}
@@ -274,7 +274,7 @@ describe('registry : domain : plugins-initialiser', function(){
 
   describe('when plugin chain requires multiple passes', function(){
 
-    var passedOptions, passedDeps, flag, error, result;
+    var passedDeps, flag, error, result;
     beforeEach(function(done){
 
       var plugins = [{
@@ -283,7 +283,7 @@ describe('registry : domain : plugins-initialiser', function(){
           register: function(options, deps, cb){
             cb();
           },
-          execute: function(key){ return true; },
+          execute: function(){ return true; },
           dependencies: ['getValue']
         },
         options: {}
@@ -295,7 +295,7 @@ describe('registry : domain : plugins-initialiser', function(){
             passedDeps = deps;
             cb();
           },
-          execute: function(key){},
+          execute: function(){},
           dependencies: ['isFlagged']
         },
         options: {}

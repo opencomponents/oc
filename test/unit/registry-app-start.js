@@ -35,7 +35,7 @@ describe('registry : app-start', function(){
             publishComponent: sinon.spy()
           };
 
-          getAppStart(mockedRepository, basicOptions, function(err, res){
+          getAppStart(mockedRepository, basicOptions, function(){
             expect(mockedRepository.publishComponent.called).to.be.false;
             done();
           });
@@ -51,7 +51,7 @@ describe('registry : app-start', function(){
             publishComponent: sinon.stub().yields(null, 'ok')
           };
 
-          getAppStart(mockedRepository, basicOptions, function(err, res){
+          getAppStart(mockedRepository, basicOptions, function(){
             expect(mockedRepository.publishComponent.called).to.be.true;
             done();
           });

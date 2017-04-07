@@ -17,7 +17,7 @@ module.exports = {
 
     return data.html;
   },
-  unrenderedComponent: function(href, options){
+  unrenderedComponent: function(href){
     return href ? format(templates.componentUnrenderedTag, href) : '';
   }
 };

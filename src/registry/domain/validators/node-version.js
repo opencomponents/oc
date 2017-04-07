@@ -1,6 +1,5 @@
 'use strict';
 
-var format = require('stringformat');
 var semver = require('semver');
 
 var packageInfo = require('../../../../package.json');

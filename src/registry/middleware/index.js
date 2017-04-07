@@ -2,10 +2,8 @@
 
 var bodyParser = require('body-parser');
 var errorhandler = require('errorhandler');
-var express = require('express');
 var morgan = require('morgan');
 var path = require('path');
-var _ = require('underscore');
 
 var baseUrlHandler = require('./base-url-handler');
 var cors = require('./cors');

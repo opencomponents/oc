@@ -14,7 +14,7 @@ module.exports = function(grunt){
       grunt.util.spawn({
         cmd: 'git',
         args: ['log', versions]
-      }, function(err, res, code){
+      }, function(err, res){
         if(err){ return callback(err); }
         var commits = res.stdout.split('commit '),
             result = [];
@@ -75,7 +75,7 @@ module.exports = function(grunt){
       grunt.util.spawn({ 
         cmd: 'git', 
         args: ['tag']
-      }, function(err, result, code){
+      }, function(err, result){
         if(err){ return callback(err); }
         callback(null, result.stdout.split('\n'));
       });

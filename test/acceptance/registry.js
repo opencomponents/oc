@@ -3,7 +3,6 @@
 var expect = require('chai').expect;
 var path = require('path');
 var request = require('minimal-request');
-var url = require('url');
 var _ = require('underscore');
 
 describe('registry', function(){
@@ -12,8 +11,7 @@ describe('registry', function(){
       result,
       error,
       headers,
-      oc = require('../../src/index'),
-      conf;
+      oc = require('../../src/index');
 
   var next = function(done){
     return function(e, r, d){
@@ -51,7 +49,7 @@ describe('registry', function(){
 
     it('should throw an error', function(done){
       expect(function(){
-        var wrongRegistry = new oc.Registry({});
+        oc.Registry({});
       }).to.throw('Registry configuration is empty');
 
       done();
