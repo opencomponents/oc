@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.36.19
+- [#447](https://github.com/opentable/oc/pull/447) Components by dir cleanup
+
 ### v0.36.18
 - [#446](https://github.com/opentable/oc/pull/446) Consider null a valid string
 
