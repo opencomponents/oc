@@ -1,7 +1,7 @@
 {
   "name": "oc-client",
   "description": "The OpenComponents client-side javascript client",
-  "version": "0.36.16",
+  "version": "0.36.17",
   "repository": "https://github.com/opentable/oc/tree/master/components/oc-client",
   "author": "Matteo Figus <matteofigus@gmail.com>",
   "oc": {
@@ -12,7 +12,7 @@
     "files": {
       "template": {
         "type": "jade",
-        "hashKey": "c60b583d891562c155c240ef38f9174b3aee0b94",
+        "hashKey": "b0cfde74f8a1059146a0f3821fb4a85a98643b9a",
         "src": "template.js"
       },
       "static": [
@@ -20,12 +20,12 @@
       ],
       "dataProvider": {
         "type": "node.js",
-        "hashKey": "90a08b5636b9245c8bfb50adf4375ff9a254fa9c",
+        "hashKey": "cfdc556fa13b93ac4cbf48a4f006125d69efa454",
         "src": "server.js"
       }
     },
-    "version": "0.36.16",
+    "version": "0.36.17",
     "packaged": true,
-    "date": 1491323580111
+    "date": 1491570252749
   }
 }
