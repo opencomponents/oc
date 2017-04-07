@@ -1,18 +1,18 @@
 'use strict';
 
-var colors = require('colors/safe');
-var expect = require('chai').expect;
-var sinon = require('sinon');
+const colors = require('colors/safe');
+const expect = require('chai').expect;
+const sinon = require('sinon');
 
 describe('cli : facade : mock', function(){
 
-  var logSpy = {},
+  let logSpy = {},
       MockFacade = require('../../src/cli/facade/mock'),
       Local = require('../../src/cli/domain/local'),
       local = new Local(),
       mockFacade = new MockFacade({ local: local, logger: logSpy });
 
-  var execute = function(){
+  const execute = function(){
     logSpy.log = sinon.spy();
     mockFacade({ targetType: 'plugin', targetName: 'getValue', targetValue: 'value' }, function(){});
   };

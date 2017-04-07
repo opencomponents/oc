@@ -1,11 +1,11 @@
 'use strict';
 
-var GetComponentHelper = require('./helpers/get-component');
-var _ = require('underscore');
+const GetComponentHelper = require('./helpers/get-component');
+const _ = require('underscore');
 
 module.exports = function(conf, repository){
 
-  var getComponent = new GetComponentHelper(conf, repository);
+  const getComponent = new GetComponentHelper(conf, repository);
 
   return function(req, res){
     getComponent({
@@ -15,7 +15,7 @@ module.exports = function(conf, repository){
       parameters: req.query,
       version: req.params.componentVersion
     }, function(result){
-      if(!!result.response.error){
+      if(result.response.error){
         res.errorCode = result.response.code;
         res.errorDetails = result.response.error;
       }

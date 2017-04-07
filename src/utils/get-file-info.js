@@ -1,11 +1,11 @@
 'use strict';
 
-var path = require('path');
+const path = require('path');
 
-var getMimeType = require('./get-mime-type');
+const getMimeType = require('./get-mime-type');
 
 module.exports = function(filePath){
-  var ext = path.extname(filePath).toLowerCase(),
+  let ext = path.extname(filePath).toLowerCase(),
       isGzipped = false;
 
   if(ext === '.gz'){

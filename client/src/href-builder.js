@@ -1,14 +1,14 @@
 'use strict';
 
-var querystring = require('querystring');
-var url = require('url');
-var settings = require('./settings');
-var mergeObjects = require('./utils/merge-objects');
+const querystring = require('querystring');
+const url = require('url');
+const settings = require('./settings');
+const mergeObjects = require('./utils/merge-objects');
 
 module.exports = function(config){
   return {
     client: function(component, options){
-      var clientRenderingEndpoint;
+      let clientRenderingEndpoint;
       
       if(!!options && !!options.registries && !!options.registries.clientRendering){
         clientRenderingEndpoint = options.registries.clientRendering;
@@ -22,7 +22,7 @@ module.exports = function(config){
         throw settings.missingComponentName;
       }
 
-      var lang = options.headers['accept-language'],
+      let lang = options.headers['accept-language'],
           forwardLang = config.forwardAcceptLanguageToClient === true;
 
       if(!forwardLang && options.forwardAcceptLanguageToClient === true){
@@ -34,10 +34,10 @@ module.exports = function(config){
         component.parameters['__ocAcceptLanguage'] = lang;
       }
 
-      var versionSegment = !!component.version ? ('/' + component.version) : '',
+      let versionSegment = component.version ? ('/' + component.version) : '',
           registryUrl = clientRenderingEndpoint,
           registrySegment = registryUrl.slice(-1) === '/' ? registryUrl : (registryUrl + '/'),
-          qs = !!component.parameters ? ('/?' + querystring.stringify(component.parameters)) : '';
+          qs = component.parameters ? ('/?' + querystring.stringify(component.parameters)) : '';
       
       return url.resolve(registrySegment, component.name) + versionSegment + qs;
     },
@@ -51,9 +51,9 @@ module.exports = function(config){
     },
 
     prepareServerGet: function(baseUrl, component, options) {
-      var urlPath = component.name + (component.version ? '/' + component.version : '');
+      const urlPath = component.name + (component.version ? '/' + component.version : '');
 
-      var qs = '';
+      let qs = '';
       if (component.parameters || options.parameters) {
         qs = '/?' + querystring.stringify(mergeObjects(component.parameters, options.parameters));
       }

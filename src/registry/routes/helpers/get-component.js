@@ -1,46 +1,46 @@
 'use strict';
 
-var acceptLanguageParser = require('accept-language-parser');
-var Cache = require('nice-cache');
-var Domain = require('domain');
-var format = require('stringformat');
-var vm = require('vm');
-var _ = require('underscore');
+const acceptLanguageParser = require('accept-language-parser');
+const Cache = require('nice-cache');
+const Domain = require('domain');
+const format = require('stringformat');
+const vm = require('vm');
+const _ = require('underscore');
 
-var applyDefaultValues = require('./apply-default-values');
-var Client = require('../../../../client');
-var detective = require('../../domain/plugins-detective');
-var eventsHandler = require('../../domain/events-handler');
-var GetComponentRetrievingInfo = require('./get-component-retrieving-info');
-var getComponentFallback = require('./get-component-fallback');
-var NestedRenderer = require('../../domain/nested-renderer');
-var RequireWrapper = require('../../domain/require-wrapper');
-var sanitiser = require('../../domain/sanitiser');
-var settings = require('../../../resources/settings');
-var strings = require('../../../resources');
-var urlBuilder = require('../../domain/url-builder');
-var validator = require('../../domain/validators');
-var requireTemplate = require('../../../utils/require-template');
+const applyDefaultValues = require('./apply-default-values');
+const Client = require('../../../../client');
+const detective = require('../../domain/plugins-detective');
+const eventsHandler = require('../../domain/events-handler');
+const GetComponentRetrievingInfo = require('./get-component-retrieving-info');
+const getComponentFallback = require('./get-component-fallback');
+const NestedRenderer = require('../../domain/nested-renderer');
+const RequireWrapper = require('../../domain/require-wrapper');
+const sanitiser = require('../../domain/sanitiser');
+const settings = require('../../../resources/settings');
+const strings = require('../../../resources');
+const urlBuilder = require('../../domain/url-builder');
+const validator = require('../../domain/validators');
+const requireTemplate = require('../../../utils/require-template');
 
 module.exports = function(conf, repository){
-  var client = new Client(),
+  let client = new Client(),
       cache = new Cache({
         verbose: !!conf.verbosity,
         refreshInterval: conf.refreshInterval
       });
 
   var renderer = function(options, cb){
-    var nestedRenderer = new NestedRenderer(renderer, options.conf),
+    let nestedRenderer = new NestedRenderer(renderer, options.conf),
         retrievingInfo = new GetComponentRetrievingInfo(options),
         responseHeaders = {};
 
-    var getLanguage = function(){
-      var paramOverride = !!options.parameters && options.parameters['__ocAcceptLanguage'];
+    const getLanguage = function(){
+      const paramOverride = !!options.parameters && options.parameters['__ocAcceptLanguage'];
       return paramOverride || options.headers['accept-language'];
     };
 
-    var callback = function(result){
-      if(!!result.response.error){
+    const callback = function(result){
+      if(result.response.error){
         retrievingInfo.extend(result.response);
       }
 
@@ -53,7 +53,7 @@ module.exports = function(conf, repository){
       return cb(result);
     };
 
-    var conf = options.conf,
+    let conf = options.conf,
         acceptLanguage = getLanguage(),
         componentCallbackDone = false,
         requestedComponent = {
@@ -93,7 +93,7 @@ module.exports = function(conf, repository){
       }
 
       // check component requirements are satisfied by registry
-      var pluginsCompatibility = validator.validatePluginsRequirements(component.oc.plugins, conf.plugins);
+      const pluginsCompatibility = validator.validatePluginsRequirements(component.oc.plugins, conf.plugins);
 
       if(!pluginsCompatibility.isValid){
         return callback({
@@ -107,7 +107,7 @@ module.exports = function(conf, repository){
       }
 
       // sanitise and check params
-      var appliedParams = applyDefaultValues(requestedComponent.parameters, component.oc.parameters),
+      let appliedParams = applyDefaultValues(requestedComponent.parameters, component.oc.parameters),
           params = sanitiser.sanitiseComponentParameters(appliedParams, component.oc.parameters),
           validationResult = validator.validateComponentParameters(params, component.oc.parameters);
 
@@ -121,16 +121,16 @@ module.exports = function(conf, repository){
         });
       }
 
-      var filterCustomHeaders = function(headers, requestedVersion, actualVersion) {
+      const filterCustomHeaders = function(headers, requestedVersion, actualVersion) {
 
-        var needFiltering = !_.isEmpty(headers) &&
+        const needFiltering = !_.isEmpty(headers) &&
           !_.isEmpty(conf.customHeadersToSkipOnWeakVersion) &&
           requestedVersion !== actualVersion;
 
         return needFiltering ? _.omit(headers, conf.customHeadersToSkipOnWeakVersion) : headers;
       };
 
-      var returnComponent = function(err, data){
+      const returnComponent = function(err, data){
 
         if(componentCallbackDone){ return; }
         componentCallbackDone = true;
@@ -147,16 +147,16 @@ module.exports = function(conf, repository){
           });
         }
 
-        var componentHref = urlBuilder.component({
+        const componentHref = urlBuilder.component({
           name: component.name,
           version: requestedComponent.version,
           parameters: params
         }, conf.baseUrl);
 
-        var isUnrendered = options.headers.accept === settings.registry.acceptUnrenderedHeader,
+        let isUnrendered = options.headers.accept === settings.registry.acceptUnrenderedHeader,
             renderMode = isUnrendered ? 'unrendered' : 'rendered';
 
-        var response = {
+        const response = {
           type: conf.local ? 'oc-component-local' : 'oc-component',
           version: component.version,
           requestVersion: requestedComponent.version,
@@ -191,7 +191,7 @@ module.exports = function(conf, repository){
           });
         } else {
 
-          var cacheKey = format('{0}/{1}/template.js', component.name, component.version),
+          let cacheKey = format('{0}/{1}/template.js', component.name, component.version),
               cached = cache.get('file-contents', cacheKey),
               key = component.oc.files.template.hashKey,
               renderOptions = {
@@ -204,7 +204,7 @@ module.exports = function(conf, repository){
                 renderInfo: component.oc.renderInfo
               };
 
-          var returnResult = function(template){
+          const returnResult = function(template){
             client.renderTemplate(template, data, renderOptions, function(err, html){
 
               if(err){
@@ -229,8 +229,8 @@ module.exports = function(conf, repository){
             returnResult(cached);
           } else {
             repository.getCompiledView(component.name, component.version, function(err, templateText){
-              var ocTemplate;
-              var type = component.oc.files.template.type;
+              let ocTemplate;
+              let type = component.oc.files.template.type;
               if (type === 'jade') { type = 'oc-template-jade'; }
               if (type === 'handlebars') { type = 'oc-template-handlebars'; }
 
@@ -240,7 +240,7 @@ module.exports = function(conf, repository){
                 throw err;
               }
 
-              var template = ocTemplate.getCompiledTemplate(templateText, key);
+              const template = ocTemplate.getCompiledTemplate(templateText, key);
               cache.set('file-contents', cacheKey, template);
               returnResult(template);
             });
@@ -252,7 +252,7 @@ module.exports = function(conf, repository){
         returnComponent(null, {});
       } else {
 
-        var cacheKey = format('{0}/{1}/server.js', component.name, component.version),
+        let cacheKey = format('{0}/{1}/server.js', component.name, component.version),
             cached = cache.get('file-contents', cacheKey),
             domain = Domain.create(),
             contextObj = {
@@ -278,8 +278,8 @@ module.exports = function(conf, repository){
               templates: repository.getTemplates()
             };
 
-        var setCallbackTimeout = function(){
-          if(!!conf.executionTimeout){
+        const setCallbackTimeout = function(){
+          if(conf.executionTimeout){
             setTimeout(function(){
               returnComponent({
                 message: format('timeout ({0}ms)', conf.executionTimeout * 1000)
@@ -315,7 +315,7 @@ module.exports = function(conf, repository){
               });
             }
 
-            var context = {
+            const context = {
               require: new RequireWrapper(conf.dependencies),
               module: { exports: {}},
               console: conf.local ? console : { log: _.noop },
@@ -323,7 +323,7 @@ module.exports = function(conf, repository){
               Buffer: Buffer
             };
 
-            var handleError = function(err){
+            const handleError = function(err){
 
               if(err.code === 'DEPENDENCY_MISSING_FROM_REGISTRY'){
                 componentCallbackDone = true;
@@ -338,7 +338,7 @@ module.exports = function(conf, repository){
                 });
               }
 
-              var usedPlugins = detective.parse(dataProcessorJs),
+              let usedPlugins = detective.parse(dataProcessorJs),
                   unRegisteredPlugins = _.difference(usedPlugins, _.keys(conf.plugins));
 
               if(!_.isEmpty(unRegisteredPlugins)){
@@ -359,7 +359,7 @@ module.exports = function(conf, repository){
 
             try {
               vm.runInNewContext(dataProcessorJs, context);
-              var processData = context.module.exports.data;
+              const processData = context.module.exports.data;
               cache.set('file-contents', cacheKey, processData);
 
               domain.on('error', handleError);

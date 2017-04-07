@@ -1,7 +1,7 @@
 'use strict';
 
-var injectr = require('injectr');
-var sinon = require('sinon');
+const injectr = require('injectr');
+const sinon = require('sinon');
 
 describe('client : get-component-data', () => {
 
@@ -20,7 +20,7 @@ describe('client : get-component-data', () => {
     };
 
     before(done => {
-      let getComponentDataPrototype = injectr('../../client/src/get-components-data.js', {
+      const getComponentDataPrototype = injectr('../../client/src/get-components-data.js', {
         'minimal-request': minimalRequestStub,
         './href-builder': function() {
           return {
@@ -91,7 +91,7 @@ describe('client : get-component-data', () => {
     };
 
     before(done => {
-      let getComponentDataPrototype = injectr('../../client/src/get-components-data.js', {
+      const getComponentDataPrototype = injectr('../../client/src/get-components-data.js', {
         'minimal-request': minimalRequestStub,
         './href-builder': function() {
           return {

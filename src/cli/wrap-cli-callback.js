@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+const _ = require('underscore');
 
 module.exports = function(callback){
   if(_.isFunction(callback)){
@@ -8,7 +8,7 @@ module.exports = function(callback){
   }
 
   return function(error){
-    if(!!error){
+    if(error){
       return process.exit(1);
     }
   };

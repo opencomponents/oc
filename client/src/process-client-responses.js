@@ -1,21 +1,21 @@
 'use strict';
 
-var format = require('stringformat');
+const format = require('stringformat');
 
-var GetOCClientScript = require('./get-oc-client-script');
-var HrefBuilder = require('./href-builder');
-var htmlRenderer = require('./html-renderer');
-var settings = require('./settings');
-var templates = require('./templates');
-var _ = require('./utils/helpers');
+const GetOCClientScript = require('./get-oc-client-script');
+const HrefBuilder = require('./href-builder');
+const htmlRenderer = require('./html-renderer');
+const settings = require('./settings');
+const templates = require('./templates');
+const _ = require('./utils/helpers');
 
 module.exports = function(cache, config){
 
-  var getOCClientScript = new GetOCClientScript(cache),
+  let getOCClientScript = new GetOCClientScript(cache),
       buildHref = new HrefBuilder(config);
 
   return function(toDo, options, cb){
-    var toProcess = [];
+    const toProcess = [];
 
     _.each(toDo, function(action){
       if(action.render === 'client' && !action.done){
@@ -34,7 +34,7 @@ module.exports = function(cache, config){
             action.result.error = settings.genericError;
             action.result.html = '';
           } else {
-            var componentClientHref;
+            let componentClientHref;
             try {
               componentClientHref = buildHref.client(action.component, options);
             } catch (err) {
@@ -43,7 +43,7 @@ module.exports = function(cache, config){
               return;
             }
             
-            var unrenderedComponentTag = htmlRenderer.unrenderedComponent(componentClientHref, options);
+            const unrenderedComponentTag = htmlRenderer.unrenderedComponent(componentClientHref, options);
 
             if(action.failover){
               action.result.html = format(templates.clientScript, clientJs, unrenderedComponentTag);

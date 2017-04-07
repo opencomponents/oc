@@ -1,15 +1,15 @@
 'use strict';
 
-var expect = require('chai').expect;
+const expect = require('chai').expect;
 
 describe('registry : domain : url-builder', function(){
 
-  var urlBuilder = require('../../src/registry/domain/url-builder');
+  const urlBuilder = require('../../src/registry/domain/url-builder');
 
-  var builtUrl;
+  let builtUrl;
 
   describe('when building component url', function () {
-      var execute = function(component, baseUrl){
+      const execute = function(component, baseUrl){
           builtUrl = urlBuilder.component(component, baseUrl);
       };
 
@@ -40,7 +40,7 @@ describe('registry : domain : url-builder', function(){
 
       describe('when building component with query string parameters', function(){
 
-          var component = {
+          const component = {
               name: 'hello-world',
               version: '1.X.X'
           };
@@ -72,7 +72,7 @@ describe('registry : domain : url-builder', function(){
   });
 
     describe('when building component preview url', function () {
-        var execute = function(component, baseUrl){
+        const execute = function(component, baseUrl){
             builtUrl = urlBuilder.componentPreview(component, baseUrl);
         };
 
@@ -103,7 +103,7 @@ describe('registry : domain : url-builder', function(){
 
         describe('when building url with query string parameters', function(){
 
-            var component = {
+            const component = {
                 name: 'hello-world',
                 version: '1.X.X'
             };

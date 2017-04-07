@@ -1,11 +1,11 @@
 'use strict';
 
-var async = require('async');
-var format = require('stringformat');
-var fs = require('fs');
-var path = require('path');
-var semverSort = require('semver-sort');
-var _ = require('underscore');
+const async = require('async');
+const format = require('stringformat');
+const fs = require('fs');
+const path = require('path');
+const semverSort = require('semver-sort');
+const _ = require('underscore');
 
 module.exports = function(grunt){
 
@@ -16,18 +16,18 @@ module.exports = function(grunt){
         args: ['log', versions]
       }, function(err, res){
         if(err){ return callback(err); }
-        var commits = res.stdout.split('commit '),
+        let commits = res.stdout.split('commit '),
             result = [];
 
         _.forEach(commits, function(commit){
-          var commitMessages = commit.split('Merge pull request'),
+          let commitMessages = commit.split('Merge pull request'),
               isPr = commitMessages.length > 1,
               isSquashedPr = !!commit.match(/(.*?)\(#(.*?)\)\n(.*?)/g),
               commitMessage,
               prNumber;
 
           if(isPr){
-            var split = commitMessages[1].split('from'),
+            let split = commitMessages[1].split('from'),
                 branchName = split[1].trim().split(' ')[0].trim();
 
             prNumber = split[0].trim().replace('#', '');
@@ -35,7 +35,7 @@ module.exports = function(grunt){
 
             result.push(format('- [#{0}](https://github.com/opentable/oc/pull/{0}) {1}', prNumber, commitMessage));
           } else if(isSquashedPr){
-            var lines = commit.split('\n'),
+            let lines = commit.split('\n'),
                 commitLine = lines[4],
                 prNumberStartIndex = commitLine.lastIndexOf(' ('),
                 prNumberEndIndex = commitLine.lastIndexOf(')');
@@ -51,11 +51,11 @@ module.exports = function(grunt){
       });
     },
     allPrs: function(tags, callback){
-      var logIntervals = [],
+      let logIntervals = [],
           results = [];
 
-      for(var i = tags.length; i > 0; i--){
-        var logInterval = tags[i - 1];
+      for(let i = tags.length; i > 0; i--){
+        let logInterval = tags[i - 1];
         if(i >= 2){
           logInterval = tags[i - 2] + '..' + logInterval;
         }
@@ -84,7 +84,7 @@ module.exports = function(grunt){
 
   grunt.registerTask('changelog', 'generates the changelog', function(){
 
-    var done = this.async(),
+    let done = this.async(),
         result = '## Change Log';
 
     get.tags(function(err, tags){
@@ -97,8 +97,8 @@ module.exports = function(grunt){
 
         changes = changes.reverse();
 
-        for(var i = tags.length - 1; i >= 0; i--){
-          var changesForTag = changes[i].join('\n');
+        for(let i = tags.length - 1; i >= 0; i--){
+          const changesForTag = changes[i].join('\n');
           if(!_.isEmpty(changesForTag.trim())){
             result += format('\n\n### {0}\n{1}', tags[i], changesForTag);
           }

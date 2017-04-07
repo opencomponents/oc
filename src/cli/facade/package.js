@@ -1,30 +1,30 @@
 'use strict';
 
-var strings = require('../../resources/index');
-var wrapCliCallback = require('../wrap-cli-callback');
-var colors = require('colors/safe');
-var format = require('stringformat');
-var path = require('path');
+const strings = require('../../resources/index');
+const wrapCliCallback = require('../wrap-cli-callback');
+const colors = require('colors/safe');
+const format = require('stringformat');
+const path = require('path');
 
 module.exports = function(dependencies) {
-  var local = dependencies.local,
+  let local = dependencies.local,
       logger = dependencies.logger;
 
-  var log = {
+  const log = {
     err: function(msg){ return logger.log(colors.red(msg)); },
     ok: function(msg){ return logger.log(colors.green(msg)); },
     warn: function(msg){ return logger.log(colors.yellow(msg)); }
   };
 
   return function(opts, callback) {
-    var componentPath = opts.componentPath,
+    let componentPath = opts.componentPath,
         packageDir = path.resolve(componentPath, '_package'),
         compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
 
     callback = wrapCliCallback(callback);
 
     log.warn(format(strings.messages.cli.PACKAGING, packageDir));
-    var packageOptions = {
+    const packageOptions = {
       componentPath: path.resolve(componentPath)
     };
     local.package(packageOptions, function(err, component){

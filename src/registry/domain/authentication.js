@@ -1,15 +1,15 @@
 'use strict';
 
-var basicAuth = require('basic-auth-connect');
-var format = require('stringformat');
-var path = require('path');
+const basicAuth = require('basic-auth-connect');
+const format = require('stringformat');
+const path = require('path');
 
-var strings = require('../../resources/');
+const strings = require('../../resources/');
 
-var builtin = {
+const builtin = {
   basic: {
     validate: function(authConfig){
-      var isValid = authConfig.username && authConfig.password;
+      const isValid = authConfig.username && authConfig.password;
       return {
           isValid: isValid,
           message: isValid ? '' : strings.errors.registry.CONFIGURATION_PUBLISH_BASIC_AUTH_CREDENTIALS_MISSING
@@ -21,17 +21,17 @@ var builtin = {
   }
 };
 
-var scheme;
+let scheme;
 
 module.exports.validate = function(authConfig){
   if(builtin[authConfig.type]){
     scheme = builtin[authConfig.type];
   }
   else {
-    var cwd = process.cwd();
+    const cwd = process.cwd();
     module.paths.push(cwd, path.join(cwd, 'node_modules'));
 
-    var moduleName = 'oc-auth-' + authConfig.type;
+    const moduleName = 'oc-auth-' + authConfig.type;
 
     try {
       scheme = require(moduleName);

@@ -1,20 +1,20 @@
 'use strict';
 
-var async = require('async');
-var semver = require('semver');
-var _ = require('underscore');
+const async = require('async');
+const semver = require('semver');
+const _ = require('underscore');
 
-var eventsHandler = require('./events-handler');
-var getUnixUTCTimestamp = require('../../utils/get-unix-utc-timestamp');
+const eventsHandler = require('./events-handler');
+const getUnixUTCTimestamp = require('../../utils/get-unix-utc-timestamp');
 
 module.exports = function(conf, cdn){
 
-  var cachedComponentsList,
+  let cachedComponentsList,
       refreshLoop;
 
-  var getFromJson = function(cb){
+  const getFromJson = function(cb){
     cdn.getFile(conf.s3.componentsDir + '/components.json', true, function(err, res){
-      var result; 
+      let result; 
       
       if(!err){
         try {
@@ -28,7 +28,7 @@ module.exports = function(conf, cdn){
     });
   };
 
-  var updateCachedData = function(newData){
+  const updateCachedData = function(newData){
     eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
     if(newData.lastEdit > cachedComponentsList.lastEdit){
       cachedComponentsList = newData;
@@ -48,22 +48,22 @@ module.exports = function(conf, cdn){
     }, conf.pollingInterval * 1000);
   };
 
-  var cacheDataAndStartRefresh = function(data, cb){
+  const cacheDataAndStartRefresh = function(data, cb){
     eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
     cachedComponentsList = data;
     refreshCachedData();
     cb(null, data);
   };
 
-  var getVersionsForComponent  = function(componentName, cb){
+  const getVersionsForComponent  = function(componentName, cb){
     cdn.listSubDirectories(conf.s3.componentsDir + '/' + componentName, function(err, versions){
       if(err){ return cb(err); }
       cb(null, versions.sort(semver.compare));
     });
   };
 
-  var getFromDirectories = function(cb){
-    var componentsInfo = {};
+  const getFromDirectories = function(cb){
+    const componentsInfo = {};
 
     cdn.listSubDirectories(conf.s3.componentsDir, function(err, components){
       if(err){
@@ -78,7 +78,7 @@ module.exports = function(conf, cdn){
       }
 
       async.map(components, getVersionsForComponent, function(errors, versions){
-        if(!!errors){ return cb(errors); }
+        if(errors){ return cb(errors); }
 
         _.forEach(components, function(component, i){
           componentsInfo[component] = versions[i];
@@ -92,20 +92,20 @@ module.exports = function(conf, cdn){
     });
   };
 
-  var returnError = function(errorCode, errorMessage, callback){
+  const returnError = function(errorCode, errorMessage, callback){
     eventsHandler.fire('error', { code: errorCode, message: errorMessage });
     return callback(errorCode);
   };
 
-  var saveData = function(data, callback){
+  const saveData = function(data, callback){
     cdn.putFileContent(JSON.stringify(data), conf.s3.componentsDir + '/components.json', true, callback);
   };
 
-  var getAndSaveFromDirectories = function(cb){ 
+  const getAndSaveFromDirectories = function(cb){ 
     getFromDirectories(function(err, components){
-      if(!!err){ return cb(err); }
+      if(err){ return cb(err); }
       saveData(components, function(err){
-        if(!!err){ return cb(err); }
+        if(err){ return cb(err); }
         cb(err, components);
       }); 
     });
@@ -119,11 +119,11 @@ module.exports = function(conf, cdn){
     load: function(callback){
       getFromJson(function(jsonErr, jsonComponents){
         getFromDirectories(function(dirErr, dirComponents){
-          if(!!dirErr){
+          if(dirErr){
             return returnError('components_list_get', dirErr, callback);
           } else if(jsonErr || !_.isEqual(dirComponents.components, jsonComponents.components)){
             saveData(dirComponents, function(saveErr){
-              if(!!saveErr){
+              if(saveErr){
                 return returnError('components_list_save', saveErr, callback);
               }
               cacheDataAndStartRefresh(dirComponents, callback);
@@ -137,7 +137,7 @@ module.exports = function(conf, cdn){
     refresh: function(callback){
       clearTimeout(refreshLoop);
       getAndSaveFromDirectories(function(err, components){
-        if(!!err){ return returnError('components_cache_refresh', err, callback); }
+        if(err){ return returnError('components_cache_refresh', err, callback); }
         cacheDataAndStartRefresh(components, callback);
       });
     }

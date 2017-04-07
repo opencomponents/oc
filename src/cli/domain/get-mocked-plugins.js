@@ -1,14 +1,14 @@
 'use strict';
 
-var colors = require('colors/safe');
-var fs = require('fs-extra');
-var path = require('path');
-var _ = require('underscore');
+const colors = require('colors/safe');
+const fs = require('fs-extra');
+const path = require('path');
+const _ = require('underscore');
 
-var settings = require('../../resources/settings');
-var strings = require('../../resources/');
+const settings = require('../../resources/settings');
+const strings = require('../../resources/');
 
-var registerStaticMocks = function(mocks, logger){
+const registerStaticMocks = function(mocks, logger){
   return _.map(mocks, function(mockedValue, pluginName){
     logger.log(colors.green('├── ' + pluginName + ' () => ' + mockedValue));
     return {
@@ -25,10 +25,10 @@ var registerStaticMocks = function(mocks, logger){
   });
 };
 
-var registerDynamicMocks = function(ocJsonLocation, mocks, logger){
+const registerDynamicMocks = function(ocJsonLocation, mocks, logger){
   return _.map(mocks, function(source, pluginName){
 
-    var p;
+    let p;
     try {
       p = require(path.resolve(ocJsonLocation, source));
     } catch(er) {
@@ -56,14 +56,14 @@ var registerDynamicMocks = function(ocJsonLocation, mocks, logger){
 
 var findPath = function(pathToResolve, fileName) {
 
-  var rootDir = fs.realpathSync('.'),
+  let rootDir = fs.realpathSync('.'),
       fileToResolve = path.join(pathToResolve, fileName);
 
   if (!fs.existsSync(fileToResolve)) {
     if (pathToResolve === rootDir) {
       return undefined;
     } else {
-      var getParent = function(x){ return x.split('/').slice(0, -1).join('/'); },
+      let getParent = function(x){ return x.split('/').slice(0, -1).join('/'); },
           parentDir = pathToResolve ? getParent(pathToResolve) : rootDir;
 
       return findPath(parentDir, fileName);
@@ -76,7 +76,7 @@ var findPath = function(pathToResolve, fileName) {
 module.exports = function(logger, componentsDir){
   componentsDir = path.resolve(componentsDir || '.');
 
-  var plugins = [],
+  let plugins = [],
       ocJsonFileName = settings.configFile.src.replace('./', ''),
       ocJsonPath = findPath(componentsDir, ocJsonFileName);
 
@@ -84,7 +84,7 @@ module.exports = function(logger, componentsDir){
     return plugins;
   }
 
-  var content = fs.readJsonSync(ocJsonPath),
+  let content = fs.readJsonSync(ocJsonPath),
       ocJsonLocation = ocJsonPath.slice(0, -ocJsonFileName.length);
 
   if(!content.mocks || !content.mocks.plugins){

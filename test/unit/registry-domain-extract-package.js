@@ -1,15 +1,15 @@
 'use strict';
 
-var expect = require('chai').expect;
-var injectr = require('injectr');
-var sinon = require('sinon');
+const expect = require('chai').expect;
+const injectr = require('injectr');
+const sinon = require('sinon');
 
 describe('registry : domain : extract-package', function(){
 
-  var decompressStub = sinon.stub(),
+  let decompressStub = sinon.stub(),
       pathResolveStub = sinon.stub();
 
-  var extractPackage = injectr('../../src/registry/domain/extract-package.js', {
+  const extractPackage = injectr('../../src/registry/domain/extract-package.js', {
     targz: { decompress: decompressStub },
     path: { resolve: pathResolveStub },
     './get-package-json-from-temp-dir': sinon.stub().yields(null, { package: 'hello' })
@@ -17,7 +17,7 @@ describe('registry : domain : extract-package', function(){
 
   describe('when successfully extracting package', function(){
 
-    var response;
+    let response;
 
     beforeEach(function(done){
       pathResolveStub.reset();
@@ -55,7 +55,7 @@ describe('registry : domain : extract-package', function(){
 
   describe('when extracting package fails', function(){
 
-    var error;
+    let error;
 
     beforeEach(function(done){
       pathResolveStub.reset();

@@ -1,10 +1,10 @@
 'use strict';
 
-var FormData = require('form-data');
-var fs = require('fs-extra');
-var path = require('path');
-var url = require('url');
-var _ = require('underscore');
+const FormData = require('form-data');
+const fs = require('fs-extra');
+const path = require('path');
+const url = require('url');
+const _ = require('underscore');
 
 module.exports = function(urlPath, files, headers, callback) {
 
@@ -13,7 +13,7 @@ module.exports = function(urlPath, files, headers, callback) {
     headers = {};
   }
 
-  var form = new FormData(),
+  let form = new FormData(),
       body = '',
       callbackDone = false,
       options = _.extend(url.parse(urlPath), { method: 'PUT' });
@@ -23,7 +23,7 @@ module.exports = function(urlPath, files, headers, callback) {
   }
 
   _.forEach(files, function(file){
-    var fileName = path.basename(file);
+    const fileName = path.basename(file);
     form.append(fileName, fs.createReadStream(file));
   });
 
@@ -31,7 +31,7 @@ module.exports = function(urlPath, files, headers, callback) {
 
   form.submit(options, function(err, res){
 
-    if(!!err){
+    if(err){
       callbackDone = true;
       return callback(err);
     }

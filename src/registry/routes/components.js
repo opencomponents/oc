@@ -1,22 +1,22 @@
 'use strict';
 
-var async = require('async');
-var format = require('stringformat');
-var _ = require('underscore');
+const async = require('async');
+const format = require('stringformat');
+const _ = require('underscore');
 
-var GetComponentHelper = require('./helpers/get-component');
-var strings = require('../../resources');
+const GetComponentHelper = require('./helpers/get-component');
+const strings = require('../../resources');
 
 module.exports = function(conf, repository){
 
-  var getComponent = new GetComponentHelper(conf, repository);
+  const getComponent = new GetComponentHelper(conf, repository);
 
   return function(req, res){
 
-    var components = req.body.components,
+    let components = req.body.components,
         registryErrors = strings.errors.registry;
 
-    var returnError = function(message){
+    const returnError = function(message){
       return res.status(400).json({
         code: registryErrors.BATCH_ROUTE_BODY_NOT_VALID_CODE,
         error: format(registryErrors.BATCH_ROUTE_BODY_NOT_VALID, message)
@@ -30,7 +30,7 @@ module.exports = function(conf, repository){
     }
 
     if(!_.isEmpty(components)){
-      var errors = _.compact(_.map(components, function(component, index){
+      const errors = _.compact(_.map(components, function(component, index){
         if(!component.name){
           return format(registryErrors.BATCH_ROUTE_COMPONENT_NAME_MISSING, index);
         }

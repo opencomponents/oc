@@ -3,11 +3,11 @@
 var _ = {
   each: function(obj, fn){
     if(_.isArray(obj)){
-      for(var i = 0; i < obj.length; i++){
+      for(let i = 0; i < obj.length; i++){
         fn(obj[i], i, obj);
       }
     } else {
-      for(var el in obj){
+      for(const el in obj){
         if(_.has(obj, el)){
           fn(obj[el], el, obj);
         }
@@ -15,13 +15,13 @@ var _ = {
     }
   },
   eachAsync: function(obj, fn, cb){
-    var callbacksLeft = obj.length;
+    let callbacksLeft = obj.length;
     
-    var next = function(err){
+    const next = function(err){
       callbacksLeft--;
       if(callbacksLeft === 0 || !!err){
 
-        var cbCopy = cb;
+        const cbCopy = cb;
         cb = _.noop;
 
         return cbCopy(err);

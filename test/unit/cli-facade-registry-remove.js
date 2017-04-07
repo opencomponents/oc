@@ -1,18 +1,18 @@
 'use strict';
 
-var colors = require('colors/safe');
-var expect = require('chai').expect;
-var sinon = require('sinon');
+const colors = require('colors/safe');
+const expect = require('chai').expect;
+const sinon = require('sinon');
 
 describe('cli : facade : registry : remove', function(){
 
-  var logSpy = {},
+  let logSpy = {},
       Registry = require('../../src/cli/domain/registry'),
       registry = new Registry(),
       RegistryFacade = require('../../src/cli/facade/registry-remove'),
       registryFacade = new RegistryFacade({ registry: registry, logger: logSpy });
 
-  var execute = function(){
+  const execute = function(){
     logSpy.log = sinon.spy();
     registryFacade({ }, function(){});
   };

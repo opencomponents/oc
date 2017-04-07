@@ -1,10 +1,10 @@
 'use strict';
 
-var async = require('async');
-var _ = require('underscore');
+const async = require('async');
+const _ = require('underscore');
 
-var settings = require('../../resources/settings');
-var strings = require('../../resources');
+const settings = require('../../resources/settings');
+const strings = require('../../resources');
 
 var sanitise = { 
   componentParams: function(component, options, callback){
@@ -59,7 +59,7 @@ module.exports = function(renderer, conf){
   return {
     renderComponent: function(componentName, renderOptions, callback){
 
-      var p = sanitise.componentParams(componentName, renderOptions, callback);
+      const p = sanitise.componentParams(componentName, renderOptions, callback);
       validate.componentParams(p);
 
       return renderer({
@@ -78,7 +78,7 @@ module.exports = function(renderer, conf){
     },
     renderComponents: function(components, renderOptions, callback){
 
-      var p = sanitise.componentsParams(components, renderOptions, callback);
+      const p = sanitise.componentsParams(components, renderOptions, callback);
       validate.componentsParams(p);
 
       async.map(p.components, function(component, cb){
@@ -89,7 +89,7 @@ module.exports = function(renderer, conf){
           parameters: _.extend(_.clone(p.options.parameters) || {}, component.parameters || {}),
           version: component.version || ''
         }, function(result){
-          var error = result.response.error;
+          const error = result.response.error;
           cb(null, error ? new Error(error) : result.response.html);
         });
       }, p.callback);

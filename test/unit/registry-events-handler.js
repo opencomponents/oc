@@ -1,15 +1,15 @@
 'use strict';
 
-var expect = require('chai').expect;
-var sinon = require('sinon');
+const expect = require('chai').expect;
+const sinon = require('sinon');
 
 describe('registry : events-handler', function(){
 
-  var eventsHandler = require('../../src/registry/domain/events-handler');
+  const eventsHandler = require('../../src/registry/domain/events-handler');
 
   describe('when requiring it multiple times', function(){
 
-    var spy = sinon.spy(),
+    let spy = sinon.spy(),
         handler2;
 
     before(function(){
@@ -29,7 +29,7 @@ describe('registry : events-handler', function(){
 
   describe('when firing an event that has multiple subscribers', function(){
 
-    var spy = sinon.spy(),
+    let spy = sinon.spy(),
         c = 0;
 
     before(function(){
@@ -55,7 +55,7 @@ describe('registry : events-handler', function(){
 
   describe('when subscribing a request event using a not valid handler', function(){
 
-    var execute = function(){
+    const execute = function(){
       eventsHandler.on('request', 'this is not a function');
     };
 

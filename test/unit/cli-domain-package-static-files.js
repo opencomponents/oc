@@ -1,19 +1,19 @@
 'use strict';
 
-var expect = require('chai').expect;
-var injectr = require('injectr');
-var path = require('path');
-var sinon = require('sinon');
-var _ = require('underscore');
+const expect = require('chai').expect;
+const injectr = require('injectr');
+const path = require('path');
+const sinon = require('sinon');
+const _ = require('underscore');
 
 describe('cli : domain : package-static-files', function(){
 
-  var packageStaticFiles,
+  let packageStaticFiles,
       error,
       mocks,
       minifyMocks;
 
-  var initialise = function(mocks, params, cb){
+  const initialise = function(mocks, params, cb){
     packageStaticFiles = injectr('../../src/cli/domain/package-static-files/index.js', mocks, { console: console });
     packageStaticFiles(params, function(e){
       error = e;
@@ -21,7 +21,7 @@ describe('cli : domain : package-static-files', function(){
     });
   };
 
-  var cleanup = function(){
+  const cleanup = function(){
     error = null;
 
     minifyMocks = {
@@ -256,7 +256,7 @@ describe('cli : domain : package-static-files', function(){
         });
 
         it('should first transpile and minify the file', function(){
-          var transformMock = minifyMocks['babel-core'].transform;
+          const transformMock = minifyMocks['babel-core'].transform;
           expect(mocks['fs-extra'].readFileSync.calledOnce).to.be.true;
           expect(transformMock.calledOnce).to.be.true;
           expect(transformMock.args[0][1].presets[0][1].targets.uglify).to.be.true;

@@ -1,17 +1,17 @@
 'use strict';
 
-var async = require('async');
-var format = require('stringformat');
-var fs = require('fs-extra');
-var minifyFile = require('./minify-file');
-var nodeDir = require('node-dir');
-var path = require('path');
-var _ = require('underscore');
+const async = require('async');
+const format = require('stringformat');
+const fs = require('fs-extra');
+const minifyFile = require('./minify-file');
+const nodeDir = require('node-dir');
+const path = require('path');
+const _ = require('underscore');
 
-var strings = require('../../../resources');
+const strings = require('../../../resources');
 
-var copyDir = function(params, cb){
-  var staticPath = path.join(params.componentPath, params.staticDir),
+const copyDir = function(params, cb){
+  let staticPath = path.join(params.componentPath, params.staticDir),
       exists = fs.existsSync(staticPath),
       isDir = exists && fs.lstatSync(staticPath).isDirectory();
 
@@ -24,7 +24,7 @@ var copyDir = function(params, cb){
     nodeDir.paths(staticPath, function(err, res){
       _.forEach(res.files, function(filePath){
     
-        var fileName = path.basename(filePath),
+        let fileName = path.basename(filePath),
             fileExt = path.extname(filePath).toLowerCase(),
             fileRelativePath = path.relative(staticPath, path.dirname(filePath)),
             fileDestinationPath = path.join(params.publishPath, params.staticDir, fileRelativePath),
@@ -33,7 +33,7 @@ var copyDir = function(params, cb){
         fs.ensureDirSync(fileDestinationPath);
 
         if(params.minify && params.ocOptions.minify !== false && (fileExt === '.js' || fileExt === '.css')){
-          var fileContent = fs.readFileSync(filePath).toString(),
+          let fileContent = fs.readFileSync(filePath).toString(),
               minified = minifyFile(fileExt, fileContent);
 
           fs.writeFileSync(fileDestination, minified);
@@ -48,7 +48,7 @@ var copyDir = function(params, cb){
 
 module.exports = function(params, callback){
 
-  var staticList = params.ocOptions.files.static;
+  const staticList = params.ocOptions.files.static;
 
   if(staticList.length === 0){
     return callback(null, 'ok');

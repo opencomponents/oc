@@ -1,14 +1,14 @@
 'use strict';
 
-var expect = require('chai').expect;
-var injectr = require('injectr');
-var sinon = require('sinon');
+const expect = require('chai').expect;
+const injectr = require('injectr');
+const sinon = require('sinon');
 
 describe('registry', function(){
 
-	var repositoryInitStub = sinon.stub();
+	const repositoryInitStub = sinon.stub();
 
-	var deps = {
+	const deps = {
 		'./app-start': sinon.stub(),
 		'./domain/events-handler': {},
 		'express': sinon.stub(),
@@ -27,13 +27,13 @@ describe('registry', function(){
 		}
 	};
 
-	var Registry = injectr('../../src/registry/index.js', deps);
+	const Registry = injectr('../../src/registry/index.js', deps);
 
 	describe('when instanciated', function(){
 
 		describe('when options are not valid', function(){
 			
-			var init;
+			let init;
 			beforeEach(function(){
 				deps['./domain/validators'].validateRegistryConfiguration.returns({ isValid: false, message: 'blargh' });
 				init = function(){ Registry({}); };
@@ -46,7 +46,7 @@ describe('registry', function(){
 
 		describe('when options are valid', function(){
 
-			var registry;
+			let registry;
 			beforeEach(function(){
 				deps['./domain/validators'].validateRegistryConfiguration.returns({ isValid: true });
 				deps.express.returns('express instance');
@@ -59,7 +59,7 @@ describe('registry', function(){
 			});
 
 			it('should bind the middleware', function(){
-				var bind = deps['./middleware'].bind;
+				const bind = deps['./middleware'].bind;
 				expect(bind.called).to.be.true;
 				expect(bind.args[0][0]).to.equal('express instance');
 				expect(bind.args[0][1]).to.eql({ port: 3000 });
@@ -73,7 +73,7 @@ describe('registry', function(){
 
 				describe('when plugins initialiser fails', function(){
 
-					var error;
+					let error;
 					beforeEach(function(done){
 						deps['./domain/plugins-initialiser'].init.yields('error!');
 						registry.start(function(err){
@@ -91,7 +91,7 @@ describe('registry', function(){
 
 					describe('when repository initialisation fails', function(){
 
-						var error;
+						let error;
 						beforeEach(function(done){
 							deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
 							repositoryInitStub.yields('nope');
@@ -111,7 +111,7 @@ describe('registry', function(){
 
 						describe('when app fails to start', function(){
 
-							var error;
+							let error;
 							beforeEach(function(done){
 								deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
 								repositoryInitStub.yields(null, 'ok');
@@ -132,7 +132,7 @@ describe('registry', function(){
 
 							describe('when http listener errors', function(){
 
-								var error;
+								let error;
 								beforeEach(function(done){
 									deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
 									repositoryInitStub.yields(null, 'ok');
@@ -156,7 +156,7 @@ describe('registry', function(){
 
 							describe('when http listener succeeds', function(){
 
-								var error, result;
+								let error, result;
 								beforeEach(function(done){
 									deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
 									repositoryInitStub.yields(null, 'ok');
@@ -191,7 +191,7 @@ describe('registry', function(){
 
 							describe('when http listener emits an error before the listener to start', function(){
 
-								var error;
+								let error;
 								beforeEach(function(done){
 									deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
 									repositoryInitStub.yields(null, 'ok');

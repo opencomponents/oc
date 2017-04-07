@@ -1,12 +1,12 @@
 'use strict';
 
-var format = require('stringformat');
-var _ = require('underscore');
+const format = require('stringformat');
+const _ = require('underscore');
 
-var strings = require('../../../resources');
+const strings = require('../../../resources');
 
-var validateParameter = function(parameter, expectedType){
-  var expected = expectedType.toLowerCase();
+const validateParameter = function(parameter, expectedType){
+  const expected = expectedType.toLowerCase();
 
   if(expected === 'boolean'){
     return _.isBoolean(parameter);
@@ -21,7 +21,7 @@ var validateParameter = function(parameter, expectedType){
 
 module.exports = function(requestParameters, expectedParameters){
 
-  var result = { isValid: true, errors: {} },
+  let result = { isValid: true, errors: {} },
       mandatoryParameters = [];
 
   _.forEach(expectedParameters, function(expectedParameter, expectedParameterName){
@@ -44,7 +44,7 @@ module.exports = function(requestParameters, expectedParameters){
   _.forEach(requestParameters, function(requestParameter, requestParameterName){
     if(_.has(expectedParameters, requestParameterName)){
       
-      var expectedType = expectedParameters[requestParameterName].type;
+      const expectedType = expectedParameters[requestParameterName].type;
 
       if(!validateParameter(requestParameter, expectedType)){
         if(!result.errors.types){
@@ -58,11 +58,11 @@ module.exports = function(requestParameters, expectedParameters){
   }, this);
 
   result.errors.message = (function(){
-    var errorString = '';
+    let errorString = '';
 
     if(_.keys(result.errors.mandatory).length > 0){
 
-      var missingParams = _.map(result.errors.mandatory, function(mandatoryParameter, mandatoryParameterName){
+      const missingParams = _.map(result.errors.mandatory, function(mandatoryParameter, mandatoryParameterName){
         return mandatoryParameterName + ', ';
       }).join('').slice(0, -2);
 
@@ -74,7 +74,7 @@ module.exports = function(requestParameters, expectedParameters){
         errorString += '; ';
       }
 
-      var badParams = _.map(result.errors.types, function(parameter, parameterName){
+      const badParams = _.map(result.errors.types, function(parameter, parameterName){
         return parameterName + ', ';
       }).join('').slice(0, -2);
 

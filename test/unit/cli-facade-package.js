@@ -1,19 +1,19 @@
 'use strict';
 
-var colors = require('colors/safe');
-var expect = require('chai').expect;
-var path = require('path');
-var sinon = require('sinon');
+const colors = require('colors/safe');
+const expect = require('chai').expect;
+const path = require('path');
+const sinon = require('sinon');
 
 describe('cli : facade : package', function(){
 
-  var logSpy = {},
+  let logSpy = {},
       Local = require('../../src/cli/domain/local'),
       local = new Local(),
       PackageFacade = require('../../src/cli/facade/package.js'),
       packageFacade = new PackageFacade({ local: local, logger: logSpy });
 
-  var execute = function(compress, cb){
+  const execute = function(compress, cb){
     logSpy.log = sinon.stub();
     packageFacade({
       componentPath: 'test/fixtures/components/hello-world/',
@@ -30,7 +30,7 @@ describe('cli : facade : package', function(){
       execute(false, function(){
         local.package.restore();
 
-        var message = logSpy.log.args[0][0],
+        let message = logSpy.log.args[0][0],
             re = new RegExp('\\' + path.sep, 'g'),
             messageWithSlashesOnPath = message.replace(re, '/');
 
@@ -73,7 +73,7 @@ describe('cli : facade : package', function(){
 
         it('should package and show success message', function(done){
           execute(false, function(){
-            var warnMessage = logSpy.log.args[0][0],
+            let warnMessage = logSpy.log.args[0][0],
                 okMessage = logSpy.log.args[1][0],
                 re = new RegExp('\\' + path.sep, 'g'),
                 warnMessageWithSlashesOnPath = warnMessage.replace(re, '/'),
@@ -96,7 +96,7 @@ describe('cli : facade : package', function(){
             execute(false, function(){
               local.compress.restore();
 
-              var warnMessage = logSpy.log.args[0][0],
+              let warnMessage = logSpy.log.args[0][0],
                   okMessage = logSpy.log.args[1][0],
                   re = new RegExp('\\' + path.sep, 'g'),
                   warnMessageWithSlashesOnPath = warnMessage.replace(re, '/'),
@@ -121,7 +121,7 @@ describe('cli : facade : package', function(){
             it('should show a message for success', function(done){
               execute(true, function(){
 
-                var warnMessage = logSpy.log.args[2][0],
+                let warnMessage = logSpy.log.args[2][0],
                   okMessage = logSpy.log.args[3][0],
                   re = new RegExp('\\' + path.sep, 'g'),
                   warnMessageWithSlashesOnPath = warnMessage.replace(re, '/'),
@@ -149,7 +149,7 @@ describe('cli : facade : package', function(){
             it('should show a message for failure', function(done){
               execute(true, function(){
 
-                var warnMessage = logSpy.log.args[2][0],
+                let warnMessage = logSpy.log.args[2][0],
                   errorMessage = logSpy.log.args[3][0],
                   re = new RegExp('\\' + path.sep, 'g'),
                   warnMessageWithSlashesOnPath = warnMessage.replace(re, '/');

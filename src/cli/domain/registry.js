@@ -1,19 +1,19 @@
 'use strict';
 
-var format = require('stringformat');
-var fs = require('fs-extra');
-var path = require('path');
-var request = require('minimal-request');
-var _ = require('underscore');
+const format = require('stringformat');
+const fs = require('fs-extra');
+const path = require('path');
+const request = require('minimal-request');
+const _ = require('underscore');
 
-var put = require('../../utils/put');
-var settings = require('../../resources/settings');
-var urlBuilder = require('../../registry/domain/url-builder');
-var urlParser = require('../domain/url-parser');
+const put = require('../../utils/put');
+const settings = require('../../resources/settings');
+const urlBuilder = require('../../registry/domain/url-builder');
+const urlParser = require('../domain/url-parser');
 
-var getOcVersion = function(){
+const getOcVersion = function(){
 
-  var ocPackagePath = path.join(__dirname, '../../../package.json'),
+  let ocPackagePath = path.join(__dirname, '../../../package.json'),
       ocInfo = fs.readJsonSync(ocPackagePath);
 
   return ocInfo.version;
@@ -22,7 +22,7 @@ var getOcVersion = function(){
 module.exports = function(opts){
   opts = opts || {};
 
-  var requestsHeaders = {
+  let requestsHeaders = {
     'user-agent': format('oc-cli-{0}/{1}-{2}-{3}',
                           getOcVersion(),
                           process.version,
@@ -93,7 +93,7 @@ module.exports = function(opts){
       }, function(err, res){
         if(err){ return callback(err); }
 
-        var parsed = urlParser.parse(res);
+        const parsed = urlParser.parse(res);
         callback(null, urlBuilder.componentPreview(parsed, parsed.registryUrl));
       });
     },
@@ -104,7 +104,7 @@ module.exports = function(opts){
 
       put(options.route, options.path, requestsHeaders, function(err, res){
 
-        if(!!err){
+        if(err){
           if(!_.isObject(err)){
             try {
               err = JSON.parse(err);

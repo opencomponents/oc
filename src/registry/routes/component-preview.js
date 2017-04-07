@@ -1,9 +1,9 @@
 'use strict';
 
-var _ = require('underscore');
+const _ = require('underscore');
 
-var urlBuilder = require('../domain/url-builder');
-var getComponentFallback = require('./helpers/get-component-fallback');
+const urlBuilder = require('../domain/url-builder');
+const getComponentFallback = require('./helpers/get-component-fallback');
 
 function componentPreview(err, req, res, component, templates) {
   if(err) {
@@ -12,7 +12,7 @@ function componentPreview(err, req, res, component, templates) {
     return res.status(404).json(err);
   }
 
-  var isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
+  const isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
 
   if(isHtmlRequest && !!res.conf.discovery){
 

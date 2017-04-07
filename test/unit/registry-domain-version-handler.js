@@ -1,21 +1,21 @@
 'use strict';
 
-var expect = require('chai').expect;
+const expect = require('chai').expect;
 
 describe('registry : domain : version-handler', function(){
 
-  var versionHandler = require('../../src/registry/domain/version-handler');
+  const versionHandler = require('../../src/registry/domain/version-handler');
 
   describe('when getting component', function(){
 
-    var get = function(a,b){ return versionHandler.getAvailableVersion(a, b); };
+    const get = function(a,b){ return versionHandler.getAvailableVersion(a, b); };
 
     describe('when versions not available', function(){
 
-      var availableVersions = [];
+      const availableVersions = [];
 
       it('should return an undefined when a version is specified', function(){
-        var requestedVersion = '1.2.3';
+        const requestedVersion = '1.2.3';
 
         expect(get(requestedVersion, availableVersions)).to.be.undefined;
       });
@@ -27,7 +27,7 @@ describe('registry : domain : version-handler', function(){
 
     describe('when versions available', function(){
 
-      var availableVersions = ['1.0.0', '1.0.1', '1.2.3', '2.0.0'];
+      const availableVersions = ['1.0.0', '1.0.1', '1.2.3', '2.0.0'];
 
       it('should return the latest when a version is not specified', function(){
         expect(get(undefined, availableVersions)).to.equal('2.0.0');
@@ -67,7 +67,7 @@ describe('registry : domain : version-handler', function(){
     });
     describe('when only pre release versions available', function(){
 
-      var availableVersions = ['1.0.0-120', '1.0.1-121', '2.0.1-122', '2.0.1-123'];
+      const availableVersions = ['1.0.0-120', '1.0.1-121', '2.0.1-122', '2.0.1-123'];
 
       it('should return the latest when a version is not specified', function(){
         expect(get(undefined, availableVersions)).to.equal('2.0.1-123');
@@ -88,7 +88,7 @@ describe('registry : domain : version-handler', function(){
     });
     describe('when mix of release and pre-release versions available', function(){
 
-      var availableVersions = ['1.0.0', '1.0.1-121', '1.0.1', '2.0.1-122', '2.0.1-123'];
+      const availableVersions = ['1.0.0', '1.0.1-121', '1.0.1', '2.0.1-122', '2.0.1-123'];
 
       it('should return the latest release version when a version is not specified', function(){
         expect(get(undefined, availableVersions)).to.equal('1.0.1');
@@ -108,7 +108,7 @@ describe('registry : domain : version-handler', function(){
 
   describe('when publishing component', function(){
 
-    var existingVersions = ['1.0.0', '1.0.1', '1.0.3', '1.1.0', '2.0.0'],
+    let existingVersions = ['1.0.0', '1.0.1', '1.0.3', '1.1.0', '2.0.0'],
         validate = function(a, b){ return versionHandler.validateNewVersion(a, b); };
 
     describe('when version already exists', function(){

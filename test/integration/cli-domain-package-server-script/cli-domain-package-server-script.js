@@ -1,17 +1,17 @@
 'use strict';
 
-var expect = require('chai').expect;
-var fs = require('fs-extra');
-var path = require('path');
-var sinon = require('sinon');
-var packageServerScript = require('../../../src/cli/domain/package-server-script/index.js');
-var hashBuilder = require('../../../src/utils/hash-builder');
+const expect = require('chai').expect;
+const fs = require('fs-extra');
+const path = require('path');
+const sinon = require('sinon');
+const packageServerScript = require('../../../src/cli/domain/package-server-script/index.js');
+const hashBuilder = require('../../../src/utils/hash-builder');
 
-var serverName = 'server.js';
-var componentName = 'component';
-var componentPath = path.resolve(__dirname, componentName);
-var publishPath = path.resolve(componentPath, '_package');
-var webpackOptions = {
+const serverName = 'server.js';
+const componentName = 'component';
+const componentPath = path.resolve(__dirname, componentName);
+const publishPath = path.resolve(componentPath, '_package');
+const webpackOptions = {
   stats: 'none'
 };
 
@@ -36,7 +36,7 @@ describe('cli : domain : package-server-script', function(){
 
 
     describe('when component implements not-valid javascript', function(){
-      var serverContent = '\nmodule.exports.data=function(context,cb){\nreturn cb(null,data; };';
+      const serverContent = '\nmodule.exports.data=function(context,cb){\nreturn cb(null,data; };';
 
       beforeEach(function(done){
         fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
@@ -73,7 +73,7 @@ describe('cli : domain : package-server-script', function(){
     });
 
     describe('when component does not require any json', function(){
-      var serverContent = '\nmodule.exports.data=function(context,cb){\nreturn cb(null, {name:\'John\'});\n};';
+      const serverContent = '\nmodule.exports.data=function(context,cb){\nreturn cb(null, {name:\'John\'});\n};';
 
       beforeEach(function(done){
         fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
@@ -100,7 +100,7 @@ describe('cli : domain : package-server-script', function(){
               expect(res.type).to.equal('node.js');
               expect(res.src).to.equal('server.js');
 
-              var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
+              const compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
               expect(res.hashKey).to.equal(hashBuilder.fromString(compiledContent));
               done();
             } catch(e) {
@@ -112,9 +112,9 @@ describe('cli : domain : package-server-script', function(){
     });
 
     describe('when component require a json file', function(){
-      var user = {first: 'John',last:'Doe'};
-      var jsonContent = JSON.stringify(user);
-      var serverContent = 'var user = require(\'./user\');\nmodule.exports.data=function(){return user.first;};';
+      const user = {first: 'John',last:'Doe'};
+      const jsonContent = JSON.stringify(user);
+      const serverContent = 'var user = require(\'./user\');\nmodule.exports.data=function(){return user.first;};';
 
       beforeEach(function(done){
         fs.writeFileSync(path.resolve(componentPath, 'user.json'), jsonContent);
@@ -144,11 +144,11 @@ describe('cli : domain : package-server-script', function(){
               return done(err);
             }
             try {
-              var name = user.first;
-              var bundle = require(path.resolve(publishPath, res.src));
+              const name = user.first;
+              const bundle = require(path.resolve(publishPath, res.src));
               expect(bundle.data()).to.be.equal(name);
 
-              var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
+              const compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
               expect(compiledContent).to.contain('John');
               done();
             } catch(e) {
@@ -160,7 +160,7 @@ describe('cli : domain : package-server-script', function(){
     });
 
     describe('when component does require an npm module', function(){
-      var serverContent = 'var _ =require(\'underscore\');'
+      const serverContent = 'var _ =require(\'underscore\');'
         + '\nvar user = {name:\'John\'};\nmodule.exports.data=function(context,cb){'
         + '\nreturn cb(null, _.has(user, \'name\'));\n};';
 
@@ -170,7 +170,7 @@ describe('cli : domain : package-server-script', function(){
       });
 
       it('should save compiled data provider', function(done){
-        var dependencies = {underscore: '1.8.3'};
+        const dependencies = {underscore: '1.8.3'};
 
         packageServerScript(
           {
@@ -192,7 +192,7 @@ describe('cli : domain : package-server-script', function(){
               expect(res.type).to.equal('node.js');
               expect(res.src).to.equal('server.js');
 
-              var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
+              const compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
               expect(res.hashKey).to.equal(hashBuilder.fromString(compiledContent));
               done();
             } catch(e) {
@@ -204,7 +204,7 @@ describe('cli : domain : package-server-script', function(){
 
       describe('and required dependencies are not present in the package.json', function(){
         it('should throw an error with details', function(done){
-          var dependencies = {lodash: '1.0.0'};
+          const dependencies = {lodash: '1.0.0'};
 
           packageServerScript(
             {
@@ -229,7 +229,7 @@ describe('cli : domain : package-server-script', function(){
     });
 
     describe('when component does require a relative path from an npm module', function(){
-      var serverContent = 'var data=require(\'react-dom/server\');module.exports.data=function(context,cb){return cb(null,data); };';
+      const serverContent = 'var data=require(\'react-dom/server\');module.exports.data=function(context,cb){return cb(null,data); };';
 
       beforeEach(function(done){
         fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
@@ -238,7 +238,7 @@ describe('cli : domain : package-server-script', function(){
 
       describe('and required dependencies are not present in the package.json', function(){
         it('should throw an error with details', function(done){
-          var dependencies = {'react': '15.4.2'};
+          const dependencies = {'react': '15.4.2'};
 
           packageServerScript(
             {
@@ -263,8 +263,8 @@ describe('cli : domain : package-server-script', function(){
     });
 
     describe('when component require a local js module', function(){
-      var jsContent = 'var user = {first: \'John\',last:\'Doe\'};\nmodule.exports = user';
-      var serverContent = 'var user = require(\'./user\');\nmodule.exports.data=function(){return user.first;};';
+      const jsContent = 'var user = {first: \'John\',last:\'Doe\'};\nmodule.exports = user';
+      const serverContent = 'var user = require(\'./user\');\nmodule.exports.data=function(){return user.first;};';
 
       beforeEach(function(done){
         fs.writeFileSync(path.resolve(componentPath, 'user.js'), jsContent);
@@ -294,8 +294,8 @@ describe('cli : domain : package-server-script', function(){
               return done(err);
             }
             try {
-              var name = 'John';
-              var bundle = require(path.resolve(publishPath, res.src));
+              const name = 'John';
+              const bundle = require(path.resolve(publishPath, res.src));
               expect(bundle.data()).to.be.equal(name);
               done();
             } catch(e) {
@@ -307,7 +307,7 @@ describe('cli : domain : package-server-script', function(){
     });
 
     describe('when component uses es2015 javascript syntax', function(){
-      var serverContent = 'const {first, last} = {first: "John", last: "Doe"};\nconst data = (context,cb) => cb(null, first, last)\nexport {data}';
+      const serverContent = 'const {first, last} = {first: "John", last: "Doe"};\nconst data = (context,cb) => cb(null, first, last)\nexport {data}';
 
       beforeEach(function(done){
         fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
@@ -331,7 +331,7 @@ describe('cli : domain : package-server-script', function(){
               return done(err);
             }
             try {
-              var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
+              const compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
               expect(compiledContent).to.not.contain('=>');
               expect(compiledContent).to.not.contain('const');
               expect(compiledContent).to.contain('var');
@@ -346,7 +346,7 @@ describe('cli : domain : package-server-script', function(){
     });
 
     describe('when component code includes a loop', function(){
-      var serverContent = 'module.exports.data=function(context,cb){ var x,y,z;'
+      const serverContent = 'module.exports.data=function(context,cb){ var x,y,z;'
         + 'while(true){ x = 234; }'
         + 'for(var i=1e12;;){ y = 546; }'
         + 'do { z = 342; } while(true);'
@@ -374,7 +374,7 @@ describe('cli : domain : package-server-script', function(){
               return done(err);
             }
             try {
-              var compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
+              const compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
               expect(compiledContent).to.contain('for(var r,a,t,i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");r=234,i--}');
               expect(compiledContent).to.contain('for(var i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");a=546,i--}');
               expect(compiledContent).to.contain('for(var i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");t=342,i--}');
@@ -391,8 +391,8 @@ describe('cli : domain : package-server-script', function(){
       describe('and requires a local js module', function(){
         describe('and requires a json file', function(){
           describe('and includes for loops', function(){
-            var someJsonContent = JSON.stringify({firstName: 'John', lastName: 'Doe'});
-            var someJsModuleContent = 'const infiniteLoops = () => {' +
+            const someJsonContent = JSON.stringify({firstName: 'John', lastName: 'Doe'});
+            const someJsModuleContent = 'const infiniteLoops = () => {' +
               'let x, y, z;' +
               'while(true){ x = 234; }' +
               'for(var i=1e12;;){ y = 546; }' +
@@ -404,14 +404,14 @@ describe('cli : domain : package-server-script', function(){
               '};' +
               'export default sayHello;';
 
-            var serverContent = 'import sayHello from \'./someModule\';' +
+            const serverContent = 'import sayHello from \'./someModule\';' +
               'import user from \'./someData\';' +
               'const {firstName: first, lastName: last} = user;' +
               'const hello = sayHello(`${first} ${last}`);' +
               'const data = (context, callback) => callback(null, { hello });' +
               'export {data}';
 
-            var error, result;
+            let error, result;
 
             beforeEach(function(done){
               fs.writeFileSync(path.resolve(componentPath, 'someModule.js'), someJsModuleContent);
@@ -446,15 +446,15 @@ describe('cli : domain : package-server-script', function(){
             });
 
             it('save compiled data provide should work as expected', function(){
-              var bundle = require(path.resolve(publishPath, result.src));
-              var callback = sinon.spy();
+              const bundle = require(path.resolve(publishPath, result.src));
+              const callback = sinon.spy();
               bundle.data({}, callback);
               expect(callback.args[0][0]).to.be.null;
               expect(callback.args[0][1]).to.deep.equal({ hello: 'Hello John Doe' });
             });
 
             it('should wrap while/do/for;; loops with an iterator limit', function(){
-              var compiledContent = fs.readFileSync(path.resolve(publishPath, result.src), {encoding: 'utf8'});
+              const compiledContent = fs.readFileSync(path.resolve(publishPath, result.src), {encoding: 'utf8'});
               expect(compiledContent.match(/Loop exceeded maximum allowed iterations/g).length).to.equal(3);
             });
           });

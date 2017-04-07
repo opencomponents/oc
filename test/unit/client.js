@@ -1,16 +1,16 @@
 'use strict';
 
-var expect = require('chai').expect;
-var injectr = require('injectr');
-var sinon = require('sinon');
+const expect = require('chai').expect;
+const injectr = require('injectr');
+const sinon = require('sinon');
 
 describe('client', function(){
 
-  var validatorStub,
+  let validatorStub,
       Client,
       init;
 
-  var initialise = function(){
+  const initialise = function(){
 
     validatorStub = sinon.stub();
     Client = injectr('../../client/src/index.js', {

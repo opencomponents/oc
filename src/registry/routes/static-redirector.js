@@ -1,17 +1,17 @@
 'use strict';
 
-var format = require('stringformat');
-var fs = require('fs-extra');
-var path = require('path');
+const format = require('stringformat');
+const fs = require('fs-extra');
+const path = require('path');
 
-var getFileInfo = require('../../utils/get-file-info');
+const getFileInfo = require('../../utils/get-file-info');
 
 module.exports = function(repository){
   return function(req, res){
 
-    var filePath,
-        clientPath = (!!res.conf.prefix ? res.conf.prefix : '/') + 'oc-client/client.js',
-        clientMapPath = (!!res.conf.prefix ? res.conf.prefix : '/') + 'oc-client/oc-client.min.map';
+    let filePath,
+        clientPath = (res.conf.prefix ? res.conf.prefix : '/') + 'oc-client/client.js',
+        clientMapPath = (res.conf.prefix ? res.conf.prefix : '/') + 'oc-client/oc-client.min.map';
 
     if(req.route.path === clientPath){
       if(res.conf.local){
@@ -36,10 +36,10 @@ module.exports = function(repository){
       return res.status(404).json({ err: res.errorDetails });
     }
 
-    var fileStream = fs.createReadStream(filePath),
+    let fileStream = fs.createReadStream(filePath),
         fileInfo = getFileInfo(filePath);
 
-    if(!!fileInfo.mimeType){
+    if(fileInfo.mimeType){
       res.set('Content-Type', fileInfo.mimeType);
     }
 

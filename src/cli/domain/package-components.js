@@ -1,23 +1,23 @@
 'use strict';
 
-var fs = require('fs-extra');
-var path = require('path');
-var async = require('async');
-var _ = require('underscore');
+const fs = require('fs-extra');
+const path = require('path');
+const async = require('async');
+const _ = require('underscore');
 
-var packageServerScript = require('./package-server-script');
-var packageStaticFiles = require('./package-static-files');
-var packageTemplate = require('./package-template');
-var getUnixUtcTimestamp = require('../../utils/get-unix-utc-timestamp');
-var validator = require('../../registry/domain/validators');
+const packageServerScript = require('./package-server-script');
+const packageStaticFiles = require('./package-static-files');
+const packageTemplate = require('./package-template');
+const getUnixUtcTimestamp = require('../../utils/get-unix-utc-timestamp');
+const validator = require('../../registry/domain/validators');
 
 module.exports = function(){
   return function(options, callback){
 
-    var componentPath = options.componentPath;
-    var minify = options.minify === true;
+    const componentPath = options.componentPath;
+    const minify = options.minify === true;
 
-    var files = fs.readdirSync(componentPath),
+    let files = fs.readdirSync(componentPath),
         publishPath = path.join(componentPath, '_package');
 
     if(_.contains(files, '_package')){
@@ -26,7 +26,7 @@ module.exports = function(){
 
     fs.mkdirSync(publishPath);
 
-    var componentPackagePath = path.join(componentPath, 'package.json'),
+    let componentPackagePath = path.join(componentPath, 'package.json'),
         ocPackagePath = path.join(__dirname, '../../../package.json');
 
     if(!fs.existsSync(componentPackagePath)){
@@ -35,7 +35,7 @@ module.exports = function(){
       return callback(new Error('error resolving oc internal dependencies'));
     }
 
-    var component = fs.readJsonSync(componentPackagePath),
+    let component = fs.readJsonSync(componentPackagePath),
         ocInfo = fs.readJsonSync(ocPackagePath);
 
     if(!validator.validateComponentName(component.name)){

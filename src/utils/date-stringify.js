@@ -1,6 +1,6 @@
 'use strict';
 
-var padZero = require('./pad-zero');
+const padZero = require('./pad-zero');
 
 module.exports = function(date){
   if(date instanceof Date) {

@@ -1,19 +1,19 @@
 'use strict';
 
-var expect = require('chai').expect;
-var fs = require('fs-extra');
-var path = require('path');
-var targz = require('targz');
-var _ = require('underscore');
+const expect = require('chai').expect;
+const fs = require('fs-extra');
+const path = require('path');
+const targz = require('targz');
+const _ = require('underscore');
 
 describe('The targz dependency', function(){
 
   describe('when compressing a folder with targz', function(){
     
-    var file = path.resolve(__dirname, '../fixtures/test.tar.gz');
+    const file = path.resolve(__dirname, '../fixtures/test.tar.gz');
 
     beforeEach(function(done){
-      var from = path.resolve(__dirname, '../fixtures/components/hello-world');
+      const from = path.resolve(__dirname, '../fixtures/components/hello-world');
       targz.compress({
         src: from,
         dest: file,
@@ -33,7 +33,7 @@ describe('The targz dependency', function(){
 
     describe('when decompressing the created file', function(){
 
-      var error,
+      let error,
           to = path.resolve(__dirname, '../fixtures/targz-test'); 
 
       beforeEach(function(done){ 

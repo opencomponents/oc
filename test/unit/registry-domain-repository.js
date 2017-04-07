@@ -1,15 +1,15 @@
 'use strict';
 
-var expect = require('chai').expect;
-var injectr = require('injectr');
-var path = require('path');
-var sinon = require('sinon');
-var _ = require('underscore');
+const expect = require('chai').expect;
+const injectr = require('injectr');
+const path = require('path');
+const sinon = require('sinon');
+const _ = require('underscore');
 
 describe('registry : domain : repository', function(){
 
-  var response;
-  var saveResult = function(callback){
+  let response;
+  const saveResult = function(callback){
     return function(err, res){
       response = { error: err, result: res };
       callback();
@@ -18,17 +18,17 @@ describe('registry : domain : repository', function(){
 
   describe('when on cdn configuration', function(){
 
-    var componentsCacheMock = {
+    const componentsCacheMock = {
       get: sinon.stub(),
       refresh: sinon.stub()
     };
 
-    var s3Mock = {
+    const s3Mock = {
       getFile: sinon.stub(),
       putDir: sinon.stub()
     };
 
-    var Repository = injectr('../../src/registry/domain/repository.js', {
+    const Repository = injectr('../../src/registry/domain/repository.js', {
       './s3': function(){
         return s3Mock;
       },
@@ -37,11 +37,11 @@ describe('registry : domain : repository', function(){
       }
     });
 
-    var cdnConfiguration = {
+    const cdnConfiguration = {
       port: 3000,
       prefix: '/v2/',
       publishValidation: function(pkg){
-        var ok = !!pkg.author && !!pkg.repository;
+        const ok = !!pkg.author && !!pkg.repository;
         return ok ? ok : { isValid: false, error: 'forbidden!!!'};
       },
       baseUrl: 'http://saymyname.com:3000/v2/',
@@ -58,7 +58,7 @@ describe('registry : domain : repository', function(){
       }
     };
 
-    var componentsCacheBaseResponse = {
+    const componentsCacheBaseResponse = {
       components: {
         'hello-world': ['1.0.0'],
         'language': ['1.0.0'],
@@ -68,7 +68,7 @@ describe('registry : domain : repository', function(){
       }
     };
 
-    var repository = new Repository(cdnConfiguration);
+    const repository = new Repository(cdnConfiguration);
 
     describe('when getting the list of available components', function(){
 
@@ -101,18 +101,18 @@ describe('registry : domain : repository', function(){
 
       describe('when the templates specificed on the configuaration are core-templates', function(){
         it('should only return uniques templates', function(){
-           var conf = _.extend(
+           const conf = _.extend(
             cdnConfiguration,
             {templates: ['oc-template-jade']}
           );
-          var repository = new Repository(conf);
+          const repository = new Repository(conf);
           expect(repository.getTemplates().length).to.equal(2);  
         });
       });
 
       describe('when templates specificed on the configuaration are not installed', function(){
         it('should throw an error', function(){
-          var conf = _.extend(
+          const conf = _.extend(
             cdnConfiguration,
             {templates: ['oc-template-react']}
           );
@@ -182,7 +182,7 @@ describe('registry : domain : repository', function(){
 
     describe('when getting a static file url', function(){
 
-      var url;
+      let url;
       before(function(){
         url = repository.getStaticFilePath('hello-world', '1.0.0', 'hi.txt');
       });
@@ -222,7 +222,7 @@ describe('registry : domain : repository', function(){
 
       describe('when component has a valid name and version', function(){
 
-        var pkg = { packageJson: {
+        const pkg = { packageJson: {
           name: 'hello-world',
           author: 'blargh',
           repository: 'asdfa'
@@ -236,7 +236,7 @@ describe('registry : domain : repository', function(){
           });
 
           it('should respond with an error', function(){
-            var message = 'Component "hello-world" with version "1.0.0" can\'t be ' +
+            const message = 'Component "hello-world" with version "1.0.0" can\'t be ' +
                           'published to s3 cdn because a component with the same ' +
                           'name and version already exists';
 
@@ -276,9 +276,9 @@ describe('registry : domain : repository', function(){
 
   describe('when on local configuration', function(){
 
-    var Repository = require('../../src/registry/domain/repository');
+    const Repository = require('../../src/registry/domain/repository');
 
-    var localConfiguration = {
+    const localConfiguration = {
       local: true,
       path: path.resolve('test/fixtures/components'),
       port: 80,
@@ -289,7 +289,7 @@ describe('registry : domain : repository', function(){
       }
     };
 
-    var repository = new Repository(localConfiguration);
+    const repository = new Repository(localConfiguration);
 
     describe('when getting the list of available components', function(){
 
@@ -363,7 +363,7 @@ describe('registry : domain : repository', function(){
 
     describe('when getting a static file url', function(){
 
-      var url;
+      let url;
       before(function(){
         url = repository.getStaticFilePath('hello-world', '1.0.0', 'hi.txt');
       });
@@ -375,7 +375,7 @@ describe('registry : domain : repository', function(){
 
     describe('when trying to publish a component', function(){
 
-      var componentDir = path.resolve('../fixtures/components/hello-world');
+      const componentDir = path.resolve('../fixtures/components/hello-world');
 
       before(function(done){
         repository.publishComponent(componentDir, 'hello-world', '1.0.0', saveResult(done));

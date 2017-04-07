@@ -1,17 +1,17 @@
 'use strict';
 
-var ComponentsRenderer = require('./components-renderer');
-var GetComponentsInfo = require('./get-components-info');
+const ComponentsRenderer = require('./components-renderer');
+const GetComponentsInfo = require('./get-components-info');
 
-var sanitiser = require('./sanitiser');
-var TemplateRenderer = require('./template-renderer');
-var validator = require('./validator');
-var Warmup = require('./warmup');
-var _ = require('./utils/helpers');
+const sanitiser = require('./sanitiser');
+const TemplateRenderer = require('./template-renderer');
+const validator = require('./validator');
+const Warmup = require('./warmup');
+const _ = require('./utils/helpers');
 
 module.exports = function(conf){
 
-  var config = sanitiser.sanitiseConfiguration(conf),
+  let config = sanitiser.sanitiseConfiguration(conf),
       validationResult = validator.validateConfiguration(config),
       renderTemplate = new TemplateRenderer(),
       renderComponents = new ComponentsRenderer(config, renderTemplate),
@@ -23,7 +23,7 @@ module.exports = function(conf){
 
   return {
     init: function(options, callback){
-      var warmup = new Warmup(config, renderComponents);
+      const warmup = new Warmup(config, renderComponents);
       return warmup(options, callback);
     },
     renderComponent: function(componentName, options, callback){

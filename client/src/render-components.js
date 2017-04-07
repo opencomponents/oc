@@ -1,25 +1,25 @@
 'use strict';
 
-var format = require('stringformat');
+const format = require('stringformat');
 
-var GetCompiledTemplate = require('./get-compiled-template');
-var settings = require('./settings');
-var _ = require('./utils/helpers');
+const GetCompiledTemplate = require('./get-compiled-template');
+const settings = require('./settings');
+const _ = require('./utils/helpers');
 
 module.exports = function(cache, renderTemplate){
 
-  var getCompiledTemplate = new GetCompiledTemplate(cache);
+  const getCompiledTemplate = new GetCompiledTemplate(cache);
 
-  var fetchTemplateAndRender = function(component, options, cb){
+  const fetchTemplateAndRender = function(component, options, cb){
 
-    var data = component.data,
+    let data = component.data,
         isLocal = component.type === 'oc-component-local',
         useCache = !isLocal;
         
     getCompiledTemplate(component.template, useCache, options.timeout, function(err, template){
-      if(!!err){ return cb(err); }
+      if(err){ return cb(err); }
 
-      var renderOptions = {
+      const renderOptions = {
         container: component.container,
         href: component.href,
         key: component.template.key,
@@ -35,7 +35,7 @@ module.exports = function(cache, renderTemplate){
 
   return function(toDo, options, cb){
 
-    var toRender = [];
+    const toRender = [];
 
     _.each(toDo, function(action){
       if(action.render === 'server' && !!action.apiResponse){
@@ -52,10 +52,10 @@ module.exports = function(cache, renderTemplate){
       action.apiResponse.container = action.container;
 
       fetchTemplateAndRender(action.apiResponse, options, function(err, html){
-        if(!!err){
-          var errorDetails = format('{0} ({1})', (err.response && err.response.error), err.status);
+        if(err){
+          const errorDetails = format('{0} ({1})', (err.response && err.response.error), err.status);
           action.result.error = new Error(format(settings.serverSideRenderingFail, errorDetails));
-          if(!!options.disableFailoverRendering){
+          if(options.disableFailoverRendering){
             action.result.html = '';
             action.done = true;
           } else {

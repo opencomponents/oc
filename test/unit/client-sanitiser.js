@@ -1,11 +1,11 @@
 'use strict';
 
-var expect = require('chai').expect;
-var injectr = require('injectr');
+const expect = require('chai').expect;
+const injectr = require('injectr');
 
 describe('client : sanitiser', function(){
 
-  var sanitiser = injectr('../../client/src/sanitiser.js', {
+  const sanitiser = injectr('../../client/src/sanitiser.js', {
     '../package': { 
       version: '1.2.3'
     }
@@ -21,7 +21,7 @@ describe('client : sanitiser', function(){
 
     describe('when user-agent not already set', function(){
 
-      var result = sanitiser.sanitiseGlobalRenderOptions({}, {});
+      const result = sanitiser.sanitiseGlobalRenderOptions({}, {});
 
       it('should set oc-client user-agent', function(){
         expect(result.headers['user-agent']).to.equal('oc-client-1.2.3/v0.10.40-darwin-x64');

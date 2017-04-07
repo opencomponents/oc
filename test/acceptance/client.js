@@ -1,12 +1,12 @@
 'use strict';
 
-var cheerio = require('cheerio');
-var expect = require('chai').expect;
-var path = require('path');
+const cheerio = require('cheerio');
+const expect = require('chai').expect;
+const path = require('path');
 
 describe('The node.js OC client', function(){
 
-  var registry,
+  let registry,
       client,
       clientOfflineRegistry,
       result,
@@ -21,7 +21,7 @@ describe('The node.js OC client', function(){
         verbosity: 0
       };
 
-  var getClientConfig = function(port){
+  const getClientConfig = function(port){
     return {
       registries: {
         clientRendering: 'http://localhost:' + port,
@@ -34,7 +34,7 @@ describe('The node.js OC client', function(){
     };
   };
 
-  var getRegExpFromJson = function(x){
+  const getRegExpFromJson = function(x){
     return JSON.stringify(x)
       .replace(/\+/g, '\\+')
       .replace(/\[/g, '\\[')
@@ -57,8 +57,8 @@ describe('The node.js OC client', function(){
     describe('when rendering 2 components', function(){
       describe('when components require params', function(){
         describe('when each component requires different params', function(){
-          var $components;
-          var $errs;
+          let $components;
+          let $errs;
           before(function(done){
             client.renderComponents([{
               name: 'welcome',
@@ -90,8 +90,8 @@ describe('The node.js OC client', function(){
         });
 
         describe('when each component requires the same params', function(){
-          var $components;
-          var $errs;
+          let $components;
+          let $errs;
           before(function(done){
             client.renderComponents([{
               name: 'welcome'
@@ -122,8 +122,8 @@ describe('The node.js OC client', function(){
         });
 
         describe('when components have some common parameters and some different', function(){
-          var $components;
-          var $errs;
+          let $components;
+          let $errs;
           before(function(done){
             client.renderComponents([{
               name: 'welcome',
@@ -161,8 +161,8 @@ describe('The node.js OC client', function(){
       });
 
       describe('when rendering both on the server-side', function(){
-        var $components;
-        var $errs;
+        let $components;
+        let $errs;
         before(function(done){
           client.renderComponents([{
             name: 'hello-world'
@@ -189,7 +189,7 @@ describe('The node.js OC client', function(){
       });
 
       describe('when the request body is malformed', function(){
-        var error, result;
+        let error, result;
 
         before(function(done){
           client.renderComponents([{
@@ -203,7 +203,7 @@ describe('The node.js OC client', function(){
           });
         });
 
-        var expectedRequest = {
+        const expectedRequest = {
           url: 'http://localhost:3030',
           method: 'post',
           headers: {
@@ -226,7 +226,7 @@ describe('The node.js OC client', function(){
           expect(error).to.be.Array;
           expect(error.length).to.be.equal(2);
 
-          var exp = getRegExpFromJson(expectedRequest),
+          let exp = getRegExpFromJson(expectedRequest),
               expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\' + 
                          '(400 The request body is malformed: component 0 must have name property, ' + 
                          'component 1 must have name property\\)');
@@ -237,7 +237,7 @@ describe('The node.js OC client', function(){
       });
 
       describe('when rendering both on the client-side', function(){
-        var $components;
+        let $components;
         before(function(done){
           client.renderComponents([{
             name: 'hello-world'
@@ -259,7 +259,7 @@ describe('The node.js OC client', function(){
       });
 
       describe('when rendering one on the server, one on the client', function(){
-        var $components;
+        let $components;
         before(function(done){
           client.renderComponents([{
             name: 'hello-world',
@@ -286,7 +286,7 @@ describe('The node.js OC client', function(){
       });
 
       describe('when rendering one with container, one without container', function(){
-        var $components;
+        let $components;
         before(function(done){
           client.renderComponents([{
             name: 'hello-world',
@@ -304,7 +304,7 @@ describe('The node.js OC client', function(){
         });
 
         it('should return first component with container', function(){
-          var $component = cheerio.load($components.with)('oc-component');
+          const $component = cheerio.load($components.with)('oc-component');
           expect($component.text()).to.equal('Hello world!');
         });
 
@@ -314,7 +314,7 @@ describe('The node.js OC client', function(){
       });
 
       describe('when there are errors in some of them', function(){
-        var $errs;
+        let $errs;
         before(function(done){
           client.renderComponents([{
             name: 'hello-world-i-dont-exist'
@@ -361,7 +361,7 @@ describe('The node.js OC client', function(){
     describe('when server-side rendering an existing component overriding registry urls', function(){
 
       before(function(done){
-        var options = {
+        const options = {
           container: true,
           registries: {
             clientRendering: 'http://localhost:3030',
@@ -384,7 +384,7 @@ describe('The node.js OC client', function(){
     describe('when client-side rendering an existing component overriding registry urls', function(){
 
       before(function(done){
-        var options = {
+        const options = {
           container: true,
           registries: {
             clientRendering: 'http://localhost:3030',
@@ -419,8 +419,8 @@ describe('The node.js OC client', function(){
     });
 
     describe('when getting components info for 2 existing component', function() {
-      var error;
-      var info;
+      let error;
+      let info;
 
       before(function(done){
         client.getComponentsInfo([{
@@ -435,7 +435,7 @@ describe('The node.js OC client', function(){
         });
       });
 
-      var expectedInfo = [{
+      const expectedInfo = [{
         componentName: 'hello-world',
         requestedVersion: undefined,
         apiResponse: {
@@ -463,8 +463,8 @@ describe('The node.js OC client', function(){
     });
 
     describe('when getting components info for 1 existing, 1 with higher version and 1 non-existing components', function() {
-      var error;
-      var info;
+      let error;
+      let info;
 
       before(function(done){
         client.getComponentsInfo([{
@@ -493,7 +493,7 @@ describe('The node.js OC client', function(){
       });
 
       it('should return correct info for the 1st component', function() {
-        var expectedFirstComponentInfo = [{
+        const expectedFirstComponentInfo = [{
           componentName: 'hello-world',
           requestedVersion: undefined,
           apiResponse: {
@@ -540,7 +540,7 @@ describe('The node.js OC client', function(){
 
     describe('when server-side rendering an existing component linked to a non responsive registry', function(){
 
-      var expectedRequest = {
+      const expectedRequest = {
         url: 'http://localhost:1234/hello-world/~1.0.0',
         method: 'get',
         headers: {
@@ -553,10 +553,10 @@ describe('The node.js OC client', function(){
 
       describe('when client-side failover rendering disabled', function(){
 
-        var error;
+        let error;
 
         before(function(done){
-          var options = { disableFailoverRendering: true };
+          const options = { disableFailoverRendering: true };
 
           clientOfflineRegistry.renderComponent('hello-world', options, function(err, html){
             result = html;
@@ -571,23 +571,23 @@ describe('The node.js OC client', function(){
 
         it('should contain the error details', function(){
 
-          var exp = getRegExpFromJson(expectedRequest),
+          let exp = getRegExpFromJson(expectedRequest),
               expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
 
-          var actual = error.toString();
+          const actual = error.toString();
           expect(actual).to.match(expected);
         });
       });
 
       describe('when client-side failover rendering enabled (default)', function(){
 
-        var $clientScript,
+        let $clientScript,
             error;
 
         before(function(done){
           clientOfflineRegistry.renderComponent('hello-world', function(err, html){
             error = err;
-            var $ = cheerio.load(html);
+            const $ = cheerio.load(html);
             $component = $('oc-component');
             $clientScript = $('script.ocClientScript');
             done();
@@ -609,7 +609,7 @@ describe('The node.js OC client', function(){
 
         it('should contain the error details', function(){
 
-          var exp = getRegExpFromJson(expectedRequest),
+          let exp = getRegExpFromJson(expectedRequest),
               expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
 
           expect(error.toString()).to.match(expected);
@@ -618,7 +618,7 @@ describe('The node.js OC client', function(){
 
       describe('when client-side failover rendering enabled with forwardAcceptLanguageToClient=true', function(){
 
-        var $clientScript,
+        let $clientScript,
             error,
             options = { 
               forwardAcceptLanguageToClient: true,
@@ -633,7 +633,7 @@ describe('The node.js OC client', function(){
         before(function(done){
           clientOfflineRegistry.renderComponent('hello-world', options, function(err, html){
             error = err;
-            var $ = cheerio.load(html);
+            const $ = cheerio.load(html);
             $component = $('oc-component');
             $clientScript = $('script.ocClientScript');
             done();
@@ -645,13 +645,13 @@ describe('The node.js OC client', function(){
         });
 
         it('should contain the component url including parameters and __ocAcceptLanguage parameter', function(){
-          var u = 'http://localhost:1234/hello-world/~1.0.0/?hi=john&__ocAcceptLanguage=da%2C%20en-gb%3Bq%3D0.8%2C%20en%3Bq%3D0.7';
+          const u = 'http://localhost:1234/hello-world/~1.0.0/?hi=john&__ocAcceptLanguage=da%2C%20en-gb%3Bq%3D0.8%2C%20en%3Bq%3D0.7';
           expect($component.attr('href')).to.equal(u);
         });
 
         it('should contain the error details', function(){
 
-          var expectedRequestWithExtraParams = {
+          const expectedRequestWithExtraParams = {
             url: 'http://localhost:1234/hello-world/~1.0.0/??hi=john',
             method: 'get',
             headers: {
@@ -663,7 +663,7 @@ describe('The node.js OC client', function(){
             json: true
           };
 
-          var exp = getRegExpFromJson(expectedRequestWithExtraParams),
+          let exp = getRegExpFromJson(expectedRequestWithExtraParams),
               expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
 
           expect(error.toString()).to.match(expected);
@@ -674,7 +674,7 @@ describe('The node.js OC client', function(){
     describe('when server-side rendering an existing component linked to a responsive registry', function(){
 
       describe('when the component is missing', function() {
-        var error, result;
+        let error, result;
 
         before(function(done){
           client.renderComponent('non-existing-component', {
@@ -686,7 +686,7 @@ describe('The node.js OC client', function(){
           });
         });
 
-        var expectedRequest = {
+        const expectedRequest = {
           url: 'http://localhost:3030/non-existing-component',
           method: 'get',
           headers: {
@@ -702,7 +702,7 @@ describe('The node.js OC client', function(){
         });
 
         it('should contain the error details', function(){
-          var exp = getRegExpFromJson(expectedRequest),
+          let exp = getRegExpFromJson(expectedRequest),
               expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed ' + 
                          '\\(404 Component "non-existing-component" not found on local repository\\)');
 
@@ -712,9 +712,9 @@ describe('The node.js OC client', function(){
 
       describe('when the component times-out', function(){
 
-        var error, result;
+        let error, result;
 
-        var expectedRequest = {
+        const expectedRequest = {
           url: 'http://localhost:3030/errors-component/??errorType=timeout&timeout=1000',
           method: 'get',
           headers: {
@@ -743,7 +743,7 @@ describe('The node.js OC client', function(){
 
         it('should contain the error details', function(){
 
-          var exp = getRegExpFromJson(expectedRequest),
+          let exp = getRegExpFromJson(expectedRequest),
               expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(timeout\\)');
 
           expect(error.toString()).to.match(expected);
@@ -751,7 +751,7 @@ describe('The node.js OC client', function(){
       });
 
       describe('when container option = true', function(){
-        var error;
+        let error;
         before(function(done){
           client.renderComponent('hello-world', { container: true }, function(err, html){
             error = err;
@@ -797,8 +797,8 @@ describe('The node.js OC client', function(){
     });
 
     describe('when getting components info with a non responsive registry', function() {
-      var error;
-      var info;
+      let error;
+      let info;
 
       before(function(done){
         clientOfflineRegistry.getComponentsInfo([{
@@ -813,7 +813,7 @@ describe('The node.js OC client', function(){
         });
       });
 
-      var expectedRequest = {
+      const expectedRequest = {
         url: 'http://localhost:1234',
         method: 'post',
         headers: {
@@ -832,8 +832,8 @@ describe('The node.js OC client', function(){
         }
       };
 
-      var exp = getRegExpFromJson(expectedRequest);
-      var expectedError = new RegExp('Getting component info failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
+      const exp = getRegExpFromJson(expectedRequest);
+      const expectedError = new RegExp('Getting component info failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
 
       it('should fail and return an errors array with an error corresponding to every component requested', function() {
         expect(error).to.not.be.undefined();

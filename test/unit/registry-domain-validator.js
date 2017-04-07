@@ -1,11 +1,11 @@
 'use strict';
 
-var expect = require('chai').expect;
-var injectr = require('injectr');
+const expect = require('chai').expect;
+const injectr = require('injectr');
 
 describe('registry : domain : validator', function(){
 
-  var validator = require('../../src/registry/domain/validators'),
+  let validator = require('../../src/registry/domain/validators'),
       baseS3Conf = {
         bucket: 'oc-components',
         key: 's3-key',
@@ -15,11 +15,11 @@ describe('registry : domain : validator', function(){
 
   describe('when validating registry configuration', function(){
 
-    var validate = function(a){ return validator.validateRegistryConfiguration(a); };
+    const validate = function(a){ return validator.validateRegistryConfiguration(a); };
 
     describe('when configuration null', function(){
 
-      var conf = null;
+      const conf = null;
 
       it('should not be valid', function(){
         expect(validate(conf).isValid).to.be.false;
@@ -29,7 +29,7 @@ describe('registry : domain : validator', function(){
 
     describe('when configuration empty', function(){
 
-      var conf = {};
+      const conf = {};
 
       it('should not be valid', function(){
         expect(validate(conf).isValid).to.be.false;
@@ -40,7 +40,7 @@ describe('registry : domain : validator', function(){
     describe('prefix', function(){
       describe('when prefix does not start with /', function(){
 
-        var conf = { prefix: 'hello/', s3: baseS3Conf };
+        const conf = { prefix: 'hello/', s3: baseS3Conf };
 
         it('should not be valid', function(){
           expect(validate(conf).isValid).to.be.false;
@@ -50,7 +50,7 @@ describe('registry : domain : validator', function(){
 
       describe('when prefix does not end with /', function(){
 
-        var conf = { prefix: '/hello', s3: baseS3Conf };
+        const conf = { prefix: '/hello', s3: baseS3Conf };
 
         it('should not be valid', function(){
           expect(validate(conf).isValid).to.be.false;
@@ -62,7 +62,7 @@ describe('registry : domain : validator', function(){
     describe('publishAuth', function(){
       describe('when not specified', function(){
 
-        var conf = { publishAuth: null, s3: baseS3Conf };
+        const conf = { publishAuth: null, s3: baseS3Conf };
 
         it('should be valid', function(){
           expect(validate(conf).isValid).to.be.true;
@@ -71,7 +71,7 @@ describe('registry : domain : validator', function(){
 
       describe('when specified and not supported', function(){
 
-        var conf = { publishAuth: { type: 'blarg' }, s3: baseS3Conf};
+        const conf = { publishAuth: { type: 'blarg' }, s3: baseS3Conf};
 
         it('should not be valid', function(){
           expect(validate(conf).isValid).to.be.false;
@@ -83,7 +83,7 @@ describe('registry : domain : validator', function(){
 
         describe('when username and password specified', function(){
 
-          var conf = { publishAuth: { type: 'basic', username: 'a', password: 'b' }, s3: baseS3Conf};
+          const conf = { publishAuth: { type: 'basic', username: 'a', password: 'b' }, s3: baseS3Conf};
 
           it('should be valid', function(){
             expect(validate(conf).isValid).to.be.true;
@@ -92,7 +92,7 @@ describe('registry : domain : validator', function(){
 
         describe('when username and password not specified', function(){
 
-          var conf = { publishAuth: { type: 'basic', a: '' }, s3: baseS3Conf};
+          const conf = { publishAuth: { type: 'basic', a: '' }, s3: baseS3Conf};
 
           it('should not be valid', function(){
             expect(validate(conf).isValid).to.be.false;
@@ -105,7 +105,7 @@ describe('registry : domain : validator', function(){
     describe('dependencies', function(){
       describe('when not specified', function(){
 
-        var conf = { dependencies: null, s3: baseS3Conf };
+        const conf = { dependencies: null, s3: baseS3Conf };
 
         it('should be valid', function(){
           expect(validate(conf).isValid).to.be.true;
@@ -116,7 +116,7 @@ describe('registry : domain : validator', function(){
 
         describe('when it is an array', function(){
 
-          var conf = { dependencies: ['hello'], s3: baseS3Conf};
+          const conf = { dependencies: ['hello'], s3: baseS3Conf};
 
           it('should be valid', function(){
             expect(validate(conf).isValid).to.be.true;
@@ -125,7 +125,7 @@ describe('registry : domain : validator', function(){
 
         describe('when it is not an array', function(){
 
-          var conf = { dependencies: { hello: 'world' }, s3: baseS3Conf};
+          const conf = { dependencies: { hello: 'world' }, s3: baseS3Conf};
 
           it('should not be valid', function(){
             expect(validate(conf).isValid).to.be.false;
@@ -138,7 +138,7 @@ describe('registry : domain : validator', function(){
     describe('s3', function(){
       describe('when local=true', function(){
 
-        var conf = { local: true };
+        const conf = { local: true };
 
         it('should be valid', function(){
           expect(validate(conf).isValid).to.be.true;
@@ -147,10 +147,10 @@ describe('registry : domain : validator', function(){
 
       describe('when not in local mode', function(){
 
-        var errorMessage = 'Registry configuration is not valid: S3 configuration is not valid';
+        const errorMessage = 'Registry configuration is not valid: S3 configuration is not valid';
 
         describe('when s3 settings empty', function(){
-          var conf = { publishAuth: false, s3: {}};
+          const conf = { publishAuth: false, s3: {}};
 
           it('should not be valid', function(){
             expect(validate(conf).isValid).to.be.false;
@@ -159,7 +159,7 @@ describe('registry : domain : validator', function(){
         });
 
         describe('when s3 setting is missing bucket', function(){
-          var conf = { publishAuth: false, s3: {
+          const conf = { publishAuth: false, s3: {
             key: 's3-key', region: 'us-west2', secret: 's3-secret'
           }};
 
@@ -170,7 +170,7 @@ describe('registry : domain : validator', function(){
         });
 
         describe('when s3 setting is missing key', function(){
-          var conf = { publishAuth: false, s3: {
+          const conf = { publishAuth: false, s3: {
             bucket: 'oc-registry', region: 'us-west2', secret: 's3-secret'
           }};
 
@@ -181,7 +181,7 @@ describe('registry : domain : validator', function(){
         });
 
         describe('when s3 setting is missing region', function(){
-          var conf = { publishAuth: false, s3: {
+          const conf = { publishAuth: false, s3: {
             bucket: 'oc-registry', key: 's3-key', secret: 's3-secret'
           }};
 
@@ -192,7 +192,7 @@ describe('registry : domain : validator', function(){
         });
 
         describe('when s3 setting is missing secret', function(){
-          var conf = { publishAuth: false, s3: {
+          const conf = { publishAuth: false, s3: {
             bucket: 'oc-registry', key: 's3-key', region: 'us-west2'
           }};
 
@@ -203,7 +203,7 @@ describe('registry : domain : validator', function(){
         });
         
         describe('when s3 setting do not use key/secret - EC2 IAM Role use case', function() {
-          var conf = {
+          const conf = {
             publishAuth: false,
             s3: {
               bucket: 'oc-registry',
@@ -217,7 +217,7 @@ describe('registry : domain : validator', function(){
         });
 
         describe('when s3 setting contains all properties', function(){
-          var conf = { publishAuth: false, s3: baseS3Conf};
+          const conf = { publishAuth: false, s3: baseS3Conf};
 
           it('should be valid', function(){
             expect(validate(conf).isValid).to.be.true;
@@ -229,7 +229,7 @@ describe('registry : domain : validator', function(){
     describe('routes', function(){
       describe('when not specified', function(){
 
-        var conf = { routes: null, s3: baseS3Conf };
+        const conf = { routes: null, s3: baseS3Conf };
 
         it('should be valid', function(){
           expect(validate(conf).isValid).to.be.true;
@@ -240,7 +240,7 @@ describe('registry : domain : validator', function(){
 
         describe('when not an array', function(){
 
-          var conf = { routes: {thisis: 'anobject', s3: baseS3Conf }};
+          const conf = { routes: {thisis: 'anobject', s3: baseS3Conf }};
 
           it('should not be valid', function(){
             expect(validate(conf).isValid).to.be.false;
@@ -250,7 +250,7 @@ describe('registry : domain : validator', function(){
 
         describe('when route does not contain route', function(){
 
-          var conf = { routes: [{ method: 'get', handler: function(){}}], s3: baseS3Conf};
+          const conf = { routes: [{ method: 'get', handler: function(){}}], s3: baseS3Conf};
 
           it('should not be valid', function(){
             expect(validate(conf).isValid).to.be.false;
@@ -260,7 +260,7 @@ describe('registry : domain : validator', function(){
 
         describe('when route does not contain handler', function(){
 
-          var conf = { routes: [{ method: 'get', route: '/hello'}], s3: baseS3Conf};
+          const conf = { routes: [{ method: 'get', route: '/hello'}], s3: baseS3Conf};
 
           it('should not be valid', function(){
             expect(validate(conf).isValid).to.be.false;
@@ -270,7 +270,7 @@ describe('registry : domain : validator', function(){
 
         describe('when route does not contain method', function(){
 
-          var conf = { routes: [{ route: '/hello', handler: function(){}}], s3: baseS3Conf};
+          const conf = { routes: [{ route: '/hello', handler: function(){}}], s3: baseS3Conf};
 
           it('should not be valid', function(){
             expect(validate(conf).isValid).to.be.false;
@@ -280,7 +280,7 @@ describe('registry : domain : validator', function(){
 
         describe('when route contains handler that is not a function', function(){
 
-          var conf = { routes: [{ route: '/hello', method: 'get', handler: 'hello' }], s3: baseS3Conf};
+          const conf = { routes: [{ route: '/hello', method: 'get', handler: 'hello' }], s3: baseS3Conf};
 
           it('should not be valid', function(){
             expect(validate(conf).isValid).to.be.false;
@@ -290,7 +290,7 @@ describe('registry : domain : validator', function(){
 
         describe('when route overrides prefix namespace', function(){
 
-          var conf = {
+          const conf = {
             prefix: '/components/',
             s3: baseS3Conf,
             routes: [{
@@ -310,7 +310,7 @@ describe('registry : domain : validator', function(){
 
     describe('customHeadersToSkipOnWeakVersion', function() {
       describe('when customHeadersToSkipOnWeakVersion is not an array', function() {
-        var conf = { 
+        const conf = { 
           customHeadersToSkipOnWeakVersion: 'test', 
           publishAuth: false, 
           s3: baseS3Conf 
@@ -323,7 +323,7 @@ describe('registry : domain : validator', function(){
       });
 
       describe('when customHeadersToSkipOnWeakVersion is an array but contains non-string elements', function() {
-        var conf = { 
+        const conf = { 
           customHeadersToSkipOnWeakVersion: ['header1', 'header2', 3, 4], 
           publishAuth: false, 
           s3: baseS3Conf
@@ -336,7 +336,7 @@ describe('registry : domain : validator', function(){
       });
 
       describe('when customHeadersToSkipOnWeakVersion is a non-empty array of strings', function() {
-        var conf = { 
+        const conf = { 
           customHeadersToSkipOnWeakVersion: ['header1', 'header2', 'header3'],
           publishAuth: false, 
           s3: baseS3Conf
@@ -351,10 +351,10 @@ describe('registry : domain : validator', function(){
 
   describe('when validating component request by parameter', function(){
 
-    var validate = function(a,b){ return validator.validateComponentParameters(a,b); };
+    const validate = function(a,b){ return validator.validateComponentParameters(a,b); };
 
     describe('when component have not parameters', function(){
-      var componentParameters = {},
+      let componentParameters = {},
           requestParameters = { hello: 'world' };
 
       it('should be valid', function(){
@@ -363,7 +363,7 @@ describe('registry : domain : validator', function(){
     });
 
     describe('when component have not mandatory parameters', function(){
-      var componentParameters = {
+      const componentParameters = {
         name: {
           type: 'string',
           mandatory: false,
@@ -372,20 +372,20 @@ describe('registry : domain : validator', function(){
       };
 
       it('should be valid when non mandatory parameters not provided', function(){
-        var requestParameters = { hello: 'world'};
+        const requestParameters = { hello: 'world'};
         expect(validate(requestParameters, componentParameters).isValid).to.be.true;
       });
 
       it('should be valid when non mandatory parameters provided in a valid format', function(done){
-        var requestParameters = { name: 'Walter White' };
+        const requestParameters = { name: 'Walter White' };
         expect(validate(requestParameters, componentParameters).isValid).to.be.true;
         done();
       });
 
       it('should be not valid when non mandatory parameters provided in a non valid format', function(){
-        var requestParameters = { name: 12345 };
+        const requestParameters = { name: 12345 };
 
-        var validateResult = validate(requestParameters, componentParameters);
+        const validateResult = validate(requestParameters, componentParameters);
 
         expect(validateResult.isValid).to.be.false;
         expect(validateResult.errors).not.to.be.empty;
@@ -398,16 +398,16 @@ describe('registry : domain : validator', function(){
 
       it('should not be valid when mandatory parameter not provided', function(){
 
-        var componentParameters = {
+        const componentParameters = {
           returnUrl: {
             type: 'string',
             mandatory: true,
             example: 'http://www.google.com'
           }
         };
-        var requestParameters = {};
+        const requestParameters = {};
 
-        var validateResult = validate(requestParameters, componentParameters);
+        const validateResult = validate(requestParameters, componentParameters);
 
         expect(validateResult.isValid).to.be.false;
         expect(validateResult.errors).not.to.be.empty;
@@ -417,7 +417,7 @@ describe('registry : domain : validator', function(){
 
       describe('when mandatory string parameter provided', function(){
 
-        var componentParameters = {
+        const componentParameters = {
           name: {
             type: 'string',
             mandatory: true,
@@ -426,15 +426,15 @@ describe('registry : domain : validator', function(){
         };
 
         it('should be valid when parameter in a valid form', function(){
-          var requestParameters = { name: 'John Doe' };
+          const requestParameters = { name: 'John Doe' };
 
           expect(validate(requestParameters, componentParameters).isValid).to.be.true;
         });
 
         it('should not be valid when parameter in a non valid form', function(){
-          var requestParameters = { name: 12345 };
+          const requestParameters = { name: 12345 };
 
-          var validateResult = validate(requestParameters, componentParameters);
+          const validateResult = validate(requestParameters, componentParameters);
 
           expect(validateResult.isValid).to.be.false;
           expect(validateResult.errors).not.to.be.empty;
@@ -443,16 +443,16 @@ describe('registry : domain : validator', function(){
         });
 
         it('should be valid when parameter is an empty string', function(){
-          var requestParameters = { name: '' };
+          const requestParameters = { name: '' };
 
-          var validateResult = validate(requestParameters, componentParameters);
+          const validateResult = validate(requestParameters, componentParameters);
 
           expect(validateResult.isValid).to.be.true;
         });
 
         describe('when non mandatory number provided', function(){
 
-          var componentParameters = {
+          const componentParameters = {
             name: {
               type: 'string',
               mandatory: true,
@@ -465,7 +465,7 @@ describe('registry : domain : validator', function(){
             }
           };
 
-          var validComponentParameters = {
+          const validComponentParameters = {
             zero: {
               type: 'number',
               mandatory: false,
@@ -474,8 +474,8 @@ describe('registry : domain : validator', function(){
           };
 
           it('should not be valid when provided in a non valid form', function(){
-            var requestParameters = { age: 'This is not a number' };
-            var validateResult = validate(requestParameters, componentParameters);
+            const requestParameters = { age: 'This is not a number' };
+            const validateResult = validate(requestParameters, componentParameters);
 
             expect(validateResult.isValid).to.be.false;
             expect(validateResult.errors).not.to.be.empty;
@@ -485,8 +485,8 @@ describe('registry : domain : validator', function(){
           });
 
           it('should be valid when 0', function(){
-            var requestParameters = { zero: 0 };
-            var validateResult = validate(requestParameters, validComponentParameters);
+            const requestParameters = { zero: 0 };
+            const validateResult = validate(requestParameters, validComponentParameters);
 
             expect(validateResult.isValid).to.be.true;
           });
@@ -494,7 +494,7 @@ describe('registry : domain : validator', function(){
 
         describe('when non mandatory boolean provided', function(){
 
-          var componentParameters = {
+          const componentParameters = {
             name: {
               type: 'string',
               mandatory: true,
@@ -508,9 +508,9 @@ describe('registry : domain : validator', function(){
           };
 
           it('should not be valid when provided in a non valid form', function(){
-            var requestParameters = { isTrue: 1234 };
+            const requestParameters = { isTrue: 1234 };
 
-            var validateResult = validate(requestParameters, componentParameters);
+            const validateResult = validate(requestParameters, componentParameters);
 
             expect(validateResult.isValid).to.be.false;
             expect(validateResult.errors).not.to.be.empty;
@@ -524,7 +524,7 @@ describe('registry : domain : validator', function(){
 
       describe('when mandatory number parameter provided', function(){
 
-        var componentParameters = {
+        const componentParameters = {
           age: {
             type: 'number',
             mandatory: true,
@@ -533,15 +533,15 @@ describe('registry : domain : validator', function(){
         };
 
         it('should be valid when parameter in a valid form', function(){
-          var requestParameters = { age: 18 };
+          const requestParameters = { age: 18 };
 
           expect(validate(requestParameters, componentParameters).isValid).to.be.true;
         });
 
         it('should not be valid when parameter in a non valid form', function(){
-          var requestParameters = { age: 'this is a string' };
+          const requestParameters = { age: 'this is a string' };
 
-          var validateResult = validate(requestParameters, componentParameters);
+          const validateResult = validate(requestParameters, componentParameters);
 
           expect(validateResult.isValid).to.be.false;
           expect(validateResult.errors).not.to.be.empty;
@@ -550,9 +550,9 @@ describe('registry : domain : validator', function(){
         });
 
         it('should not be valid when parameter is null', function(){
-          var requestParameters = { age: null };
+          const requestParameters = { age: null };
 
-          var validateResult = validate(requestParameters, componentParameters);
+          const validateResult = validate(requestParameters, componentParameters);
 
           expect(validateResult.isValid).to.be.false;
           expect(validateResult.errors).not.to.be.empty;
@@ -563,7 +563,7 @@ describe('registry : domain : validator', function(){
 
       describe('when mandatory boolean parameter provided', function(){
 
-        var componentParameters = {
+        const componentParameters = {
           happy: {
             type: 'boolean',
             mandatory: true,
@@ -572,15 +572,15 @@ describe('registry : domain : validator', function(){
         };
 
         it('should be valid when parameter in a valid form', function(){
-          var requestParameters = { happy: false };
+          const requestParameters = { happy: false };
 
           expect(validate(requestParameters, componentParameters).isValid).to.be.true;
         });
 
         it('should not be valid when parameter in a non valid form', function(){
-          var requestParameters = { happy: 'this is a string' };
+          const requestParameters = { happy: 'this is a string' };
 
-          var validateResult = validate(requestParameters, componentParameters);
+          const validateResult = validate(requestParameters, componentParameters);
 
           expect(validateResult.isValid).to.be.false;
           expect(validateResult.errors).not.to.be.empty;
@@ -589,9 +589,9 @@ describe('registry : domain : validator', function(){
         });
 
         it('should not be valid when parameter is null', function(){
-          var requestParameters = { happy: null };
+          const requestParameters = { happy: null };
 
-          var validateResult = validate(requestParameters, componentParameters);
+          const validateResult = validate(requestParameters, componentParameters);
 
           expect(validateResult.isValid).to.be.false;
           expect(validateResult.errors).not.to.be.empty;
@@ -600,9 +600,9 @@ describe('registry : domain : validator', function(){
         });
 
         it('should not be valid when parameter is undefined', function(){
-          var requestParameters = { happy: undefined };
+          const requestParameters = { happy: undefined };
 
-          var validateResult = validate(requestParameters, componentParameters);
+          const validateResult = validate(requestParameters, componentParameters);
 
           expect(validateResult.isValid).to.be.false;
           expect(validateResult.errors).not.to.be.empty;
@@ -611,9 +611,9 @@ describe('registry : domain : validator', function(){
         });
 
         it('should not be valid when parameter not provided', function(){
-          var requestParameters = {};
+          const requestParameters = {};
 
-          var validateResult = validate(requestParameters, componentParameters);
+          const validateResult = validate(requestParameters, componentParameters);
 
           expect(validateResult.isValid).to.be.false;
           expect(validateResult.errors).not.to.be.empty;
@@ -626,11 +626,11 @@ describe('registry : domain : validator', function(){
 
   describe('when validating component name for new candidate', function(){
 
-    var validate = function(a){ return validator.validateComponentName(a); };
+    const validate = function(a){ return validator.validateComponentName(a); };
 
     describe('when name has spaces', function(){
 
-      var name = 'hello ha';
+      const name = 'hello ha';
       it('should not be valid', function(){
         expect(validate(name)).to.be.false;
       });
@@ -638,7 +638,7 @@ describe('registry : domain : validator', function(){
 
     describe('when name has not allowed characters', function(){
 
-      var name = 'name@ha';
+      const name = 'name@ha';
       it('should not be valid', function(){
         expect(validate(name)).to.be.false;
       });
@@ -646,7 +646,7 @@ describe('registry : domain : validator', function(){
 
     describe('when name has alphanumeric characters, _ or -', function(){
 
-      var name = 'hello-world_haha23';
+      const name = 'hello-world_haha23';
       it('should be valid', function(){
         expect(validate(name)).to.be.true;
       });
@@ -654,7 +654,7 @@ describe('registry : domain : validator', function(){
 
     describe('when name is reserved', function(){
 
-      var name = '_package';
+      const name = '_package';
       it('should not be valid', function(){
         expect(validate(name)).to.be.false;
       });
@@ -663,11 +663,11 @@ describe('registry : domain : validator', function(){
   });
 
   describe('when validating template type for new candidate', function(){
-    var validate = function(a){ return validator.validateTemplateType(a); };
+    const validate = function(a){ return validator.validateTemplateType(a); };
 
     describe('when type is not handlebars or jade', function(){
 
-      var type = 'othertype';
+      const type = 'othertype';
       it('should not be valid', function(){
         expect(validate(type)).to.be.false;
       });
@@ -675,7 +675,7 @@ describe('registry : domain : validator', function(){
 
     describe('when type is handlebars', function(){
 
-      var type = 'handlebars';
+      const type = 'handlebars';
       it('should be valid', function(){
         expect(validate(type)).to.be.true;
       });
@@ -683,7 +683,7 @@ describe('registry : domain : validator', function(){
 
     describe('when type is jade', function(){
 
-      var type = 'jade';
+      const type = 'jade';
       it('should be valid', function(){
         expect(validate(type)).to.be.true;
       });
@@ -692,7 +692,7 @@ describe('registry : domain : validator', function(){
 
   describe('when validating component version for new candidate', function(){
 
-    var existingVersions = ['1.0.0', '1.0.1', '2.0.0', '2.1.0'],
+    let existingVersions = ['1.0.0', '1.0.1', '2.0.0', '2.1.0'],
         isValid = function(a,b){ return validator.validateVersion(a, b); };
 
     describe('when version already exists', function(){
@@ -710,7 +710,7 @@ describe('registry : domain : validator', function(){
 
   describe('when validating component package for new candidate', function(){
 
-    var validate = function(a, b){ return validator.validatePackage(a, b || {}); };
+    const validate = function(a, b){ return validator.validatePackage(a, b || {}); };
 
     describe('when package not valid', function(){
 
@@ -753,15 +753,15 @@ describe('registry : domain : validator', function(){
 
     describe('when custom validation provided', function(){
       
-      var validate = function(obj){ return validator.validatePackageJson(obj); };
+      const validate = function(obj){ return validator.validatePackageJson(obj); };
 
-      var customValidator = function(pkg){
-        var isValid = !!pkg.author && !!pkg.repository;
+      const customValidator = function(pkg){
+        const isValid = !!pkg.author && !!pkg.repository;
         return isValid ? isValid : { isValid: false, error: 'author and repository are required' };
       };
 
       describe('when package.json does not contain mandatory fields', function(){
-        var result;
+        let result;
         beforeEach(function(){
           result = validate({
             packageJson: { name: 'my-component'},
@@ -780,7 +780,7 @@ describe('registry : domain : validator', function(){
       });
 
       describe('when package.json contains mandatory fields', function(){
-        var result;
+        let result;
         beforeEach(function(){
           result = validate({
             packageJson: { name: 'my-component', author: 'somebody', repository: 'https://github.com/somebody/my-component'},
@@ -796,7 +796,7 @@ describe('registry : domain : validator', function(){
     });
 
     describe('when package is valid', function(){
-      var _package = {
+      const _package = {
         fieldname: 'package.tar.gz',
         originalname: 'package.tar.gz',
         name: 'theFile-1415986760368.tar.gz',
@@ -816,11 +816,11 @@ describe('registry : domain : validator', function(){
 
   describe('when validating component plugin requirements', function(){
 
-    var validate = validator.validatePluginsRequirements;
+    const validate = validator.validatePluginsRequirements;
 
     describe('when component does not require any plugin', function(){
 
-      var requirements = null,
+      let requirements = null,
           supportedPlugins = {
             log: function(){}
           };
@@ -832,13 +832,13 @@ describe('registry : domain : validator', function(){
 
     describe('when component requires plugin', function(){
 
-      var requirements = ['getToggle'];
+      const requirements = ['getToggle'];
       describe('when registry does not support plugin', function(){
-        var supportedPlugins = {
+        const supportedPlugins = {
           log: function(){}
         };
 
-        var validationResult = validate(requirements, supportedPlugins);
+        const validationResult = validate(requirements, supportedPlugins);
 
         it('should not be valid', function(){
           expect(validationResult.isValid).to.be.false;
@@ -850,7 +850,7 @@ describe('registry : domain : validator', function(){
       });
 
       describe('when registry supports plugin', function(){
-        var supportedPlugins = {
+        const supportedPlugins = {
           getToggle: function(){ return true; }
         };
 
@@ -862,18 +862,18 @@ describe('registry : domain : validator', function(){
   });
 
   describe('when validating CLI OC version in request headers', function(){
-    var validator = injectr('../../src/registry/domain/validators/index.js', {
+    const validator = injectr('../../src/registry/domain/validators/index.js', {
       './oc-cli-version': injectr('../../src/registry/domain/validators/oc-cli-version.js', {
         '../../../../package.json': { version: '0.16.34'}
       })
     });
 
-    var validate = function(userAgent){
+    const validate = function(userAgent){
       return validator.validateOcCliVersion(userAgent);
     };
 
     describe('when user-agent header is not specified', function(){
-      var result = validate('value');
+      const result = validate('value');
 
       it('should be invalid', function(){
         expect(result.isValid).to.be.false;
@@ -885,7 +885,7 @@ describe('registry : domain : validator', function(){
     });
 
     describe('when user-agent header doesn\'t have correct format', function(){
-      var result = validate('oc-cli/1.2.3-v0.10.35-darwin-x64');
+      const result = validate('oc-cli/1.2.3-v0.10.35-darwin-x64');
 
       it('should be invalid', function(){
         expect(result.isValid).to.be.false;
@@ -897,7 +897,7 @@ describe('registry : domain : validator', function(){
     });
 
     describe('when OC CLI version in user-agent header is lower than Registry version', function(){
-      var result = validate('oc-cli-0.2.3/v0.10.35-darwin-x64');
+      const result = validate('oc-cli-0.2.3/v0.10.35-darwin-x64');
 
       it('should be invalid', function(){
         expect(result.isValid).to.be.false;
@@ -909,7 +909,7 @@ describe('registry : domain : validator', function(){
     });
 
     describe('when OC CLI version in user-agent header is equal to Registry version', function(){
-      var result = validate('oc-cli-0.16.34/v0.10.35-darwin-x64');
+      const result = validate('oc-cli-0.16.34/v0.10.35-darwin-x64');
 
       it('should be valid', function(){
         expect(result.isValid).to.be.true;
@@ -921,7 +921,7 @@ describe('registry : domain : validator', function(){
     });
 
     describe('when OC CLI version in user-agent header is higher than Registry version', function(){
-      var result = validate('oc-cli-0.16.35/v0.10.35-darwin-x64');
+      const result = validate('oc-cli-0.16.35/v0.10.35-darwin-x64');
 
       it('should be valid', function(){
         expect(result.isValid).to.be.true;
@@ -934,18 +934,18 @@ describe('registry : domain : validator', function(){
   });
 
   describe('when validating node engine version in request headers', function(){
-    var validator = injectr('../../src/registry/domain/validators/index.js', {
+    const validator = injectr('../../src/registry/domain/validators/index.js', {
       './node-version': injectr('../../src/registry/domain/validators/node-version.js', {
         '../../../../package.json': { engines: { node: '>=0.10.35' }}
       })
     });
 
-    var validate = function(userAgent){
+    const validate = function(userAgent){
       return validator.validateNodeVersion(userAgent, 'v0.10.36');
     };
 
     describe('when user-agent header is not specified', function(){
-      var result = validate('value');
+      const result = validate('value');
 
       it('should be invalid', function(){
         expect(result.isValid).to.be.false;
@@ -957,7 +957,7 @@ describe('registry : domain : validator', function(){
     });
 
     describe('when user-agent header doesn\'t have correct format', function(){
-      var result = validate('oc-cli/1.2.3-v0.10.35-darwin-x64');
+      const result = validate('oc-cli/1.2.3-v0.10.35-darwin-x64');
 
       it('should be invalid', function(){
         expect(result.isValid).to.be.false;
@@ -969,7 +969,7 @@ describe('registry : domain : validator', function(){
     });
 
     describe('when node version in user-agent header is lower than Registry version of node', function(){
-      var result = validate('oc-cli-0.2.3/v0.10.34-darwin-x64');
+      const result = validate('oc-cli-0.2.3/v0.10.34-darwin-x64');
 
       it('should be invalid', function(){
         expect(result.isValid).to.be.false;
@@ -981,7 +981,7 @@ describe('registry : domain : validator', function(){
     });
 
     describe('when node version in user-agent header is equal to Registry version of node', function(){
-      var result = validate('oc-cli-0.16.34/v0.10.35-darwin-x64');
+      const result = validate('oc-cli-0.16.34/v0.10.35-darwin-x64');
 
       it('should be valid', function(){
         expect(result.isValid).to.be.true;
@@ -993,7 +993,7 @@ describe('registry : domain : validator', function(){
     });
 
     describe('when node version in user-agent header is higher than Registry version of node', function(){
-      var result = validate('oc-cli-0.16.35/v0.10.36-darwin-x64');
+      const result = validate('oc-cli-0.16.35/v0.10.36-darwin-x64');
 
       it('should be valid', function(){
         expect(result.isValid).to.be.true;

@@ -1,22 +1,22 @@
 'use strict';
 
-var expect = require('chai').expect;
-var injectr = require('injectr');
-var path = require('path');
-var _ = require('underscore');
+const expect = require('chai').expect;
+const injectr = require('injectr');
+const path = require('path');
+const _ = require('underscore');
 
 describe('utils : require-template', function(){
-  var globals = {
+  const globals = {
     '__dirname': '.',
   };
   
-  var deps = {
+  const deps = {
 		'path': {
       join (a, b, c, template) {
         return path.join(a,b,c,template);
       },
       resolve (a,b,template) {
-        var dir = path.join(
+        const dir = path.join(
           path.resolve(),
           'node_modules/oc-template-handlebars/node_modules',
           template
@@ -26,13 +26,13 @@ describe('utils : require-template', function(){
     }
 	};
 
-  var requireTemplate = injectr(
+  const requireTemplate = injectr(
     '../../src/utils/require-template.js', deps, globals
   );
 
   it('should return the template found if its of the correct type', function(){
-    var template = requireTemplate('oc-template-jade');
-    var templateAPIs = _.keys(template);
+    const template = requireTemplate('oc-template-jade');
+    const templateAPIs = _.keys(template);
   
     expect(_.contains(templateAPIs,
       'getInfo',

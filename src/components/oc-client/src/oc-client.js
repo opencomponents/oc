@@ -23,14 +23,14 @@ var oc = oc || {};
   oc.status = oc.status || false;
 
   // If oc client is already inside the page, we do nothing.
-  if(!!oc.status){
+  if(oc.status){
     return oc;
   } else {
     oc.status = 'loading';
   }
 
   // Constants
-  var CDNJS_BASEURL = 'https://cdnjs.cloudflare.com/ajax/libs/',
+  let CDNJS_BASEURL = 'https://cdnjs.cloudflare.com/ajax/libs/',
       IE9_AJAX_POLYFILL_URL = CDNJS_BASEURL + 'jquery-ajaxtransport-xdomainrequest/1.0.3/jquery.xdomainrequest.min.js',
       JQUERY_URL = CDNJS_BASEURL + 'jquery/1.11.2/jquery.min.js',
       RETRY_INTERVAL = oc.conf.retryInterval || 5000,
@@ -51,7 +51,7 @@ var oc = oc || {};
       MESSAGES_RETRIEVING = 'Unrendered component found. Trying to retrieve it...';
 
   // The code
-  var debug = oc.conf.debug || false,
+  let debug = oc.conf.debug || false,
       noop = function(){},
       nav = $window.navigator.userAgent,
       is9 = !!(nav.match(/MSIE 9/)),
@@ -60,16 +60,16 @@ var oc = oc || {};
       retries = {},
       isBool = function(a){ return typeof(a) === 'boolean'; };
 
-  var logger = {
+  const logger = {
     error: function(msg){
       return console.log(msg);
     },
     info: function(msg){
-      return !!debug ? console.log(msg) : false;
+      return debug ? console.log(msg) : false;
     }
   };
 
-  var registeredTemplates = {
+  const registeredTemplates = {
     'oc-template-handlebars': {
       externals: [
         { global: 'Handlebars', url: 'https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.runtime.min.js' }
@@ -97,7 +97,7 @@ var oc = oc || {};
     registerTemplates(oc.conf.templates);
   }
 
-  var retry = function(component, cb, failedRetryCb){
+  const retry = function(component, cb, failedRetryCb){
     if(retries[component] === undefined){
       retries[component] = RETRY_LIMIT;
     }
@@ -112,9 +112,9 @@ var oc = oc || {};
     retries[component]--;
   };
 
-  var addParametersToHref = function (href, parameters) {
+  const addParametersToHref = function (href, parameters) {
     if(href && parameters) {
-      var param = oc.$.param(parameters);
+      const param = oc.$.param(parameters);
       if(href.indexOf('?') > -1) {
         return href + '&' + param;
       } else {
@@ -143,14 +143,14 @@ var oc = oc || {};
       nameSpace = [nameSpace];
     }
 
-    var needsToBeLoaded = function(){
-      var base = $window;
+    const needsToBeLoaded = function(){
+      let base = $window;
 
       if(typeof(nameSpace) === 'undefined'){
         return true;
       }
 
-      for(var i = 0; i < nameSpace.length; i++){
+      for(let i = 0; i < nameSpace.length; i++){
         base = base[nameSpace[i]];
         if(!base){
           return true;
@@ -160,14 +160,14 @@ var oc = oc || {};
       return false;
     };
 
-    var getObj = function(){
-      var base = $window;
+    const getObj = function(){
+      let base = $window;
 
       if(typeof(nameSpace) === 'undefined'){
         return undefined;
       }
 
-      for(var i = 0; i < nameSpace.length; i++){
+      for(let i = 0; i < nameSpace.length; i++){
         base = base[nameSpace[i]];
         if(!base){
           return undefined;
@@ -187,7 +187,7 @@ var oc = oc || {};
   };
 
 
-  var processHtml = function($component, data, callback){
+  const processHtml = function($component, data, callback){
 
     data.id = Math.floor(Math.random()*9999999999);
 
@@ -197,11 +197,11 @@ var oc = oc || {};
     $component.attr('data-rendering', false);
     $component.attr('data-version', data.version);
 
-    if(!!data.key){
+    if(data.key){
       $component.attr('data-hash', data.key);
     }
 
-    if(!!data.name){
+    if(data.name){
       $component.attr('data-name', data.name);
       oc.renderedComponents[data.name] = data.version;
       oc.events.fire('oc:rendered', data);
@@ -220,7 +220,7 @@ var oc = oc || {};
       throw MESSAGES_ERRORS_NAME_PARAMETER_IS_REQUIRED;
     }
 
-    var withFinalSlash = function(s){
+    const withFinalSlash = function(s){
       s = s || '';
 
       if(s.slice(-1) !== '/'){
@@ -230,15 +230,15 @@ var oc = oc || {};
       return s;
     };
 
-    var href = withFinalSlash(options.baseUrl) + withFinalSlash(options.name);
+    let href = withFinalSlash(options.baseUrl) + withFinalSlash(options.name);
 
-    if(!!options.version){
+    if(options.version){
       href += withFinalSlash(options.version);
     }
 
-    if(!!options.parameters){
+    if(options.parameters){
       href += '?';
-      for(var parameter in options.parameters){
+      for(const parameter in options.parameters){
         if(options.parameters.hasOwnProperty(parameter)){
           href += parameter + '=' + options.parameters[parameter] + '&';
         }
@@ -261,7 +261,7 @@ var oc = oc || {};
 
       initialising = true;
 
-      var requirePolyfills = function($, cb){
+      const requirePolyfills = function($, cb){
         if(is9 && !$.IE_POLYFILL_LOADED){
           oc.require(IE9_AJAX_POLYFILL_URL, cb);
         } else {
@@ -269,13 +269,13 @@ var oc = oc || {};
         }
       };
 
-      var done = function(){
+      const done = function(){
         initialised = true;
         initialising = false;
 
         oc.events = (function(){
 
-          var obj = oc.$({});
+          const obj = oc.$({});
 
           return {
             fire: function(key, data){
@@ -295,7 +295,7 @@ var oc = oc || {};
         oc.events.fire('oc:ready', oc);
         oc.status = 'ready';
 
-        for(var i = 0; i < oc.cmd.length; i++){
+        for(let i = 0; i < oc.cmd.length; i++){
           oc.cmd[i](oc);
         }
 
@@ -304,7 +304,7 @@ var oc = oc || {};
         };
       };
 
-      var wasDollarThereAlready = !!$window.$;
+      const wasDollarThereAlready = !!$window.$;
       oc.require('jQuery', JQUERY_URL, function(jQuery){
 
         requirePolyfills(jQuery, function(){
@@ -325,19 +325,19 @@ var oc = oc || {};
 
   oc.render = function(compiledViewInfo, model, callback){
     oc.ready(function(){
-      var type = compiledViewInfo.type;
+      let type = compiledViewInfo.type;
       if (type === 'jade') { type = 'oc-template-jade'; }
       if (type === 'handlebars') { type = 'oc-template-handlebars'; }
-      var template = registeredTemplates[type];
+      const template = registeredTemplates[type];
 
-      if(!!template){
+      if(template){
         oc.require(['oc', 'components', compiledViewInfo.key], compiledViewInfo.src, function(compiledView){
           if(!compiledView){
             callback(MESSAGES_ERRORS_LOADING_COMPILED_VIEW.replace('{0}', compiledViewInfo.src));
           } else {
 
-            var externals = template.externals;
-            var externalsRequired = 0;
+            const externals = template.externals;
+            let externalsRequired = 0;
 
             externals.forEach(function(library, _index, externals){
               oc.require(library.global, library.url, function(){
@@ -345,7 +345,7 @@ var oc = oc || {};
                 if(externalsRequired === externals.length) {
                   if(type === 'oc-template-handlebars'){
                     try {
-                      var linked = $window.Handlebars.template(compiledView, []);
+                      const linked = $window.Handlebars.template(compiledView, []);
                       callback(null, linked(model));
                     } catch(e){
                       callback(e.toString());
@@ -366,7 +366,7 @@ var oc = oc || {};
 
   oc.renderNestedComponent = function($component, callback){
     oc.ready(function(){
-      var dataRendering = $component.attr('data-rendering'),
+      let dataRendering = $component.attr('data-rendering'),
           dataRendered = $component.attr('data-rendered'),
           isRendering = isBool(dataRendering) ? dataRendering : (dataRendering === 'true'),
           isRendered = isBool(dataRendered) ? dataRendered : (dataRendered === 'true');
@@ -392,7 +392,7 @@ var oc = oc || {};
   };
 
   oc.renderByHref = function(href, retryNumberOrCallback, cb){
-    var callback = cb,
+    let callback = cb,
         retryNumber = retryNumberOrCallback;
 
     if(typeof retryNumberOrCallback === 'function') {
@@ -403,7 +403,7 @@ var oc = oc || {};
     oc.ready(function(){
 
       if(href !== ''){
-        var hrefWithCount = href;
+        let hrefWithCount = href;
         if(RETRY_SEND_NUMBER) {
           hrefWithCount = addParametersToHref(hrefWithCount, {
             '__oc_Retry': retryNumber
@@ -435,7 +435,7 @@ var oc = oc || {};
 
               if(apiResponse.html.indexOf('<' + OC_TAG) === 0){
 
-                var innerHtmlPlusEnding = apiResponse.html.slice(apiResponse.html.indexOf('>') + 1),
+                let innerHtmlPlusEnding = apiResponse.html.slice(apiResponse.html.indexOf('>') + 1),
                     innerHtml = innerHtmlPlusEnding.slice(0, innerHtmlPlusEnding.lastIndexOf('<'));
 
                 apiResponse.html = innerHtml;
@@ -464,10 +464,10 @@ var oc = oc || {};
 
   oc.renderUnloadedComponents = function(){
     oc.ready(function(){
-      var $unloadedComponents = oc.$(OC_TAG + '[data-rendered!=true]'),
+      let $unloadedComponents = oc.$(OC_TAG + '[data-rendered!=true]'),
           toDo = $unloadedComponents.length;
 
-      var done = function(){
+      const done = function(){
         toDo--;
         if(!toDo){
           oc.renderUnloadedComponents();
@@ -475,7 +475,7 @@ var oc = oc || {};
       };
 
       if(toDo > 0){
-        for(var i = 0; i < $unloadedComponents.length; i++){
+        for(let i = 0; i < $unloadedComponents.length; i++){
           oc.renderNestedComponent(oc.$($unloadedComponents[i]), done);
         }
       }
@@ -490,7 +490,7 @@ var oc = oc || {};
 
       if(oc.$(placeholder)){
         oc.$(placeholder).html('<' + OC_TAG + ' href="' + href + '" />');
-        var newComponent = oc.$(OC_TAG, placeholder);
+        const newComponent = oc.$(OC_TAG, placeholder);
         oc.renderNestedComponent(newComponent, function(){
           callback(newComponent);
         });
