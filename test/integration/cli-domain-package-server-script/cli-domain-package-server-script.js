@@ -63,7 +63,6 @@ describe('cli : domain : package-server-script', function(){
               } catch(e) {
                 return done(e);
               }
-              return done('error');
             }
           );
         } catch (e) {
