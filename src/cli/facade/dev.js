@@ -140,10 +140,7 @@ module.exports = function(dependencies){
     log.warn(strings.messages.cli.SCANNING_COMPONENTS, true);
     local.getComponentsByDir(componentsDir, function(err, components){
 
-      if(err){
-        callback(err);
-        return log.err(err);
-      } else if(_.isEmpty(components)){
+      if(_.isEmpty(components)){
         err = format(errors.DEV_FAIL, errors.COMPONENTS_NOT_FOUND);
         callback(err);
         return log.err(err);        
