@@ -11,7 +11,7 @@ var packageComponents = require('./package-components');
 var mock = require('./mock');
 var validator = require('../../registry/domain/validators');
 
-module.exports = function(dependencies){
+module.exports = function(){
 
   return _.extend(this, {
     cleanup: function(compressedPackagePath, callback){
@@ -30,7 +30,7 @@ module.exports = function(dependencies){
         }
       }, callback);
     },
-    getComponentsByDir: getComponentsByDir(dependencies),
+    getComponentsByDir: getComponentsByDir(),
     getLocalNpmModules: getLocalNpmModules(),
     init: function(componentName, templateType, callback){
 

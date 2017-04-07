@@ -17,7 +17,7 @@ var logger = {
 };
 
 var dependencies = {
-  local: new Local({ logger: logger }),
+  local: new Local(),
   logger: logger,
   registry: new Registry()
 };
