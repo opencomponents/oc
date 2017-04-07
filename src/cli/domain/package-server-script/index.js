@@ -1,5 +1,6 @@
 'use strict';
 
+var async = require('async');
 var fs = require('fs-extra');
 var path = require('path');
 
@@ -18,14 +19,16 @@ module.exports = function packageServerScript(params, callback){
     dataPath: path.join(params.componentPath, params.ocOptions.files.data)
   };
 
-  bundle(bundleParams, function(err, bundledServer){
+  bundle(bundleParams, function(err, bundledFiles){
     if (err) {
       return callback(err);
     } else {
-      fs.writeFile(path.join(publishPath, fileName), bundledServer, function(err){
+      async.eachOf(bundledFiles, function(bundledFileContent, bundledFileName, next){
+        fs.writeFile(path.join(publishPath, bundledFileName), bundledFileContent, next);
+      }, function(err){
         callback(err, {
           type: 'node.js',
-          hashKey: hashBuilder.fromString(bundledServer),
+          hashKey: hashBuilder.fromString(bundledFiles[fileName]),
           src: fileName
         });
       });

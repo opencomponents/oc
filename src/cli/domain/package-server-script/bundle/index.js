@@ -37,7 +37,9 @@ module.exports = function bundle(params, callBack) {
       console.log(log);
     }
 
-    var serverContentBundled = memoryFs.readFileSync('/build/server.js', 'UTF8');
-    callBack(warning, serverContentBundled);
+    callBack(warning, {
+      'server.js': memoryFs.readFileSync('/build/server.js', 'UTF8'),
+      'server.js.map': memoryFs.readFileSync('/build/server.js.map', 'UTF8')
+    });
   });
 };
