@@ -98,13 +98,27 @@ describe('registry : routes : helpers : apply-default-values', function(){
       });
 
       describe('when request doesn\'t specify values of optional parameters', function(){
-        before(function(){
-          parameters = apply({ mandatory: 'request value' }, componentParameters);
+
+        describe('when string parameter is undefined', function(){
+          before(function(){
+            parameters = apply({ mandatory: 'request value' }, componentParameters);
+          });
+
+          it('should return requestParameters with default values of optional parameters', function(){
+            expect(parameters).to.eql({ mandatory: 'request value', optional: 'default value of optional parameter', optional2: false
+           });
+          });
         });
 
-        it('should return requestParameters with default values of optional parameters', function(){
-          expect(parameters).to.eql({ mandatory: 'request value', optional: 'default value of optional parameter', optional2: false
-         });
+        describe('when string parameter is null', function(){
+          before(function(){
+            parameters = apply({ mandatory: 'request value', optional: null }, componentParameters);
+          });
+
+          it('should return requestParameters with default values of optional parameters', function(){
+            expect(parameters).to.eql({ mandatory: 'request value', optional: 'default value of optional parameter', optional2: false
+           });
+          });
         });
       });
     });
