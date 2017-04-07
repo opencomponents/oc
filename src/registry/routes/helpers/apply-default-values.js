@@ -8,7 +8,8 @@ module.exports = function(requestParameters, expectedParameters) {
   });
   
   _.forEach(optionalParametersWithDefaults, function(expectedParameter, expectedParameterName){
-    if(!_.has(requestParameters, expectedParameterName)) {
+  	var param = requestParameters[expectedParameterName];
+    if(_.isUndefined(param) || _.isNull(param)) {
       requestParameters[expectedParameterName] = expectedParameter.default;
     }
   });

@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.36.18
+- [#446](https://github.com/opentable/oc/pull/446) Consider null a valid string
+
 ### v0.36.17
 - [#443](https://github.com/opentable/oc/pull/443) Use baseUrl as default with host as fallback
 - [#444](https://github.com/opentable/oc/pull/444) Require templates is broken

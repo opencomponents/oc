@@ -763,7 +763,8 @@ describe('registry', function(){
               body: {
                 parameters: { firstName: 'John' },
                 components: [
-                  {name:'welcome-with-optional-parameters', parameters: { lastName: 'Smith', nick: 'smithy'}},
+                  {name:'welcome-with-optional-parameters', parameters: { lastName: 'Smith', nick: 'smithy' }},
+                  {name:'welcome-with-optional-parameters', parameters: { lastName: 'Smith', nick: null }},
                   {name:'welcome-with-optional-parameters', parameters: { lastName: 'Smith'}},
                   {name:'welcome-with-optional-parameters', parameters: { nick: 'smithy'}}
                 ]
@@ -776,14 +777,16 @@ describe('registry', function(){
             expect(result[0].response.href).to.equal('http://localhost:3030/welcome-with-optional-parameters?firstName=John&lastName=Smith&nick=smithy');
           });
 
-          it('should render second component with default value of nick', function(){
+          it('should render second and third components with default value of nick', function(){
             expect(result[1].response.html).to.equal('<span>hi John Smith (Johnny)</span>');
             expect(result[1].response.href).to.equal('http://localhost:3030/welcome-with-optional-parameters?firstName=John&lastName=Smith&nick=Johnny');
+            expect(result[2].response.html).to.equal('<span>hi John Smith (Johnny)</span>');
+            expect(result[2].response.href).to.equal('http://localhost:3030/welcome-with-optional-parameters?firstName=John&lastName=Smith&nick=Johnny');
           });
 
-          it('should render third component without value of lastName', function(){
-            expect(result[2].response.html).to.equal('<span>hi John  (smithy)</span>');
-            expect(result[2].response.href).to.equal('http://localhost:3030/welcome-with-optional-parameters?firstName=John&nick=smithy');
+          it('should render fourth component without value of lastName', function(){
+            expect(result[3].response.html).to.equal('<span>hi John  (smithy)</span>');
+            expect(result[3].response.href).to.equal('http://localhost:3030/welcome-with-optional-parameters?firstName=John&nick=smithy');
           });
         });
       });
