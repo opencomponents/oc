@@ -1,5 +1,12 @@
 ## Change Log
 
+### v0.36.17
+- [#443](https://github.com/opentable/oc/pull/443) Use baseUrl as default with host as fallback
+- [#444](https://github.com/opentable/oc/pull/444) Require templates is broken
+- [#430](https://github.com/opentable/oc/pull/430) [GPT-567] Registering supported templates on componentPreview view
+- [#429](https://github.com/opentable/oc/pull/429) [GPT-518] dynamically register templates on browser client
+- [#426](https://github.com/opentable/oc/pull/426) [GPT-565] Dynamic support to oc-templates in oc dev
+
 ### v0.36.16
 - [#432](https://github.com/opentable/oc/pull/432) prepare-server-get-component-parameters
 - [#428](https://github.com/opentable/oc/pull/428) registerTemplate API fix
