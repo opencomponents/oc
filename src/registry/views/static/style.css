@@ -126,10 +126,8 @@ p {
 }
 
 .componentRow .release {
-  padding-left: 20px;
-  padding-bottom: 0px;
-  padding-top: 20px;
-  font-size: 18px;
+  padding: 15px;
+  font-size: 16px;
   margin: 0;
   width: 100%;
 }

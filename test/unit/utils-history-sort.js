@@ -3,12 +3,38 @@
 var expect = require('chai').expect;
 var sinon = require('sinon');
 
-describe.only('utils : historySort', function(){
+describe('utils : historySort', function(){
 
   var historySorted = require('../../src/utils/history-sort');
+  var ds = require('../../src/utils/date-stringify');
 
   describe('when a history of components is provided', function(){
-    var history = require('../../src/registry/history.json');
+    var history = {
+      lastEdit: 1491478634575,
+      components: {
+        'example-component-1': [
+          {
+              lastModified: 1459864868000,
+              version: '1.0.0'
+          },
+          {
+              lastModified: 1467727268000,
+              version: '1.0.1'
+          }
+        ],
+        'example-component-3': [
+            {
+                lastModified: 1491056624678,
+                version: '1.0.0'
+            },
+            {
+                lastModified: 1491402224345,
+                version: '1.0.1'
+            }
+        ]
+      }
+    };
+    
     var componentsHistory;
 
     before(function(){
@@ -17,7 +43,7 @@ describe.only('utils : historySort', function(){
     
     describe('composing the single history object', function(){
       it('should return the publish date of a component', function(){
-        expect(componentsHistory[0].lastModified).to.equal('2017/04/05 15:23:44');
+        expect(componentsHistory[0].lastModified).to.equal(ds(new Date(1491402224345)));
       });
       
       it('should return the version of a component', function(){
@@ -32,7 +58,6 @@ describe.only('utils : historySort', function(){
     describe('sorting the entries by date', function(){
       it('should return the publish date of a component', function(){
         expect(new Date(componentsHistory[0].lastModified)).to.be.above(new Date(componentsHistory[1].lastModified));
-        expect(new Date(componentsHistory[1].lastModified)).to.be.above(new Date(componentsHistory[2].lastModified));
       });
     });
   });
