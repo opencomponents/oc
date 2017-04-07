@@ -185,7 +185,7 @@
     "no-useless-escape": "off",
     "no-useless-rename": "error",
     "no-useless-return": "error",
-    "no-var": "off",
+    "no-var": "error",
     "no-void": "off",
     "no-warning-comments": "error",
     "no-whitespace-before-property": "error",
@@ -204,7 +204,7 @@
     "operator-linebreak": "off",
     "padded-blocks": "off",
     "prefer-arrow-callback": "off",
-    "prefer-const": "off",
+    "prefer-const": "error",
     "prefer-destructuring": [
       "error",
       {
