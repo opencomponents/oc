@@ -19,10 +19,10 @@ var validator = require('./domain/validators');
 module.exports = function(options){
 
   var repository,
-      self = this,
-      server,
-      validationResult = validator.validateRegistryConfiguration(options),
-      plugins = [];
+    self = this,
+    server,
+    validationResult = validator.validateRegistryConfiguration(options),
+    plugins = [];
 
   if(!validationResult.isValid){
     throw validationResult.message;
@@ -88,9 +88,9 @@ module.exports = function(options){
           if(_.isObject(componentsInfo)){
 
             var componentsNumber = _.keys(componentsInfo.components).length,
-                componentsReleases = _.reduce(componentsInfo.components, function(memo, component){
-                  return (parseInt(memo, 10) + component.length);
-                });
+              componentsReleases = _.reduce(componentsInfo.components, function(memo, component){
+                return (parseInt(memo, 10) + component.length);
+              });
 
             console.log(format(colors.green('Registry serving {0} components for a total of {1} releases.', componentsNumber, componentsReleases)));
           }

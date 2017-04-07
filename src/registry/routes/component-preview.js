@@ -38,7 +38,7 @@ module.exports = function(conf, repository){
 
       if(registryError && conf.fallbackRegistryUrl) {
         return getComponentFallback.getComponentPreview(conf, req, res, registryError, function(fallbackError, fallbackComponent){
-            componentPreview(fallbackError, req, res, fallbackComponent, repository.getTemplates());
+          componentPreview(fallbackError, req, res, fallbackComponent, repository.getTemplates());
         });
       }
 

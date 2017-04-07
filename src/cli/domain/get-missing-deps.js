@@ -10,7 +10,7 @@ module.exports = function(dependencies){
   _.forEach(dependencies, function(npmModule){
  
     var index = npmModule.indexOf('@'),
-        moduleName = npmModule;
+      moduleName = npmModule;
     
     if (index > 0) {
       moduleName = npmModule.substr(0, index);

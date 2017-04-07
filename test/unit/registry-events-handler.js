@@ -10,7 +10,7 @@ describe('registry : events-handler', function(){
   describe('when requiring it multiple times', function(){
 
     var spy = sinon.spy(),
-        handler2;
+      handler2;
 
     before(function(){
       eventsHandler.on('eventName', spy);
@@ -30,7 +30,7 @@ describe('registry : events-handler', function(){
   describe('when firing an event that has multiple subscribers', function(){
 
     var spy = sinon.spy(),
-        c = 0;
+      c = 0;
 
     before(function(){
       eventsHandler.on('fire', function(payload){ spy(++c, payload); });

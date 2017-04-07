@@ -20,7 +20,7 @@ module.exports = function(options){
     getData: function(){
 
       var delta = process.hrtime(start),
-          nanosec = delta[0] * 1e9 + delta[1];
+        nanosec = delta[0] * 1e9 + delta[1];
 
       eventData.duration = nanosec / 1e3;
 

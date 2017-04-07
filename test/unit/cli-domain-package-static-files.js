@@ -9,9 +9,9 @@ var _ = require('underscore');
 describe('cli : domain : package-static-files', function(){
 
   var packageStaticFiles,
-      error,
-      mocks,
-      minifyMocks;
+    error,
+    mocks,
+    minifyMocks;
 
   var initialise = function(mocks, params, cb){
     packageStaticFiles = injectr('../../src/cli/domain/package-static-files/index.js', mocks, { console: console });

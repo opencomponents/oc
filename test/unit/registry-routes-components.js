@@ -6,11 +6,11 @@ var sinon = require('sinon');
 describe('registry : routes : components', function(){
 
   var ComponentsRoute = require('../../src/registry/routes/components'),
-      mockedComponents = require('../fixtures/mocked-components'),
-      mockedRepository,
-      componentsRoute,
-      code,
-      response;
+    mockedComponents = require('../fixtures/mocked-components'),
+    mockedRepository,
+    componentsRoute,
+    code,
+    response;
   
   var initialise = function(params){
     mockedRepository = {
@@ -149,22 +149,22 @@ describe('registry : routes : components', function(){
     });
 
     var expectedResponse = [{
-        status: 200,
-        response: {
-          name: 'async-error2-component',
-          type: 'oc-component',
-          requestVersion: '1.X.X',
-          version: '1.0.0',
-        }
-      }, {
-        status: 200,
-        response: {
-          name: 'async-error2-component',
-          type: 'oc-component',
-          requestVersion: '1.0.0',
-          version: '1.0.0',
-        }
-      }];
+      status: 200,
+      response: {
+        name: 'async-error2-component',
+        type: 'oc-component',
+        requestVersion: '1.X.X',
+        version: '1.0.0',
+      }
+    }, {
+      status: 200,
+      response: {
+        name: 'async-error2-component',
+        type: 'oc-component',
+        requestVersion: '1.0.0',
+        version: '1.0.0',
+      }
+    }];
 
     it('should return a response containing components in the correct order', function(){
       expect(response).to.be.eql(expectedResponse);

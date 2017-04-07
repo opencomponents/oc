@@ -8,15 +8,15 @@ var _ = require('underscore');
 describe('registry : routes : helpers : get-component', function(){
 
   var fireStub = sinon.stub(),
-      mockedComponents = require('../fixtures/mocked-components'),
-      mockedRepository,
-      getComponent,
-      GetComponent = injectr('../../src/registry/routes/helpers/get-component.js', {
-        '../../domain/events-handler': {
-          on: _.noop,
-          fire: fireStub
-        }
-      }, { console: console, Buffer: Buffer, setTimeout: setTimeout });
+    mockedComponents = require('../fixtures/mocked-components'),
+    mockedRepository,
+    getComponent,
+    GetComponent = injectr('../../src/registry/routes/helpers/get-component.js', {
+      '../../domain/events-handler': {
+        on: _.noop,
+        fire: fireStub
+      }
+    }, { console: console, Buffer: Buffer, setTimeout: setTimeout });
   
   var initialise = function(params){
     mockedRepository = {
@@ -34,7 +34,7 @@ describe('registry : routes : helpers : get-component', function(){
       initialise(mockedComponents['async-error2-component']);
       getComponent = new GetComponent({}, mockedRepository);
 
-     getComponent({
+      getComponent({
         name: 'async-error2-component',
         headers: {},
         parameters: {},

@@ -14,7 +14,7 @@ var urlParser = require('../domain/url-parser');
 var getOcVersion = function(){
 
   var ocPackagePath = path.join(__dirname, '../../../package.json'),
-      ocInfo = fs.readJsonSync(ocPackagePath);
+    ocInfo = fs.readJsonSync(ocPackagePath);
 
   return ocInfo.version;
 };
@@ -67,7 +67,7 @@ module.exports = function(opts){
     },
     get: function(callback){
       if(opts.registry){
-          return callback(null, [opts.registry]);
+        return callback(null, [opts.registry]);
       }
 
       fs.readJson(settings.configFile.src, function(err, res){

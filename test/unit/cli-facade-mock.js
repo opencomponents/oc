@@ -7,10 +7,10 @@ var sinon = require('sinon');
 describe('cli : facade : mock', function(){
 
   var logSpy = {},
-      MockFacade = require('../../src/cli/facade/mock'),
-      Local = require('../../src/cli/domain/local'),
-      local = new Local(),
-      mockFacade = new MockFacade({ local: local, logger: logSpy });
+    MockFacade = require('../../src/cli/facade/mock'),
+    Local = require('../../src/cli/domain/local'),
+    local = new Local(),
+    mockFacade = new MockFacade({ local: local, logger: logSpy });
 
   var execute = function(){
     logSpy.log = sinon.spy();

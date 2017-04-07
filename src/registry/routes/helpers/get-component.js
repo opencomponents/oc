@@ -24,15 +24,15 @@ var requireTemplate = require('../../../utils/require-template');
 
 module.exports = function(conf, repository){
   var client = new Client(),
-      cache = new Cache({
-        verbose: !!conf.verbosity,
-        refreshInterval: conf.refreshInterval
-      });
+    cache = new Cache({
+      verbose: !!conf.verbosity,
+      refreshInterval: conf.refreshInterval
+    });
 
   var renderer = function(options, cb){
     var nestedRenderer = new NestedRenderer(renderer, options.conf),
-        retrievingInfo = new GetComponentRetrievingInfo(options),
-        responseHeaders = {};
+      retrievingInfo = new GetComponentRetrievingInfo(options),
+      responseHeaders = {};
 
     var getLanguage = function(){
       var paramOverride = !!options.parameters && options.parameters['__ocAcceptLanguage'];
@@ -54,13 +54,13 @@ module.exports = function(conf, repository){
     };
 
     var conf = options.conf,
-        acceptLanguage = getLanguage(),
-        componentCallbackDone = false,
-        requestedComponent = {
-          name: options.name,
-          version: options.version || '',
-          parameters: options.parameters
-        };
+      acceptLanguage = getLanguage(),
+      componentCallbackDone = false,
+      requestedComponent = {
+        name: options.name,
+        version: options.version || '',
+        parameters: options.parameters
+      };
 
     repository.getComponent(requestedComponent.name, requestedComponent.version, function(err, component){
 
@@ -108,8 +108,8 @@ module.exports = function(conf, repository){
 
       // sanitise and check params
       var appliedParams = applyDefaultValues(requestedComponent.parameters, component.oc.parameters),
-          params = sanitiser.sanitiseComponentParameters(appliedParams, component.oc.parameters),
-          validationResult = validator.validateComponentParameters(params, component.oc.parameters);
+        params = sanitiser.sanitiseComponentParameters(appliedParams, component.oc.parameters),
+        validationResult = validator.validateComponentParameters(params, component.oc.parameters);
 
       if(!validationResult.isValid){
         return callback({
@@ -154,7 +154,7 @@ module.exports = function(conf, repository){
         }, conf.baseUrl);
 
         var isUnrendered = options.headers.accept === settings.registry.acceptUnrenderedHeader,
-            renderMode = isUnrendered ? 'unrendered' : 'rendered';
+          renderMode = isUnrendered ? 'unrendered' : 'rendered';
 
         var response = {
           type: conf.local ? 'oc-component-local' : 'oc-component',
@@ -192,17 +192,17 @@ module.exports = function(conf, repository){
         } else {
 
           var cacheKey = format('{0}/{1}/template.js', component.name, component.version),
-              cached = cache.get('file-contents', cacheKey),
-              key = component.oc.files.template.hashKey,
-              renderOptions = {
-                href: componentHref,
-                key: key,
-                version: component.version,
-                name: component.name,
-                templateType: component.oc.files.template.type,
-                container: component.oc.container,
-                renderInfo: component.oc.renderInfo
-              };
+            cached = cache.get('file-contents', cacheKey),
+            key = component.oc.files.template.hashKey,
+            renderOptions = {
+              href: componentHref,
+              key: key,
+              version: component.version,
+              name: component.name,
+              templateType: component.oc.files.template.type,
+              container: component.oc.container,
+              renderInfo: component.oc.renderInfo
+            };
 
           var returnResult = function(template){
             client.renderTemplate(template, data, renderOptions, function(err, html){
@@ -253,30 +253,30 @@ module.exports = function(conf, repository){
       } else {
 
         var cacheKey = format('{0}/{1}/server.js', component.name, component.version),
-            cached = cache.get('file-contents', cacheKey),
-            domain = Domain.create(),
-            contextObj = {
-              acceptLanguage: acceptLanguageParser.parse(acceptLanguage),
-              baseUrl: conf.baseUrl,
-              env: conf.env,
-              params: params,
-              plugins: conf.plugins,
-              renderComponent: nestedRenderer.renderComponent,
-              renderComponents: nestedRenderer.renderComponents,
-              requestHeaders: options.headers,
-              staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', ''),
-              setHeader: function(header, value) {
-                if (!(typeof(header) === 'string' && typeof(value) === 'string')) {
-                  throw strings.errors.registry.COMPONENT_SET_HEADER_PARAMETERS_NOT_VALID;
-                }
+          cached = cache.get('file-contents', cacheKey),
+          domain = Domain.create(),
+          contextObj = {
+            acceptLanguage: acceptLanguageParser.parse(acceptLanguage),
+            baseUrl: conf.baseUrl,
+            env: conf.env,
+            params: params,
+            plugins: conf.plugins,
+            renderComponent: nestedRenderer.renderComponent,
+            renderComponents: nestedRenderer.renderComponents,
+            requestHeaders: options.headers,
+            staticPath: repository.getStaticFilePath(component.name, component.version, '').replace('https:', ''),
+            setHeader: function(header, value) {
+              if (!(typeof(header) === 'string' && typeof(value) === 'string')) {
+                throw strings.errors.registry.COMPONENT_SET_HEADER_PARAMETERS_NOT_VALID;
+              }
 
-                if (header && value) {
-                  responseHeaders = responseHeaders || {};
-                  responseHeaders[header.toLowerCase()] = value;
-                }
-              },
-              templates: repository.getTemplates()
-            };
+              if (header && value) {
+                responseHeaders = responseHeaders || {};
+                responseHeaders[header.toLowerCase()] = value;
+              }
+            },
+            templates: repository.getTemplates()
+          };
 
         var setCallbackTimeout = function(){
           if(!!conf.executionTimeout){
@@ -339,7 +339,7 @@ module.exports = function(conf, repository){
               }
 
               var usedPlugins = detective.parse(dataProcessorJs),
-                  unRegisteredPlugins = _.difference(usedPlugins, _.keys(conf.plugins));
+                unRegisteredPlugins = _.difference(usedPlugins, _.keys(conf.plugins));
 
               if(!_.isEmpty(unRegisteredPlugins)){
                 componentCallbackDone = true;

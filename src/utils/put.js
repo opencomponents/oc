@@ -14,9 +14,9 @@ module.exports = function(urlPath, files, headers, callback) {
   }
 
   var form = new FormData(),
-      body = '',
-      callbackDone = false,
-      options = _.extend(url.parse(urlPath), { method: 'PUT' });
+    body = '',
+    callbackDone = false,
+    options = _.extend(url.parse(urlPath), { method: 'PUT' });
 
   if(!_.isArray(files)){
     files = [files];

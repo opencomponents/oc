@@ -4,7 +4,7 @@ var _ = require('underscore');
 
 module.exports = function(componentRequirements, registryPlugins){
   var result = { isValid: true },
-      missing = [];
+    missing = [];
 
   _.forEach(componentRequirements || [], function(requiredPlugin){
     if(!registryPlugins || _.isEmpty(registryPlugins) || !_.contains(_.keys(registryPlugins), requiredPlugin)){

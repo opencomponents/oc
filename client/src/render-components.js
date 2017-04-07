@@ -13,8 +13,8 @@ module.exports = function(cache, renderTemplate){
   var fetchTemplateAndRender = function(component, options, cb){
 
     var data = component.data,
-        isLocal = component.type === 'oc-component-local',
-        useCache = !isLocal;
+      isLocal = component.type === 'oc-component-local',
+      useCache = !isLocal;
         
     getCompiledTemplate(component.template, useCache, options.timeout, function(err, template){
       if(!!err){ return cb(err); }

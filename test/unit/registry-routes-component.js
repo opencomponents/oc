@@ -7,8 +7,8 @@ var _ = require('underscore');
 describe('registry : routes : component', function(){
 
   var ComponentRoute = require('../../src/registry/routes/component'),
-      mockedComponents = require('../fixtures/mocked-components'),
-      mockedRepository, resJsonStub, resSetStub, statusStub, componentRoute;
+    mockedComponents = require('../fixtures/mocked-components'),
+    mockedRepository, resJsonStub, resSetStub, statusStub, componentRoute;
   
   var initialise = function(params){
     resJsonStub = sinon.stub();

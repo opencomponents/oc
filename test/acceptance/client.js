@@ -7,19 +7,19 @@ var path = require('path');
 describe('The node.js OC client', function(){
 
   var registry,
-      client,
-      clientOfflineRegistry,
-      result,
-      oc = require('../../src/index'),
-      $component,
-      conf = {          
-        local: true,
-        path: path.resolve('test/fixtures/components'),
-        port: 3030,
-        baseUrl: 'http://localhost:3030/',
-        env: { name: 'local' },
-        verbosity: 0
-      };
+    client,
+    clientOfflineRegistry,
+    result,
+    oc = require('../../src/index'),
+    $component,
+    conf = {          
+      local: true,
+      path: path.resolve('test/fixtures/components'),
+      port: 3030,
+      baseUrl: 'http://localhost:3030/',
+      env: { name: 'local' },
+      verbosity: 0
+    };
 
   var getClientConfig = function(port){
     return {
@@ -227,7 +227,7 @@ describe('The node.js OC client', function(){
           expect(error.length).to.be.equal(2);
 
           var exp = getRegExpFromJson(expectedRequest),
-              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\' + 
+            expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\' + 
                          '(400 The request body is malformed: component 0 must have name property, ' + 
                          'component 1 must have name property\\)');
 
@@ -278,7 +278,7 @@ describe('The node.js OC client', function(){
 
         it('should return rendered content for rendered component', function(){
           expect($components['hello-world']).to.equal('Hello world!');
-          });
+        });
 
         it('should return browser oc tag for unrendered component', function(){
           expect($components['no-containers'].attr('href')).to.equal('http://localhost:3030/no-containers');
@@ -572,7 +572,7 @@ describe('The node.js OC client', function(){
         it('should contain the error details', function(){
 
           var exp = getRegExpFromJson(expectedRequest),
-              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
+            expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
 
           var actual = error.toString();
           expect(actual).to.match(expected);
@@ -582,7 +582,7 @@ describe('The node.js OC client', function(){
       describe('when client-side failover rendering enabled (default)', function(){
 
         var $clientScript,
-            error;
+          error;
 
         before(function(done){
           clientOfflineRegistry.renderComponent('hello-world', function(err, html){
@@ -610,7 +610,7 @@ describe('The node.js OC client', function(){
         it('should contain the error details', function(){
 
           var exp = getRegExpFromJson(expectedRequest),
-              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
+            expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
 
           expect(error.toString()).to.match(expected);
         });
@@ -619,16 +619,16 @@ describe('The node.js OC client', function(){
       describe('when client-side failover rendering enabled with forwardAcceptLanguageToClient=true', function(){
 
         var $clientScript,
-            error,
-            options = { 
-              forwardAcceptLanguageToClient: true,
-              parameters: {
-                hi: 'john'
-              },
-              headers: {
-                'accept-language': 'da, en-gb;q=0.8, en;q=0.7'
-              }
-            };
+          error,
+          options = { 
+            forwardAcceptLanguageToClient: true,
+            parameters: {
+              hi: 'john'
+            },
+            headers: {
+              'accept-language': 'da, en-gb;q=0.8, en;q=0.7'
+            }
+          };
 
         before(function(done){
           clientOfflineRegistry.renderComponent('hello-world', options, function(err, html){
@@ -664,7 +664,7 @@ describe('The node.js OC client', function(){
           };
 
           var exp = getRegExpFromJson(expectedRequestWithExtraParams),
-              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
+            expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
 
           expect(error.toString()).to.match(expected);
         });
@@ -703,7 +703,7 @@ describe('The node.js OC client', function(){
 
         it('should contain the error details', function(){
           var exp = getRegExpFromJson(expectedRequest),
-              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed ' + 
+            expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed ' + 
                          '\\(404 Component "non-existing-component" not found on local repository\\)');
 
           expect(error.toString()).to.match(expected);
@@ -744,7 +744,7 @@ describe('The node.js OC client', function(){
         it('should contain the error details', function(){
 
           var exp = getRegExpFromJson(expectedRequest),
-              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(timeout\\)');
+            expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(timeout\\)');
 
           expect(error.toString()).to.match(expected);
         });
