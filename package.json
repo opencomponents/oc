@@ -31,7 +31,7 @@
     "chai": "1.10.0",
     "cheerio": "0.22.0",
     "grunt": "^1.0.1",
-    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-eslint": "^19.0.0",
     "grunt-git": "^1.0.0",
     "grunt-karma": "^2.0.0",
     "grunt-mocha-test": "^0.12.7",
