@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.36.20
+- [#449](https://github.com/opentable/oc/pull/449) No unused variables
+
 ### v0.36.19
 - [#447](https://github.com/opentable/oc/pull/447) Components by dir cleanup
 
