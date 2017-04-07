@@ -9,7 +9,7 @@ describe('cli : facade : init', function(){
   var logSpy = {},
       InitFacade = require('../../src/cli/facade/init'),
       Local = require('../../src/cli/domain/local'),
-      local = new Local({ logger: { log: function(){} } }),
+      local = new Local(),
       initFacade = new InitFacade({ local: local, logger: logSpy });
 
   var execute = function(componentName, templateType){

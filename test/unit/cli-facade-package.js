@@ -10,7 +10,7 @@ describe('cli : facade : package', function(){
 
   var logSpy = {},
       Local = require('../../src/cli/domain/local'),
-      local = new Local({ logger: { log: function(){} } }),
+      local = new Local(),
       readStub = sinon.stub().yields(null, 'test'),
       PackageFacade = require('../../src/cli/facade/package.js'),
       packageFacade = new PackageFacade({ local: local, logger: logSpy });
