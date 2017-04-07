@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.36.21
+- [#450](https://github.com/opentable/oc/pull/450) Replace jshint by eslint
+
 ### v0.36.20
 - [#449](https://github.com/opentable/oc/pull/449) No unused variables
 
