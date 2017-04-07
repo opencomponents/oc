@@ -4,14 +4,12 @@ var colors = require('colors/safe');
 var expect = require('chai').expect;
 var path = require('path');
 var sinon = require('sinon');
-var _ = require('underscore');
 
 describe('cli : facade : package', function(){
 
   var logSpy = {},
       Local = require('../../src/cli/domain/local'),
       local = new Local(),
-      readStub = sinon.stub().yields(null, 'test'),
       PackageFacade = require('../../src/cli/facade/package.js'),
       packageFacade = new PackageFacade({ local: local, logger: logSpy });
 

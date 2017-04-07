@@ -1,6 +1,5 @@
 'use strict';
 
-var expect = require('chai').expect;
 var injectr = require('injectr');
 var sinon = require('sinon');
 
@@ -10,7 +9,7 @@ describe('client : get-component-data', () => {
     const baseUrl = 'http://localhost:3030';
     const resultUrl = 'http://localhost:3030/hello-world/1.0.0/?p1=v1&p2=v2';
     
-    const minimalRequestStub = sinon.stub().yields(true); //Returns error for every request
+    const minimalRequestStub = sinon.stub().yields(true);
     const serverStub = sinon.stub().returns(baseUrl);
     const prepareServerGetStub = sinon.stub().returns(resultUrl);
 
@@ -23,7 +22,7 @@ describe('client : get-component-data', () => {
     before(done => {
       let getComponentDataPrototype = injectr('../../client/src/get-components-data.js', {
         'minimal-request': minimalRequestStub,
-        './href-builder': function(config) {
+        './href-builder': function() {
           return {
             server: serverStub,
             prepareServerGet: prepareServerGetStub
@@ -59,11 +58,11 @@ describe('client : get-component-data', () => {
 
     it('a GET request is made with the URL returned by href-builder.prepareServerGet method', () => {
       sinon.assert.calledWith(minimalRequestStub, {
-          headers: options.headers,
-          json: true,
-          method: 'get',
-          timeout: 10,
-          url: resultUrl
+        headers: options.headers,
+        json: true,
+        method: 'get',
+        timeout: 10,
+        url: resultUrl
       });
     });
   });
@@ -94,7 +93,7 @@ describe('client : get-component-data', () => {
     before(done => {
       let getComponentDataPrototype = injectr('../../client/src/get-components-data.js', {
         'minimal-request': minimalRequestStub,
-        './href-builder': function(config) {
+        './href-builder': function() {
           return {
             server: serverStub,
             prepareServerGet: prepareServerGetStub
@@ -130,15 +129,15 @@ describe('client : get-component-data', () => {
 
     it('a POST request is made with the URL returned by href-builder.server method', () => {
       sinon.assert.calledWith(minimalRequestStub, {
-          headers: options.headers,
-          json: true,
-          method: 'post',
-          timeout: 10,
-          url: baseUrl,
-          body: {
-            components: [component0, component1],
-            parameters: options.parameters
-          }
+        headers: options.headers,
+        json: true,
+        method: 'post',
+        timeout: 10,
+        url: baseUrl,
+        body: {
+          components: [component0, component1],
+          parameters: options.parameters
+        }
       });
     });
   });

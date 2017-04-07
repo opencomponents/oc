@@ -22,7 +22,7 @@ module.exports = function packageServerScript(params, callback){
     if (err) {
       return callback(err);
     } else {
-      fs.writeFile(path.join(publishPath, fileName), bundledServer, function(err, res){
+      fs.writeFile(path.join(publishPath, fileName), bundledServer, function(err){
         callback(err, {
           type: 'node.js',
           hashKey: hashBuilder.fromString(bundledServer),

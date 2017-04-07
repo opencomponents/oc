@@ -1,8 +1,6 @@
 'use strict';
 
 var colors = require('colors/safe');
-var format = require('stringformat');
-var _ = require('underscore');
 
 var strings = require('../../resources/index');
 var wrapCliCallback = require('../wrap-cli-callback');
@@ -22,7 +20,7 @@ module.exports = function(dependencies){
 
     callback = wrapCliCallback(callback);
     
-    registry.add(opts.registryUrl, function(err, res){
+    registry.add(opts.registryUrl, function(err){
       if(err){
         log.err(err);
         return callback(err);

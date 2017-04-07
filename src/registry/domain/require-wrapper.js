@@ -1,7 +1,6 @@
 'use strict';
 
 var path = require('path');
-var fs = require('fs-extra');
 var _ = require('underscore');
 var requirePackageName = require('require-package-name');
 

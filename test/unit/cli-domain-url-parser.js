@@ -1,7 +1,6 @@
 'use strict';
 
 var expect = require('chai').expect;
-var sinon = require('sinon');
 
 describe('cli : domain : url-parser', function(){
 

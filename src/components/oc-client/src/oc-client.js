@@ -52,7 +52,6 @@ var oc = oc || {};
 
   // The code
   var debug = oc.conf.debug || false,
-      headScripts = [],
       noop = function(){},
       nav = $window.navigator.userAgent,
       is9 = !!(nav.match(/MSIE 9/)),
@@ -468,7 +467,7 @@ var oc = oc || {};
       var $unloadedComponents = oc.$(OC_TAG + '[data-rendered!=true]'),
           toDo = $unloadedComponents.length;
 
-      var done = function(cb){
+      var done = function(){
         toDo--;
         if(!toDo){
           oc.renderUnloadedComponents();

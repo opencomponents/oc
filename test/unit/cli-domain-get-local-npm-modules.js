@@ -46,7 +46,7 @@ describe('cli : domain : get-local-npm-modules', function(){
 
   describe('when reading modules from dir', function(){
 
-    var error, result;
+    var result;
     beforeEach(function(){
 
       var data = initialise();
@@ -73,7 +73,7 @@ describe('cli : domain : get-local-npm-modules', function(){
 
   describe('when node_modules directory doesn\'t exist', function(){
 
-    var error, result;
+    var result;
     beforeEach(function(){
 
       var data = initialise();

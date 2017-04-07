@@ -1,6 +1,5 @@
 'use strict';
 
-var express = require('express');
 var responseTime = require('response-time');
 
 var eventsHandler = require('../domain/events-handler');

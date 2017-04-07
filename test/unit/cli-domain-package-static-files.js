@@ -15,7 +15,7 @@ describe('cli : domain : package-static-files', function(){
 
   var initialise = function(mocks, params, cb){
     packageStaticFiles = injectr('../../src/cli/domain/package-static-files/index.js', mocks, { console: console });
-    packageStaticFiles(params, function(e, r){
+    packageStaticFiles(params, function(e){
       error = e;
       cb();
     });
