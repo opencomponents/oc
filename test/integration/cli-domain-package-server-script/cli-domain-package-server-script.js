@@ -56,7 +56,7 @@ describe('cli : domain : package-server-script', function(){
               publishPath: publishPath,
               webpack: webpackOptions
             },
-            function(err, res){
+            function(err){
               try {
                 expect(err.toString()).to.contain('Unexpected token, expected , (3:19)');
                 return done();
@@ -218,7 +218,7 @@ describe('cli : domain : package-server-script', function(){
               webpack: webpackOptions,
               dependencies: dependencies
             },
-            function(err, res){
+            function(err){
               expect(err).to.not.be.null;
               expect(err).to.contain('Missing dependencies from package.json => "underscore"');
               done();
@@ -252,7 +252,7 @@ describe('cli : domain : package-server-script', function(){
               webpack: webpackOptions,
               dependencies: dependencies
             },
-            function(err, res){
+            function(err){
               expect(err).to.not.be.null;
               expect(err.toString()).to.contain('Missing dependencies from package.json => "react-dom"');
               done();

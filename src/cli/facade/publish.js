@@ -5,7 +5,6 @@ var colors = require('colors/safe');
 var format = require('stringformat');
 var path = require('path');
 var read = require('read');
-var semver = require('semver');
 var _ = require('underscore');
 
 var strings = require('../../resources/index');
@@ -69,7 +68,7 @@ module.exports = function(dependencies){
     var putComponentToRegistry = function(options, cb){
       log.warn(format(strings.messages.cli.PUBLISHING, options.route));
 
-      registry.putComponent(options, function(err, res){
+      registry.putComponent(options, function(err){
 
         if(!!err){
           if(err === 'Unauthorized'){

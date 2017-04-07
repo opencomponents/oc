@@ -3,7 +3,6 @@
 var cheerio = require('cheerio');
 var expect = require('chai').expect;
 var path = require('path');
-var _ = require('underscore');
 
 describe('The node.js OC client', function(){
 
@@ -330,7 +329,7 @@ describe('The node.js OC client', function(){
             container: false,
             renderInfo: false,
             disableFailoverRendering: true
-          }, function(err, html){
+          }, function(err){
             $errs = err;
             done();
           });
@@ -619,8 +618,7 @@ describe('The node.js OC client', function(){
 
       describe('when client-side failover rendering enabled with forwardAcceptLanguageToClient=true', function(){
 
-        var $componentScript,
-            $clientScript,
+        var $clientScript,
             error,
             options = { 
               forwardAcceptLanguageToClient: true,

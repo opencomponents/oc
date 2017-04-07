@@ -38,7 +38,7 @@ describe('registry : domain : s3', function(){
     }
   });
 
-  var initialise = function(isWin){
+  var initialise = function(){
     mockedS3Client = {
       getObject: sinon.stub(),
       listObjects: sinon.stub(),

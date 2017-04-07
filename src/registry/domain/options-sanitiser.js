@@ -1,6 +1,5 @@
 'use strict';
 
-var express = require('express');
 var _ = require('underscore');
 
 var settings = require('../../resources/settings');

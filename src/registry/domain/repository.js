@@ -41,7 +41,7 @@ module.exports = function(conf){
     });
   
   var local = {
-    getCompiledView: function(componentName, componentVersion){
+    getCompiledView: function(componentName){
       if(componentName === 'oc-client'){
         return fs.readFileSync(path.join(__dirname, '../../components/oc-client/_package/template.js')).toString();
       }
@@ -246,7 +246,7 @@ module.exports = function(conf){
           });
         }
 
-        cdn.putDir(pkgDetails.outputFolder, conf.s3.componentsDir + '/' + componentName + '/' + componentVersion, function(err, res){
+        cdn.putDir(pkgDetails.outputFolder, conf.s3.componentsDir + '/' + componentName + '/' + componentVersion, function(err){
           if(!!err){ return callback(err); }
           componentsCache.refresh(callback);
         });

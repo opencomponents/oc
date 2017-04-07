@@ -2,9 +2,7 @@
 
 var expect = require('chai').expect;
 var injectr = require('injectr');
-var path = require('path');
 var sinon = require('sinon');
-var uglifyJs = require('uglify-js');
 var _ = require('underscore');
 
 var fsMock,
@@ -57,7 +55,7 @@ describe('cli : domain : package-template', function(){
               }
             },
             publishPath: '/path/to/component/_package/'
-          }, function(e, r){
+          }, function(e){
             error = e;
             done();
           });
@@ -86,7 +84,7 @@ describe('cli : domain : package-template', function(){
               }
             },
             publishPath: '/path/to/component/_package/'
-          }, function(e, r){
+          }, function(e){
             error = e;
             done();
           });

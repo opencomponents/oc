@@ -7,8 +7,7 @@ describe('registry : routes : components', function(){
 
   var ComponentsRoute = require('../../src/registry/routes/components'),
       mockedComponents = require('../fixtures/mocked-components'),
-      mockedRepository, 
-      resJsonStub, 
+      mockedRepository,
       componentsRoute,
       code,
       response;

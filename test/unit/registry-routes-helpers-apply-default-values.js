@@ -1,8 +1,6 @@
 'use strict';
 
 var expect = require('chai').expect;
-var sinon = require('sinon');
-var _ = require('underscore');
 
 describe('registry : routes : helpers : apply-default-values', function(){
 

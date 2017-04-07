@@ -56,7 +56,7 @@ describe('registry : domain : extract-package', function(){
 
   describe('when extracting package fails', function(){
 
-    var error, response;
+    var error;
 
     beforeEach(function(done){
       pathResolveStub.reset();
@@ -71,7 +71,7 @@ describe('registry : domain : extract-package', function(){
           name: '1478279453422.tar.gz',
           path: '/some-path/registry/temp/1478279453422.tar.gz'
         }
-      }, function(err, res){
+      }, function(err){
         error = err;
         done();
       });

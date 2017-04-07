@@ -5,7 +5,6 @@ var expect = require('chai').expect;
 var injectr = require('injectr');
 var path = require('path');
 var sinon = require('sinon');
-var _ = require('underscore');
 
 describe('cli : facade : publish', function(){
 
@@ -13,7 +12,7 @@ describe('cli : facade : publish', function(){
       Registry = require('../../src/cli/domain/registry'),
       registry = new Registry(),
       Local = require('../../src/cli/domain/local'),
-      local = new Local({ logger: { log: function(){} } }),
+      local = new Local(),
       readStub = sinon.stub().yields(null, 'test'),
       PublishFacade = injectr('../../src/cli/facade/publish.js', { read: readStub }),
       publishFacade = new PublishFacade({ registry: registry, local: local, logger: logSpy });

@@ -3,7 +3,6 @@
 var expect = require('chai').expect;
 var injctr = require('injectr');
 var sinon = require('sinon');
-var _ = require('underscore');
 
 describe('registry : domain : components-cache', function(){
 
@@ -205,7 +204,7 @@ describe('registry : domain : components-cache', function(){
           mockedCdn.listSubDirectories.onCall(4).yields(null, ['1.0.0']);
 
           initialise();
-          componentsCache.load(function(err, res){
+          componentsCache.load(function(){
             componentsCache.refresh(saveCallbackResult(done));
           });
         });
@@ -234,7 +233,7 @@ describe('registry : domain : components-cache', function(){
           mockedCdn.listSubDirectories.onCall(4).yields(null, ['1.0.0']);
 
           initialise();
-          componentsCache.load(function(err, res){
+          componentsCache.load(function(){
             componentsCache.refresh(saveCallbackResult(done));
           });
         });

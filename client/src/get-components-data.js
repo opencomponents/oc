@@ -2,7 +2,6 @@
 
 var format = require('stringformat');
 var request = require('minimal-request');
-var url = require('url');
 
 var settings = require('./settings');
 var HrefBuilder = require('./href-builder');

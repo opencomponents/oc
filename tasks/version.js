@@ -6,7 +6,7 @@ var semver = require('semver');
 
 var packageJson = require('../package');
 
-module.exports = function(grunt, taskObject){
+module.exports = function(grunt){
 
   grunt.registerTask('version', 'Does the version upgrade', function(versionType){
 

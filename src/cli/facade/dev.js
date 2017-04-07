@@ -41,7 +41,7 @@ module.exports = function(dependencies){
       if(_.isEmpty(missing)){ return cb(); }
 
       log.warn(format(strings.messages.cli.INSTALLING_DEPS, missing.join(', ')));
-      npmInstaller(missing, function(err, result){
+      npmInstaller(missing, function(err){
         if(!!err){
           log.err(err.toString());
           throw err;
@@ -140,10 +140,7 @@ module.exports = function(dependencies){
     log.warn(strings.messages.cli.SCANNING_COMPONENTS, true);
     local.getComponentsByDir(componentsDir, function(err, components){
 
-      if(err){
-        callback(err);
-        return log.err(err);
-      } else if(_.isEmpty(components)){
+      if(_.isEmpty(components)){
         err = format(errors.DEV_FAIL, errors.COMPONENTS_NOT_FOUND);
         callback(err);
         return log.err(err);        
@@ -174,7 +171,7 @@ module.exports = function(dependencies){
           registerPlugins(registry);
 
           log.warn(format(strings.messages.cli.REGISTRY_STARTING, baseUrl));
-          registry.start(function(err, app){
+          registry.start(function(err){
 
             if(err){
               if(err.code === 'EADDRINUSE'){

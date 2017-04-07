@@ -63,8 +63,7 @@ module.exports = function(conf, cdn){
   };
 
   var getFromDirectories = function(cb){
-    var componentsInfo = {},
-        self = this;
+    var componentsInfo = {};
 
     cdn.listSubDirectories(conf.s3.componentsDir, function(err, components){
       if(err){
@@ -105,7 +104,7 @@ module.exports = function(conf, cdn){
   var getAndSaveFromDirectories = function(cb){ 
     getFromDirectories(function(err, components){
       if(!!err){ return cb(err); }
-      saveData(components, function(err, res){
+      saveData(components, function(err){
         if(!!err){ return cb(err); }
         cb(err, components);
       }); 
@@ -123,7 +122,7 @@ module.exports = function(conf, cdn){
           if(!!dirErr){
             return returnError('components_list_get', dirErr, callback);
           } else if(jsonErr || !_.isEqual(dirComponents.components, jsonComponents.components)){
-            saveData(dirComponents, function(saveErr, saveResult){
+            saveData(dirComponents, function(saveErr){
               if(!!saveErr){
                 return returnError('components_list_save', saveErr, callback);
               }

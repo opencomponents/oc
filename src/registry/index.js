@@ -1,7 +1,7 @@
 'use strict';
 
 var async = require('async');
-var colors = require('colors');
+var colors = require('colors/safe');
 var express = require('express');
 var format = require('stringformat');
 var http = require('http');
@@ -83,7 +83,7 @@ module.exports = function(options){
         
         if(!!options.verbosity){
 
-          console.log(format('Registry started at port {0}'.green, self.app.get('port')));
+          console.log(format(colors.green('Registry started at port {0}'), self.app.get('port')));
           
           if(_.isObject(componentsInfo)){
 
@@ -92,7 +92,7 @@ module.exports = function(options){
                   return (parseInt(memo, 10) + component.length);
                 });
 
-            console.log(format('Registry serving {0} components for a total of {1} releases.', componentsNumber, componentsReleases).green);
+            console.log(format(colors.green('Registry serving {0} components for a total of {1} releases.', componentsNumber, componentsReleases)));
           }
         }
 

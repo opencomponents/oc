@@ -69,7 +69,6 @@ module.exports = function(config) {
       var hasErrors = false;
 
       _.each(responses, function(response, i) {
-        var action = actions.requestedComponents[i];
         var responseData = actions.responseData[i];
 
         if (response.status !== 200) {

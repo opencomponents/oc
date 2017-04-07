@@ -8,20 +8,9 @@ var _ = require('underscore');
 
 var initialise = function(){
 
-  var loggerMock = {
-    log: sinon.stub()
-  };
-
   var fsMock = {
-    existsSync: sinon.stub(),
-    lstatSync: sinon.stub(),
-    mkdirSync: sinon.spy(),
     readdirSync: sinon.stub(),
-    readFileSync: sinon.stub(),
-    readJson: sinon.stub(),
-    readJsonSync: sinon.stub(),
-    writeFile: sinon.stub().yields(null, 'ok'),
-    writeJson: sinon.stub().yields(null, 'ok')
+    readJsonSync: sinon.stub()
   };
 
   var pathMock = {
@@ -37,9 +26,9 @@ var initialise = function(){
     path: pathMock
   }, { __dirname: '' });
 
-  var local = new GetComponentsByDir({ logger: loggerMock });
+  var local = new GetComponentsByDir();
 
-  return { local: local, fs: fsMock, logger: loggerMock };
+  return { local: local, fs: fsMock };
 };
 
 var executeComponentsListingByDir = function(local, callback){
@@ -62,18 +51,10 @@ describe('cli : domain : get-components-by-dir', function(){
         '_package'
       ]);
 
-      data.fs.lstatSync.onCall(0).returns({ isDirectory: function(){ return true; }});
-      data.fs.existsSync.onCall(0).returns(true);
       data.fs.readJsonSync.onCall(0).returns({ oc: {}});
-
-      data.fs.lstatSync.onCall(1).returns({ isDirectory: function(){ return true; }});
-      data.fs.existsSync.onCall(1).returns(false);
-
-      data.fs.lstatSync.onCall(2).returns({ isDirectory: function(){ return false; }});
-
-      data.fs.lstatSync.onCall(3).returns({ isDirectory: function(){ return true; }});
-      data.fs.existsSync.onCall(2).returns(true);
-      data.fs.readJsonSync.onCall(1).returns({ oc: { packaged: true }});
+      data.fs.readJsonSync.onCall(1).throws(new Error('ENOENT: no such file or directory'));      
+      data.fs.readJsonSync.onCall(2).throws(new Error('ENOENT: no such file or directory'));
+      data.fs.readJsonSync.onCall(3).returns({ oc: { packaged: true }});
 
       executeComponentsListingByDir(data.local, function(err, res){
         error = err;
@@ -82,14 +63,18 @@ describe('cli : domain : get-components-by-dir', function(){
       });
     });
 
-    it('should add version to package.json file', function(){
+    it('should not error', function(){
+      expect(error).to.be.null;
+    });
+
+    it('should get the correct list', function(){
       expect(result).to.eql(['./a-component']);
     });
   });
 
   describe('when reading a broken package.json', function(){
 
-    var error, result, logger;
+    var error, result;
     beforeEach(function(done){
 
       var data = initialise();
@@ -99,28 +84,55 @@ describe('cli : domain : get-components-by-dir', function(){
         'another-component'
       ]);
 
-      data.fs.lstatSync.onCall(0).returns({ isDirectory: function(){ return true; }});
-      data.fs.existsSync.onCall(0).returns(true);
       data.fs.readJsonSync.onCall(0).throws(new Error('syntax error: fubar'));
-
-      data.fs.lstatSync.onCall(1).returns({ isDirectory: function(){ return true; }});
-      data.fs.existsSync.onCall(1).returns(true);
       data.fs.readJsonSync.onCall(1).returns({ oc: { }});
 
       executeComponentsListingByDir(data.local, function(err, res){
         error = err;
         result = res;
-        logger = data.logger;
         done();
       });
     });
 
-    it('should handle the error and continue loading other components', function(){
-      expect(result).to.eql(['./another-component']);
+    it('should not error', function(){
+      expect(error).to.be.null;
     });
 
-    it('should log the error', function(){
-      expect(logger.log.called).to.eql(true);
+    it('should get the correct list', function(){
+      expect(result).to.eql(['./another-component']);
+    });
+  });
+
+  describe('when finds no components', function(){
+
+    var error, result;
+    beforeEach(function(done){
+
+      var data = initialise();
+
+      data.fs.readdirSync.onCall(0).returns([
+        'a-broken-component',
+        'not-a-component-dir',
+        'file.json'
+      ]);
+
+      data.fs.readJsonSync.onCall(0).throws(new Error('syntax error: fubar'));
+      data.fs.readJsonSync.onCall(1).throws(new Error('ENOENT: no such file or directory'));
+      data.fs.readJsonSync.onCall(2).throws(new Error('ENOENT: no such file or directory'));
+
+      executeComponentsListingByDir(data.local, function(err, res){
+        error = err;
+        result = res;
+        done();
+      });
+    });
+
+    it('should not error', function(){
+      expect(error).to.be.null;
+    });
+
+    it('should get an empty list', function(){
+      expect(result).to.eql([]);
     });
   });
 });

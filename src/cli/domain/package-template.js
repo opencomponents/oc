@@ -7,7 +7,6 @@ var uglifyJs = require('uglify-js');
 
 var hashBuilder = require('../../utils/hash-builder');
 var strings = require('../../resources');
-var validator = require('../../registry/domain/validators');
 var requireTemplate = require('../../utils/require-template');
 
 var javaScriptizeTemplate = function(functionName, data){
@@ -56,7 +55,7 @@ module.exports = function(params, callback){
       if (err) {
         return callback(format('{0} compilation failed - {1}', viewSrc, err));
       }
-      fs.writeFile(path.join(params.publishPath, 'template.js'), compiled.view, function(err, res){
+      fs.writeFile(path.join(params.publishPath, 'template.js'), compiled.view, function(err){
         return callback(err, {
           type: params.ocOptions.files.template.type,
           hashKey: compiled.hash,

@@ -1,6 +1,5 @@
 'use strict';
 
-var _ = require('underscore');
 var expect = require('chai').expect;
 var path = require('path');
 var request = require('minimal-request');
