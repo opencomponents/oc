@@ -33,7 +33,7 @@ module.exports.bind = function(app, options){
 
   app.set('views', path.join(__dirname, '../views'));
   app.set('view engine', 'jade');
-  app.set('view cache', false);
+  app.set('view cache', true);
 
   if(!!options.verbosity){
     app.use(morgan('dev'));
