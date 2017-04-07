@@ -10,7 +10,7 @@ describe('registry : domain : sanitiser', function(){
 
     var sanitise = function(a,b){ return sanitiser.sanitiseComponentParameters(a,b); };
 
-    describe('when component have boolean parameter', function(){
+    describe('when component has boolean parameter', function(){
 
       it('should convert string to boolean when true', function(){
         
@@ -43,10 +43,28 @@ describe('registry : domain : sanitiser', function(){
 
         expect(sanitisedParameters).to.eql({ isTrue: false });
       });
-
     });
 
-    describe('when component have number parameter', function(){
+    describe('when component has string parameter', function(){
+
+      it('should convert null to empty', function(){
+
+        var componentParameters = {
+          myString: {
+            type: 'string',
+            mandatory: false,
+            example: 'hello'
+          }
+        };
+
+        var requestParameters = { myString: null },
+            sanitisedParameters = sanitise(requestParameters, componentParameters);
+
+        expect(sanitisedParameters).to.eql({ myString: '' });
+      });
+    });
+
+    describe('when component has number parameter', function(){
 
       it('should convert string to number', function(){
 

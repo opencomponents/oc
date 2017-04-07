@@ -17,14 +17,11 @@ var sanitise = {
   numberParameter: function(variable){
     return variable*1;
   },
+  stringParameter: function(variable){
+    return _.isNull(variable) ? '' : variable;
+  },
   parameter: function(variable, type){
-    if(type === 'boolean'){
-      return sanitise.booleanParameter(variable);
-    } else if(type === 'number'){
-      return sanitise.numberParameter(variable);
-    }
-
-    return variable;
+    return sanitise[type + 'Parameter'](variable);
   }
 };
 
