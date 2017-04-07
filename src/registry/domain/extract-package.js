@@ -8,10 +8,10 @@ const getPackageJsonFromTempDir = require('./get-package-json-from-temp-dir');
 
 module.exports = function(files, callback){
 
-  let packageFile = files[_.keys(files)[0]],
-      packagePath = path.resolve(packageFile.path),
-      packageUntarOutput = path.resolve(packageFile.path, '..', packageFile.name.replace('.tar.gz', '')),
-      packageOutput = path.resolve(packageUntarOutput, '_package');
+  const packageFile = files[_.keys(files)[0]],
+    packagePath = path.resolve(packageFile.path),
+    packageUntarOutput = path.resolve(packageFile.path, '..', packageFile.name.replace('.tar.gz', '')),
+    packageOutput = path.resolve(packageUntarOutput, '_package');
 
   targz.decompress({
     src: packagePath,

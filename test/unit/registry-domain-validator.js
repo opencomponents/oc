@@ -5,13 +5,13 @@ const injectr = require('injectr');
 
 describe('registry : domain : validator', function(){
 
-  let validator = require('../../src/registry/domain/validators'),
-      baseS3Conf = {
-        bucket: 'oc-components',
-        key: 's3-key',
-        region: 'us-west2',
-        secret: 's3-secret'
-      };
+  const validator = require('../../src/registry/domain/validators'),
+    baseS3Conf = {
+      bucket: 'oc-components',
+      key: 's3-key',
+      region: 'us-west2',
+      secret: 's3-secret'
+    };
 
   describe('when validating registry configuration', function(){
 
@@ -354,8 +354,8 @@ describe('registry : domain : validator', function(){
     const validate = function(a,b){ return validator.validateComponentParameters(a,b); };
 
     describe('when component have not parameters', function(){
-      let componentParameters = {},
-          requestParameters = { hello: 'world' };
+      const componentParameters = {},
+        requestParameters = { hello: 'world' };
 
       it('should be valid', function(){
         expect(validate(requestParameters, componentParameters).isValid).to.be.true;
@@ -692,8 +692,8 @@ describe('registry : domain : validator', function(){
 
   describe('when validating component version for new candidate', function(){
 
-    let existingVersions = ['1.0.0', '1.0.1', '2.0.0', '2.1.0'],
-        isValid = function(a,b){ return validator.validateVersion(a, b); };
+    const existingVersions = ['1.0.0', '1.0.1', '2.0.0', '2.1.0'],
+      isValid = function(a,b){ return validator.validateVersion(a, b); };
 
     describe('when version already exists', function(){
       it('should not be valid', function(){
@@ -820,10 +820,10 @@ describe('registry : domain : validator', function(){
 
     describe('when component does not require any plugin', function(){
 
-      let requirements = null,
-          supportedPlugins = {
-            log: function(){}
-          };
+      const requirements = null,
+        supportedPlugins = {
+          log: function(){}
+        };
 
       it('should be valid', function(){
         expect(validate(requirements, supportedPlugins).isValid).to.be.true;

@@ -6,12 +6,12 @@ const sinon = require('sinon');
 
 describe('cli : facade : dev', function(){
 
-  let logSpy = {},
-      DevFacade = require('../../src/cli/facade/dev'),
-      Local = require('../../src/cli/domain/local'),
-      local = new Local(),
-      npm = require('npm'),
-      devFacade = new DevFacade({ local: local, logger: logSpy });
+  const logSpy = {},
+    DevFacade = require('../../src/cli/facade/dev'),
+    Local = require('../../src/cli/domain/local'),
+    local = new Local(),
+    npm = require('npm'),
+    devFacade = new DevFacade({ local: local, logger: logSpy });
 
   const execute = function(dirName, port){
     logSpy.logNoNewLine = sinon.spy();

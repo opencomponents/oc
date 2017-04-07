@@ -2,7 +2,7 @@
 
 const _ = require('underscore');
 
-var sanitise = {
+const sanitise = {
   booleanParameter: function(variable){
     if(_.isString(variable)){
       if(variable === 'true'){
@@ -43,8 +43,8 @@ module.exports = {
     _.forEach(requestParameters, function(requestParameter, requestParameterName){
       if(_.has(expectedParameters, requestParameterName)){
         
-        let expectedType = expectedParameters[requestParameterName].type,
-            sanitised = sanitise.parameter(requestParameter, expectedType);
+        const expectedType = expectedParameters[requestParameterName].type,
+          sanitised = sanitise.parameter(requestParameter, expectedType);
 
         result[requestParameterName] = sanitised;
       } else if(!_.contains(toRemove, requestParameterName)){

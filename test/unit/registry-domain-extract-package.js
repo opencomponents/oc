@@ -6,8 +6,8 @@ const sinon = require('sinon');
 
 describe('registry : domain : extract-package', function(){
 
-  let decompressStub = sinon.stub(),
-      pathResolveStub = sinon.stub();
+  const decompressStub = sinon.stub(),
+    pathResolveStub = sinon.stub();
 
   const extractPackage = injectr('../../src/registry/domain/extract-package.js', {
     targz: { decompress: decompressStub },

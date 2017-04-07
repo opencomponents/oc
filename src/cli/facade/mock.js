@@ -8,8 +8,8 @@ const wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
   
-  let local = dependencies.local,
-      logger = dependencies.logger;
+  const local = dependencies.local,
+    logger = dependencies.logger;
 
   return function(opts, callback){
 

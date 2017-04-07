@@ -30,8 +30,8 @@ const compileView = function(viewPath, type, cb) {
   ocTemplate.compile({ template, viewPath }, function(err, compiledView){
     if (err) { return cb(err);}
 
-    let hashView = hashBuilder.fromString(compiledView.toString()),
-        javaScriptizedView = javaScriptizeTemplate(hashView, compiledView);
+    const hashView = hashBuilder.fromString(compiledView.toString()),
+      javaScriptizedView = javaScriptizeTemplate(hashView, compiledView);
 
     return cb(null, {
       hash: hashView,
@@ -42,8 +42,8 @@ const compileView = function(viewPath, type, cb) {
 
 module.exports = function(params, callback){
 
-  let viewSrc = params.ocOptions.files.template.src,
-      viewPath = path.join(params.componentPath, viewSrc);
+  const viewSrc = params.ocOptions.files.template.src,
+    viewPath = path.join(params.componentPath, viewSrc);
 
   if(!fs.existsSync(viewPath)){
     return callback(format(strings.errors.cli.TEMPLATE_NOT_FOUND, viewSrc));

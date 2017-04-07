@@ -21,8 +21,8 @@ const validateParameter = function(parameter, expectedType){
 
 module.exports = function(requestParameters, expectedParameters){
 
-  let result = { isValid: true, errors: {} },
-      mandatoryParameters = [];
+  const result = { isValid: true, errors: {} },
+    mandatoryParameters = [];
 
   _.forEach(expectedParameters, function(expectedParameter, expectedParameterName){
     if(expectedParameter.mandatory){

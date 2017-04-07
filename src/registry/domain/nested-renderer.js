@@ -6,7 +6,7 @@ const _ = require('underscore');
 const settings = require('../../resources/settings');
 const strings = require('../../resources');
 
-var sanitise = { 
+const sanitise = { 
   componentParams: function(component, options, callback){
     return _.extend(sanitise.options(options, callback), {
       componentName: component
@@ -33,7 +33,7 @@ var sanitise = {
   }
 };
 
-var validate = {
+const validate = {
   callback: function(c){
     if(!c || !_.isFunction(c)){
       throw new Error(strings.errors.registry.NESTED_RENDERER_CALLBACK_IS_NOT_VALID);

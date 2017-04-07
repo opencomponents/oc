@@ -9,14 +9,14 @@ const wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
   
-  let local = dependencies.local,
-      logger = dependencies.logger;
+  const local = dependencies.local,
+    logger = dependencies.logger;
 
   return function(opts, callback){
 
-    let componentName = opts.componentName,
-        templateType = _.isUndefined(opts.templateType) ? 'handlebars' : opts.templateType,
-        errors = strings.errors.cli;
+    const componentName = opts.componentName,
+      templateType = _.isUndefined(opts.templateType) ? 'handlebars' : opts.templateType,
+      errors = strings.errors.cli;
 
     callback = wrapCliCallback(callback);
 

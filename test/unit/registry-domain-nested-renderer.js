@@ -6,9 +6,10 @@ const _ = require('underscore');
 
 describe('registry : routes : helpers : nested-renderer', function(){
 
-  let NestedRenderer = require('../../src/registry/domain/nested-renderer'),
-      nestedRenderer,
-      renderer;
+  const NestedRenderer = require('../../src/registry/domain/nested-renderer');
+
+  let nestedRenderer,
+    renderer;
 
   const initialise = function(rendererMocks, conf){
 

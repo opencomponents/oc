@@ -25,8 +25,8 @@ module.exports = function(config, renderComponents){
     options.timeout = options.timeout || 5;
     options.headers = options.headers || {};
 
-    let urls = [],
-        toWarmup = [];
+    const urls = [],
+      toWarmup = [];
 
     _.each(config.components, function(version, name){
       const versionSegment = version ? (version + '/') : '';
@@ -48,12 +48,12 @@ module.exports = function(config, renderComponents){
           return next(new Error(format(settings.warmupFailed, JSON.stringify(requestDetails), err)));
         }
 
-        let parameters = componentInfo.oc.parameters,
-            componentToWarmup = { 
-              name: componentInfo.name,
-              version: componentInfo.version,
-              parameters: {}
-            };
+        const parameters = componentInfo.oc.parameters,
+          componentToWarmup = { 
+            name: componentInfo.name,
+            version: componentInfo.version,
+            parameters: {}
+          };
 
         if(parameters){
           _.each(parameters, function(value, parameter){

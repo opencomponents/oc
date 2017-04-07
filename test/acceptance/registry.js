@@ -8,10 +8,11 @@ const _ = require('underscore');
 describe('registry', function(){
 
   let registry,
-      result,
-      error,
-      headers,
-      oc = require('../../src/index');
+    result,
+    error,
+    headers;
+
+  const oc = require('../../src/index');
 
   const next = function(done){
     return function(e, r, d){

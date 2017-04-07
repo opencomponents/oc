@@ -1,6 +1,6 @@
 'use strict';
 
-var oc = oc || {};
+const oc = oc || {};
 oc.cmd = oc.cmd || [];
 
 oc.cmd.push(function(){
@@ -11,9 +11,9 @@ oc.cmd.push(function(){
 
   $('.refresh-preview').click(function(){
 
-    let splitted = $('#href').val().split('?'),
-        url = splitted[0],
-        lang = $('#lang').val();
+    let url = splitted[0];
+    const splitted = $('#href').val().split('?'),
+      lang = $('#lang').val();
 
     if(url.slice(-1) !== '/'){
       url += '/';

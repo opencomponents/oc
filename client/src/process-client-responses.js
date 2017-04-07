@@ -11,8 +11,8 @@ const _ = require('./utils/helpers');
 
 module.exports = function(cache, config){
 
-  let getOCClientScript = new GetOCClientScript(cache),
-      buildHref = new HrefBuilder(config);
+  const getOCClientScript = new GetOCClientScript(cache),
+    buildHref = new HrefBuilder(config);
 
   return function(toDo, options, cb){
     const toProcess = [];

@@ -8,14 +8,14 @@ const sinon = require('sinon');
 
 describe('cli : facade : publish', function(){
 
-  let logSpy = {},
-      Registry = require('../../src/cli/domain/registry'),
-      registry = new Registry(),
-      Local = require('../../src/cli/domain/local'),
-      local = new Local(),
-      readStub = sinon.stub().yields(null, 'test'),
-      PublishFacade = injectr('../../src/cli/facade/publish.js', { read: readStub }),
-      publishFacade = new PublishFacade({ registry: registry, local: local, logger: logSpy });
+  const logSpy = {},
+    Registry = require('../../src/cli/domain/registry'),
+    registry = new Registry(),
+    Local = require('../../src/cli/domain/local'),
+    local = new Local(),
+    readStub = sinon.stub().yields(null, 'test'),
+    PublishFacade = injectr('../../src/cli/facade/publish.js', { read: readStub }),
+    publishFacade = new PublishFacade({ registry: registry, local: local, logger: logSpy });
 
   const execute = function(cb, creds){
     creds = creds || {};
@@ -62,9 +62,9 @@ describe('cli : facade : publish', function(){
         execute(function(){
           local.package.restore();
 
-          let message = logSpy.log.args[0][0],
-              re = new RegExp('\\' + path.sep, 'g'),
-              messageWithSlashesOnPath = message.replace(re, '/');
+          const message = logSpy.log.args[0][0],
+            re = new RegExp('\\' + path.sep, 'g'),
+            messageWithSlashesOnPath = message.replace(re, '/');
 
           expect(messageWithSlashesOnPath).to.include('Packaging -> ');
           expect(messageWithSlashesOnPath).to.include('components/hello-world/_package');
@@ -118,9 +118,9 @@ describe('cli : facade : publish', function(){
               execute(function(){
                 registry.putComponent.restore();
 
-                let message = logSpy.log.args[1][0],
-                    re = new RegExp('\\' + path.sep, 'g'),
-                    messageWithSlashesOnPath = message.replace(re, '/');
+                const message = logSpy.log.args[1][0],
+                  re = new RegExp('\\' + path.sep, 'g'),
+                  messageWithSlashesOnPath = message.replace(re, '/');
 
                 expect(messageWithSlashesOnPath).to.include('Compressing -> ');
                 expect(messageWithSlashesOnPath).to.include('components/hello-world/package.tar.gz');

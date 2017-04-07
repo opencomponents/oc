@@ -21,11 +21,11 @@ module.exports = function(conf){
     httpOptions: { timeout: conf.s3.timeout || 10000 }
   });
 
-  let bucket = conf.s3.bucket,
-      cache = new Cache({
-        verbose: !!conf.verbosity,
-        refreshInterval: conf.refreshInterval
-      });
+  const bucket = conf.s3.bucket,
+    cache = new Cache({
+      verbose: !!conf.verbosity,
+      refreshInterval: conf.refreshInterval
+    });
 
   return {
     listSubDirectories: function(dir, callback){
@@ -108,8 +108,8 @@ module.exports = function(conf){
         const files = paths.files;
 
         async.each(files, function(file, cb){
-          let relativeFile = file.substr(dirInput.length),
-              url = (dirOutput + relativeFile).replace(/\\/g, '/');
+          const relativeFile = file.substr(dirInput.length),
+            url = (dirOutput + relativeFile).replace(/\\/g, '/');
 
           self.putFile(file, url, relativeFile === '/server.js', cb);
         }, function(errors){
@@ -131,15 +131,15 @@ module.exports = function(conf){
     },
     putFileContent: function(fileContent, fileName, isPrivate, callback){
 
-      let fileInfo = getFileInfo(fileName),
-          obj = {
-            Bucket: bucket,
-            Key: fileName,
-            Body: fileContent,
-            ACL: isPrivate ? 'authenticated-read' : 'public-read',
-            ServerSideEncryption: 'AES256',
-            Expires: getNextYear()
-          };
+      const fileInfo = getFileInfo(fileName),
+        obj = {
+          Bucket: bucket,
+          Key: fileName,
+          Body: fileContent,
+          ACL: isPrivate ? 'authenticated-read' : 'public-read',
+          ServerSideEncryption: 'AES256',
+          Expires: getNextYear()
+        };
 
       if(fileInfo.mimeType){
         obj.ContentType = fileInfo.mimeType;

@@ -54,17 +54,17 @@ const registerDynamicMocks = function(ocJsonLocation, mocks, logger){
   }).filter(function(p){ return p; });
 };
 
-var findPath = function(pathToResolve, fileName) {
+const findPath = function(pathToResolve, fileName) {
 
-  let rootDir = fs.realpathSync('.'),
-      fileToResolve = path.join(pathToResolve, fileName);
+  const rootDir = fs.realpathSync('.'),
+    fileToResolve = path.join(pathToResolve, fileName);
 
   if (!fs.existsSync(fileToResolve)) {
     if (pathToResolve === rootDir) {
       return undefined;
     } else {
-      let getParent = function(x){ return x.split('/').slice(0, -1).join('/'); },
-          parentDir = pathToResolve ? getParent(pathToResolve) : rootDir;
+      const getParent = function(x){ return x.split('/').slice(0, -1).join('/'); },
+        parentDir = pathToResolve ? getParent(pathToResolve) : rootDir;
 
       return findPath(parentDir, fileName);
     }
@@ -76,16 +76,16 @@ var findPath = function(pathToResolve, fileName) {
 module.exports = function(logger, componentsDir){
   componentsDir = path.resolve(componentsDir || '.');
 
-  let plugins = [],
-      ocJsonFileName = settings.configFile.src.replace('./', ''),
-      ocJsonPath = findPath(componentsDir, ocJsonFileName);
+  let plugins = [];
+  const ocJsonFileName = settings.configFile.src.replace('./', ''),
+    ocJsonPath = findPath(componentsDir, ocJsonFileName);
 
   if(!ocJsonPath){
     return plugins;
   }
 
-  let content = fs.readJsonSync(ocJsonPath),
-      ocJsonLocation = ocJsonPath.slice(0, -ocJsonFileName.length);
+  const content = fs.readJsonSync(ocJsonPath),
+    ocJsonLocation = ocJsonPath.slice(0, -ocJsonFileName.length);
 
   if(!content.mocks || !content.mocks.plugins){
     return plugins;

@@ -87,9 +87,9 @@ module.exports = function(config){
   };
 
   return function(toDo, options, cb){
-    let serverRenderingFail = settings.serverSideRenderingFail,
-        serverRendering = { components: [], positions: [] },
-        serverRenderingEndpoint = hrefBuilder.server(options);
+    const serverRenderingFail = settings.serverSideRenderingFail,
+      serverRendering = { components: [], positions: [] },
+      serverRenderingEndpoint = hrefBuilder.server(options);
 
     _.each(toDo, function(action){
       if(action.render === 'server'){

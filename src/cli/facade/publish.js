@@ -12,9 +12,9 @@ const wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
 
-  let registry = dependencies.registry,
-      local = dependencies.local,
-      logger = dependencies.logger;
+  const registry = dependencies.registry,
+    local = dependencies.local,
+    logger = dependencies.logger;
 
   const log = {
     err: function(msg){ return logger.log(colors.red(msg)); },
@@ -24,10 +24,11 @@ module.exports = function(dependencies){
 
   return function(opts, callback){
 
-    let componentPath = opts.componentPath,
-        packageDir = path.resolve(componentPath, '_package'),
-        compressedPackagePath = path.resolve(componentPath, 'package.tar.gz'),
-        errorMessage;
+    const componentPath = opts.componentPath,
+      packageDir = path.resolve(componentPath, '_package'),
+      compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
+
+    let errorMessage;
 
     callback = wrapCliCallback(callback);
 
@@ -65,7 +66,7 @@ module.exports = function(dependencies){
       });
     };
 
-    var putComponentToRegistry = function(options, cb){
+    const putComponentToRegistry = function(options, cb){
       log.warn(format(strings.messages.cli.PUBLISHING, options.route));
 
       registry.putComponent(options, function(err){
@@ -84,8 +85,8 @@ module.exports = function(dependencies){
             });
 
           } else if(err.code === 'cli_version_not_valid') {
-            let upgradeCommand = format(strings.commands.cli.UPGRADE, err.details.suggestedVersion),
-                errorDetails = format(strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE, colors.blue(upgradeCommand));
+            const upgradeCommand = format(strings.commands.cli.UPGRADE, err.details.suggestedVersion),
+              errorDetails = format(strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE, colors.blue(upgradeCommand));
 
             errorMessage = format(strings.errors.cli.PUBLISHING_FAIL, errorDetails);
             log.err(errorMessage);
@@ -122,9 +123,9 @@ module.exports = function(dependencies){
         }
 
         async.eachSeries(registryLocations, function(registryUrl, next){
-          let registryLength = registryUrl.length,
-              registryNormalised = registryUrl.slice(registryLength - 1) === '/' ? registryUrl.slice(0, registryLength - 1) : registryUrl,
-              componentRoute = format('{0}/{1}/{2}', registryNormalised, component.name, component.version);
+          const registryLength = registryUrl.length,
+            registryNormalised = registryUrl.slice(registryLength - 1) === '/' ? registryUrl.slice(0, registryLength - 1) : registryUrl,
+            componentRoute = format('{0}/{1}/{2}', registryNormalised, component.name, component.version);
 
           putComponentToRegistry({ route: componentRoute, path: compressedPackagePath}, next);
         }, function(err){

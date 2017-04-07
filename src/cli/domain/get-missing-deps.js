@@ -9,8 +9,8 @@ module.exports = function(dependencies){
 
   _.forEach(dependencies, function(npmModule){
  
-    let index = npmModule.indexOf('@'),
-        moduleName = npmModule;
+    const index = npmModule.indexOf('@');
+    let moduleName = npmModule;
     
     if (index > 0) {
       moduleName = npmModule.substr(0, index);

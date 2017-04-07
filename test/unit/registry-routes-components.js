@@ -5,9 +5,10 @@ const sinon = require('sinon');
 
 describe('registry : routes : components', function(){
 
-  let ComponentsRoute = require('../../src/registry/routes/components'),
-      mockedComponents = require('../fixtures/mocked-components'),
-      mockedRepository,
+  const ComponentsRoute = require('../../src/registry/routes/components'),
+    mockedComponents = require('../fixtures/mocked-components');
+
+  let mockedRepository,
       componentsRoute,
       code,
       response;

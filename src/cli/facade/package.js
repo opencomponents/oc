@@ -7,8 +7,8 @@ const format = require('stringformat');
 const path = require('path');
 
 module.exports = function(dependencies) {
-  let local = dependencies.local,
-      logger = dependencies.logger;
+  const local = dependencies.local,
+    logger = dependencies.logger;
 
   const log = {
     err: function(msg){ return logger.log(colors.red(msg)); },
@@ -17,9 +17,9 @@ module.exports = function(dependencies) {
   };
 
   return function(opts, callback) {
-    let componentPath = opts.componentPath,
-        packageDir = path.resolve(componentPath, '_package'),
-        compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
+    const componentPath = opts.componentPath,
+      packageDir = path.resolve(componentPath, '_package'),
+      compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
 
     callback = wrapCliCallback(callback);
 

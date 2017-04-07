@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = {
+const _ = {
   each: function(obj, fn){
     if(_.isArray(obj)){
       for(let i = 0; i < obj.length; i++){

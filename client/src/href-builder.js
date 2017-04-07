@@ -22,8 +22,8 @@ module.exports = function(config){
         throw settings.missingComponentName;
       }
 
-      let lang = options.headers['accept-language'],
-          forwardLang = config.forwardAcceptLanguageToClient === true;
+      const lang = options.headers['accept-language'];
+      let forwardLang = config.forwardAcceptLanguageToClient === true;
 
       if(!forwardLang && options.forwardAcceptLanguageToClient === true){
         forwardLang = true;
@@ -34,10 +34,10 @@ module.exports = function(config){
         component.parameters['__ocAcceptLanguage'] = lang;
       }
 
-      let versionSegment = component.version ? ('/' + component.version) : '',
-          registryUrl = clientRenderingEndpoint,
-          registrySegment = registryUrl.slice(-1) === '/' ? registryUrl : (registryUrl + '/'),
-          qs = component.parameters ? ('/?' + querystring.stringify(component.parameters)) : '';
+      const versionSegment = component.version ? ('/' + component.version) : '',
+        registryUrl = clientRenderingEndpoint,
+        registrySegment = registryUrl.slice(-1) === '/' ? registryUrl : (registryUrl + '/'),
+        qs = component.parameters ? ('/?' + querystring.stringify(component.parameters)) : '';
       
       return url.resolve(registrySegment, component.name) + versionSegment + qs;
     },

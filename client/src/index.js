@@ -11,11 +11,11 @@ const _ = require('./utils/helpers');
 
 module.exports = function(conf){
 
-  let config = sanitiser.sanitiseConfiguration(conf),
-      validationResult = validator.validateConfiguration(config),
-      renderTemplate = new TemplateRenderer(),
-      renderComponents = new ComponentsRenderer(config, renderTemplate),
-      getComponentsInfo = new GetComponentsInfo(config);
+  const config = sanitiser.sanitiseConfiguration(conf),
+    validationResult = validator.validateConfiguration(config),
+    renderTemplate = new TemplateRenderer(),
+    renderComponents = new ComponentsRenderer(config, renderTemplate),
+    getComponentsInfo = new GetComponentsInfo(config);
 
   if(!validationResult.isValid){
     throw new Error(validationResult.error);

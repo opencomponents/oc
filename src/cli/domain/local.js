@@ -44,15 +44,15 @@ module.exports = function(){
 
       try {
 
-        let pathDir = '../../components/base-component-' + templateType,
-            baseComponentDir = path.resolve(__dirname, pathDir),
-            npmIgnorePath = path.resolve(__dirname, pathDir + '/.npmignore');
+        const pathDir = '../../components/base-component-' + templateType,
+          baseComponentDir = path.resolve(__dirname, pathDir),
+          npmIgnorePath = path.resolve(__dirname, pathDir + '/.npmignore');
 
         fs.ensureDirSync(componentName);
         fs.copySync(baseComponentDir, componentName);
         fs.copySync(npmIgnorePath, componentName + '/.gitignore');
 
-        let componentPath = path.resolve(componentName, 'package.json'),
+        const componentPath = path.resolve(componentName, 'package.json'),
           component = _.extend(fs.readJsonSync(componentPath), {
             name: componentName
           });

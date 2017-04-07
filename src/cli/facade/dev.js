@@ -16,8 +16,8 @@ const watch = require('../domain/watch');
 const wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
-  let local = dependencies.local,
-      logger = dependencies.logger;
+  const local = dependencies.local,
+    logger = dependencies.logger;
 
   const log = {
     err: function(msg){ return logger.log(colors.red(msg)); },
@@ -27,13 +27,13 @@ module.exports = function(dependencies){
 
   return function(opts, callback){
 
-    let componentsDir = opts.dirPath,
-        port = opts.port || 3000,
-        baseUrl = opts.baseUrl || format('http://localhost:{0}/', port),
-        packaging = false,
-        errors = strings.errors.cli,
-        fallbackRegistryUrl = opts.fallbackRegistryUrl,
-        hotReloading = _.isUndefined(opts.hotReloading) ? true : opts.hotReloading;
+    const componentsDir = opts.dirPath,
+      port = opts.port || 3000,
+      baseUrl = opts.baseUrl || format('http://localhost:{0}/', port),
+      errors = strings.errors.cli,
+      fallbackRegistryUrl = opts.fallbackRegistryUrl,
+      hotReloading = _.isUndefined(opts.hotReloading) ? true : opts.hotReloading;
+    let packaging = false;
 
     callback = wrapCliCallback(callback);
 
@@ -65,7 +65,7 @@ module.exports = function(dependencies){
       });
     };
 
-    var packageComponents = function(componentsDirs, cb){
+    const packageComponents = function(componentsDirs, cb){
       cb = _.isFunction(cb) ? cb : _.noop;
 
       let i = 0;
@@ -104,11 +104,11 @@ module.exports = function(dependencies){
       }
     };
 
-    var loadDependencies = function(components, cb){
+    const loadDependencies = function(components, cb){
       log.warn(strings.messages.cli.CHECKING_DEPENDENCIES, true);
       
-      let dependencies = getComponentsDependencies(components),
-          missing = getMissingDeps(dependencies.withVersions, components);
+      const dependencies = getComponentsDependencies(components),
+        missing = getMissingDeps(dependencies.withVersions, components);
 
       if(_.isEmpty(missing)){
         log.ok('OK');

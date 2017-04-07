@@ -98,7 +98,7 @@ module.exports.init = function(pluginsToRegister, callback){
     cb();
   };
 
-  var terminator = function(err){
+  const terminator = function(err){
     if(deferredLoads.length > 0){
       const deferredPlugins = _.clone(deferredLoads);
       deferredLoads = [];

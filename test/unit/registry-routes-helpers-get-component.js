@@ -6,17 +6,18 @@ const sinon = require('sinon');
 const _ = require('underscore');
 
 describe('registry : routes : helpers : get-component', function(){
-
-  let fireStub = sinon.stub(),
-      mockedComponents = require('../fixtures/mocked-components'),
-      mockedRepository,
-      getComponent,
-      GetComponent = injectr('../../src/registry/routes/helpers/get-component.js', {
+  const fireStub = sinon.stub(),
+    mockedComponents = require('../fixtures/mocked-components'),
+    GetComponent = injectr('../../src/registry/routes/helpers/get-component.js', {
         '../../domain/events-handler': {
           on: _.noop,
           fire: fireStub
         }
-      }, { console: console, Buffer: Buffer, setTimeout: setTimeout });
+      }, { console: console, Buffer: Buffer, setTimeout: setTimeout }
+    );
+
+  let mockedRepository,
+      getComponent;
   
   const initialise = function(params){
     mockedRepository = {

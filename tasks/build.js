@@ -11,18 +11,18 @@ module.exports = function(grunt){
 
   grunt.registerTask('build', 'Builds and minifies the oc-client component', function(){
 
-    let done = this.async(),
-        version = packageJson.version,
-        clientComponentDir = '../src/components/oc-client/',
-        licenseRow = '/*! OpenComponents client v{0} | (c) 2015-{1} OpenTable, Inc. | {2} */',
-        licenseLink = 'https://github.com/opentable/oc/tree/master/src/components/oc-client/LICENSES',
-        license = format(licenseRow, version, new Date().getFullYear(), licenseLink),
-        headLoad = fs.readFileSync(path.join(__dirname, clientComponentDir, 'src/head.load.js')).toString(),
-        ocClient = fs.readFileSync(path.join(__dirname, clientComponentDir, 'src/oc-client.js')).toString(),
-        bundle = format('{0}\n;\n{1}\n;\noc.clientVersion=\'{2}\';', headLoad, ocClient, version),
-        ocClientPackageInfo = require(clientComponentDir + 'package.json'),
-        shrinkwrap = require('../npm-shrinkwrap'),
-        jsonConfig = {spaces: 2};
+    const done = this.async(),
+      version = packageJson.version,
+      clientComponentDir = '../src/components/oc-client/',
+      licenseRow = '/*! OpenComponents client v{0} | (c) 2015-{1} OpenTable, Inc. | {2} */',
+      licenseLink = 'https://github.com/opentable/oc/tree/master/src/components/oc-client/LICENSES',
+      license = format(licenseRow, version, new Date().getFullYear(), licenseLink),
+      headLoad = fs.readFileSync(path.join(__dirname, clientComponentDir, 'src/head.load.js')).toString(),
+      ocClient = fs.readFileSync(path.join(__dirname, clientComponentDir, 'src/oc-client.js')).toString(),
+      bundle = format('{0}\n;\n{1}\n;\noc.clientVersion=\'{2}\';', headLoad, ocClient, version),
+      ocClientPackageInfo = require(clientComponentDir + 'package.json'),
+      shrinkwrap = require('../npm-shrinkwrap'),
+      jsonConfig = {spaces: 2};
 
     ocClientPackageInfo.version = version;
     shrinkwrap.version = version;
@@ -40,12 +40,12 @@ module.exports = function(grunt){
     fs.writeFileSync(path.join(__dirname, clientComponentDir, 'src/oc-client.min.map'), compressed.map);
     fs.writeFileSync(path.join(__dirname, '../client/src/oc-client.min.js'), compressedCode);
 
-    let Local = require('../src/cli/domain/local'),
-        local = new Local(),
-        packageOptions = {
-            componentPath: path.join(__dirname, clientComponentDir),
-            verbose: false
-        };
+    const Local = require('../src/cli/domain/local'),
+      local = new Local(),
+      packageOptions = {
+          componentPath: path.join(__dirname, clientComponentDir),
+          verbose: false
+      };
 
     local.package(packageOptions, function(err){
       grunt.log[err ? 'error' : 'ok'](err ? err : 'Client has been built and packaged');

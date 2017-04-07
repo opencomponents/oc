@@ -6,11 +6,11 @@ const sinon = require('sinon');
 
 describe('cli : facade : init', function(){
 
-  let logSpy = {},
-      InitFacade = require('../../src/cli/facade/init'),
-      Local = require('../../src/cli/domain/local'),
-      local = new Local(),
-      initFacade = new InitFacade({ local: local, logger: logSpy });
+  const logSpy = {},
+    InitFacade = require('../../src/cli/facade/init'),
+    Local = require('../../src/cli/domain/local'),
+    local = new Local(),
+    initFacade = new InitFacade({ local: local, logger: logSpy });
 
   const execute = function(componentName, templateType){
     logSpy.log = sinon.spy();

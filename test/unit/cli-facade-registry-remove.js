@@ -6,11 +6,11 @@ const sinon = require('sinon');
 
 describe('cli : facade : registry : remove', function(){
 
-  let logSpy = {},
-      Registry = require('../../src/cli/domain/registry'),
-      registry = new Registry(),
-      RegistryFacade = require('../../src/cli/facade/registry-remove'),
-      registryFacade = new RegistryFacade({ registry: registry, logger: logSpy });
+  const logSpy = {},
+    Registry = require('../../src/cli/domain/registry'),
+    registry = new Registry(),
+    RegistryFacade = require('../../src/cli/facade/registry-remove'),
+    registryFacade = new RegistryFacade({ registry: registry, logger: logSpy });
 
   const execute = function(){
     logSpy.log = sinon.spy();

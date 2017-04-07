@@ -6,9 +6,9 @@ const _ = require('underscore');
 
 describe('registry : routes : component', function(){
 
-  let ComponentRoute = require('../../src/registry/routes/component'),
-      mockedComponents = require('../fixtures/mocked-components'),
-      mockedRepository, resJsonStub, resSetStub, statusStub, componentRoute;
+  const ComponentRoute = require('../../src/registry/routes/component'),
+    mockedComponents = require('../fixtures/mocked-components');
+  let mockedRepository, resJsonStub, resSetStub, statusStub, componentRoute;
   
   const initialise = function(params){
     resJsonStub = sinon.stub();

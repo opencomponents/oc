@@ -13,10 +13,10 @@ module.exports = function(urlPath, files, headers, callback) {
     headers = {};
   }
 
-  let form = new FormData(),
-      body = '',
-      callbackDone = false,
-      options = _.extend(url.parse(urlPath), { method: 'PUT' });
+  const form = new FormData(),
+    options = _.extend(url.parse(urlPath), { method: 'PUT' });
+  let body = '',
+    callbackDone = false;
 
   if(!_.isArray(files)){
     files = [files];

@@ -7,11 +7,11 @@ const sinon = require('sinon');
 
 describe('cli : facade : package', function(){
 
-  let logSpy = {},
-      Local = require('../../src/cli/domain/local'),
-      local = new Local(),
-      PackageFacade = require('../../src/cli/facade/package.js'),
-      packageFacade = new PackageFacade({ local: local, logger: logSpy });
+  const logSpy = {},
+    Local = require('../../src/cli/domain/local'),
+    local = new Local(),
+    PackageFacade = require('../../src/cli/facade/package.js'),
+    packageFacade = new PackageFacade({ local: local, logger: logSpy });
 
   const execute = function(compress, cb){
     logSpy.log = sinon.stub();
@@ -30,9 +30,9 @@ describe('cli : facade : package', function(){
       execute(false, function(){
         local.package.restore();
 
-        let message = logSpy.log.args[0][0],
-            re = new RegExp('\\' + path.sep, 'g'),
-            messageWithSlashesOnPath = message.replace(re, '/');
+        const message = logSpy.log.args[0][0],
+          re = new RegExp('\\' + path.sep, 'g'),
+          messageWithSlashesOnPath = message.replace(re, '/');
 
         expect(messageWithSlashesOnPath).to.include('Packaging -> ');
         expect(messageWithSlashesOnPath).to.include('components/hello-world/_package');
@@ -73,11 +73,11 @@ describe('cli : facade : package', function(){
 
         it('should package and show success message', function(done){
           execute(false, function(){
-            let warnMessage = logSpy.log.args[0][0],
-                okMessage = logSpy.log.args[1][0],
-                re = new RegExp('\\' + path.sep, 'g'),
-                warnMessageWithSlashesOnPath = warnMessage.replace(re, '/'),
-                okMessageWithSlashesOnPath = okMessage.replace(re, '/');
+            const warnMessage = logSpy.log.args[0][0],
+              okMessage = logSpy.log.args[1][0],
+              re = new RegExp('\\' + path.sep, 'g'),
+              warnMessageWithSlashesOnPath = warnMessage.replace(re, '/'),
+              okMessageWithSlashesOnPath = okMessage.replace(re, '/');
 
             expect(warnMessageWithSlashesOnPath).to.include('Packaging -> ');
             expect(warnMessageWithSlashesOnPath).to.include('components/hello-world/_package');
@@ -96,11 +96,11 @@ describe('cli : facade : package', function(){
             execute(false, function(){
               local.compress.restore();
 
-              let warnMessage = logSpy.log.args[0][0],
-                  okMessage = logSpy.log.args[1][0],
-                  re = new RegExp('\\' + path.sep, 'g'),
-                  warnMessageWithSlashesOnPath = warnMessage.replace(re, '/'),
-                  okMessageWithSlashesOnPath = okMessage.replace(re, '/');
+              const warnMessage = logSpy.log.args[0][0],
+                okMessage = logSpy.log.args[1][0],
+                re = new RegExp('\\' + path.sep, 'g'),
+                warnMessageWithSlashesOnPath = warnMessage.replace(re, '/'),
+                okMessageWithSlashesOnPath = okMessage.replace(re, '/');
 
               expect(warnMessageWithSlashesOnPath).to.include('Packaging -> ');
               expect(okMessageWithSlashesOnPath).to.include('Packaged -> ');
@@ -121,7 +121,7 @@ describe('cli : facade : package', function(){
             it('should show a message for success', function(done){
               execute(true, function(){
 
-                let warnMessage = logSpy.log.args[2][0],
+                const warnMessage = logSpy.log.args[2][0],
                   okMessage = logSpy.log.args[3][0],
                   re = new RegExp('\\' + path.sep, 'g'),
                   warnMessageWithSlashesOnPath = warnMessage.replace(re, '/'),
@@ -149,7 +149,7 @@ describe('cli : facade : package', function(){
             it('should show a message for failure', function(done){
               execute(true, function(){
 
-                let warnMessage = logSpy.log.args[2][0],
+                const warnMessage = logSpy.log.args[2][0],
                   errorMessage = logSpy.log.args[3][0],
                   re = new RegExp('\\' + path.sep, 'g'),
                   warnMessageWithSlashesOnPath = warnMessage.replace(re, '/');

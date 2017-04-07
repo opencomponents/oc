@@ -57,11 +57,11 @@ describe('cli : domain : registry', function(){
       });
 
       it('should save the file with slashed url', function(){
-        let requestStub = sinon.stub(),
-            fsStub = {
-              readJson: sinon.stub(),
-              writeJson: sinon.spy()
-            };
+        const requestStub = sinon.stub(),
+          fsStub = {
+            readJson: sinon.stub(),
+            writeJson: sinon.spy()
+          };
 
         requestStub.yields(null, { type: 'oc-registry' });
 

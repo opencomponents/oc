@@ -9,8 +9,8 @@ const wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
   
-  let registry = dependencies.registry,
-      logger = dependencies.logger;
+  const registry = dependencies.registry,
+    logger = dependencies.logger;
 
   const log = {
     err: function(msg){ return logger.log(colors.red(msg)); },

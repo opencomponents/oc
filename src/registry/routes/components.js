@@ -13,8 +13,8 @@ module.exports = function(conf, repository){
 
   return function(req, res){
 
-    let components = req.body.components,
-        registryErrors = strings.errors.registry;
+    const components = req.body.components,
+      registryErrors = strings.errors.registry;
 
     const returnError = function(message){
       return res.status(400).json({

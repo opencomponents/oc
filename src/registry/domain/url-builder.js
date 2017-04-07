@@ -20,7 +20,7 @@ function componentForType(component, baseUrl, type) {
   return href;
 }
 
-var build = {
+const build = {
   component: function (component, baseUrl) {
     if (_.isString(component)) {
       component = {name: component};

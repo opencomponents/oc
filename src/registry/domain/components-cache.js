@@ -35,7 +35,7 @@ module.exports = function(conf, cdn){
     }
   };
 
-  var refreshCachedData = function(){
+  const refreshCachedData = function(){
     refreshLoop = setTimeout(function(){
       getFromJson(function(err, data){
         if(err){

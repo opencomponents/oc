@@ -10,10 +10,10 @@ const _ = require('./utils/helpers');
 
 module.exports = function(config, renderTemplate){
 
-  let cache = new Cache(config.cache),
-      getComponentsData = new GetComponentsData(config),
-      renderComponents = new RenderComponents(cache, renderTemplate),
-      processClientReponses = new ProcessClientResponse(cache, config);
+  const cache = new Cache(config.cache),
+    getComponentsData = new GetComponentsData(config),
+    renderComponents = new RenderComponents(cache, renderTemplate),
+    processClientReponses = new ProcessClientResponse(cache, config);
 
   return function(components, options, callback){
 
@@ -35,9 +35,9 @@ module.exports = function(config, renderTemplate){
     getComponentsData(toDo, options, function(){
       renderComponents(toDo, options, function(){
         processClientReponses(toDo, options, function(){
-          let errors = [], 
-              results = [],
-              hasErrors = false;
+          const errors = [], 
+            results = [];
+          let hasErrors = false;
         
           _.each(toDo, function(action){
             if(action.result.error) {

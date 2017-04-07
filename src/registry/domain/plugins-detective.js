@@ -14,9 +14,9 @@ module.exports.parse = function(code){
     return [];
   }
 
-  let context = contexts[0],
-      search = new RegExp(context+'\\.plugins\\.\\w+', 'gi'),
-      repl = new RegExp(context+'\\.plugins\\.', 'gi');
+  const context = contexts[0],
+    search = new RegExp(context+'\\.plugins\\.\\w+', 'gi'),
+    repl = new RegExp(context+'\\.plugins\\.', 'gi');
 
   return _.map(code.match(search), function(match){
     return match.replace(repl, '');

@@ -9,9 +9,9 @@ const getFileInfo = require('../../utils/get-file-info');
 module.exports = function(repository){
   return function(req, res){
 
-    let filePath,
-        clientPath = (res.conf.prefix ? res.conf.prefix : '/') + 'oc-client/client.js',
-        clientMapPath = (res.conf.prefix ? res.conf.prefix : '/') + 'oc-client/oc-client.min.map';
+    let filePath;
+    const clientPath = (res.conf.prefix ? res.conf.prefix : '/') + 'oc-client/client.js',
+      clientMapPath = (res.conf.prefix ? res.conf.prefix : '/') + 'oc-client/oc-client.min.map';
 
     if(req.route.path === clientPath){
       if(res.conf.local){
@@ -36,8 +36,8 @@ module.exports = function(repository){
       return res.status(404).json({ err: res.errorDetails });
     }
 
-    let fileStream = fs.createReadStream(filePath),
-        fileInfo = getFileInfo(filePath);
+    const fileStream = fs.createReadStream(filePath),
+      fileInfo = getFileInfo(filePath);
 
     if(fileInfo.mimeType){
       res.set('Content-Type', fileInfo.mimeType);

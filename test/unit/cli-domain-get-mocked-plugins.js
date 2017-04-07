@@ -7,10 +7,11 @@ const _ = require('underscore');
 
 describe('cli : domain : get-mocked-plugins', function(){
 
-  let dynamicPluginModule = function(a){ return a ? 'blarg' : 'flarg'; },
-      notAFunctionModule = { 'foo' : 'bar' },
-      fsMock,
-      getMockedPlugins;
+  const dynamicPluginModule = function(a){ return a ? 'blarg' : 'flarg'; },
+    notAFunctionModule = { 'foo' : 'bar' };
+
+  let fsMock,
+    getMockedPlugins;
 
   const initialise = function(fs, pathJoinStub){
 
@@ -120,8 +121,8 @@ describe('cli : domain : get-mocked-plugins', function(){
         }
       };
 
-      let readMock = sinon.stub(),
-          existsMock = sinon.stub();
+      const readMock = sinon.stub(),
+        existsMock = sinon.stub();
       
       readMock.withArgs('/root/components/oc.json').returns(ocJsonComponent);
       readMock.withArgs('/root/oc.json').returns(ocJsonRoot);

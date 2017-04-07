@@ -16,18 +16,18 @@ module.exports = function(repository){
         return res.status(404).json({ error: res.errorDetails });
       }
 
-      let isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0,
-          baseResponse = {
-            href: res.conf.baseUrl,
-            ocVersion: packageInfo.version,
-            type: res.conf.local ? 'oc-registry-local' : 'oc-registry'
-          };
+      const isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0,
+        baseResponse = {
+          href: res.conf.baseUrl,
+          ocVersion: packageInfo.version,
+          type: res.conf.local ? 'oc-registry-local' : 'oc-registry'
+        };
 
       if(isHtmlRequest && !!res.conf.discovery){
 
         let componentsInfo = [],
-            componentsReleases = 0,
-            stateCounts = {};
+          componentsReleases = 0;
+        const stateCounts = {};
 
         async.each(components, function(component, callback){
           return repository.getComponent(component, function(err, result){

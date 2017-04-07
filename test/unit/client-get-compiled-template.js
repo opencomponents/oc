@@ -23,8 +23,8 @@ describe('client : get-compiled-template', function(){
     const errorExample = '<?xml version="1.0" encoding="UTF-8"?><Error><Code>AccessDenied</Code><Message>' +
       'Access Denied</Message><RequestId>1234567890</RequestId><HostId>asdfghjklqwertyuiop</HostId></Error>';
     
-    let requestStub = sinon.stub().yields(403, errorExample),
-        error;
+    const requestStub = sinon.stub().yields(403, errorExample);
+    let error;
 
     before(function(done){
       initialise(requestStub);

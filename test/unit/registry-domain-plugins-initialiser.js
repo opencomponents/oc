@@ -144,8 +144,8 @@ describe('registry : domain : plugins-initialiser', function(){
     });
 
     it('should be make the functionality usable', function(){
-      let a = result.getValue('a'),
-          flagged = result.isFlagged();
+      const a = result.getValue('a'),
+        flagged = result.isFlagged();
 
       expect(a).to.equal(123);
       expect(flagged).to.equal(true);

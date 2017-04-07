@@ -3,8 +3,8 @@
 const _ = require('underscore');
 
 module.exports = function(componentRequirements, registryPlugins){
-  let result = { isValid: true },
-      missing = [];
+  const result = { isValid: true },
+    missing = [];
 
   _.forEach(componentRequirements || [], function(requiredPlugin){
     if(!registryPlugins || _.isEmpty(registryPlugins) || !_.contains(_.keys(registryPlugins), requiredPlugin)){

@@ -11,20 +11,20 @@ describe('registry : domain : components-cache', function(){
     getFile: sinon.stub(),
     listSubDirectories: sinon.stub(),
     putFileContent: sinon.stub()
-  };
+  },
+    baseOptions = { pollingInterval: 5, s3: { componentsDir: 'component'}},
+    baseResponse = JSON.stringify({
+      lastEdit: 12345678,
+      components: {
+        'hello-world': ['1.0.0', '1.0.2']
+      }
+    });
 
   let setTimeoutStub,
-      clearTimeoutStub,
-      componentsCache,
-      eventsHandlerStub,
-      baseOptions = { pollingInterval: 5, s3: { componentsDir: 'component'}},
-      response,
-      baseResponse = JSON.stringify({
-        lastEdit: 12345678,
-        components: {
-          'hello-world': ['1.0.0', '1.0.2']
-        }
-      });
+    clearTimeoutStub,
+    componentsCache,
+    eventsHandlerStub,
+    response;
 
   const initialise = function(){
     clearTimeoutStub = sinon.stub();
