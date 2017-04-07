@@ -9,15 +9,8 @@ var _ = require('underscore');
 var initialise = function(){
 
   var fsMock = {
-    existsSync: sinon.stub(),
-    lstatSync: sinon.stub(),
-    mkdirSync: sinon.spy(),
     readdirSync: sinon.stub(),
-    readFileSync: sinon.stub(),
-    readJson: sinon.stub(),
-    readJsonSync: sinon.stub(),
-    writeFile: sinon.stub().yields(null, 'ok'),
-    writeJson: sinon.stub().yields(null, 'ok')
+    readJsonSync: sinon.stub()
   };
 
   var pathMock = {
@@ -58,14 +51,10 @@ describe('cli : domain : get-components-by-dir', function(){
         '_package'
       ]);
 
-      data.fs.existsSync.onCall(0).returns(true);
-      data.fs.existsSync.onCall(1).returns(false);
-      data.fs.existsSync.onCall(2).returns(false);
-      data.fs.existsSync.onCall(3).returns(true);
-
-
       data.fs.readJsonSync.onCall(0).returns({ oc: {}});
-      data.fs.readJsonSync.onCall(1).returns({ oc: { packaged: true }});
+      data.fs.readJsonSync.onCall(1).throws(new Error('ENOENT: no such file or directory'));      
+      data.fs.readJsonSync.onCall(2).throws(new Error('ENOENT: no such file or directory'));
+      data.fs.readJsonSync.onCall(3).returns({ oc: { packaged: true }});
 
       executeComponentsListingByDir(data.local, function(err, res){
         error = err;
@@ -94,9 +83,6 @@ describe('cli : domain : get-components-by-dir', function(){
         'a-broken-component',
         'another-component'
       ]);
-
-      data.fs.existsSync.onCall(0).returns(true);
-      data.fs.existsSync.onCall(1).returns(true);
 
       data.fs.readJsonSync.onCall(0).throws(new Error('syntax error: fubar'));
       data.fs.readJsonSync.onCall(1).returns({ oc: { }});
@@ -130,11 +116,9 @@ describe('cli : domain : get-components-by-dir', function(){
         'file.json'
       ]);
 
-      data.fs.existsSync.onCall(0).returns(true);
-      data.fs.existsSync.onCall(1).returns(false);
-      data.fs.existsSync.onCall(1).returns(false);
-
       data.fs.readJsonSync.onCall(0).throws(new Error('syntax error: fubar'));
+      data.fs.readJsonSync.onCall(1).throws(new Error('ENOENT: no such file or directory'));
+      data.fs.readJsonSync.onCall(2).throws(new Error('ENOENT: no such file or directory'));
 
       executeComponentsListingByDir(data.local, function(err, res){
         error = err;

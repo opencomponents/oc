@@ -11,13 +11,8 @@ module.exports = function(){
     var isOcComponent = function(file){
 
       var filePath = path.resolve(componentsDir, file),
-          packagePath = path.join(filePath, 'package.json');
-
-      if(!fs.existsSync(packagePath)){
-        return false;
-      }
-
-      var content;
+          packagePath = path.join(filePath, 'package.json'),
+          content;
 
       try {
         content = fs.readJsonSync(packagePath);
