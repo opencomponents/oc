@@ -1,4 +1,5 @@
 'use strict';
+/* eslint no-unused-vars: 'off' */
 
 var expect = require('chai').expect;
 var injctr = require('injectr');

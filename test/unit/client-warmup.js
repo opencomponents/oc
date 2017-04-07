@@ -23,7 +23,7 @@ describe('client : warmup', function(){
 
   describe('when warming up the client for responsive components', function(){
 
-    var error, response, renderComponentStub;
+    var error, renderComponentStub;
 
     beforeEach(function(done){
       initialise();
@@ -40,9 +40,8 @@ describe('client : warmup', function(){
         }
       }, renderComponentStub);
 
-      warmup({}, function(err, res){
+      warmup({}, function(err){
         error = err;
-        response = res;
         done();
       });
     });
@@ -64,7 +63,7 @@ describe('client : warmup', function(){
   });
 
   describe('when warming up the client for component with parameters', function(){
-    var error, response, renderComponentStub;
+    var error, renderComponentStub;
 
     beforeEach(function(done){
       initialise(null, {
@@ -93,9 +92,8 @@ describe('client : warmup', function(){
         }
       }, renderComponentStub);
 
-      warmup({}, function(err, res){
+      warmup({}, function(err){
         error = err;
-        response = res;
         done();
       });
     });
