@@ -1,0 +1,4 @@
+#componentsHistory.box
+  each release in componentsHistory
+    .componentRow.row.double.table
+      p.release Version #{release.version} of the component #{release.name} has been published on: #{release.lastModified}

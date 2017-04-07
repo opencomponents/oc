@@ -125,6 +125,15 @@ p {
   width: 100%;
 }
 
+.componentRow .release {
+  padding-left: 20px;
+  padding-bottom: 0px;
+  padding-top: 20px;
+  font-size: 18px;
+  margin: 0;
+  width: 100%;
+}
+
 .componentRow .title .description {
   padding: 0;
   font-size: 14px;
@@ -208,6 +217,10 @@ span.component-state-experimental {
 
 span.component-state-deprecated {
   background-color: #B9381E;
+}
+
+a.tab-link {
+  color: #8B0000;
 }
 
 .bold {
