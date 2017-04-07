@@ -43,15 +43,14 @@ var compileView = function(viewPath, type, cb) {
 module.exports = function(params, callback){
 
   var viewSrc = params.ocOptions.files.template.src,
-      viewPath = path.join(params.componentPath, viewSrc),
-      compiled;
+      viewPath = path.join(params.componentPath, viewSrc);
 
   if(!fs.existsSync(viewPath)){
     return callback(format(strings.errors.cli.TEMPLATE_NOT_FOUND, viewSrc));
   }
 
   try {
-    compiled = compileView(viewPath, params.ocOptions.files.template.type, (err, compiled) => {
+    compileView(viewPath, params.ocOptions.files.template.type, (err, compiled) => {
       if (err) {
         return callback(format('{0} compilation failed - {1}', viewSrc, err));
       }

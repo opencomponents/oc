@@ -7,7 +7,6 @@ var request = require('minimal-request');
 describe('registry', function(){
   describe('when fallbackRegistryUrl is specified', function(){
     var oc = require('../../../src/index');
-    var error;
     var fallbackRegistry;
     var registry;
     var result;
@@ -27,7 +26,6 @@ describe('registry', function(){
 
     function next(done){
       return function(e, r){
-        error = e;
         result = r;
         done();
       };
