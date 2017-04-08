@@ -1,6 +1,7 @@
 'use strict';
+/* eslint no-var: 'off' */
 
-const oc = oc || {};
+var oc = oc || {};
 oc.cmd = oc.cmd || [];
 
 oc.cmd.push(function(){
@@ -11,8 +12,8 @@ oc.cmd.push(function(){
 
   $('.refresh-preview').click(function(){
 
-    let url = splitted[0];
-    const splitted = $('#href').val().split('?'),
+    var splitted = $('#href').val().split('?'),
+      url = splitted[0],
       lang = $('#lang').val();
 
     if(url.slice(-1) !== '/'){

@@ -1,17 +1,18 @@
 'use strict';
+/* eslint no-var: 'off' */
 
-const oc = oc || {};
+var oc = oc || {};
 oc.cmd = oc.cmd || [];
 
 oc.cmd.push(function(){
 
-  const componentsListChanged = function(){
+  var componentsListChanged = function(){
     $('.componentRow').removeClass('hide');
-    const s = $('.search').val(),
+    var s = $('.search').val(),
       r = new RegExp(s),
       selectedCheckboxes = $('input[type=checkbox]:checked'),
-      hiddenStates = [];
-    let hidden = 0,
+      hiddenStates = [],
+      hidden = 0,
       i;
 
     for(i = 0; i < selectedCheckboxes.length; i++){
@@ -19,25 +20,25 @@ oc.cmd.push(function(){
     }
 
     for(i = 0; i < componentsList.length; i++){
-      const matches = !s || !!componentsList[i].name.match(r),
-        selector = $('#component-' + componentsList[i].name);
-      let isHidden = false;
+      var matches = !s || !!componentsList[i].name.match(r),
+        selector = $('#component-' + componentsList[i].name),
+        isHidden = false;
 
-      for(let j = 0; j < hiddenStates.length; j++){
+      for(var j = 0; j < hiddenStates.length; j++){
         if(componentsList[i].state.toLowerCase() === hiddenStates[j]){
           isHidden = true;
         }
       }
 
-      const show = matches && !isHidden;
+      var show = matches && !isHidden;
       selector[show ? 'removeClass' : 'addClass']('hide');
       if(!show){
         hidden += 1;
       }
     }
 
-    const totalShowing = componentsList.length - hidden;
-    let result = 'Showing ' + totalShowing + ' components';
+    var totalShowing = componentsList.length - hidden,
+      result = 'Showing ' + totalShowing + ' components';
 
     if(s){
       result += ' matching search query: ' + s;
