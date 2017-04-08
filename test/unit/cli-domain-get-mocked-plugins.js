@@ -167,7 +167,7 @@ describe('cli : domain : get-mocked-plugins', function(){
         initialise({
           existsSync: sinon.stub().returns(true),
           readJsonSync: sinon.stub().returns(ocJson)
-         });
+        });
         result = getMockedPlugins({ warn: sinon.stub() }, '/root/components/');
       });
 
@@ -193,7 +193,7 @@ describe('cli : domain : get-mocked-plugins', function(){
         initialise({
           existsSync: sinon.stub().returns(true),
           readJsonSync: sinon.stub().returns(ocJson)
-         });
+        });
         result = getMockedPlugins({ log: () => {}, warn: () => {} }, '/root/components/');
       });
 
@@ -224,7 +224,7 @@ describe('cli : domain : get-mocked-plugins', function(){
         initialise({
           existsSync: sinon.stub().returns(true),
           readJsonSync: sinon.stub().returns(ocJson)
-         });
+        });
         result = getMockedPlugins({ log: () => {}, warn: () => {} }, '/root/components/');
       });
 
