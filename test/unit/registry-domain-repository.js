@@ -101,7 +101,7 @@ describe('registry : domain : repository', function(){
 
       describe('when the templates specificed on the configuaration are core-templates', function(){
         it('should only return uniques templates', function(){
-           const conf = _.extend(
+          const conf = _.extend(
             cdnConfiguration,
             {templates: ['oc-template-jade']}
           );

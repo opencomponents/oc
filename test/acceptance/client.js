@@ -279,7 +279,7 @@ describe('The node.js OC client', function(){
 
         it('should return rendered content for rendered component', function(){
           expect($components['hello-world']).to.equal('Hello world!');
-          });
+        });
 
         it('should return browser oc tag for unrendered component', function(){
           expect($components['no-containers'].attr('href')).to.equal('http://localhost:3030/no-containers');
@@ -583,7 +583,7 @@ describe('The node.js OC client', function(){
       describe('when client-side failover rendering enabled (default)', function(){
 
         let $clientScript,
-            error;
+          error;
 
         before(function(done){
           clientOfflineRegistry.renderComponent('hello-world', function(err, html){
@@ -611,7 +611,7 @@ describe('The node.js OC client', function(){
         it('should contain the error details', function(){
 
           const exp = getRegExpFromJson(expectedRequest),
-              expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
+            expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
 
           expect(error.toString()).to.match(expected);
         });
@@ -622,14 +622,14 @@ describe('The node.js OC client', function(){
         let $clientScript,
           error;
         const options = { 
-            forwardAcceptLanguageToClient: true,
-            parameters: {
-              hi: 'john'
-            },
-            headers: {
-              'accept-language': 'da, en-gb;q=0.8, en;q=0.7'
-            }
-          };
+          forwardAcceptLanguageToClient: true,
+          parameters: {
+            hi: 'john'
+          },
+          headers: {
+            'accept-language': 'da, en-gb;q=0.8, en;q=0.7'
+          }
+        };
 
         before(function(done){
           clientOfflineRegistry.renderComponent('hello-world', options, function(err, html){

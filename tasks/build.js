@@ -43,8 +43,8 @@ module.exports = function(grunt){
     const Local = require('../src/cli/domain/local'),
       local = new Local(),
       packageOptions = {
-          componentPath: path.join(__dirname, clientComponentDir),
-          verbose: false
+        componentPath: path.join(__dirname, clientComponentDir),
+        verbose: false
       };
 
     local.package(packageOptions, function(err){

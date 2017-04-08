@@ -11,7 +11,7 @@ module.exports = function(){
     const isOcComponent = function(file){
 
       const filePath = path.resolve(componentsDir, file),
-          packagePath = path.join(filePath, 'package.json');
+        packagePath = path.join(filePath, 'package.json');
       let content;
 
       try {

@@ -44,14 +44,14 @@ describe('cli : facade : init', function(){
     });
 
     describe('when the template is of a non valid type', function(){
-        beforeEach(function(){
-          execute('valid-component', 'invalid-type');
-        });
+      beforeEach(function(){
+        execute('valid-component', 'invalid-type');
+      });
 
-        it('should show an error', function(){
-          const expected = 'An error happened when initialising the component: the template is not valid. Allowed values are handlebars and jade';
-          expect(logSpy.log.args[0][0]).to.equal(colors.red(expected));
-        });
+      it('should show an error', function(){
+        const expected = 'An error happened when initialising the component: the template is not valid. Allowed values are handlebars and jade';
+        expect(logSpy.log.args[0][0]).to.equal(colors.red(expected));
+      });
     });
 
     describe('when an error happens', function(){

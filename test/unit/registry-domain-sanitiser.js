@@ -88,8 +88,8 @@ describe('registry : domain : sanitiser', function(){
       it('should keep the parameter as it is', function(){
 
         const componentParameters = {},
-            requestParameters = { age: 123 },
-            sanitisedParameters = sanitise(requestParameters, componentParameters);
+          requestParameters = { age: 123 },
+          sanitisedParameters = sanitise(requestParameters, componentParameters);
 
         expect(sanitisedParameters).to.eql({ age: 123 });
       });

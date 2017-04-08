@@ -68,7 +68,7 @@ module.exports = function(grunt){
           next();
         });
       }, function(){
-          callback(null, results);
+        callback(null, results);
       });
     },
     tags: function(callback){

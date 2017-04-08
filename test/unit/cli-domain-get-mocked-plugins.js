@@ -166,9 +166,9 @@ describe('cli : domain : get-mocked-plugins', function(){
 
       beforeEach(function(){
         initialise({
-            existsSync: sinon.stub().returns(true),
-            readJsonSync: sinon.stub().returns(ocJson)
-         });
+          existsSync: sinon.stub().returns(true),
+          readJsonSync: sinon.stub().returns(ocJson)
+        });
         result = getMockedPlugins({log: sinon.stub()}, '/root/components/');
       });
 
@@ -192,9 +192,9 @@ describe('cli : domain : get-mocked-plugins', function(){
 
       beforeEach(function(){
         initialise({
-            existsSync: sinon.stub().returns(true),
-            readJsonSync: sinon.stub().returns(ocJson)
-         });
+          existsSync: sinon.stub().returns(true),
+          readJsonSync: sinon.stub().returns(ocJson)
+        });
         result = getMockedPlugins({log: sinon.stub()}, '/root/components/');
       });
 
@@ -223,9 +223,9 @@ describe('cli : domain : get-mocked-plugins', function(){
 
       beforeEach(function(){
         initialise({
-            existsSync: sinon.stub().returns(true),
-            readJsonSync: sinon.stub().returns(ocJson)
-         });
+          existsSync: sinon.stub().returns(true),
+          readJsonSync: sinon.stub().returns(ocJson)
+        });
         result = getMockedPlugins({ log: sinon.stub() }, '/root/components/');
       });
 
@@ -257,9 +257,9 @@ describe('cli : domain : get-mocked-plugins', function(){
 
       beforeEach(function(){
         initialise({
-            existsSync: sinon.stub().returns(true),
-            readJsonSync: sinon.stub().returns(ocJson)
-         });
+          existsSync: sinon.stub().returns(true),
+          readJsonSync: sinon.stub().returns(ocJson)
+        });
         result = getMockedPlugins(logger, '/root/components/');
       });
 
@@ -290,9 +290,9 @@ describe('cli : domain : get-mocked-plugins', function(){
 
       beforeEach(function(){
         initialise({
-            existsSync: sinon.stub().returns(true),
-            readJsonSync: sinon.stub().returns(ocJson)
-         });
+          existsSync: sinon.stub().returns(true),
+          readJsonSync: sinon.stub().returns(ocJson)
+        });
         result = getMockedPlugins(logger, '/root/components/');
       });
 

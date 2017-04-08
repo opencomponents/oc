@@ -238,8 +238,8 @@ describe('cli : facade : publish', function(){
                 beforeEach(function(done){
                   sinon.stub(registry, 'putComponent').yields('Unauthorized');
                   execute(done, {
-                      username: 'myuser',
-                      password: 'password'
+                    username: 'myuser',
+                    password: 'password'
                   });
                 });
 

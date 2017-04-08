@@ -67,7 +67,7 @@ module.exports = function(opts){
     },
     get: function(callback){
       if(opts.registry){
-          return callback(null, [opts.registry]);
+        return callback(null, [opts.registry]);
       }
 
       fs.readJson(settings.configFile.src, function(err, res){

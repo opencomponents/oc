@@ -11,7 +11,7 @@ describe('utils : require-template', function(){
   };
   
   const deps = {
-		'path': {
+    'path': {
       join (a, b, c, template) {
         return path.join(a,b,c,template);
       },
@@ -24,7 +24,7 @@ describe('utils : require-template', function(){
         return dir;
       }
     }
-	};
+  };
 
   const requireTemplate = injectr(
     '../../src/utils/require-template.js', deps, globals
@@ -44,7 +44,7 @@ describe('utils : require-template', function(){
 
   it('should throw an error if the template found hasn\'t the right format', function(){
     try {
-    requireTemplate('handlebars');
+      requireTemplate('handlebars');
     } catch (e) {
       expect(e).to.equal('Error requiring oc-template: "handlebars" is not a valid oc-template');
     }

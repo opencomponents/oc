@@ -8,7 +8,7 @@ const strings = require('../../resources/index');
 const wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
-  
+
   const registry = dependencies.registry,
     logger = dependencies.logger;
 

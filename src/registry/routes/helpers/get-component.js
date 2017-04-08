@@ -108,8 +108,8 @@ module.exports = function(conf, repository){
 
       // sanitise and check params
       const appliedParams = applyDefaultValues(requestedComponent.parameters, component.oc.parameters),
-          params = sanitiser.sanitiseComponentParameters(appliedParams, component.oc.parameters),
-          validationResult = validator.validateComponentParameters(params, component.oc.parameters);
+        params = sanitiser.sanitiseComponentParameters(appliedParams, component.oc.parameters),
+        validationResult = validator.validateComponentParameters(params, component.oc.parameters);
 
       if(!validationResult.isValid){
         return callback({

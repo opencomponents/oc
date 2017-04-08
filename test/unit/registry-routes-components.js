@@ -9,9 +9,9 @@ describe('registry : routes : components', function(){
     mockedComponents = require('../fixtures/mocked-components');
 
   let mockedRepository,
-      componentsRoute,
-      code,
-      response;
+    componentsRoute,
+    code,
+    response;
   
   const initialise = function(params){
     mockedRepository = {
@@ -150,22 +150,22 @@ describe('registry : routes : components', function(){
     });
 
     const expectedResponse = [{
-        status: 200,
-        response: {
-          name: 'async-error2-component',
-          type: 'oc-component',
-          requestVersion: '1.X.X',
-          version: '1.0.0',
-        }
-      }, {
-        status: 200,
-        response: {
-          name: 'async-error2-component',
-          type: 'oc-component',
-          requestVersion: '1.0.0',
-          version: '1.0.0',
-        }
-      }];
+      status: 200,
+      response: {
+        name: 'async-error2-component',
+        type: 'oc-component',
+        requestVersion: '1.X.X',
+        version: '1.0.0',
+      }
+    }, {
+      status: 200,
+      response: {
+        name: 'async-error2-component',
+        type: 'oc-component',
+        requestVersion: '1.0.0',
+        version: '1.0.0',
+      }
+    }];
 
     it('should return a response containing components in the correct order', function(){
       expect(response).to.be.eql(expectedResponse);

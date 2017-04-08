@@ -10,11 +10,11 @@ describe('client : sanitiser', function(){
       version: '1.2.3'
     }
   }, { process: 
-    {
-      version: 'v0.10.40',
-      platform: 'darwin',
-      arch: 'x64'
-    }
+  {
+    version: 'v0.10.40',
+    platform: 'darwin',
+    arch: 'x64'
+  }
   });
 
   describe('when sanitising global rendering options', function(){

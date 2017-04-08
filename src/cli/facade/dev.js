@@ -149,7 +149,7 @@ module.exports = function(dependencies){
       log.ok('OK');
       _.forEach(components, function(component){
         logger.log(colors.green('├── ') + component);
-    });
+      });
 
       loadDependencies(components, function(dependencies){
         packageComponents(components, function(){

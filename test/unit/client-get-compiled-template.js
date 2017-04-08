@@ -19,12 +19,12 @@ describe('client : get-compiled-template', function(){
   };
 
   describe('when template file request fails', function(){
-    
+
+    let error;
     const errorExample = '<?xml version="1.0" encoding="UTF-8"?><Error><Code>AccessDenied</Code><Message>' +
       'Access Denied</Message><RequestId>1234567890</RequestId><HostId>asdfghjklqwertyuiop</HostId></Error>';
     
     const requestStub = sinon.stub().yields(403, errorExample);
-    let error;
 
     before(function(done){
       initialise(requestStub);

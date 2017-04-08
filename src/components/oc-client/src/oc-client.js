@@ -32,34 +32,34 @@ var oc = oc || {};
 
   // varants
   var CDNJS_BASEURL = 'https://cdnjs.cloudflare.com/ajax/libs/',
-      IE9_AJAX_POLYFILL_URL = CDNJS_BASEURL + 'jquery-ajaxtransport-xdomainrequest/1.0.3/jquery.xdomainrequest.min.js',
-      JQUERY_URL = CDNJS_BASEURL + 'jquery/1.11.2/jquery.min.js',
-      RETRY_INTERVAL = oc.conf.retryInterval || 5000,
-      RETRY_LIMIT = oc.conf.retryLimit || 30,
-      RETRY_SEND_NUMBER = oc.conf.retrySendNumber || true,
-      POLLING_INTERVAL = oc.conf.pollingInterval || 500,
-      OC_TAG = oc.conf.tag || 'oc-component',
-      MESSAGES_ERRORS_BASEURL_PARAMETER_IS_REQUIRED ='baseUrl parameter is required',
-      MESSAGES_ERRORS_HREF_MISSING = 'Href parameter missing',
-      MESSAGES_ERRORS_NAME_PARAMETER_IS_REQUIRED ='name parameter is required',
-      MESSAGES_ERRORS_RETRY_FAILED = 'Failed to load {0} component {1} times. Giving up'.replace('{1}', RETRY_LIMIT),
-      MESSAGES_ERRORS_LOADING_COMPILED_VIEW = 'Error getting compiled view: {0}',
-      MESSAGES_ERRORS_RENDERING = 'Error rendering component: {0}, error: {1}',
-      MESSAGES_ERRORS_RETRIEVING = 'Failed to retrieve the component. Retrying in {0} seconds...'.replace('{0}', RETRY_INTERVAL/1000),
-      MESSAGES_ERRORS_VIEW_ENGINE_NOT_SUPPORTED = 'Error loading component: view engine "{0}" not supported',
-      MESSAGES_LOADING_COMPONENT = oc.conf.loadingMessage || '',
-      MESSAGES_RENDERED = 'Component \'{0}\' correctly rendered',
-      MESSAGES_RETRIEVING = 'Unrendered component found. Trying to retrieve it...';
+    IE9_AJAX_POLYFILL_URL = CDNJS_BASEURL + 'jquery-ajaxtransport-xdomainrequest/1.0.3/jquery.xdomainrequest.min.js',
+    JQUERY_URL = CDNJS_BASEURL + 'jquery/1.11.2/jquery.min.js',
+    RETRY_INTERVAL = oc.conf.retryInterval || 5000,
+    RETRY_LIMIT = oc.conf.retryLimit || 30,
+    RETRY_SEND_NUMBER = oc.conf.retrySendNumber || true,
+    POLLING_INTERVAL = oc.conf.pollingInterval || 500,
+    OC_TAG = oc.conf.tag || 'oc-component',
+    MESSAGES_ERRORS_BASEURL_PARAMETER_IS_REQUIRED ='baseUrl parameter is required',
+    MESSAGES_ERRORS_HREF_MISSING = 'Href parameter missing',
+    MESSAGES_ERRORS_NAME_PARAMETER_IS_REQUIRED ='name parameter is required',
+    MESSAGES_ERRORS_RETRY_FAILED = 'Failed to load {0} component {1} times. Giving up'.replace('{1}', RETRY_LIMIT),
+    MESSAGES_ERRORS_LOADING_COMPILED_VIEW = 'Error getting compiled view: {0}',
+    MESSAGES_ERRORS_RENDERING = 'Error rendering component: {0}, error: {1}',
+    MESSAGES_ERRORS_RETRIEVING = 'Failed to retrieve the component. Retrying in {0} seconds...'.replace('{0}', RETRY_INTERVAL/1000),
+    MESSAGES_ERRORS_VIEW_ENGINE_NOT_SUPPORTED = 'Error loading component: view engine "{0}" not supported',
+    MESSAGES_LOADING_COMPONENT = oc.conf.loadingMessage || '',
+    MESSAGES_RENDERED = 'Component \'{0}\' correctly rendered',
+    MESSAGES_RETRIEVING = 'Unrendered component found. Trying to retrieve it...';
 
   // The code
   var debug = oc.conf.debug || false,
-      noop = function(){},
-      nav = $window.navigator.userAgent,
-      is9 = !!(nav.match(/MSIE 9/)),
-      initialised = false,
-      initialising = false,
-      retries = {},
-      isBool = function(a){ return typeof(a) === 'boolean'; };
+    noop = function(){},
+    nav = $window.navigator.userAgent,
+    is9 = !!(nav.match(/MSIE 9/)),
+    initialised = false,
+    initialising = false,
+    retries = {},
+    isBool = function(a){ return typeof(a) === 'boolean'; };
 
   var logger = {
     error: function(msg){
@@ -368,9 +368,9 @@ var oc = oc || {};
   oc.renderNestedComponent = function($component, callback){
     oc.ready(function(){
       var dataRendering = $component.attr('data-rendering'),
-          dataRendered = $component.attr('data-rendered'),
-          isRendering = isBool(dataRendering) ? dataRendering : (dataRendering === 'true'),
-          isRendered = isBool(dataRendered) ? dataRendered : (dataRendered === 'true');
+        dataRendered = $component.attr('data-rendered'),
+        isRendering = isBool(dataRendering) ? dataRendering : (dataRendering === 'true'),
+        isRendered = isBool(dataRendered) ? dataRendered : (dataRendered === 'true');
 
       if(!isRendering && !isRendered){
         logger.info(MESSAGES_RETRIEVING);
@@ -394,7 +394,7 @@ var oc = oc || {};
 
   oc.renderByHref = function(href, retryNumberOrCallback, cb){
     var callback = cb,
-        retryNumber = retryNumberOrCallback;
+      retryNumber = retryNumberOrCallback;
 
     if(typeof retryNumberOrCallback === 'function') {
       callback = retryNumberOrCallback;
@@ -437,7 +437,7 @@ var oc = oc || {};
               if(apiResponse.html.indexOf('<' + OC_TAG) === 0){
 
                 var innerHtmlPlusEnding = apiResponse.html.slice(apiResponse.html.indexOf('>') + 1),
-                    innerHtml = innerHtmlPlusEnding.slice(0, innerHtmlPlusEnding.lastIndexOf('<'));
+                  innerHtml = innerHtmlPlusEnding.slice(0, innerHtmlPlusEnding.lastIndexOf('<'));
 
                 apiResponse.html = innerHtml;
               }
@@ -466,7 +466,7 @@ var oc = oc || {};
   oc.renderUnloadedComponents = function(){
     oc.ready(function(){
       var $unloadedComponents = oc.$(OC_TAG + '[data-rendered!=true]'),
-          toDo = $unloadedComponents.length;
+        toDo = $unloadedComponents.length;
 
       var done = function(){
         toDo--;
