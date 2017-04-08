@@ -1,17 +1,17 @@
 'use strict';
 
-var expect = require('chai').expect;
+const expect = require('chai').expect;
 
 describe('registry : routes : helpers : apply-default-values', function(){
 
-  var parameters;
-  var applyDefaultValues = require('../../src/registry/routes/helpers/apply-default-values');
-  var apply = function(a, b) {
+  let parameters;
+  const applyDefaultValues = require('../../src/registry/routes/helpers/apply-default-values');
+  const apply = function(a, b) {
     return applyDefaultValues(a, b);
   };
 
   describe('when component deesn\'t have optional parameters', function(){
-    var componentParameters = {
+    const componentParameters = {
       mandatory: {
         type: 'string',
         mandatory: true,
@@ -30,7 +30,7 @@ describe('registry : routes : helpers : apply-default-values', function(){
 
   describe('when component has optional parameters', function(){
     describe('when default value of parameter is not specified', function(){
-      var componentParameters = {
+      const componentParameters = {
         mandatory: {
           type: 'string',
           mandatory: true,
@@ -55,7 +55,7 @@ describe('registry : routes : helpers : apply-default-values', function(){
     });
     
     describe('when default value of parameter is specified', function() {
-      var componentParameters = {
+      const componentParameters = {
         mandatory: {
           type: 'string',
           mandatory: true,

@@ -1,11 +1,11 @@
 'use strict';
 
-var settings = require('./settings');
-var _ = require('./utils/helpers');
+const settings = require('./settings');
+const _ = require('./utils/helpers');
 
 module.exports = {
   validateConfiguration: function(conf){
-    var errorMessage = function(msg){
+    const errorMessage = function(msg){
       return {
         isValid: false,
         error: settings.configurationNotValid + msg

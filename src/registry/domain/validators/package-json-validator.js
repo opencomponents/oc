@@ -1,8 +1,8 @@
 'use strict';
 
-var _ = require('underscore');
+const _ = require('underscore');
 
-var strings = require('../../../resources');
+const strings = require('../../../resources');
 
 module.exports = function(pkgDetails){
 
@@ -13,7 +13,7 @@ module.exports = function(pkgDetails){
     };
   }
 
-  var result = pkgDetails.customValidator(pkgDetails.packageJson);
+  let result = pkgDetails.customValidator(pkgDetails.packageJson);
   
   if(_.isBoolean(result)){
     result = { isValid: result };

@@ -1,16 +1,16 @@
 'use strict';
 
-var expect = require('chai').expect;
+const expect = require('chai').expect;
 
 describe('client : validator', function(){
 
-  var validator = require('../../client/src/validator');
+  const validator = require('../../client/src/validator');
 
   describe('when validating configuration', function(){
 
     describe('when registries is an array', function(){
 
-      var result = validator.validateConfiguration({
+      const result = validator.validateConfiguration({
         registries: ['http://www.registries.com']
       });
 
@@ -22,7 +22,7 @@ describe('client : validator', function(){
 
     describe('when registries doesn\'t have neither clientRendering or serverRendering properties', function(){
 
-      var result = validator.validateConfiguration({
+      const result = validator.validateConfiguration({
         registries: {}
       });
 

@@ -1,17 +1,17 @@
 'use strict';
 
-var querystring = require('querystring');
-var url = require('url');
-var _ = require('underscore');
+const querystring = require('querystring');
+const url = require('url');
+const _ = require('underscore');
 
 function componentForType(component, baseUrl, type) {
   if (_.isString(component)) {
     component = {name: component};
   }
 
-  var href = url.resolve(baseUrl, component.name) + '/';
+  let href = url.resolve(baseUrl, component.name) + '/';
 
-  if (!!component.version) {
+  if (component.version) {
     href += component.version + '/';
   }
 
@@ -20,13 +20,13 @@ function componentForType(component, baseUrl, type) {
   return href;
 }
 
-var build = {
+const build = {
   component: function (component, baseUrl) {
     if (_.isString(component)) {
       component = {name: component};
     }
 
-    var componentUrl = url.resolve(baseUrl, component.name);
+    let componentUrl = url.resolve(baseUrl, component.name);
 
     if (component.version) {
       componentUrl += '/' + component.version;
@@ -40,7 +40,7 @@ var build = {
     return componentForType(component, baseUrl, 'info');
   },
   componentPreview: function (component, baseUrl) {
-    var href = componentForType(component, baseUrl, 'preview');
+    let href = componentForType(component, baseUrl, 'preview');
     if (!!component.parameters && !_.isEmpty(component.parameters)) {
       href += '/?' + querystring.stringify(component.parameters);
     } else {
@@ -50,7 +50,7 @@ var build = {
     return href;
   },
   queryString: function (parameters) {
-    var qs = '';
+    let qs = '';
 
     if (_.keys(parameters).length > 0) {
       qs += '?';

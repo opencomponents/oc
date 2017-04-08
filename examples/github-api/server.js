@@ -1,5 +1,5 @@
 'use strict';
-var request = require('request');
+const request = require('request');
 
 module.exports.data = function(context, callback){
   request({

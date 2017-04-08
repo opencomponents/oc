@@ -1,18 +1,19 @@
 'use strict';
 
-var expect = require('chai').expect;
-var injectr = require('injectr');
-var sinon = require('sinon');
-var _ = require('underscore');
+const expect = require('chai').expect;
+const injectr = require('injectr');
+const sinon = require('sinon');
+const _ = require('underscore');
 
 describe('cli : domain : get-mocked-plugins', function(){
 
-  var dynamicPluginModule = function(a){ return a ? 'blarg' : 'flarg'; },
-    notAFunctionModule = { 'foo' : 'bar' },
-    fsMock,
+  const dynamicPluginModule = function(a){ return a ? 'blarg' : 'flarg'; },
+    notAFunctionModule = { 'foo' : 'bar' };
+
+  let fsMock,
     getMockedPlugins;
 
-  var initialise = function(fs, pathJoinStub){
+  const initialise = function(fs, pathJoinStub){
 
     fsMock = _.extend({
       existsSync: sinon.stub().returns(true),
@@ -22,7 +23,7 @@ describe('cli : domain : get-mocked-plugins', function(){
       writeFile: sinon.stub().yields(null, 'ok')
     }, fs || {});
 
-    var fakePathFunc = function(){
+    const fakePathFunc = function(){
       return _.toArray(arguments)
               .map(function(x){
                 return x.replace(/\.\//g, '');
@@ -45,7 +46,7 @@ describe('cli : domain : get-mocked-plugins', function(){
 
     describe('when componentsDir parameter is undefined', function(){
 
-      var joinStub = sinon.stub();
+      const joinStub = sinon.stub();
 
       beforeEach(function(){
         initialise({}, joinStub);
@@ -59,7 +60,7 @@ describe('cli : domain : get-mocked-plugins', function(){
 
     describe('when componentsDir parameter is omitted', function(){
 
-      var joinStub = sinon.stub();
+      const joinStub = sinon.stub();
 
       beforeEach(function(){
         initialise({}, joinStub);
@@ -73,8 +74,8 @@ describe('cli : domain : get-mocked-plugins', function(){
 
     describe('when oc.json is in both root and component folder', function(){
 
-      var result;
-      var ocJsonComponent = {
+      let result;
+      const ocJsonComponent = {
         registries: [],
         mocks: {
           plugins: {
@@ -83,7 +84,7 @@ describe('cli : domain : get-mocked-plugins', function(){
         }
       };
 
-      var readMock = sinon.stub().returns(ocJsonComponent);
+      const readMock = sinon.stub().returns(ocJsonComponent);
 
       beforeEach(function(){
         initialise({
@@ -102,8 +103,8 @@ describe('cli : domain : get-mocked-plugins', function(){
 
     describe('when oc.json is in root folder', function(){
 
-      var result;
-      var ocJsonComponent = {
+      let result;
+      const ocJsonComponent = {
         registries: [],
         mocks: {
           plugins: {
@@ -111,7 +112,7 @@ describe('cli : domain : get-mocked-plugins', function(){
           }
         }
       };
-      var ocJsonRoot = {
+      const ocJsonRoot = {
         registries: [],
         mocks: {
           plugins: {
@@ -120,7 +121,7 @@ describe('cli : domain : get-mocked-plugins', function(){
         }
       };
 
-      var readMock = sinon.stub(),
+      const readMock = sinon.stub(),
         existsMock = sinon.stub();
       
       readMock.withArgs('/root/components/oc.json').returns(ocJsonComponent);
@@ -143,7 +144,7 @@ describe('cli : domain : get-mocked-plugins', function(){
     });
 
     describe('when oc.json is missing', function(){
-      var result;
+      let result;
       beforeEach(function(){
         initialise({ existsSync: sinon.stub().returns(false) });
         result = getMockedPlugins(console, '/root/components/');
@@ -155,8 +156,8 @@ describe('cli : domain : get-mocked-plugins', function(){
     });
 
     describe('when no plugins are specified', function(){
-      var result;
-      var ocJson = {
+      let result;
+      const ocJson = {
         registries: [],
         mocks: {
           plugins: {}
@@ -177,8 +178,8 @@ describe('cli : domain : get-mocked-plugins', function(){
     });
 
     describe('when a static plugin is specified', function(){
-      var result;
-      var ocJson = {
+      let result;
+      const ocJson = {
         registries: [],
         mocks: {
           plugins: {
@@ -208,8 +209,8 @@ describe('cli : domain : get-mocked-plugins', function(){
     });
 
     describe('when a dynamic plugin is specified', function(){
-      var result;
-      var ocJson = {
+      let result;
+      const ocJson = {
         registries: [],
         mocks: {
           plugins: {
@@ -240,8 +241,8 @@ describe('cli : domain : get-mocked-plugins', function(){
     });
 
     describe('when a dynamic plugin is specified and the referenced file is missing', function(){
-      var result;
-      var ocJson = {
+      let result;
+      const ocJson = {
         registries: [],
         mocks: {
           plugins: {
@@ -252,7 +253,7 @@ describe('cli : domain : get-mocked-plugins', function(){
         }
       };
 
-      var logger = { log: sinon.stub() };
+      const logger = { log: sinon.stub() };
 
       beforeEach(function(){
         initialise({
@@ -273,8 +274,8 @@ describe('cli : domain : get-mocked-plugins', function(){
     });
 
     describe('when a dynamic plugin is specified and the module is not a function', function(){
-      var result;
-      var ocJson = {
+      let result;
+      const ocJson = {
         registries: [],
         mocks: {
           plugins: {
@@ -285,7 +286,7 @@ describe('cli : domain : get-mocked-plugins', function(){
         }
       };
 
-      var logger = { log: sinon.stub() };
+      const logger = { log: sinon.stub() };
 
       beforeEach(function(){
         initialise({

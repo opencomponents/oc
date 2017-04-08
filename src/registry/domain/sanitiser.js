@@ -1,8 +1,8 @@
 'use strict';
 
-var _ = require('underscore');
+const _ = require('underscore');
 
-var sanitise = {
+const sanitise = {
   booleanParameter: function(variable){
     if(_.isString(variable)){
       if(variable === 'true'){
@@ -33,17 +33,17 @@ var sanitise = {
   }
 };
 
-var toRemove = ['__ocAcceptLanguage'];
+const toRemove = ['__ocAcceptLanguage'];
 
 module.exports = {
   sanitiseComponentParameters: function(requestParameters, expectedParameters){
 
-    var result = {};
+    const result = {};
 
     _.forEach(requestParameters, function(requestParameter, requestParameterName){
       if(_.has(expectedParameters, requestParameterName)){
         
-        var expectedType = expectedParameters[requestParameterName].type,
+        const expectedType = expectedParameters[requestParameterName].type,
           sanitised = sanitise.parameter(requestParameter, expectedType);
 
         result[requestParameterName] = sanitised;

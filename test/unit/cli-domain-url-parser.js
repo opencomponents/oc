@@ -1,12 +1,12 @@
 'use strict';
 
-var expect = require('chai').expect;
+const expect = require('chai').expect;
 
 describe('cli : domain : url-parser', function(){
 
-  var parsed;
-  var execute = function(url, returnVersion){
-    var urlParser = require('../../src/cli/domain/url-parser');
+  let parsed;
+  const execute = function(url, returnVersion){
+    const urlParser = require('../../src/cli/domain/url-parser');
 
     parsed = urlParser.parse({
       href: url,

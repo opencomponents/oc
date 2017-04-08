@@ -1,6 +1,6 @@
 'use strict';
 
-var wrapCliCallback = require('../wrap-cli-callback');
+const wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(){
 

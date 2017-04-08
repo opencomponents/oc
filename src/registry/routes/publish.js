@@ -1,10 +1,10 @@
 'use strict';
 
-var format = require('stringformat');
+const format = require('stringformat');
 
-var extractPackage = require('../domain/extract-package');
-var strings = require('../../resources/index');
-var validator = require('../domain/validators');
+const extractPackage = require('../domain/extract-package');
+const strings = require('../../resources/index');
+const validator = require('../domain/validators');
 
 module.exports = function(repository){
 
@@ -20,7 +20,7 @@ module.exports = function(repository){
       return res.status(409).json({ error: res.errorDetails });
     }
 
-    var validationResult = validator.validateOcCliVersion(req.headers['user-agent']);
+    let validationResult = validator.validateOcCliVersion(req.headers['user-agent']);
     if(!validationResult.isValid) {
       res.errorDetails = format(strings.errors.registry.OC_CLI_VERSION_IS_NOT_VALID, validationResult.error.registryVersion, validationResult.error.cliVersion);
       return res.status(409).json({
@@ -42,7 +42,7 @@ module.exports = function(repository){
 
     extractPackage(req.files, function(err, pkgDetails){
 
-      if(!!err){
+      if(err){
         res.errorDetails = format('Package is not valid: {0}', err);
         return res.status(500).json({ error: 'package is not valid', details: err });
       }

@@ -1,9 +1,9 @@
 'use strict';
 
-var querystring = require('querystring');
-var url = require('url');
+const querystring = require('querystring');
+const url = require('url');
 
-var removeFinalSlashes = function(s){
+const removeFinalSlashes = function(s){
   while(s.slice(-1) === '/'){
     s = s.slice(0, -1);
   }
@@ -13,7 +13,7 @@ var removeFinalSlashes = function(s){
 module.exports = {
   parse: function(parsed){
 
-    var requestedVersion = parsed.requestVersion,
+    const requestedVersion = parsed.requestVersion,
       href = url.parse(parsed.href),
       relativePath = removeFinalSlashes(href.pathname),
       withoutVersion = removeFinalSlashes(relativePath.replace(requestedVersion, '')),

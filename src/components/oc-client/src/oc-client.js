@@ -1,4 +1,5 @@
 'use strict';
+/* eslint no-var: 'off' */
 
 var oc = oc || {};
 
@@ -23,13 +24,13 @@ var oc = oc || {};
   oc.status = oc.status || false;
 
   // If oc client is already inside the page, we do nothing.
-  if(!!oc.status){
+  if(oc.status){
     return oc;
   } else {
     oc.status = 'loading';
   }
 
-  // Constants
+  // varants
   var CDNJS_BASEURL = 'https://cdnjs.cloudflare.com/ajax/libs/',
     IE9_AJAX_POLYFILL_URL = CDNJS_BASEURL + 'jquery-ajaxtransport-xdomainrequest/1.0.3/jquery.xdomainrequest.min.js',
     JQUERY_URL = CDNJS_BASEURL + 'jquery/1.11.2/jquery.min.js',
@@ -65,7 +66,7 @@ var oc = oc || {};
       return console.log(msg);
     },
     info: function(msg){
-      return !!debug ? console.log(msg) : false;
+      return debug ? console.log(msg) : false;
     }
   };
 
@@ -197,11 +198,11 @@ var oc = oc || {};
     $component.attr('data-rendering', false);
     $component.attr('data-version', data.version);
 
-    if(!!data.key){
+    if(data.key){
       $component.attr('data-hash', data.key);
     }
 
-    if(!!data.name){
+    if(data.name){
       $component.attr('data-name', data.name);
       oc.renderedComponents[data.name] = data.version;
       oc.events.fire('oc:rendered', data);
@@ -232,11 +233,11 @@ var oc = oc || {};
 
     var href = withFinalSlash(options.baseUrl) + withFinalSlash(options.name);
 
-    if(!!options.version){
+    if(options.version){
       href += withFinalSlash(options.version);
     }
 
-    if(!!options.parameters){
+    if(options.parameters){
       href += '?';
       for(var parameter in options.parameters){
         if(options.parameters.hasOwnProperty(parameter)){
@@ -330,7 +331,7 @@ var oc = oc || {};
       if (type === 'handlebars') { type = 'oc-template-handlebars'; }
       var template = registeredTemplates[type];
 
-      if(!!template){
+      if(template){
         oc.require(['oc', 'components', compiledViewInfo.key], compiledViewInfo.src, function(compiledView){
           if(!compiledView){
             callback(MESSAGES_ERRORS_LOADING_COMPILED_VIEW.replace('{0}', compiledViewInfo.src));

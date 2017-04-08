@@ -1,8 +1,8 @@
 'use strict';
 
-var _ = require('underscore');
+const _ = require('underscore');
 
-var customLaunchers = {
+const customLaunchers = {
   'chrome': {
     base: 'SauceLabs',
     browserName: 'chrome',

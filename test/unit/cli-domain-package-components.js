@@ -1,18 +1,18 @@
 'use strict';
 
-var expect = require('chai').expect;
-var injectr = require('injectr');
-var path = require('path');
-var sinon = require('sinon');
-var _ = require('underscore');
+const expect = require('chai').expect;
+const injectr = require('injectr');
+const path = require('path');
+const sinon = require('sinon');
+const _ = require('underscore');
 
 describe('cli : domain : package-components', function(){
 
-  var packageStaticFilesStub;
+  let packageStaticFilesStub;
 
-  var initialise = function(){
+  const initialise = function(){
 
-    var fsMock = {
+    const fsMock = {
       existsSync: sinon.stub(),
       lstatSync: sinon.stub(),
       mkdirSync: sinon.spy(),
@@ -24,7 +24,7 @@ describe('cli : domain : package-components', function(){
       writeJson: sinon.stub().yields(null, 'ok')
     };
 
-    var pathMock = {
+    const pathMock = {
       extname: path.extname,
       join: path.join,
       resolve: function(){
@@ -34,19 +34,19 @@ describe('cli : domain : package-components', function(){
 
     packageStaticFilesStub = sinon.stub().yields(null, 'ok');
 
-    var PackageComponents = injectr('../../src/cli/domain/package-components.js', {
+    const PackageComponents = injectr('../../src/cli/domain/package-components.js', {
       'fs-extra': fsMock,
       path: pathMock,
       './package-static-files': packageStaticFilesStub,
       './package-template': sinon.stub().yields(null, { type: 'jade', src: 'template.js', hashKey: '123456'})
     }, { __dirname: ''});
 
-    var packageComponents = new PackageComponents();
+    const packageComponents = new PackageComponents();
 
     return { packageComponents: packageComponents, fs: fsMock };
   };
 
-  var executePackaging = function(packageComponents, minify, callback){
+  const executePackaging = function(packageComponents, minify, callback){
     return packageComponents({
       componentPath: '.',
       minify: minify,
@@ -60,10 +60,10 @@ describe('cli : domain : package-components', function(){
 
       describe('when minify=true', function(){
 
-        var component;
+        let component;
         beforeEach(function(done){
 
-          var data = initialise();
+          const data = initialise();
 
           component = {
             name: 'helloworld',
@@ -105,10 +105,10 @@ describe('cli : domain : package-components', function(){
 
       describe('when minify=false', function(){
 
-        var component;
+        let component;
         beforeEach(function(done){
 
-          var data = initialise();
+          const data = initialise();
 
           component = {
             name: 'helloworld',

@@ -1,48 +1,48 @@
 'use strict';
 
-var async = require('async');
-var colors = require('colors/safe');
-var format = require('stringformat');
-var path = require('path');
-var _ = require('underscore');
+const async = require('async');
+const colors = require('colors/safe');
+const format = require('stringformat');
+const path = require('path');
+const _ = require('underscore');
 
-var getComponentsDependencies = require('../domain/get-components-deps');
-var getMissingDeps = require('../domain/get-missing-deps');
-var getMockedPlugins = require('../domain/get-mocked-plugins');
-var npmInstaller = require('../domain/npm-installer');
-var oc = require('../../index');
-var strings = require('../../resources/index');
-var watch = require('../domain/watch');
-var wrapCliCallback = require('../wrap-cli-callback');
+const getComponentsDependencies = require('../domain/get-components-deps');
+const getMissingDeps = require('../domain/get-missing-deps');
+const getMockedPlugins = require('../domain/get-mocked-plugins');
+const npmInstaller = require('../domain/npm-installer');
+const oc = require('../../index');
+const strings = require('../../resources/index');
+const watch = require('../domain/watch');
+const wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
-  var local = dependencies.local,
+  const local = dependencies.local,
     logger = dependencies.logger;
 
-  var log = {
+  const log = {
     err: function(msg){ return logger.log(colors.red(msg)); },
     ok: function(msg){ return logger.log(colors.green(msg)); },
-    warn: function(msg, noNewLine){ return logger[!!noNewLine ? 'logNoNewLine' : 'log'](colors.yellow(msg)); }
+    warn: function(msg, noNewLine){ return logger[noNewLine ? 'logNoNewLine' : 'log'](colors.yellow(msg)); }
   };
 
   return function(opts, callback){
 
-    var componentsDir = opts.dirPath,
+    const componentsDir = opts.dirPath,
       port = opts.port || 3000,
       baseUrl = opts.baseUrl || format('http://localhost:{0}/', port),
-      packaging = false,
       errors = strings.errors.cli,
       fallbackRegistryUrl = opts.fallbackRegistryUrl,
       hotReloading = _.isUndefined(opts.hotReloading) ? true : opts.hotReloading;
+    let packaging = false;
 
     callback = wrapCliCallback(callback);
 
-    var installMissingDeps = function(missing, cb){
+    const installMissingDeps = function(missing, cb){
       if(_.isEmpty(missing)){ return cb(); }
 
       log.warn(format(strings.messages.cli.INSTALLING_DEPS, missing.join(', ')));
       npmInstaller(missing, function(err){
-        if(!!err){
+        if(err){
           log.err(err.toString());
           throw err;
         }
@@ -50,9 +50,9 @@ module.exports = function(dependencies){
       });
     };
 
-    var watchForChanges = function(components, cb){
+    const watchForChanges = function(components, cb){
       watch(components, componentsDir, function(err, changedFile){
-        if(!!err){
+        if(err){
           log.err(format(strings.errors.generic, err));
         } else {
           log.warn(format(strings.messages.cli.CHANGES_DETECTED, changedFile));
@@ -65,10 +65,10 @@ module.exports = function(dependencies){
       });
     };
 
-    var packageComponents = function(componentsDirs, cb){
+    const packageComponents = function(componentsDirs, cb){
       cb = _.isFunction(cb) ? cb : _.noop;
 
-      var i = 0;
+      let i = 0;
 
       if(!packaging){
         packaging = true;
@@ -76,7 +76,7 @@ module.exports = function(dependencies){
 
         async.eachSeries(componentsDirs, function(dir, cb){
 
-          var packageOptions = {
+          const packageOptions = {
             componentPath: dir,
             minify: false,
             verbose: opts.verbose
@@ -87,8 +87,8 @@ module.exports = function(dependencies){
             cb(err);
           });
         }, function(error){
-          if(!!error){
-            var errorDescription = ((error instanceof SyntaxError) || !!error.message) ? error.message : error;
+          if(error){
+            const errorDescription = ((error instanceof SyntaxError) || !!error.message) ? error.message : error;
             log.err(format(strings.errors.cli.PACKAGING_FAIL, componentsDirs[i], errorDescription));
             log.warn(strings.messages.cli.RETRYING_10_SECONDS);
             setTimeout(function(){
@@ -104,10 +104,10 @@ module.exports = function(dependencies){
       }
     };
 
-    var loadDependencies = function(components, cb){
+    const loadDependencies = function(components, cb){
       log.warn(strings.messages.cli.CHECKING_DEPENDENCIES, true);
       
-      var dependencies = getComponentsDependencies(components),
+      const dependencies = getComponentsDependencies(components),
         missing = getMissingDeps(dependencies.withVersions, components);
 
       if(_.isEmpty(missing)){
@@ -121,8 +121,8 @@ module.exports = function(dependencies){
       });
     };
 
-    var registerPlugins = function(registry){
-      var mockedPlugins = getMockedPlugins(logger, componentsDir);
+    const registerPlugins = function(registry){
+      const mockedPlugins = getMockedPlugins(logger, componentsDir);
 
       mockedPlugins.forEach(function(p){
         registry.register(p);
@@ -154,7 +154,7 @@ module.exports = function(dependencies){
       loadDependencies(components, function(dependencies){
         packageComponents(components, function(){
           
-          var registry = new oc.Registry({
+          const registry = new oc.Registry({
             local: true,
             hotReloading: hotReloading,
             fallbackRegistryUrl: fallbackRegistryUrl,

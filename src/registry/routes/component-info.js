@@ -1,17 +1,17 @@
 'use strict';
 
-var parseAuthor = require('parse-author');
-var _ = require('underscore');
+const parseAuthor = require('parse-author');
+const _ = require('underscore');
 
-var getComponentFallback = require('./helpers/get-component-fallback');
-var isUrlDiscoverable = require('./helpers/is-url-discoverable');
-var urlBuilder = require('../domain/url-builder');
+const getComponentFallback = require('./helpers/get-component-fallback');
+const isUrlDiscoverable = require('./helpers/is-url-discoverable');
+const urlBuilder = require('../domain/url-builder');
 
 function getParams(component) {
-  var params = {};
-  if(!!component.oc.parameters){
-    var mandatoryParams = _.filter(_.keys(component.oc.parameters), function(paramName){
-      var param = component.oc.parameters[paramName];
+  let params = {};
+  if(component.oc.parameters){
+    const mandatoryParams = _.filter(_.keys(component.oc.parameters), function(paramName){
+      const param = component.oc.parameters[paramName];
       return !!param.mandatory && !!param.example;
     });
 
@@ -24,7 +24,7 @@ function getParams(component) {
 }
 
 function getParsedAuthor(component) {
-  var author = component.author || {};
+  const author = component.author || {};
   return _.isString(author) ? parseAuthor(author) : author;
 }
 
@@ -48,13 +48,13 @@ function componentInfo(err, req, res, component) {
     return res.status(404).json(err);
   }
 
-  var isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
+  const isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
 
   if(isHtmlRequest && !!res.conf.discovery){
 
-    var params = getParams(component);
-    var parsedAuthor = getParsedAuthor(component);
-    var href = res.conf.baseUrl;
+    const params = getParams(component);
+    const parsedAuthor = getParsedAuthor(component);
+    let href = res.conf.baseUrl;
 
     addGetRepositoryUrlFunction(component);
 

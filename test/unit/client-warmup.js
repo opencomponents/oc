@@ -1,14 +1,14 @@
 'use strict';
 
-var expect = require('chai').expect;
-var injectr = require('injectr');
-var sinon = require('sinon');
+const expect = require('chai').expect;
+const injectr = require('injectr');
+const sinon = require('sinon');
 
 describe('client : warmup', function(){
 
-  var Warmup, requestStub;
+  let Warmup, requestStub;
 
-  var initialise = function(error, mockedResponse){
+  const initialise = function(error, mockedResponse){
 
     requestStub = sinon.stub().yields(error, mockedResponse || {
       name: 'componentName',
@@ -23,14 +23,14 @@ describe('client : warmup', function(){
 
   describe('when warming up the client for responsive components', function(){
 
-    var error, renderComponentStub;
+    let error, renderComponentStub;
 
     beforeEach(function(done){
       initialise();
 
       renderComponentStub = sinon.stub().yields(null, ['hello', 'component', 'another']);
 
-      var warmup = new Warmup({
+      const warmup = new Warmup({
         components: {
           'component1': '',
           'component2': '1.x.x' 
@@ -63,7 +63,7 @@ describe('client : warmup', function(){
   });
 
   describe('when warming up the client for component with parameters', function(){
-    var error, renderComponentStub;
+    let error, renderComponentStub;
 
     beforeEach(function(done){
       initialise(null, {
@@ -83,7 +83,7 @@ describe('client : warmup', function(){
 
       renderComponentStub = sinon.stub().yields(null, ['hello']);
 
-      var warmup = new Warmup({
+      const warmup = new Warmup({
         components: {
           'component-with-params': ''
         },
@@ -115,12 +115,12 @@ describe('client : warmup', function(){
 
   describe('when warming up the client for unresponsive components', function(){
 
-    var error;
+    let error;
 
     beforeEach(function(done){
       initialise('timeout');
 
-      var warmup = new Warmup({
+      const warmup = new Warmup({
         components: { component1: '' },
         registries: {
           serverRendering: 'https://my-registry.com'
@@ -139,7 +139,7 @@ describe('client : warmup', function(){
 
     it('should return an error with all the details', function(){
 
-      var expectedRequest = {
+      const expectedRequest = {
         url: 'https://my-registry.com/component1/~info',
         json: true,
         headers: { 'Accept-Language': 'en-US' },
@@ -147,7 +147,7 @@ describe('client : warmup', function(){
         timeout: 5
       };
 
-      var expectedError = 'Error: Error warming up oc-client: request ' + JSON.stringify(expectedRequest) + ' failed (timeout)';
+      const expectedError = 'Error: Error warming up oc-client: request ' + JSON.stringify(expectedRequest) + ' failed (timeout)';
 
       expect(error.toString()).to.be.equal(expectedError);
     });

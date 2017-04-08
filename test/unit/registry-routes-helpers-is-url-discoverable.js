@@ -9,7 +9,7 @@ describe('registry : routes : helpers : is-url-discoverable', function(){
 
     let result;
     before((done) => {
-      var isDiscoverable = injectr('../../src/registry/routes/helpers/is-url-discoverable.js', {
+      const isDiscoverable = injectr('../../src/registry/routes/helpers/is-url-discoverable.js', {
         'minimal-request': (req, cb) => cb(null, '{}', {
           response: {
             headers: {
@@ -34,7 +34,7 @@ describe('registry : routes : helpers : is-url-discoverable', function(){
 
     let result;
     before((done) => {
-      var isDiscoverable = injectr('../../src/registry/routes/helpers/is-url-discoverable.js', {
+      const isDiscoverable = injectr('../../src/registry/routes/helpers/is-url-discoverable.js', {
         'minimal-request': (req, cb) => cb(null, '{}', {
           response: {
             headers: {

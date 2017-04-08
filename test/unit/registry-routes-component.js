@@ -1,16 +1,16 @@
 'use strict';
 
-var expect = require('chai').expect;
-var sinon = require('sinon');
-var _ = require('underscore');
+const expect = require('chai').expect;
+const sinon = require('sinon');
+const _ = require('underscore');
 
 describe('registry : routes : component', function(){
 
-  var ComponentRoute = require('../../src/registry/routes/component'),
-    mockedComponents = require('../fixtures/mocked-components'),
-    mockedRepository, resJsonStub, resSetStub, statusStub, componentRoute;
+  const ComponentRoute = require('../../src/registry/routes/component'),
+    mockedComponents = require('../fixtures/mocked-components');
+  let mockedRepository, resJsonStub, resSetStub, statusStub, componentRoute;
   
-  var initialise = function(params){
+  const initialise = function(params){
     resJsonStub = sinon.stub();
     resSetStub = sinon.stub();
     statusStub = sinon.stub().returns({ json: resJsonStub });
@@ -25,12 +25,12 @@ describe('registry : routes : component', function(){
 
   describe('when getting a component with server.js execution timeout', function(){
 
-    var code, response;
+    let code, response;
     before(function(done){
       initialise(mockedComponents['timeout-component']);
       componentRoute = new ComponentRoute({}, mockedRepository);
 
-      var resStatus = function(calledCode){
+      const resStatus = function(calledCode){
         code = calledCode;
         return {
           json: function(calledResponse){
@@ -275,7 +275,7 @@ describe('registry : routes : component', function(){
     describe('when plugin declared in package.json', function(){
 
       beforeEach(function(){
-        var component = _.clone(mockedComponents['plugin-component']);
+        const component = _.clone(mockedComponents['plugin-component']);
         component.package.oc.plugins = ['doSomething'];
         initialise(component);
         componentRoute = new ComponentRoute({}, mockedRepository);
@@ -502,8 +502,8 @@ describe('registry : routes : component', function(){
   describe('when getting a simple component with server.js after headers component no custom headers should be set', function() {
 
     before(function(done) {
-      var headersComponent = mockedComponents['another-response-headers-component'];
-      var simpleComponent = mockedComponents['simple-component'];
+      const headersComponent = mockedComponents['another-response-headers-component'];
+      const simpleComponent = mockedComponents['simple-component'];
 
       mockedRepository = {
         getCompiledView: sinon.stub(),
