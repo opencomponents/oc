@@ -8,7 +8,7 @@ var BabiliPlugin = require('babili-webpack-plugin');
 
 module.exports = function webpackConfigGenerator(params){
   return {
-    devtool: '#source-map',
+    devtool: '#cheap-module-source-map',
     entry: params.dataPath,
     target: 'node',
     output: {
