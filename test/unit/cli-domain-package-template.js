@@ -1,15 +1,15 @@
 'use strict';
 
-var expect = require('chai').expect;
-var injectr = require('injectr');
-var sinon = require('sinon');
-var _ = require('underscore');
+const expect = require('chai').expect;
+const injectr = require('injectr');
+const sinon = require('sinon');
+const _ = require('underscore');
 
-var fsMock,
+let fsMock,
   packageTemplate,
   uglifySpy;
 
-var initialise = function(fs, uglifyStub){
+const initialise = function(fs, uglifyStub){
 
   uglifySpy = sinon.spy();
   fsMock = _.extend({
@@ -37,7 +37,7 @@ describe('cli : domain : package-template', function(){
 
       describe('when component view is not found', function(){
 
-        var error;
+        let error;
         before(function(done){
 
           initialise({
@@ -68,7 +68,7 @@ describe('cli : domain : package-template', function(){
 
       describe('when component view type is not valid', function(){
 
-        var error;
+        let error;
         before(function(done){
 
           initialise();

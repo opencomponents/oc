@@ -1,12 +1,12 @@
 'use strict';
 
-var format = require('stringformat');
+const format = require('stringformat');
 
-var packageInfo = require('../package');
-var _ = require('./utils/helpers');
+const packageInfo = require('../package');
+const _ = require('./utils/helpers');
 
-var lowerHeaderKeys = function(headers){
-  var result = {};
+const lowerHeaderKeys = function(headers){
+  const result = {};
 
   _.each(headers, function(header, headerName){
     result[headerName.toLowerCase()] = header;
@@ -15,7 +15,7 @@ var lowerHeaderKeys = function(headers){
   return result;
 };
 
-var getDefaultUserAgent = function() {
+const getDefaultUserAgent = function() {
   return format('oc-client-{0}/{1}-{2}-{3}',
                 packageInfo.version,
                 process.version,
@@ -23,7 +23,7 @@ var getDefaultUserAgent = function() {
                 process.arch);
 };
 
-var sanitiseDefaultOptions = function(options) {
+const sanitiseDefaultOptions = function(options) {
   if(_.isFunction(options)){
     options = {};
   }

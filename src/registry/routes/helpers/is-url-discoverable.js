@@ -1,6 +1,6 @@
 'use strict';
 
-var request = require('minimal-request');
+const request = require('minimal-request');
 
 module.exports = function(url, callback){
   request({
@@ -8,7 +8,7 @@ module.exports = function(url, callback){
     headers: { accept: 'text/html' }
   }, function(err, body, details){
 
-    var isHtml = function(){
+    const isHtml = function(){
       return details.response.headers['content-type'].indexOf('text/html') >= 0;
     };
 

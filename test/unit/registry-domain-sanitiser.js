@@ -1,20 +1,20 @@
 'use strict';
 
-var expect = require('chai').expect;
+const expect = require('chai').expect;
 
 describe('registry : domain : sanitiser', function(){
 
-  var sanitiser = require('../../src/registry/domain/sanitiser');
+  const sanitiser = require('../../src/registry/domain/sanitiser');
 
   describe('when sanitising component\'s request parameters', function(){
 
-    var sanitise = function(a,b){ return sanitiser.sanitiseComponentParameters(a,b); };
+    const sanitise = function(a,b){ return sanitiser.sanitiseComponentParameters(a,b); };
 
     describe('when component has boolean parameter', function(){
 
       it('should convert string to boolean when true', function(){
         
-        var componentParameters = {
+        const componentParameters = {
           isTrue: {
             type: 'boolean',
             mandatory: true,
@@ -22,7 +22,7 @@ describe('registry : domain : sanitiser', function(){
           }
         };
 
-        var requestParameters = { isTrue: 'true' },
+        const requestParameters = { isTrue: 'true' },
           sanitisedParameters = sanitise(requestParameters, componentParameters);
 
         expect(sanitisedParameters).to.eql({ isTrue: true });
@@ -30,7 +30,7 @@ describe('registry : domain : sanitiser', function(){
 
       it('should convert string to boolean when true', function(){
         
-        var componentParameters = {
+        const componentParameters = {
           isTrue: {
             type: 'boolean',
             mandatory: true,
@@ -38,7 +38,7 @@ describe('registry : domain : sanitiser', function(){
           }
         };
 
-        var requestParameters = { isTrue: 'false' },
+        const requestParameters = { isTrue: 'false' },
           sanitisedParameters = sanitise(requestParameters, componentParameters);
 
         expect(sanitisedParameters).to.eql({ isTrue: false });
@@ -49,7 +49,7 @@ describe('registry : domain : sanitiser', function(){
 
       it('should convert null to empty', function(){
 
-        var componentParameters = {
+        const componentParameters = {
           myString: {
             type: 'string',
             mandatory: false,
@@ -57,7 +57,7 @@ describe('registry : domain : sanitiser', function(){
           }
         };
 
-        var requestParameters = { myString: null },
+        const requestParameters = { myString: null },
           sanitisedParameters = sanitise(requestParameters, componentParameters);
 
         expect(sanitisedParameters).to.eql({ myString: '' });
@@ -68,7 +68,7 @@ describe('registry : domain : sanitiser', function(){
 
       it('should convert string to number', function(){
 
-        var componentParameters = {
+        const componentParameters = {
           age: {
             type: 'number',
             mandatory: true,
@@ -76,7 +76,7 @@ describe('registry : domain : sanitiser', function(){
           }
         };
 
-        var requestParameters = { age: '123' },
+        const requestParameters = { age: '123' },
           sanitisedParameters = sanitise(requestParameters, componentParameters);
 
         expect(sanitisedParameters).to.eql({ age: 123 });
@@ -87,7 +87,7 @@ describe('registry : domain : sanitiser', function(){
 
       it('should keep the parameter as it is', function(){
 
-        var componentParameters = {},
+        const componentParameters = {},
           requestParameters = { age: 123 },
           sanitisedParameters = sanitise(requestParameters, componentParameters);
 

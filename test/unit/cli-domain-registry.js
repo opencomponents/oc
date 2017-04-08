@@ -1,13 +1,13 @@
 'use strict';
 
-var expect = require('chai').expect;
-var injectr = require('injectr');
-var sinon = require('sinon');
+const expect = require('chai').expect;
+const injectr = require('injectr');
+const sinon = require('sinon');
 
-var getRegistry = function(dependencies, opts){
+const getRegistry = function(dependencies, opts){
   dependencies.fs = dependencies.fs || {};
   dependencies.fs.readJsonSync = sinon.stub().returns({ version: '1.2.3' });
-  var Registry = injectr('../../src/cli/domain/registry.js', {
+  const Registry = injectr('../../src/cli/domain/registry.js', {
     'minimal-request': dependencies.request,
     'fs-extra': dependencies.fs,
     '../../utils/put': dependencies.put,
@@ -33,7 +33,7 @@ describe('cli : domain : registry', function(){
   describe('registry specified at runtime', function(){
 
     it('should use the registry specified', function(){
-      var registry = getRegistry({}, { registry: 'http://myotherregistry.com'});
+      const registry = getRegistry({}, { registry: 'http://myotherregistry.com'});
 
       registry.get(function(err, registries){
         expect(registries[0]).to.eql('http://myotherregistry.com');
@@ -46,9 +46,9 @@ describe('cli : domain : registry', function(){
     describe('when registry does not end with "/"', function(){
 
       it('should append the slash when doing the request', function(done){
-        var requestStub = sinon.stub();
+        const requestStub = sinon.stub();
         requestStub.yields('err');
-        var registry = getRegistry({ request: requestStub });
+        const registry = getRegistry({ request: requestStub });
 
         registry.add('http://some-api.com/asd', function(){
           expect(requestStub.getCall(0).args[0].url).to.eql('http://some-api.com/asd/');
@@ -57,7 +57,7 @@ describe('cli : domain : registry', function(){
       });
 
       it('should save the file with slashed url', function(){
-        var requestStub = sinon.stub(),
+        const requestStub = sinon.stub(),
           fsStub = {
             readJson: sinon.stub(),
             writeJson: sinon.spy()
@@ -67,7 +67,7 @@ describe('cli : domain : registry', function(){
 
         fsStub.readJson.yields(null, {});
 
-        var registry = getRegistry({ request: requestStub, fs: fsStub });
+        const registry = getRegistry({ request: requestStub, fs: fsStub });
 
         registry.add('http://some-api.com/asd');
 
@@ -82,10 +82,10 @@ describe('cli : domain : registry', function(){
 
     describe('when no credentials used', function(){
 
-      var args, putSpy;
+      let args, putSpy;
       beforeEach(function(){
         putSpy = sinon.spy();
-        var registry = getRegistry({ put: putSpy });
+        const registry = getRegistry({ put: putSpy });
         registry.putComponent({ route: 'http://registry.com/component/1.0.0', path: '/blabla/path' }, function(){});
         args = putSpy.args[0];
       });
@@ -104,10 +104,10 @@ describe('cli : domain : registry', function(){
 
     describe('when credentials used', function(){
 
-      var args, putSpy;
+      let args, putSpy;
       beforeEach(function(){
         putSpy = sinon.spy();
-        var registry = getRegistry({ put: putSpy });
+        const registry = getRegistry({ put: putSpy });
         registry.putComponent({
           route: 'http://registry.com/component/1.0.0',
           path: '/blabla/path',
@@ -132,9 +132,9 @@ describe('cli : domain : registry', function(){
 
   describe('when getting preview url', function(){
 
-    var err, res;
-    var execute = function(href, error, parsed, done){
-      var registry = getRegistry({ 
+    let err, res;
+    const execute = function(href, error, parsed, done){
+      const registry = getRegistry({ 
         request: sinon.stub().yields(error, parsed),
         urlParser: {
           parse: sinon.stub().returns(parsed)

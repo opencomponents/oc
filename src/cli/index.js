@@ -1,18 +1,18 @@
 'use strict';
 
-var cli = require('yargs');
-var _ = require('underscore');
+const cli = require('yargs');
+const commands = require('./commands');
+const format = require('stringformat');
+const _ = require('underscore');
 
-var commands = require('./commands');
-var format = require('stringformat');
-var Local = require('./domain/local');
-var logger = require('./logger');
-var Registry = require('./domain/registry');
-var strings = require('../resources');
+const Local = require('./domain/local');
+const logger = require('./logger');
+const Registry = require('./domain/registry');
+const strings = require('../resources');
 
-var dependencies = {
+const dependencies = {
   local: new Local(),
-  logger: logger,
+  logger,
   registry: new Registry()
 };
 
@@ -28,7 +28,7 @@ function validate(argv, level){
 function processCommand(command, commandName, cli, level, prefix){
   prefix = prefix || '';
   level = (level || 0) + 1;
-  var facade = require('./facade/' + prefix + commandName)(dependencies);
+  const facade = require('./facade/' + prefix + commandName)(dependencies);
 
   cli
     .command(
@@ -37,23 +37,23 @@ function processCommand(command, commandName, cli, level, prefix){
       function(yargs){
         yargs.usage(command.usage);
 
-        if(!!command.options){
+        if(command.options){
           yargs.options(command.options);
         }
 
-        if(!!command.commands){
+        if(command.commands){
           yargs
             .check(function(argv){
               return validate(argv, level);
             })
             .epilogue(strings.messages.cli.HELP_HINT);
-          var newPrefix = (!!prefix ? prefix + '-' : '') + commandName + '-';
+          const newPrefix = (prefix ? prefix + '-' : '') + commandName + '-';
           _.mapObject(command.commands, function(commandConfiguration, commandName){
             processCommand(commandConfiguration, commandName, yargs, level, newPrefix);
           });
         }
 
-        if(!!command.example){
+        if(command.example){
           yargs
             .example(
               command.example.cmd,
@@ -69,7 +69,7 @@ _.forEach(commands.commands, function(command, commandName) {
   processCommand(command, commandName, cli);
 });
 
-var argv = cli
+const argv = cli
   .completion()
   .check(function(argv){
     return validate(argv, 0);

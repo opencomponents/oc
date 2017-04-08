@@ -1,18 +1,18 @@
 'use strict';
 
-var expect = require('chai').expect;
-var injectr = require('injectr');
-var sinon = require('sinon');
+const expect = require('chai').expect;
+const injectr = require('injectr');
+const sinon = require('sinon');
 
-var getAppStart = function(mockedRepository, options, callback){
-  var appStart = injectr('../../src/registry/app-start.js', {
+const getAppStart = function(mockedRepository, options, callback){
+  const appStart = injectr('../../src/registry/app-start.js', {
     '../components/oc-client/_package/package': { version: '1.2.3' }
   }, { console: { log: sinon.stub() }, __dirname: '.'});
       
   return appStart(mockedRepository, options, callback);
 };
 
-var basicOptions = {
+const basicOptions = {
   s3: {
     bucket: 'test',
     path: 'path',
@@ -30,7 +30,7 @@ describe('registry : app-start', function(){
 
         it('should not publish it', function(done){
 
-          var mockedRepository = {
+          const mockedRepository = {
             getComponentVersions: sinon.stub().yields(null, ['1.2.3']),
             publishComponent: sinon.spy()
           };
@@ -46,7 +46,7 @@ describe('registry : app-start', function(){
 
         it('should publish it', function(done){
 
-          var mockedRepository = {
+          const mockedRepository = {
             getComponentVersions: sinon.stub().yields(null, ['1.0.0']),
             publishComponent: sinon.stub().yields(null, 'ok')
           };

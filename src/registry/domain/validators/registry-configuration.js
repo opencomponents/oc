@@ -1,16 +1,16 @@
 'use strict';
 
-var format = require('stringformat');
-var _ = require('underscore');
+const format = require('stringformat');
+const _ = require('underscore');
 
-var auth = require('../authentication');
-var strings = require('../../../resources');
+const auth = require('../authentication');
+const strings = require('../../../resources');
 
 module.exports = function(conf){
 
-  var response = { isValid: true };
+  const response = { isValid: true };
 
-  var returnError = function(message){
+  const returnError = function(message){
     response.isValid = false;
     response.message = message || 'registry configuration is not valid';
     return response;
@@ -20,9 +20,9 @@ module.exports = function(conf){
     return returnError(strings.errors.registry.CONFIGURATION_EMPTY);
   }
 
-  var prefix = conf.prefix;
+  const prefix = conf.prefix;
 
-  if(!!prefix){
+  if(prefix){
     if(prefix.substr(0, 1) !== '/'){
       return returnError(strings.errors.registry.CONFIGURATION_PREFIX_DOES_NOT_START_WITH_SLASH);
     }
@@ -32,22 +32,22 @@ module.exports = function(conf){
     }
   }
 
-  var publishAuth = conf.publishAuth;
+  const publishAuth = conf.publishAuth;
 
-  if(!!publishAuth){
-    var res = auth.validate(publishAuth);
+  if(publishAuth){
+    const res = auth.validate(publishAuth);
     if(!res.isValid){
       return returnError(res.message);
     }
   }
 
-  var dependencies = conf.dependencies;
+  const dependencies = conf.dependencies;
 
   if(!!dependencies && !_.isArray(dependencies)){
     return returnError(strings.errors.registry.CONFIGURATION_DEPENDENCIES_MUST_BE_ARRAY);
   }
 
-  var routes = conf.routes;
+  const routes = conf.routes;
 
   if(!!routes && !_.isArray(routes)){
     return returnError(strings.errors.registry.CONFIGURATION_ROUTES_MUST_BE_ARRAY);
@@ -81,7 +81,7 @@ module.exports = function(conf){
       return returnError(strings.errors.registry.CONFIGURATION_HEADERS_TO_SKIP_MUST_BE_STRING_ARRAY);
     }
 
-    var hasNonStringElements = conf.customHeadersToSkipOnWeakVersion.find(function(element) {
+    const hasNonStringElements = conf.customHeadersToSkipOnWeakVersion.find(function(element) {
       return typeof(element) !== 'string';
     });
 

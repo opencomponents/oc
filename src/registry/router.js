@@ -1,19 +1,19 @@
 'use strict';
 
-var format = require('stringformat');
-var _ = require('underscore');
+const format = require('stringformat');
+const _ = require('underscore');
 
-var ComponentRoute = require('./routes/component');
-var ComponentsRoute = require('./routes/components');
-var ComponentInfoRoute = require('./routes/component-info');
-var ComponentPreviewRoute = require('./routes/component-preview');
-var ListComponentsRoute = require('./routes/list-components');
-var PublishRoute = require('./routes/publish');
-var settings = require('../resources/settings');
-var StaticRedirectorRoute = require('./routes/static-redirector');
+const ComponentRoute = require('./routes/component');
+const ComponentsRoute = require('./routes/components');
+const ComponentInfoRoute = require('./routes/component-info');
+const ComponentPreviewRoute = require('./routes/component-preview');
+const ListComponentsRoute = require('./routes/list-components');
+const PublishRoute = require('./routes/publish');
+const settings = require('../resources/settings');
+const StaticRedirectorRoute = require('./routes/static-redirector');
 
 module.exports.create = function(app, conf, repository){
-  var routes = {
+  const routes = {
     component: new ComponentRoute(conf, repository),
     components: new ComponentsRoute(conf, repository),
     componentInfo: new ComponentInfoRoute(conf, repository),
@@ -49,7 +49,7 @@ module.exports.create = function(app, conf, repository){
   app.get(conf.prefix + ':componentName/:componentVersion', routes.component);
   app.get(conf.prefix + ':componentName', routes.component);
 
-  if(!!conf.routes){
+  if(conf.routes){
     _.forEach(conf.routes, function(route){
       app[route.method.toLowerCase()](route.route, route.handler);
     });

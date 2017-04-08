@@ -1,7 +1,7 @@
 'use strict';
 
-var path = require('path');
-var watch = require('watch');
+const path = require('path');
+const watch = require('watch');
 
 module.exports = function(dirs, baseDir, changed){
   try {

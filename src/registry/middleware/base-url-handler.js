@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+const _ = require('underscore');
 
 module.exports = function(req, res, next){
 

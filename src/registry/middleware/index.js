@@ -1,15 +1,15 @@
 'use strict';
 
-var bodyParser = require('body-parser');
-var errorhandler = require('errorhandler');
-var morgan = require('morgan');
-var path = require('path');
+const bodyParser = require('body-parser');
+const errorhandler = require('errorhandler');
+const morgan = require('morgan');
+const path = require('path');
 
-var baseUrlHandler = require('./base-url-handler');
-var cors = require('./cors');
-var discoveryHandler = require('./discovery-handler');
-var fileUploads = require('./file-uploads');
-var requestHandler = require('./request-handler');
+const baseUrlHandler = require('./base-url-handler');
+const cors = require('./cors');
+const discoveryHandler = require('./discovery-handler');
+const fileUploads = require('./file-uploads');
+const requestHandler = require('./request-handler');
 
 module.exports.bind = function(app, options){
 
@@ -33,7 +33,7 @@ module.exports.bind = function(app, options){
   app.set('view engine', 'jade');
   app.set('view cache', true);
 
-  if(!!options.verbosity){
+  if(options.verbosity){
     app.use(morgan('dev'));
   }
 

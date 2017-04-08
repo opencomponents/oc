@@ -1,12 +1,12 @@
 'use strict';
 
-var _ = require('underscore');
+const _ = require('underscore');
 
-var settings = require('../../resources/settings');
-var auth = require('./authentication');
+const settings = require('../../resources/settings');
+const auth = require('./authentication');
 
 module.exports = function(input){
-  var options = _.clone(input);
+  const options = _.clone(input);
 
   if(!options.publishAuth){
     options.beforePublish = function(req, res, next){ next(); };

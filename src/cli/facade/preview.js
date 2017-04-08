@@ -1,13 +1,13 @@
 'use strict';
 
-var opn = require('opn');
+const opn = require('opn');
 
-var strings = require('../../resources/index');
-var wrapCliCallback = require('../wrap-cli-callback');
+const strings = require('../../resources/index');
+const wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
 
-  var logger = dependencies.logger,
+  const logger = dependencies.logger,
     registry = dependencies.registry;
 
   return function(opts, callback){

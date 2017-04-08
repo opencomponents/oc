@@ -1,24 +1,24 @@
 'use strict';
 
-var expect = require('chai').expect;
-var injectr = require('injectr');
-var sinon = require('sinon');
-var _ = require('underscore');
+const expect = require('chai').expect;
+const injectr = require('injectr');
+const sinon = require('sinon');
+const _ = require('underscore');
 
 describe('registry : routes : helpers : get-component', function(){
-
-  var fireStub = sinon.stub(),
+  const fireStub = sinon.stub(),
     mockedComponents = require('../fixtures/mocked-components'),
-    mockedRepository,
-    getComponent,
     GetComponent = injectr('../../src/registry/routes/helpers/get-component.js', {
       '../../domain/events-handler': {
         on: _.noop,
         fire: fireStub
       }
     }, { console: console, Buffer: Buffer, setTimeout: setTimeout });
+
+  let mockedRepository,
+    getComponent;
   
-  var initialise = function(params){
+  const initialise = function(params){
     mockedRepository = {
       getCompiledView: sinon.stub().yields(null, params.view),
       getComponent: sinon.stub().yields(null, params.package),

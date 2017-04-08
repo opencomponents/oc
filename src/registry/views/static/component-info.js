@@ -1,4 +1,5 @@
 'use strict';
+/* eslint no-var: 'off' */
 
 var oc = oc || {};
 oc.cmd = oc.cmd || [];

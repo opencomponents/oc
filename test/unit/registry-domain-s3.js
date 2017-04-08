@@ -1,18 +1,18 @@
 'use strict';
 
-var expect = require('chai').expect;
-var injectr = require('injectr');
-var path = require('path');
-var sinon = require('sinon');
+const expect = require('chai').expect;
+const injectr = require('injectr');
+const path = require('path');
+const sinon = require('sinon');
 
 describe('registry : domain : s3', function(){
 
-  var s3, 
+  let s3, 
     mockedS3Client,
     error, 
     response;
     
-  var S3 = injectr('../../src/registry/domain/s3.js', {
+  const S3 = injectr('../../src/registry/domain/s3.js', {
     'fs-extra': {
       readFile: sinon.stub().yields(null, 'file content!')
     },
@@ -26,7 +26,7 @@ describe('registry : domain : s3', function(){
     },
     'node-dir': {
       paths: function(input, cb){
-        var sep = path.sep;
+        const sep = path.sep;
         cb(null, {
           files: [
             '/absolute-path-to-dir' + sep + 'package.json',
@@ -38,7 +38,7 @@ describe('registry : domain : s3', function(){
     }
   });
 
-  var initialise = function(){
+  const initialise = function(){
     mockedS3Client = {
       getObject: sinon.stub(),
       listObjects: sinon.stub(),
@@ -54,7 +54,7 @@ describe('registry : domain : s3', function(){
     });
   };
 
-  var execute = function(method, path, callback){
+  const execute = function(method, path, callback){
     error = response = undefined;
     s3[method](path, function(err, res){
       error = err;
@@ -63,7 +63,7 @@ describe('registry : domain : s3', function(){
     });
   };
   
-  var initialiseAndExecutePut = function(fileName, isPrivate, callback){
+  const initialiseAndExecutePut = function(fileName, isPrivate, callback){
     initialise();
     mockedS3Client.putObject.yields(null, 'ok');
     s3.putFile('/path/to/', fileName, isPrivate, function(err, res){
@@ -73,7 +73,7 @@ describe('registry : domain : s3', function(){
     });      
   };
   
-  var initialiseAndExecutePutDir = function(callback){
+  const initialiseAndExecutePutDir = function(callback){
     initialise();
     mockedS3Client.putObject.yields(null, 'ok');
     s3.putDir('/absolute-path-to-dir', 'components\\componentName\\1.0.0', function(err, res){
@@ -217,7 +217,7 @@ describe('registry : domain : s3', function(){
       });
 
       it('should be saved using authenticated-read ACL', function(){
-        var params = mockedS3Client.putObject.args;
+        const params = mockedS3Client.putObject.args;
         expect(params[0][0].ACL).to.equal('authenticated-read');
       });
     });
@@ -229,7 +229,7 @@ describe('registry : domain : s3', function(){
       });
 
       it('should be saved using public-read ACL', function(){
-        var params = mockedS3Client.putObject.args;
+        const params = mockedS3Client.putObject.args;
         expect(params[0][0].ACL).to.equal('public-read');
       });
     });
@@ -241,7 +241,7 @@ describe('registry : domain : s3', function(){
       });
 
       it('should be saved using application/javascript Content-Type', function(){
-        var params = mockedS3Client.putObject.args;
+        const params = mockedS3Client.putObject.args;
         expect(params[0][0].ContentType).to.equal('application/javascript');
       });
     });
@@ -253,12 +253,12 @@ describe('registry : domain : s3', function(){
       });
 
       it('should be saved using application/javascript Content-Type', function(){
-        var params = mockedS3Client.putObject.args;
+        const params = mockedS3Client.putObject.args;
         expect(params[0][0].ContentType).to.equal('application/javascript');
       });
 
       it('should be saved using gzip Content Content-Encoding', function(){
-        var params = mockedS3Client.putObject.args;
+        const params = mockedS3Client.putObject.args;
         expect(params[0][0].ContentEncoding).to.equal('gzip');
       });
     });
@@ -270,7 +270,7 @@ describe('registry : domain : s3', function(){
       });
 
       it('should be saved using text/css Content-Type', function(){
-        var params = mockedS3Client.putObject.args;
+        const params = mockedS3Client.putObject.args;
         expect(params[0][0].ContentType).to.equal('text/css');
       });
     });
@@ -282,12 +282,12 @@ describe('registry : domain : s3', function(){
       });
 
       it('should be saved using text/css Content-Type', function(){
-        var params = mockedS3Client.putObject.args;
+        const params = mockedS3Client.putObject.args;
         expect(params[0][0].ContentType).to.equal('text/css');
       });
 
       it('should be saved using text/css Content-Encoding', function(){
-        var params = mockedS3Client.putObject.args;
+        const params = mockedS3Client.putObject.args;
         expect(params[0][0].ContentEncoding).to.equal('gzip');
       });
     });
@@ -299,7 +299,7 @@ describe('registry : domain : s3', function(){
       });
 
       it('should be saved using image/jpeg Content-Type', function(){
-        var params = mockedS3Client.putObject.args;
+        const params = mockedS3Client.putObject.args;
         expect(params[0][0].ContentType).to.equal('image/jpeg');
       });
     });
@@ -311,7 +311,7 @@ describe('registry : domain : s3', function(){
       });
 
       it('should be saved using image/gif Content-Type', function(){
-        var params = mockedS3Client.putObject.args;
+        const params = mockedS3Client.putObject.args;
         expect(params[0][0].ContentType).to.equal('image/gif');
       });
     });
@@ -323,7 +323,7 @@ describe('registry : domain : s3', function(){
       });
 
       it('should be saved using image/png fileType', function(){
-        var params = mockedS3Client.putObject.args;
+        const params = mockedS3Client.putObject.args;
         expect(params[0][0].ContentType).to.equal('image/png');
       });
     });

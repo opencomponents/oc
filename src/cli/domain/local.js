@@ -1,15 +1,15 @@
 'use strict';
 
-var fs = require('fs-extra');
-var path = require('path');
-var targz = require('targz');
-var _ = require('underscore');
+const fs = require('fs-extra');
+const path = require('path');
+const targz = require('targz');
+const _ = require('underscore');
 
-var getComponentsByDir = require('./get-components-by-dir');
-var getLocalNpmModules = require('./get-local-npm-modules');
-var packageComponents = require('./package-components');
-var mock = require('./mock');
-var validator = require('../../registry/domain/validators');
+const getComponentsByDir = require('./get-components-by-dir');
+const getLocalNpmModules = require('./get-local-npm-modules');
+const packageComponents = require('./package-components');
+const mock = require('./mock');
+const validator = require('../../registry/domain/validators');
 
 module.exports = function(){
 
@@ -44,7 +44,7 @@ module.exports = function(){
 
       try {
 
-        var pathDir = '../../components/base-component-' + templateType,
+        const pathDir = '../../components/base-component-' + templateType,
           baseComponentDir = path.resolve(__dirname, pathDir),
           npmIgnorePath = path.resolve(__dirname, pathDir + '/.npmignore');
 
@@ -52,7 +52,7 @@ module.exports = function(){
         fs.copySync(baseComponentDir, componentName);
         fs.copySync(npmIgnorePath, componentName + '/.gitignore');
 
-        var componentPath = path.resolve(componentName, 'package.json'),
+        const componentPath = path.resolve(componentName, 'package.json'),
           component = _.extend(fs.readJsonSync(componentPath), {
             name: componentName
           });

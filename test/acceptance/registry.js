@@ -1,19 +1,20 @@
 'use strict';
 
-var expect = require('chai').expect;
-var path = require('path');
-var request = require('minimal-request');
-var _ = require('underscore');
+const expect = require('chai').expect;
+const path = require('path');
+const request = require('minimal-request');
+const _ = require('underscore');
 
 describe('registry', function(){
 
-  var registry,
+  let registry,
     result,
     error,
-    headers,
-    oc = require('../../src/index');
+    headers;
 
-  var next = function(done){
+  const oc = require('../../src/index');
+
+  const next = function(done){
     return function(e, r, d){
       error = e;
       result = r;
@@ -22,7 +23,7 @@ describe('registry', function(){
     };
   };
 
-  var getDefaultTestConfiguration = function() {
+  const getDefaultTestConfiguration = function() {
     return {
       local: true,
       path: path.resolve('test/fixtures/components'),
@@ -34,7 +35,7 @@ describe('registry', function(){
     };
   };
 
-  var initializeRegistry = function(configuration, cb) {
+  const initializeRegistry = function(configuration, cb) {
     registry = new oc.Registry(configuration);
     registry.start(cb);
   };

@@ -1,15 +1,15 @@
 'use strict';
 
-var semver = require('semver');
-var _ = require('underscore');
+const semver = require('semver');
+const _ = require('underscore');
 
-var ocCliVersionValidator = require('./oc-cli-version');
-var componentParametersValidator = require('./component-parameters');
-var packageJsonValidator = require('./package-json-validator');
-var pluginsRequirementsValidator = require('./plugins-requirements');
-var registryConfigurationValidator = require('./registry-configuration');
-var uploadedPackageValidator = require('./uploaded-package');
-var nodeVersionValidator = require('./node-version');
+const ocCliVersionValidator = require('./oc-cli-version');
+const componentParametersValidator = require('./component-parameters');
+const packageJsonValidator = require('./package-json-validator');
+const pluginsRequirementsValidator = require('./plugins-requirements');
+const registryConfigurationValidator = require('./registry-configuration');
+const uploadedPackageValidator = require('./uploaded-package');
+const nodeVersionValidator = require('./node-version');
 
 module.exports = {
   validateComponentName: function(componentName){

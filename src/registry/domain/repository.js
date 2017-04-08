@@ -1,35 +1,35 @@
 'use strict';
 
-var format = require('stringformat');
-var fs = require('fs-extra');
-var path = require('path');
-var _ = require('underscore');
+const format = require('stringformat');
+const fs = require('fs-extra');
+const path = require('path');
+const _ = require('underscore');
 
-var ComponentsCache = require('./components-cache');
-var packageInfo = require('../../../package.json');
-var S3 = require('./s3');
-var settings = require('../../resources/settings');
-var strings = require('../../resources');
-var validator = require('./validators');
-var versionHandler = require('./version-handler');
-var requireTemplate = require('../../utils/require-template');
+const ComponentsCache = require('./components-cache');
+const packageInfo = require('../../../package.json');
+const S3 = require('./s3');
+const settings = require('../../resources/settings');
+const strings = require('../../resources');
+const validator = require('./validators');
+const versionHandler = require('./version-handler');
+const requireTemplate = require('../../utils/require-template');
 
 module.exports = function(conf){
 
-  var cdn = !conf.local && new S3(conf),
+  const cdn = !conf.local && new S3(conf),
     repositorySource = conf.local ? 'local repository' : 's3 cdn',
     componentsCache = new ComponentsCache(conf, cdn);
 
-  var getFilePath = function(component, version, filePath){
+  const getFilePath = function(component, version, filePath){
     return format('{0}/{1}/{2}/{3}', conf.s3.componentsDir, component, version, filePath);
   };
 
-  var coreTemplates = ['oc-template-jade', 'oc-template-handlebars'];
-  var templates = _.union(coreTemplates, conf.templates)
+  const coreTemplates = ['oc-template-jade', 'oc-template-handlebars'];
+  const templates = _.union(coreTemplates, conf.templates)
     .map(function(template){
       try {
-        var ocTemplate = requireTemplate(template);
-        var info = ocTemplate.getInfo();
+        const ocTemplate = requireTemplate(template);
+        const info = ocTemplate.getInfo();
         return {
           type: info.type,
           version: info.version,
@@ -40,7 +40,7 @@ module.exports = function(conf){
       }
     });
   
-  var local = {
+  const local = {
     getCompiledView: function(componentName){
       if(componentName === 'oc-client'){
         return fs.readFileSync(path.join(__dirname, '../../components/oc-client/_package/template.js')).toString();
@@ -50,8 +50,8 @@ module.exports = function(conf){
     },
     getComponents: function(){ 
 
-      var validComponents = fs.readdirSync(conf.path).filter(function(file){
-        var isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory(),
+      const validComponents = fs.readdirSync(conf.path).filter(function(file){
+        const isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory(),
           isValidComponent = isDir ? (fs.readdirSync(path.join(conf.path, file)).filter(function(file){
             return file === '_package';
           }).length === 1) : false;
@@ -93,7 +93,7 @@ module.exports = function(conf){
     },
     getComponent: function(componentName, componentVersion, callback){
 
-      var self = this;
+      const self = this;
 
       if(typeof(componentVersion) === 'function'){
         callback = componentVersion;
@@ -110,7 +110,7 @@ module.exports = function(conf){
           return callback(format(strings.errors.registry.COMPONENT_NOT_FOUND, componentName, repositorySource));
         }
 
-        var version = versionHandler.getAvailableVersion(componentVersion, availableVersions);
+        const version = versionHandler.getAvailableVersion(componentVersion, availableVersions);
 
         if(!version){
           return callback(format(strings.errors.registry.COMPONENT_VERSION_NOT_FOUND, componentName, componentVersion, repositorySource));
@@ -128,7 +128,7 @@ module.exports = function(conf){
     },
     getComponentInfo: function(componentName, componentVersion, callback){
       if(conf.local){
-        var componentInfo;
+        let componentInfo;
 
         if(componentName === 'oc-client'){
           componentInfo = fs.readJsonSync(path.join(__dirname, '../../components/oc-client/_package/package.json'));
@@ -144,7 +144,7 @@ module.exports = function(conf){
       }
 
       cdn.getFile(getFilePath(componentName, componentVersion, 'package.json'), function(err, component){
-        var parsed;
+        let parsed;
 
         try {
           parsed = JSON.parse(component);
@@ -156,7 +156,7 @@ module.exports = function(conf){
       });
     },
     getComponentPath: function(componentName, componentVersion){
-      var prefix = conf.local ? conf.baseUrl : ('https:' + conf.s3.path + conf.s3.componentsDir + '/');
+      const prefix = conf.local ? conf.baseUrl : ('https:' + conf.s3.path + conf.s3.componentsDir + '/');
       return format('{0}{1}/{2}/', prefix, componentName, componentVersion);
     },
     getComponents: function(callback){
@@ -165,7 +165,7 @@ module.exports = function(conf){
       }
 
       componentsCache.get(function(err, res){
-        callback(err, !!res ? _.keys(res.components) : null);
+        callback(err, res ? _.keys(res.components) : null);
       });
     },
     getComponentVersions: function(componentName, callback){
@@ -225,7 +225,7 @@ module.exports = function(conf){
         });
       }
 
-      var validationResult = validator.validatePackageJson(_.extend(pkgDetails, {
+      const validationResult = validator.validatePackageJson(_.extend(pkgDetails, {
         componentName: componentName,
         customValidator: conf.publishValidation
       }));
@@ -247,7 +247,7 @@ module.exports = function(conf){
         }
 
         cdn.putDir(pkgDetails.outputFolder, conf.s3.componentsDir + '/' + componentName + '/' + componentVersion, function(err){
-          if(!!err){ return callback(err); }
+          if(err){ return callback(err); }
           componentsCache.refresh(callback);
         });
       });

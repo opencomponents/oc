@@ -1,14 +1,14 @@
 'use strict';
 
-var colors = require('colors/safe');
-var expect = require('chai').expect;
-var injectr = require('injectr');
-var path = require('path');
-var sinon = require('sinon');
+const colors = require('colors/safe');
+const expect = require('chai').expect;
+const injectr = require('injectr');
+const path = require('path');
+const sinon = require('sinon');
 
 describe('cli : facade : publish', function(){
 
-  var logSpy = {},
+  const logSpy = {},
     Registry = require('../../src/cli/domain/registry'),
     registry = new Registry(),
     Local = require('../../src/cli/domain/local'),
@@ -17,7 +17,7 @@ describe('cli : facade : publish', function(){
     PublishFacade = injectr('../../src/cli/facade/publish.js', { read: readStub }),
     publishFacade = new PublishFacade({ registry: registry, local: local, logger: logSpy });
 
-  var execute = function(cb, creds){
+  const execute = function(cb, creds){
     creds = creds || {};
     logSpy.err = sinon.stub();
     logSpy.log = sinon.stub();
@@ -64,8 +64,7 @@ describe('cli : facade : publish', function(){
         sinon.stub(local, 'package').yields('the component is not valid');
         execute(function(){
           local.package.restore();
-
-          var message = logSpy.warn.args[0][0],
+          const message = logSpy.warn.args[0][0],
             re = new RegExp('\\' + path.sep, 'g'),
             messageWithSlashesOnPath = message.replace(re, '/');
 
@@ -120,8 +119,7 @@ describe('cli : facade : publish', function(){
               sinon.stub(registry, 'putComponent').yields('blabla');
               execute(function(){
                 registry.putComponent.restore();
-
-                var message = logSpy.warn.args[1][0],
+                const message = logSpy.warn.args[1][0],
                   re = new RegExp('\\' + path.sep, 'g'),
                   messageWithSlashesOnPath = message.replace(re, '/');
 
@@ -257,7 +255,7 @@ describe('cli : facade : publish', function(){
 
               describe('when it succeeds', function(){
 
-                var stub;
+                let stub;
                 beforeEach(function(done){
                   sinon.stub(registry, 'putComponent').yields(null, 'yay');
                   stub = sinon.stub(local, 'cleanup').yields(null, 'done');

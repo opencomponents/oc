@@ -1,16 +1,16 @@
 'use strict';
 
-var async = require('async');
-var AWS = require('aws-sdk');
-var Cache = require('nice-cache');
-var format = require('stringformat');
-var fs = require('fs-extra');
-var nodeDir = require('node-dir');
-var _ = require('underscore');
+const async = require('async');
+const AWS = require('aws-sdk');
+const Cache = require('nice-cache');
+const format = require('stringformat');
+const fs = require('fs-extra');
+const nodeDir = require('node-dir');
+const _ = require('underscore');
 
-var getFileInfo = require('../../utils/get-file-info');
-var getNextYear = require('../../utils/get-next-year');
-var strings = require('../../resources');
+const getFileInfo = require('../../utils/get-file-info');
+const getNextYear = require('../../utils/get-next-year');
+const strings = require('../../resources');
 
 module.exports = function(conf){
 
@@ -21,7 +21,7 @@ module.exports = function(conf){
     httpOptions: { timeout: conf.s3.timeout || 10000 }
   });
 
-  var bucket = conf.s3.bucket,
+  const bucket = conf.s3.bucket,
     cache = new Cache({
       verbose: !!conf.verbosity,
       refreshInterval: conf.refreshInterval
@@ -30,8 +30,8 @@ module.exports = function(conf){
   return {
     listSubDirectories: function(dir, callback){
 
-      var normalisedPath = dir.lastIndexOf('/') === (dir.length - 1) && dir.length > 0 ? dir : dir + '/';
-      var client = new AWS.S3();
+      const normalisedPath = dir.lastIndexOf('/') === (dir.length - 1) && dir.length > 0 ? dir : dir + '/';
+      const client = new AWS.S3();
 
       client.listObjects({
         Bucket: bucket,
@@ -47,7 +47,7 @@ module.exports = function(conf){
           });
         }
 
-        var result = _.map(data.CommonPrefixes, function(commonPrefix){
+        const result = _.map(data.CommonPrefixes, function(commonPrefix){
           return commonPrefix.Prefix.substr(normalisedPath.length, commonPrefix.Prefix.length - normalisedPath.length - 1);
         });
 
@@ -61,8 +61,8 @@ module.exports = function(conf){
         force = false;
       }
 
-      var getFromAws = function(callback){
-        var client = new AWS.S3();
+      const getFromAws = function(callback){
+        const client = new AWS.S3();
 
         client.getObject({
           Bucket: bucket,
@@ -83,9 +83,9 @@ module.exports = function(conf){
         return getFromAws(callback);
       }
 
-      var cached = cache.get('s3-file', filePath);
+      const cached = cache.get('s3-file', filePath);
 
-      if(!!cached){
+      if(cached){
         return callback(null, cached);
       }
 
@@ -102,13 +102,13 @@ module.exports = function(conf){
     },
     putDir: function(dirInput, dirOutput, callback){
 
-      var self = this;
+      const self = this;
 
       nodeDir.paths(dirInput, function(err, paths) {
-        var files = paths.files;
+        const files = paths.files;
 
         async.each(files, function(file, cb){
-          var relativeFile = file.substr(dirInput.length),
+          const relativeFile = file.substr(dirInput.length),
             url = (dirOutput + relativeFile).replace(/\\/g, '/');
 
           self.putFile(file, url, relativeFile === '/server.js', cb);
@@ -122,16 +122,16 @@ module.exports = function(conf){
       });
     },
     putFile: function(filePath, fileName, isPrivate, callback){
-      var self = this;
+      const self = this;
       
       fs.readFile(filePath, function(err, fileContent){
-        if(!!err){ return callback(err); }
+        if(err){ return callback(err); }
         self.putFileContent(fileContent, fileName, isPrivate, callback);
       });
     },
     putFileContent: function(fileContent, fileName, isPrivate, callback){
 
-      var fileInfo = getFileInfo(fileName),
+      const fileInfo = getFileInfo(fileName),
         obj = {
           Bucket: bucket,
           Key: fileName,
@@ -141,15 +141,15 @@ module.exports = function(conf){
           Expires: getNextYear()
         };
 
-      if(!!fileInfo.mimeType){
+      if(fileInfo.mimeType){
         obj.ContentType = fileInfo.mimeType;
       }
 
-      if(!!fileInfo.gzip){
+      if(fileInfo.gzip){
         obj.ContentEncoding = 'gzip';
       }
 
-      var client = new AWS.S3();
+      const client = new AWS.S3();
       client.putObject(obj, callback);
     }
   };

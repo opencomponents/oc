@@ -1,11 +1,11 @@
 'use strict';
 
-var async = require('async');
-var _ = require('underscore');
+const async = require('async');
+const _ = require('underscore');
 
-var dateStringified = require('../../utils/date-stringify');
-var packageInfo = require('../../../package.json');
-var urlBuilder = require('../domain/url-builder');
+const dateStringified = require('../../utils/date-stringify');
+const packageInfo = require('../../../package.json');
+const urlBuilder = require('../domain/url-builder');
 
 module.exports = function(repository){
   return function(req, res, next){
@@ -16,7 +16,7 @@ module.exports = function(repository){
         return res.status(404).json({ error: res.errorDetails });
       }
 
-      var isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0,
+      const isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0,
         baseResponse = {
           href: res.conf.baseUrl,
           ocVersion: packageInfo.version,
@@ -25,9 +25,9 @@ module.exports = function(repository){
 
       if(isHtmlRequest && !!res.conf.discovery){
 
-        var componentsInfo = [],
-          componentsReleases = 0,
-          stateCounts = {};
+        let componentsInfo = [],
+          componentsReleases = 0;
+        const stateCounts = {};
 
         async.each(components, function(component, callback){
           return repository.getComponent(component, function(err, result){
@@ -55,9 +55,9 @@ module.exports = function(repository){
             componentsReleases: componentsReleases,
             componentsList: _.map(componentsInfo, function(component){
 
-              var state = (!!component.oc && !!component.oc.state) ? component.oc.state : '';
+              const state = (!!component.oc && !!component.oc.state) ? component.oc.state : '';
 
-              if(!!state){
+              if(state){
                 stateCounts[state] = stateCounts[state] || 0;
                 stateCounts[state] += 1;
               }

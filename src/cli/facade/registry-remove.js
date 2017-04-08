@@ -1,11 +1,11 @@
 'use strict';
 
-var strings = require('../../resources/index');
-var wrapCliCallback = require('../wrap-cli-callback');
+const strings = require('../../resources/index');
+const wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
   
-  var registry = dependencies.registry,
+  const registry = dependencies.registry,
     logger = dependencies.logger;
 
   return function(opts, callback){
