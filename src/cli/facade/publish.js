@@ -16,12 +16,6 @@ module.exports = function(dependencies){
       local = dependencies.local,
       logger = dependencies.logger;
 
-  var log = {
-    err: function(msg){ return logger.log(colors.red(msg)); },
-    ok: function(msg){ return logger.log(colors.green(msg)); },
-    warn: function(msg){ return logger.log(colors.yellow(msg)); }
-  };
-
   return function(opts, callback){
 
     var componentPath = opts.componentPath,
@@ -33,14 +27,14 @@ module.exports = function(dependencies){
 
     var getCredentials = function(cb){
       if(opts.username && opts.password){
-        log.ok(strings.messages.cli.USING_CREDS);
+        logger.ok(strings.messages.cli.USING_CREDS);
         return cb(null, _.pick(opts, 'username', 'password'));
       }
 
-      log.warn(strings.messages.cli.ENTER_USERNAME);
+      logger.warn(strings.messages.cli.ENTER_USERNAME);
 
       read({}, function(err, username){
-        log.warn(strings.messages.cli.ENTER_PASSWORD);
+        logger.warn(strings.messages.cli.ENTER_PASSWORD);
 
         read({ silent: true }, function(err, password){
           cb(null, { username: username, password: password});
@@ -49,14 +43,14 @@ module.exports = function(dependencies){
     };
 
     var packageAndCompress = function(cb){
-      log.warn(format(strings.messages.cli.PACKAGING, packageDir));
+      logger.warn(format(strings.messages.cli.PACKAGING, packageDir));
       var packageOptions = {
         componentPath: path.resolve(componentPath)
       };
       local.package(packageOptions, function(err, component){
         if(err){ return cb(err); }
 
-        log.warn(format(strings.messages.cli.COMPRESSING, compressedPackagePath));
+        logger.warn(format(strings.messages.cli.COMPRESSING, compressedPackagePath));
 
         local.compress(packageDir, compressedPackagePath, function(err){
           if(err){ return cb(err); }
@@ -66,18 +60,18 @@ module.exports = function(dependencies){
     };
 
     var putComponentToRegistry = function(options, cb){
-      log.warn(format(strings.messages.cli.PUBLISHING, options.route));
+      logger.warn(format(strings.messages.cli.PUBLISHING, options.route));
 
       registry.putComponent(options, function(err){
 
         if(!!err){
           if(err === 'Unauthorized'){
             if(!!options.username || !!options.password){
-              log.err(format(strings.errors.cli.PUBLISHING_FAIL, strings.errors.cli.INVALID_CREDENTIALS));
+              logger.err(format(strings.errors.cli.PUBLISHING_FAIL, strings.errors.cli.INVALID_CREDENTIALS));
               return cb(err);
             }
 
-            log.warn(strings.messages.cli.REGISTRY_CREDENTIALS_REQUIRED);
+            logger.warn(strings.messages.cli.REGISTRY_CREDENTIALS_REQUIRED);
 
             return getCredentials(function(err, credentials){
               putComponentToRegistry(_.extend(options, credentials), cb);
@@ -88,21 +82,21 @@ module.exports = function(dependencies){
                 errorDetails = format(strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE, colors.blue(upgradeCommand));
 
             errorMessage = format(strings.errors.cli.PUBLISHING_FAIL, errorDetails);
-            log.err(errorMessage);
+            logger.err(errorMessage);
             return cb(errorMessage);
           } else if(err.code === 'node_version_not_valid') {
             var details = format(strings.errors.cli.NODE_CLI_VERSION_NEEDS_UPGRADE, err.details.suggestedVersion);
 
             errorMessage = format(strings.errors.cli.PUBLISHING_FAIL, details);
-            log.err(errorMessage);
+            logger.err(errorMessage);
             return cb(errorMessage);
           } else {
             errorMessage = format(strings.errors.cli.PUBLISHING_FAIL, err);
-            log.err(errorMessage);
+            logger.err(errorMessage);
             return cb(errorMessage);
           }
         } else {
-          log.ok(format(strings.messages.cli.PUBLISHED, options.route));
+          logger.ok(format(strings.messages.cli.PUBLISHED, options.route));
           return cb(null, 'ok');
         }
       });
@@ -110,14 +104,14 @@ module.exports = function(dependencies){
 
     registry.get(function(err, registryLocations){
       if(err){ 
-        log.err(err);
+        logger.err(err);
         return callback(err);
       }
 
       packageAndCompress(function(err, component){
         if(err){
           errorMessage = format(strings.errors.cli.PACKAGE_CREATION_FAIL, err);
-          log.err(errorMessage);
+          logger.err(errorMessage);
           return callback(errorMessage);
         }
 

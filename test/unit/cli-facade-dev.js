@@ -1,6 +1,5 @@
 'use strict';
 
-var colors = require('colors/safe');
 var expect = require('chai').expect;
 var sinon = require('sinon');
 
@@ -14,8 +13,8 @@ describe('cli : facade : dev', function(){
       devFacade = new DevFacade({ local: local, logger: logSpy });
 
   var execute = function(dirName, port){
-    logSpy.logNoNewLine = sinon.spy();
-    logSpy.log = sinon.spy();
+    logSpy.err = sinon.spy();
+    logSpy.warn = () => {};
     devFacade({ dirName: dirName, port: port }, function(){});
   };
 
@@ -35,7 +34,7 @@ describe('cli : facade : dev', function(){
       });
 
       it('should show an error', function(){
-        expect(logSpy.log.args[0][0]).to.equal(colors.red('An error happened when initialising the dev runner: no components found in specified path'));
+        expect(logSpy.err.args[0][0]).to.equal('An error happened when initialising the dev runner: no components found in specified path');
       });
     });
 
@@ -53,7 +52,7 @@ describe('cli : facade : dev', function(){
       });
 
       it('should show an error', function(){
-        expect(logSpy.log.args[0][0]).to.equal(colors.red('An error happened when initialising the dev runner: no components found in specified path'));
+        expect(logSpy.err.args[0][0]).to.equal('An error happened when initialising the dev runner: no components found in specified path');
       });
     });
   });

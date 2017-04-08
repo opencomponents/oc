@@ -19,12 +19,6 @@ module.exports = function(dependencies){
   var local = dependencies.local,
       logger = dependencies.logger;
 
-  var log = {
-    err: function(msg){ return logger.log(colors.red(msg)); },
-    ok: function(msg){ return logger.log(colors.green(msg)); },
-    warn: function(msg, noNewLine){ return logger[!!noNewLine ? 'logNoNewLine' : 'log'](colors.yellow(msg)); }
-  };
-
   return function(opts, callback){
 
     var componentsDir = opts.dirPath,
@@ -40,10 +34,10 @@ module.exports = function(dependencies){
     var installMissingDeps = function(missing, cb){
       if(_.isEmpty(missing)){ return cb(); }
 
-      log.warn(format(strings.messages.cli.INSTALLING_DEPS, missing.join(', ')));
+      logger.warn(format(strings.messages.cli.INSTALLING_DEPS, missing.join(', ')));
       npmInstaller(missing, function(err){
         if(!!err){
-          log.err(err.toString());
+          logger.err(err.toString());
           throw err;
         }
         cb();
@@ -53,11 +47,11 @@ module.exports = function(dependencies){
     var watchForChanges = function(components, cb){
       watch(components, componentsDir, function(err, changedFile){
         if(!!err){
-          log.err(format(strings.errors.generic, err));
+          logger.err(format(strings.errors.generic, err));
         } else {
-          log.warn(format(strings.messages.cli.CHANGES_DETECTED, changedFile));
+          logger.warn(format(strings.messages.cli.CHANGES_DETECTED, changedFile));
           if(!hotReloading){
-            log.warn(strings.messages.cli.HOT_RELOADING_DISABLED);
+            logger.warn(strings.messages.cli.HOT_RELOADING_DISABLED);
           } else {
             cb(components);
           }
@@ -72,7 +66,7 @@ module.exports = function(dependencies){
 
       if(!packaging){
         packaging = true;
-        log.warn(strings.messages.cli.PACKAGING_COMPONENTS, true);
+        logger.warn(strings.messages.cli.PACKAGING_COMPONENTS, true);
 
         async.eachSeries(componentsDirs, function(dir, cb){
 
@@ -89,15 +83,15 @@ module.exports = function(dependencies){
         }, function(error){
           if(!!error){
             var errorDescription = ((error instanceof SyntaxError) || !!error.message) ? error.message : error;
-            log.err(format(strings.errors.cli.PACKAGING_FAIL, componentsDirs[i], errorDescription));
-            log.warn(strings.messages.cli.RETRYING_10_SECONDS);
+            logger.err(format(strings.errors.cli.PACKAGING_FAIL, componentsDirs[i], errorDescription));
+            logger.warn(strings.messages.cli.RETRYING_10_SECONDS);
             setTimeout(function(){
               packaging = false;
               packageComponents(componentsDirs);
             }, 10000);
           } else {
             packaging = false;
-            log.ok('OK');
+            logger.ok('OK');
             cb();
           }
         });
@@ -105,17 +99,17 @@ module.exports = function(dependencies){
     };
 
     var loadDependencies = function(components, cb){
-      log.warn(strings.messages.cli.CHECKING_DEPENDENCIES, true);
+      logger.warn(strings.messages.cli.CHECKING_DEPENDENCIES, true);
       
       var dependencies = getComponentsDependencies(components),
           missing = getMissingDeps(dependencies.withVersions, components);
 
       if(_.isEmpty(missing)){
-        log.ok('OK');
+        logger.ok('OK');
         return cb(dependencies);
       }
 
-      log.err('FAIL');
+      logger.err('FAIL');
       installMissingDeps(missing, function(){
         loadDependencies(components, cb);
       });
@@ -130,23 +124,23 @@ module.exports = function(dependencies){
 
       registry.on('request', function(data){
         if(data.errorCode === 'PLUGIN_MISSING_FROM_REGISTRY'){
-          log.err(format(strings.errors.cli.PLUGIN_MISSING_FROM_REGISTRY, data.errorDetails, colors.blue(strings.commands.cli.MOCK_PLUGIN)));
+          logger.err(format(strings.errors.cli.PLUGIN_MISSING_FROM_REGISTRY, data.errorDetails, colors.blue(strings.commands.cli.MOCK_PLUGIN)));
         } else if(data.errorCode === 'PLUGIN_MISSING_FROM_COMPONENT'){
-          log.err(format(strings.errors.cli.PLUGIN_MISSING_FROM_COMPONENT, data.errorDetails));
+          logger.err(format(strings.errors.cli.PLUGIN_MISSING_FROM_COMPONENT, data.errorDetails));
         }
       });
     };
 
-    log.warn(strings.messages.cli.SCANNING_COMPONENTS, true);
+    logger.warn(strings.messages.cli.SCANNING_COMPONENTS, true);
     local.getComponentsByDir(componentsDir, function(err, components){
 
       if(_.isEmpty(components)){
         err = format(errors.DEV_FAIL, errors.COMPONENTS_NOT_FOUND);
         callback(err);
-        return log.err(err);        
+        return logger.err(err);        
       }
 
-      log.ok('OK');
+      logger.ok('OK');
       _.forEach(components, function(component){
         logger.log(colors.green('├── ') + component);
     });
@@ -170,7 +164,7 @@ module.exports = function(dependencies){
 
           registerPlugins(registry);
 
-          log.warn(format(strings.messages.cli.REGISTRY_STARTING, baseUrl));
+          logger.warn(format(strings.messages.cli.REGISTRY_STARTING, baseUrl));
           registry.start(function(err){
 
             if(err){
@@ -178,7 +172,7 @@ module.exports = function(dependencies){
                 err = format(strings.errors.cli.PORT_IS_BUSY, port);
               }
               callback(err);
-              return log.err(err);
+              return logger.err(err);
             }
 
             watchForChanges(components, packageComponents);

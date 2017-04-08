@@ -19,7 +19,10 @@ describe('cli : facade : publish', function(){
 
   var execute = function(cb, creds){
     creds = creds || {};
+    logSpy.err = sinon.stub();
     logSpy.log = sinon.stub();
+    logSpy.ok = sinon.stub();
+    logSpy.warn = sinon.stub();
     publishFacade({
       componentPath: 'test/fixtures/components/hello-world/',
       username: creds.username,
@@ -43,7 +46,7 @@ describe('cli : facade : publish', function(){
       });
 
       it('should show an error', function(){
-        expect(logSpy.log.args[0][0]).to.equal(colors.red('an error!'));
+        expect(logSpy.err.args[0][0]).to.equal('an error!');
       });
     });
 
@@ -62,7 +65,7 @@ describe('cli : facade : publish', function(){
         execute(function(){
           local.package.restore();
 
-          var message = logSpy.log.args[0][0],
+          var message = logSpy.warn.args[0][0],
               re = new RegExp('\\' + path.sep, 'g'),
               messageWithSlashesOnPath = message.replace(re, '/');
 
@@ -86,7 +89,7 @@ describe('cli : facade : publish', function(){
           });
 
           it('should show an error', function(){
-            expect(logSpy.log.args[1][0]).to.equal(colors.red('An error happened when creating the package: the component is not valid'));
+            expect(logSpy.err.args[0][0]).to.equal('An error happened when creating the package: the component is not valid');
           });
         });
 
@@ -118,7 +121,7 @@ describe('cli : facade : publish', function(){
               execute(function(){
                 registry.putComponent.restore();
 
-                var message = logSpy.log.args[1][0],
+                var message = logSpy.warn.args[1][0],
                     re = new RegExp('\\' + path.sep, 'g'),
                     messageWithSlashesOnPath = message.replace(re, '/');
 
@@ -135,7 +138,7 @@ describe('cli : facade : publish', function(){
                 execute(function(){
                   registry.putComponent.restore();
 
-                  expect(logSpy.log.args[2][0]).to.include('Publishing -> ');
+                  expect(logSpy.warn.args[2][0]).to.include('Publishing -> ');
                   done();
                 });
               });
@@ -145,8 +148,8 @@ describe('cli : facade : publish', function(){
                 execute(function(){
                   registry.putComponent.restore();
 
-                  expect(logSpy.log.args[2][0]).to.include('http://www.api.com');
-                  expect(logSpy.log.args[4][0]).to.include('http://www.api2.com');
+                  expect(logSpy.ok.args[0][0]).to.include('http://www.api.com');
+                  expect(logSpy.ok.args[1][0]).to.include('http://www.api2.com');
                   done();
                 });
               });
@@ -163,7 +166,7 @@ describe('cli : facade : publish', function(){
                 });
 
                 it('should show an error', function(){
-                  expect(logSpy.log.args[3][0]).to.include('An error happened when publishing the component: nope!');
+                  expect(logSpy.err.args[0][0]).to.include('An error happened when publishing the component: nope!');
                 });
               });
 
@@ -188,8 +191,8 @@ describe('cli : facade : publish', function(){
                 });
 
                 it('should show an error', function(){
-                  expect(logSpy.log.args[3][0]).to.equal(colors.red('An error happened when publishing the component: the version of used ' +
-                    'OC CLI is invalid. Try to upgrade OC CLI running ' + colors.blue('[sudo] npm i -g oc@1.23.X')));
+                  expect(logSpy.err.args[0][0]).to.equal('An error happened when publishing the component: the version of used ' +
+                    'OC CLI is invalid. Try to upgrade OC CLI running ' + colors.blue('[sudo] npm i -g oc@1.23.X'));
                 });
               });
 
@@ -214,8 +217,8 @@ describe('cli : facade : publish', function(){
                 });
 
                 it('should show an error', function(){
-                  expect(logSpy.log.args[3][0]).to.equal(colors.red('An error happened when publishing the component: the version of used ' +
-                    'node is invalid. Try to upgrade node to version matching \'>=0.10.35\''));
+                  expect(logSpy.err.args[0][0]).to.equal('An error happened when publishing the component: the version of used ' +
+                    'node is invalid. Try to upgrade node to version matching \'>=0.10.35\'');
                 });
               });
 
@@ -230,7 +233,7 @@ describe('cli : facade : publish', function(){
                 });
 
                 it('should prompt for credentials', function(){
-                  expect(logSpy.log.args[3][0]).to.equal(colors.yellow('Registry requires credentials.'));
+                  expect(logSpy.warn.args[3][0]).to.equal('Registry requires credentials.');
                 });
               });
 
@@ -248,7 +251,7 @@ describe('cli : facade : publish', function(){
                 });
 
                 it('should not prompt for credentials', function(){
-                  expect(logSpy.log.args[4][0]).to.equal(colors.green('Using specified credentials'));
+                  expect(logSpy.ok.args[0][0]).to.equal('Using specified credentials');
                 });
               });
 
@@ -267,8 +270,8 @@ describe('cli : facade : publish', function(){
                 });
 
                 it('should show a message', function(){
-                  expect(logSpy.log.args[3][0]).to.include('Published -> ');
-                  expect(logSpy.log.args[3][0]).to.include('http://www.api.com/hello-world/1.0.0');
+                  expect(logSpy.ok.args[0][0]).to.include('Published -> ');
+                  expect(logSpy.ok.args[0][0]).to.include('http://www.api.com/hello-world/1.0.0');
                 });
 
                 it('should remove the compressed package', function(){

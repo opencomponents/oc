@@ -32,12 +32,12 @@ var registerDynamicMocks = function(ocJsonLocation, mocks, logger){
     try {
       p = require(path.resolve(ocJsonLocation, source));
     } catch(er) {
-      logger.log(colors.red(er.toString()));
+      logger.err(er.toString());
       return;
     }
 
     if(!_.isFunction(p)){
-      logger.log(colors.red(strings.errors.cli.MOCK_PLUGIN_IS_NOT_A_FUNCTION));
+      logger.err(strings.errors.cli.MOCK_PLUGIN_IS_NOT_A_FUNCTION);
       return;
     }
 
@@ -91,10 +91,10 @@ module.exports = function(logger, componentsDir){
     return plugins;
   }
 
-  logger.log(colors.yellow(strings.messages.cli.REGISTERING_MOCKED_PLUGINS));
+  logger.warn(strings.messages.cli.REGISTERING_MOCKED_PLUGINS);
 
   plugins = plugins.concat(registerStaticMocks(content.mocks.plugins.static, logger));
-  plugins = plugins.concat(registerDynamicMocks(ocJsonLocation, content.mocks.plugins.dynamic,logger));
+  plugins = plugins.concat(registerDynamicMocks(ocJsonLocation, content.mocks.plugins.dynamic, logger));
 
   return plugins;
 };

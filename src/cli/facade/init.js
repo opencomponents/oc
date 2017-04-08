@@ -1,6 +1,5 @@
 'use strict';
 
-var colors = require('colors/safe');
 var format = require('stringformat');
 var _ = require('underscore');
 
@@ -30,9 +29,9 @@ module.exports = function(dependencies){
           err = errors.TEMPLATE_TYPE_NOT_VALID;
         }
 
-        logger.log(colors.red(format(errors.INIT_FAIL, err)));
+        logger.err(format(errors.INIT_FAIL, err));
       } else {
-        logger.log(colors.green(format(strings.messages.cli.COMPONENT_INITED, componentName)));
+        logger.ok(format(strings.messages.cli.COMPONENT_INITED, componentName));
       }
 
       callback(err, componentName);

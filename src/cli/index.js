@@ -6,15 +6,9 @@ var _ = require('underscore');
 var commands = require('./commands');
 var format = require('stringformat');
 var Local = require('./domain/local');
+var logger = require('./logger');
 var Registry = require('./domain/registry');
 var strings = require('../resources');
-
-var logger = {
-  log: console.log,
-  logNoNewLine: function(msg){
-    return process.stdout.write(msg.toString());
-  }
-};
 
 var dependencies = {
   local: new Local(),

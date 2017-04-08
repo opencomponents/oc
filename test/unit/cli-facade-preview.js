@@ -1,6 +1,5 @@
 'use strict';
 
-var colors = require('colors/safe');
 var expect = require('chai').expect;
 var injectr = require('injectr');
 var sinon = require('sinon');
@@ -13,7 +12,7 @@ describe('cli : facade : preview', function(){
 
     opnSpy = sinon.spy();
     registryStub = { getComponentPreviewUrlByUrl: sinon.stub().yields(error, url)};
-    logSpy = { log: sinon.spy()};
+    logSpy = { err: sinon.spy()};
 
     var PreviewFacade = injectr('../../src/cli/facade/preview.js', { opn: opnSpy }),
         previewFacade = new PreviewFacade({ logger: logSpy, registry: registryStub });
@@ -32,7 +31,7 @@ describe('cli : facade : preview', function(){
     });
 
     it('should show error message', function(){
-      expect(logSpy.log.args[0][0]).to.equal(colors.red('The specified path is not a valid component\'s url'));
+      expect(logSpy.err.args[0][0]).to.equal('The specified path is not a valid component\'s url');
     });
   });
 

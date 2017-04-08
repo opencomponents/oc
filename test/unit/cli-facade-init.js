@@ -1,6 +1,5 @@
 'use strict';
 
-var colors = require('colors/safe');
 var expect = require('chai').expect;
 var sinon = require('sinon');
 
@@ -13,7 +12,8 @@ describe('cli : facade : init', function(){
       initFacade = new InitFacade({ local: local, logger: logSpy });
 
   var execute = function(componentName, templateType){
-    logSpy.log = sinon.spy();
+    logSpy.err = sinon.spy();
+    logSpy.ok = sinon.spy();
     initFacade({ componentName: componentName, templateType: templateType }, function(){});
   };
 
@@ -27,7 +27,7 @@ describe('cli : facade : init', function(){
 
       it('should show an error', function(){
         var expected = 'An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -';
-        expect(logSpy.log.args[0][0]).to.equal(colors.red(expected));
+        expect(logSpy.err.args[0][0]).to.equal(expected);
       });
     });
 
@@ -39,7 +39,7 @@ describe('cli : facade : init', function(){
 
       it('should show an error', function(){
         var expected = 'An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -';
-        expect(logSpy.log.args[0][0]).to.equal(colors.red(expected));
+        expect(logSpy.err.args[0][0]).to.equal(expected);
       });
     });
 
@@ -50,7 +50,7 @@ describe('cli : facade : init', function(){
 
         it('should show an error', function(){
           var expected = 'An error happened when initialising the component: the template is not valid. Allowed values are handlebars and jade';
-          expect(logSpy.log.args[0][0]).to.equal(colors.red(expected));
+          expect(logSpy.err.args[0][0]).to.equal(expected);
         });
     });
 
@@ -66,7 +66,7 @@ describe('cli : facade : init', function(){
       });
 
       it('should show an error', function(){
-        expect(logSpy.log.args[0][0]).to.equal(colors.red('An error happened when initialising the component: nope!'));
+        expect(logSpy.err.args[0][0]).to.equal('An error happened when initialising the component: nope!');
       });
     });
 
@@ -82,7 +82,7 @@ describe('cli : facade : init', function(){
       });
 
       it('should show a message', function(){
-        expect(logSpy.log.args[0][0]).to.equal(colors.green('Component "the-best-component" created'));
+        expect(logSpy.ok.args[0][0]).to.equal('Component "the-best-component" created');
       });
     });
   });

@@ -1,6 +1,5 @@
 'use strict';
 
-var colors = require('colors/safe');
 var expect = require('chai').expect;
 var sinon = require('sinon');
 
@@ -13,8 +12,9 @@ describe('cli : facade : registry : add', function(){
       registryFacade = new RegistryFacade({ registry: registry, logger: logSpy });
 
   var execute = function(){
-    logSpy.log = sinon.spy();
-    registryFacade({ }, function(){});
+    logSpy.err = sinon.spy();
+    logSpy.ok = sinon.spy();
+    registryFacade({}, function(){});
   };
 
   describe('when adding a not valid registry', function(){
@@ -29,7 +29,7 @@ describe('cli : facade : registry : add', function(){
     });
 
     it('should show the error', function(){
-      expect(logSpy.log.args[0][0]).to.equal(colors.red('An error!!!'));
+      expect(logSpy.err.args[0][0]).to.equal('An error!!!');
     });
   });
 
@@ -45,7 +45,7 @@ describe('cli : facade : registry : add', function(){
     });
 
     it('should show a confirmation message', function(){
-      expect(logSpy.log.args[0][0]).to.equal(colors.green('oc registry added'));
+      expect(logSpy.ok.args[0][0]).to.equal('oc registry added');
     });
   });
 });
