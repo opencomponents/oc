@@ -1,22 +1,22 @@
 'use strict';
 
-var format = require('stringformat');
-var request = require('minimal-request');
+const format = require('stringformat');
+const request = require('minimal-request');
 
-var settings = require('./settings');
-var TryGetCached = require('./try-get-cached');
-var requireTemplate = require('./utils/require-template');
+const settings = require('./settings');
+const TryGetCached = require('./try-get-cached');
+const requireTemplate = require('./utils/require-template');
 
 module.exports = function(cache){
-  var tryGetCached = new TryGetCached(cache);
+  const tryGetCached = new TryGetCached(cache);
 
   return function(template, useCache, timeout, callback){
-    var getTemplateFromS3 = function(cb){
+    const getTemplateFromS3 = function(cb){
       request({
         url: template.src,
         timeout: timeout
       }, function(err, templateText){
-        if(!!err){
+        if(err){
           return cb({
             status: err,
             response: {
@@ -25,11 +25,11 @@ module.exports = function(cache){
           });
         }
 
-        var type = template.type;
+        let type = template.type;
         if (type === 'jade') { type = 'oc-template-jade'; }
         if (type === 'handlebars') { type = 'oc-template-handlebars'; }
 
-        var ocTemplate;
+        let ocTemplate;
         try {
           ocTemplate = requireTemplate(type); 
         } catch (err) {
@@ -40,7 +40,7 @@ module.exports = function(cache){
       });
     };
 
-    if(!!useCache){
+    if(useCache){
       return tryGetCached('template', template.key, getTemplateFromS3, callback);
     }
 

@@ -1,14 +1,14 @@
 'use strict';
 
-var responseTime = require('response-time');
+const responseTime = require('response-time');
 
-var eventsHandler = require('../domain/events-handler');
+const eventsHandler = require('../domain/events-handler');
 
 module.exports = function(){
 
   return responseTime(function (req, res, time) {
 
-    var data = {
+    const data = {
       body: req.body,
       duration: parseInt(time * 1000, 10),
       headers: req.headers,
@@ -20,11 +20,11 @@ module.exports = function(){
       statusCode: res.statusCode
     };
 
-    if(!!res.errorDetails){
+    if(res.errorDetails){
       data.errorDetails = res.errorDetails;
     }
 
-    if(!!res.errorCode){
+    if(res.errorCode){
       data.errorCode = res.errorCode;
     }
 

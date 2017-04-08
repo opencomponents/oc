@@ -1,10 +1,10 @@
 /*jshint camelcase:false */
 'use strict';
 
-var webpack = require('webpack');
-var path = require('path');
-var externalDependenciesHandlers = require('./externalDependenciesHandlers');
-var BabiliPlugin = require('babili-webpack-plugin');
+const webpack = require('webpack');
+const path = require('path');
+const externalDependenciesHandlers = require('./externalDependenciesHandlers');
+const BabiliPlugin = require('babili-webpack-plugin');
 
 module.exports = function webpackConfigGenerator(params){
   return {

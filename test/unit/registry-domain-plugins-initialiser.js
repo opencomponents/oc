@@ -1,19 +1,19 @@
 'use strict';
 
-var expect = require('chai').expect;
+const expect = require('chai').expect;
 
 describe('registry : domain : plugins-initialiser', function(){
 
-  var pluginsInitialiser = require('../../src/registry/domain/plugins-initialiser');
+  const pluginsInitialiser = require('../../src/registry/domain/plugins-initialiser');
 
   describe('when initialising not valid plugins', function(){
 
     describe('when plugin not registered correctly', function(){
 
-      var error;
+      let error;
       beforeEach(function(done){
 
-        var plugins = [{
+        const plugins = [{
           name: 'doSomething'
         }];
 
@@ -30,10 +30,10 @@ describe('registry : domain : plugins-initialiser', function(){
 
     describe('when plugin is anonymous', function(){
 
-      var error;
+      let error;
       beforeEach(function(done){
 
-        var plugins = [{
+        const plugins = [{
           register: {
             register: function(){},
             execute: function(){}
@@ -53,10 +53,10 @@ describe('registry : domain : plugins-initialiser', function(){
 
     describe('when plugin does not expose a register method', function(){
 
-      var error;
+      let error;
       beforeEach(function(done){
 
-        var plugins = [{
+        const plugins = [{
           name: 'doSomething',
           register: { execute: function(){}}
         }];
@@ -74,10 +74,10 @@ describe('registry : domain : plugins-initialiser', function(){
 
     describe('when plugin does not expose an execute method', function(){
 
-      var error;
+      let error;
       beforeEach(function(done){
 
-        var plugins = [{
+        const plugins = [{
           name: 'doSomething',
           register: { register: function(){}}
         }];
@@ -96,10 +96,10 @@ describe('registry : domain : plugins-initialiser', function(){
 
   describe('when initialising valid plugins', function(){
 
-    var passedOptions, flag, result;
+    let passedOptions, flag, result;
     beforeEach(function(done){
 
-      var plugins = [{
+      const plugins = [{
         name: 'getValue',
         register: {
           register: function(options, deps, cb){
@@ -144,7 +144,7 @@ describe('registry : domain : plugins-initialiser', function(){
     });
 
     it('should be make the functionality usable', function(){
-      var a = result.getValue('a'),
+      const a = result.getValue('a'),
         flagged = result.isFlagged();
 
       expect(a).to.equal(123);
@@ -154,10 +154,10 @@ describe('registry : domain : plugins-initialiser', function(){
 
   describe('when plugin specifies dependencies', function(){
 
-    var passedDeps, flag;
+    let passedDeps, flag;
     beforeEach(function(done){
 
-      var plugins = [{
+      const plugins = [{
         name: 'isFlagged',
         register: {
           register: function(options, deps, cb){
@@ -194,10 +194,10 @@ describe('registry : domain : plugins-initialiser', function(){
 
   describe('when plugins have a circular dependency', function(){
 
-    var flag, error;
+    let flag, error;
     beforeEach(function(done){
 
-      var plugins = [{
+      const plugins = [{
         name: 'getValue',
         register: {
           register: function(options, deps, cb){
@@ -235,10 +235,10 @@ describe('registry : domain : plugins-initialiser', function(){
 
   describe('when plugin depends on a plugin that is not registered', function(){
 
-    var error;
+    let error;
     beforeEach(function(done){
 
-      var plugins = [{
+      const plugins = [{
         name: 'getValue',
         register: {
           register: function(options, deps, cb){
@@ -263,10 +263,10 @@ describe('registry : domain : plugins-initialiser', function(){
 
   describe('when plugin chain requires multiple passes', function(){
 
-    var flag, result;
+    let flag, result;
     beforeEach(function(done){
 
-      var plugins = [{
+      const plugins = [{
         name: 'doSomething',
         register: {
           register: function(options, deps, cb){

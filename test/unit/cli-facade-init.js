@@ -1,18 +1,18 @@
 'use strict';
 
-var colors = require('colors/safe');
-var expect = require('chai').expect;
-var sinon = require('sinon');
+const colors = require('colors/safe');
+const expect = require('chai').expect;
+const sinon = require('sinon');
 
 describe('cli : facade : init', function(){
 
-  var logSpy = {},
+  const logSpy = {},
     InitFacade = require('../../src/cli/facade/init'),
     Local = require('../../src/cli/domain/local'),
     local = new Local(),
     initFacade = new InitFacade({ local: local, logger: logSpy });
 
-  var execute = function(componentName, templateType){
+  const execute = function(componentName, templateType){
     logSpy.log = sinon.spy();
     initFacade({ componentName: componentName, templateType: templateType }, function(){});
   };
@@ -26,7 +26,7 @@ describe('cli : facade : init', function(){
       });
 
       it('should show an error', function(){
-        var expected = 'An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -';
+        const expected = 'An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -';
         expect(logSpy.log.args[0][0]).to.equal(colors.red(expected));
       });
     });
@@ -38,7 +38,7 @@ describe('cli : facade : init', function(){
       });
 
       it('should show an error', function(){
-        var expected = 'An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -';
+        const expected = 'An error happened when initialising the component: the name is not valid. Allowed characters are alphanumeric, _, -';
         expect(logSpy.log.args[0][0]).to.equal(colors.red(expected));
       });
     });
@@ -49,7 +49,7 @@ describe('cli : facade : init', function(){
       });
 
       it('should show an error', function(){
-        var expected = 'An error happened when initialising the component: the template is not valid. Allowed values are handlebars and jade';
+        const expected = 'An error happened when initialising the component: the template is not valid. Allowed values are handlebars and jade';
         expect(logSpy.log.args[0][0]).to.equal(colors.red(expected));
       });
     });

@@ -1,10 +1,10 @@
 'use strict';
 
-var format = require('stringformat');
-var request = require('minimal-request');
+const format = require('stringformat');
+const request = require('minimal-request');
 
-var settings = require('./settings');
-var _ = require('./utils/helpers');
+const settings = require('./settings');
+const _ = require('./utils/helpers');
 
 module.exports = function(config, renderComponents){
   return function(options, cb){
@@ -25,17 +25,17 @@ module.exports = function(config, renderComponents){
     options.timeout = options.timeout || 5;
     options.headers = options.headers || {};
 
-    var urls = [],
+    const urls = [],
       toWarmup = [];
 
     _.each(config.components, function(version, name){
-      var versionSegment = version ? (version + '/') : '';
+      const versionSegment = version ? (version + '/') : '';
       urls.push(config.registries.serverRendering + name + '/' + versionSegment + '~info');
     });
 
     _.eachAsync(urls, function(url, next){
 
-      var requestDetails = {
+      const requestDetails = {
         url: url,
         json: true,
         headers: options.headers,
@@ -48,16 +48,16 @@ module.exports = function(config, renderComponents){
           return next(new Error(format(settings.warmupFailed, JSON.stringify(requestDetails), err)));
         }
 
-        var parameters = componentInfo.oc.parameters,
+        const parameters = componentInfo.oc.parameters,
           componentToWarmup = { 
             name: componentInfo.name,
             version: componentInfo.version,
             parameters: {}
           };
 
-        if(!!parameters){
+        if(parameters){
           _.each(parameters, function(value, parameter){
-            if(!!value.mandatory){
+            if(value.mandatory){
               componentToWarmup.parameters[parameter] = value.example;
             }
           });
@@ -72,7 +72,7 @@ module.exports = function(config, renderComponents){
       options.container = false;
 
       renderComponents(toWarmup, options, function(errors, results){
-        var response = {};
+        const response = {};
         _.each(toWarmup, function(component, i){
           response[component.name] = results[i];
         });

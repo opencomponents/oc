@@ -1,17 +1,17 @@
 'use strict';
 
-var fs = require('fs-extra');
-var path = require('path');
+const fs = require('fs-extra');
+const path = require('path');
 
-var bundle = require('./bundle');
-var hashBuilder = require('../../../utils/hash-builder');
+const bundle = require('./bundle');
+const hashBuilder = require('../../../utils/hash-builder');
 
 module.exports = function packageServerScript(params, callback){
-  var fileName = 'server.js';
-  var publishPath = params.publishPath;
-  var webpackParams = { stats: params.verbose ? 'verbose' : 'errors-only' };
+  const fileName = 'server.js';
+  const publishPath = params.publishPath;
+  const webpackParams = { stats: params.verbose ? 'verbose' : 'errors-only' };
 
-  var bundleParams = {
+  const bundleParams = {
     webpack: params.webpack || webpackParams,
     dependencies: params.dependencies || {},
     fileName: fileName,

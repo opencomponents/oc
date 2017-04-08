@@ -1,16 +1,16 @@
 'use strict';
 
-var htmlRenderer = require('./html-renderer');
-var requireTemplate = require('./utils/require-template');
+const htmlRenderer = require('./html-renderer');
+const requireTemplate = require('./utils/require-template');
 
 module.exports = function(){
   return function(template, model, options, callback){
 
-    var type = options.templateType;
+    let type = options.templateType;
     if (type === 'jade') { type = 'oc-template-jade'; }
     if (type === 'handlebars') { type = 'oc-template-handlebars'; }
 
-    var ocTemplate;
+    let ocTemplate;
     try {
       ocTemplate = requireTemplate(type); 
     } catch (err) {

@@ -1,13 +1,13 @@
 'use strict';
 
-var _ = require('underscore');
+const _ = require('underscore');
 
 module.exports = function(input){
-  var response = {
+  const response = {
     isValid: true
   };
 
-  var returnError = function(message){
+  const returnError = function(message){
     response.isValid = false;
     response.message = message || 'uploaded package is not valid';
     return response;
@@ -21,7 +21,7 @@ module.exports = function(input){
     return returnError('not_valid');
   }
 
-  var file = input[_.keys(input)[0]];
+  const file = input[_.keys(input)[0]];
 
   if(file.mimetype !== 'application/octet-stream' || !!file.truncated || file.extension !== 'gz' || file.path.indexOf('.tar.gz') < 0){
     return returnError('not_valid');

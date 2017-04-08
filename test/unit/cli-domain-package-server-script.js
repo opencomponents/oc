@@ -1,17 +1,17 @@
 'use strict';
 
-var expect = require('chai').expect;
+const expect = require('chai').expect;
 
-var externalDependenciesHandlers =
+const externalDependenciesHandlers =
   require('../../src/cli/domain/package-server-script/bundle/config/externalDependenciesHandlers');
-var webpackConfigGenerator =
+const webpackConfigGenerator =
   require('../../src/cli/domain/package-server-script/bundle/config');
 
 
 describe('cli : domain : package-server-script ', function(){
 
   describe('bundle/config/externalDependenciesHandlers when configured with a dependencies hash', function(){
-    var handler = externalDependenciesHandlers({lodash: '4.17.14'});
+    const handler = externalDependenciesHandlers({lodash: '4.17.14'});
 
     it('should return an array containing a function and a regular expression ', function(){
       expect(handler).to.be.an('array');
@@ -21,7 +21,7 @@ describe('cli : domain : package-server-script ', function(){
     });
 
     describe('its regular expression', function(){
-      var regex = handler[1];
+      const regex = handler[1];
       it('should match npm module names', function() {
         expect(regex.test('lodash')).to.be.true;
         expect(regex.test('lodash/fp/curryN')).to.be.true;
@@ -34,7 +34,7 @@ describe('cli : domain : package-server-script ', function(){
     });
 
     describe('its function', function() {
-      var missingDephandler = handler[0];
+      const missingDephandler = handler[0];
       it('should return an error if a specific npm-module is missing from the given dependencies', function(done) {
         missingDephandler('_', 'underscore', function(err){
           expect(err.toString()).to.be.equal('Error: Missing dependencies from package.json => \"underscore\"');
@@ -53,7 +53,7 @@ describe('cli : domain : package-server-script ', function(){
   describe('bundle/config', function(){
 
     describe('when configured', function(){
-      var config = webpackConfigGenerator({
+      const config = webpackConfigGenerator({
         webpack: { stats: 'none' },
         dependencies: {},
         fileName: 'server.js',

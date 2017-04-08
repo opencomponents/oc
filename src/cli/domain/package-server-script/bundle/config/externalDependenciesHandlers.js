@@ -6,22 +6,22 @@
  *
 */
 'use strict';
-var format = require('stringformat');
-var _ = require('underscore');
-var strings = require('../../../../../resources');
+const format = require('stringformat');
+const _ = require('underscore');
+const strings = require('../../../../../resources');
 
 
 module.exports = function externalDependenciesHandlers(dependencies){
-  var deps = dependencies || {};
+  const deps = dependencies || {};
 
-  var missingExternalDependecy = function(dep, dependencies) {
+  const missingExternalDependecy = function(dep, dependencies) {
     return !_.contains(_.keys(dependencies), dep);
   };
 
   return [
     function(context, req, callback) {
       if (/^[a-z@][a-z\-\/0-9]+$/i.test(req)) {
-        var dependencyName = req;
+        let dependencyName = req;
         if (/\//g.test(dependencyName)) {
           dependencyName = dependencyName.substring(0, dependencyName.indexOf('/'));
         }

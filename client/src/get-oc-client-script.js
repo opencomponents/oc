@@ -1,13 +1,13 @@
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
+const fs = require('fs');
+const path = require('path');
 
-var TryGetCached = require('./try-get-cached');
+const TryGetCached = require('./try-get-cached');
 
 module.exports = function(cache){
 
-  var tryGetCached = new TryGetCached(cache);
+  const tryGetCached = new TryGetCached(cache);
   
   return function(callback){
     tryGetCached('scripts', 'oc-client', function(cb){

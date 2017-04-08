@@ -1,21 +1,21 @@
 'use strict';
 
-var format = require('stringformat');
-var fs = require('fs-extra');
-var path = require('path');
-var uglifyJs = require('uglify-js');
+const format = require('stringformat');
+const fs = require('fs-extra');
+const path = require('path');
+const uglifyJs = require('uglify-js');
 
-var hashBuilder = require('../../utils/hash-builder');
-var strings = require('../../resources');
-var requireTemplate = require('../../utils/require-template');
+const hashBuilder = require('../../utils/hash-builder');
+const strings = require('../../resources');
+const requireTemplate = require('../../utils/require-template');
 
-var javaScriptizeTemplate = function(functionName, data){
+const javaScriptizeTemplate = function(functionName, data){
   return format('var {0}={0}||{};{0}.components={0}.components||{};{0}.components[\'{1}\']={2}', 'oc', functionName, data.toString());
 };
 
-var compileView = function(viewPath, type, cb) {
-  var template = fs.readFileSync(viewPath).toString();
-  var ocTemplate;
+const compileView = function(viewPath, type, cb) {
+  const template = fs.readFileSync(viewPath).toString();
+  let ocTemplate;
 
   if (type === 'jade') { type = 'oc-template-jade'; }
   if (type === 'handlebars') { type = 'oc-template-handlebars'; }
@@ -30,7 +30,7 @@ var compileView = function(viewPath, type, cb) {
   ocTemplate.compile({ template, viewPath }, function(err, compiledView){
     if (err) { return cb(err);}
 
-    var hashView = hashBuilder.fromString(compiledView.toString()),
+    const hashView = hashBuilder.fromString(compiledView.toString()),
       javaScriptizedView = javaScriptizeTemplate(hashView, compiledView);
 
     return cb(null, {
@@ -42,7 +42,7 @@ var compileView = function(viewPath, type, cb) {
 
 module.exports = function(params, callback){
 
-  var viewSrc = params.ocOptions.files.template.src,
+  const viewSrc = params.ocOptions.files.template.src,
     viewPath = path.join(params.componentPath, viewSrc);
 
   if(!fs.existsSync(viewPath)){

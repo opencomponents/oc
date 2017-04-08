@@ -1,11 +1,11 @@
 'use strict';
 
-var format = require('stringformat');
-var request = require('minimal-request');
+const format = require('stringformat');
+const request = require('minimal-request');
 
-var settings = require('./settings');
-var sanitiser = require('./sanitiser');
-var _ = require('./utils/helpers');
+const settings = require('./settings');
+const sanitiser = require('./sanitiser');
+const _ = require('./utils/helpers');
 
 module.exports = function(config) {
 
@@ -20,14 +20,14 @@ module.exports = function(config) {
 
     options = sanitiser.sanitiseGlobalGetInfoOptions(options);
 
-    var serverRenderingEndpoint;
+    let serverRenderingEndpoint;
     if(!!options && !!options.registries && !!options.registries.serverRendering){
       serverRenderingEndpoint = options.registries.serverRendering;
     } else if(!!config && !!config.registries){
       serverRenderingEndpoint = config.registries.serverRendering;
     }
 
-    var actions = { requestedComponents: [], responseData: [] };
+    const actions = { requestedComponents: [], responseData: [] };
 
     _.each(components, function(component) {
       actions.requestedComponents.push({
@@ -41,7 +41,7 @@ module.exports = function(config) {
       });
     });
     
-    var requestDetails = {
+    const requestDetails = {
       url: serverRenderingEndpoint,
       method: 'post',
       headers: options.headers,
@@ -55,7 +55,7 @@ module.exports = function(config) {
     request(requestDetails, function(error, responses) {
       if(!!error || !responses || _.isEmpty(responses)) {
         responses = [];
-        var errorDetails = !!error ? error.toString() : settings.emptyResponse;
+        const errorDetails = error ? error.toString() : settings.emptyResponse;
         _.each(actions.requestedComponents, function(){
           responses.push({
             response: {
@@ -65,18 +65,18 @@ module.exports = function(config) {
         });
       }
 
-      var errors = [];
-      var hasErrors = false;
+      const errors = [];
+      let hasErrors = false;
 
       _.each(responses, function(response, i) {
-        var responseData = actions.responseData[i];
+        const responseData = actions.responseData[i];
 
         if (response.status !== 200) {
-          var errorDetails;
+          let errorDetails;
           if (!response.status && response.response.error) {
             errorDetails = response.response.error;
           } else {
-            var errorDescription = (response.response && response.response.error);
+            let errorDescription = (response.response && response.response.error);
             if (errorDescription && response.response.details && response.response.details.originalError) {
               errorDescription += response.response.details.originalError;
             }

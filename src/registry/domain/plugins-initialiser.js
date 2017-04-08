@@ -1,14 +1,14 @@
 'use strict';
 
-var async = require('async');
-var format = require('stringformat');
-var _ = require('underscore');
-var DepGraph = require('dependency-graph').DepGraph;
+const async = require('async');
+const format = require('stringformat');
+const _ = require('underscore');
+const DepGraph = require('dependency-graph').DepGraph;
 
-var strings = require('../../resources');
+const strings = require('../../resources');
 
-var validatePlugins = function(plugins){
-  var c = 0;
+const validatePlugins = function(plugins){
+  let c = 0;
 
   plugins.forEach(function(plugin){
     c++;
@@ -20,8 +20,8 @@ var validatePlugins = function(plugins){
   });
 };
 
-var checkDependencies = function(plugins){
-  var graph = new DepGraph();
+const checkDependencies = function(plugins){
+  const graph = new DepGraph();
 
   plugins.forEach(function(p){
     graph.addNode(p.name);
@@ -45,15 +45,15 @@ var checkDependencies = function(plugins){
   return graph.overallOrder();
 };
 
-var deferredLoads = [];
-var defer = function(plugin, cb){
+let deferredLoads = [];
+const defer = function(plugin, cb){
   deferredLoads.push(plugin);
   return cb();
 };
 
 module.exports.init = function(pluginsToRegister, callback){
 
-  var registered = {};
+  const registered = {};
 
   try {
     validatePlugins(pluginsToRegister);
@@ -63,12 +63,12 @@ module.exports.init = function(pluginsToRegister, callback){
     return callback(err);
   }
 
-  var dependenciesRegistered = function(dependencies){
+  const dependenciesRegistered = function(dependencies){
     if(dependencies.length === 0){
       return true;
     }
 
-    var present = true;
+    let present = true;
     dependencies.forEach(function(d) {
       if(!registered[d]){
         present = false;
@@ -78,7 +78,7 @@ module.exports.init = function(pluginsToRegister, callback){
     return present;
   };
 
-  var loadPlugin = function(plugin, cb){
+  const loadPlugin = function(plugin, cb){
     if(registered[plugin.name]){
       return cb();
     }
@@ -91,16 +91,16 @@ module.exports.init = function(pluginsToRegister, callback){
       return defer(plugin, cb);
     }
 
-    var dependencies = _.pick(registered, plugin.register.dependencies);
+    const dependencies = _.pick(registered, plugin.register.dependencies);
 
     plugin.register.register(plugin.options || {}, dependencies, plugin.callback || _.noop);
     registered[plugin.name] = plugin.register.execute;
     cb();
   };
 
-  var terminator = function(err){
+  const terminator = function(err){
     if(deferredLoads.length > 0){
-      var deferredPlugins = _.clone(deferredLoads);
+      const deferredPlugins = _.clone(deferredLoads);
       deferredLoads = [];
 
       return async.mapSeries(deferredPlugins, loadPlugin, terminator);

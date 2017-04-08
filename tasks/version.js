@@ -1,10 +1,10 @@
 'use strict';
 
-var fs = require('fs-extra');
-var path = require('path');
-var semver = require('semver');
+const fs = require('fs-extra');
+const path = require('path');
+const semver = require('semver');
 
-var packageJson = require('../package');
+const packageJson = require('../package');
 
 module.exports = function(grunt){
 

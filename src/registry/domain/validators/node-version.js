@@ -1,12 +1,12 @@
 'use strict';
 
-var semver = require('semver');
+const semver = require('semver');
 
-var packageInfo = require('../../../../package.json');
+const packageInfo = require('../../../../package.json');
 
 module.exports = function(userAgent, nodeVersion) {
-  var result = { isValid: false};
-  var error = {
+  const result = { isValid: false};
+  const error = {
     suggestedVersion: packageInfo.engines.node || '*',
     registryNodeVersion: nodeVersion,
     cliNodeVersion: ''
@@ -18,14 +18,14 @@ module.exports = function(userAgent, nodeVersion) {
     return result;
   }
 
-  var matchVersion = /.*\/v([\w|.]+)-.*/.exec(userAgent);
+  const matchVersion = /.*\/v([\w|.]+)-.*/.exec(userAgent);
   if(!matchVersion) {
     result.error = error;
     result.error.code = result.error.nodeVersion = 'not_valid';
     return result;
   }
 
-  var cliNodeVersion = matchVersion[1];
+  const cliNodeVersion = matchVersion[1];
   if(!semver.satisfies(cliNodeVersion, packageInfo.engines.node)) {
     result.error = error;
     result.error.code = 'not_matching';

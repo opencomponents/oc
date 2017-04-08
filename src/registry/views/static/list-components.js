@@ -1,4 +1,5 @@
 'use strict';
+/* eslint no-var: 'off' */
 
 var oc = oc || {};
 oc.cmd = oc.cmd || [];
@@ -39,7 +40,7 @@ oc.cmd.push(function(){
     var totalShowing = componentsList.length - hidden,
       result = 'Showing ' + totalShowing + ' components';
 
-    if(!!s){
+    if(s){
       result += ' matching search query: ' + s;
     }
 
@@ -51,7 +52,7 @@ oc.cmd.push(function(){
   $('#filter-components').submit(componentsListChanged).keyup(componentsListChanged);
   $('#filter-components input[type=checkbox]').change(componentsListChanged);
 
-  if(!!q){
+  if(q){
     $('.search').val(q);
   }
 

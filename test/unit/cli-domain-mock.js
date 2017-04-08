@@ -1,14 +1,14 @@
 'use strict';
 
-var expect = require('chai').expect;
-var injectr = require('injectr');
-var path = require('path');
-var sinon = require('sinon');
-var _ = require('underscore');
+const expect = require('chai').expect;
+const injectr = require('injectr');
+const path = require('path');
+const sinon = require('sinon');
+const _ = require('underscore');
 
-var initialise = function(){
+const initialise = function(){
 
-  var fsMock = {
+  const fsMock = {
     existsSync: sinon.stub(),
     lstatSync: sinon.stub(),
     mkdirSync: sinon.spy(),
@@ -20,7 +20,7 @@ var initialise = function(){
     writeJson: sinon.stub().yields(null, 'ok')
   };
 
-  var pathMock = {
+  const pathMock = {
     extname: path.extname,
     join: path.join,
     resolve: function(){
@@ -28,17 +28,17 @@ var initialise = function(){
     }
   };
 
-  var Local = injectr('../../src/cli/domain/mock.js', {
+  const Local = injectr('../../src/cli/domain/mock.js', {
     'fs-extra': fsMock,
     path: pathMock
   }, { __dirname: '' });
 
-  var local = new Local();
+  const local = new Local();
 
   return { local: local, fs: fsMock };
 };
 
-var executeMocking = function(local, type, name, value, cb){
+const executeMocking = function(local, type, name, value, cb){
   return local({
     targetType: type,
     targetName: name,
@@ -50,7 +50,7 @@ describe('cli : domain : mock', function(){
 
   describe('when mocking a static plugin', function(){
 
-    var data;
+    let data;
     beforeEach(function(done){
       data = initialise();
 
@@ -77,7 +77,7 @@ describe('cli : domain : mock', function(){
 
   describe('when mocking a static plugin using a bool value', function(){
 
-    var data;
+    let data;
     beforeEach(function(done){
       data = initialise();
 
@@ -104,7 +104,7 @@ describe('cli : domain : mock', function(){
 
   describe('when mocking a dynamic plugin', function(){
 
-    var data;
+    let data;
     beforeEach(function(done){
       data = initialise();
 

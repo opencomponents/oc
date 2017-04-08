@@ -1,13 +1,13 @@
 'use strict';
 
-var expect = require('chai').expect;
+const expect = require('chai').expect;
 
 describe('utils : getFileInfo', function(){
 
-  var getFileInfo = require('../../src/utils/get-file-info');
+  const getFileInfo = require('../../src/utils/get-file-info');
 
   describe('when extension is .js', function(){
-    var fileInfo = getFileInfo('/path/file.js');
+    const fileInfo = getFileInfo('/path/file.js');
 
     it('should return the correct myme type', function(){
       expect(fileInfo.mimeType).to.equal('application/javascript');
@@ -23,7 +23,7 @@ describe('utils : getFileInfo', function(){
   });
 
   describe('when extension is .js.gz', function(){
-    var fileInfo = getFileInfo('path/file.js.gz');
+    const fileInfo = getFileInfo('path/file.js.gz');
 
     it('should return the correct myme type', function(){
       expect(fileInfo.mimeType).to.equal('application/javascript');
@@ -39,7 +39,7 @@ describe('utils : getFileInfo', function(){
   });
 
   describe('when extension is .css.gz', function(){
-    var fileInfo = getFileInfo('path/file.css.gz');
+    const fileInfo = getFileInfo('path/file.css.gz');
 
     it('should return the correct myme type', function(){
       expect(fileInfo.mimeType).to.equal('text/css'); 
@@ -55,7 +55,7 @@ describe('utils : getFileInfo', function(){
   });
 
   describe('when extension is unknown', function(){
-    var fileInfo = getFileInfo('.heisenberg');
+    const fileInfo = getFileInfo('.heisenberg');
 
     it('should return mime undefined', function(){
       expect(fileInfo.mimeType).to.be.undefined;

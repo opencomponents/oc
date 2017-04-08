@@ -1,10 +1,10 @@
 'use strict';
 
-var format = require('stringformat');
-var path = require('path');
+const format = require('stringformat');
+const path = require('path');
 
-var templateNotFound = 'Error requiring oc-template: "{0}" not found';
-var templateNotValid = 'Error requiring oc-template: "{0}" is not a valid oc-template';
+const templateNotFound = 'Error requiring oc-template: "{0}" not found';
+const templateNotValid = 'Error requiring oc-template: "{0}" is not a valid oc-template';
 
 function isValidTemplate(template){
   if (typeof template !== 'object') {
@@ -22,9 +22,9 @@ function isValidTemplate(template){
 }
 
 module.exports = function(template) {
-  var ocTemplate;
-  var localTemplate = path.join(__dirname, '../../../', 'node_modules', template);
-  var relativeTemplate = path.resolve('.', 'node_modules', template);
+  let ocTemplate;
+  const localTemplate = path.join(__dirname, '../../../', 'node_modules', template);
+  const relativeTemplate = path.resolve('.', 'node_modules', template);
   
   try {
     if (require.cache && !!require.cache[localTemplate]) {
