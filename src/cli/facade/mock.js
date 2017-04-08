@@ -1,14 +1,14 @@
 'use strict';
 
-var colors = require('colors/safe');
-var format = require('stringformat');
+const colors = require('colors/safe');
+const format = require('stringformat');
 
-var strings = require('../../resources/index');
-var wrapCliCallback = require('../wrap-cli-callback');
+const strings = require('../../resources/index');
+const wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
   
-  var local = dependencies.local,
+  const local = dependencies.local,
     logger = dependencies.logger;
 
   return function(opts, callback){

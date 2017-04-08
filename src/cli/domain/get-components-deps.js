@@ -1,23 +1,23 @@
 'use strict';
 
-var fs = require('fs-extra');
-var path = require('path');
-var _ =  require('underscore');
-var format = require('stringformat');
-var settings = require('../../resources');
+const fs = require('fs-extra');
+const path = require('path');
+const _ =  require('underscore');
+const format = require('stringformat');
+const settings = require('../../resources');
 
 module.exports = function(components){
-  var deps = { modules: {}, withVersions: {}, templates: {} };
+  const deps = { modules: {}, withVersions: {}, templates: {} };
 
-  var legacyTemplates = {
+  const legacyTemplates = {
     'jade': true,
     'handlebars': true
   };
 
   components.forEach(function(c){
-    var pkg = fs.readJsonSync(path.join(c, 'package.json'));
-    var type = pkg.oc.files.template.type;
-    var dependencies = pkg.dependencies;
+    const pkg = fs.readJsonSync(path.join(c, 'package.json'));
+    const type = pkg.oc.files.template.type;
+    const dependencies = pkg.dependencies;
 
     if (!deps.templates[type] && !legacyTemplates[type]) {
       if (!dependencies[type]) {
@@ -27,8 +27,8 @@ module.exports = function(components){
     }
 
     _.keys(dependencies).forEach(function(name){
-      var version = dependencies[name];
-      var depToInstall = version.length > 0
+      const version = dependencies[name];
+      const depToInstall = version.length > 0
         ? (name + '@' + version)
         : name;
 

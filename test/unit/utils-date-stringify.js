@@ -1,17 +1,17 @@
 'use strict';
 
-var expect = require('chai').expect;
-var sinon = require('sinon');
+const expect = require('chai').expect;
+const sinon = require('sinon');
 
 describe('utils : dateStringify', function(){
 
-  var dateStringified = require('../../src/utils/date-stringify');
+  const dateStringified = require('../../src/utils/date-stringify');
 
   describe('when the date is provided', function(){
-    var dateString;
+    let dateString;
 
     before(function(){
-      var mockedDate = new Date();
+      const mockedDate = new Date();
       sinon.stub(mockedDate, 'getFullYear').returns(2015);
       sinon.stub(mockedDate, 'getMonth').returns(8);
       sinon.stub(mockedDate, 'getDate').returns(18);
@@ -28,8 +28,8 @@ describe('utils : dateStringify', function(){
   });
 
   describe('when the provided data is not valid', function(){
-    var anyNotValidData = 'Not a date';
-    var dateString = dateStringified(anyNotValidData);
+    const anyNotValidData = 'Not a date';
+    const dateString = dateStringified(anyNotValidData);
 
     it('should return empty string', function(){
       expect(dateString).to.be.empty;

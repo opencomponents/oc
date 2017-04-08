@@ -1,14 +1,14 @@
 'use strict';
 
-var _ = require('underscore');
+const _ = require('underscore');
 
-var strings = require('../../resources');
+const strings = require('../../resources');
 
-var subscriptions = {};
+let subscriptions = {};
 
 module.exports = {
   fire: function(eventName, eventData){
-    if(!!subscriptions[eventName]){
+    if(subscriptions[eventName]){
       _.forEach(subscriptions[eventName], function(callback){
         callback(eventData);
       });

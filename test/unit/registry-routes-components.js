@@ -1,18 +1,19 @@
 'use strict';
 
-var expect = require('chai').expect;
-var sinon = require('sinon');
+const expect = require('chai').expect;
+const sinon = require('sinon');
 
 describe('registry : routes : components', function(){
 
-  var ComponentsRoute = require('../../src/registry/routes/components'),
-    mockedComponents = require('../fixtures/mocked-components'),
-    mockedRepository,
+  const ComponentsRoute = require('../../src/registry/routes/components'),
+    mockedComponents = require('../fixtures/mocked-components');
+
+  let mockedRepository,
     componentsRoute,
     code,
     response;
   
-  var initialise = function(params){
+  const initialise = function(params){
     mockedRepository = {
       getCompiledView: sinon.stub().yields(null, params.view),
       getComponent: sinon.stub().yields(null, params.package),
@@ -22,7 +23,7 @@ describe('registry : routes : components', function(){
     };
   };
 
-  var makeRequest = function(body, cb){
+  const makeRequest = function(body, cb){
     componentsRoute({ headers: {}, body: body }, {
       conf: { baseUrl: 'http://components.com/' },
       status: function(jsonCode){
@@ -37,7 +38,7 @@ describe('registry : routes : components', function(){
     });
   };
 
-  var makeInfoRequest = function(body, cb){
+  const makeInfoRequest = function(body, cb){
     componentsRoute({ headers: { accept: 'application/vnd.oc.info+json' }, body: body }, {
       conf: { baseUrl: 'http://components.com/' },
       status: function(jsonCode){
@@ -148,7 +149,7 @@ describe('registry : routes : components', function(){
       expect(response.length).to.be.equal(2);
     });
 
-    var expectedResponse = [{
+    const expectedResponse = [{
       status: 200,
       response: {
         name: 'async-error2-component',

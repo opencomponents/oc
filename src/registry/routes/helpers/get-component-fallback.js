@@ -1,12 +1,12 @@
 'use strict';
 
-var request = require('minimal-request');
-var url = require('url');
-var urlBuilder = require('../../domain/url-builder');
-var _ = require('underscore');
+const request = require('minimal-request');
+const url = require('url');
+const urlBuilder = require('../../domain/url-builder');
+const _ = require('underscore');
 
 function getComponentFallbackForViewType(buildUrl, conf, req, res, registryError, callback) {
-  var path = buildUrl({
+  const path = buildUrl({
     name: req.params.componentName,
     version: req.params.componentVersion
   }, conf.fallbackRegistryUrl);

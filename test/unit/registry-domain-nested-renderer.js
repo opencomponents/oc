@@ -1,16 +1,17 @@
 'use strict';
 
-var expect = require('chai').expect;
-var sinon = require('sinon');
-var _ = require('underscore');
+const expect = require('chai').expect;
+const sinon = require('sinon');
+const _ = require('underscore');
 
 describe('registry : routes : helpers : nested-renderer', function(){
 
-  var NestedRenderer = require('../../src/registry/domain/nested-renderer'),
-    nestedRenderer,
+  const NestedRenderer = require('../../src/registry/domain/nested-renderer');
+
+  let nestedRenderer,
     renderer;
 
-  var initialise = function(rendererMocks, conf){
+  const initialise = function(rendererMocks, conf){
 
     if(_.isArray(rendererMocks)){
       renderer = sinon.stub();
@@ -34,7 +35,7 @@ describe('registry : routes : helpers : nested-renderer', function(){
         beforeEach(function(){ initialise(); });
 
         it('should throw an error', function(){
-          var f = function(){ nestedRenderer.renderComponent(); };
+          const f = function(){ nestedRenderer.renderComponent(); };
           expect(f).to.throw('component\'s name is not valid');        
         });
       });
@@ -44,7 +45,7 @@ describe('registry : routes : helpers : nested-renderer', function(){
         beforeEach(function(){ initialise(); });
 
         it('should throw an error', function(){
-          var f = function(){ nestedRenderer.renderComponent(''); };
+          const f = function(){ nestedRenderer.renderComponent(''); };
           expect(f).to.throw('component\'s name is not valid');        
         });
       });
@@ -53,7 +54,7 @@ describe('registry : routes : helpers : nested-renderer', function(){
         beforeEach(function(){ initialise(); });
 
         it('should throw an error', function(){
-          var f = function(){ nestedRenderer.renderComponent('my-component'); };
+          const f = function(){ nestedRenderer.renderComponent('my-component'); };
           expect(f).to.throw('callback is not valid');
         });
       });
@@ -62,14 +63,14 @@ describe('registry : routes : helpers : nested-renderer', function(){
         beforeEach(function(){ initialise(); });
 
         it('should throw an error', function(){
-          var f = function(){ nestedRenderer.renderComponent('my-component', {}, 'blarg'); };
+          const f = function(){ nestedRenderer.renderComponent('my-component', {}, 'blarg'); };
           expect(f).to.throw('callback is not valid');
         });
       });
 
       describe('when requesting a not existent component', function(){
         
-        var error;
+        let error;
         beforeEach(function(done){
           initialise({
             status: 404,
@@ -94,7 +95,7 @@ describe('registry : routes : helpers : nested-renderer', function(){
 
       describe('when all params specified', function(){
         
-        var result, error;
+        let result, error;
         beforeEach(function(done){
           
           initialise({
@@ -142,7 +143,7 @@ describe('registry : routes : helpers : nested-renderer', function(){
 
       describe('when minimal params specified', function(){
         
-        var result, error;
+        let result, error;
         beforeEach(function(done){
           
           initialise({
@@ -191,7 +192,7 @@ describe('registry : routes : helpers : nested-renderer', function(){
         beforeEach(function(){ initialise(); });
 
         it('should throw an error', function(){
-          var f = function(){ nestedRenderer.renderComponents(); };
+          const f = function(){ nestedRenderer.renderComponents(); };
           expect(f).to.throw('components is not valid');        
         });
       });
@@ -201,7 +202,7 @@ describe('registry : routes : helpers : nested-renderer', function(){
         beforeEach(function(){ initialise(); });
 
         it('should throw an error', function(){
-          var f = function(){ nestedRenderer.renderComponents([]); };
+          const f = function(){ nestedRenderer.renderComponents([]); };
           expect(f).to.throw('components is not valid');        
         });
       });
@@ -210,7 +211,7 @@ describe('registry : routes : helpers : nested-renderer', function(){
         beforeEach(function(){ initialise(); });
 
         it('should throw an error', function(){
-          var f = function(){ nestedRenderer.renderComponents([{ name: 'my-component'}]); };
+          const f = function(){ nestedRenderer.renderComponents([{ name: 'my-component'}]); };
           expect(f).to.throw('callback is not valid');
         });
       });
@@ -219,14 +220,14 @@ describe('registry : routes : helpers : nested-renderer', function(){
         beforeEach(function(){ initialise(); });
 
         it('should throw an error', function(){
-          var f = function(){ nestedRenderer.renderComponents(['my-component'], {}, 'blarg'); };
+          const f = function(){ nestedRenderer.renderComponents(['my-component'], {}, 'blarg'); };
           expect(f).to.throw('callback is not valid');
         });
       });
 
       describe('when requesting not existent components', function(){
         
-        var result, error;
+        let result, error;
         beforeEach(function(done){
           initialise({
             status: 404,
@@ -262,7 +263,7 @@ describe('registry : routes : helpers : nested-renderer', function(){
 
       describe('when all params specified', function(){
         
-        var result, error;
+        let result, error;
         beforeEach(function(done){
           
           initialise([
@@ -348,7 +349,7 @@ describe('registry : routes : helpers : nested-renderer', function(){
 
       describe('when minimal params specified', function(){
         
-        var result, error;
+        let result, error;
         beforeEach(function(done){
           
           initialise([{

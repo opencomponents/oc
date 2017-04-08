@@ -1,7 +1,7 @@
 'use strict';
 
-var format = require('stringformat');
-var multer = require('multer');
+const format = require('stringformat');
+const multer = require('multer');
 
 module.exports = function(req, res, next){
 

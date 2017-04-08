@@ -1,8 +1,8 @@
 'use strict';
 
-var semver = require('semver');
-var semverExtra = require('semver-extra');
-var _ = require('underscore');
+const semver = require('semver');
+const semverExtra = require('semver-extra');
+const _ = require('underscore');
 
 module.exports = {
   getAvailableVersion: function(requestedVersion, availableVersions){
@@ -11,9 +11,9 @@ module.exports = {
       requestedVersion = '';
     }
 
-    var version = semver.maxSatisfying(availableVersions, requestedVersion) || undefined;
-    var max = semverExtra.max(availableVersions);
-    var isLatest = requestedVersion === '';
+    const version = semver.maxSatisfying(availableVersions, requestedVersion) || undefined;
+    const max = semverExtra.max(availableVersions);
+    const isLatest = requestedVersion === '';
     return version || (isLatest && max) || undefined;
   },
   validateNewVersion: function(requestedVersion, availableVersions){

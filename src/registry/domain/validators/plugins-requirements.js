@@ -1,9 +1,9 @@
 'use strict';
 
-var _ = require('underscore');
+const _ = require('underscore');
 
 module.exports = function(componentRequirements, registryPlugins){
-  var result = { isValid: true },
+  const result = { isValid: true },
     missing = [];
 
   _.forEach(componentRequirements || [], function(requiredPlugin){

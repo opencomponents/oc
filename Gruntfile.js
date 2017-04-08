@@ -1,15 +1,15 @@
 'use strict';
 
-var _ = require('underscore');
+const _ = require('underscore');
 
 module.exports = function(grunt){
 
-  var taskObject = { pkg: grunt.file.readJSON('package.json') };
+  const taskObject = { pkg: grunt.file.readJSON('package.json') };
 
   grunt.file.expand('tasks/*.js', '!tasks/_*.js').forEach(function(file) {
-    var name = file.split('/');
+    let name = file.split('/');
     name = name[name.length - 1].replace('.js', '');
-    var task = require('./' + file);
+    const task = require('./' + file);
 
     if(_.isFunction(task)) {
       task(grunt);

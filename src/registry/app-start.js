@@ -1,11 +1,11 @@
 'use strict';
 
-var colors = require('colors/safe');
-var format = require('stringformat');
-var path = require('path');
-var _ = require('underscore');
+const colors = require('colors/safe');
+const format = require('stringformat');
+const path = require('path');
+const _ = require('underscore');
 
-var packageInfo = require('../components/oc-client/_package/package');
+const packageInfo = require('../components/oc-client/_package/package');
 
 module.exports = function(repository, options, callback){
 
@@ -13,7 +13,7 @@ module.exports = function(repository, options, callback){
     return callback(null, 'ok');
   }
 
-  var logger = !!options.verbosity ? console : { log: _.noop };
+  const logger = options.verbosity ? console : { log: _.noop };
 
   logger.log(format(colors.yellow('Connecting to library: {0}/{1}'), options.s3.bucket, options.s3.componentsDir));
 
@@ -29,7 +29,7 @@ module.exports = function(repository, options, callback){
 
       logger.log(colors.yellow('Component not found. Publishing it...'));
 
-      var pkgInfo = {
+      const pkgInfo = {
         outputFolder: path.resolve(__dirname, '../components/oc-client/_package'),
         packageJson: packageInfo
       };

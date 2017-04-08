@@ -1,9 +1,9 @@
 'use strict';
 
-var fs = require('fs-extra');
-var path = require('path');
+const fs = require('fs-extra');
+const path = require('path');
 
-var settings = require('../../resources/settings');
+const settings = require('../../resources/settings');
 
 module.exports = function(){
   return function(params, callback){
@@ -12,7 +12,7 @@ module.exports = function(){
 
       localConfig = localConfig || {};
 
-      var mockType = params.targetType + 's';
+      const mockType = params.targetType + 's';
 
       if(!localConfig.mocks){
         localConfig.mocks = {};
@@ -22,7 +22,7 @@ module.exports = function(){
         localConfig.mocks[mockType] = {};
       }
 
-      var pluginType = 'static';
+      let pluginType = 'static';
       if(fs.existsSync(path.resolve(params.targetValue.toString()))){
         pluginType = 'dynamic';
       }

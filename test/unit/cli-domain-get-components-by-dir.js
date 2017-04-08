@@ -1,19 +1,19 @@
 'use strict';
 
-var expect = require('chai').expect;
-var injectr = require('injectr');
-var path = require('path');
-var sinon = require('sinon');
-var _ = require('underscore');
+const expect = require('chai').expect;
+const injectr = require('injectr');
+const path = require('path');
+const sinon = require('sinon');
+const _ = require('underscore');
 
-var initialise = function(){
+const initialise = function(){
 
-  var fsMock = {
+  const fsMock = {
     readdirSync: sinon.stub(),
     readJsonSync: sinon.stub()
   };
 
-  var pathMock = {
+  const pathMock = {
     extname: path.extname,
     join: path.join,
     resolve: function(){
@@ -21,17 +21,17 @@ var initialise = function(){
     }
   };
 
-  var GetComponentsByDir = injectr('../../src/cli/domain/get-components-by-dir.js', {
+  const GetComponentsByDir = injectr('../../src/cli/domain/get-components-by-dir.js', {
     'fs-extra': fsMock,
     path: pathMock
   }, { __dirname: '' });
 
-  var local = new GetComponentsByDir();
+  const local = new GetComponentsByDir();
 
   return { local: local, fs: fsMock };
 };
 
-var executeComponentsListingByDir = function(local, callback){
+const executeComponentsListingByDir = function(local, callback){
   return local('.', callback);
 };
 
@@ -39,10 +39,10 @@ describe('cli : domain : get-components-by-dir', function(){
 
   describe('when getting components from dir', function(){
 
-    var error, result;
+    let error, result;
     beforeEach(function(done){
 
-      var data = initialise();
+      const data = initialise();
 
       data.fs.readdirSync.onCall(0).returns([
         'a-component',
@@ -74,10 +74,10 @@ describe('cli : domain : get-components-by-dir', function(){
 
   describe('when reading a broken package.json', function(){
 
-    var error, result;
+    let error, result;
     beforeEach(function(done){
 
-      var data = initialise();
+      const data = initialise();
 
       data.fs.readdirSync.onCall(0).returns([
         'a-broken-component',
@@ -105,10 +105,10 @@ describe('cli : domain : get-components-by-dir', function(){
 
   describe('when finds no components', function(){
 
-    var error, result;
+    let error, result;
     beforeEach(function(done){
 
-      var data = initialise();
+      const data = initialise();
 
       data.fs.readdirSync.onCall(0).returns([
         'a-broken-component',

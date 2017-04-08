@@ -1,8 +1,8 @@
 'use strict';
 
-var format = require('stringformat');
+const format = require('stringformat');
 
-var templates = require('./templates');
+const templates = require('./templates');
 
 module.exports = {
   renderedComponent: function(data){

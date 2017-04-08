@@ -1,15 +1,15 @@
 'use strict';
 
-var expect = require('chai').expect;
-var path = require('path');
-var request = require('minimal-request');
+const expect = require('chai').expect;
+const path = require('path');
+const request = require('minimal-request');
 
 describe('registry', function(){
   describe('when fallbackRegistryUrl is specified', function(){
-    var oc = require('../../../src/index');
-    var fallbackRegistry;
-    var registry;
-    var result;
+    const oc = require('../../../src/index');
+    let fallbackRegistry;
+    let registry;
+    let result;
 
     function retrieveRegistryConfiguration(port, pathToComponents, fallbackRegistryUrl){
       return {

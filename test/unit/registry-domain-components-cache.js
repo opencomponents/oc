@@ -1,36 +1,37 @@
 'use strict';
 /* eslint no-unused-vars: 'off' */
 
-var expect = require('chai').expect;
-var injctr = require('injectr');
-var sinon = require('sinon');
+const expect = require('chai').expect;
+const injctr = require('injectr');
+const sinon = require('sinon');
 
 describe('registry : domain : components-cache', function(){
 
-  var mockedCdn = {
-    getFile: sinon.stub(),
-    listSubDirectories: sinon.stub(),
-    putFileContent: sinon.stub()
-  };
-
-  var setTimeoutStub,
-    clearTimeoutStub,
-    componentsCache,
-    eventsHandlerStub,
+  const mockedCdn = {
+      getFile: sinon.stub(),
+      listSubDirectories: sinon.stub(),
+      putFileContent: sinon.stub()
+    },
     baseOptions = { pollingInterval: 5, s3: { componentsDir: 'component'}},
-    response,
     baseResponse = JSON.stringify({
       lastEdit: 12345678,
       components: {
         'hello-world': ['1.0.0', '1.0.2']
       }
-    });
+    }
+  );
 
-  var initialise = function(){
+  let setTimeoutStub,
+    clearTimeoutStub,
+    componentsCache,
+    eventsHandlerStub,
+    response;
+
+  const initialise = function(){
     clearTimeoutStub = sinon.stub();
     setTimeoutStub = sinon.stub();
     eventsHandlerStub = { fire: sinon.stub() };
-    var ComponentsCache = injctr('../../src/registry/domain/components-cache.js', {
+    const ComponentsCache = injctr('../../src/registry/domain/components-cache.js', {
       '../../utils/get-unix-utc-timestamp': function(){
         return 12345678;
       },
@@ -43,7 +44,7 @@ describe('registry : domain : components-cache', function(){
     componentsCache = new ComponentsCache(baseOptions, mockedCdn);
   };
 
-  var saveCallbackResult = function(callback){
+  const saveCallbackResult = function(callback){
     return function(err, res){
       response = { error: err, result: res };
       callback();
@@ -184,7 +185,7 @@ describe('registry : domain : components-cache', function(){
 
     describe('when refreshing the cache', function(){
 
-      var baseResponseUpdated = JSON.parse(baseResponse);
+      let baseResponseUpdated = JSON.parse(baseResponse);
       baseResponseUpdated.components['hello-world'].push('2.0.0');
       baseResponseUpdated.components['new-component'] = ['1.0.0'];
       baseResponseUpdated.lastEdit++;
