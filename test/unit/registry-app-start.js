@@ -6,8 +6,8 @@ var sinon = require('sinon');
 
 var getAppStart = function(mockedRepository, options, callback){
   var appStart = injectr('../../src/registry/app-start.js', {
-        '../components/oc-client/_package/package': { version: '1.2.3' }
-      }, { console: { log: sinon.stub() }, __dirname: '.'});
+    '../components/oc-client/_package/package': { version: '1.2.3' }
+  }, { console: { log: sinon.stub() }, __dirname: '.'});
       
   return appStart(mockedRepository, options, callback);
 };

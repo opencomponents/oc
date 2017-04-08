@@ -12,7 +12,7 @@ var _ = require('./utils/helpers');
 module.exports = function(cache, config){
 
   var getOCClientScript = new GetOCClientScript(cache),
-      buildHref = new HrefBuilder(config);
+    buildHref = new HrefBuilder(config);
 
   return function(toDo, options, cb){
     var toProcess = [];

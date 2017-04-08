@@ -31,7 +31,7 @@ var compileView = function(viewPath, type, cb) {
     if (err) { return cb(err);}
 
     var hashView = hashBuilder.fromString(compiledView.toString()),
-        javaScriptizedView = javaScriptizeTemplate(hashView, compiledView);
+      javaScriptizedView = javaScriptizeTemplate(hashView, compiledView);
 
     return cb(null, {
       hash: hashView,
@@ -43,7 +43,7 @@ var compileView = function(viewPath, type, cb) {
 module.exports = function(params, callback){
 
   var viewSrc = params.ocOptions.files.template.src,
-      viewPath = path.join(params.componentPath, viewSrc);
+    viewPath = path.join(params.componentPath, viewSrc);
 
   if(!fs.existsSync(viewPath)){
     return callback(format(strings.errors.cli.TEMPLATE_NOT_FOUND, viewSrc));

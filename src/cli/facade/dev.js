@@ -17,17 +17,17 @@ var wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
   var local = dependencies.local,
-      logger = dependencies.logger;
+    logger = dependencies.logger;
 
   return function(opts, callback){
 
     var componentsDir = opts.dirPath,
-        port = opts.port || 3000,
-        baseUrl = opts.baseUrl || format('http://localhost:{0}/', port),
-        packaging = false,
-        errors = strings.errors.cli,
-        fallbackRegistryUrl = opts.fallbackRegistryUrl,
-        hotReloading = _.isUndefined(opts.hotReloading) ? true : opts.hotReloading;
+      port = opts.port || 3000,
+      baseUrl = opts.baseUrl || format('http://localhost:{0}/', port),
+      packaging = false,
+      errors = strings.errors.cli,
+      fallbackRegistryUrl = opts.fallbackRegistryUrl,
+      hotReloading = _.isUndefined(opts.hotReloading) ? true : opts.hotReloading;
 
     callback = wrapCliCallback(callback);
 
@@ -102,7 +102,7 @@ module.exports = function(dependencies){
       logger.warn(strings.messages.cli.CHECKING_DEPENDENCIES, true);
       
       var dependencies = getComponentsDependencies(components),
-          missing = getMissingDeps(dependencies.withVersions, components);
+        missing = getMissingDeps(dependencies.withVersions, components);
 
       if(_.isEmpty(missing)){
         logger.ok('OK');
@@ -143,7 +143,7 @@ module.exports = function(dependencies){
       logger.ok('OK');
       _.forEach(components, function(component){
         logger.log(colors.green('├── ') + component);
-    });
+      });
 
       loadDependencies(components, function(dependencies){
         packageComponents(components, function(){

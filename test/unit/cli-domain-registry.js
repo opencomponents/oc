@@ -8,22 +8,22 @@ var getRegistry = function(dependencies, opts){
   dependencies.fs = dependencies.fs || {};
   dependencies.fs.readJsonSync = sinon.stub().returns({ version: '1.2.3' });
   var Registry = injectr('../../src/cli/domain/registry.js', {
-        'minimal-request': dependencies.request,
-        'fs-extra': dependencies.fs,
-        '../../utils/put': dependencies.put,
-        '../domain/url-parser': dependencies.urlParser,
-        path: {
-          join: sinon.stub().returns('/hello/world')
-        }
-      }, { 
-        Buffer: Buffer, 
-        __dirname: '/hello',
-        process: {
-          arch: 'x64',
-          platform: 'darwin',
-          version: 'v0.10.35'
-        }
-      });
+    'minimal-request': dependencies.request,
+    'fs-extra': dependencies.fs,
+    '../../utils/put': dependencies.put,
+    '../domain/url-parser': dependencies.urlParser,
+    path: {
+      join: sinon.stub().returns('/hello/world')
+    }
+  }, { 
+    Buffer: Buffer, 
+    __dirname: '/hello',
+    process: {
+      arch: 'x64',
+      platform: 'darwin',
+      version: 'v0.10.35'
+    }
+  });
 
   return new Registry(opts);
 };
@@ -58,10 +58,10 @@ describe('cli : domain : registry', function(){
 
       it('should save the file with slashed url', function(){
         var requestStub = sinon.stub(),
-            fsStub = {
-              readJson: sinon.stub(),
-              writeJson: sinon.spy()
-            };
+          fsStub = {
+            readJson: sinon.stub(),
+            writeJson: sinon.spy()
+          };
 
         requestStub.yields(null, { type: 'oc-registry' });
 

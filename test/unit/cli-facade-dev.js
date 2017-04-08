@@ -6,11 +6,11 @@ var sinon = require('sinon');
 describe('cli : facade : dev', function(){
 
   var logSpy = {},
-      DevFacade = require('../../src/cli/facade/dev'),
-      Local = require('../../src/cli/domain/local'),
-      local = new Local(),
-      npm = require('npm'),
-      devFacade = new DevFacade({ local: local, logger: logSpy });
+    DevFacade = require('../../src/cli/facade/dev'),
+    Local = require('../../src/cli/domain/local'),
+    local = new Local(),
+    npm = require('npm'),
+    devFacade = new DevFacade({ local: local, logger: logSpy });
 
   var execute = function(dirName, port){
     logSpy.err = sinon.spy();

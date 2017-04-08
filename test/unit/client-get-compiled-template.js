@@ -24,7 +24,7 @@ describe('client : get-compiled-template', function(){
       'Access Denied</Message><RequestId>1234567890</RequestId><HostId>asdfghjklqwertyuiop</HostId></Error>';
     
     var requestStub = sinon.stub().yields(403, errorExample),
-        error;
+      error;
 
     before(function(done){
       initialise(requestStub);

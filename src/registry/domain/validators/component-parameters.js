@@ -22,7 +22,7 @@ var validateParameter = function(parameter, expectedType){
 module.exports = function(requestParameters, expectedParameters){
 
   var result = { isValid: true, errors: {} },
-      mandatoryParameters = [];
+    mandatoryParameters = [];
 
   _.forEach(expectedParameters, function(expectedParameter, expectedParameterName){
     if(expectedParameter.mandatory){

@@ -6,8 +6,8 @@ var sinon = require('sinon');
 var _ = require('underscore');
 
 var fsMock,
-    packageTemplate,
-    uglifySpy;
+  packageTemplate,
+  uglifySpy;
 
 var initialise = function(fs, uglifyStub){
 

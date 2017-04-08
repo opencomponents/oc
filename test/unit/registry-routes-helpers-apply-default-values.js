@@ -104,7 +104,7 @@ describe('registry : routes : helpers : apply-default-values', function(){
 
           it('should return requestParameters with default values of optional parameters', function(){
             expect(parameters).to.eql({ mandatory: 'request value', optional: 'default value of optional parameter', optional2: false
-           });
+            });
           });
         });
 
@@ -115,7 +115,7 @@ describe('registry : routes : helpers : apply-default-values', function(){
 
           it('should return requestParameters with default values of optional parameters', function(){
             expect(parameters).to.eql({ mandatory: 'request value', optional: 'default value of optional parameter', optional2: false
-           });
+            });
           });
         });
       });

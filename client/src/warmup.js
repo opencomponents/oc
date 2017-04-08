@@ -26,7 +26,7 @@ module.exports = function(config, renderComponents){
     options.headers = options.headers || {};
 
     var urls = [],
-        toWarmup = [];
+      toWarmup = [];
 
     _.each(config.components, function(version, name){
       var versionSegment = version ? (version + '/') : '';
@@ -49,11 +49,11 @@ module.exports = function(config, renderComponents){
         }
 
         var parameters = componentInfo.oc.parameters,
-            componentToWarmup = { 
-              name: componentInfo.name,
-              version: componentInfo.version,
-              parameters: {}
-            };
+          componentToWarmup = { 
+            name: componentInfo.name,
+            version: componentInfo.version,
+            parameters: {}
+          };
 
         if(!!parameters){
           _.each(parameters, function(value, parameter){

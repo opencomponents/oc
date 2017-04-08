@@ -37,7 +37,7 @@ module.exports = function(cache){
         }
 
         cb(null, ocTemplate.getCompiledTemplate(templateText, template.key));
-       });
+      });
     };
 
     if(!!useCache){

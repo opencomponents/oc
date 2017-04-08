@@ -13,15 +13,15 @@ var wrapCliCallback = require('../wrap-cli-callback');
 module.exports = function(dependencies){
 
   var registry = dependencies.registry,
-      local = dependencies.local,
-      logger = dependencies.logger;
+    local = dependencies.local,
+    logger = dependencies.logger;
 
   return function(opts, callback){
 
     var componentPath = opts.componentPath,
-        packageDir = path.resolve(componentPath, '_package'),
-        compressedPackagePath = path.resolve(componentPath, 'package.tar.gz'),
-        errorMessage;
+      packageDir = path.resolve(componentPath, '_package'),
+      compressedPackagePath = path.resolve(componentPath, 'package.tar.gz'),
+      errorMessage;
 
     callback = wrapCliCallback(callback);
 
@@ -79,7 +79,7 @@ module.exports = function(dependencies){
 
           } else if(err.code === 'cli_version_not_valid') {
             var upgradeCommand = format(strings.commands.cli.UPGRADE, err.details.suggestedVersion),
-                errorDetails = format(strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE, colors.blue(upgradeCommand));
+              errorDetails = format(strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE, colors.blue(upgradeCommand));
 
             errorMessage = format(strings.errors.cli.PUBLISHING_FAIL, errorDetails);
             logger.err(errorMessage);
@@ -117,8 +117,8 @@ module.exports = function(dependencies){
 
         async.eachSeries(registryLocations, function(registryUrl, next){
           var registryLength = registryUrl.length,
-              registryNormalised = registryUrl.slice(registryLength - 1) === '/' ? registryUrl.slice(0, registryLength - 1) : registryUrl,
-              componentRoute = format('{0}/{1}/{2}', registryNormalised, component.name, component.version);
+            registryNormalised = registryUrl.slice(registryLength - 1) === '/' ? registryUrl.slice(0, registryLength - 1) : registryUrl,
+            componentRoute = format('{0}/{1}/{2}', registryNormalised, component.name, component.version);
 
           putComponentToRegistry({ route: componentRoute, path: compressedPackagePath}, next);
         }, function(err){

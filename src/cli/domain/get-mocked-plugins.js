@@ -57,14 +57,14 @@ var registerDynamicMocks = function(ocJsonLocation, mocks, logger){
 var findPath = function(pathToResolve, fileName) {
 
   var rootDir = fs.realpathSync('.'),
-      fileToResolve = path.join(pathToResolve, fileName);
+    fileToResolve = path.join(pathToResolve, fileName);
 
   if (!fs.existsSync(fileToResolve)) {
     if (pathToResolve === rootDir) {
       return undefined;
     } else {
       var getParent = function(x){ return x.split('/').slice(0, -1).join('/'); },
-          parentDir = pathToResolve ? getParent(pathToResolve) : rootDir;
+        parentDir = pathToResolve ? getParent(pathToResolve) : rootDir;
 
       return findPath(parentDir, fileName);
     }
@@ -77,15 +77,15 @@ module.exports = function(logger, componentsDir){
   componentsDir = path.resolve(componentsDir || '.');
 
   var plugins = [],
-      ocJsonFileName = settings.configFile.src.replace('./', ''),
-      ocJsonPath = findPath(componentsDir, ocJsonFileName);
+    ocJsonFileName = settings.configFile.src.replace('./', ''),
+    ocJsonPath = findPath(componentsDir, ocJsonFileName);
 
   if(!ocJsonPath){
     return plugins;
   }
 
   var content = fs.readJsonSync(ocJsonPath),
-      ocJsonLocation = ocJsonPath.slice(0, -ocJsonFileName.length);
+    ocJsonLocation = ocJsonPath.slice(0, -ocJsonFileName.length);
 
   if(!content.mocks || !content.mocks.plugins){
     return plugins;

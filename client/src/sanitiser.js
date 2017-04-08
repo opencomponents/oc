@@ -25,15 +25,15 @@ var getDefaultUserAgent = function() {
 
 var sanitiseDefaultOptions = function(options) {
   if(_.isFunction(options)){
-      options = {};
-    }
+    options = {};
+  }
 
-    options = options || {};
-    options.headers = lowerHeaderKeys(options.headers);
-    options.headers['user-agent'] = options.headers['user-agent'] || getDefaultUserAgent();
+  options = options || {};
+  options.headers = lowerHeaderKeys(options.headers);
+  options.headers['user-agent'] = options.headers['user-agent'] || getDefaultUserAgent();
 
-    options.timeout = options.timeout || 5;
-    return options;
+  options.timeout = options.timeout || 5;
+  return options;
 };
 
 module.exports = {

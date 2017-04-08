@@ -23,7 +23,7 @@ describe('registry : domain : sanitiser', function(){
         };
 
         var requestParameters = { isTrue: 'true' },
-            sanitisedParameters = sanitise(requestParameters, componentParameters);
+          sanitisedParameters = sanitise(requestParameters, componentParameters);
 
         expect(sanitisedParameters).to.eql({ isTrue: true });
       });
@@ -39,7 +39,7 @@ describe('registry : domain : sanitiser', function(){
         };
 
         var requestParameters = { isTrue: 'false' },
-            sanitisedParameters = sanitise(requestParameters, componentParameters);
+          sanitisedParameters = sanitise(requestParameters, componentParameters);
 
         expect(sanitisedParameters).to.eql({ isTrue: false });
       });
@@ -58,7 +58,7 @@ describe('registry : domain : sanitiser', function(){
         };
 
         var requestParameters = { myString: null },
-            sanitisedParameters = sanitise(requestParameters, componentParameters);
+          sanitisedParameters = sanitise(requestParameters, componentParameters);
 
         expect(sanitisedParameters).to.eql({ myString: '' });
       });
@@ -77,7 +77,7 @@ describe('registry : domain : sanitiser', function(){
         };
 
         var requestParameters = { age: '123' },
-            sanitisedParameters = sanitise(requestParameters, componentParameters);
+          sanitisedParameters = sanitise(requestParameters, componentParameters);
 
         expect(sanitisedParameters).to.eql({ age: 123 });
       });
@@ -88,8 +88,8 @@ describe('registry : domain : sanitiser', function(){
       it('should keep the parameter as it is', function(){
 
         var componentParameters = {},
-            requestParameters = { age: 123 },
-            sanitisedParameters = sanitise(requestParameters, componentParameters);
+          requestParameters = { age: 123 },
+          sanitisedParameters = sanitise(requestParameters, componentParameters);
 
         expect(sanitisedParameters).to.eql({ age: 123 });
       });

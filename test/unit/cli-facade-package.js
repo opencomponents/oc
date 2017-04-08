@@ -7,10 +7,10 @@ var sinon = require('sinon');
 describe('cli : facade : package', function(){
 
   var logSpy = {},
-      Local = require('../../src/cli/domain/local'),
-      local = new Local(),
-      PackageFacade = require('../../src/cli/facade/package.js'),
-      packageFacade = new PackageFacade({ local: local, logger: logSpy });
+    Local = require('../../src/cli/domain/local'),
+    local = new Local(),
+    PackageFacade = require('../../src/cli/facade/package.js'),
+    packageFacade = new PackageFacade({ local: local, logger: logSpy });
 
   var execute = function(compress, cb){
     logSpy.err = sinon.stub();
@@ -32,8 +32,8 @@ describe('cli : facade : package', function(){
         local.package.restore();
 
         var message = logSpy.warn.args[0][0],
-            re = new RegExp('\\' + path.sep, 'g'),
-            messageWithSlashesOnPath = message.replace(re, '/');
+          re = new RegExp('\\' + path.sep, 'g'),
+          messageWithSlashesOnPath = message.replace(re, '/');
 
         expect(messageWithSlashesOnPath).to.include('Packaging -> ');
         expect(messageWithSlashesOnPath).to.include('components/hello-world/_package');
@@ -74,11 +74,12 @@ describe('cli : facade : package', function(){
 
         it('should package and show success message', function(done){
           execute(false, function(){
+
             var warnMessage = logSpy.warn.args[0][0],
-                okMessage = logSpy.ok.args[0][0],
-                re = new RegExp('\\' + path.sep, 'g'),
-                warnMessageWithSlashesOnPath = warnMessage.replace(re, '/'),
-                okMessageWithSlashesOnPath = okMessage.replace(re, '/');
+              okMessage = logSpy.ok.args[0][0],
+              re = new RegExp('\\' + path.sep, 'g'),
+              warnMessageWithSlashesOnPath = warnMessage.replace(re, '/'),
+              okMessageWithSlashesOnPath = okMessage.replace(re, '/');
 
             expect(warnMessageWithSlashesOnPath).to.include('Packaging -> ');
             expect(warnMessageWithSlashesOnPath).to.include('components/hello-world/_package');
@@ -98,10 +99,10 @@ describe('cli : facade : package', function(){
               local.compress.restore();
 
               var warnMessage = logSpy.warn.args[0][0],
-                  okMessage = logSpy.ok.args[0][0],
-                  re = new RegExp('\\' + path.sep, 'g'),
-                  warnMessageWithSlashesOnPath = warnMessage.replace(re, '/'),
-                  okMessageWithSlashesOnPath = okMessage.replace(re, '/');
+                okMessage = logSpy.ok.args[0][0],
+                re = new RegExp('\\' + path.sep, 'g'),
+                warnMessageWithSlashesOnPath = warnMessage.replace(re, '/'),
+                okMessageWithSlashesOnPath = okMessage.replace(re, '/');
 
               expect(warnMessageWithSlashesOnPath).to.include('Packaging -> ');
               expect(okMessageWithSlashesOnPath).to.include('Packaged -> ');

@@ -7,8 +7,8 @@ var sinon = require('sinon');
 describe('client', function(){
 
   var validatorStub,
-      Client,
-      init;
+    Client,
+    init;
 
   var initialise = function(){
 

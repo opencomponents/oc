@@ -6,10 +6,10 @@ var sinon = require('sinon');
 describe('cli : facade : registry : add', function(){
 
   var logSpy = {},
-      Registry = require('../../src/cli/domain/registry'),
-      registry = new Registry(),
-      RegistryFacade = require('../../src/cli/facade/registry-add'),
-      registryFacade = new RegistryFacade({ registry: registry, logger: logSpy });
+    Registry = require('../../src/cli/domain/registry'),
+    registry = new Registry(),
+    RegistryFacade = require('../../src/cli/facade/registry-add'),
+    registryFacade = new RegistryFacade({ registry: registry, logger: logSpy });
 
   var execute = function(){
     logSpy.err = sinon.spy();
