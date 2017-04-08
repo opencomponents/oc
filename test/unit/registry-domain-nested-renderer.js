@@ -7,8 +7,8 @@ var _ = require('underscore');
 describe('registry : routes : helpers : nested-renderer', function(){
 
   var NestedRenderer = require('../../src/registry/domain/nested-renderer'),
-      nestedRenderer,
-      renderer;
+    nestedRenderer,
+    renderer;
 
   var initialise = function(rendererMocks, conf){
 

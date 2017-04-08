@@ -6,7 +6,7 @@ var getMimeType = require('./get-mime-type');
 
 module.exports = function(filePath){
   var ext = path.extname(filePath).toLowerCase(),
-      isGzipped = false;
+    isGzipped = false;
 
   if(ext === '.gz'){
     isGzipped = true;

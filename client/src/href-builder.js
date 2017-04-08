@@ -23,7 +23,7 @@ module.exports = function(config){
       }
 
       var lang = options.headers['accept-language'],
-          forwardLang = config.forwardAcceptLanguageToClient === true;
+        forwardLang = config.forwardAcceptLanguageToClient === true;
 
       if(!forwardLang && options.forwardAcceptLanguageToClient === true){
         forwardLang = true;
@@ -35,9 +35,9 @@ module.exports = function(config){
       }
 
       var versionSegment = !!component.version ? ('/' + component.version) : '',
-          registryUrl = clientRenderingEndpoint,
-          registrySegment = registryUrl.slice(-1) === '/' ? registryUrl : (registryUrl + '/'),
-          qs = !!component.parameters ? ('/?' + querystring.stringify(component.parameters)) : '';
+        registryUrl = clientRenderingEndpoint,
+        registrySegment = registryUrl.slice(-1) === '/' ? registryUrl : (registryUrl + '/'),
+        qs = !!component.parameters ? ('/?' + querystring.stringify(component.parameters)) : '';
       
       return url.resolve(registrySegment, component.name) + versionSegment + qs;
     },

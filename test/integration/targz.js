@@ -34,7 +34,7 @@ describe('The targz dependency', function(){
     describe('when decompressing the created file', function(){
 
       var error,
-          to = path.resolve(__dirname, '../fixtures/targz-test'); 
+        to = path.resolve(__dirname, '../fixtures/targz-test'); 
 
       beforeEach(function(done){ 
         targz.decompress({

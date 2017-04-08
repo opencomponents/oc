@@ -8,7 +8,7 @@ var path = require('path');
 
 module.exports = function(dependencies) {
   var local = dependencies.local,
-      logger = dependencies.logger;
+    logger = dependencies.logger;
 
   var log = {
     err: function(msg){ return logger.log(colors.red(msg)); },
@@ -18,8 +18,8 @@ module.exports = function(dependencies) {
 
   return function(opts, callback) {
     var componentPath = opts.componentPath,
-        packageDir = path.resolve(componentPath, '_package'),
-        compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
+      packageDir = path.resolve(componentPath, '_package'),
+      compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
 
     callback = wrapCliCallback(callback);
 

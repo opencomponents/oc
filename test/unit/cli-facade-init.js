@@ -7,10 +7,10 @@ var sinon = require('sinon');
 describe('cli : facade : init', function(){
 
   var logSpy = {},
-      InitFacade = require('../../src/cli/facade/init'),
-      Local = require('../../src/cli/domain/local'),
-      local = new Local(),
-      initFacade = new InitFacade({ local: local, logger: logSpy });
+    InitFacade = require('../../src/cli/facade/init'),
+    Local = require('../../src/cli/domain/local'),
+    local = new Local(),
+    initFacade = new InitFacade({ local: local, logger: logSpy });
 
   var execute = function(componentName, templateType){
     logSpy.log = sinon.spy();
@@ -44,14 +44,14 @@ describe('cli : facade : init', function(){
     });
 
     describe('when the template is of a non valid type', function(){
-        beforeEach(function(){
-          execute('valid-component', 'invalid-type');
-        });
+      beforeEach(function(){
+        execute('valid-component', 'invalid-type');
+      });
 
-        it('should show an error', function(){
-          var expected = 'An error happened when initialising the component: the template is not valid. Allowed values are handlebars and jade';
-          expect(logSpy.log.args[0][0]).to.equal(colors.red(expected));
-        });
+      it('should show an error', function(){
+        var expected = 'An error happened when initialising the component: the template is not valid. Allowed values are handlebars and jade';
+        expect(logSpy.log.args[0][0]).to.equal(colors.red(expected));
+      });
     });
 
     describe('when an error happens', function(){

@@ -44,7 +44,7 @@ module.exports = {
       if(_.has(expectedParameters, requestParameterName)){
         
         var expectedType = expectedParameters[requestParameterName].type,
-            sanitised = sanitise.parameter(requestParameter, expectedType);
+          sanitised = sanitise.parameter(requestParameter, expectedType);
 
         result[requestParameterName] = sanitised;
       } else if(!_.contains(toRemove, requestParameterName)){

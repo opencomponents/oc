@@ -22,10 +22,10 @@ module.exports = function(conf){
   });
 
   var bucket = conf.s3.bucket,
-      cache = new Cache({
-        verbose: !!conf.verbosity,
-        refreshInterval: conf.refreshInterval
-      });
+    cache = new Cache({
+      verbose: !!conf.verbosity,
+      refreshInterval: conf.refreshInterval
+    });
 
   return {
     listSubDirectories: function(dir, callback){
@@ -109,7 +109,7 @@ module.exports = function(conf){
 
         async.each(files, function(file, cb){
           var relativeFile = file.substr(dirInput.length),
-              url = (dirOutput + relativeFile).replace(/\\/g, '/');
+            url = (dirOutput + relativeFile).replace(/\\/g, '/');
 
           self.putFile(file, url, relativeFile === '/server.js', cb);
         }, function(errors){
@@ -132,14 +132,14 @@ module.exports = function(conf){
     putFileContent: function(fileContent, fileName, isPrivate, callback){
 
       var fileInfo = getFileInfo(fileName),
-          obj = {
-            Bucket: bucket,
-            Key: fileName,
-            Body: fileContent,
-            ACL: isPrivate ? 'authenticated-read' : 'public-read',
-            ServerSideEncryption: 'AES256',
-            Expires: getNextYear()
-          };
+        obj = {
+          Bucket: bucket,
+          Key: fileName,
+          Body: fileContent,
+          ACL: isPrivate ? 'authenticated-read' : 'public-read',
+          ServerSideEncryption: 'AES256',
+          Expires: getNextYear()
+        };
 
       if(!!fileInfo.mimeType){
         obj.ContentType = fileInfo.mimeType;

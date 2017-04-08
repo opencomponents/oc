@@ -17,7 +17,7 @@ var wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
   var local = dependencies.local,
-      logger = dependencies.logger;
+    logger = dependencies.logger;
 
   var log = {
     err: function(msg){ return logger.log(colors.red(msg)); },
@@ -28,12 +28,12 @@ module.exports = function(dependencies){
   return function(opts, callback){
 
     var componentsDir = opts.dirPath,
-        port = opts.port || 3000,
-        baseUrl = opts.baseUrl || format('http://localhost:{0}/', port),
-        packaging = false,
-        errors = strings.errors.cli,
-        fallbackRegistryUrl = opts.fallbackRegistryUrl,
-        hotReloading = _.isUndefined(opts.hotReloading) ? true : opts.hotReloading;
+      port = opts.port || 3000,
+      baseUrl = opts.baseUrl || format('http://localhost:{0}/', port),
+      packaging = false,
+      errors = strings.errors.cli,
+      fallbackRegistryUrl = opts.fallbackRegistryUrl,
+      hotReloading = _.isUndefined(opts.hotReloading) ? true : opts.hotReloading;
 
     callback = wrapCliCallback(callback);
 
@@ -108,7 +108,7 @@ module.exports = function(dependencies){
       log.warn(strings.messages.cli.CHECKING_DEPENDENCIES, true);
       
       var dependencies = getComponentsDependencies(components),
-          missing = getMissingDeps(dependencies.withVersions, components);
+        missing = getMissingDeps(dependencies.withVersions, components);
 
       if(_.isEmpty(missing)){
         log.ok('OK');
@@ -149,7 +149,7 @@ module.exports = function(dependencies){
       log.ok('OK');
       _.forEach(components, function(component){
         logger.log(colors.green('├── ') + component);
-    });
+      });
 
       loadDependencies(components, function(dependencies){
         packageComponents(components, function(){

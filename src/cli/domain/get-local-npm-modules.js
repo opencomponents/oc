@@ -15,8 +15,8 @@ module.exports = function(){
     return fs.readdirSync(nodeFolder).filter(function(file){
 
       var filePath = path.resolve(nodeFolder, file),
-          isBin = file === '.bin',
-          isDir = fs.lstatSync(filePath).isDirectory();
+        isBin = file === '.bin',
+        isDir = fs.lstatSync(filePath).isDirectory();
 
       return isDir && !isBin;
     });

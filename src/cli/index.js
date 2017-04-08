@@ -25,8 +25,8 @@ var dependencies = {
 function validate(argv, level){
   if(argv._.length > level &&
     !_.contains(_.keys(commands.commands), argv._[level])) {
-      throw new Error(format(strings.messages.cli.NO_SUCH_COMMAND, argv._[level]));
-    }
+    throw new Error(format(strings.messages.cli.NO_SUCH_COMMAND, argv._[level]));
+  }
 
   return true;
 }

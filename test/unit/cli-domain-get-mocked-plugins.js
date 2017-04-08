@@ -8,9 +8,9 @@ var _ = require('underscore');
 describe('cli : domain : get-mocked-plugins', function(){
 
   var dynamicPluginModule = function(a){ return a ? 'blarg' : 'flarg'; },
-      notAFunctionModule = { 'foo' : 'bar' },
-      fsMock,
-      getMockedPlugins;
+    notAFunctionModule = { 'foo' : 'bar' },
+    fsMock,
+    getMockedPlugins;
 
   var initialise = function(fs, pathJoinStub){
 
@@ -121,7 +121,7 @@ describe('cli : domain : get-mocked-plugins', function(){
       };
 
       var readMock = sinon.stub(),
-          existsMock = sinon.stub();
+        existsMock = sinon.stub();
       
       readMock.withArgs('/root/components/oc.json').returns(ocJsonComponent);
       readMock.withArgs('/root/oc.json').returns(ocJsonRoot);
@@ -165,9 +165,9 @@ describe('cli : domain : get-mocked-plugins', function(){
 
       beforeEach(function(){
         initialise({
-            existsSync: sinon.stub().returns(true),
-            readJsonSync: sinon.stub().returns(ocJson)
-         });
+          existsSync: sinon.stub().returns(true),
+          readJsonSync: sinon.stub().returns(ocJson)
+        });
         result = getMockedPlugins({log: sinon.stub()}, '/root/components/');
       });
 
@@ -191,9 +191,9 @@ describe('cli : domain : get-mocked-plugins', function(){
 
       beforeEach(function(){
         initialise({
-            existsSync: sinon.stub().returns(true),
-            readJsonSync: sinon.stub().returns(ocJson)
-         });
+          existsSync: sinon.stub().returns(true),
+          readJsonSync: sinon.stub().returns(ocJson)
+        });
         result = getMockedPlugins({log: sinon.stub()}, '/root/components/');
       });
 
@@ -222,9 +222,9 @@ describe('cli : domain : get-mocked-plugins', function(){
 
       beforeEach(function(){
         initialise({
-            existsSync: sinon.stub().returns(true),
-            readJsonSync: sinon.stub().returns(ocJson)
-         });
+          existsSync: sinon.stub().returns(true),
+          readJsonSync: sinon.stub().returns(ocJson)
+        });
         result = getMockedPlugins({ log: sinon.stub() }, '/root/components/');
       });
 
@@ -256,9 +256,9 @@ describe('cli : domain : get-mocked-plugins', function(){
 
       beforeEach(function(){
         initialise({
-            existsSync: sinon.stub().returns(true),
-            readJsonSync: sinon.stub().returns(ocJson)
-         });
+          existsSync: sinon.stub().returns(true),
+          readJsonSync: sinon.stub().returns(ocJson)
+        });
         result = getMockedPlugins(logger, '/root/components/');
       });
 
@@ -289,9 +289,9 @@ describe('cli : domain : get-mocked-plugins', function(){
 
       beforeEach(function(){
         initialise({
-            existsSync: sinon.stub().returns(true),
-            readJsonSync: sinon.stub().returns(ocJson)
-         });
+          existsSync: sinon.stub().returns(true),
+          readJsonSync: sinon.stub().returns(ocJson)
+        });
         result = getMockedPlugins(logger, '/root/components/');
       });
 
