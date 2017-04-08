@@ -1,0 +1,35 @@
+{
+  "lastEdit": 1491478634575,
+  "components": {
+    "example-component-1": [
+      {
+          "lastModified": 1459864868000,
+          "version": "1.0.0"
+      },
+      {
+          "lastModified": 1467727268000,
+          "version": "1.0.1"
+      }
+    ],
+    "example-component-2": [
+        {
+            "lastModified": 1486303268000,
+            "version": "0.0.1"
+        },
+        {
+            "lastModified": 1488722463456,
+            "version": "0.0.2"
+        }
+    ],
+    "example-component-3": [
+        {
+            "lastModified": 1491056624678,
+            "version": "1.0.0"
+        },
+        {
+            "lastModified": 1491402224345,
+            "version": "1.0.1"
+        }
+    ]
+  }
+}

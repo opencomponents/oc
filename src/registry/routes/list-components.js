@@ -4,6 +4,8 @@ var async = require('async');
 var _ = require('underscore');
 
 var dateStringified = require('../../utils/date-stringify');
+var history = require('../history.json');
+var historySorted = require('../../utils/history-sort');
 var packageInfo = require('../../../package.json');
 var urlBuilder = require('../domain/url-builder');
 
@@ -48,7 +50,7 @@ module.exports = function(repository){
             return componentInfo.name;
           });
 
-          return res.render('list-components', _.extend(baseResponse, {
+          return res.render('components-main', _.extend(baseResponse, {
             availableDependencies: res.conf.dependencies,
             availablePlugins: res.conf.plugins,
             components: componentsInfo,
@@ -67,6 +69,7 @@ module.exports = function(repository){
                 state: state
               };
             }),
+            componentsHistory: historySorted(history),
             q: req.query.q || '',
             stateCounts: stateCounts
           }));
