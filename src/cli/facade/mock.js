@@ -9,7 +9,7 @@ var wrapCliCallback = require('../wrap-cli-callback');
 module.exports = function(dependencies){
   
   var local = dependencies.local,
-      logger = dependencies.logger;
+    logger = dependencies.logger;
 
   return function(opts, callback){
 

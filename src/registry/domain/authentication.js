@@ -11,8 +11,8 @@ var builtin = {
     validate: function(authConfig){
       var isValid = authConfig.username && authConfig.password;
       return {
-          isValid: isValid,
-          message: isValid ? '' : strings.errors.registry.CONFIGURATION_PUBLISH_BASIC_AUTH_CREDENTIALS_MISSING
+        isValid: isValid,
+        message: isValid ? '' : strings.errors.registry.CONFIGURATION_PUBLISH_BASIC_AUTH_CREDENTIALS_MISSING
       };
     },
     middleware: function(authConfig){
@@ -37,8 +37,8 @@ module.exports.validate = function(authConfig){
       scheme = require(moduleName);
     } catch(err){
       return {
-          isValid: false,
-          message: format(strings.errors.registry.CONFIGURATION_PUBLISH_AUTH_MODULE_NOT_FOUND, moduleName)
+        isValid: false,
+        message: format(strings.errors.registry.CONFIGURATION_PUBLISH_AUTH_MODULE_NOT_FOUND, moduleName)
       };
     }
   }

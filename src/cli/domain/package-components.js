@@ -18,7 +18,7 @@ module.exports = function(){
     var minify = options.minify === true;
 
     var files = fs.readdirSync(componentPath),
-        publishPath = path.join(componentPath, '_package');
+      publishPath = path.join(componentPath, '_package');
 
     if(_.contains(files, '_package')){
       fs.removeSync(publishPath);
@@ -27,7 +27,7 @@ module.exports = function(){
     fs.mkdirSync(publishPath);
 
     var componentPackagePath = path.join(componentPath, 'package.json'),
-        ocPackagePath = path.join(__dirname, '../../../package.json');
+      ocPackagePath = path.join(__dirname, '../../../package.json');
 
     if(!fs.existsSync(componentPackagePath)){
       return callback(new Error('component does not contain package.json'));
@@ -36,7 +36,7 @@ module.exports = function(){
     }
 
     var component = fs.readJsonSync(componentPackagePath),
-        ocInfo = fs.readJsonSync(ocPackagePath);
+      ocInfo = fs.readJsonSync(ocPackagePath);
 
     if(!validator.validateComponentName(component.name)){
       return callback(new Error('name not valid'));

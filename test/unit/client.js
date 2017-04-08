@@ -7,9 +7,8 @@ var sinon = require('sinon');
 describe('client', function(){
 
   var validatorStub,
-      client,
-      Client,
-      init;
+    Client,
+    init;
 
   var initialise = function(){
 
@@ -23,7 +22,7 @@ describe('client', function(){
     before(function(){
       initialise();
       validatorStub.returns({ isValid: false, error: 'argh!' });
-      init = function(){ client = new Client(); };
+      init = function(){ Client(); };
     });
 
     it('should throw an exception', function(){

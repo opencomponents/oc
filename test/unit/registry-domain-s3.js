@@ -8,9 +8,9 @@ var sinon = require('sinon');
 describe('registry : domain : s3', function(){
 
   var s3, 
-      mockedS3Client,
-      error, 
-      response;
+    mockedS3Client,
+    error, 
+    response;
     
   var S3 = injectr('../../src/registry/domain/s3.js', {
     'fs-extra': {

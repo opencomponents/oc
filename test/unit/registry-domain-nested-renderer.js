@@ -7,8 +7,8 @@ var _ = require('underscore');
 describe('registry : routes : helpers : nested-renderer', function(){
 
   var NestedRenderer = require('../../src/registry/domain/nested-renderer'),
-      nestedRenderer,
-      renderer;
+    nestedRenderer,
+    renderer;
 
   var initialise = function(rendererMocks, conf){
 
@@ -69,7 +69,7 @@ describe('registry : routes : helpers : nested-renderer', function(){
 
       describe('when requesting a not existent component', function(){
         
-        var result, error;
+        var error;
         beforeEach(function(done){
           initialise({
             status: 404,
@@ -78,8 +78,7 @@ describe('registry : routes : helpers : nested-renderer', function(){
             }
           });
 
-          nestedRenderer.renderComponent('404-component', {}, function(err, res){
-            result = res;
+          nestedRenderer.renderComponent('404-component', {}, function(err){
             error = err;
             done();
           });

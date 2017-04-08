@@ -1,4 +1,5 @@
 'use strict';
+/* eslint no-unused-vars: 'off' */
 
 var expect = require('chai').expect;
 var injctr = require('injectr');
@@ -13,17 +14,17 @@ describe('registry : domain : components-cache', function(){
   };
 
   var setTimeoutStub,
-      clearTimeoutStub,
-      componentsCache,
-      eventsHandlerStub,
-      baseOptions = { pollingInterval: 5, s3: { componentsDir: 'component'}},
-      response,
-      baseResponse = JSON.stringify({
-        lastEdit: 12345678,
-        components: {
-          'hello-world': ['1.0.0', '1.0.2']
-        }
-      });
+    clearTimeoutStub,
+    componentsCache,
+    eventsHandlerStub,
+    baseOptions = { pollingInterval: 5, s3: { componentsDir: 'component'}},
+    response,
+    baseResponse = JSON.stringify({
+      lastEdit: 12345678,
+      components: {
+        'hello-world': ['1.0.0', '1.0.2']
+      }
+    });
 
   var initialise = function(){
     clearTimeoutStub = sinon.stub();

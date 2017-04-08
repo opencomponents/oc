@@ -10,16 +10,15 @@ describe('registry : domain : plugins-initialiser', function(){
 
     describe('when plugin not registered correctly', function(){
 
-      var result, error;
+      var error;
       beforeEach(function(done){
 
         var plugins = [{
           name: 'doSomething'
         }];
 
-        pluginsInitialiser.init(plugins, function(err, res){
+        pluginsInitialiser.init(plugins, function(err){
           error = err;
-          result = res;
           done();
         });
       });
@@ -31,7 +30,7 @@ describe('registry : domain : plugins-initialiser', function(){
 
     describe('when plugin is anonymous', function(){
 
-      var result, error;
+      var error;
       beforeEach(function(done){
 
         var plugins = [{
@@ -41,9 +40,8 @@ describe('registry : domain : plugins-initialiser', function(){
           }
         }];
 
-        pluginsInitialiser.init(plugins, function(err, res){
+        pluginsInitialiser.init(plugins, function(err){
           error = err;
-          result = res;
           done();
         });
       });
@@ -55,7 +53,7 @@ describe('registry : domain : plugins-initialiser', function(){
 
     describe('when plugin does not expose a register method', function(){
 
-      var result, error;
+      var error;
       beforeEach(function(done){
 
         var plugins = [{
@@ -63,9 +61,8 @@ describe('registry : domain : plugins-initialiser', function(){
           register: { execute: function(){}}
         }];
 
-        pluginsInitialiser.init(plugins, function(err, res){
+        pluginsInitialiser.init(plugins, function(err){
           error = err;
-          result = res;
           done();
         });
       });
@@ -77,7 +74,7 @@ describe('registry : domain : plugins-initialiser', function(){
 
     describe('when plugin does not expose an execute method', function(){
 
-      var result, error;
+      var error;
       beforeEach(function(done){
 
         var plugins = [{
@@ -85,9 +82,8 @@ describe('registry : domain : plugins-initialiser', function(){
           register: { register: function(){}}
         }];
 
-        pluginsInitialiser.init(plugins, function(err, res){
+        pluginsInitialiser.init(plugins, function(err){
           error = err;
-          result = res;
           done();
         });
       });
@@ -100,7 +96,7 @@ describe('registry : domain : plugins-initialiser', function(){
 
   describe('when initialising valid plugins', function(){
 
-    var passedOptions, flag, error, result;
+    var passedOptions, flag, result;
     beforeEach(function(done){
 
       var plugins = [{
@@ -133,7 +129,6 @@ describe('registry : domain : plugins-initialiser', function(){
       }];
 
       pluginsInitialiser.init(plugins, function(err, res){
-        error = err;
         result = res;
         done();
       });
@@ -150,7 +145,7 @@ describe('registry : domain : plugins-initialiser', function(){
 
     it('should be make the functionality usable', function(){
       var a = result.getValue('a'),
-          flagged = result.isFlagged();
+        flagged = result.isFlagged();
 
       expect(a).to.equal(123);
       expect(flagged).to.equal(true);
@@ -159,7 +154,7 @@ describe('registry : domain : plugins-initialiser', function(){
 
   describe('when plugin specifies dependencies', function(){
 
-    var passedDeps, flag, error, result;
+    var passedDeps, flag;
     beforeEach(function(done){
 
       var plugins = [{
@@ -187,9 +182,7 @@ describe('registry : domain : plugins-initialiser', function(){
         options: {}
       }];
 
-      pluginsInitialiser.init(plugins, function(err, res){
-        error = err;
-        result = res;
+      pluginsInitialiser.init(plugins, function(){
         done();
       });
     });
@@ -201,14 +194,13 @@ describe('registry : domain : plugins-initialiser', function(){
 
   describe('when plugins have a circular dependency', function(){
 
-    var passedDeps, flag, error, result;
+    var flag, error;
     beforeEach(function(done){
 
       var plugins = [{
         name: 'getValue',
         register: {
           register: function(options, deps, cb){
-            passedDeps = deps;
             cb();
           },
           execute: function(){},
@@ -230,9 +222,8 @@ describe('registry : domain : plugins-initialiser', function(){
         }
       }];
 
-      pluginsInitialiser.init(plugins, function(err, res){
+      pluginsInitialiser.init(plugins, function(err){
         error = err;
-        result = res;
         done();
       });
     });
@@ -244,14 +235,13 @@ describe('registry : domain : plugins-initialiser', function(){
 
   describe('when plugin depends on a plugin that is not registered', function(){
 
-    var passedDeps, error, result;
+    var error;
     beforeEach(function(done){
 
       var plugins = [{
         name: 'getValue',
         register: {
           register: function(options, deps, cb){
-            passedDeps = deps;
             cb();
           },
           execute: function(){},
@@ -260,9 +250,8 @@ describe('registry : domain : plugins-initialiser', function(){
         options: {}
       }];
 
-      pluginsInitialiser.init(plugins, function(err, res){
+      pluginsInitialiser.init(plugins, function(err){
         error = err;
-        result = res;
         done();
       });
     });
@@ -274,7 +263,7 @@ describe('registry : domain : plugins-initialiser', function(){
 
   describe('when plugin chain requires multiple passes', function(){
 
-    var passedDeps, flag, error, result;
+    var flag, result;
     beforeEach(function(done){
 
       var plugins = [{
@@ -292,7 +281,6 @@ describe('registry : domain : plugins-initialiser', function(){
         name: 'getValue',
         register: {
           register: function(options, deps, cb){
-            passedDeps = deps;
             cb();
           },
           execute: function(){},
@@ -314,7 +302,6 @@ describe('registry : domain : plugins-initialiser', function(){
       }];
 
       pluginsInitialiser.init(plugins, function(err, res){
-        error = err;
         result = res;
         done();
       });

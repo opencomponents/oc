@@ -7,7 +7,7 @@ var sinon = require('sinon');
 describe('registry : domain : extract-package', function(){
 
   var decompressStub = sinon.stub(),
-      pathResolveStub = sinon.stub();
+    pathResolveStub = sinon.stub();
 
   var extractPackage = injectr('../../src/registry/domain/extract-package.js', {
     targz: { decompress: decompressStub },
@@ -17,7 +17,7 @@ describe('registry : domain : extract-package', function(){
 
   describe('when successfully extracting package', function(){
 
-    var error, response;
+    var response;
 
     beforeEach(function(done){
       pathResolveStub.reset();
@@ -33,7 +33,6 @@ describe('registry : domain : extract-package', function(){
           path: '/some-path/registry/temp/1478279453422.tar.gz'
         }
       }, function(err, res){
-        error = err;
         response = res;
         done();
       });

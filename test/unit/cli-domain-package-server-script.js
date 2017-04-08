@@ -53,7 +53,7 @@ describe('cli : domain : package-server-script ', function(){
   describe('bundle/config', function(){
 
     describe('when configured', function(){
-       var config = webpackConfigGenerator({
+      var config = webpackConfigGenerator({
         webpack: { stats: 'none' },
         dependencies: {},
         fileName: 'server.js',

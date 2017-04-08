@@ -17,18 +17,18 @@ module.exports = function(grunt){
       }, function(err, res){
         if(err){ return callback(err); }
         var commits = res.stdout.split('commit '),
-            result = [];
+          result = [];
 
         _.forEach(commits, function(commit){
           var commitMessages = commit.split('Merge pull request'),
-              isPr = commitMessages.length > 1,
-              isSquashedPr = !!commit.match(/(.*?)\(#(.*?)\)\n(.*?)/g),
-              commitMessage,
-              prNumber;
+            isPr = commitMessages.length > 1,
+            isSquashedPr = !!commit.match(/(.*?)\(#(.*?)\)\n(.*?)/g),
+            commitMessage,
+            prNumber;
 
           if(isPr){
             var split = commitMessages[1].split('from'),
-                branchName = split[1].trim().split(' ')[0].trim();
+              branchName = split[1].trim().split(' ')[0].trim();
 
             prNumber = split[0].trim().replace('#', '');
             commitMessage = split[1].replace(branchName, '').trim();
@@ -36,9 +36,9 @@ module.exports = function(grunt){
             result.push(format('- [#{0}](https://github.com/opentable/oc/pull/{0}) {1}', prNumber, commitMessage));
           } else if(isSquashedPr){
             var lines = commit.split('\n'),
-                commitLine = lines[4],
-                prNumberStartIndex = commitLine.lastIndexOf(' ('),
-                prNumberEndIndex = commitLine.lastIndexOf(')');
+              commitLine = lines[4],
+              prNumberStartIndex = commitLine.lastIndexOf(' ('),
+              prNumberEndIndex = commitLine.lastIndexOf(')');
 
             prNumber = commitLine.substr(prNumberStartIndex + 3, prNumberEndIndex - prNumberStartIndex - 3);
             commitMessage = commitLine.substr(0, prNumberStartIndex).trim();
@@ -52,7 +52,7 @@ module.exports = function(grunt){
     },
     allPrs: function(tags, callback){
       var logIntervals = [],
-          results = [];
+        results = [];
 
       for(var i = tags.length; i > 0; i--){
         var logInterval = tags[i - 1];
@@ -68,7 +68,7 @@ module.exports = function(grunt){
           next();
         });
       }, function(){
-          callback(null, results);
+        callback(null, results);
       });
     },
     tags: function(callback){
@@ -85,7 +85,7 @@ module.exports = function(grunt){
   grunt.registerTask('changelog', 'generates the changelog', function(){
 
     var done = this.async(),
-        result = '## Change Log';
+      result = '## Change Log';
 
     get.tags(function(err, tags){
       if(err){ return grunt.fatal(err); }

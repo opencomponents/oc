@@ -19,7 +19,7 @@ module.exports = function(fileExt, fileContent){
     };
 
     var babelOptions = { presets: [[babelPresetEnv, presetOptions]] },
-        es5 = babel.transform(fileContent, babelOptions).code;
+      es5 = babel.transform(fileContent, babelOptions).code;
     
     return uglifyJs.minify(es5, { fromString: true }).code;
 

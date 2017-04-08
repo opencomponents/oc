@@ -10,8 +10,8 @@ module.exports = function(repository){
   return function(req, res){
 
     var filePath,
-        clientPath = (!!res.conf.prefix ? res.conf.prefix : '/') + 'oc-client/client.js',
-        clientMapPath = (!!res.conf.prefix ? res.conf.prefix : '/') + 'oc-client/oc-client.min.map';
+      clientPath = (!!res.conf.prefix ? res.conf.prefix : '/') + 'oc-client/client.js',
+      clientMapPath = (!!res.conf.prefix ? res.conf.prefix : '/') + 'oc-client/oc-client.min.map';
 
     if(req.route.path === clientPath){
       if(res.conf.local){
@@ -37,7 +37,7 @@ module.exports = function(repository){
     }
 
     var fileStream = fs.createReadStream(filePath),
-        fileInfo = getFileInfo(filePath);
+      fileInfo = getFileInfo(filePath);
 
     if(!!fileInfo.mimeType){
       res.set('Content-Type', fileInfo.mimeType);

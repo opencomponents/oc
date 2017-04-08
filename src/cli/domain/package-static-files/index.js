@@ -12,8 +12,8 @@ var strings = require('../../../resources');
 
 var copyDir = function(params, cb){
   var staticPath = path.join(params.componentPath, params.staticDir),
-      exists = fs.existsSync(staticPath),
-      isDir = exists && fs.lstatSync(staticPath).isDirectory();
+    exists = fs.existsSync(staticPath),
+    isDir = exists && fs.lstatSync(staticPath).isDirectory();
 
   if(!exists){
     return cb(format(strings.errors.cli.FOLDER_NOT_FOUND, staticPath));
@@ -25,16 +25,16 @@ var copyDir = function(params, cb){
       _.forEach(res.files, function(filePath){
     
         var fileName = path.basename(filePath),
-            fileExt = path.extname(filePath).toLowerCase(),
-            fileRelativePath = path.relative(staticPath, path.dirname(filePath)),
-            fileDestinationPath = path.join(params.publishPath, params.staticDir, fileRelativePath),
-            fileDestination = path.join(fileDestinationPath, fileName);
+          fileExt = path.extname(filePath).toLowerCase(),
+          fileRelativePath = path.relative(staticPath, path.dirname(filePath)),
+          fileDestinationPath = path.join(params.publishPath, params.staticDir, fileRelativePath),
+          fileDestination = path.join(fileDestinationPath, fileName);
 
         fs.ensureDirSync(fileDestinationPath);
 
         if(params.minify && params.ocOptions.minify !== false && (fileExt === '.js' || fileExt === '.css')){
           var fileContent = fs.readFileSync(filePath).toString(),
-              minified = minifyFile(fileExt, fileContent);
+            minified = minifyFile(fileExt, fileContent);
 
           fs.writeFileSync(fileDestination, minified);
         } else {

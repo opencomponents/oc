@@ -8,11 +8,11 @@ oc.cmd.push(function(){
   var componentsListChanged = function(){
     $('.componentRow').removeClass('hide');
     var s = $('.search').val(),
-        r = new RegExp(s),
-        selectedCheckboxes = $('input[type=checkbox]:checked'),
-        hiddenStates = [],
-        hidden = 0,
-        i;
+      r = new RegExp(s),
+      selectedCheckboxes = $('input[type=checkbox]:checked'),
+      hiddenStates = [],
+      hidden = 0,
+      i;
 
     for(i = 0; i < selectedCheckboxes.length; i++){
       hiddenStates.push($(selectedCheckboxes[i]).attr('name'));
@@ -20,8 +20,8 @@ oc.cmd.push(function(){
 
     for(i = 0; i < componentsList.length; i++){
       var matches = !s || !!componentsList[i].name.match(r),
-          selector = $('#component-' + componentsList[i].name),
-          isHidden = false;
+        selector = $('#component-' + componentsList[i].name),
+        isHidden = false;
 
       for(var j = 0; j < hiddenStates.length; j++){
         if(componentsList[i].state.toLowerCase() === hiddenStates[j]){
@@ -37,7 +37,7 @@ oc.cmd.push(function(){
     }
 
     var totalShowing = componentsList.length - hidden,
-        result = 'Showing ' + totalShowing + ' components';
+      result = 'Showing ' + totalShowing + ' components';
 
     if(!!s){
       result += ' matching search query: ' + s;
