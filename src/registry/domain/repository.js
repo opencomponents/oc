@@ -39,7 +39,7 @@ module.exports = function(conf){
         throw err;
       }
     });
-  
+
   const local = {
     getCompiledView: function(componentName){
       if(componentName === 'oc-client'){
@@ -48,7 +48,7 @@ module.exports = function(conf){
 
       return fs.readFileSync(path.join(conf.path, componentName + '/_package/template.js')).toString();
     },
-    getComponents: function(){ 
+    getComponents: function(){
 
       const validComponents = fs.readdirSync(conf.path).filter(function(file){
         const isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory(),
@@ -61,7 +61,7 @@ module.exports = function(conf){
 
       validComponents.push('oc-client');
       return validComponents;
-    }, 
+    },
     getComponentVersions: function(componentName, callback){
       if(componentName === 'oc-client'){
         return callback(null, [fs.readJsonSync(path.join(__dirname, '../../../package.json')).version]);
@@ -81,7 +81,7 @@ module.exports = function(conf){
       return fs.readFileSync(path.join(conf.path, componentName + '/_package/server.js')).toString();
     }
   };
-  
+
 
   return {
     getCompiledView: function(componentName, componentVersion, callback){
@@ -101,7 +101,7 @@ module.exports = function(conf){
       }
 
       this.getComponentVersions(componentName, function(err, availableVersions){
-        
+
         if(err){
           return callback(err);
         }
@@ -238,7 +238,7 @@ module.exports = function(conf){
       }
 
       this.getComponentVersions(componentName, function(err, componentVersions){
-        
+
         if(!versionHandler.validateNewVersion(componentVersion, componentVersions)){
           return callback({
             code: strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND_CODE,

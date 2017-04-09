@@ -201,7 +201,7 @@ describe('registry : domain : validator', function(){
             expect(validate(conf).message).to.equal(errorMessage);
           });
         });
-        
+
         describe('when s3 setting do not use key/secret - EC2 IAM Role use case', function() {
           const conf = {
             publishAuth: false,
@@ -310,10 +310,10 @@ describe('registry : domain : validator', function(){
 
     describe('customHeadersToSkipOnWeakVersion', function() {
       describe('when customHeadersToSkipOnWeakVersion is not an array', function() {
-        const conf = { 
-          customHeadersToSkipOnWeakVersion: 'test', 
-          publishAuth: false, 
-          s3: baseS3Conf 
+        const conf = {
+          customHeadersToSkipOnWeakVersion: 'test',
+          publishAuth: false,
+          s3: baseS3Conf
         };
 
         it('should not be valid', function() {
@@ -323,9 +323,9 @@ describe('registry : domain : validator', function(){
       });
 
       describe('when customHeadersToSkipOnWeakVersion is an array but contains non-string elements', function() {
-        const conf = { 
-          customHeadersToSkipOnWeakVersion: ['header1', 'header2', 3, 4], 
-          publishAuth: false, 
+        const conf = {
+          customHeadersToSkipOnWeakVersion: ['header1', 'header2', 3, 4],
+          publishAuth: false,
           s3: baseS3Conf
         };
 
@@ -336,9 +336,9 @@ describe('registry : domain : validator', function(){
       });
 
       describe('when customHeadersToSkipOnWeakVersion is a non-empty array of strings', function() {
-        const conf = { 
+        const conf = {
           customHeadersToSkipOnWeakVersion: ['header1', 'header2', 'header3'],
-          publishAuth: false, 
+          publishAuth: false,
           s3: baseS3Conf
         };
 
@@ -752,7 +752,7 @@ describe('registry : domain : validator', function(){
     });
 
     describe('when custom validation provided', function(){
-      
+
       const validate = function(obj){ return validator.validatePackageJson(obj); };
 
       const customValidator = function(pkg){

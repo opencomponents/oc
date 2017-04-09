@@ -17,7 +17,7 @@ describe('registry : routes : helpers : get-component', function(){
 
   let mockedRepository,
     getComponent;
-  
+
   const initialise = function(params){
     mockedRepository = {
       getCompiledView: sinon.stub().yields(null, params.view),

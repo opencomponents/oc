@@ -38,7 +38,7 @@ module.exports = function(opts){
       }
 
       request({
-        url: registry, 
+        url: registry,
         headers: requestsHeaders,
         json: true
       }, function(err, apiResponse){
@@ -87,7 +87,7 @@ module.exports = function(opts){
     },
     getComponentPreviewUrlByUrl: function(componentHref, callback){
       request({
-        url: componentHref, 
+        url: componentHref,
         headers: requestsHeaders,
         json: true
       }, function(err, res){

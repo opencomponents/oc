@@ -21,7 +21,7 @@ module.exports = function(dependencies){
   return function(opts, callback){
 
     callback = wrapCliCallback(callback);
-    
+
     registry.get(function(err, registries){
       if(err){
         log.err(format(strings.errors.generic, err));
@@ -36,7 +36,7 @@ module.exports = function(dependencies){
         }
 
         _.forEach(registries, function(registryLocation){
-          log.ok(registryLocation);       
+          log.ok(registryLocation);
         });
 
         callback(null, registries);

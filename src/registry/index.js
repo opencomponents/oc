@@ -77,15 +77,15 @@ module.exports = function(options){
       server = http.createServer(self.app);
 
       server.listen(options.port, function(err){
-        
+
         if(err){ return callback(err); }
 
         eventsHandler.fire('start', {});
-        
+
         if(options.verbosity){
 
           console.log(format(colors.green('Registry started at port {0}'), self.app.get('port')));
-          
+
           if(_.isObject(componentsInfo)){
 
             const componentsNumber = _.keys(componentsInfo.components).length,

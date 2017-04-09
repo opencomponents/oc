@@ -52,7 +52,7 @@ describe('cli : domain : get-components-by-dir', function(){
       ]);
 
       data.fs.readJsonSync.onCall(0).returns({ oc: {}});
-      data.fs.readJsonSync.onCall(1).throws(new Error('ENOENT: no such file or directory'));      
+      data.fs.readJsonSync.onCall(1).throws(new Error('ENOENT: no such file or directory'));
       data.fs.readJsonSync.onCall(2).throws(new Error('ENOENT: no such file or directory'));
       data.fs.readJsonSync.onCall(3).returns({ oc: { packaged: true }});
 

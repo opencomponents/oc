@@ -26,7 +26,7 @@ module.exports = function(template) {
   let ocTemplate;
   const localTemplate = path.join(__dirname, '../../', 'node_modules', template);
   const relativeTemplate = path.resolve('.', 'node_modules', template);
-  
+
   try {
     if (require.cache && !!require.cache[localTemplate]) {
       delete require.cache[localTemplate];

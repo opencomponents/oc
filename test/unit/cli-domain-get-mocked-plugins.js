@@ -123,7 +123,7 @@ describe('cli : domain : get-mocked-plugins', function(){
 
       const readMock = sinon.stub(),
         existsMock = sinon.stub();
-      
+
       readMock.withArgs('/root/components/oc.json').returns(ocJsonComponent);
       readMock.withArgs('/root/oc.json').returns(ocJsonRoot);
 

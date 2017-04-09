@@ -27,7 +27,7 @@ module.exports = function(conf){
       return warmup(options, callback);
     },
     renderComponent: function(componentName, options, callback){
-      if(_.isFunction(options)){ 
+      if(_.isFunction(options)){
         callback = options;
         options = {};
       }
@@ -45,11 +45,11 @@ module.exports = function(conf){
       });
     },
     renderComponents: function(components, options, callback){
-      if(_.isFunction(options)){ 
+      if(_.isFunction(options)){
         callback = options;
         options = {};
       }
-      
+
       renderComponents(components, options, callback);
     },
     getComponentsInfo: function(components, callback) {

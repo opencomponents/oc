@@ -40,7 +40,7 @@ module.exports = function(config) {
         requestedVersion: component.version
       });
     });
-    
+
     const requestDetails = {
       url: serverRenderingEndpoint,
       method: 'post',

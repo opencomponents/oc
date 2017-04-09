@@ -8,7 +8,7 @@ describe('client : get-component-data', () => {
   describe('when invoked for one component', () => {
     const baseUrl = 'http://localhost:3030';
     const resultUrl = 'http://localhost:3030/hello-world/1.0.0/?p1=v1&p2=v2';
-    
+
     const minimalRequestStub = sinon.stub().yields(true);
     const serverStub = sinon.stub().returns(baseUrl);
     const prepareServerGetStub = sinon.stub().returns(resultUrl);
@@ -69,7 +69,7 @@ describe('client : get-component-data', () => {
 
   describe('when invoked for two components', () => {
     const baseUrl = 'http://localhost:3030';
-    
+
     const minimalRequestStub = sinon.stub().yields(true); //Returns error for every request
     const serverStub = sinon.stub().returns(baseUrl);
     const prepareServerGetStub = sinon.stub().returns(baseUrl + '/test-route'); // Invalid - should never be called
@@ -79,7 +79,7 @@ describe('client : get-component-data', () => {
       headers: {'header-a': 'header-value b'},
       timeout: 10
     };
-    
+
     const component0 = {
       name: 'hello-world',
       version: '1.0.0'

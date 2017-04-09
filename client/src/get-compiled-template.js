@@ -31,7 +31,7 @@ module.exports = function(cache){
 
         let ocTemplate;
         try {
-          ocTemplate = requireTemplate(type); 
+          ocTemplate = requireTemplate(type);
         } catch (err) {
           return callback(err);
         }

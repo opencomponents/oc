@@ -14,7 +14,7 @@ module.exports = function(pkgDetails){
   }
 
   let result = pkgDetails.customValidator(pkgDetails.packageJson);
-  
+
   if(_.isBoolean(result)){
     result = { isValid: result };
 
