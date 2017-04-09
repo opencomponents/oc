@@ -43,7 +43,7 @@ describe('client : href-builder :', () => {
         const options = {parameters: {p1: 'v1'}};
         const component = {name: 'hello-world', version: '1.0.0'};
         const hrefBuilder = new hrefBuilderPrototype({});
-        
+
         expect(hrefBuilder.prepareServerGet('http://localhost:3030', component, options))
             .to.equal('http://localhost:3030/hello-world/1.0.0/?p1=v1');
       });
@@ -54,7 +54,7 @@ describe('client : href-builder :', () => {
         const options = {parameters: {p1: 'v1', p2: 'v 2'}};
         const component = {name: 'hello-world', version: '1.0.0'};
         const hrefBuilder = new hrefBuilderPrototype({});
-        
+
         expect(hrefBuilder.prepareServerGet('http://localhost:3030', component, options))
             .to.equal('http://localhost:3030/hello-world/1.0.0/?p1=v1&p2=v%202');
       });

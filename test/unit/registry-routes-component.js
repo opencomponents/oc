@@ -9,7 +9,7 @@ describe('registry : routes : component', function(){
   const ComponentRoute = require('../../src/registry/routes/component'),
     mockedComponents = require('../fixtures/mocked-components');
   let mockedRepository, resJsonStub, resSetStub, statusStub, componentRoute;
-  
+
   const initialise = function(params){
     resJsonStub = sinon.stub();
     resSetStub = sinon.stub();
@@ -367,7 +367,7 @@ describe('registry : routes : component', function(){
           status: statusStub
         });
       });
-  
+
       it('should return 200 status code', function(){
         expect(statusStub.args[0][0]).to.be.equal(200);
       });
@@ -446,8 +446,8 @@ describe('registry : routes : component', function(){
     });
 
     it('should set response headers', function() {
-      expect(resJsonStub.args[0][0].headers).to.be.undefined;      
-      expect(resSetStub.args[0][0]).to.not.be.null;      
+      expect(resJsonStub.args[0][0].headers).to.be.undefined;
+      expect(resSetStub.args[0][0]).to.not.be.null;
       expect(resSetStub.args[0][0]['test-header']).to.equal('test-value');
     });
 
@@ -458,7 +458,7 @@ describe('registry : routes : component', function(){
   });
 
   describe('when getting a component with server.js that sets custom headers with non-empty customHeadersToSkipOnWeakVersion', function() {
-    
+
     before(function(done) {
       initialise(mockedComponents['response-headers-component']);
       componentRoute = new ComponentRoute({}, mockedRepository);
@@ -490,7 +490,7 @@ describe('registry : routes : component', function(){
 
     it('should not set response headers', function() {
       expect(resJsonStub.args[0][0].headers).to.be.undefined;
-      expect(resSetStub.called).to.be.false;      
+      expect(resSetStub.called).to.be.false;
     });
 
     it('should return component\'s name and request version', function() {
@@ -574,8 +574,8 @@ describe('registry : routes : component', function(){
     });
 
     it('should set response headers for the first component', function() {
-      expect(resJsonStub.args[0][0].headers).to.be.undefined;      
-      expect(resSetStub.args[0][0]).to.not.be.null;      
+      expect(resJsonStub.args[0][0].headers).to.be.undefined;
+      expect(resSetStub.args[0][0]).to.not.be.null;
       expect(resSetStub.args[0][0]['another-test-header']).to.equal('another-test-value');
     });
 
@@ -589,8 +589,8 @@ describe('registry : routes : component', function(){
     });
 
     it('should not set custom response for the second component', function() {
-      expect(resJsonStub.args[1][0].headers).to.be.undefined;      
-      expect(resSetStub.calledTwice).to.be.false;      
+      expect(resJsonStub.args[1][0].headers).to.be.undefined;
+      expect(resSetStub.calledTwice).to.be.false;
     });
   });
 

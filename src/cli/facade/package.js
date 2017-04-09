@@ -29,8 +29,8 @@ module.exports = function(dependencies) {
     };
     local.package(packageOptions, function(err, component){
       if(err){
-        log.err(format(strings.errors.cli.PACKAGE_CREATION_FAIL, err)); 
-        return callback(err); 
+        log.err(format(strings.errors.cli.PACKAGE_CREATION_FAIL, err));
+        return callback(err);
       }
 
       log.ok(format(strings.messages.cli.PACKAGED, packageDir));
@@ -40,8 +40,8 @@ module.exports = function(dependencies) {
 
         local.compress(packageDir, compressedPackagePath, function(err){
           if(err){
-            log.err(format(strings.errors.cli.PACKAGE_CREATION_FAIL, err)); 
-            return callback(err); 
+            log.err(format(strings.errors.cli.PACKAGE_CREATION_FAIL, err));
+            return callback(err);
           }
           log.ok(format(strings.messages.cli.COMPRESSED, compressedPackagePath));
           callback(null, component);

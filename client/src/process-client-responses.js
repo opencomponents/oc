@@ -42,7 +42,7 @@ module.exports = function(cache, config){
               action.result.html = '';
               return;
             }
-            
+
             const unrenderedComponentTag = htmlRenderer.unrenderedComponent(componentClientHref, options);
 
             if(action.failover){

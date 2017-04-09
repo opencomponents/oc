@@ -11,7 +11,7 @@ module.exports = {
       data.html += format(templates.renderInfo, data.name, data.version);
     }
 
-    if(data.container !== false){ 
+    if(data.container !== false){
       data.html = format(templates.componentTag, data.href, data.key, data.name || '', data.version, data.html);
     }
 

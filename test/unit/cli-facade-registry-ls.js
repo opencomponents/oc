@@ -23,7 +23,7 @@ describe('cli : facade : registry : ls', function(){
     beforeEach(function(){
       sinon.stub(registry, 'get').yields(null, []);
       execute();
-    }); 
+    });
 
     afterEach(function(){
       registry.get.restore();

@@ -9,7 +9,7 @@ describe('utils : require-template', function(){
   const globals = {
     '__dirname': '.',
   };
-  
+
   const deps = {
     'path': {
       join (a, b, c, template) {
@@ -33,7 +33,7 @@ describe('utils : require-template', function(){
   it('should return the template found if its of the correct type', function(){
     const template = requireTemplate('oc-template-jade');
     const templateAPIs = _.keys(template);
-  
+
     expect(_.contains(templateAPIs,
       'getInfo',
       'getCompiledTemplate',

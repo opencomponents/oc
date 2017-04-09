@@ -16,7 +16,7 @@ const _ = {
   },
   eachAsync: function(obj, fn, cb){
     let callbacksLeft = obj.length;
-    
+
     const next = function(err){
       callbacksLeft--;
       if(callbacksLeft === 0 || !!err){

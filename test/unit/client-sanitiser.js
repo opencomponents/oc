@@ -6,10 +6,10 @@ const injectr = require('injectr');
 describe('client : sanitiser', function(){
 
   const sanitiser = injectr('../../client/src/sanitiser.js', {
-    '../package': { 
+    '../package': {
       version: '1.2.3'
     }
-  }, { process: 
+  }, { process:
   {
     version: 'v0.10.40',
     platform: 'darwin',

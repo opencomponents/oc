@@ -15,14 +15,14 @@ describe('registry : routes : helpers : nested-renderer', function(){
 
     if(_.isArray(rendererMocks)){
       renderer = sinon.stub();
-      
+
       _.each(rendererMocks, function(rendererMock, i){
         renderer.onCall(i).yields(rendererMock);
       });
     } else {
       renderer = sinon.stub().yields(rendererMocks);
     }
-    
+
     nestedRenderer = new NestedRenderer(renderer, conf || {});
   };
 
@@ -36,7 +36,7 @@ describe('registry : routes : helpers : nested-renderer', function(){
 
         it('should throw an error', function(){
           const f = function(){ nestedRenderer.renderComponent(); };
-          expect(f).to.throw('component\'s name is not valid');        
+          expect(f).to.throw('component\'s name is not valid');
         });
       });
 
@@ -46,7 +46,7 @@ describe('registry : routes : helpers : nested-renderer', function(){
 
         it('should throw an error', function(){
           const f = function(){ nestedRenderer.renderComponent(''); };
-          expect(f).to.throw('component\'s name is not valid');        
+          expect(f).to.throw('component\'s name is not valid');
         });
       });
 
@@ -69,7 +69,7 @@ describe('registry : routes : helpers : nested-renderer', function(){
       });
 
       describe('when requesting a not existent component', function(){
-        
+
         let error;
         beforeEach(function(done){
           initialise({
@@ -94,10 +94,10 @@ describe('registry : routes : helpers : nested-renderer', function(){
     describe('when req is valid', function(){
 
       describe('when all params specified', function(){
-        
+
         let result, error;
         beforeEach(function(done){
-          
+
           initialise({
             status: 200,
             response: {
@@ -142,10 +142,10 @@ describe('registry : routes : helpers : nested-renderer', function(){
       });
 
       describe('when minimal params specified', function(){
-        
+
         let result, error;
         beforeEach(function(done){
-          
+
           initialise({
             status: 200,
             response: {
@@ -193,7 +193,7 @@ describe('registry : routes : helpers : nested-renderer', function(){
 
         it('should throw an error', function(){
           const f = function(){ nestedRenderer.renderComponents(); };
-          expect(f).to.throw('components is not valid');        
+          expect(f).to.throw('components is not valid');
         });
       });
 
@@ -203,7 +203,7 @@ describe('registry : routes : helpers : nested-renderer', function(){
 
         it('should throw an error', function(){
           const f = function(){ nestedRenderer.renderComponents([]); };
-          expect(f).to.throw('components is not valid');        
+          expect(f).to.throw('components is not valid');
         });
       });
 
@@ -226,7 +226,7 @@ describe('registry : routes : helpers : nested-renderer', function(){
       });
 
       describe('when requesting not existent components', function(){
-        
+
         let result, error;
         beforeEach(function(done){
           initialise({
@@ -262,10 +262,10 @@ describe('registry : routes : helpers : nested-renderer', function(){
     describe('when req is valid', function(){
 
       describe('when all params specified', function(){
-        
+
         let result, error;
         beforeEach(function(done){
-          
+
           initialise([
             {
               status: 200,
@@ -348,10 +348,10 @@ describe('registry : routes : helpers : nested-renderer', function(){
       });
 
       describe('when minimal params specified', function(){
-        
+
         let result, error;
         beforeEach(function(done){
-          
+
           initialise([{
             status: 200,
             response: { html: '<b>Some html</b>' }
@@ -378,7 +378,7 @@ describe('registry : routes : helpers : nested-renderer', function(){
         });
 
         it('should make correct request to renderer', function(){
-            
+
           expect(renderer.args.length).to.equal(2);
 
           expect(renderer.args[0][0]).to.eql({

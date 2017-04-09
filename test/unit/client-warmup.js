@@ -33,7 +33,7 @@ describe('client : warmup', function(){
       const warmup = new Warmup({
         components: {
           'component1': '',
-          'component2': '1.x.x' 
+          'component2': '1.x.x'
         },
         registries: {
           serverRendering: 'https://my-registry.com'
@@ -45,7 +45,7 @@ describe('client : warmup', function(){
         done();
       });
     });
-    
+
     it('should return no error', function(){
       expect(error).to.be.null;
     });
@@ -97,7 +97,7 @@ describe('client : warmup', function(){
         done();
       });
     });
-    
+
     it('should return no error', function(){
       expect(error).to.be.null;
     });

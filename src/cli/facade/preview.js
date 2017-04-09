@@ -16,7 +16,7 @@ module.exports = function(dependencies){
     callback = wrapCliCallback(callback);
 
     registry.getComponentPreviewUrlByUrl(opts.componentHref, function(err, href){
-      if(err){ 
+      if(err){
         logger.log(colors.red(strings.errors.cli.COMPONENT_HREF_NOT_FOUND));
         return callback(strings.errors.cli.COMPONENT_HREF_NOT_FOUND);
       }

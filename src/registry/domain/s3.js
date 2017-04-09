@@ -41,7 +41,7 @@ module.exports = function(conf){
         if(err){ return callback(err); }
 
         if(data.CommonPrefixes.length === 0){
-          return callback({ 
+          return callback({
             code: strings.errors.s3.DIR_NOT_FOUND_CODE,
             msg: format(strings.errors.s3.DIR_NOT_FOUND, dir)
           });
@@ -68,7 +68,7 @@ module.exports = function(conf){
           Bucket: bucket,
           Key: filePath
         }, function(err, data){
-          if(err){ 
+          if(err){
             return callback(err.code === 'NoSuchKey' ? {
               code: strings.errors.s3.FILE_NOT_FOUND_CODE,
               msg: format(strings.errors.s3.FILE_NOT_FOUND, filePath)
@@ -123,7 +123,7 @@ module.exports = function(conf){
     },
     putFile: function(filePath, fileName, isPrivate, callback){
       const self = this;
-      
+
       fs.readFile(filePath, function(err, fileContent){
         if(err){ return callback(err); }
         self.putFileContent(fileContent, fileName, isPrivate, callback);
