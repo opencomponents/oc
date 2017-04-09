@@ -13,7 +13,7 @@ describe('The node.js OC client', function(){
     $component;
 
   const oc = require('../../src/index'),
-    conf = {          
+    conf = {
       local: true,
       path: path.resolve('test/fixtures/components'),
       port: 3030,
@@ -51,8 +51,8 @@ describe('The node.js OC client', function(){
       registry.start(done);
     });
 
-    after(function(done){ 
-      registry.close(done); 
+    after(function(done){
+      registry.close(done);
     });
 
     describe('when rendering 2 components', function(){
@@ -183,7 +183,7 @@ describe('The node.js OC client', function(){
           expect($components['hello-world']).to.equal('Hello world!');
           expect($components['no-containers']).to.equal('Hello world!');
         });
-        
+
         it('should return null errors', function () {
           expect($errs).to.be.null;
         });
@@ -222,14 +222,14 @@ describe('The node.js OC client', function(){
         it('should contain a blank html response', function() {
           expect(result).to.deep.equal(['', '']);
         });
-        
+
         it('should contain the error details', function() {
           expect(error).to.be.Array;
           expect(error.length).to.be.equal(2);
 
           const exp = getRegExpFromJson(expectedRequest),
-            expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\' + 
-                         '(400 The request body is malformed: component 0 must have name property, ' + 
+            expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed \\' +
+                         '(400 The request body is malformed: component 0 must have name property, ' +
                          'component 1 must have name property\\)');
 
           expect(error[0].toString()).to.match(expected);
@@ -621,7 +621,7 @@ describe('The node.js OC client', function(){
 
         let $clientScript,
           error;
-        const options = { 
+        const options = {
           forwardAcceptLanguageToClient: true,
           parameters: {
             hi: 'john'
@@ -704,7 +704,7 @@ describe('The node.js OC client', function(){
 
         it('should contain the error details', function(){
           const exp = getRegExpFromJson(expectedRequest),
-            expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed ' + 
+            expected = new RegExp('Error: Server-side rendering failed: request ' + exp + ' failed ' +
                          '\\(404 Component "non-existing-component" not found on local repository\\)');
 
           expect(error.toString()).to.match(expected);
@@ -840,7 +840,7 @@ describe('The node.js OC client', function(){
         expect(error).to.not.be.undefined();
         expect(error).to.be.instanceof(Array);
         expect(error.length).to.be.equal(2);
-        
+
         expect(error[0]).to.match(expectedError);
         expect(error[1]).to.match(expectedError);
       });

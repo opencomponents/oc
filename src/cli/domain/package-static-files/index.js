@@ -23,7 +23,7 @@ const copyDir = function(params, cb){
 
     nodeDir.paths(staticPath, function(err, res){
       _.forEach(res.files, function(filePath){
-    
+
         const fileName = path.basename(filePath),
           fileExt = path.extname(filePath).toLowerCase(),
           fileRelativePath = path.relative(staticPath, path.dirname(filePath)),

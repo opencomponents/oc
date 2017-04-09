@@ -20,11 +20,11 @@ describe('client : render-components', function(){
   };
 
   describe('when compiled template fetch fails', function(){
-    
+
     const errorExample = 'request https://cdn.com/components/1.3.5/template.js failed (' +
       '<?xml version="1.0" encoding="UTF-8"?><Error><Code>AccessDenied</Code><Message>' +
       'Access Denied</Message><RequestId>1234567890</RequestId><HostId>asdfghjklqwertyuiop</HostId></Error>)';
-    
+
     const getCompiledTemplateStub = sinon.stub().yields({
       status: 403,
       response: {

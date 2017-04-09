@@ -99,7 +99,7 @@ describe('registry', function(){
         initializeRegistry(_.extend(getDefaultTestConfiguration(), {customHeadersToSkipOnWeakVersion: ['Cache-Control']}), done);
       });
 
-      after(function(done){ 
+      after(function(done){
         registry.close(function() {
           initializeRegistry(getDefaultTestConfiguration(), done);
         });
@@ -203,7 +203,7 @@ describe('registry', function(){
         initializeRegistry(_.extend(getDefaultTestConfiguration(), {customHeadersToSkipOnWeakVersion: ['Cache-Control']}), done);
       });
 
-      after(function(done){ 
+      after(function(done){
         registry.close(function() {
           initializeRegistry(getDefaultTestConfiguration(), done);
         });

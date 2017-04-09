@@ -19,10 +19,10 @@ const compileView = function(viewPath, type, cb) {
 
   if (type === 'jade') { type = 'oc-template-jade'; }
   if (type === 'handlebars') { type = 'oc-template-handlebars'; }
-  
+
 
   try {
-    ocTemplate = requireTemplate(type); 
+    ocTemplate = requireTemplate(type);
   } catch (err) {
     return cb(err);
   }

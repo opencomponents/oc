@@ -9,7 +9,7 @@ module.exports = function(config){
   return {
     client: function(component, options){
       let clientRenderingEndpoint;
-      
+
       if(!!options && !!options.registries && !!options.registries.clientRendering){
         clientRenderingEndpoint = options.registries.clientRendering;
       } else if(!!config && !!config.registries && !!config.registries.clientRendering){
@@ -38,7 +38,7 @@ module.exports = function(config){
         registryUrl = clientRenderingEndpoint,
         registrySegment = registryUrl.slice(-1) === '/' ? registryUrl : (registryUrl + '/'),
         qs = component.parameters ? ('/?' + querystring.stringify(component.parameters)) : '';
-      
+
       return url.resolve(registrySegment, component.name) + versionSegment + qs;
     },
 

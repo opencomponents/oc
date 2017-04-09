@@ -12,11 +12,11 @@ module.exports = function(){
 
     let ocTemplate;
     try {
-      ocTemplate = requireTemplate(type); 
+      ocTemplate = requireTemplate(type);
     } catch (err) {
       return callback(err);
     }
-    
+
     ocTemplate.render(
       {
         template,

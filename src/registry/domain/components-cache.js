@@ -14,8 +14,8 @@ module.exports = function(conf, cdn){
 
   const getFromJson = function(cb){
     cdn.getFile(conf.s3.componentsDir + '/components.json', true, function(err, res){
-      let result; 
-      
+      let result;
+
       if(!err){
         try {
           result = JSON.parse(res);
@@ -73,8 +73,8 @@ module.exports = function(conf, cdn){
             components: []
           });
         }
-        
-        return cb(err); 
+
+        return cb(err);
       }
 
       async.map(components, getVersionsForComponent, function(errors, versions){
@@ -101,13 +101,13 @@ module.exports = function(conf, cdn){
     cdn.putFileContent(JSON.stringify(data), conf.s3.componentsDir + '/components.json', true, callback);
   };
 
-  const getAndSaveFromDirectories = function(cb){ 
+  const getAndSaveFromDirectories = function(cb){
     getFromDirectories(function(err, components){
       if(err){ return cb(err); }
       saveData(components, function(err){
         if(err){ return cb(err); }
         cb(err, components);
-      }); 
+      });
     });
   };
 

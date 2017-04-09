@@ -14,7 +14,7 @@ module.exports = function(injectedDependencies){
       throw {
         code: strings.errors.registry.DEPENDENCY_NOT_FOUND_CODE,
         missing: [moduleName]
-      }; 
+      };
     }
 
     const nodeModulesPath = path.resolve('.', 'node_modules');
@@ -26,7 +26,7 @@ module.exports = function(injectedDependencies){
       throw {
         code: strings.errors.registry.DEPENDENCY_NOT_FOUND_CODE,
         missing: [modulePath]
-      }; 
+      };
     }
   };
 };

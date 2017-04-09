@@ -35,10 +35,10 @@ module.exports = function(config, renderTemplate){
     getComponentsData(toDo, options, function(){
       renderComponents(toDo, options, function(){
         processClientReponses(toDo, options, function(){
-          const errors = [], 
+          const errors = [],
             results = [];
           let hasErrors = false;
-        
+
           _.each(toDo, function(action){
             if(action.result.error) {
               hasErrors = true;

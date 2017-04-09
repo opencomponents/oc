@@ -72,8 +72,8 @@ module.exports = function(grunt){
       });
     },
     tags: function(callback){
-      grunt.util.spawn({ 
-        cmd: 'git', 
+      grunt.util.spawn({
+        cmd: 'git',
         args: ['tag']
       }, function(err, result){
         if(err){ return callback(err); }

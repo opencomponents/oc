@@ -6,7 +6,7 @@ const _ = require('underscore');
 const settings = require('../../resources/settings');
 const strings = require('../../resources');
 
-const sanitise = { 
+const sanitise = {
   componentParams: function(component, options, callback){
     return _.extend(sanitise.options(options, callback), {
       componentName: component

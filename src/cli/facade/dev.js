@@ -100,7 +100,7 @@ module.exports = function(dependencies){
 
     const loadDependencies = function(components, cb){
       logger.warn(strings.messages.cli.CHECKING_DEPENDENCIES, true);
-      
+
       const dependencies = getComponentsDependencies(components),
         missing = getMissingDeps(dependencies.withVersions, components);
 
@@ -137,7 +137,7 @@ module.exports = function(dependencies){
       if(_.isEmpty(components)){
         err = format(errors.DEV_FAIL, errors.COMPONENTS_NOT_FOUND);
         callback(err);
-        return logger.err(err);        
+        return logger.err(err);
       }
 
       logger.ok('OK');
@@ -147,7 +147,7 @@ module.exports = function(dependencies){
 
       loadDependencies(components, function(dependencies){
         packageComponents(components, function(){
-          
+
           const registry = new oc.Registry({
             local: true,
             hotReloading: hotReloading,

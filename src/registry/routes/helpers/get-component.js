@@ -235,7 +235,7 @@ module.exports = function(conf, repository){
               if (type === 'handlebars') { type = 'oc-template-handlebars'; }
 
               try {
-                ocTemplate = requireTemplate(type); 
+                ocTemplate = requireTemplate(type);
               } catch (err) {
                 throw err;
               }

@@ -12,7 +12,7 @@ describe('registry : routes : components', function(){
     componentsRoute,
     code,
     response;
-  
+
   const initialise = function(params){
     mockedRepository = {
       getCompiledView: sinon.stub().yields(null, params.view),

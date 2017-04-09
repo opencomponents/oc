@@ -6,7 +6,7 @@ const strings = require('../../resources/index');
 const wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
-  
+
   const local = dependencies.local,
     logger = dependencies.logger;
 

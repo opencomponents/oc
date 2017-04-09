@@ -69,7 +69,7 @@ const findPath = function(pathToResolve, fileName) {
       return findPath(parentDir, fileName);
     }
   }
-  
+
   return fileToResolve;
 };
 

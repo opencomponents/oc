@@ -9,7 +9,7 @@ const _ = require('underscore');
 describe('The targz dependency', function(){
 
   describe('when compressing a folder with targz', function(){
-    
+
     const file = path.resolve(__dirname, '../fixtures/test.tar.gz');
 
     beforeEach(function(done){
@@ -36,7 +36,7 @@ describe('The targz dependency', function(){
       let error;
       const to = path.resolve(__dirname, '../fixtures/targz-test');
 
-      beforeEach(function(done){ 
+      beforeEach(function(done){
         targz.decompress({
           src: file,
           dest: to

@@ -33,7 +33,7 @@ function componentPreview(err, req, res, component, templates) {
 
 module.exports = function(conf, repository){
   return function(req, res){
-    
+
     repository.getComponent(req.params.componentName, req.params.componentVersion, function(registryError, component){
 
       if(registryError && conf.fallbackRegistryUrl) {

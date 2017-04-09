@@ -104,7 +104,7 @@ module.exports = function(dependencies){
     };
 
     registry.get(function(err, registryLocations){
-      if(err){ 
+      if(err){
         logger.err(err);
         return callback(err);
       }
