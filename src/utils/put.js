@@ -46,7 +46,7 @@ module.exports = function(urlPath, files, headers, callback) {
 
         if(res.statusCode !== 200){
           callback(body);
-        } else { 
+        } else {
           callback(null, body);
         }
       }

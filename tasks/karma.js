@@ -68,7 +68,7 @@ const customLaunchers = {
     platform: 'iOS',
     version: '9.3',
     'device-orientation': 'portrait'
-  } 
+  }
 };
 
 module.exports = {
@@ -92,7 +92,7 @@ module.exports = {
   'sauce-ie9': {
     customLaunchers: _.pick(customLaunchers, 'ie9'),
     browsers: ['ie9']
-  },  
+  },
   'sauce-osx': {
     customLaunchers: _.pick(customLaunchers, 'safari', 'iphone', 'ipad'),
     browsers: ['safari', 'iphone', 'ipad']

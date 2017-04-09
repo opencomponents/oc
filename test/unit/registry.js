@@ -32,7 +32,7 @@ describe('registry', function(){
   describe('when instanciated', function(){
 
     describe('when options are not valid', function(){
-      
+
       let init;
       beforeEach(function(){
         deps['./domain/validators'].validateRegistryConfiguration.returns({ isValid: false, message: 'blargh' });

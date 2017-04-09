@@ -10,7 +10,7 @@ module.exports = function(options){
     parameters: options.parameters,
     requestVersion: options.version || ''
   };
-    
+
   const start = process.hrtime();
 
   return {

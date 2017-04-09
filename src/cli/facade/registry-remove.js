@@ -6,7 +6,7 @@ const strings = require('../../resources/index');
 const wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies){
-  
+
   const registry = dependencies.registry,
     logger = dependencies.logger;
 
@@ -19,7 +19,7 @@ module.exports = function(dependencies){
   return function(opts, callback){
 
     callback = wrapCliCallback(callback);
-    
+
     registry.remove(opts.registryUrl, function(err){
       if(err){
         log.err(err);

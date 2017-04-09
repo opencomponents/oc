@@ -43,7 +43,7 @@ module.exports = function(requestParameters, expectedParameters){
 
   _.forEach(requestParameters, function(requestParameter, requestParameterName){
     if(_.has(expectedParameters, requestParameterName)){
-      
+
       const expectedType = expectedParameters[requestParameterName].type;
 
       if(!validateParameter(requestParameter, expectedType)){
@@ -79,7 +79,7 @@ module.exports = function(requestParameters, expectedParameters){
       }).join('').slice(0, -2);
 
       errorString += format(strings.errors.registry.PARAMETER_WRONG_FORMAT, badParams);
-    } 
+    }
     return errorString;
   }());
 

@@ -33,7 +33,7 @@ module.exports = function(repository, options, callback){
         outputFolder: path.resolve(__dirname, '../components/oc-client/_package'),
         packageJson: packageInfo
       };
-      
+
       repository.publishComponent(pkgInfo, 'oc-client', packageInfo.version, function(err, res){
         if(!err){
           logger.log(colors.green('Component published.'));
