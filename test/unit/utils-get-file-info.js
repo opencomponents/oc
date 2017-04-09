@@ -42,7 +42,7 @@ describe('utils : getFileInfo', function(){
     const fileInfo = getFileInfo('path/file.css.gz');
 
     it('should return the correct myme type', function(){
-      expect(fileInfo.mimeType).to.equal('text/css'); 
+      expect(fileInfo.mimeType).to.equal('text/css');
     });
 
     it('should return the correct extension', function(){

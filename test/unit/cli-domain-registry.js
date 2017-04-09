@@ -15,8 +15,8 @@ const getRegistry = function(dependencies, opts){
     path: {
       join: sinon.stub().returns('/hello/world')
     }
-  }, { 
-    Buffer: Buffer, 
+  }, {
+    Buffer: Buffer,
     __dirname: '/hello',
     process: {
       arch: 'x64',
@@ -134,12 +134,12 @@ describe('cli : domain : registry', function(){
 
     let err, res;
     const execute = function(href, error, parsed, done){
-      const registry = getRegistry({ 
+      const registry = getRegistry({
         request: sinon.stub().yields(error, parsed),
         urlParser: {
           parse: sinon.stub().returns(parsed)
         }
-      });        
+      });
       registry.getComponentPreviewUrlByUrl(href, function(e, r){
         err = e;
         res = r;

@@ -84,7 +84,7 @@ describe('registry : domain : version-handler', function(){
       it('should return the version specified', function(){
         expect(get('1.0.1-121', availableVersions)).to.equal('1.0.1-121');
       });
-      
+
     });
     describe('when mix of release and pre-release versions available', function(){
 

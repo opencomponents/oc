@@ -49,7 +49,7 @@ module.exports = function(config, renderComponents){
         }
 
         const parameters = componentInfo.oc.parameters,
-          componentToWarmup = { 
+          componentToWarmup = {
             name: componentInfo.name,
             version: componentInfo.version,
             parameters: {}
@@ -76,7 +76,7 @@ module.exports = function(config, renderComponents){
         _.each(toWarmup, function(component, i){
           response[component.name] = results[i];
         });
-        
+
         cb(null, response);
       });
     });

@@ -68,7 +68,7 @@ module.exports = function(conf){
   }
 
   if(!conf.local){
-    // S3 settings should either specify both key/secret or 
+    // S3 settings should either specify both key/secret or
     // skip both when leveraging IAM Role based S3 access from EC2
     if (!conf.s3 || !conf.s3.bucket || !conf.s3.region ||
       (conf.s3.key && !conf.s3.secret) || (!conf.s3.key && conf.s3.secret)) {

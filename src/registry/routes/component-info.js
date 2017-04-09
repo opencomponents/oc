@@ -65,7 +65,7 @@ function componentInfo(err, req, res, component) {
 
       res.render('component-info', {
         component: component,
-        dependencies: _.keys(component.dependencies),       
+        dependencies: _.keys(component.dependencies),
         href: href,
         parsedAuthor: parsedAuthor,
         sandBoxDefaultQs: urlBuilder.queryString(params)

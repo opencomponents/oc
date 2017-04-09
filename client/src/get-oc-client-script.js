@@ -8,7 +8,7 @@ const TryGetCached = require('./try-get-cached');
 module.exports = function(cache){
 
   const tryGetCached = new TryGetCached(cache);
-  
+
   return function(callback){
     tryGetCached('scripts', 'oc-client', function(cb){
       fs.readFile(path.resolve(__dirname, './oc-client.min.js'), 'utf-8', cb);

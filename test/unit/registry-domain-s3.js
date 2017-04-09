@@ -7,11 +7,11 @@ const sinon = require('sinon');
 
 describe('registry : domain : s3', function(){
 
-  let s3, 
+  let s3,
     mockedS3Client,
-    error, 
+    error,
     response;
-    
+
   const S3 = injectr('../../src/registry/domain/s3.js', {
     'fs-extra': {
       readFile: sinon.stub().yields(null, 'file content!')
@@ -45,8 +45,8 @@ describe('registry : domain : s3', function(){
       putObject: sinon.stub()
     };
 
-    s3 = new S3({ 
-      cache: { refreshInterval: 60 }, 
+    s3 = new S3({
+      cache: { refreshInterval: 60 },
       s3: {
         bucket: 'test-bucket',
         path: '//s3.amazonaws.com/test-bucket/'
@@ -62,7 +62,7 @@ describe('registry : domain : s3', function(){
       callback();
     });
   };
-  
+
   const initialiseAndExecutePut = function(fileName, isPrivate, callback){
     initialise();
     mockedS3Client.putObject.yields(null, 'ok');
@@ -70,9 +70,9 @@ describe('registry : domain : s3', function(){
       error = err;
       response = res;
       callback();
-    });      
+    });
   };
-  
+
   const initialiseAndExecutePutDir = function(callback){
     initialise();
     mockedS3Client.putObject.yields(null, 'ok');
@@ -80,7 +80,7 @@ describe('registry : domain : s3', function(){
       error = err;
       response = res;
       callback();
-    });      
+    });
   };
 
   describe('when bucket is empty', function(){

@@ -13,7 +13,7 @@ describe('cli : domain : url-parser', function(){
       requestVersion: returnVersion
     });
   };
-  
+
   describe('when parsing http://www.registry.com/api/v2/component-name', function(){
 
     before(function(){
@@ -40,7 +40,7 @@ describe('cli : domain : url-parser', function(){
       expect(parsed.clientHref).to.equal('http://www.registry.com/api/v2/oc-client/client.js');
     });
   });
-  
+
   describe('when parsing http://www.registry.com/component-name/~1.0.0/?hello=world', function(){
 
     before(function(){
@@ -67,7 +67,7 @@ describe('cli : domain : url-parser', function(){
       expect(parsed.clientHref).to.equal('http://www.registry.com/oc-client/client.js');
     });
   });
-  
+
   describe('when parsing http://www.registry.com/12345/~1.0.0?hello=world', function(){
 
     before(function(){

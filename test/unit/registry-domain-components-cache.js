@@ -36,7 +36,7 @@ describe('registry : domain : components-cache', function(){
         return 12345678;
       },
       './events-handler': eventsHandlerStub
-    }, { 
+    }, {
       setTimeout: setTimeoutStub,
       clearTimeout: clearTimeoutStub
     });

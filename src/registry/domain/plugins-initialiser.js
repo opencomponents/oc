@@ -14,7 +14,7 @@ const validatePlugins = function(plugins){
     c++;
     if(!_.isObject(plugin.register) || !_.isFunction(plugin.register.register) ||
        !_.isFunction(plugin.register.execute) || !_.isString(plugin.name)){
-      
+
       throw new Error(format(strings.errors.registry.PLUGIN_NOT_VALID, plugin.name || c));
     }
   });

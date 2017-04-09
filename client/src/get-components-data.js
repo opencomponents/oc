@@ -15,12 +15,12 @@ module.exports = function(config){
 
     if (response && response.error) {
       if (errorDetails) {
-        errorDetails = format('{0} {1}', errorDetails, response.error); 
+        errorDetails = format('{0} {1}', errorDetails, response.error);
       } else {
         errorDetails = response.error;
       }
     }
-    
+
     if (!errorDetails) {
       errorDetails = settings.emptyResponse;
     }
@@ -33,7 +33,7 @@ module.exports = function(config){
         }
       });
     });
-    
+
     return responses;
   };
 
@@ -61,7 +61,7 @@ module.exports = function(config){
 
   const performGet = function(endpoint, serverRendering, options, callback) {
     const component = serverRendering.components[0];
-    const requestUrl = hrefBuilder.prepareServerGet(endpoint, component, options); 
+    const requestUrl = hrefBuilder.prepareServerGet(endpoint, component, options);
 
     const requestDetails = {
       url: requestUrl,
@@ -111,24 +111,24 @@ module.exports = function(config){
           action.failover = true;
         }
       });
-      
+
       return cb(serverRenderingFail);
     }
 
     const performRequest = (serverRendering.components.length === 1) ? performGet : performPost;
-    
+
     performRequest(serverRenderingEndpoint, serverRendering, options, function(responses) {
       _.each(responses, function(response, i){
         const action = toDo[serverRendering.positions[i]];
 
         if(action.render === 'server'){
           if(response.status !== 200){
-            
+
             let errorDetails;
             if(!response.status && response.response.error){
               errorDetails = response.response.error;
             } else {
-              
+
               let errorDescription = (response.response && response.response.error);
               if(errorDescription && response.response.details && response.response.details.originalError){
                 errorDescription += response.response.details.originalError;

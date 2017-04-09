@@ -18,7 +18,7 @@ describe('client', function(){
     }, { __dirname: '/something/', console: console });
   };
 
-  describe('when not correctly initialised', function(){    
+  describe('when not correctly initialised', function(){
     before(function(){
       initialise();
       validatorStub.returns({ isValid: false, error: 'argh!' });

@@ -106,7 +106,7 @@ describe('registry : domain : repository', function(){
             {templates: ['oc-template-jade']}
           );
           const repository = new Repository(conf);
-          expect(repository.getTemplates().length).to.equal(2);  
+          expect(repository.getTemplates().length).to.equal(2);
         });
       });
 
@@ -120,7 +120,7 @@ describe('registry : domain : repository', function(){
           try {
             Repository(conf);
           } catch (err) {
-            expect(err).to.equal('Error requiring oc-template: "oc-template-react" not found');  
+            expect(err).to.equal('Error requiring oc-template: "oc-template-react" not found');
           }
         });
       });
@@ -195,7 +195,7 @@ describe('registry : domain : repository', function(){
     describe('when trying to publish a component', function(){
 
       describe('when component has not a valid name', function(){
-        
+
         before(function(done){
           repository.publishComponent({}, 'blue velvet', '1.0.0', saveResult(done));
         });

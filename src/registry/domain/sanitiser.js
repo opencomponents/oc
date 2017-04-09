@@ -42,7 +42,7 @@ module.exports = {
 
     _.forEach(requestParameters, function(requestParameter, requestParameterName){
       if(_.has(expectedParameters, requestParameterName)){
-        
+
         const expectedType = expectedParameters[requestParameterName].type,
           sanitised = sanitise.parameter(requestParameter, expectedType);
 

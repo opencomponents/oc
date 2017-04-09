@@ -53,7 +53,7 @@ describe('registry : routes : helpers : apply-default-values', function(){
         });
       });
     });
-    
+
     describe('when default value of parameter is specified', function() {
       const componentParameters = {
         mandatory: {
