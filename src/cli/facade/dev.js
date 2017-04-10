@@ -171,8 +171,9 @@ module.exports = function(dependencies){
               if(err.code === 'EADDRINUSE'){
                 err = format(strings.errors.cli.PORT_IS_BUSY, port);
               }
-              callback(err);
-              return logger.err(err);
+
+              logger.err(err);
+              return callback(err);
             }
 
             watchForChanges(components, packageComponents);
