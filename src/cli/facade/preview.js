@@ -1,6 +1,5 @@
 'use strict';
 
-const colors = require('colors/safe');
 const opn = require('opn');
 
 const strings = require('../../resources/index');
@@ -17,7 +16,7 @@ module.exports = function(dependencies){
 
     registry.getComponentPreviewUrlByUrl(opts.componentHref, function(err, href){
       if(err){
-        logger.log(colors.red(strings.errors.cli.COMPONENT_HREF_NOT_FOUND));
+        logger.err(strings.errors.cli.COMPONENT_HREF_NOT_FOUND);
         return callback(strings.errors.cli.COMPONENT_HREF_NOT_FOUND);
       }
       opn(href);

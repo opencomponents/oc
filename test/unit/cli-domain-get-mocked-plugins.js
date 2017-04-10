@@ -91,7 +91,7 @@ describe('cli : domain : get-mocked-plugins', function(){
           existsSync: sinon.stub().returns(true),
           readJsonSync: readMock
         });
-        result = getMockedPlugins({ log: _.noop }, '/root/components/');
+        result = getMockedPlugins({ log: () => {}, warn: () => {} }, '/root/components/');
       });
 
       it('should use components folder oc.json as default', function(){
@@ -135,7 +135,7 @@ describe('cli : domain : get-mocked-plugins', function(){
           existsSync: existsMock,
           readJsonSync: readMock
         });
-        result = getMockedPlugins({ log: _.noop }, '/root/components/');
+        result = getMockedPlugins({ log: () => {}, warn: () => {} }, '/root/components/');
       });
 
       it('should use root oc.json', function(){
@@ -169,7 +169,7 @@ describe('cli : domain : get-mocked-plugins', function(){
           existsSync: sinon.stub().returns(true),
           readJsonSync: sinon.stub().returns(ocJson)
         });
-        result = getMockedPlugins({log: sinon.stub()}, '/root/components/');
+        result = getMockedPlugins({ warn: sinon.stub() }, '/root/components/');
       });
 
       it('should return an empty array', function(){
@@ -195,7 +195,7 @@ describe('cli : domain : get-mocked-plugins', function(){
           existsSync: sinon.stub().returns(true),
           readJsonSync: sinon.stub().returns(ocJson)
         });
-        result = getMockedPlugins({log: sinon.stub()}, '/root/components/');
+        result = getMockedPlugins({ log: () => {}, warn: () => {} }, '/root/components/');
       });
 
       it('should return the static plugin', function(){
@@ -226,7 +226,7 @@ describe('cli : domain : get-mocked-plugins', function(){
           existsSync: sinon.stub().returns(true),
           readJsonSync: sinon.stub().returns(ocJson)
         });
-        result = getMockedPlugins({ log: sinon.stub() }, '/root/components/');
+        result = getMockedPlugins({ log: () => {}, warn: () => {} }, '/root/components/');
       });
 
       it('should return the dynamic plugin', function(){
@@ -253,7 +253,7 @@ describe('cli : domain : get-mocked-plugins', function(){
         }
       };
 
-      const logger = { log: sinon.stub() };
+      const logger = { err: sinon.stub(), warn: () => {} };
 
       beforeEach(function(){
         initialise({
@@ -264,7 +264,7 @@ describe('cli : domain : get-mocked-plugins', function(){
       });
 
       it('should log an error', function(){
-        expect(logger.log.secondCall.args[0]).to.contain(
+        expect(logger.err.args[0][0]).to.contain(
           'Error: Cannot find module');
       });
 
@@ -286,7 +286,7 @@ describe('cli : domain : get-mocked-plugins', function(){
         }
       };
 
-      const logger = { log: sinon.stub() };
+      const logger = { err: sinon.stub(), warn: () => {} };
 
       beforeEach(function(){
         initialise({
@@ -297,7 +297,7 @@ describe('cli : domain : get-mocked-plugins', function(){
       });
 
       it('should log an error', function(){
-        expect(logger.log.secondCall.args[0]).to.contain(
+        expect(logger.err.args[0][0]).to.contain(
           'Looks like you are trying to register a dynamic mock plugin but the file you specified is not a function');
       });
 

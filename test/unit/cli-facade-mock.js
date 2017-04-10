@@ -1,6 +1,5 @@
 'use strict';
 
-const colors = require('colors/safe');
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
@@ -13,7 +12,7 @@ describe('cli : facade : mock', function(){
     mockFacade = new MockFacade({ local: local, logger: logSpy });
 
   const execute = function(){
-    logSpy.log = sinon.spy();
+    logSpy.ok = sinon.spy();
     mockFacade({ targetType: 'plugin', targetName: 'getValue', targetValue: 'value' }, function(){});
   };
 
@@ -31,7 +30,7 @@ describe('cli : facade : mock', function(){
       });
 
       it('should show a confirmation message', function(){
-        expect(logSpy.log.args[0][0]).to.equal(colors.green('Mock for plugin has been registered: getValue () => value'));
+        expect(logSpy.ok.args[0][0]).to.equal('Mock for plugin has been registered: getValue () => value');
       });
     });
   });

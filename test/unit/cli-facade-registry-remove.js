@@ -1,6 +1,5 @@
 'use strict';
 
-const colors = require('colors/safe');
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
@@ -13,7 +12,8 @@ describe('cli : facade : registry : remove', function(){
     registryFacade = new RegistryFacade({ registry: registry, logger: logSpy });
 
   const execute = function(){
-    logSpy.log = sinon.spy();
+    logSpy.err = sinon.spy();
+    logSpy.ok = sinon.spy();
     registryFacade({ }, function(){});
   };
 
@@ -29,7 +29,7 @@ describe('cli : facade : registry : remove', function(){
     });
 
     it('should show the error', function(){
-      expect(logSpy.log.args[0][0]).to.equal(colors.red('something bad happened!'));
+      expect(logSpy.err.args[0][0]).to.equal('something bad happened!');
     });
   });
 
@@ -45,7 +45,7 @@ describe('cli : facade : registry : remove', function(){
     });
 
     it('should show a confirmation message', function (){
-      expect(logSpy.log.args[0][0]).to.equal(colors.green('oc registry deleted'));
+      expect(logSpy.ok.args[0][0]).to.equal('oc registry deleted');
     });
   });
 });

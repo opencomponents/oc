@@ -1,24 +1,18 @@
 'use strict';
 
 const cli = require('yargs');
-const _ = require('underscore');
-
 const commands = require('./commands');
 const format = require('stringformat');
+const _ = require('underscore');
+
 const Local = require('./domain/local');
+const logger = require('./logger');
 const Registry = require('./domain/registry');
 const strings = require('../resources');
 
-const logger = {
-  log: console.log,
-  logNoNewLine: function(msg){
-    return process.stdout.write(msg.toString());
-  }
-};
-
 const dependencies = {
   local: new Local(),
-  logger: logger,
+  logger,
   registry: new Registry()
 };
 

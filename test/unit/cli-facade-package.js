@@ -1,6 +1,5 @@
 'use strict';
 
-const colors = require('colors/safe');
 const expect = require('chai').expect;
 const path = require('path');
 const sinon = require('sinon');
@@ -14,7 +13,9 @@ describe('cli : facade : package', function(){
     packageFacade = new PackageFacade({ local: local, logger: logSpy });
 
   const execute = function(compress, cb){
-    logSpy.log = sinon.stub();
+    logSpy.err = sinon.stub();
+    logSpy.ok = sinon.stub();
+    logSpy.warn = sinon.stub();
     packageFacade({
       componentPath: 'test/fixtures/components/hello-world/',
       compress: compress
@@ -30,7 +31,7 @@ describe('cli : facade : package', function(){
       execute(false, function(){
         local.package.restore();
 
-        const message = logSpy.log.args[0][0],
+        const message = logSpy.warn.args[0][0],
           re = new RegExp('\\' + path.sep, 'g'),
           messageWithSlashesOnPath = message.replace(re, '/');
 
@@ -54,7 +55,7 @@ describe('cli : facade : package', function(){
         });
 
         it('should show an error', function(){
-          expect(logSpy.log.args[1][0]).to.equal(colors.red('An error happened when creating the package: the component is not valid'));
+          expect(logSpy.err.args[0][0]).to.equal('An error happened when creating the package: the component is not valid');
         });
       });
 
@@ -73,8 +74,8 @@ describe('cli : facade : package', function(){
 
         it('should package and show success message', function(done){
           execute(false, function(){
-            const warnMessage = logSpy.log.args[0][0],
-              okMessage = logSpy.log.args[1][0],
+            const warnMessage = logSpy.warn.args[0][0],
+              okMessage = logSpy.ok.args[0][0],
               re = new RegExp('\\' + path.sep, 'g'),
               warnMessageWithSlashesOnPath = warnMessage.replace(re, '/'),
               okMessageWithSlashesOnPath = okMessage.replace(re, '/');
@@ -95,16 +96,15 @@ describe('cli : facade : package', function(){
 
             execute(false, function(){
               local.compress.restore();
-
-              const warnMessage = logSpy.log.args[0][0],
-                okMessage = logSpy.log.args[1][0],
+              const warnMessage = logSpy.warn.args[0][0],
+                okMessage = logSpy.ok.args[0][0],
                 re = new RegExp('\\' + path.sep, 'g'),
                 warnMessageWithSlashesOnPath = warnMessage.replace(re, '/'),
                 okMessageWithSlashesOnPath = okMessage.replace(re, '/');
 
               expect(warnMessageWithSlashesOnPath).to.include('Packaging -> ');
               expect(okMessageWithSlashesOnPath).to.include('Packaged -> ');
-              expect(logSpy.log.args[2]).to.be.undefined;
+              expect(logSpy.warn.args[1]).to.be.undefined;
               done();
             });
           });
@@ -120,9 +120,8 @@ describe('cli : facade : package', function(){
 
             it('should show a message for success', function(done){
               execute(true, function(){
-
-                const warnMessage = logSpy.log.args[2][0],
-                  okMessage = logSpy.log.args[3][0],
+                const warnMessage = logSpy.warn.args[1][0],
+                  okMessage = logSpy.ok.args[1][0],
                   re = new RegExp('\\' + path.sep, 'g'),
                   warnMessageWithSlashesOnPath = warnMessage.replace(re, '/'),
                   okMessageWithSlashesOnPath = okMessage.replace(re, '/');
@@ -148,15 +147,14 @@ describe('cli : facade : package', function(){
 
             it('should show a message for failure', function(done){
               execute(true, function(){
-
-                const warnMessage = logSpy.log.args[2][0],
-                  errorMessage = logSpy.log.args[3][0],
+                const warnMessage = logSpy.warn.args[1][0],
+                  errorMessage = logSpy.err.args[0][0],
                   re = new RegExp('\\' + path.sep, 'g'),
                   warnMessageWithSlashesOnPath = warnMessage.replace(re, '/');
 
                 expect(warnMessageWithSlashesOnPath).to.include('Compressing -> ');
                 expect(warnMessageWithSlashesOnPath).to.include('components/hello-world/package.tar.gz');
-                expect(errorMessage).to.equal(colors.red('An error happened when creating the package: error while compressing'));
+                expect(errorMessage).to.equal('An error happened when creating the package: error while compressing');
                 done();
               });
             });
