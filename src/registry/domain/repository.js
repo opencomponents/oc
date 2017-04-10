@@ -143,17 +143,7 @@ module.exports = function(conf){
         }
       }
 
-      cdn.getFile(getFilePath(componentName, componentVersion, 'package.json'), function(err, component){
-        let parsed;
-
-        try {
-          parsed = JSON.parse(component);
-        } catch(er){
-          return callback('parsing error');
-        }
-
-        callback(null, parsed);
-      });
+      cdn.getJson(getFilePath(componentName, componentVersion, 'package.json'), callback);
     },
     getComponentPath: function(componentName, componentVersion){
       const prefix = conf.local ? conf.baseUrl : ('https:' + conf.s3.path + conf.s3.componentsDir + '/');

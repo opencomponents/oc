@@ -9,23 +9,10 @@ const getUnixUTCTimestamp = require('../../utils/get-unix-utc-timestamp');
 
 module.exports = function(conf, cdn){
 
-  let cachedComponentsList,
-    refreshLoop;
+  let cachedComponentsList, refreshLoop;
 
-  const getFromJson = function(cb){
-    cdn.getFile(conf.s3.componentsDir + '/components.json', true, function(err, res){
-      let result;
-
-      if(!err){
-        try {
-          result = JSON.parse(res);
-        } catch(e){
-          return cb(e);
-        }
-      }
-
-      cb(err, result);
-    });
+  const getFromJson = function(callback){
+    cdn.getJson(conf.s3.componentsDir + '/components.json', true, callback);
   };
 
   const updateCachedData = function(newData){

@@ -1,5 +1,4 @@
 'use strict';
-/* eslint no-unused-vars: 'off' */
 
 const expect = require('chai').expect;
 const injctr = require('injectr');
@@ -8,24 +7,19 @@ const sinon = require('sinon');
 describe('registry : domain : components-cache', function(){
 
   const mockedCdn = {
-      getFile: sinon.stub(),
-      listSubDirectories: sinon.stub(),
-      putFileContent: sinon.stub()
-    },
-    baseOptions = { pollingInterval: 5, s3: { componentsDir: 'component'}},
-    baseResponse = JSON.stringify({
-      lastEdit: 12345678,
-      components: {
-        'hello-world': ['1.0.0', '1.0.2']
-      }
-    }
-  );
+    getJson: sinon.stub(),
+    listSubDirectories: sinon.stub(),
+    putFileContent: sinon.stub()
+  };
 
-  let setTimeoutStub,
-    clearTimeoutStub,
-    componentsCache,
-    eventsHandlerStub,
-    response;
+  const baseOptions = { pollingInterval: 5, s3: { componentsDir: 'component'}};
+
+  const baseResponse = () => ({
+    lastEdit: 12345678,
+    components: { 'hello-world': ['1.0.0', '1.0.2'] }
+  });
+
+  let setTimeoutStub, clearTimeoutStub, componentsCache, eventsHandlerStub;
 
   const initialise = function(){
     clearTimeoutStub = sinon.stub();
@@ -44,32 +38,25 @@ describe('registry : domain : components-cache', function(){
     componentsCache = new ComponentsCache(baseOptions, mockedCdn);
   };
 
-  const saveCallbackResult = function(callback){
-    return function(err, res){
-      response = { error: err, result: res };
-      callback();
-    };
-  };
-
   describe('when library does not contain components.json', function(){
 
     describe('when initialising the cache', function(){
 
       before(function(done){
-        mockedCdn.getFile = sinon.stub();
-        mockedCdn.getFile.yields('not_found');
+        mockedCdn.getJson = sinon.stub();
+        mockedCdn.getJson.yields('not_found');
         mockedCdn.listSubDirectories = sinon.stub();
         mockedCdn.listSubDirectories.onCall(0).yields(null, ['hello-world']);
         mockedCdn.listSubDirectories.onCall(1).yields(null, ['1.0.0', '1.0.2']);
         mockedCdn.putFileContent = sinon.stub();
         mockedCdn.putFileContent.yields(null, 'ok');
         initialise();
-        componentsCache.load(saveCallbackResult(done));
+        componentsCache.load(done);
       });
 
       it('should try fetching the components.json', function(){
-        expect(mockedCdn.getFile.calledOnce).to.be.true;
-        expect(mockedCdn.getFile.args[0][0]).to.be.equal('component/components.json');
+        expect(mockedCdn.getJson.calledOnce).to.be.true;
+        expect(mockedCdn.getJson.args[0][0]).to.be.equal('component/components.json');
       });
 
       it('should scan for directories to fetch components and versions', function(){
@@ -99,20 +86,20 @@ describe('registry : domain : components-cache', function(){
     describe('when initialising the cache', function(){
 
       before(function(done){
-        mockedCdn.getFile = sinon.stub();
-        mockedCdn.getFile.yields(null, baseResponse);
+        mockedCdn.getJson = sinon.stub();
+        mockedCdn.getJson.yields(null, baseResponse());
         mockedCdn.listSubDirectories = sinon.stub();
         mockedCdn.listSubDirectories.onCall(0).yields(null, ['hello-world']);
         mockedCdn.listSubDirectories.onCall(1).yields(null, ['1.0.0', '1.0.2', '2.0.0']);
         mockedCdn.putFileContent = sinon.stub();
         mockedCdn.putFileContent.yields(null, 'ok');
         initialise();
-        componentsCache.load(saveCallbackResult(done));
+        componentsCache.load(done);
       });
 
       it('should fetch the components.json', function(){
-        expect(mockedCdn.getFile.calledOnce).to.be.true;
-        expect(mockedCdn.getFile.args[0][0]).to.be.equal('component/components.json');
+        expect(mockedCdn.getJson.calledOnce).to.be.true;
+        expect(mockedCdn.getJson.args[0][0]).to.be.equal('component/components.json');
       });
 
       it('should scan for directories to fetch components and versions', function(){
@@ -142,19 +129,19 @@ describe('registry : domain : components-cache', function(){
     describe('when initialising the cache', function(){
 
       before(function(done){
-        mockedCdn.getFile = sinon.stub();
-        mockedCdn.getFile.yields(null, baseResponse);
+        mockedCdn.getJson = sinon.stub();
+        mockedCdn.getJson.yields(null, baseResponse());
         mockedCdn.listSubDirectories = sinon.stub();
         mockedCdn.listSubDirectories.onCall(0).yields(null, ['hello-world']);
         mockedCdn.listSubDirectories.onCall(1).yields(null, ['1.0.0', '1.0.2']);
         mockedCdn.putFileContent = sinon.stub();
         initialise();
-        componentsCache.load(saveCallbackResult(done));
+        componentsCache.load(done);
       });
 
       it('should fetch the components.json', function(){
-        expect(mockedCdn.getFile.calledOnce).to.be.true;
-        expect(mockedCdn.getFile.args[0][0]).to.be.equal('component/components.json');
+        expect(mockedCdn.getJson.calledOnce).to.be.true;
+        expect(mockedCdn.getJson.args[0][0]).to.be.equal('component/components.json');
       });
 
       it('should scan for directories to fetch components and versions', function(){
@@ -185,17 +172,16 @@ describe('registry : domain : components-cache', function(){
 
     describe('when refreshing the cache', function(){
 
-      let baseResponseUpdated = JSON.parse(baseResponse);
+      const baseResponseUpdated = baseResponse();
       baseResponseUpdated.components['hello-world'].push('2.0.0');
       baseResponseUpdated.components['new-component'] = ['1.0.0'];
       baseResponseUpdated.lastEdit++;
-      baseResponseUpdated = JSON.stringify(baseResponseUpdated);
 
       describe('when refresh errors', function(){
 
         before(function(done){
-          mockedCdn.getFile = sinon.stub();
-          mockedCdn.getFile.yields(null, baseResponse);
+          mockedCdn.getJson = sinon.stub();
+          mockedCdn.getJson.yields(null, baseResponse());
           mockedCdn.putFileContent = sinon.stub();
           mockedCdn.putFileContent.yields(null, 'ok');
           mockedCdn.listSubDirectories = sinon.stub();
@@ -207,7 +193,7 @@ describe('registry : domain : components-cache', function(){
 
           initialise();
           componentsCache.load(function(){
-            componentsCache.refresh(saveCallbackResult(done));
+            componentsCache.refresh(() => done());
           });
         });
 
@@ -223,8 +209,8 @@ describe('registry : domain : components-cache', function(){
       describe('when refresh does not generate errors', function(){
 
         before(function(done){
-          mockedCdn.getFile = sinon.stub();
-          mockedCdn.getFile.yields(null, baseResponse);
+          mockedCdn.getJson = sinon.stub();
+          mockedCdn.getJson.yields(null, baseResponse());
           mockedCdn.putFileContent = sinon.stub();
           mockedCdn.putFileContent.yields(null, 'ok');
           mockedCdn.listSubDirectories = sinon.stub();
@@ -236,7 +222,7 @@ describe('registry : domain : components-cache', function(){
 
           initialise();
           componentsCache.load(function(){
-            componentsCache.refresh(saveCallbackResult(done));
+            componentsCache.refresh(done);
           });
         });
 
