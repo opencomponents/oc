@@ -18,8 +18,8 @@ module.exports = function(grunt){
     fs.writeJsonSync(path.join(__dirname, '../package.json'), packageJson, {spaces: 2});
 
     grunt.task.run([
-      'test-local-silent',
       'build',
+      'test-local-silent',
       'git-stage'
     ]);
   });
