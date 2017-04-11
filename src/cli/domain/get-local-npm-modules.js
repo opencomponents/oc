@@ -12,7 +12,7 @@ module.exports = function(){
       return [];
     }
 
-    return fs.readdirSync(nodeFolder).filter(function(file){
+    return fs.readdirSync(nodeFolder).filter((file) => {
 
       const filePath = path.resolve(nodeFolder, file),
         isBin = file === '.bin',

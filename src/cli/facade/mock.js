@@ -14,7 +14,7 @@ module.exports = function(dependencies){
 
     callback = wrapCliCallback(callback);
 
-    local.mock(opts, function(err, res){
+    local.mock(opts, (err, res) => {
       logger.ok(format(strings.messages.cli.MOCKED_PLUGIN, opts.targetName, opts.targetValue));
       callback(err, res);
     });

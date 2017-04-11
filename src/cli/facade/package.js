@@ -20,7 +20,7 @@ module.exports = function(dependencies) {
     const packageOptions = {
       componentPath: path.resolve(componentPath)
     };
-    local.package(packageOptions, function(err, component){
+    local.package(packageOptions, (err, component) => {
       if(err){
         logger.err(format(strings.errors.cli.PACKAGE_CREATION_FAIL, err));
         return callback(err);
@@ -31,7 +31,7 @@ module.exports = function(dependencies) {
       if (opts.compress) {
         logger.warn(format(strings.messages.cli.COMPRESSING, compressedPackagePath));
 
-        local.compress(packageDir, compressedPackagePath, function(err){
+        local.compress(packageDir, compressedPackagePath, (err) => {
           if(err){
             logger.err(format(strings.errors.cli.PACKAGE_CREATION_FAIL, err));
             return callback(err);

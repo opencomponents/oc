@@ -26,7 +26,7 @@ module.exports = function(config){
     }
 
     const responses = [];
-    _.each(components, function(){
+    _.each(components, () => {
       responses.push({
         response: {
           error: format(settings.connectionError, JSON.stringify(requestDetails), errorDetails)
@@ -50,7 +50,7 @@ module.exports = function(config){
       }
     };
 
-    request(requestDetails, function(error, responses) {
+    request(requestDetails, (error, responses) => {
       if(!!error || !responses || _.isEmpty(responses)){
         responses = handleErrorResponse(requestDetails, error, responses, serverRendering.components);
       }
@@ -71,7 +71,7 @@ module.exports = function(config){
       json: true
     };
 
-    request(requestDetails, function(error, responses) {
+    request(requestDetails, (error, responses) => {
       if(!!error || !responses || _.isEmpty(responses)) {
         responses = handleErrorResponse(requestDetails, error, responses, serverRendering.components);
       } else {
@@ -91,7 +91,7 @@ module.exports = function(config){
       serverRendering = { components: [], positions: [] },
       serverRenderingEndpoint = hrefBuilder.server(options);
 
-    _.each(toDo, function(action){
+    _.each(toDo, (action) => {
       if(action.render === 'server'){
         serverRendering.components.push(action.component);
         serverRendering.positions.push(action.pos);
@@ -101,7 +101,7 @@ module.exports = function(config){
     if(_.isEmpty(serverRendering.components)){
       return cb();
     } else if(!serverRenderingEndpoint){
-      _.each(toDo, function(action){
+      _.each(toDo, (action) => {
         action.result.error = serverRenderingFail;
         if(options.disableFailoverRendering){
           action.result.html = '';
@@ -117,8 +117,8 @@ module.exports = function(config){
 
     const performRequest = (serverRendering.components.length === 1) ? performGet : performPost;
 
-    performRequest(serverRenderingEndpoint, serverRendering, options, function(responses) {
-      _.each(responses, function(response, i){
+    performRequest(serverRenderingEndpoint, serverRendering, options, (responses) => {
+      _.each(responses, (response, i) => {
         const action = toDo[serverRendering.positions[i]];
 
         if(action.render === 'server'){

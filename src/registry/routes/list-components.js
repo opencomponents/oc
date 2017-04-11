@@ -10,7 +10,7 @@ const urlBuilder = require('../domain/url-builder');
 module.exports = function(repository){
   return function(req, res, next){
 
-    repository.getComponents(function(err, components){
+    repository.getComponents((err, components) => {
       if(err){
         res.errorDetails = 'cdn not available';
         return res.status(404).json({ error: res.errorDetails });
@@ -29,31 +29,27 @@ module.exports = function(repository){
           componentsReleases = 0;
         const stateCounts = {};
 
-        async.each(components, function(component, callback){
-          return repository.getComponent(component, function(err, result){
-            if(err){ return callback(err); }
+        async.each(components, (component, callback) => repository.getComponent(component, (err, result) => {
+          if(err){ return callback(err); }
 
-            if(result.oc && result.oc.date) {
-              result.oc.stringifiedDate = dateStringified(new Date(result.oc.date));
-            }
+          if(result.oc && result.oc.date) {
+            result.oc.stringifiedDate = dateStringified(new Date(result.oc.date));
+          }
 
-            componentsInfo.push(result);
-            componentsReleases += result.allVersions.length;
-            callback();
-          });
-        }, function(err){
+          componentsInfo.push(result);
+          componentsReleases += result.allVersions.length;
+          callback();
+        }), (err) => {
           if(err){ return next(err); }
 
-          componentsInfo = _.sortBy(componentsInfo, function(componentInfo){
-            return componentInfo.name;
-          });
+          componentsInfo = _.sortBy(componentsInfo, (componentInfo) => componentInfo.name);
 
           return res.render('list-components', _.extend(baseResponse, {
             availableDependencies: res.conf.dependencies,
             availablePlugins: res.conf.plugins,
             components: componentsInfo,
             componentsReleases: componentsReleases,
-            componentsList: _.map(componentsInfo, function(component){
+            componentsList: _.map(componentsInfo, (component) => {
 
               const state = (!!component.oc && !!component.oc.state) ? component.oc.state : '';
 
@@ -73,9 +69,7 @@ module.exports = function(repository){
         });
       } else {
         res.status(200).json(_.extend(baseResponse, {
-          components: _.map(components, function(component){
-            return urlBuilder.component(component, res.conf.baseUrl);
-          })
+          components: _.map(components, (component) => urlBuilder.component(component, res.conf.baseUrl))
         }));
       }
     });

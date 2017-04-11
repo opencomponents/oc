@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
 
-describe('client : render-components', function(){
+describe('client : render-components', () => {
 
   let renderComponents;
 
@@ -19,7 +19,7 @@ describe('client : render-components', function(){
     renderComponents = new RenderComponents();
   };
 
-  describe('when compiled template fetch fails', function(){
+  describe('when compiled template fetch fails', () => {
 
     const errorExample = 'request https://cdn.com/components/1.3.5/template.js failed (' +
       '<?xml version="1.0" encoding="UTF-8"?><Error><Code>AccessDenied</Code><Message>' +
@@ -34,7 +34,7 @@ describe('client : render-components', function(){
 
     let toDo;
 
-    before(function(done){
+    before((done) => {
       initialise(getCompiledTemplateStub);
 
       toDo = [{
@@ -48,11 +48,11 @@ describe('client : render-components', function(){
       renderComponents(toDo, {}, done);
     });
 
-    it('should return an error containing the details', function(){
+    it('should return an error containing the details', () => {
       expect(toDo[0].result.error.toString()).to.eql('Error: Server-side rendering failed: ' + errorExample + ' (403)');
     });
 
-    it('should schedule it to be rendered as client-side as failover', function(){
+    it('should schedule it to be rendered as client-side as failover', () => {
       expect(toDo[0].render).to.equal('client');
       expect(toDo[0].failover).to.equal(true);
     });

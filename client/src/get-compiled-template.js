@@ -15,7 +15,7 @@ module.exports = function(cache){
       request({
         url: template.src,
         timeout: timeout
-      }, function(err, templateText){
+      }, (err, templateText) => {
         if(err){
           return cb({
             status: err,

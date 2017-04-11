@@ -8,7 +8,7 @@ module.exports = function(cache){
       return callback(null, cached);
     }
 
-    predicate(function(err, res){
+    predicate((err, res) => {
       if(err){ return callback(err); }
 
       cache.set(type, key, res);

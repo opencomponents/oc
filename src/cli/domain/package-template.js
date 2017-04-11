@@ -27,7 +27,7 @@ const compileView = function(viewPath, type, cb) {
     return cb(err);
   }
 
-  ocTemplate.compile({ template, viewPath }, function(err, compiledView){
+  ocTemplate.compile({ template, viewPath }, (err, compiledView) => {
     if (err) { return cb(err);}
 
     const hashView = hashBuilder.fromString(compiledView.toString()),
@@ -54,13 +54,11 @@ module.exports = function(params, callback){
       if (err) {
         return callback(format('{0} compilation failed - {1}', viewSrc, err));
       }
-      fs.writeFile(path.join(params.publishPath, 'template.js'), compiled.view, function(err){
-        return callback(err, {
-          type: params.ocOptions.files.template.type,
-          hashKey: compiled.hash,
-          src: 'template.js'
-        });
-      });
+      fs.writeFile(path.join(params.publishPath, 'template.js'), compiled.view, (err) => callback(err, {
+        type: params.ocOptions.files.template.type,
+        hashKey: compiled.hash,
+        src: 'template.js'
+      }));
     });
   } catch(e){
     return callback(format('{0} compilation failed - {1}', viewSrc, e));

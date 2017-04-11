@@ -14,12 +14,12 @@ module.exports = function(grunt){
       grunt.util.spawn({
         cmd: 'git',
         args: ['log', versions]
-      }, function(err, res){
+      }, (err, res) => {
         if(err){ return callback(err); }
         const commits = res.stdout.split('commit '),
           result = [];
 
-        _.forEach(commits, function(commit){
+        _.forEach(commits, (commit) => {
           const commitMessages = commit.split('Merge pull request'),
             isPr = commitMessages.length > 1,
             isSquashedPr = !!commit.match(/(.*?)\(#(.*?)\)\n(.*?)/g);
@@ -62,12 +62,12 @@ module.exports = function(grunt){
         logIntervals.push(logInterval);
       }
 
-      async.eachSeries(logIntervals, function(logInterval, next){
-        get.prs(logInterval, function(err, prs){
+      async.eachSeries(logIntervals, (logInterval, next) => {
+        get.prs(logInterval, (err, prs) => {
           results.push(prs);
           next();
         });
-      }, function(){
+      }, () => {
         callback(null, results);
       });
     },
@@ -75,7 +75,7 @@ module.exports = function(grunt){
       grunt.util.spawn({
         cmd: 'git',
         args: ['tag']
-      }, function(err, result){
+      }, (err, result) => {
         if(err){ return callback(err); }
         callback(null, result.stdout.split('\n'));
       });
@@ -87,12 +87,12 @@ module.exports = function(grunt){
     const done = this.async();
     let result = '## Change Log';
 
-    get.tags(function(err, tags){
+    get.tags((err, tags) => {
       if(err){ return grunt.fatal(err); }
 
       semverSort.asc(tags);
 
-      get.allPrs(tags, function(err, changes){
+      get.allPrs(tags, (err, changes) => {
         if(err){ return grunt.fatal(err); }
 
         changes = changes.reverse();

@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
 
-describe('cli : facade : preview', function(){
+describe('cli : facade : preview', () => {
 
   let opnSpy, logSpy, registryStub;
 
@@ -17,31 +17,31 @@ describe('cli : facade : preview', function(){
     const PreviewFacade = injectr('../../src/cli/facade/preview.js', { opn: opnSpy }),
       previewFacade = new PreviewFacade({ logger: logSpy, registry: registryStub });
 
-    previewFacade({ componentHref: 'http://components.com/component' }, function(){});
+    previewFacade({ componentHref: 'http://components.com/component' }, () => {});
   };
 
-  describe('when previewing not valid component', function(){
+  describe('when previewing not valid component', () => {
 
-    beforeEach(function(){
+    beforeEach(() => {
       execute('404!!!', {});
     });
 
-    it('should not open any preview', function(){
+    it('should not open any preview', () => {
       expect(opnSpy.called).to.be.false;
     });
 
-    it('should show error message', function(){
+    it('should show error message', () => {
       expect(logSpy.err.args[0][0]).to.equal('The specified path is not a valid component\'s url');
     });
   });
 
-  describe('when previewing valid component', function(){
+  describe('when previewing valid component', () => {
 
-    beforeEach(function(){
+    beforeEach(() => {
       execute(null, 'http://registry.com/component/~preview/');
     });
 
-    it('should open /component/~preview/', function(){
+    it('should open /component/~preview/', () => {
       expect(opnSpy.args[0][0]).to.equal('http://registry.com/component/~preview/');
     });
   });

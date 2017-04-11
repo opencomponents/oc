@@ -26,7 +26,7 @@ module.exports = function(conf){
 
   const coreTemplates = ['oc-template-jade', 'oc-template-handlebars'];
   const templates = _.union(coreTemplates, conf.templates)
-    .map(function(template){
+    .map((template) => {
       try {
         const ocTemplate = requireTemplate(template);
         const info = ocTemplate.getInfo();
@@ -50,11 +50,9 @@ module.exports = function(conf){
     },
     getComponents: function(){
 
-      const validComponents = fs.readdirSync(conf.path).filter(function(file){
+      const validComponents = fs.readdirSync(conf.path).filter((file) => {
         const isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory(),
-          isValidComponent = isDir ? (fs.readdirSync(path.join(conf.path, file)).filter(function(file){
-            return file === '_package';
-          }).length === 1) : false;
+          isValidComponent = isDir ? (fs.readdirSync(path.join(conf.path, file)).filter((file) => file === '_package').length === 1) : false;
 
         return isValidComponent;
       });
@@ -100,7 +98,7 @@ module.exports = function(conf){
         componentVersion = undefined;
       }
 
-      this.getComponentVersions(componentName, function(err, availableVersions){
+      this.getComponentVersions(componentName, (err, availableVersions) => {
 
         if(err){
           return callback(err);
@@ -116,7 +114,7 @@ module.exports = function(conf){
           return callback(format(strings.errors.registry.COMPONENT_VERSION_NOT_FOUND, componentName, componentVersion, repositorySource));
         }
 
-        self.getComponentInfo(componentName, version, function(err, component){
+        self.getComponentInfo(componentName, version, (err, component) => {
           if(err){
             return callback('component not available: ' + err, null);
           }
@@ -154,7 +152,7 @@ module.exports = function(conf){
         return callback(null, local.getComponents());
       }
 
-      componentsCache.get(function(err, res){
+      componentsCache.get((err, res) => {
         callback(err, res ? _.keys(res.components) : null);
       });
     },
@@ -163,7 +161,7 @@ module.exports = function(conf){
         return local.getComponentVersions(componentName, callback);
       }
 
-      componentsCache.get(function(err, res){
+      componentsCache.get((err, res) => {
         callback(err, (!!res && !!_.has(res.components, componentName)) ? res.components[componentName] : []);
       });
     },
@@ -227,7 +225,7 @@ module.exports = function(conf){
         });
       }
 
-      this.getComponentVersions(componentName, function(err, componentVersions){
+      this.getComponentVersions(componentName, (err, componentVersions) => {
 
         if(!versionHandler.validateNewVersion(componentVersion, componentVersions)){
           return callback({
@@ -236,7 +234,7 @@ module.exports = function(conf){
           });
         }
 
-        cdn.putDir(pkgDetails.outputFolder, conf.s3.componentsDir + '/' + componentName + '/' + componentVersion, function(err){
+        cdn.putDir(pkgDetails.outputFolder, conf.s3.componentsDir + '/' + componentName + '/' + componentVersion, (err) => {
           if(err){ return callback(err); }
           componentsCache.refresh(callback);
         });

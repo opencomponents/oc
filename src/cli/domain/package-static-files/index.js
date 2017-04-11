@@ -21,8 +21,8 @@ const copyDir = function(params, cb){
     return cb(format(strings.errors.cli.FOLDER_IS_NOT_A_FOLDER, staticPath));
   } else {
 
-    nodeDir.paths(staticPath, function(err, res){
-      _.forEach(res.files, function(filePath){
+    nodeDir.paths(staticPath, (err, res) => {
+      _.forEach(res.files, (filePath) => {
 
         const fileName = path.basename(filePath),
           fileExt = path.extname(filePath).toLowerCase(),
@@ -54,9 +54,9 @@ module.exports = function(params, callback){
     return callback(null, 'ok');
   }
 
-  async.eachSeries(staticList, function(staticDir, cb){
+  async.eachSeries(staticList, (staticDir, cb) => {
     copyDir(_.extend(params, { staticDir: staticDir }), cb);
-  }, function(errors){
+  }, (errors) => {
     if(errors){ return callback(errors); }
     callback(null, 'ok');
   });

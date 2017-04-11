@@ -4,8 +4,8 @@ const expect = require('chai').expect;
 const path = require('path');
 const request = require('minimal-request');
 
-describe('registry', function(){
-  describe('when fallbackRegistryUrl is specified', function(){
+describe('registry', () => {
+  describe('when fallbackRegistryUrl is specified', () => {
     const oc = require('../../../src/index');
     let fallbackRegistry;
     let registry;
@@ -31,88 +31,88 @@ describe('registry', function(){
       };
     }
 
-    before(function(done){
+    before((done) => {
       registry = new oc.Registry(retrieveRegistryConfiguration(3030, 'test/fixtures/components', 'http://localhost:3031'));
       fallbackRegistry = new oc.Registry(retrieveRegistryConfiguration(3031, 'test/fixtures/fallback-registry-components'));
-      registry.start(function(){
+      registry.start(() => {
         fallbackRegistry.start(done);
       });
     });
 
-    after(function(done){
-      registry.close(function(){
+    after((done) => {
+      registry.close(() => {
         fallbackRegistry.close(done);
       });
     });
 
-    describe('GET /welcome', function(){
+    describe('GET /welcome', () => {
 
-      before(function(done){
+      before((done) => {
         request({
           url: 'http://localhost:3030/welcome',
           json: true
         }, next(done));
       });
 
-      it('should respond with the local registry url', function(){
+      it('should respond with the local registry url', () => {
         expect(result.href).to.eql('http://localhost:3030/welcome');
       });
 
-      it('should respond the `Hello world!` html', function(){
+      it('should respond the `Hello world!` html', () => {
         expect(result.html).to.equal('<span>hi John Doe  </span>');
       });
     });
 
-    describe('GET /fallback-hello-world', function(){
+    describe('GET /fallback-hello-world', () => {
 
-      before(function(done){
+      before((done) => {
         request({
           url: 'http://localhost:3030/fallback-hello-world',
           json: true
         }, next(done));
       });
 
-      it('should respond with the fallback registry url', function(){
+      it('should respond with the fallback registry url', () => {
         expect(result.href).to.eql('http://localhost:3031/fallback-hello-world');
       });
 
-      it('should respond the `Hello world!` html', function(){
+      it('should respond the `Hello world!` html', () => {
         expect(result.html).to.equal('Hello world!');
       });
     });
 
-    describe('GET /fallback-hello-world/~info', function(){
+    describe('GET /fallback-hello-world/~info', () => {
 
-      before(function(done){
+      before((done) => {
         request({
           url: 'http://localhost:3030/fallback-welcome-with-optional-parameters/~info',
           json: true
         }, next(done));
       });
 
-      it('should respond with requested component', function(){
+      it('should respond with requested component', () => {
         expect(result.name).to.eql('fallback-welcome-with-optional-parameters');
       });
 
-      it('should respond with components parameters', function(){
+      it('should respond with components parameters', () => {
         expect(Object.keys(result.oc.parameters).length).to.equal(3);
       });
     });
 
-    describe('GET /fallback-hello-world/~preview', function(){
+    describe('GET /fallback-hello-world/~preview', () => {
 
-      before(function(done){
+      before((done) => {
         request({
           url: 'http://localhost:3030/fallback-welcome-with-optional-parameters/~preview',
           json: true
         }, next(done));
       });
 
-      it('should respond with requested component', function(){
+      it('should respond with requested component', () => {
         expect(result.name).to.eql('fallback-welcome-with-optional-parameters');
       });
 
-      it('should respond with components parameters', function(){
+      it('should respond with components parameters', () => {
         expect(Object.keys(result.oc.parameters).length).to.equal(3);
       });
     });

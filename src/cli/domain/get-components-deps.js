@@ -14,7 +14,7 @@ module.exports = function(components){
     'handlebars': true
   };
 
-  components.forEach(function(c){
+  components.forEach((c) => {
     const pkg = fs.readJsonSync(path.join(c, 'package.json'));
     const type = pkg.oc.files.template.type;
     const dependencies = pkg.dependencies;
@@ -26,7 +26,7 @@ module.exports = function(components){
       deps.templates[type] = true;
     }
 
-    _.keys(dependencies).forEach(function(name){
+    _.keys(dependencies).forEach((name) => {
       const version = dependencies[name];
       const depToInstall = version.length > 0
         ? (name + '@' + version)

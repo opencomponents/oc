@@ -9,7 +9,7 @@ let subscriptions = {};
 module.exports = {
   fire: function(eventName, eventData){
     if(subscriptions[eventName]){
-      _.forEach(subscriptions[eventName], function(callback){
+      _.forEach(subscriptions[eventName], (callback) => {
         callback(eventData);
       });
     }

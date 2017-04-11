@@ -18,11 +18,11 @@ module.exports = function packageServerScript(params, callback){
     dataPath: path.join(params.componentPath, params.ocOptions.files.data)
   };
 
-  bundle(bundleParams, function(err, bundledServer){
+  bundle(bundleParams, (err, bundledServer) => {
     if (err) {
       return callback(err);
     } else {
-      fs.writeFile(path.join(publishPath, fileName), bundledServer, function(err){
+      fs.writeFile(path.join(publishPath, fileName), bundledServer, (err) => {
         callback(err, {
           type: 'node.js',
           hashKey: hashBuilder.fromString(bundledServer),

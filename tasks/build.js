@@ -47,7 +47,7 @@ module.exports = function(grunt){
         verbose: false
       };
 
-    local.package(packageOptions, function(err){
+    local.package(packageOptions, (err) => {
       grunt.log[err ? 'error' : 'ok'](err ? err : 'Client has been built and packaged');
       done();
     });

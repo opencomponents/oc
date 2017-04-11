@@ -6,7 +6,7 @@ const path = require('path');
 const sinon = require('sinon');
 const _ = require('underscore');
 
-describe('registry : domain : repository', function(){
+describe('registry : domain : repository', () => {
 
   let response;
   const saveResult = function(callback){
@@ -16,7 +16,7 @@ describe('registry : domain : repository', function(){
     };
   };
 
-  describe('when on cdn configuration', function(){
+  describe('when on cdn configuration', () => {
 
     const componentsCacheMock = {
       get: sinon.stub(),
@@ -70,37 +70,37 @@ describe('registry : domain : repository', function(){
 
     const repository = new Repository(cdnConfiguration);
 
-    describe('when getting the list of available components', function(){
+    describe('when getting the list of available components', () => {
 
-      before(function(done){
+      before((done) => {
         componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
         repository.getComponents(saveResult(done));
       });
 
-      it('should fetch the list from the cache', function(){
+      it('should fetch the list from the cache', () => {
         expect(componentsCacheMock.get.called).to.be.true;
       });
 
-      it('should respond without an error', function(){
+      it('should respond without an error', () => {
         expect(response.error).to.be.null;
       });
 
-      it('should list the components', function(){
+      it('should list the components', () => {
         expect(response.result).to.eql(['hello-world', 'language', 'no-containers', 'welcome', 'oc-client']);
       });
     });
 
-    describe('when getting the list of supported templates', function(){
-      describe('when no templates are specificed on the configuaration', function(){
-        it('should return core templates', function(){
+    describe('when getting the list of supported templates', () => {
+      describe('when no templates are specificed on the configuaration', () => {
+        it('should return core templates', () => {
           expect(repository.getTemplates().length).to.equal(2);
           expect(repository.getTemplates()[0].type).to.equal('oc-template-jade');
           expect(repository.getTemplates()[1].type).to.equal('oc-template-handlebars');
         });
       });
 
-      describe('when the templates specificed on the configuaration are core-templates', function(){
-        it('should only return uniques templates', function(){
+      describe('when the templates specificed on the configuaration are core-templates', () => {
+        it('should only return uniques templates', () => {
           const conf = _.extend(
             cdnConfiguration,
             {templates: ['oc-template-jade']}
@@ -110,8 +110,8 @@ describe('registry : domain : repository', function(){
         });
       });
 
-      describe('when templates specificed on the configuaration are not installed', function(){
-        it('should throw an error', function(){
+      describe('when templates specificed on the configuaration are not installed', () => {
+        it('should throw an error', () => {
           const conf = _.extend(
             cdnConfiguration,
             {templates: ['oc-template-react']}
@@ -126,101 +126,101 @@ describe('registry : domain : repository', function(){
       });
     });
 
-    describe('when trying to get a not valid component', function(){
+    describe('when trying to get a not valid component', () => {
 
-      describe('when the component does not exist', function(){
-        before(function(done){
+      describe('when the component does not exist', () => {
+        before((done) => {
           componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
           repository.getComponent('form-component', '1.0.0', saveResult(done));
         });
 
-        it('should respond with a proper error', function(){
+        it('should respond with a proper error', () => {
           expect(response.error).not.to.be.empty;
           expect(response.error).to.equal('Component "form-component" not found on s3 cdn');
         });
       });
 
-      describe('when the component exists but version does not', function(){
-        before(function(done){
+      describe('when the component exists but version does not', () => {
+        before((done) => {
           componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
           repository.getComponent('hello-world', '2.0.0', saveResult(done));
         });
 
-        it('should respond with a proper error', function(){
+        it('should respond with a proper error', () => {
           expect(response.error).not.to.be.empty;
           expect(response.error).to.equal('Component "hello-world" with version "2.0.0" not found on s3 cdn');
         });
       });
     });
 
-    describe('when getting an existing component', function(){
+    describe('when getting an existing component', () => {
 
-      before(function(done){
+      before((done) => {
         componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
         s3Mock.getJson.yields(null, { name: 'hello-world', version: '1.0.0'});
         repository.getComponent('hello-world', '1.0.0', saveResult(done));
       });
 
-      it('should respond without an error', function(){
+      it('should respond without an error', () => {
         expect(response.error).to.be.null;
       });
 
-      it('should fetch the versions\' list from the cache', function(){
+      it('should fetch the versions\' list from the cache', () => {
         expect(componentsCacheMock.get.called).to.be.true;
       });
 
-      it('should fetch the component info from the correct package.json file', function(){
+      it('should fetch the component info from the correct package.json file', () => {
         expect(s3Mock.getJson.args[0][0]).to.equal('components/hello-world/1.0.0/package.json');
       });
 
-      it('should return the component info', function(){
+      it('should return the component info', () => {
         expect(response.result).not.to.be.empty;
         expect(response.result.name).to.equal('hello-world');
         expect(response.result.version).to.equal('1.0.0');
       });
     });
 
-    describe('when getting a static file url', function(){
+    describe('when getting a static file url', () => {
 
       let url;
-      before(function(){
+      before(() => {
         url = repository.getStaticFilePath('hello-world', '1.0.0', 'hi.txt');
       });
 
-      it('should be using the static redirector from registry', function(){
+      it('should be using the static redirector from registry', () => {
         expect(url).to.equal('https://s3.amazonaws.com/walter-test/components/hello-world/1.0.0/hi.txt');
       });
     });
 
-    describe('when trying to publish a component', function(){
+    describe('when trying to publish a component', () => {
 
-      describe('when component has not a valid name', function(){
+      describe('when component has not a valid name', () => {
 
-        before(function(done){
+        before((done) => {
           repository.publishComponent({}, 'blue velvet', '1.0.0', saveResult(done));
         });
 
-        it('should respond with an error', function(){
+        it('should respond with an error', () => {
           expect(response.error).not.to.be.empty;
           expect(response.error.code).to.equal('name_not_valid');
           expect(response.error.msg).to.equal('The component\'s name contains invalid characters. Allowed are alphanumeric, _, -');
         });
       });
 
-      describe('when component has a not valid version', function(){
+      describe('when component has a not valid version', () => {
 
-        before(function(done){
+        before((done) => {
           repository.publishComponent({}, 'hello-world', '1.0', saveResult(done));
         });
 
-        it('should respond with an error', function(){
+        it('should respond with an error', () => {
           expect(response.error).not.to.be.empty;
           expect(response.error.code).to.equal('version_not_valid');
           expect(response.error.msg).to.eql('Version "1.0" is not a valid semantic version.');
         });
       });
 
-      describe('when component has a valid name and version', function(){
+      describe('when component has a valid name and version', () => {
 
         const pkg = { packageJson: {
           name: 'hello-world',
@@ -228,14 +228,14 @@ describe('registry : domain : repository', function(){
           repository: 'asdfa'
         }};
 
-        describe('when component with same name and version is already in library', function(){
+        describe('when component with same name and version is already in library', () => {
 
-          before(function(done){
+          before((done) => {
             componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
             repository.publishComponent(pkg, 'hello-world', '1.0.0', saveResult(done));
           });
 
-          it('should respond with an error', function(){
+          it('should respond with an error', () => {
             const message = 'Component "hello-world" with version "1.0.0" can\'t be ' +
                           'published to s3 cdn because a component with the same ' +
                           'name and version already exists';
@@ -246,9 +246,9 @@ describe('registry : domain : repository', function(){
           });
         });
 
-        describe('when component with same name and version is not in library', function(){
+        describe('when component with same name and version is not in library', () => {
 
-          before(function(done){
+          before((done) => {
             componentsCacheMock.get = sinon.stub();
             componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
             componentsCacheMock.refresh = sinon.stub();
@@ -261,11 +261,11 @@ describe('registry : domain : repository', function(){
             }), 'hello-world', '1.0.1', saveResult(done));
           });
 
-          it('should refresh cached components list', function(){
+          it('should refresh cached components list', () => {
             expect(componentsCacheMock.refresh.called).to.be.true;
           });
 
-          it('should store the component in the correct directory', function(){
+          it('should store the component in the correct directory', () => {
             expect(s3Mock.putDir.args[0][0]).to.equal('/path/to/component');
             expect(s3Mock.putDir.args[0][1]).to.equal('components/hello-world/1.0.1');
           });
@@ -274,7 +274,7 @@ describe('registry : domain : repository', function(){
     });
   });
 
-  describe('when on local configuration', function(){
+  describe('when on local configuration', () => {
 
     const Repository = require('../../src/registry/domain/repository');
 
@@ -291,17 +291,17 @@ describe('registry : domain : repository', function(){
 
     const repository = new Repository(localConfiguration);
 
-    describe('when getting the list of available components', function(){
+    describe('when getting the list of available components', () => {
 
-      before(function(done){
+      before((done) => {
         repository.getComponents(saveResult(done));
       });
 
-      it('should respond without an error', function(){
+      it('should respond without an error', () => {
         expect(response.error).to.be.null;
       });
 
-      it('should list the components', function(){
+      it('should list the components', () => {
         expect(response.result).to.eql([
           'container-with-multiple-nested',
           'container-with-nested',
@@ -319,69 +319,69 @@ describe('registry : domain : repository', function(){
       });
     });
 
-    describe('when trying to get a not valid component', function(){
+    describe('when trying to get a not valid component', () => {
 
-      describe('when the component does not exist', function(){
-        before(function(done){
+      describe('when the component does not exist', () => {
+        before((done) => {
           repository.getComponent('form-component', '1.0.0', saveResult(done));
         });
 
-        it('should respond with a proper error', function(){
+        it('should respond with a proper error', () => {
           expect(response.error).not.to.be.empty;
           expect(response.error).to.equal('Component "form-component" not found on local repository');
         });
       });
 
-      describe('when the component exists but version does not', function(){
-        before(function(done){
+      describe('when the component exists but version does not', () => {
+        before((done) => {
           repository.getComponent('hello-world', '2.0.0', saveResult(done));
         });
 
-        it('should respond with a proper error', function(){
+        it('should respond with a proper error', () => {
           expect(response.error).not.to.be.empty;
           expect(response.error).to.equal('Component "hello-world" with version "2.0.0" not found on local repository');
         });
       });
     });
 
-    describe('when getting an existing component', function(){
+    describe('when getting an existing component', () => {
 
-      before(function(done){
+      before((done) => {
         repository.getComponent('hello-world', '1.0.0', saveResult(done));
       });
 
-      it('should respond without an error', function(){
+      it('should respond without an error', () => {
         expect(response.error).to.be.null;
       });
 
-      it('should return the component info', function(){
+      it('should return the component info', () => {
         expect(response.result).not.to.be.empty;
         expect(response.result.name).to.equal('hello-world');
         expect(response.result.version).to.equal('1.0.0');
       });
     });
 
-    describe('when getting a static file url', function(){
+    describe('when getting a static file url', () => {
 
       let url;
-      before(function(){
+      before(() => {
         url = repository.getStaticFilePath('hello-world', '1.0.0', 'hi.txt');
       });
 
-      it('should be using the static redirector from registry', function(){
+      it('should be using the static redirector from registry', () => {
         expect(url).to.equal('http://localhost/v2/hello-world/1.0.0/static/hi.txt');
       });
     });
 
-    describe('when trying to publish a component', function(){
+    describe('when trying to publish a component', () => {
 
       const componentDir = path.resolve('../fixtures/components/hello-world');
 
-      before(function(done){
+      before((done) => {
         repository.publishComponent(componentDir, 'hello-world', '1.0.0', saveResult(done));
       });
 
-      it('should respond with an error', function(){
+      it('should respond with an error', () => {
         expect(response.error).not.to.be.empty;
         expect(response.error.code).to.equal('not_allowed');
         expect(response.error.msg).to.equal('Components can\'t be published to local repository');

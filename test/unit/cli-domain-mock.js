@@ -46,12 +46,12 @@ const executeMocking = function(local, type, name, value, cb){
   }, cb);
 };
 
-describe('cli : domain : mock', function(){
+describe('cli : domain : mock', () => {
 
-  describe('when mocking a static plugin', function(){
+  describe('when mocking a static plugin', () => {
 
     let data;
-    beforeEach(function(done){
+    beforeEach((done) => {
       data = initialise();
 
       data.fs.readJson.yields(null, { something: 'hello' });
@@ -60,7 +60,7 @@ describe('cli : domain : mock', function(){
       executeMocking(data.local, 'plugin', 'getValue', 'value', done);
     });
 
-    it('should add mock to oc.json', function(){
+    it('should add mock to oc.json', () => {
       expect(data.fs.writeJson.called).to.be.true;
       expect(data.fs.writeJson.args[0][1]).to.eql({
         something: 'hello',
@@ -75,10 +75,10 @@ describe('cli : domain : mock', function(){
     });
   });
 
-  describe('when mocking a static plugin using a bool value', function(){
+  describe('when mocking a static plugin using a bool value', () => {
 
     let data;
-    beforeEach(function(done){
+    beforeEach((done) => {
       data = initialise();
 
       data.fs.readJson.yields(null, { something: 'hello' });
@@ -87,7 +87,7 @@ describe('cli : domain : mock', function(){
       executeMocking(data.local, 'plugin', 'isTrue', false, done);
     });
 
-    it('should add mock to oc.json', function(){
+    it('should add mock to oc.json', () => {
       expect(data.fs.writeJson.called).to.be.true;
       expect(data.fs.writeJson.args[0][1]).to.eql({
         something: 'hello',
@@ -102,10 +102,10 @@ describe('cli : domain : mock', function(){
     });
   });
 
-  describe('when mocking a dynamic plugin', function(){
+  describe('when mocking a dynamic plugin', () => {
 
     let data;
-    beforeEach(function(done){
+    beforeEach((done) => {
       data = initialise();
 
       data.fs.readJson.yields(null, { something: 'hello' });
@@ -115,7 +115,7 @@ describe('cli : domain : mock', function(){
       executeMocking(data.local, 'plugin', 'getValue', './value.js', done);
     });
 
-    it('should add mock to oc.json', function(){
+    it('should add mock to oc.json', () => {
       expect(data.fs.writeJson.called).to.be.true;
       expect(data.fs.writeJson.args[0][1]).to.eql({
         something: 'hello',

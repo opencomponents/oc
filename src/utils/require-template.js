@@ -16,9 +16,7 @@ function isValidTemplate(template){
     'getCompiledTemplate',
     'compile',
     'render'
-  ].every(function(method){
-    return template[method];
-  });
+  ].every((method) => template[method]);
 }
 
 

@@ -34,10 +34,10 @@ module.exports = function(dependencies){
 
       logger.warn(strings.messages.cli.ENTER_USERNAME);
 
-      read({}, function(err, username){
+      read({}, (err, username) => {
         logger.warn(strings.messages.cli.ENTER_PASSWORD);
 
-        read({ silent: true }, function(err, password){
+        read({ silent: true }, (err, password) => {
           cb(null, { username: username, password: password});
         });
       });
@@ -48,12 +48,12 @@ module.exports = function(dependencies){
       const packageOptions = {
         componentPath: path.resolve(componentPath)
       };
-      local.package(packageOptions, function(err, component){
+      local.package(packageOptions, (err, component) => {
         if(err){ return cb(err); }
 
         logger.warn(format(strings.messages.cli.COMPRESSING, compressedPackagePath));
 
-        local.compress(packageDir, compressedPackagePath, function(err){
+        local.compress(packageDir, compressedPackagePath, (err) => {
           if(err){ return cb(err); }
           cb(null, component);
         });
@@ -63,7 +63,7 @@ module.exports = function(dependencies){
     const putComponentToRegistry = function(options, cb){
       logger.warn(format(strings.messages.cli.PUBLISHING, options.route));
 
-      registry.putComponent(options, function(err){
+      registry.putComponent(options, (err) => {
 
         if(err){
           if(err === 'Unauthorized'){
@@ -74,7 +74,7 @@ module.exports = function(dependencies){
 
             logger.warn(strings.messages.cli.REGISTRY_CREDENTIALS_REQUIRED);
 
-            return getCredentials(function(err, credentials){
+            return getCredentials((err, credentials) => {
               putComponentToRegistry(_.extend(options, credentials), cb);
             });
 
@@ -103,27 +103,27 @@ module.exports = function(dependencies){
       });
     };
 
-    registry.get(function(err, registryLocations){
+    registry.get((err, registryLocations) => {
       if(err){
         logger.err(err);
         return callback(err);
       }
 
-      packageAndCompress(function(err, component){
+      packageAndCompress((err, component) => {
         if(err){
           errorMessage = format(strings.errors.cli.PACKAGE_CREATION_FAIL, err);
           logger.err(errorMessage);
           return callback(errorMessage);
         }
 
-        async.eachSeries(registryLocations, function(registryUrl, next){
+        async.eachSeries(registryLocations, (registryUrl, next) => {
           const registryLength = registryUrl.length,
             registryNormalised = registryUrl.slice(registryLength - 1) === '/' ? registryUrl.slice(0, registryLength - 1) : registryUrl,
             componentRoute = format('{0}/{1}/{2}', registryNormalised, component.name, component.version);
 
           putComponentToRegistry({ route: componentRoute, path: compressedPackagePath}, next);
-        }, function(err){
-          local.cleanup(compressedPackagePath, function(err2, res){
+        }, (err) => {
+          local.cleanup(compressedPackagePath, (err2, res) => {
             if(err){ return callback(err); }
             callback(err2, res);
           });

@@ -40,14 +40,14 @@ module.exports = function(repository){
       });
     }
 
-    extractPackage(req.files, function(err, pkgDetails){
+    extractPackage(req.files, (err, pkgDetails) => {
 
       if(err){
         res.errorDetails = format('Package is not valid: {0}', err);
         return res.status(500).json({ error: 'package is not valid', details: err });
       }
 
-      repository.publishComponent(pkgDetails, req.params.componentName, req.params.componentVersion, function(err){
+      repository.publishComponent(pkgDetails, req.params.componentName, req.params.componentVersion, (err) => {
 
         if(err){
           if(err.code === 'not_allowed'){

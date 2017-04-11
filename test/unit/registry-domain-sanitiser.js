@@ -2,17 +2,17 @@
 
 const expect = require('chai').expect;
 
-describe('registry : domain : sanitiser', function(){
+describe('registry : domain : sanitiser', () => {
 
   const sanitiser = require('../../src/registry/domain/sanitiser');
 
-  describe('when sanitising component\'s request parameters', function(){
+  describe('when sanitising component\'s request parameters', () => {
 
     const sanitise = function(a,b){ return sanitiser.sanitiseComponentParameters(a,b); };
 
-    describe('when component has boolean parameter', function(){
+    describe('when component has boolean parameter', () => {
 
-      it('should convert string to boolean when true', function(){
+      it('should convert string to boolean when true', () => {
 
         const componentParameters = {
           isTrue: {
@@ -28,7 +28,7 @@ describe('registry : domain : sanitiser', function(){
         expect(sanitisedParameters).to.eql({ isTrue: true });
       });
 
-      it('should convert string to boolean when true', function(){
+      it('should convert string to boolean when true', () => {
 
         const componentParameters = {
           isTrue: {
@@ -45,9 +45,9 @@ describe('registry : domain : sanitiser', function(){
       });
     });
 
-    describe('when component has string parameter', function(){
+    describe('when component has string parameter', () => {
 
-      it('should convert null to empty', function(){
+      it('should convert null to empty', () => {
 
         const componentParameters = {
           myString: {
@@ -64,9 +64,9 @@ describe('registry : domain : sanitiser', function(){
       });
     });
 
-    describe('when component has number parameter', function(){
+    describe('when component has number parameter', () => {
 
-      it('should convert string to number', function(){
+      it('should convert string to number', () => {
 
         const componentParameters = {
           age: {
@@ -83,9 +83,9 @@ describe('registry : domain : sanitiser', function(){
       });
     });
 
-    describe('when component have not defined optional parameter', function(){
+    describe('when component have not defined optional parameter', () => {
 
-      it('should keep the parameter as it is', function(){
+      it('should keep the parameter as it is', () => {
 
         const componentParameters = {},
           requestParameters = { age: 123 },

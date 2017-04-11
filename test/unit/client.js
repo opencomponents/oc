@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
 
-describe('client', function(){
+describe('client', () => {
 
   let validatorStub,
     Client,
@@ -18,14 +18,14 @@ describe('client', function(){
     }, { __dirname: '/something/', console: console });
   };
 
-  describe('when not correctly initialised', function(){
-    before(function(){
+  describe('when not correctly initialised', () => {
+    before(() => {
       initialise();
       validatorStub.returns({ isValid: false, error: 'argh!' });
       init = function(){ Client(); };
     });
 
-    it('should throw an exception', function(){
+    it('should throw an exception', () => {
       expect(init).to.throw('argh!');
     });
   });

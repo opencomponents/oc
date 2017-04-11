@@ -42,7 +42,7 @@ module.exports = function(input){
   }
 
   options.customHeadersToSkipOnWeakVersion = (options.customHeadersToSkipOnWeakVersion || [])
-    .map(function(s) { return s.toLowerCase(); });
+    .map((s) => s.toLowerCase());
 
   options.port = process.env.PORT || options.port;
 

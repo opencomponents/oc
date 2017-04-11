@@ -12,7 +12,7 @@ module.exports = function(dependencies){
 
     callback = wrapCliCallback(callback);
 
-    registry.add(opts.registryUrl, function(err){
+    registry.add(opts.registryUrl, (err) => {
       if(err){
         logger.err(err);
         return callback(err);

@@ -6,7 +6,7 @@ module.exports = function(componentRequirements, registryPlugins){
   const result = { isValid: true },
     missing = [];
 
-  _.forEach(componentRequirements || [], function(requiredPlugin){
+  _.forEach(componentRequirements || [], (requiredPlugin) => {
     if(!registryPlugins || _.isEmpty(registryPlugins) || !_.contains(_.keys(registryPlugins), requiredPlugin)){
       missing.push(requiredPlugin);
     }

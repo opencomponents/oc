@@ -29,16 +29,16 @@ const initialise = function(fs, uglifyStub){
   });
 };
 
-describe('cli : domain : package-template', function(){
+describe('cli : domain : package-template', () => {
 
-  describe('when packaging component\'s template', function(){
+  describe('when packaging component\'s template', () => {
 
-    describe('when component is not valid', function(){
+    describe('when component is not valid', () => {
 
-      describe('when component view is not found', function(){
+      describe('when component view is not found', () => {
 
         let error;
-        before(function(done){
+        before((done) => {
 
           initialise({
             existsSync: sinon.stub().returns(false)
@@ -55,21 +55,21 @@ describe('cli : domain : package-template', function(){
               }
             },
             publishPath: '/path/to/component/_package/'
-          }, function(e){
+          }, (e) => {
             error = e;
             done();
           });
         });
 
-        it('should show error', function(){
+        it('should show error', () => {
           expect(error).to.equal('file template.jade not found');
         });
       });
 
-      describe('when component view type is not valid', function(){
+      describe('when component view type is not valid', () => {
 
         let error;
-        before(function(done){
+        before((done) => {
 
           initialise();
 
@@ -84,21 +84,21 @@ describe('cli : domain : package-template', function(){
               }
             },
             publishPath: '/path/to/component/_package/'
-          }, function(e){
+          }, (e) => {
             error = e;
             done();
           });
         });
 
-        it('should show error', function(){
+        it('should show error', () => {
           expect(error).to.equal('template.wha compilation failed - Error requiring oc-template: "whazaaa" not found');
         });
       });
     });
 
-    describe('when component is valid', function(){
+    describe('when component is valid', () => {
 
-      before(function(done){
+      before((done) => {
 
         initialise({
           readFileSync: sinon.stub().returns('div this is a jade view')
@@ -118,7 +118,7 @@ describe('cli : domain : package-template', function(){
         }, done);
       });
 
-      it('should save compiled view', function(){
+      it('should save compiled view', () => {
         expect(fsMock.writeFile.args[0][1]).to.contain('<div>this is a jade view</div>');
       });
     });

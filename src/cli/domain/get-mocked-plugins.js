@@ -9,7 +9,7 @@ const settings = require('../../resources/settings');
 const strings = require('../../resources/');
 
 const registerStaticMocks = function(mocks, logger){
-  return _.map(mocks, function(mockedValue, pluginName){
+  return _.map(mocks, (mockedValue, pluginName) => {
     logger.log(colors.green('├── ' + pluginName + ' () => ' + mockedValue));
     return {
       name: pluginName,
@@ -26,7 +26,7 @@ const registerStaticMocks = function(mocks, logger){
 };
 
 const registerDynamicMocks = function(ocJsonLocation, mocks, logger){
-  return _.map(mocks, function(source, pluginName){
+  return _.map(mocks, (source, pluginName) => {
 
     let p;
     try {
@@ -51,7 +51,7 @@ const registerDynamicMocks = function(ocJsonLocation, mocks, logger){
         execute: p
       }
     };
-  }).filter(function(p){ return p; });
+  }).filter((p) => p);
 };
 
 const findPath = function(pathToResolve, fileName) {

@@ -55,7 +55,7 @@ const build = {
     if (_.keys(parameters).length > 0) {
       qs += '?';
 
-      _.forEach(parameters, function (parameter, key) {
+      _.forEach(parameters, (parameter, key) => {
         qs += key + '=' + encodeURIComponent(parameter) + '&';
       });
 

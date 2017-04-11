@@ -6,7 +6,7 @@ module.exports = function(url, callback){
   request({
     url: url,
     headers: { accept: 'text/html' }
-  }, function(err, body, details){
+  }, (err, body, details) => {
 
     const isHtml = function(){
       return details.response.headers['content-type'].indexOf('text/html') >= 0;

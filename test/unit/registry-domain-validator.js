@@ -3,7 +3,7 @@
 const expect = require('chai').expect;
 const injectr = require('injectr');
 
-describe('registry : domain : validator', function(){
+describe('registry : domain : validator', () => {
 
   const validator = require('../../src/registry/domain/validators'),
     baseS3Conf = {
@@ -13,88 +13,88 @@ describe('registry : domain : validator', function(){
       secret: 's3-secret'
     };
 
-  describe('when validating registry configuration', function(){
+  describe('when validating registry configuration', () => {
 
     const validate = function(a){ return validator.validateRegistryConfiguration(a); };
 
-    describe('when configuration null', function(){
+    describe('when configuration null', () => {
 
       const conf = null;
 
-      it('should not be valid', function(){
+      it('should not be valid', () => {
         expect(validate(conf).isValid).to.be.false;
         expect(validate(conf).message).to.equal('Registry configuration is empty');
       });
     });
 
-    describe('when configuration empty', function(){
+    describe('when configuration empty', () => {
 
       const conf = {};
 
-      it('should not be valid', function(){
+      it('should not be valid', () => {
         expect(validate(conf).isValid).to.be.false;
         expect(validate(conf).message).to.equal('Registry configuration is empty');
       });
     });
 
-    describe('prefix', function(){
-      describe('when prefix does not start with /', function(){
+    describe('prefix', () => {
+      describe('when prefix does not start with /', () => {
 
         const conf = { prefix: 'hello/', s3: baseS3Conf };
 
-        it('should not be valid', function(){
+        it('should not be valid', () => {
           expect(validate(conf).isValid).to.be.false;
           expect(validate(conf).message).to.equal('Registry configuration is not valid: prefix should start with "/"');
         });
       });
 
-      describe('when prefix does not end with /', function(){
+      describe('when prefix does not end with /', () => {
 
         const conf = { prefix: '/hello', s3: baseS3Conf };
 
-        it('should not be valid', function(){
+        it('should not be valid', () => {
           expect(validate(conf).isValid).to.be.false;
           expect(validate(conf).message).to.equal('Registry configuration is not valid: prefix should end with "/"');
         });
       });
     });
 
-    describe('publishAuth', function(){
-      describe('when not specified', function(){
+    describe('publishAuth', () => {
+      describe('when not specified', () => {
 
         const conf = { publishAuth: null, s3: baseS3Conf };
 
-        it('should be valid', function(){
+        it('should be valid', () => {
           expect(validate(conf).isValid).to.be.true;
         });
       });
 
-      describe('when specified and not supported', function(){
+      describe('when specified and not supported', () => {
 
         const conf = { publishAuth: { type: 'blarg' }, s3: baseS3Conf};
 
-        it('should not be valid', function(){
+        it('should not be valid', () => {
           expect(validate(conf).isValid).to.be.false;
           expect(validate(conf).message).to.equal('Registry configuration is not valid: module "oc-auth-blarg" not found');
         });
       });
 
-      describe('when specified and basic', function(){
+      describe('when specified and basic', () => {
 
-        describe('when username and password specified', function(){
+        describe('when username and password specified', () => {
 
           const conf = { publishAuth: { type: 'basic', username: 'a', password: 'b' }, s3: baseS3Conf};
 
-          it('should be valid', function(){
+          it('should be valid', () => {
             expect(validate(conf).isValid).to.be.true;
           });
         });
 
-        describe('when username and password not specified', function(){
+        describe('when username and password not specified', () => {
 
           const conf = { publishAuth: { type: 'basic', a: '' }, s3: baseS3Conf};
 
-          it('should not be valid', function(){
+          it('should not be valid', () => {
             expect(validate(conf).isValid).to.be.false;
             expect(validate(conf).message).to.equal('Registry configuration is not valid: basic auth requires username and password');
           });
@@ -102,32 +102,32 @@ describe('registry : domain : validator', function(){
       });
     });
 
-    describe('dependencies', function(){
-      describe('when not specified', function(){
+    describe('dependencies', () => {
+      describe('when not specified', () => {
 
         const conf = { dependencies: null, s3: baseS3Conf };
 
-        it('should be valid', function(){
+        it('should be valid', () => {
           expect(validate(conf).isValid).to.be.true;
         });
       });
 
-      describe('when specified', function(){
+      describe('when specified', () => {
 
-        describe('when it is an array', function(){
+        describe('when it is an array', () => {
 
           const conf = { dependencies: ['hello'], s3: baseS3Conf};
 
-          it('should be valid', function(){
+          it('should be valid', () => {
             expect(validate(conf).isValid).to.be.true;
           });
         });
 
-        describe('when it is not an array', function(){
+        describe('when it is not an array', () => {
 
           const conf = { dependencies: { hello: 'world' }, s3: baseS3Conf};
 
-          it('should not be valid', function(){
+          it('should not be valid', () => {
             expect(validate(conf).isValid).to.be.false;
             expect(validate(conf).message).to.equal('Registry configuration is not valid: dependencies must be an array');
           });
@@ -135,74 +135,74 @@ describe('registry : domain : validator', function(){
       });
     });
 
-    describe('s3', function(){
-      describe('when local=true', function(){
+    describe('s3', () => {
+      describe('when local=true', () => {
 
         const conf = { local: true };
 
-        it('should be valid', function(){
+        it('should be valid', () => {
           expect(validate(conf).isValid).to.be.true;
         });
       });
 
-      describe('when not in local mode', function(){
+      describe('when not in local mode', () => {
 
         const errorMessage = 'Registry configuration is not valid: S3 configuration is not valid';
 
-        describe('when s3 settings empty', function(){
+        describe('when s3 settings empty', () => {
           const conf = { publishAuth: false, s3: {}};
 
-          it('should not be valid', function(){
+          it('should not be valid', () => {
             expect(validate(conf).isValid).to.be.false;
             expect(validate(conf).message).to.equal(errorMessage);
           });
         });
 
-        describe('when s3 setting is missing bucket', function(){
+        describe('when s3 setting is missing bucket', () => {
           const conf = { publishAuth: false, s3: {
             key: 's3-key', region: 'us-west2', secret: 's3-secret'
           }};
 
-          it('should not be valid', function(){
+          it('should not be valid', () => {
             expect(validate(conf).isValid).to.be.false;
             expect(validate(conf).message).to.equal(errorMessage);
           });
         });
 
-        describe('when s3 setting is missing key', function(){
+        describe('when s3 setting is missing key', () => {
           const conf = { publishAuth: false, s3: {
             bucket: 'oc-registry', region: 'us-west2', secret: 's3-secret'
           }};
 
-          it('should not be valid', function(){
+          it('should not be valid', () => {
             expect(validate(conf).isValid).to.be.false;
             expect(validate(conf).message).to.equal(errorMessage);
           });
         });
 
-        describe('when s3 setting is missing region', function(){
+        describe('when s3 setting is missing region', () => {
           const conf = { publishAuth: false, s3: {
             bucket: 'oc-registry', key: 's3-key', secret: 's3-secret'
           }};
 
-          it('should not be valid', function(){
+          it('should not be valid', () => {
             expect(validate(conf).isValid).to.be.false;
             expect(validate(conf).message).to.equal(errorMessage);
           });
         });
 
-        describe('when s3 setting is missing secret', function(){
+        describe('when s3 setting is missing secret', () => {
           const conf = { publishAuth: false, s3: {
             bucket: 'oc-registry', key: 's3-key', region: 'us-west2'
           }};
 
-          it('should not be valid', function(){
+          it('should not be valid', () => {
             expect(validate(conf).isValid).to.be.false;
             expect(validate(conf).message).to.equal(errorMessage);
           });
         });
 
-        describe('when s3 setting do not use key/secret - EC2 IAM Role use case', function() {
+        describe('when s3 setting do not use key/secret - EC2 IAM Role use case', () => {
           const conf = {
             publishAuth: false,
             s3: {
@@ -211,84 +211,84 @@ describe('registry : domain : validator', function(){
             }
           };
 
-          it('should be valid', function() {
+          it('should be valid', () => {
             expect(validate(conf).isValid).to.be.true;
           });
         });
 
-        describe('when s3 setting contains all properties', function(){
+        describe('when s3 setting contains all properties', () => {
           const conf = { publishAuth: false, s3: baseS3Conf};
 
-          it('should be valid', function(){
+          it('should be valid', () => {
             expect(validate(conf).isValid).to.be.true;
           });
         });
       });
     });
 
-    describe('routes', function(){
-      describe('when not specified', function(){
+    describe('routes', () => {
+      describe('when not specified', () => {
 
         const conf = { routes: null, s3: baseS3Conf };
 
-        it('should be valid', function(){
+        it('should be valid', () => {
           expect(validate(conf).isValid).to.be.true;
         });
       });
 
-      describe('when specified', function(){
+      describe('when specified', () => {
 
-        describe('when not an array', function(){
+        describe('when not an array', () => {
 
           const conf = { routes: {thisis: 'anobject', s3: baseS3Conf }};
 
-          it('should not be valid', function(){
+          it('should not be valid', () => {
             expect(validate(conf).isValid).to.be.false;
             expect(validate(conf).message).to.be.eql('Registry configuration is not valid: routes must be an array');
           });
         });
 
-        describe('when route does not contain route', function(){
+        describe('when route does not contain route', () => {
 
           const conf = { routes: [{ method: 'get', handler: function(){}}], s3: baseS3Conf};
 
-          it('should not be valid', function(){
+          it('should not be valid', () => {
             expect(validate(conf).isValid).to.be.false;
             expect(validate(conf).message).to.be.eql('Registry configuration is not valid: each route should contain route, method and handler');
           });
         });
 
-        describe('when route does not contain handler', function(){
+        describe('when route does not contain handler', () => {
 
           const conf = { routes: [{ method: 'get', route: '/hello'}], s3: baseS3Conf};
 
-          it('should not be valid', function(){
+          it('should not be valid', () => {
             expect(validate(conf).isValid).to.be.false;
             expect(validate(conf).message).to.be.eql('Registry configuration is not valid: each route should contain route, method and handler');
           });
         });
 
-        describe('when route does not contain method', function(){
+        describe('when route does not contain method', () => {
 
           const conf = { routes: [{ route: '/hello', handler: function(){}}], s3: baseS3Conf};
 
-          it('should not be valid', function(){
+          it('should not be valid', () => {
             expect(validate(conf).isValid).to.be.false;
             expect(validate(conf).message).to.be.eql('Registry configuration is not valid: each route should contain route, method and handler');
           });
         });
 
-        describe('when route contains handler that is not a function', function(){
+        describe('when route contains handler that is not a function', () => {
 
           const conf = { routes: [{ route: '/hello', method: 'get', handler: 'hello' }], s3: baseS3Conf};
 
-          it('should not be valid', function(){
+          it('should not be valid', () => {
             expect(validate(conf).isValid).to.be.false;
             expect(validate(conf).message).to.be.eql('Registry configuration is not valid: handler should be a function');
           });
         });
 
-        describe('when route overrides prefix namespace', function(){
+        describe('when route overrides prefix namespace', () => {
 
           const conf = {
             prefix: '/components/',
@@ -300,7 +300,7 @@ describe('registry : domain : validator', function(){
             }]
           };
 
-          it('should not be valid', function(){
+          it('should not be valid', () => {
             expect(validate(conf).isValid).to.be.false;
             expect(validate(conf).message).to.be.eql('Registry configuration is not valid: route url can\'t contain "/components/"');
           });
@@ -308,61 +308,61 @@ describe('registry : domain : validator', function(){
       });
     });
 
-    describe('customHeadersToSkipOnWeakVersion', function() {
-      describe('when customHeadersToSkipOnWeakVersion is not an array', function() {
+    describe('customHeadersToSkipOnWeakVersion', () => {
+      describe('when customHeadersToSkipOnWeakVersion is not an array', () => {
         const conf = {
           customHeadersToSkipOnWeakVersion: 'test',
           publishAuth: false,
           s3: baseS3Conf
         };
 
-        it('should not be valid', function() {
+        it('should not be valid', () => {
           expect(validate(conf).isValid).to.be.false;
           expect(validate(conf).message).to.equal('Registry configuration is not valid: customHeadersToSkipOnWeakVersion must be an array of strings');
         });
       });
 
-      describe('when customHeadersToSkipOnWeakVersion is an array but contains non-string elements', function() {
+      describe('when customHeadersToSkipOnWeakVersion is an array but contains non-string elements', () => {
         const conf = {
           customHeadersToSkipOnWeakVersion: ['header1', 'header2', 3, 4],
           publishAuth: false,
           s3: baseS3Conf
         };
 
-        it('should not be valid', function() {
+        it('should not be valid', () => {
           expect(validate(conf).isValid).to.be.false;
           expect(validate(conf).message).to.equal('Registry configuration is not valid: customHeadersToSkipOnWeakVersion must be an array of strings');
         });
       });
 
-      describe('when customHeadersToSkipOnWeakVersion is a non-empty array of strings', function() {
+      describe('when customHeadersToSkipOnWeakVersion is a non-empty array of strings', () => {
         const conf = {
           customHeadersToSkipOnWeakVersion: ['header1', 'header2', 'header3'],
           publishAuth: false,
           s3: baseS3Conf
         };
 
-        it('should be valid', function() {
+        it('should be valid', () => {
           expect(validate(conf).isValid).to.be.true;
         });
       });
     });
   });
 
-  describe('when validating component request by parameter', function(){
+  describe('when validating component request by parameter', () => {
 
     const validate = function(a,b){ return validator.validateComponentParameters(a,b); };
 
-    describe('when component have not parameters', function(){
+    describe('when component have not parameters', () => {
       const componentParameters = {},
         requestParameters = { hello: 'world' };
 
-      it('should be valid', function(){
+      it('should be valid', () => {
         expect(validate(requestParameters, componentParameters).isValid).to.be.true;
       });
     });
 
-    describe('when component have not mandatory parameters', function(){
+    describe('when component have not mandatory parameters', () => {
       const componentParameters = {
         name: {
           type: 'string',
@@ -371,18 +371,18 @@ describe('registry : domain : validator', function(){
         }
       };
 
-      it('should be valid when non mandatory parameters not provided', function(){
+      it('should be valid when non mandatory parameters not provided', () => {
         const requestParameters = { hello: 'world'};
         expect(validate(requestParameters, componentParameters).isValid).to.be.true;
       });
 
-      it('should be valid when non mandatory parameters provided in a valid format', function(done){
+      it('should be valid when non mandatory parameters provided in a valid format', (done) => {
         const requestParameters = { name: 'Walter White' };
         expect(validate(requestParameters, componentParameters).isValid).to.be.true;
         done();
       });
 
-      it('should be not valid when non mandatory parameters provided in a non valid format', function(){
+      it('should be not valid when non mandatory parameters provided in a non valid format', () => {
         const requestParameters = { name: 12345 };
 
         const validateResult = validate(requestParameters, componentParameters);
@@ -394,9 +394,9 @@ describe('registry : domain : validator', function(){
       });
     });
 
-    describe('when component have mandatory parameters', function(){
+    describe('when component have mandatory parameters', () => {
 
-      it('should not be valid when mandatory parameter not provided', function(){
+      it('should not be valid when mandatory parameter not provided', () => {
 
         const componentParameters = {
           returnUrl: {
@@ -415,7 +415,7 @@ describe('registry : domain : validator', function(){
         expect(validateResult.errors.message).to.equal('Expected mandatory parameters are missing: returnUrl');
       });
 
-      describe('when mandatory string parameter provided', function(){
+      describe('when mandatory string parameter provided', () => {
 
         const componentParameters = {
           name: {
@@ -425,13 +425,13 @@ describe('registry : domain : validator', function(){
           }
         };
 
-        it('should be valid when parameter in a valid form', function(){
+        it('should be valid when parameter in a valid form', () => {
           const requestParameters = { name: 'John Doe' };
 
           expect(validate(requestParameters, componentParameters).isValid).to.be.true;
         });
 
-        it('should not be valid when parameter in a non valid form', function(){
+        it('should not be valid when parameter in a non valid form', () => {
           const requestParameters = { name: 12345 };
 
           const validateResult = validate(requestParameters, componentParameters);
@@ -442,7 +442,7 @@ describe('registry : domain : validator', function(){
           expect(validateResult.errors.message).to.equal('Parameters are not correctly formatted: name');
         });
 
-        it('should be valid when parameter is an empty string', function(){
+        it('should be valid when parameter is an empty string', () => {
           const requestParameters = { name: '' };
 
           const validateResult = validate(requestParameters, componentParameters);
@@ -450,7 +450,7 @@ describe('registry : domain : validator', function(){
           expect(validateResult.isValid).to.be.true;
         });
 
-        describe('when non mandatory number provided', function(){
+        describe('when non mandatory number provided', () => {
 
           const componentParameters = {
             name: {
@@ -473,7 +473,7 @@ describe('registry : domain : validator', function(){
             }
           };
 
-          it('should not be valid when provided in a non valid form', function(){
+          it('should not be valid when provided in a non valid form', () => {
             const requestParameters = { age: 'This is not a number' };
             const validateResult = validate(requestParameters, componentParameters);
 
@@ -484,7 +484,7 @@ describe('registry : domain : validator', function(){
             expect(validateResult.errors.message).to.equal('Expected mandatory parameters are missing: name; Parameters are not correctly formatted: age');
           });
 
-          it('should be valid when 0', function(){
+          it('should be valid when 0', () => {
             const requestParameters = { zero: 0 };
             const validateResult = validate(requestParameters, validComponentParameters);
 
@@ -492,7 +492,7 @@ describe('registry : domain : validator', function(){
           });
         });
 
-        describe('when non mandatory boolean provided', function(){
+        describe('when non mandatory boolean provided', () => {
 
           const componentParameters = {
             name: {
@@ -507,7 +507,7 @@ describe('registry : domain : validator', function(){
             }
           };
 
-          it('should not be valid when provided in a non valid form', function(){
+          it('should not be valid when provided in a non valid form', () => {
             const requestParameters = { isTrue: 1234 };
 
             const validateResult = validate(requestParameters, componentParameters);
@@ -522,7 +522,7 @@ describe('registry : domain : validator', function(){
         });
       });
 
-      describe('when mandatory number parameter provided', function(){
+      describe('when mandatory number parameter provided', () => {
 
         const componentParameters = {
           age: {
@@ -532,13 +532,13 @@ describe('registry : domain : validator', function(){
           }
         };
 
-        it('should be valid when parameter in a valid form', function(){
+        it('should be valid when parameter in a valid form', () => {
           const requestParameters = { age: 18 };
 
           expect(validate(requestParameters, componentParameters).isValid).to.be.true;
         });
 
-        it('should not be valid when parameter in a non valid form', function(){
+        it('should not be valid when parameter in a non valid form', () => {
           const requestParameters = { age: 'this is a string' };
 
           const validateResult = validate(requestParameters, componentParameters);
@@ -549,7 +549,7 @@ describe('registry : domain : validator', function(){
           expect(validateResult.errors.message).to.equal('Parameters are not correctly formatted: age');
         });
 
-        it('should not be valid when parameter is null', function(){
+        it('should not be valid when parameter is null', () => {
           const requestParameters = { age: null };
 
           const validateResult = validate(requestParameters, componentParameters);
@@ -561,7 +561,7 @@ describe('registry : domain : validator', function(){
         });
       });
 
-      describe('when mandatory boolean parameter provided', function(){
+      describe('when mandatory boolean parameter provided', () => {
 
         const componentParameters = {
           happy: {
@@ -571,13 +571,13 @@ describe('registry : domain : validator', function(){
           }
         };
 
-        it('should be valid when parameter in a valid form', function(){
+        it('should be valid when parameter in a valid form', () => {
           const requestParameters = { happy: false };
 
           expect(validate(requestParameters, componentParameters).isValid).to.be.true;
         });
 
-        it('should not be valid when parameter in a non valid form', function(){
+        it('should not be valid when parameter in a non valid form', () => {
           const requestParameters = { happy: 'this is a string' };
 
           const validateResult = validate(requestParameters, componentParameters);
@@ -588,7 +588,7 @@ describe('registry : domain : validator', function(){
           expect(validateResult.errors.message).to.equal('Parameters are not correctly formatted: happy');
         });
 
-        it('should not be valid when parameter is null', function(){
+        it('should not be valid when parameter is null', () => {
           const requestParameters = { happy: null };
 
           const validateResult = validate(requestParameters, componentParameters);
@@ -599,7 +599,7 @@ describe('registry : domain : validator', function(){
           expect(validateResult.errors.message).to.equal('Parameters are not correctly formatted: happy');
         });
 
-        it('should not be valid when parameter is undefined', function(){
+        it('should not be valid when parameter is undefined', () => {
           const requestParameters = { happy: undefined };
 
           const validateResult = validate(requestParameters, componentParameters);
@@ -610,7 +610,7 @@ describe('registry : domain : validator', function(){
           expect(validateResult.errors.message).to.equal('Parameters are not correctly formatted: happy');
         });
 
-        it('should not be valid when parameter not provided', function(){
+        it('should not be valid when parameter not provided', () => {
           const requestParameters = {};
 
           const validateResult = validate(requestParameters, componentParameters);
@@ -624,105 +624,105 @@ describe('registry : domain : validator', function(){
     });
   });
 
-  describe('when validating component name for new candidate', function(){
+  describe('when validating component name for new candidate', () => {
 
     const validate = function(a){ return validator.validateComponentName(a); };
 
-    describe('when name has spaces', function(){
+    describe('when name has spaces', () => {
 
       const name = 'hello ha';
-      it('should not be valid', function(){
+      it('should not be valid', () => {
         expect(validate(name)).to.be.false;
       });
     });
 
-    describe('when name has not allowed characters', function(){
+    describe('when name has not allowed characters', () => {
 
       const name = 'name@ha';
-      it('should not be valid', function(){
+      it('should not be valid', () => {
         expect(validate(name)).to.be.false;
       });
     });
 
-    describe('when name has alphanumeric characters, _ or -', function(){
+    describe('when name has alphanumeric characters, _ or -', () => {
 
       const name = 'hello-world_haha23';
-      it('should be valid', function(){
+      it('should be valid', () => {
         expect(validate(name)).to.be.true;
       });
     });
 
-    describe('when name is reserved', function(){
+    describe('when name is reserved', () => {
 
       const name = '_package';
-      it('should not be valid', function(){
+      it('should not be valid', () => {
         expect(validate(name)).to.be.false;
       });
     });
 
   });
 
-  describe('when validating template type for new candidate', function(){
+  describe('when validating template type for new candidate', () => {
     const validate = function(a){ return validator.validateTemplateType(a); };
 
-    describe('when type is not handlebars or jade', function(){
+    describe('when type is not handlebars or jade', () => {
 
       const type = 'othertype';
-      it('should not be valid', function(){
+      it('should not be valid', () => {
         expect(validate(type)).to.be.false;
       });
     });
 
-    describe('when type is handlebars', function(){
+    describe('when type is handlebars', () => {
 
       const type = 'handlebars';
-      it('should be valid', function(){
+      it('should be valid', () => {
         expect(validate(type)).to.be.true;
       });
     });
 
-    describe('when type is jade', function(){
+    describe('when type is jade', () => {
 
       const type = 'jade';
-      it('should be valid', function(){
+      it('should be valid', () => {
         expect(validate(type)).to.be.true;
       });
     });
   });
 
-  describe('when validating component version for new candidate', function(){
+  describe('when validating component version for new candidate', () => {
 
     const existingVersions = ['1.0.0', '1.0.1', '2.0.0', '2.1.0'],
       isValid = function(a,b){ return validator.validateVersion(a, b); };
 
-    describe('when version already exists', function(){
-      it('should not be valid', function(){
+    describe('when version already exists', () => {
+      it('should not be valid', () => {
         expect(isValid('this.is.not.valid', existingVersions)).not.to.be.true;
       });
     });
 
-    describe('when version does not exist', function(){
-      it('should be valid', function(){
+    describe('when version does not exist', () => {
+      it('should be valid', () => {
         expect(isValid('1.2.33', existingVersions)).to.be.true;
       });
     });
   });
 
-  describe('when validating component package for new candidate', function(){
+  describe('when validating component package for new candidate', () => {
 
     const validate = function(a, b){ return validator.validatePackage(a, b || {}); };
 
-    describe('when package not valid', function(){
+    describe('when package not valid', () => {
 
-      it('should not be valid when uploaded files is empty', function(){
+      it('should not be valid when uploaded files is empty', () => {
         expect(validate({}).isValid).to.be.false;
       });
 
-      it('should not be valid when uploaded package consists of multiple files', function(){
+      it('should not be valid when uploaded package consists of multiple files', () => {
         expect(validate({ afile: {}, anotherFile: {}}).isValid).to.be.false;
       });
 
-      it('should not be valid when file has not the proper file extension', function(){
+      it('should not be valid when file has not the proper file extension', () => {
         expect(validate({ theFile: {
           fieldname: 'file.jpg',
           originalname: 'file.jpg',
@@ -736,7 +736,7 @@ describe('registry : domain : validator', function(){
         }}).isValid).to.be.false;
       });
 
-      it('should not be valid when file has been truncated', function(){
+      it('should not be valid when file has been truncated', () => {
         expect(validate({ theFile: {
           fieldname: 'package.tar.gz',
           originalname: 'package.tar.gz',
@@ -751,7 +751,7 @@ describe('registry : domain : validator', function(){
       });
     });
 
-    describe('when custom validation provided', function(){
+    describe('when custom validation provided', () => {
 
       const validate = function(obj){ return validator.validatePackageJson(obj); };
 
@@ -760,9 +760,9 @@ describe('registry : domain : validator', function(){
         return isValid ? isValid : { isValid: false, error: 'author and repository are required' };
       };
 
-      describe('when package.json does not contain mandatory fields', function(){
+      describe('when package.json does not contain mandatory fields', () => {
         let result;
-        beforeEach(function(){
+        beforeEach(() => {
           result = validate({
             packageJson: { name: 'my-component'},
             componentName: 'my-component',
@@ -770,18 +770,18 @@ describe('registry : domain : validator', function(){
           });
         });
 
-        it('should not be valid', function(){
+        it('should not be valid', () => {
           expect(result.isValid).to.be.false;
         });
 
-        it('should return the error', function(){
+        it('should return the error', () => {
           expect(result.error).to.be.equal('author and repository are required');
         });
       });
 
-      describe('when package.json contains mandatory fields', function(){
+      describe('when package.json contains mandatory fields', () => {
         let result;
-        beforeEach(function(){
+        beforeEach(() => {
           result = validate({
             packageJson: { name: 'my-component', author: 'somebody', repository: 'https://github.com/somebody/my-component'},
             componentName: 'my-component',
@@ -789,13 +789,13 @@ describe('registry : domain : validator', function(){
           });
         });
 
-        it('should be valid', function(){
+        it('should be valid', () => {
           expect(result.isValid).to.be.true;
         });
       });
     });
 
-    describe('when package is valid', function(){
+    describe('when package is valid', () => {
       const _package = {
         fieldname: 'package.tar.gz',
         originalname: 'package.tar.gz',
@@ -808,60 +808,60 @@ describe('registry : domain : validator', function(){
         truncated: false
       };
 
-      it('should be valid', function(){
+      it('should be valid', () => {
         expect(validate({ theFile: _package }).isValid).to.be.true;
       });
     });
   });
 
-  describe('when validating component plugin requirements', function(){
+  describe('when validating component plugin requirements', () => {
 
     const validate = validator.validatePluginsRequirements;
 
-    describe('when component does not require any plugin', function(){
+    describe('when component does not require any plugin', () => {
 
       const requirements = null,
         supportedPlugins = {
           log: function(){}
         };
 
-      it('should be valid', function(){
+      it('should be valid', () => {
         expect(validate(requirements, supportedPlugins).isValid).to.be.true;
       });
     });
 
-    describe('when component requires plugin', function(){
+    describe('when component requires plugin', () => {
 
       const requirements = ['getToggle'];
-      describe('when registry does not support plugin', function(){
+      describe('when registry does not support plugin', () => {
         const supportedPlugins = {
           log: function(){}
         };
 
         const validationResult = validate(requirements, supportedPlugins);
 
-        it('should not be valid', function(){
+        it('should not be valid', () => {
           expect(validationResult.isValid).to.be.false;
         });
 
-        it('should list missing dependencies', function(){
+        it('should list missing dependencies', () => {
           expect(validationResult.missing).to.eql(['getToggle']);
         });
       });
 
-      describe('when registry supports plugin', function(){
+      describe('when registry supports plugin', () => {
         const supportedPlugins = {
           getToggle: function(){ return true; }
         };
 
-        it('should be valid', function(){
+        it('should be valid', () => {
           expect(validate(requirements, supportedPlugins).isValid).to.be.true;
         });
       });
     });
   });
 
-  describe('when validating CLI OC version in request headers', function(){
+  describe('when validating CLI OC version in request headers', () => {
     const validator = injectr('../../src/registry/domain/validators/index.js', {
       './oc-cli-version': injectr('../../src/registry/domain/validators/oc-cli-version.js', {
         '../../../../package.json': { version: '0.16.34'}
@@ -872,68 +872,68 @@ describe('registry : domain : validator', function(){
       return validator.validateOcCliVersion(userAgent);
     };
 
-    describe('when user-agent header is not specified', function(){
+    describe('when user-agent header is not specified', () => {
       const result = validate('value');
 
-      it('should be invalid', function(){
+      it('should be invalid', () => {
         expect(result.isValid).to.be.false;
       });
 
-      it('should suggest correct version of CLI', function(){
+      it('should suggest correct version of CLI', () => {
         expect(result.error.suggestedVersion).to.equal('0.16.X');
       });
     });
 
-    describe('when user-agent header doesn\'t have correct format', function(){
+    describe('when user-agent header doesn\'t have correct format', () => {
       const result = validate('oc-cli/1.2.3-v0.10.35-darwin-x64');
 
-      it('should be invalid', function(){
+      it('should be invalid', () => {
         expect(result.isValid).to.be.false;
       });
 
-      it('should suggest correct version of CLI', function(){
+      it('should suggest correct version of CLI', () => {
         expect(result.error.suggestedVersion).to.equal('0.16.X');
       });
     });
 
-    describe('when OC CLI version in user-agent header is lower than Registry version', function(){
+    describe('when OC CLI version in user-agent header is lower than Registry version', () => {
       const result = validate('oc-cli-0.2.3/v0.10.35-darwin-x64');
 
-      it('should be invalid', function(){
+      it('should be invalid', () => {
         expect(result.isValid).to.be.false;
       });
 
-      it('should suggest correct version of CLI', function(){
+      it('should suggest correct version of CLI', () => {
         expect(result.error.suggestedVersion).to.equal('0.16.X');
       });
     });
 
-    describe('when OC CLI version in user-agent header is equal to Registry version', function(){
+    describe('when OC CLI version in user-agent header is equal to Registry version', () => {
       const result = validate('oc-cli-0.16.34/v0.10.35-darwin-x64');
 
-      it('should be valid', function(){
+      it('should be valid', () => {
         expect(result.isValid).to.be.true;
       });
 
-      it('should not return an error', function(){
+      it('should not return an error', () => {
         expect(result.error).to.be.empty;
       });
     });
 
-    describe('when OC CLI version in user-agent header is higher than Registry version', function(){
+    describe('when OC CLI version in user-agent header is higher than Registry version', () => {
       const result = validate('oc-cli-0.16.35/v0.10.35-darwin-x64');
 
-      it('should be valid', function(){
+      it('should be valid', () => {
         expect(result.isValid).to.be.true;
       });
 
-      it('should not return an error', function(){
+      it('should not return an error', () => {
         expect(result.error).to.be.empty;
       });
     });
   });
 
-  describe('when validating node engine version in request headers', function(){
+  describe('when validating node engine version in request headers', () => {
     const validator = injectr('../../src/registry/domain/validators/index.js', {
       './node-version': injectr('../../src/registry/domain/validators/node-version.js', {
         '../../../../package.json': { engines: { node: '>=0.10.35' }}
@@ -944,62 +944,62 @@ describe('registry : domain : validator', function(){
       return validator.validateNodeVersion(userAgent, 'v0.10.36');
     };
 
-    describe('when user-agent header is not specified', function(){
+    describe('when user-agent header is not specified', () => {
       const result = validate('value');
 
-      it('should be invalid', function(){
+      it('should be invalid', () => {
         expect(result.isValid).to.be.false;
       });
 
-      it('should suggest correct version of node engine', function(){
+      it('should suggest correct version of node engine', () => {
         expect(result.error.suggestedVersion).to.equal('>=0.10.35');
       });
     });
 
-    describe('when user-agent header doesn\'t have correct format', function(){
+    describe('when user-agent header doesn\'t have correct format', () => {
       const result = validate('oc-cli/1.2.3-v0.10.35-darwin-x64');
 
-      it('should be invalid', function(){
+      it('should be invalid', () => {
         expect(result.isValid).to.be.false;
       });
 
-      it('should suggest correct version of node engine', function(){
+      it('should suggest correct version of node engine', () => {
         expect(result.error.suggestedVersion).to.equal('>=0.10.35');
       });
     });
 
-    describe('when node version in user-agent header is lower than Registry version of node', function(){
+    describe('when node version in user-agent header is lower than Registry version of node', () => {
       const result = validate('oc-cli-0.2.3/v0.10.34-darwin-x64');
 
-      it('should be invalid', function(){
+      it('should be invalid', () => {
         expect(result.isValid).to.be.false;
       });
 
-      it('should suggest correct version of node engine', function(){
+      it('should suggest correct version of node engine', () => {
         expect(result.error.suggestedVersion).to.equal('>=0.10.35');
       });
     });
 
-    describe('when node version in user-agent header is equal to Registry version of node', function(){
+    describe('when node version in user-agent header is equal to Registry version of node', () => {
       const result = validate('oc-cli-0.16.34/v0.10.35-darwin-x64');
 
-      it('should be valid', function(){
+      it('should be valid', () => {
         expect(result.isValid).to.be.true;
       });
 
-      it('should not return an error', function(){
+      it('should not return an error', () => {
         expect(result.error).to.be.empty;
       });
     });
 
-    describe('when node version in user-agent header is higher than Registry version of node', function(){
+    describe('when node version in user-agent header is higher than Registry version of node', () => {
       const result = validate('oc-cli-0.16.35/v0.10.36-darwin-x64');
 
-      it('should be valid', function(){
+      it('should be valid', () => {
         expect(result.isValid).to.be.true;
       });
 
-      it('should not return an error', function(){
+      it('should not return an error', () => {
         expect(result.error).to.be.empty;
       });
     });

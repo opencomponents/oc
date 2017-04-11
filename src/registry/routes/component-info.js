@@ -10,14 +10,12 @@ const urlBuilder = require('../domain/url-builder');
 function getParams(component) {
   let params = {};
   if(component.oc.parameters){
-    const mandatoryParams = _.filter(_.keys(component.oc.parameters), function(paramName){
+    const mandatoryParams = _.filter(_.keys(component.oc.parameters), (paramName) => {
       const param = component.oc.parameters[paramName];
       return !!param.mandatory && !!param.example;
     });
 
-    params = _.mapObject(_.pick(component.oc.parameters, mandatoryParams), function(param){
-      return param.example;
-    });
+    params = _.mapObject(_.pick(component.oc.parameters, mandatoryParams), (param) => param.example);
   }
 
   return params;
@@ -58,7 +56,7 @@ function componentInfo(err, req, res, component) {
 
     addGetRepositoryUrlFunction(component);
 
-    isUrlDiscoverable(href, function(err, result){
+    isUrlDiscoverable(href, (err, result) => {
       if(!result.isDiscoverable){
         href = '//' + req.headers.host + res.conf.prefix;
       }
@@ -81,9 +79,9 @@ function componentInfo(err, req, res, component) {
 
 module.exports = function(conf, repository){
   return function(req, res){
-    repository.getComponent(req.params.componentName, req.params.componentVersion, function(registryError, component){
+    repository.getComponent(req.params.componentName, req.params.componentVersion, (registryError, component) => {
       if(registryError && conf.fallbackRegistryUrl) {
-        return getComponentFallback.getComponentInfo(conf, req, res, registryError, function(fallbackError, fallbackComponent){
+        return getComponentFallback.getComponentInfo(conf, req, res, registryError, (fallbackError, fallbackComponent) => {
           componentInfo(fallbackError, req, res, fallbackComponent);
         });
       }
