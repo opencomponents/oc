@@ -40,7 +40,7 @@ module.exports = {
 
     const result = {};
 
-    _.forEach(requestParameters, function(requestParameter, requestParameterName){
+    _.forEach(requestParameters, (requestParameter, requestParameterName) => {
       if(_.has(expectedParameters, requestParameterName)){
 
         const expectedType = expectedParameters[requestParameterName].type,

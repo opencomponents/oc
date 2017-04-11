@@ -18,7 +18,7 @@ function getComponentFallbackForViewType(buildUrl, conf, req, res, registryError
       'host': url.parse(conf.fallbackRegistryUrl).host,
       'accept': 'application/json'
     })
-  }, function (fallbackErr, fallbackResponse) {
+  }, (fallbackErr, fallbackResponse) => {
     if (fallbackErr === 304) {
       return res.status(304).send('');
     }
@@ -47,7 +47,7 @@ module.exports = {
           component
         ]
       }
-    }, function (err, res) {
+    }, (err, res) => {
       if (err || !res || res.length === 0) {
         return callback({
           status: 404,

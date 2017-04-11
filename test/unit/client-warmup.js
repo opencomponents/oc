@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
 
-describe('client : warmup', function(){
+describe('client : warmup', () => {
 
   let Warmup, requestStub;
 
@@ -21,11 +21,11 @@ describe('client : warmup', function(){
     }, { console: console });
   };
 
-  describe('when warming up the client for responsive components', function(){
+  describe('when warming up the client for responsive components', () => {
 
     let error, renderComponentStub;
 
-    beforeEach(function(done){
+    beforeEach((done) => {
       initialise();
 
       renderComponentStub = sinon.stub().yields(null, ['hello', 'component', 'another']);
@@ -40,32 +40,32 @@ describe('client : warmup', function(){
         }
       }, renderComponentStub);
 
-      warmup({}, function(err){
+      warmup({}, (err) => {
         error = err;
         done();
       });
     });
 
-    it('should return no error', function(){
+    it('should return no error', () => {
       expect(error).to.be.null;
     });
 
-    it('should make individual requests to ~info routes for each component + oc-client component', function(){
+    it('should make individual requests to ~info routes for each component + oc-client component', () => {
       expect(requestStub.args.length).to.equal(3);
       expect(requestStub.args[0][0].url).to.equal('https://my-registry.com/component1/~info');
       expect(requestStub.args[1][0].url).to.equal('https://my-registry.com/component2/1.x.x/~info');
       expect(requestStub.args[2][0].url).to.equal('https://my-registry.com/oc-client/~info');
     });
 
-    it('should render the components', function(){
+    it('should render the components', () => {
       expect(renderComponentStub.args[0][0].length).to.equal(3);
     });
   });
 
-  describe('when warming up the client for component with parameters', function(){
+  describe('when warming up the client for component with parameters', () => {
     let error, renderComponentStub;
 
-    beforeEach(function(done){
+    beforeEach((done) => {
       initialise(null, {
         name: 'component-with-params',
         version: '1.4.6',
@@ -92,17 +92,17 @@ describe('client : warmup', function(){
         }
       }, renderComponentStub);
 
-      warmup({}, function(err){
+      warmup({}, (err) => {
         error = err;
         done();
       });
     });
 
-    it('should return no error', function(){
+    it('should return no error', () => {
       expect(error).to.be.null;
     });
 
-    it('should render the component with the mandatory parameters', function(){
+    it('should render the component with the mandatory parameters', () => {
       expect(renderComponentStub.args[0][0][0]).to.eql({
         name: 'component-with-params',
         version: '1.4.6',
@@ -113,11 +113,11 @@ describe('client : warmup', function(){
     });
   });
 
-  describe('when warming up the client for unresponsive components', function(){
+  describe('when warming up the client for unresponsive components', () => {
 
     let error;
 
-    beforeEach(function(done){
+    beforeEach((done) => {
       initialise('timeout');
 
       const warmup = new Warmup({
@@ -125,19 +125,19 @@ describe('client : warmup', function(){
         registries: {
           serverRendering: 'https://my-registry.com'
         }
-      }, function(){});
+      }, () => {});
 
       warmup({
         headers: {
           'Accept-Language': 'en-US'
         }
-      }, function(err){
+      }, (err) => {
         error = err;
         done();
       });
     });
 
-    it('should return an error with all the details', function(){
+    it('should return an error with all the details', () => {
 
       const expectedRequest = {
         url: 'https://my-registry.com/component1/~info',

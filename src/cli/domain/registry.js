@@ -41,14 +41,14 @@ module.exports = function(opts){
         url: registry,
         headers: requestsHeaders,
         json: true
-      }, function(err, apiResponse){
+      }, (err, apiResponse) => {
         if(err || !apiResponse){
           return callback('oc registry not available', null);
         } else if(apiResponse.type !== 'oc-registry'){
           return callback('not a valid oc registry', null);
         }
 
-        fs.readJson(settings.configFile.src, function(err, res){
+        fs.readJson(settings.configFile.src, (err, res) => {
           if(err){
             res = {};
           }
@@ -70,7 +70,7 @@ module.exports = function(opts){
         return callback(null, [opts.registry]);
       }
 
-      fs.readJson(settings.configFile.src, function(err, res){
+      fs.readJson(settings.configFile.src, (err, res) => {
         if(err || !res.registries || res.registries.length === 0){
           return callback('No oc registries');
         }
@@ -90,7 +90,7 @@ module.exports = function(opts){
         url: componentHref,
         headers: requestsHeaders,
         json: true
-      }, function(err, res){
+      }, (err, res) => {
         if(err){ return callback(err); }
 
         const parsed = urlParser.parse(res);
@@ -102,7 +102,7 @@ module.exports = function(opts){
         requestsHeaders = _.extend(requestsHeaders, { 'Authorization': 'Basic ' + new Buffer(options.username + ':' + options.password).toString('base64') });
       }
 
-      put(options.route, options.path, requestsHeaders, function(err, res){
+      put(options.route, options.path, requestsHeaders, (err, res) => {
 
         if(err){
           if(!_.isObject(err)){
@@ -126,7 +126,7 @@ module.exports = function(opts){
       });
     },
     remove: function(registry, callback){
-      fs.readJson(settings.configFile.src, function(err, res){
+      fs.readJson(settings.configFile.src, (err, res) => {
         if(err){
           res = {};
         }

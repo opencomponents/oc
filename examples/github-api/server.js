@@ -8,16 +8,14 @@ module.exports.data = function(context, callback){
     headers: {
       'User-Agent': 'oc-example'
     }
-  }, function(err, res, body){
+  }, (err, res, body) => {
     if(err){
       return callback(err);
     }
 
     callback(null, {
       username: context.params.username,
-      repos: body.sort(function(a, b){
-        return a['stargazers_count'] - b['stargazers_count'];
-      })
+      repos: body.sort((a, b) => a['stargazers_count'] - b['stargazers_count'])
     });
   });
 };

@@ -21,7 +21,7 @@ module.exports = function(config, renderTemplate){
 
     const toDo = [];
 
-    _.each(components, function(component, i){
+    _.each(components, (component, i) => {
       component.version = component.version || config.components[component.name];
       toDo.push({
         component: component,
@@ -32,14 +32,14 @@ module.exports = function(config, renderTemplate){
       });
     });
 
-    getComponentsData(toDo, options, function(){
-      renderComponents(toDo, options, function(){
-        processClientReponses(toDo, options, function(){
+    getComponentsData(toDo, options, () => {
+      renderComponents(toDo, options, () => {
+        processClientReponses(toDo, options, () => {
           const errors = [],
             results = [];
           let hasErrors = false;
 
-          _.each(toDo, function(action){
+          _.each(toDo, (action) => {
             if(action.result.error) {
               hasErrors = true;
             }

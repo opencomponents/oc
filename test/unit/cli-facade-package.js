@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const path = require('path');
 const sinon = require('sinon');
 
-describe('cli : facade : package', function(){
+describe('cli : facade : package', () => {
 
   const logSpy = {},
     Local = require('../../src/cli/domain/local'),
@@ -19,16 +19,16 @@ describe('cli : facade : package', function(){
     packageFacade({
       componentPath: 'test/fixtures/components/hello-world/',
       compress: compress
-    }, function(){
+    }, () => {
       cb();
     });
   };
 
-  describe('before packaging a component', function(){
+  describe('before packaging a component', () => {
 
-    it('should always show a message', function(done){
+    it('should always show a message', (done) => {
       sinon.stub(local, 'package').yields('the component is not valid');
-      execute(false, function(){
+      execute(false, () => {
         local.package.restore();
 
         const message = logSpy.warn.args[0][0],
@@ -41,39 +41,39 @@ describe('cli : facade : package', function(){
       });
     });
 
-    describe('when packaging', function(){
+    describe('when packaging', () => {
 
-      describe('when a component is not valid', function(){
+      describe('when a component is not valid', () => {
 
-        beforeEach(function(done){
+        beforeEach((done) => {
           sinon.stub(local, 'package').yields('the component is not valid');
           execute(false, done);
         });
 
-        afterEach(function(){
+        afterEach(() => {
           local.package.restore();
         });
 
-        it('should show an error', function(){
+        it('should show an error', () => {
           expect(logSpy.err.args[0][0]).to.equal('An error happened when creating the package: the component is not valid');
         });
       });
 
-      describe('when a component is valid', function(){
+      describe('when a component is valid', () => {
 
-        beforeEach(function(){
+        beforeEach(() => {
           sinon.stub(local, 'package').yields(null, {
             name: 'hello-world',
             version: '1.0.0'
           });
         });
 
-        afterEach(function(){
+        afterEach(() => {
           local.package.restore();
         });
 
-        it('should package and show success message', function(done){
-          execute(false, function(){
+        it('should package and show success message', (done) => {
+          execute(false, () => {
             const warnMessage = logSpy.warn.args[0][0],
               okMessage = logSpy.ok.args[0][0],
               re = new RegExp('\\' + path.sep, 'g'),
@@ -89,12 +89,12 @@ describe('cli : facade : package', function(){
           });
         });
 
-        describe('when creating tar.gz archive', function(){
+        describe('when creating tar.gz archive', () => {
 
-          it('should not compress when option set to false', function(done){
+          it('should not compress when option set to false', (done) => {
             sinon.stub(local, 'compress').yields(null);
 
-            execute(false, function(){
+            execute(false, () => {
               local.compress.restore();
               const warnMessage = logSpy.warn.args[0][0],
                 okMessage = logSpy.ok.args[0][0],
@@ -109,17 +109,17 @@ describe('cli : facade : package', function(){
             });
           });
 
-          describe('when compression is successful', function(){
-            beforeEach(function(){
+          describe('when compression is successful', () => {
+            beforeEach(() => {
               sinon.stub(local, 'compress').yields(null);
             });
 
-            afterEach(function(){
+            afterEach(() => {
               local.compress.restore();
             });
 
-            it('should show a message for success', function(done){
-              execute(true, function(){
+            it('should show a message for success', (done) => {
+              execute(true, () => {
                 const warnMessage = logSpy.warn.args[1][0],
                   okMessage = logSpy.ok.args[1][0],
                   re = new RegExp('\\' + path.sep, 'g'),
@@ -135,18 +135,18 @@ describe('cli : facade : package', function(){
             });
           });
 
-          describe('when compression fails', function(){
+          describe('when compression fails', () => {
 
-            beforeEach(function(){
+            beforeEach(() => {
               sinon.stub(local, 'compress').yields('error while compressing');
             });
 
-            afterEach(function(){
+            afterEach(() => {
               local.compress.restore();
             });
 
-            it('should show a message for failure', function(done){
-              execute(true, function(){
+            it('should show a message for failure', (done) => {
+              execute(true, () => {
                 const warnMessage = logSpy.warn.args[1][0],
                   errorMessage = logSpy.err.args[0][0],
                   re = new RegExp('\\' + path.sep, 'g'),

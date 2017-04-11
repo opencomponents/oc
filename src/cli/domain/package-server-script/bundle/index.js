@@ -11,7 +11,7 @@ module.exports = function bundle(params, callBack) {
   const compiler = webpack(config);
   compiler.outputFileSystem = memoryFs;
 
-  compiler.run(function(error, stats){
+  compiler.run((error, stats) => {
     let softError;
     let warning;
 

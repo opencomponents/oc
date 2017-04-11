@@ -1,12 +1,13 @@
 'use strict';
 /* eslint no-var: 'off' */
+/* esling prefer-arrow-callback: 'off' */
 
 var oc = oc || {};
 
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module
-    define(['exports', 'jquery'], function(exports, $) {
+    define(['exports', 'jquery'], (exports, $) => {
       factory((root.oc = exports), $, root.head, root.document, root.window);
     });
   } else if (typeof exports === 'object' && typeof exports.nodeName !== 'string') {
@@ -16,7 +17,7 @@ var oc = oc || {};
     // Browser globals
     factory((root.oc = oc), root.$, root.head, root.document, root.window);
   }
-}(this, function (exports, $, head, $document, $window) { // jshint ignore:line
+}(this, (exports, $, head, $document, $window) => { // jshint ignore:line
   // public variables
   oc.conf = oc.conf || {};
   oc.cmd = oc.cmd || [];
@@ -85,7 +86,7 @@ var oc = oc || {};
 
   function registerTemplates(templates) {
     templates = Array.isArray(templates) ? templates : [templates];
-    templates.forEach(function(template){
+    templates.forEach((template) => {
       if (!registeredTemplates[template.type]) {
         registeredTemplates[template.type] = {
           externals: template.externals
@@ -107,7 +108,7 @@ var oc = oc || {};
       return failedRetryCb();
     }
 
-    setTimeout(function(){
+    setTimeout(() => {
       cb(RETRY_LIMIT - retries[component] + 1);
     }, RETRY_INTERVAL);
     retries[component]--;
@@ -179,7 +180,7 @@ var oc = oc || {};
     };
 
     if(needsToBeLoaded()){
-      head.load(url, function(){
+      head.load(url, () => {
         callback(getObj());
       });
     } else {
@@ -306,9 +307,9 @@ var oc = oc || {};
       };
 
       var wasDollarThereAlready = !!$window.$;
-      oc.require('jQuery', JQUERY_URL, function(jQuery){
+      oc.require('jQuery', JQUERY_URL, (jQuery) => {
 
-        requirePolyfills(jQuery, function(){
+        requirePolyfills(jQuery, () => {
           if(wasDollarThereAlready){
             // jQuery was already there. The client shares the same instance.
             oc.$ = jQuery;
@@ -325,14 +326,14 @@ var oc = oc || {};
   };
 
   oc.render = function(compiledViewInfo, model, callback){
-    oc.ready(function(){
+    oc.ready(() => {
       var type = compiledViewInfo.type;
       if (type === 'jade') { type = 'oc-template-jade'; }
       if (type === 'handlebars') { type = 'oc-template-handlebars'; }
       var template = registeredTemplates[type];
 
       if(template){
-        oc.require(['oc', 'components', compiledViewInfo.key], compiledViewInfo.src, function(compiledView){
+        oc.require(['oc', 'components', compiledViewInfo.key], compiledViewInfo.src, (compiledView) => {
           if(!compiledView){
             callback(MESSAGES_ERRORS_LOADING_COMPILED_VIEW.replace('{0}', compiledViewInfo.src));
           } else {
@@ -340,8 +341,8 @@ var oc = oc || {};
             var externals = template.externals;
             var externalsRequired = 0;
 
-            externals.forEach(function(library, _index, externals){
-              oc.require(library.global, library.url, function(){
+            externals.forEach((library, _index, externals) => {
+              oc.require(library.global, library.url, () => {
                 externalsRequired++;
                 if(externalsRequired === externals.length) {
                   if(type === 'oc-template-handlebars'){
@@ -366,7 +367,7 @@ var oc = oc || {};
   };
 
   oc.renderNestedComponent = function($component, callback){
-    oc.ready(function(){
+    oc.ready(() => {
       var dataRendering = $component.attr('data-rendering'),
         dataRendered = $component.attr('data-rendered'),
         isRendering = isBool(dataRendering) ? dataRendering : (dataRendering === 'true'),
@@ -377,7 +378,7 @@ var oc = oc || {};
         $component.attr('data-rendering', true);
         $component.html('<div class="oc-loading">' + MESSAGES_LOADING_COMPONENT + '</div>');
 
-        oc.renderByHref($component.attr('href'), function(err, data){
+        oc.renderByHref($component.attr('href'), (err, data) => {
           if(err || !data){
             $component.html('');
             logger.error(err);
@@ -401,7 +402,7 @@ var oc = oc || {};
       retryNumber = 0;
     }
 
-    oc.ready(function(){
+    oc.ready(() => {
 
       if(href !== ''){
         var hrefWithCount = href;
@@ -419,7 +420,7 @@ var oc = oc || {};
           async: true,
           success: function(apiResponse){
             if(apiResponse.renderMode === 'unrendered'){
-              oc.render(apiResponse.template, apiResponse.data, function(err, html){
+              oc.render(apiResponse.template, apiResponse.data, (err, html) => {
                 if(err){
                   return callback(MESSAGES_ERRORS_RENDERING.replace('{0}', apiResponse.href).replace('{1}', err));
                 }
@@ -450,9 +451,9 @@ var oc = oc || {};
           },
           error: function(){
             logger.error(MESSAGES_ERRORS_RETRIEVING);
-            retry(href, function(requestNumber) {
+            retry(href, (requestNumber) => {
               oc.renderByHref(href, requestNumber, callback);
-            }, function(){
+            }, () => {
               callback(MESSAGES_ERRORS_RETRY_FAILED.replace('{0}', href));
             });
           }
@@ -464,7 +465,7 @@ var oc = oc || {};
   };
 
   oc.renderUnloadedComponents = function(){
-    oc.ready(function(){
+    oc.ready(() => {
       var $unloadedComponents = oc.$(OC_TAG + '[data-rendered!=true]'),
         toDo = $unloadedComponents.length;
 
@@ -484,7 +485,7 @@ var oc = oc || {};
   };
 
   oc.load = function(placeholder, href, callback){
-    oc.ready(function(){
+    oc.ready(() => {
       if(typeof(callback) !== 'function'){
         callback = noop;
       }
@@ -492,7 +493,7 @@ var oc = oc || {};
       if(oc.$(placeholder)){
         oc.$(placeholder).html('<' + OC_TAG + ' href="' + href + '" />');
         var newComponent = oc.$(OC_TAG, placeholder);
-        oc.renderNestedComponent(newComponent, function(){
+        oc.renderNestedComponent(newComponent, () => {
           callback(newComponent);
         });
       }

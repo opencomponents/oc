@@ -47,7 +47,7 @@ module.exports = function(repository){
       res.set('Content-Encoding', 'gzip');
     }
 
-    fileStream.on('open', function(){
+    fileStream.on('open', () => {
       fileStream.pipe(res);
     });
   };

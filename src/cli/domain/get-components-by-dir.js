@@ -35,9 +35,7 @@ module.exports = function(){
       return callback(null, []);
     }
 
-    const components = dirContent.filter(isOcComponent).map(function(component) {
-      return path.resolve(componentsDir, component);
-    });
+    const components = dirContent.filter(isOcComponent).map((component) => path.resolve(componentsDir, component));
 
     callback(null, components);
   };

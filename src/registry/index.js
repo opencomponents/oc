@@ -66,17 +66,17 @@ module.exports = function(options){
         repository.init(cb);
       },
       function(componentsInfo, cb){
-        appStart(repository, options, function(err){
+        appStart(repository, options, (err) => {
           cb(err ? err.msg : null, componentsInfo);
         });
       }
     ],
-    function(err, componentsInfo){
+    (err, componentsInfo) => {
       if(err){ return callback(err); }
 
       server = http.createServer(self.app);
 
-      server.listen(options.port, function(err){
+      server.listen(options.port, (err) => {
 
         if(err){ return callback(err); }
 
@@ -89,9 +89,7 @@ module.exports = function(options){
           if(_.isObject(componentsInfo)){
 
             const componentsNumber = _.keys(componentsInfo.components).length,
-              componentsReleases = _.reduce(componentsInfo.components, function(memo, component){
-                return (parseInt(memo, 10) + component.length);
-              });
+              componentsReleases = _.reduce(componentsInfo.components, (memo, component) => (parseInt(memo, 10) + component.length));
 
             console.log(format(colors.green('Registry serving {0} components for a total of {1} releases.', componentsNumber, componentsReleases)));
           }
@@ -100,7 +98,7 @@ module.exports = function(options){
         callback(null, { app: self.app, server: server });
       });
 
-      server.on('error', function(e){
+      server.on('error', (e) => {
         eventsHandler.fire('error', { code: 'EXPRESS_ERROR', message: e });
         callback(e);
       });

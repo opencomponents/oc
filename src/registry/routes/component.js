@@ -14,7 +14,7 @@ module.exports = function(conf, repository){
       name: req.params.componentName,
       parameters: req.query,
       version: req.params.componentVersion
-    }, function(result){
+    }, (result) => {
       if(result.response.error){
         res.errorCode = result.response.code;
         res.errorDetails = result.response.error;

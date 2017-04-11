@@ -16,7 +16,7 @@ module.exports.bind = function(app, options){
   app.set('port', options.port);
   app.set('json spaces', 0);
 
-  app.use(function(req, res, next){
+  app.use((req, res, next) => {
     res.conf = options;
     next();
   });

@@ -8,7 +8,7 @@ const packageJson = require('../package');
 
 module.exports = function(grunt){
 
-  grunt.registerTask('version', 'Does the version upgrade', function(versionType){
+  grunt.registerTask('version', 'Does the version upgrade', (versionType) => {
 
     packageJson.version = semver.inc(packageJson.version, versionType);
     grunt.config.set('version', packageJson.version);

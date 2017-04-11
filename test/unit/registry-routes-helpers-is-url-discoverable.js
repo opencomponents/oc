@@ -3,7 +3,7 @@
 const expect = require('chai').expect;
 const injectr = require('injectr');
 
-describe('registry : routes : helpers : is-url-discoverable', function(){
+describe('registry : routes : helpers : is-url-discoverable', () => {
 
   describe('when url responds with application/json', () => {
 

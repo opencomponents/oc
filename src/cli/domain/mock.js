@@ -8,7 +8,7 @@ const settings = require('../../resources/settings');
 module.exports = function(){
   return function(params, callback){
 
-    fs.readJson(settings.configFile.src, function(err, localConfig){
+    fs.readJson(settings.configFile.src, (err, localConfig) => {
 
       localConfig = localConfig || {};
 

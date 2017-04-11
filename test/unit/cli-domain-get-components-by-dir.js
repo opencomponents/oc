@@ -35,12 +35,12 @@ const executeComponentsListingByDir = function(local, callback){
   return local('.', callback);
 };
 
-describe('cli : domain : get-components-by-dir', function(){
+describe('cli : domain : get-components-by-dir', () => {
 
-  describe('when getting components from dir', function(){
+  describe('when getting components from dir', () => {
 
     let error, result;
-    beforeEach(function(done){
+    beforeEach((done) => {
 
       const data = initialise();
 
@@ -56,26 +56,26 @@ describe('cli : domain : get-components-by-dir', function(){
       data.fs.readJsonSync.onCall(2).throws(new Error('ENOENT: no such file or directory'));
       data.fs.readJsonSync.onCall(3).returns({ oc: { packaged: true }});
 
-      executeComponentsListingByDir(data.local, function(err, res){
+      executeComponentsListingByDir(data.local, (err, res) => {
         error = err;
         result = res;
         done();
       });
     });
 
-    it('should not error', function(){
+    it('should not error', () => {
       expect(error).to.be.null;
     });
 
-    it('should get the correct list', function(){
+    it('should get the correct list', () => {
       expect(result).to.eql(['./a-component']);
     });
   });
 
-  describe('when reading a broken package.json', function(){
+  describe('when reading a broken package.json', () => {
 
     let error, result;
-    beforeEach(function(done){
+    beforeEach((done) => {
 
       const data = initialise();
 
@@ -87,26 +87,26 @@ describe('cli : domain : get-components-by-dir', function(){
       data.fs.readJsonSync.onCall(0).throws(new Error('syntax error: fubar'));
       data.fs.readJsonSync.onCall(1).returns({ oc: { }});
 
-      executeComponentsListingByDir(data.local, function(err, res){
+      executeComponentsListingByDir(data.local, (err, res) => {
         error = err;
         result = res;
         done();
       });
     });
 
-    it('should not error', function(){
+    it('should not error', () => {
       expect(error).to.be.null;
     });
 
-    it('should get the correct list', function(){
+    it('should get the correct list', () => {
       expect(result).to.eql(['./another-component']);
     });
   });
 
-  describe('when finds no components', function(){
+  describe('when finds no components', () => {
 
     let error, result;
-    beforeEach(function(done){
+    beforeEach((done) => {
 
       const data = initialise();
 
@@ -120,18 +120,18 @@ describe('cli : domain : get-components-by-dir', function(){
       data.fs.readJsonSync.onCall(1).throws(new Error('ENOENT: no such file or directory'));
       data.fs.readJsonSync.onCall(2).throws(new Error('ENOENT: no such file or directory'));
 
-      executeComponentsListingByDir(data.local, function(err, res){
+      executeComponentsListingByDir(data.local, (err, res) => {
         error = err;
         result = res;
         done();
       });
     });
 
-    it('should not error', function(){
+    it('should not error', () => {
       expect(error).to.be.null;
     });
 
-    it('should get an empty list', function(){
+    it('should get an empty list', () => {
       expect(result).to.eql([]);
     });
   });

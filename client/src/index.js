@@ -36,7 +36,7 @@ module.exports = function(conf){
         name: componentName,
         version: options.version,
         parameters: options.parameters || options.params
-      }], options, function(errors, results){
+      }], options, (errors, results) => {
         if(errors) {
           return callback(errors[0], results[0]);
         }

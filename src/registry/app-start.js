@@ -17,7 +17,7 @@ module.exports = function(repository, options, callback){
 
   logger.log(format(colors.yellow('Connecting to library: {0}/{1}'), options.s3.bucket, options.s3.componentsDir));
 
-  repository.getComponentVersions('oc-client', function(err, componentInfo){
+  repository.getComponentVersions('oc-client', (err, componentInfo) => {
 
     if(err){
       return logger.log(colors.red(err));
@@ -34,7 +34,7 @@ module.exports = function(repository, options, callback){
         packageJson: packageInfo
       };
 
-      repository.publishComponent(pkgInfo, 'oc-client', packageInfo.version, function(err, res){
+      repository.publishComponent(pkgInfo, 'oc-client', packageInfo.version, (err, res) => {
         if(!err){
           logger.log(colors.green('Component published.'));
         } else {

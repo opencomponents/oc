@@ -7,7 +7,7 @@ module.exports = function(dependencies){
 
   const missing = [];
 
-  _.forEach(dependencies, function(npmModule){
+  _.forEach(dependencies, (npmModule) => {
 
     const index = npmModule.indexOf('@');
     let moduleName = npmModule;

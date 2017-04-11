@@ -22,7 +22,7 @@ module.exports = function(){
         template,
         model
       },
-      function(err, html){
+      (err, html) => {
         options.html = html;
         return callback(err, htmlRenderer.renderedComponent(options));
       }

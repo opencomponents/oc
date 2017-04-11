@@ -6,7 +6,7 @@ module.exports = function(grunt){
 
   const taskObject = { pkg: grunt.file.readJSON('package.json') };
 
-  grunt.file.expand('tasks/*.js', '!tasks/_*.js').forEach(function(file) {
+  grunt.file.expand('tasks/*.js', '!tasks/_*.js').forEach((file) => {
     let name = file.split('/');
     name = name[name.length - 1].replace('.js', '');
     const task = require('./' + file);

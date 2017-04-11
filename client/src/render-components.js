@@ -16,7 +16,7 @@ module.exports = function(cache, renderTemplate){
       isLocal = component.type === 'oc-component-local',
       useCache = !isLocal;
 
-    getCompiledTemplate(component.template, useCache, options.timeout, function(err, template){
+    getCompiledTemplate(component.template, useCache, options.timeout, (err, template) => {
       if(err){ return cb(err); }
 
       const renderOptions = {
@@ -37,7 +37,7 @@ module.exports = function(cache, renderTemplate){
 
     const toRender = [];
 
-    _.each(toDo, function(action){
+    _.each(toDo, (action) => {
       if(action.render === 'server' && !!action.apiResponse){
         toRender.push(action);
       }
@@ -47,11 +47,11 @@ module.exports = function(cache, renderTemplate){
       return cb();
     }
 
-    _.eachAsync(toRender, function(action, next){
+    _.eachAsync(toRender, (action, next) => {
 
       action.apiResponse.container = action.container;
 
-      fetchTemplateAndRender(action.apiResponse, options, function(err, html){
+      fetchTemplateAndRender(action.apiResponse, options, (err, html) => {
         if(err){
           const errorDetails = format('{0} ({1})', (err.response && err.response.error), err.status);
           action.result.error = new Error(format(settings.serverSideRenderingFail, errorDetails));

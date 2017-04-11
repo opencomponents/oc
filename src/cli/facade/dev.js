@@ -35,7 +35,7 @@ module.exports = function(dependencies){
       if(_.isEmpty(missing)){ return cb(); }
 
       logger.warn(format(strings.messages.cli.INSTALLING_DEPS, missing.join(', ')));
-      npmInstaller(missing, function(err){
+      npmInstaller(missing, (err) => {
         if(err){
           logger.err(err.toString());
           throw err;
@@ -45,7 +45,7 @@ module.exports = function(dependencies){
     };
 
     const watchForChanges = function(components, cb){
-      watch(components, componentsDir, function(err, changedFile){
+      watch(components, componentsDir, (err, changedFile) => {
         if(err){
           logger.err(format(strings.errors.generic, err));
         } else {
@@ -68,7 +68,7 @@ module.exports = function(dependencies){
         packaging = true;
         logger.warn(strings.messages.cli.PACKAGING_COMPONENTS, true);
 
-        async.eachSeries(componentsDirs, function(dir, cb){
+        async.eachSeries(componentsDirs, (dir, cb) => {
 
           const packageOptions = {
             componentPath: dir,
@@ -76,16 +76,16 @@ module.exports = function(dependencies){
             verbose: opts.verbose
           };
 
-          local.package(packageOptions, function(err){
+          local.package(packageOptions, (err) => {
             if(!err){ i++; }
             cb(err);
           });
-        }, function(error){
+        }, (error) => {
           if(error){
             const errorDescription = ((error instanceof SyntaxError) || !!error.message) ? error.message : error;
             logger.err(format(strings.errors.cli.PACKAGING_FAIL, componentsDirs[i], errorDescription));
             logger.warn(strings.messages.cli.RETRYING_10_SECONDS);
-            setTimeout(function(){
+            setTimeout(() => {
               packaging = false;
               packageComponents(componentsDirs);
             }, 10000);
@@ -110,7 +110,7 @@ module.exports = function(dependencies){
       }
 
       logger.err('FAIL');
-      installMissingDeps(missing, function(){
+      installMissingDeps(missing, () => {
         loadDependencies(components, cb);
       });
     };
@@ -118,11 +118,11 @@ module.exports = function(dependencies){
     const registerPlugins = function(registry){
       const mockedPlugins = getMockedPlugins(logger, componentsDir);
 
-      mockedPlugins.forEach(function(p){
+      mockedPlugins.forEach((p) => {
         registry.register(p);
       });
 
-      registry.on('request', function(data){
+      registry.on('request', (data) => {
         if(data.errorCode === 'PLUGIN_MISSING_FROM_REGISTRY'){
           logger.err(format(strings.errors.cli.PLUGIN_MISSING_FROM_REGISTRY, data.errorDetails, colors.blue(strings.commands.cli.MOCK_PLUGIN)));
         } else if(data.errorCode === 'PLUGIN_MISSING_FROM_COMPONENT'){
@@ -132,7 +132,7 @@ module.exports = function(dependencies){
     };
 
     logger.warn(strings.messages.cli.SCANNING_COMPONENTS, true);
-    local.getComponentsByDir(componentsDir, function(err, components){
+    local.getComponentsByDir(componentsDir, (err, components) => {
 
       if(_.isEmpty(components)){
         err = format(errors.DEV_FAIL, errors.COMPONENTS_NOT_FOUND);
@@ -141,12 +141,12 @@ module.exports = function(dependencies){
       }
 
       logger.ok('OK');
-      _.forEach(components, function(component){
+      _.forEach(components, (component) => {
         logger.log(colors.green('├── ') + component);
       });
 
-      loadDependencies(components, function(dependencies){
-        packageComponents(components, function(){
+      loadDependencies(components, (dependencies) => {
+        packageComponents(components, () => {
 
           const registry = new oc.Registry({
             local: true,
@@ -165,7 +165,7 @@ module.exports = function(dependencies){
           registerPlugins(registry);
 
           logger.warn(format(strings.messages.cli.REGISTRY_STARTING, baseUrl));
-          registry.start(function(err){
+          registry.start((err) => {
 
             if(err){
               if(err.code === 'EADDRINUSE'){

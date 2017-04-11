@@ -51,7 +51,7 @@ module.exports = function(){
           componentPath: componentPath,
           ocOptions: component.oc,
           publishPath: publishPath
-        }, function(err, packagedTemplateInfo){
+        }, (err, packagedTemplateInfo) => {
           if(err){ return cb(err); }
 
           component.oc.files.template = packagedTemplateInfo;
@@ -72,7 +72,7 @@ module.exports = function(){
           ocOptions: component.oc,
           publishPath: publishPath,
           verbose: options.verbose
-        }, function(err, packagedServerScriptInfo){
+        }, (err, packagedServerScriptInfo) => {
           if(err){ return cb(err); }
 
           component.oc.files.dataProvider = packagedServerScriptInfo;
@@ -95,7 +95,7 @@ module.exports = function(){
           component.oc.files.static = [component.oc.files.static];
         }
 
-        fs.writeJson(path.join(publishPath, 'package.json'), component, function(err){
+        fs.writeJson(path.join(publishPath, 'package.json'), component, (err) => {
           cb(err, component);
         });
       },
@@ -106,9 +106,7 @@ module.exports = function(){
           publishPath: publishPath,
           minify: minify,
           ocOptions: component.oc
-        }, function(err){
-          return cb(err, component);
-        });
+        }, (err) => cb(err, component));
       }
     ], callback);
   };

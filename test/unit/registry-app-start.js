@@ -20,38 +20,38 @@ const basicOptions = {
   }
 };
 
-describe('registry : app-start', function(){
+describe('registry : app-start', () => {
 
-  describe('when registry starting', function(){
+  describe('when registry starting', () => {
 
-    describe('when not in local mode', function(){
+    describe('when not in local mode', () => {
 
-      describe('when oc-client found on library', function(){
+      describe('when oc-client found on library', () => {
 
-        it('should not publish it', function(done){
+        it('should not publish it', (done) => {
 
           const mockedRepository = {
             getComponentVersions: sinon.stub().yields(null, ['1.2.3']),
             publishComponent: sinon.spy()
           };
 
-          getAppStart(mockedRepository, basicOptions, function(){
+          getAppStart(mockedRepository, basicOptions, () => {
             expect(mockedRepository.publishComponent.called).to.be.false;
             done();
           });
         });
       });
 
-      describe('when oc-client not found on library', function(){
+      describe('when oc-client not found on library', () => {
 
-        it('should publish it', function(done){
+        it('should publish it', (done) => {
 
           const mockedRepository = {
             getComponentVersions: sinon.stub().yields(null, ['1.0.0']),
             publishComponent: sinon.stub().yields(null, 'ok')
           };
 
-          getAppStart(mockedRepository, basicOptions, function(){
+          getAppStart(mockedRepository, basicOptions, () => {
             expect(mockedRepository.publishComponent.called).to.be.true;
             done();
           });

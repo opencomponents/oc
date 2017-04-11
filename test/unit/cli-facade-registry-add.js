@@ -3,7 +3,7 @@
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
-describe('cli : facade : registry : add', function(){
+describe('cli : facade : registry : add', () => {
 
   const logSpy = {},
     Registry = require('../../src/cli/domain/registry'),
@@ -14,37 +14,37 @@ describe('cli : facade : registry : add', function(){
   const execute = function(){
     logSpy.err = sinon.spy();
     logSpy.ok = sinon.spy();
-    registryFacade({}, function(){});
+    registryFacade({}, () => {});
   };
 
-  describe('when adding a not valid registry', function(){
+  describe('when adding a not valid registry', () => {
 
-    beforeEach(function(){
+    beforeEach(() => {
       sinon.stub(registry, 'add').yields('An error!!!', null);
       execute();
     });
 
-    afterEach(function(){
+    afterEach(() => {
       registry.add.restore();
     });
 
-    it('should show the error', function(){
+    it('should show the error', () => {
       expect(logSpy.err.args[0][0]).to.equal('An error!!!');
     });
   });
 
-  describe('when adding a valid registry', function(){
+  describe('when adding a valid registry', () => {
 
-    beforeEach(function(){
+    beforeEach(() => {
       sinon.stub(registry, 'add').yields(null, 'ok!');
       execute();
     });
 
-    beforeEach(function(){
+    beforeEach(() => {
       registry.add.restore();
     });
 
-    it('should show a confirmation message', function(){
+    it('should show a confirmation message', () => {
       expect(logSpy.ok.args[0][0]).to.equal('oc registry added');
     });
   });

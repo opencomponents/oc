@@ -24,7 +24,7 @@ module.exports.create = function(app, conf, repository){
   };
 
   if(conf.prefix !== '/'){
-    app.get('/', function(req, res){ res.redirect(conf.prefix); });
+    app.get('/', (req, res) => { res.redirect(conf.prefix); });
     app.get(conf.prefix.substr(0, conf.prefix.length - 1), routes.listComponents);
   }
 
@@ -50,7 +50,7 @@ module.exports.create = function(app, conf, repository){
   app.get(conf.prefix + ':componentName', routes.component);
 
   if(conf.routes){
-    _.forEach(conf.routes, function(route){
+    _.forEach(conf.routes, (route) => {
       app[route.method.toLowerCase()](route.route, route.handler);
     });
   }

@@ -34,7 +34,7 @@ function processCommand(command, commandName, cli, level, prefix){
     .command(
       command.cmd || commandName,
       command.description,
-      function(yargs){
+      (yargs) => {
         yargs.usage(command.usage);
 
         if(command.options){
@@ -43,12 +43,10 @@ function processCommand(command, commandName, cli, level, prefix){
 
         if(command.commands){
           yargs
-            .check(function(argv){
-              return validate(argv, level);
-            })
+            .check((argv) => validate(argv, level))
             .epilogue(strings.messages.cli.HELP_HINT);
           const newPrefix = (prefix ? prefix + '-' : '') + commandName + '-';
-          _.mapObject(command.commands, function(commandConfiguration, commandName){
+          _.mapObject(command.commands, (commandConfiguration, commandName) => {
             processCommand(commandConfiguration, commandName, yargs, level, newPrefix);
           });
         }
@@ -65,15 +63,13 @@ function processCommand(command, commandName, cli, level, prefix){
     );
 }
 
-_.forEach(commands.commands, function(command, commandName) {
+_.forEach(commands.commands, (command, commandName) => {
   processCommand(command, commandName, cli);
 });
 
 const argv = cli
   .completion()
-  .check(function(argv){
-    return validate(argv, 0);
-  })
+  .check((argv) => validate(argv, 0))
   .usage(commands.usage)
   .epilogue(strings.messages.cli.HELP_HINT)
   .help('h')

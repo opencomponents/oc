@@ -29,7 +29,7 @@ module.exports = function(config) {
 
     const actions = { requestedComponents: [], responseData: [] };
 
-    _.each(components, function(component) {
+    _.each(components, (component) => {
       actions.requestedComponents.push({
         name: component.name,
         version: component.version
@@ -52,11 +52,11 @@ module.exports = function(config) {
       }
     };
 
-    request(requestDetails, function(error, responses) {
+    request(requestDetails, (error, responses) => {
       if(!!error || !responses || _.isEmpty(responses)) {
         responses = [];
         const errorDetails = error ? error.toString() : settings.emptyResponse;
-        _.each(actions.requestedComponents, function(){
+        _.each(actions.requestedComponents, () => {
           responses.push({
             response: {
               error: format(settings.connectionError, JSON.stringify(requestDetails), errorDetails)
@@ -68,7 +68,7 @@ module.exports = function(config) {
       const errors = [];
       let hasErrors = false;
 
-      _.each(responses, function(response, i) {
+      _.each(responses, (response, i) => {
         const responseData = actions.responseData[i];
 
         if (response.status !== 200) {

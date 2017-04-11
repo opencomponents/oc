@@ -6,7 +6,7 @@ const eventsHandler = require('../domain/events-handler');
 
 module.exports = function(){
 
-  return responseTime(function (req, res, time) {
+  return responseTime((req, res, time) => {
 
     const data = {
       body: req.body,

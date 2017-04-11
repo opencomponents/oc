@@ -17,7 +17,7 @@ module.exports = function(cache, config){
   return function(toDo, options, cb){
     const toProcess = [];
 
-    _.each(toDo, function(action){
+    _.each(toDo, (action) => {
       if(action.render === 'client' && !action.done){
         toProcess.push(action);
       }
@@ -27,8 +27,8 @@ module.exports = function(cache, config){
       return cb();
     }
 
-    getOCClientScript(function(clientErr, clientJs){
-      _.each(toDo, function(action){
+    getOCClientScript((clientErr, clientJs) => {
+      _.each(toDo, (action) => {
         if(action.render === 'client'){
           if(!!clientErr || !clientJs){
             action.result.error = settings.genericError;

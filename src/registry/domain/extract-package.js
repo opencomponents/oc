@@ -16,11 +16,11 @@ module.exports = function(files, callback){
   targz.decompress({
     src: packagePath,
     dest: packageUntarOutput
-  }, function(err){
+  }, (err) => {
 
     if(err){ return callback(err); }
 
-    getPackageJsonFromTempDir(packageOutput, function(err, packageJson){
+    getPackageJsonFromTempDir(packageOutput, (err, packageJson) => {
       callback(err, {
         outputFolder: packageOutput,
         packageJson: packageJson
