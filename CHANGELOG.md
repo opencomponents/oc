@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.36.23
+- [#460](https://github.com/opentable/oc/pull/460) Move to =>
+
 ### v0.36.22
 - [#459](https://github.com/opentable/oc/pull/459) Fix manual build script
 - [#458](https://github.com/opentable/oc/pull/458) Cleanup
