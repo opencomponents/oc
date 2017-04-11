@@ -3,7 +3,6 @@
 const async = require('async');
 const colors = require('colors/safe');
 const express = require('express');
-const format = require('stringformat');
 const http = require('http');
 const _ = require('underscore');
 
@@ -18,8 +17,7 @@ const validator = require('./domain/validators');
 
 module.exports = function(options){
 
-  let repository,
-    server;
+  let repository, server;
 
   const self = this,
     validationResult = validator.validateRegistryConfiguration(options),
@@ -45,11 +43,13 @@ module.exports = function(options){
     repository = new Repository(options);
   };
 
-  this.register = function(plugin, cb){
-    plugins.push(_.extend(plugin, { callback: cb }));
+  this.register = function(plugin, callback){
+    plugins.push(_.extend(plugin, { callback }));
   };
 
   this.start = function(callback){
+
+    const ok = msg => console.log(colors.green(msg));
 
     if(!_.isFunction(callback)){
       callback = _.noop;
@@ -58,17 +58,16 @@ module.exports = function(options){
     router.create(this.app, options, repository);
 
     async.waterfall([
-      function(cb){
-        pluginsInitialiser.init(plugins, cb);
-      },
-      function(plugins, cb){
+
+      cb => pluginsInitialiser.init(plugins, cb),
+
+      (plugins, cb) => {
         options.plugins = plugins;
         repository.init(cb);
       },
-      function(componentsInfo, cb){
-        appStart(repository, options, (err) => {
-          cb(err ? err.msg : null, componentsInfo);
-        });
+
+      (componentsInfo, cb) => {
+        appStart(repository, options, (err) => cb(err ? err.msg : null, componentsInfo));
       }
     ],
     (err, componentsInfo) => {
@@ -84,23 +83,23 @@ module.exports = function(options){
 
         if(options.verbosity){
 
-          console.log(format(colors.green('Registry started at port {0}'), self.app.get('port')));
+          ok(`Registry started at port ${self.app.get('port')}`);
 
           if(_.isObject(componentsInfo)){
 
-            const componentsNumber = _.keys(componentsInfo.components).length,
-              componentsReleases = _.reduce(componentsInfo.components, (memo, component) => (parseInt(memo, 10) + component.length));
+            const componentsNumber = _.keys(componentsInfo.components).length;
+            const componentsReleases = _.reduce(componentsInfo.components, (memo, component) => (parseInt(memo, 10) + component.length));
 
-            console.log(format(colors.green('Registry serving {0} components for a total of {1} releases.', componentsNumber, componentsReleases)));
+            ok(`Registry serving ${componentsNumber} components for a total of ${componentsReleases} releases.`);
           }
         }
 
-        callback(null, { app: self.app, server: server });
+        callback(null, { app: self.app, server });
       });
 
-      server.on('error', (e) => {
-        eventsHandler.fire('error', { code: 'EXPRESS_ERROR', message: e });
-        callback(e);
+      server.on('error', (message) => {
+        eventsHandler.fire('error', { code: 'EXPRESS_ERROR', message });
+        callback(message);
       });
     });
   };
