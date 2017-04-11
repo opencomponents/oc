@@ -24,7 +24,7 @@ describe('registry : domain : repository', function(){
     };
 
     const s3Mock = {
-      getFile: sinon.stub(),
+      getJson: sinon.stub(),
       putDir: sinon.stub()
     };
 
@@ -157,7 +157,7 @@ describe('registry : domain : repository', function(){
 
       before(function(done){
         componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
-        s3Mock.getFile.yields(null, '{\"name\":\"hello-world\",\"version\":\"1.0.0\"}');
+        s3Mock.getJson.yields(null, { name: 'hello-world', version: '1.0.0'});
         repository.getComponent('hello-world', '1.0.0', saveResult(done));
       });
 
@@ -170,7 +170,7 @@ describe('registry : domain : repository', function(){
       });
 
       it('should fetch the component info from the correct package.json file', function(){
-        expect(s3Mock.getFile.args[0][0]).to.equal('components/hello-world/1.0.0/package.json');
+        expect(s3Mock.getJson.args[0][0]).to.equal('components/hello-world/1.0.0/package.json');
       });
 
       it('should return the component info', function(){
