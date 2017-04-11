@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.36.24
+- [#461](https://github.com/opentable/oc/pull/461) Registry start log fix
+
 ### v0.36.23
 - [#460](https://github.com/opentable/oc/pull/460) Move to =>
 
