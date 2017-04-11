@@ -11,20 +11,18 @@ module.exports = function(conf, cdn){
 
   let cachedComponentsList, refreshLoop;
 
-  const getFromJson = function(callback){
-    cdn.getJson(conf.s3.componentsDir + '/components.json', true, callback);
-  };
+  const getFromJson = callback => cdn.getJson(`${conf.s3.componentsDir}/components.json`, true, callback);
 
-  const updateCachedData = function(newData){
+  const updateCachedData = (newData) => {
     eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
     if(newData.lastEdit > cachedComponentsList.lastEdit){
       cachedComponentsList = newData;
     }
   };
 
-  const refreshCachedData = function(){
-    refreshLoop = setTimeout(function(){
-      getFromJson(function(err, data){
+  const refreshCachedData = () => {
+    refreshLoop = setTimeout(() => {
+      getFromJson((err, data) => {
         if(err){
           eventsHandler.fire('error', { code: 'components_list_get', message: err });
         } else {
@@ -35,24 +33,24 @@ module.exports = function(conf, cdn){
     }, conf.pollingInterval * 1000);
   };
 
-  const cacheDataAndStartRefresh = function(data, cb){
+  const cacheDataAndStartRefresh = (data, cb) => {
     eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
     cachedComponentsList = data;
     refreshCachedData();
     cb(null, data);
   };
 
-  const getVersionsForComponent  = function(componentName, cb){
-    cdn.listSubDirectories(conf.s3.componentsDir + '/' + componentName, function(err, versions){
+  const getVersionsForComponent = (componentName, cb) => {
+    cdn.listSubDirectories(`${conf.s3.componentsDir}/${componentName}`, (err, versions) => {
       if(err){ return cb(err); }
       cb(null, versions.sort(semver.compare));
     });
   };
 
-  const getFromDirectories = function(cb){
+  const getFromDirectories = (cb) => {
     const componentsInfo = {};
 
-    cdn.listSubDirectories(conf.s3.componentsDir, function(err, components){
+    cdn.listSubDirectories(conf.s3.componentsDir, (err, components) => {
       if(err){
         if(err.code === 'dir_not_found'){
           return cb(null, {
@@ -64,10 +62,10 @@ module.exports = function(conf, cdn){
         return cb(err);
       }
 
-      async.map(components, getVersionsForComponent, function(errors, versions){
+      async.map(components, getVersionsForComponent, (errors, versions) => {
         if(errors){ return cb(errors); }
 
-        _.forEach(components, function(component, i){
+        _.forEach(components, (component, i) => {
           componentsInfo[component] = versions[i];
         });
 
@@ -79,19 +77,19 @@ module.exports = function(conf, cdn){
     });
   };
 
-  const returnError = function(errorCode, errorMessage, callback){
-    eventsHandler.fire('error', { code: errorCode, message: errorMessage });
-    return callback(errorCode);
+  const returnError = (code, message, callback) => {
+    eventsHandler.fire('error', { code, message });
+    return callback(code);
   };
 
-  const saveData = function(data, callback){
-    cdn.putFileContent(JSON.stringify(data), conf.s3.componentsDir + '/components.json', true, callback);
+  const saveData = (data, callback) => {
+    cdn.putFileContent(JSON.stringify(data), `${conf.s3.componentsDir}/components.json`, true, callback);
   };
 
-  const getAndSaveFromDirectories = function(cb){
-    getFromDirectories(function(err, components){
+  const getAndSaveFromDirectories = (cb) => {
+    getFromDirectories((err, components) => {
       if(err){ return cb(err); }
-      saveData(components, function(err){
+      saveData(components, (err) => {
         if(err){ return cb(err); }
         cb(err, components);
       });
@@ -99,17 +97,20 @@ module.exports = function(conf, cdn){
   };
 
   return {
-    get: function(callback){
-      if(!cachedComponentsList){ return returnError('components_cache_empty', 'The component\'s cache was empty', callback); }
+    get: (callback) => {
+      if(!cachedComponentsList){
+        return returnError('components_cache_empty', `The component's cache was empty`, callback);
+      }
+
       callback(null, cachedComponentsList);
     },
-    load: function(callback){
-      getFromJson(function(jsonErr, jsonComponents){
-        getFromDirectories(function(dirErr, dirComponents){
+    load: (callback) => {
+      getFromJson((jsonErr, jsonComponents) => {
+        getFromDirectories((dirErr, dirComponents) => {
           if(dirErr){
             return returnError('components_list_get', dirErr, callback);
           } else if(jsonErr || !_.isEqual(dirComponents.components, jsonComponents.components)){
-            saveData(dirComponents, function(saveErr){
+            saveData(dirComponents, (saveErr) => {
               if(saveErr){
                 return returnError('components_list_save', saveErr, callback);
               }
@@ -121,10 +122,12 @@ module.exports = function(conf, cdn){
         });
       });
     },
-    refresh: function(callback){
+    refresh: (callback) => {
       clearTimeout(refreshLoop);
-      getAndSaveFromDirectories(function(err, components){
-        if(err){ return returnError('components_cache_refresh', err, callback); }
+      getAndSaveFromDirectories((err, components) => {
+        if(err){
+          return returnError('components_cache_refresh', err, callback);
+        }
         cacheDataAndStartRefresh(components, callback);
       });
     }

@@ -36,7 +36,7 @@ module.exports = function(conf){
       force = false;
     }
 
-    const getFromAws = (callback) => {
+    const getFromAws = (cb) => {
       getClient().getObject({
         Bucket: bucket,
         Key: filePath
@@ -48,7 +48,7 @@ module.exports = function(conf){
           } : err);
         }
 
-        callback(null, data.Body.toString());
+        cb(null, data.Body.toString());
       });
     };
 
@@ -72,13 +72,21 @@ module.exports = function(conf){
 
   const getJson = (filePath, force, callback) => {
 
+    if(_.isFunction(force)){
+      callback = force;
+      force = false;
+    }
+
     getFile(filePath, force, (err, file) => {
       if(err){ return callback(err); }
 
       try {
         callback(null, JSON.parse(file));
       } catch(er){
-        return callback('parsing error');
+        return callback({
+          code: strings.errors.s3.FILE_NOT_VALID_CODE,
+          msg: format(strings.errors.s3.FILE_NOT_VALID, filePath)
+        });
       }
     });
   };
@@ -153,7 +161,7 @@ module.exports = function(conf){
   };
 
   const putFile = (filePath, fileName, isPrivate, callback) => {
-    fs.readFile(filePath, function(err, fileContent){
+    fs.readFile(filePath, (err, fileContent) => {
       if(err){ return callback(err); }
       putFileContent(fileContent, fileName, isPrivate, callback);
     });
