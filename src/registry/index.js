@@ -17,8 +17,7 @@ const validator = require('./domain/validators');
 
 module.exports = function(options){
 
-  let repository,
-    server;
+  let repository, server;
 
   const self = this,
     validationResult = validator.validateRegistryConfiguration(options),
@@ -44,8 +43,8 @@ module.exports = function(options){
     repository = new Repository(options);
   };
 
-  this.register = function(plugin, cb){
-    plugins.push(_.extend(plugin, { callback: cb }));
+  this.register = function(plugin, callback){
+    plugins.push(_.extend(plugin, { callback }));
   };
 
   this.start = function(callback){
@@ -59,14 +58,14 @@ module.exports = function(options){
     router.create(this.app, options, repository);
 
     async.waterfall([
-      
+
       cb => pluginsInitialiser.init(plugins, cb),
-      
+
       (plugins, cb) => {
         options.plugins = plugins;
         repository.init(cb);
       },
-      
+
       (componentsInfo, cb) => {
         appStart(repository, options, (err) => cb(err ? err.msg : null, componentsInfo));
       }
@@ -95,12 +94,12 @@ module.exports = function(options){
           }
         }
 
-        callback(null, { app: self.app, server: server });
+        callback(null, { app: self.app, server });
       });
 
-      server.on('error', (e) => {
-        eventsHandler.fire('error', { code: 'EXPRESS_ERROR', message: e });
-        callback(e);
+      server.on('error', (message) => {
+        eventsHandler.fire('error', { code: 'EXPRESS_ERROR', message });
+        callback(message);
       });
     });
   };
