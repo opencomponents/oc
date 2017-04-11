@@ -3,7 +3,6 @@
 const async = require('async');
 const colors = require('colors/safe');
 const express = require('express');
-const format = require('stringformat');
 const http = require('http');
 const _ = require('underscore');
 
