@@ -1,5 +1,15 @@
 ## Change Log
 
+### v0.36.22
+- [#459](https://github.com/opentable/oc/pull/459) Fix manual build script
+- [#458](https://github.com/opentable/oc/pull/458) Cleanup
+- [#454](https://github.com/opentable/oc/pull/454) Logger cleanup
+- [#455](https://github.com/opentable/oc/pull/455) UI interface tests
+- [#457](https://github.com/opentable/oc/pull/457) Log error before exiting
+- [#456](https://github.com/opentable/oc/pull/456) Removed trailing spaces
+- [#452](https://github.com/opentable/oc/pull/452) var => let/const
+- [#453](https://github.com/opentable/oc/pull/453) Fix indentation
+
 ### v0.36.21
 - [#450](https://github.com/opentable/oc/pull/450) Replace jshint by eslint
 
