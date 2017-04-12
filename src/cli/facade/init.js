@@ -19,7 +19,7 @@ module.exports = function(dependencies){
 
     callback = wrapCliCallback(callback);
 
-    local.init(componentName, templateType, { logger: logger }, function(err, res){
+    local.init(componentName, templateType, { logger: logger }, err => {
       if(err){
         if(err === 'name not valid'){
           err = errors.NAME_NOT_VALID;
