@@ -1,7 +1,7 @@
 'use strict';
 
 const expect = require('chai').expect;
-const injctr = require('injectr');
+const injectr = require('injectr');
 const sinon = require('sinon');
 
 describe('registry : domain : components-cache', () => {
@@ -21,15 +21,18 @@ describe('registry : domain : components-cache', () => {
 
   let setTimeoutStub, clearTimeoutStub, componentsCache, eventsHandlerStub;
 
+  const getTimestamp = () => 12345678;
+
   const initialise = function(){
     clearTimeoutStub = sinon.stub();
     setTimeoutStub = sinon.stub();
     eventsHandlerStub = { fire: sinon.stub() };
-    const ComponentsCache = injctr('../../src/registry/domain/components-cache.js', {
-      '../../utils/get-unix-utc-timestamp': function(){
-        return 12345678;
-      },
-      './events-handler': eventsHandlerStub
+    const ComponentsCache = injectr('../../src/registry/domain/components-cache/index.js', {
+      '../../../utils/get-unix-utc-timestamp': getTimestamp,
+      '../events-handler': eventsHandlerStub,
+      './components-list': injectr('../../src/registry/domain/components-cache/components-list.js', {
+        '../../../utils/get-unix-utc-timestamp': getTimestamp
+      })
     }, {
       setTimeout: setTimeoutStub,
       clearTimeout: clearTimeoutStub
@@ -199,10 +202,9 @@ describe('registry : domain : components-cache', () => {
 
         it('should generate an error event', () => {
           expect(eventsHandlerStub.fire.called).to.be.true;
-          expect(eventsHandlerStub.fire.args[0][0]).to.equal('cache-poll');
-          expect(eventsHandlerStub.fire.args[1][0]).to.equal('error');
-          expect(eventsHandlerStub.fire.args[1][1].code).to.equal('components_cache_refresh');
-          expect(eventsHandlerStub.fire.args[1][1].message).to.contain('an error!');
+          expect(eventsHandlerStub.fire.args[0][0]).to.equal('error');
+          expect(eventsHandlerStub.fire.args[0][1].code).to.equal('components_cache_refresh');
+          expect(eventsHandlerStub.fire.args[0][1].message).to.contain('an error!');
         });
       });
 
