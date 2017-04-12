@@ -71,7 +71,6 @@ module.exports = function(conf, cdn){
 
   const cacheDataAndStartPolling = (data, callback) => {
     cachedComponentsList = data;
-    eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
     refreshLoop = poll();
     callback(null, data);
   };

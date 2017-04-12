@@ -199,10 +199,9 @@ describe('registry : domain : components-cache', () => {
 
         it('should generate an error event', () => {
           expect(eventsHandlerStub.fire.called).to.be.true;
-          expect(eventsHandlerStub.fire.args[0][0]).to.equal('cache-poll');
-          expect(eventsHandlerStub.fire.args[1][0]).to.equal('error');
-          expect(eventsHandlerStub.fire.args[1][1].code).to.equal('components_cache_refresh');
-          expect(eventsHandlerStub.fire.args[1][1].message).to.contain('an error!');
+          expect(eventsHandlerStub.fire.args[0][0]).to.equal('error');
+          expect(eventsHandlerStub.fire.args[0][1].code).to.equal('components_cache_refresh');
+          expect(eventsHandlerStub.fire.args[0][1].message).to.contain('an error!');
         });
       });
 
