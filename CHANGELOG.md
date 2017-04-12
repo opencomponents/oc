@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.36.25
+- [#463](https://github.com/opentable/oc/pull/463) Components cache cleanup
+
 ### v0.36.24
 - [#461](https://github.com/opentable/oc/pull/461) Registry start log fix
 
