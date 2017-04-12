@@ -11,70 +11,69 @@ module.exports = function(conf, cdn){
 
   let cachedComponentsList, refreshLoop;
 
-  const getFromJson = callback => cdn.getJson(`${conf.s3.componentsDir}/components.json`, true, callback);
+  const componentsList = {
+    getFromJson: callback => cdn.getJson(`${conf.s3.componentsDir}/components.json`, true, callback),
 
-  const updateCachedData = (newData) => {
-    eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
-    if(newData.lastEdit > cachedComponentsList.lastEdit){
-      cachedComponentsList = newData;
-    }
-  };
+    getFromDirectories: (callback) => {
+      const componentsInfo = {};
 
-  const refreshCachedData = () => {
-    refreshLoop = setTimeout(() => {
-      getFromJson((err, data) => {
+      const getVersionsForComponent = (componentName, cb) => {
+        cdn.listSubDirectories(`${conf.s3.componentsDir}/${componentName}`, (err, versions) => {
+          if(err){ return cb(err); }
+          cb(null, versions.sort(semver.compare));
+        });
+      };
+
+      cdn.listSubDirectories(conf.s3.componentsDir, (err, components) => {
         if(err){
-          eventsHandler.fire('error', { code: 'components_list_get', message: err });
-        } else {
-          updateCachedData(data);
+          if(err.code === 'dir_not_found'){
+            return callback(null, {
+              lastEdit: getUnixUTCTimestamp(),
+              components: []
+            });
+          }
+
+          return callback(err);
         }
-        refreshLoop = refreshCachedData();
-      });
-    }, conf.pollingInterval * 1000);
-  };
 
-  const cacheDataAndStartRefresh = (data, cb) => {
-    eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
-    cachedComponentsList = data;
-    refreshCachedData();
-    cb(null, data);
-  };
+        async.map(components, getVersionsForComponent, (errors, versions) => {
+          if(errors){ return callback(errors); }
 
-  const getVersionsForComponent = (componentName, cb) => {
-    cdn.listSubDirectories(`${conf.s3.componentsDir}/${componentName}`, (err, versions) => {
-      if(err){ return cb(err); }
-      cb(null, versions.sort(semver.compare));
-    });
-  };
-
-  const getFromDirectories = (cb) => {
-    const componentsInfo = {};
-
-    cdn.listSubDirectories(conf.s3.componentsDir, (err, components) => {
-      if(err){
-        if(err.code === 'dir_not_found'){
-          return cb(null, {
-            lastEdit: getUnixUTCTimestamp(),
-            components: []
+          _.forEach(components, (component, i) => {
+            componentsInfo[component] = versions[i];
           });
-        }
 
-        return cb(err);
-      }
-
-      async.map(components, getVersionsForComponent, (errors, versions) => {
-        if(errors){ return cb(errors); }
-
-        _.forEach(components, (component, i) => {
-          componentsInfo[component] = versions[i];
-        });
-
-        cb(null, {
-          lastEdit: getUnixUTCTimestamp(),
-          components: componentsInfo
+          callback(null, {
+            lastEdit: getUnixUTCTimestamp(),
+            components: componentsInfo
+          });
         });
       });
+    },
+
+    save: (data, callback) => cdn.putFileContent(JSON.stringify(data), `${conf.s3.componentsDir}/components.json`, true, callback)
+  };
+
+  const poll = () => setTimeout(() => {
+    componentsList.getFromJson((err, data) => {
+      if(err){
+        eventsHandler.fire('error', { code: 'components_list_get', message: err });
+      } else {
+        eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
+
+        if(data.lastEdit > cachedComponentsList.lastEdit){
+          cachedComponentsList = data;
+        }
+      }
+      refreshLoop = poll();
     });
+  }, conf.pollingInterval * 1000);
+
+  const cacheDataAndStartPolling = (data, callback) => {
+    cachedComponentsList = data;
+    eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
+    refreshLoop = poll();
+    callback(null, data);
   };
 
   const returnError = (code, message, callback) => {
@@ -82,14 +81,10 @@ module.exports = function(conf, cdn){
     return callback(code);
   };
 
-  const saveData = (data, callback) => {
-    cdn.putFileContent(JSON.stringify(data), `${conf.s3.componentsDir}/components.json`, true, callback);
-  };
-
   const getAndSaveFromDirectories = (cb) => {
-    getFromDirectories((err, components) => {
+    componentsList.getFromDirectories((err, components) => {
       if(err){ return cb(err); }
-      saveData(components, (err) => {
+      componentsList.save(components, (err) => {
         if(err){ return cb(err); }
         cb(err, components);
       });
@@ -105,19 +100,19 @@ module.exports = function(conf, cdn){
       callback(null, cachedComponentsList);
     },
     load: (callback) => {
-      getFromJson((jsonErr, jsonComponents) => {
-        getFromDirectories((dirErr, dirComponents) => {
+      componentsList.getFromJson((jsonErr, jsonComponents) => {
+        componentsList.getFromDirectories((dirErr, dirComponents) => {
           if(dirErr){
             return returnError('components_list_get', dirErr, callback);
           } else if(jsonErr || !_.isEqual(dirComponents.components, jsonComponents.components)){
-            saveData(dirComponents, (saveErr) => {
+            componentsList.save(dirComponents, (saveErr) => {
               if(saveErr){
                 return returnError('components_list_save', saveErr, callback);
               }
-              cacheDataAndStartRefresh(dirComponents, callback);
+              cacheDataAndStartPolling(dirComponents, callback);
             });
           } else {
-            cacheDataAndStartRefresh(jsonComponents, callback);
+            cacheDataAndStartPolling(jsonComponents, callback);
           }
         });
       });
@@ -128,7 +123,7 @@ module.exports = function(conf, cdn){
         if(err){
           return returnError('components_cache_refresh', err, callback);
         }
-        cacheDataAndStartRefresh(components, callback);
+        cacheDataAndStartPolling(components, callback);
       });
     }
   };
