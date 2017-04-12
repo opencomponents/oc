@@ -38,16 +38,6 @@ module.exports = function(conf, cdn){
     return callback(code);
   };
 
-  const getAndSaveFromDirectories = (cb) => {
-    componentsList.getFromDirectories((err, components) => {
-      if(err){ return cb(err); }
-      componentsList.save(components, (err) => {
-        if(err){ return cb(err); }
-        cb(err, components);
-      });
-    });
-  };
-
   return {
     get: (callback) => {
       if(!cachedComponentsList){
@@ -76,7 +66,7 @@ module.exports = function(conf, cdn){
     },
     refresh: (callback) => {
       clearTimeout(refreshLoop);
-      getAndSaveFromDirectories((err, components) => {
+      componentsList.refresh((err, components) => {
         if(err){
           return returnError('components_cache_refresh', err, callback);
         }
