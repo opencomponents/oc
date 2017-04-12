@@ -5,12 +5,12 @@ const path = require('path');
 const targz = require('targz');
 const _ = require('lodash');
 
-var getComponentsByDir = require('./get-components-by-dir');
-var getLocalNpmModules = require('./get-local-npm-modules');
-var packageComponents = require('./package-components');
-var mock = require('./mock');
-var validator = require('../../registry/domain/validators');
-var initTemplate = require('./init-template');
+const getComponentsByDir = require('./get-components-by-dir');
+const getLocalNpmModules = require('./get-local-npm-modules');
+const packageComponents = require('./package-components');
+const mock = require('./mock');
+const validator = require('../../registry/domain/validators');
+const initTemplate = require('./init-template');
 
 module.exports = function() {
   return _.extend(this, {
@@ -45,8 +45,8 @@ module.exports = function() {
       if(validator.validateTemplateType(templateType)){
         try {
           const pathDir = '../../components/base-component-' + templateType,
-              baseComponentDir = path.resolve(__dirname, pathDir),
-              npmIgnorePath = path.resolve(__dirname, pathDir + '/.npmignore');
+            baseComponentDir = path.resolve(__dirname, pathDir),
+            npmIgnorePath = path.resolve(__dirname, pathDir + '/.npmignore');
 
           fs.ensureDirSync(componentName);
           fs.copySync(baseComponentDir, componentName);

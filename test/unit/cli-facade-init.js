@@ -1,22 +1,21 @@
 'use strict';
 
-var colors = require('colors/safe');
-var expect = require('chai').expect;
-var sinon = require('sinon');
-var injectr = require('injectr');
+const expect = require('chai').expect;
+const sinon = require('sinon');
+const injectr = require('injectr');
 
-describe('cli : facade : init', function(){
-  var deps = {
-    './init-template': function(){
+describe('cli : facade : init', () => {
+  const deps = {
+    './init-template': () => {
       throw '💩';
     }
   };
 
-  var logSpy = {},
-      InitFacade = require('../../src/cli/facade/init'),
-      Local = injectr('../../src/cli/domain/local.js', deps, {}),
-      local = new Local({ logger: { log: function(){} } }),
-      initFacade = new InitFacade({ local: local, logger: logSpy });
+  const logSpy = {},
+    InitFacade = require('../../src/cli/facade/init'),
+    Local = injectr('../../src/cli/domain/local.js', deps, {}),
+    local = new Local({ logger: { log: () => {} } }),
+    initFacade = new InitFacade({ local: local, logger: logSpy });
 
   const execute = function(componentName, templateType){
     logSpy.err = sinon.spy();
