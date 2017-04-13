@@ -172,6 +172,7 @@ module.exports = function(conf){
     getJson,
     getUrl,
     listSubDirectories,
+    maxConcurrentRequests: 20,
     putDir,
     putFile,
     putFileContent

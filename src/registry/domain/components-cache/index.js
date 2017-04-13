@@ -2,6 +2,7 @@
 
 const _ = require('underscore');
 
+const ComponentsDetails = require('./components-details');
 const ComponentsList = require('./components-list');
 const eventsHandler = require('../events-handler');
 const getUnixUTCTimestamp = require('../../../utils/get-unix-utc-timestamp');
@@ -11,6 +12,7 @@ module.exports = function(conf, cdn){
   let cachedComponentsList, refreshLoop;
 
   const componentsList = ComponentsList(conf, cdn);
+  const componentsDetails = ComponentsDetails(conf, cdn);
 
   const poll = () => setTimeout(() => {
     componentsList.getFromJson((err, data) => {
@@ -47,6 +49,34 @@ module.exports = function(conf, cdn){
       callback(null, cachedComponentsList);
     },
     load: (callback) => {
+
+      const verifyDetailsIntegrity = (componentsList) => {
+        console.log('verifying details integrity');
+        const next = () => cacheDataAndStartPolling(componentsList, callback);
+
+        componentsDetails.getFromJson((jsonErr, jsonDetails) => {
+          console.log('getting dir details');
+          componentsDetails.getFromDirectories(componentsList.components, jsonDetails, (dirErr, dirDetails) => {
+
+            if(dirErr){
+              return returnError('components_details_get', dirErr, callback);
+            } else if(jsonErr || !_.isEqual(dirDetails.components, jsonDetails.components)){
+              console.log('not identical, saving');
+              console.log(dirDetails);
+              componentsDetails.save(dirDetails, (saveErr) => {
+                if(saveErr){ console.log('error on saving');
+                  return returnError('components_details_save', saveErr, callback);
+                }
+
+                next();
+              });
+            } else {
+              next();
+            }
+          });
+        });
+      };
+
       componentsList.getFromJson((jsonErr, jsonComponents) => {
         componentsList.getFromDirectories((dirErr, dirComponents) => {
           if(dirErr){
@@ -56,10 +86,10 @@ module.exports = function(conf, cdn){
               if(saveErr){
                 return returnError('components_list_save', saveErr, callback);
               }
-              cacheDataAndStartPolling(dirComponents, callback);
+              verifyDetailsIntegrity(dirComponents);
             });
           } else {
-            cacheDataAndStartPolling(jsonComponents, callback);
+            verifyDetailsIntegrity(jsonComponents);
           }
         });
       });
