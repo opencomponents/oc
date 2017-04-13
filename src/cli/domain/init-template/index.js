@@ -27,11 +27,11 @@ module.exports = function (componentName, templateType, options, callback) {
     // If template available in the dev registry, generate boilerplate out of its blueprint
     const templatePath = path.resolve('node_modules', config.packageName);
     require(templatePath);
-    blueprint(_.extend({}, config, { templatePath }));
+    return blueprint(_.extend({}, config, { templatePath }));
   } catch (e) {
     // Otherwise install the template
     initPackage(config);
     const templatePath = path.resolve(process.cwd(), config.templateType);
-    installTemplate(_.extend({}, config, { templatePath }), blueprint);
+    return installTemplate(_.extend({}, config, { templatePath }), blueprint);
   }
 };
