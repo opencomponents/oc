@@ -6,6 +6,12 @@ var oc = oc || {};
 oc.cmd = oc.cmd || [];
 
 oc.cmd.push(function(){
+  
+  $('#componentsHistory').hide();
+  
+  $('#menuList a').click(function () {
+      $('.box').hide().eq($(this).index()).show();
+  });
 
   var componentsListChanged = function(){
     $('.componentRow').removeClass('hide');

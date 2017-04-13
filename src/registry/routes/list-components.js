@@ -4,6 +4,8 @@ const async = require('async');
 const _ = require('underscore');
 
 const dateStringified = require('../../utils/date-stringify');
+const history = require('../history.json');
+const historySorted = require('../../utils/history-sort');
 const packageInfo = require('../../../package.json');
 const urlBuilder = require('../domain/url-builder');
 
@@ -44,7 +46,7 @@ module.exports = function(repository){
 
           componentsInfo = _.sortBy(componentsInfo, (componentInfo) => componentInfo.name);
 
-          return res.render('list-components', _.extend(baseResponse, {
+          return res.render('components-main', _.extend(baseResponse, {
             availableDependencies: res.conf.dependencies,
             availablePlugins: res.conf.plugins,
             components: componentsInfo,
@@ -63,6 +65,7 @@ module.exports = function(repository){
                 state: state
               };
             }),
+            componentsHistory: historySorted(history),
             q: req.query.q || '',
             stateCounts: stateCounts
           }));
