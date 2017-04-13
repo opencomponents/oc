@@ -1,7 +1,6 @@
 'use strict';
 
 const async = require('async');
-const _ = require('underscore');
 
 const getUnixUTCTimestamp = require('../../../utils/get-unix-utc-timestamp');
 
@@ -30,7 +29,7 @@ module.exports = (conf, cdn) => {
               if(err){ return next(err); }
               details.components[name][version] = { publishDate: content.oc.date || 0 };
               next();
-            });          
+            });
           }
         }, done);
       }, (err) => callback(err, {

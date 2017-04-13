@@ -1,22 +1,22 @@
 'use strict';
 
-var _ = require('underscore');
-var dateStringified = require('./date-stringify');
+const _ = require('underscore');
+const dateStringified = require('./date-stringify');
 
 module.exports = function(history) {
-  var result = [];
-  
-  _.each(history.components, function(singleComponent, name) {
-    _.each(singleComponent, function(release) {
-      var entry = {
+  const result = [];
+
+  _.each(history.components, (singleComponent, name) => {
+    _.each(singleComponent, (release) => {
+      const entry = {
         name,
         version: release.version,
         lastModified: dateStringified(new Date(release.lastModified))
       };
-      
+
       result.push(entry);
     });
   });
-  
+
   return _.sortBy(result, 'lastModified').reverse();
 };
