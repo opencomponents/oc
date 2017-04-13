@@ -51,20 +51,16 @@ module.exports = function(conf, cdn){
     load: (callback) => {
 
       const verifyDetailsIntegrity = (componentsList) => {
-        console.log('verifying details integrity');
         const next = () => cacheDataAndStartPolling(componentsList, callback);
 
         componentsDetails.getFromJson((jsonErr, jsonDetails) => {
-          console.log('getting dir details');
           componentsDetails.getFromDirectories(componentsList.components, jsonDetails, (dirErr, dirDetails) => {
 
             if(dirErr){
               return returnError('components_details_get', dirErr, callback);
             } else if(jsonErr || !_.isEqual(dirDetails.components, jsonDetails.components)){
-              console.log('not identical, saving');
-              console.log(dirDetails);
               componentsDetails.save(dirDetails, (saveErr) => {
-                if(saveErr){ console.log('error on saving');
+                if(saveErr){
                   return returnError('components_details_save', saveErr, callback);
                 }
 

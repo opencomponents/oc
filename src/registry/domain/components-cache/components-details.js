@@ -23,11 +23,9 @@ module.exports = (conf, cdn) => {
         details.components[name] = details.components[name] || {};
 
         async.eachLimit(versions, cdn.maxConcurrentRequests, (version, next) => {
-
           if(details.components[name][version]){
             next();
           } else {
-            console.log(`getting ${conf.s3.componentsDir}/${name}/${version}/package.json`);
             cdn.getJson(`${conf.s3.componentsDir}/${name}/${version}/package.json`, true, (err, content) => {
               if(err){ return next(err); }
               details.components[name][version] = { publishDate: content.oc.date || 0 };
@@ -37,7 +35,7 @@ module.exports = (conf, cdn) => {
         }, done);
       }, (err) => callback(err, {
         lastEdit: getUnixUTCTimestamp(),
-        components: details
+        components: details.components
       }));
     },
 
