@@ -26,8 +26,7 @@ module.exports = function(repository){
 
       if(isHtmlRequest && !!res.conf.discovery){
 
-        let componentsInfo = [],
-          componentsReleases = 0;
+        let componentsInfo = [], componentsReleases = 0;
         const stateCounts = {};
 
         async.each(components, (component, callback) => repository.getComponent(component, (err, result) => {
@@ -43,7 +42,7 @@ module.exports = function(repository){
         }), (err) => {
           if(err){ return next(err); }
 
-          componentsInfo = _.sortBy(componentsInfo, (componentInfo) => componentInfo.name);
+          componentsInfo = _.sortBy(componentsInfo, 'name');
 
           repository.getComponentsDetails((err, details) => {
 
@@ -51,7 +50,7 @@ module.exports = function(repository){
               availableDependencies: res.conf.dependencies,
               availablePlugins: res.conf.plugins,
               components: componentsInfo,
-              componentsReleases: componentsReleases,
+              componentsReleases,
               componentsList: _.map(componentsInfo, (component) => {
 
                 const state = (!!component.oc && !!component.oc.state) ? component.oc.state : '';
@@ -68,7 +67,7 @@ module.exports = function(repository){
               }),
               componentsHistory: !res.conf.local && getComponentsHistory(details),
               q: req.query.q || '',
-              stateCounts: stateCounts
+              stateCounts
             }));
           });
         });

@@ -1,0 +1,74 @@
+'use strict';
+
+const async = require('async');
+const _ = require('underscore');
+
+const eventsHandler = require('./events-handler');
+const getUnixUTCTimestamp = require('../../utils/get-unix-utc-timestamp');
+
+module.exports = (conf, cdn) => {
+
+  const returnError = (code, message, callback) => {
+    eventsHandler.fire('error', { code, message });
+    return callback(code);
+  };
+
+  const filePath = () => `${conf.s3.componentsDir}/components-details.json`;
+
+  const getFromJson = callback => cdn.getJson(filePath(), true, callback);
+
+  const getFromDirectories = (options, callback) => {
+
+    const details = options.details || {};
+    details.components = details.components || {};
+
+    async.eachOfSeries(options.componentsList.components, (versions, name, done) => {
+
+      details.components[name] = details.components[name] || {};
+
+      async.eachLimit(versions, cdn.maxConcurrentRequests, (version, next) => {
+        if(details.components[name][version]){
+          next();
+        } else {
+          cdn.getJson(`${conf.s3.componentsDir}/${name}/${version}/package.json`, true, (err, content) => {
+            if(err){ return next(err); }
+            details.components[name][version] = { publishDate: content.oc.date || 0 };
+            next();
+          });
+        }
+      }, done);
+    }, (err) => callback(err, {
+      lastEdit: getUnixUTCTimestamp(),
+      components: details.components
+    }));
+  };
+
+  const refresh = (componentsList, callback) => {
+
+    getFromJson((jsonErr, jsonDetails) => {
+      getFromDirectories({ componentsList, details: jsonDetails }, (dirErr, dirDetails) => {
+
+        if(dirErr){
+          return returnError('components_details_get', dirErr, callback);
+        } else if(jsonErr || !_.isEqual(dirDetails.components, jsonDetails.components)){
+          save(dirDetails, (saveErr) => {
+            if(saveErr){
+              return returnError('components_details_save', saveErr, callback);
+            }
+
+            callback();
+          });
+        } else {
+          callback();
+        }
+      });
+    });
+  };
+
+  const save = (data, callback) => cdn.putFileContent(JSON.stringify(data), filePath(), true, callback);
+
+  return {
+    getFromJson,
+    refresh
+  };
+};

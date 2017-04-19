@@ -6,6 +6,7 @@ const path = require('path');
 const _ = require('underscore');
 
 const ComponentsCache = require('./components-cache');
+const ComponentsDetails = require('./components-details');
 const packageInfo = require('../../../package.json');
 const S3 = require('./s3');
 const settings = require('../../resources/settings');
@@ -153,7 +154,7 @@ module.exports = function(conf){
         callback(err, res ? _.keys(res.components) : null);
       });
     },
-    getComponentsDetails: callback => componentsCache.getDetails(callback),
+    getComponentsDetails: callback => componentsDetails.getFromJson(callback),
     getComponentVersions: (componentName, callback) => {
       if(conf.local){
         return local.getComponentVersions(componentName, callback);
