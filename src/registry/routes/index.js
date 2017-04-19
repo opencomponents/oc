@@ -5,7 +5,7 @@ const _ = require('underscore');
 
 const dateStringified = require('../../utils/date-stringify');
 const history = require('../history.json');
-const historySorted = require('./helpers/history-sort');
+const getComponentsHistory = require('./helpers/get-components-history');
 const packageInfo = require('../../../package.json');
 const urlBuilder = require('../domain/url-builder');
 
@@ -65,7 +65,7 @@ module.exports = function(repository){
                 state: state
               };
             }),
-            componentsHistory: historySorted(history),
+            componentsHistory: res.conf.local ? false : getComponentsHistory(history),
             q: req.query.q || '',
             stateCounts: stateCounts
           }));

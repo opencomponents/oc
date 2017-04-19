@@ -49,6 +49,7 @@ oc.cmd.push(function(){
 
     return false;
   };
+
   var initialiseTabs = function(){
 
     var selectItem = function(target){

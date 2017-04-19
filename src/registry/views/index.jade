@@ -17,8 +17,9 @@ block content
 
   h2#menuList
     a(href="#components-list" class="tab-link") Components
-    | &nbsp;|&nbsp;
-    a(href="#components-history" class="tab-link") History
+    if componentsHistory
+      | &nbsp;|&nbsp;
+      a(href="#components-history" class="tab-link") History
   
   include components-list
   include components-history
