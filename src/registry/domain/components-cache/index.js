@@ -48,6 +48,9 @@ module.exports = function(conf, cdn){
 
       callback(null, cachedComponentsList);
     },
+
+    getDetails: (callback) => componentsDetails.getFromJson(callback),
+    
     load: (callback) => {
 
       const verifyDetailsIntegrity = (componentsList) => {

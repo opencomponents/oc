@@ -4,7 +4,6 @@ const async = require('async');
 const _ = require('underscore');
 
 const dateStringified = require('../../utils/date-stringify');
-const history = require('../history.json');
 const getComponentsHistory = require('./helpers/get-components-history');
 const packageInfo = require('../../../package.json');
 const urlBuilder = require('../domain/url-builder');
@@ -46,29 +45,32 @@ module.exports = function(repository){
 
           componentsInfo = _.sortBy(componentsInfo, (componentInfo) => componentInfo.name);
 
-          return res.render('index', _.extend(baseResponse, {
-            availableDependencies: res.conf.dependencies,
-            availablePlugins: res.conf.plugins,
-            components: componentsInfo,
-            componentsReleases: componentsReleases,
-            componentsList: _.map(componentsInfo, (component) => {
+          repository.getComponentsDetails((err, details) => {
 
-              const state = (!!component.oc && !!component.oc.state) ? component.oc.state : '';
+            res.render('index', _.extend(baseResponse, {
+              availableDependencies: res.conf.dependencies,
+              availablePlugins: res.conf.plugins,
+              components: componentsInfo,
+              componentsReleases: componentsReleases,
+              componentsList: _.map(componentsInfo, (component) => {
 
-              if(state){
-                stateCounts[state] = stateCounts[state] || 0;
-                stateCounts[state] += 1;
-              }
+                const state = (!!component.oc && !!component.oc.state) ? component.oc.state : '';
 
-              return {
-                name: component.name,
-                state: state
-              };
-            }),
-            componentsHistory: res.conf.local ? false : getComponentsHistory(history),
-            q: req.query.q || '',
-            stateCounts: stateCounts
-          }));
+                if(state){
+                  stateCounts[state] = stateCounts[state] || 0;
+                  stateCounts[state] += 1;
+                }
+
+                return {
+                  name: component.name,
+                  state: state
+                };
+              }),
+              componentsHistory: !res.conf.local && getComponentsHistory(details),
+              q: req.query.q || '',
+              stateCounts: stateCounts
+            }));
+          });
         });
       } else {
         res.status(200).json(_.extend(baseResponse, {
