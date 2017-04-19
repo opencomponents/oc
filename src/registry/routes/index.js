@@ -5,7 +5,7 @@ const _ = require('underscore');
 
 const dateStringified = require('../../utils/date-stringify');
 const history = require('../history.json');
-const historySorted = require('../../utils/history-sort');
+const historySorted = require('./helpers/history-sort');
 const packageInfo = require('../../../package.json');
 const urlBuilder = require('../domain/url-builder');
 
@@ -46,7 +46,7 @@ module.exports = function(repository){
 
           componentsInfo = _.sortBy(componentsInfo, (componentInfo) => componentInfo.name);
 
-          return res.render('components-main', _.extend(baseResponse, {
+          return res.render('index', _.extend(baseResponse, {
             availableDependencies: res.conf.dependencies,
             availablePlugins: res.conf.plugins,
             components: componentsInfo,
