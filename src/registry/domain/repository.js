@@ -187,7 +187,9 @@ module.exports = function(conf){
         return callback(null, 'ok');
       }
 
-      componentsCache.load(callback);
+      componentsCache.load((err, componentsList) => {
+        componentsDetails.refresh(componentsList, callback);
+      });
     },
     publishComponent: (pkgDetails, componentName, componentVersion, callback) => {
       if(conf.local){
@@ -234,7 +236,10 @@ module.exports = function(conf){
 
         cdn.putDir(pkgDetails.outputFolder, `${conf.s3.componentsDir}/${componentName}/${componentVersion}`, (err) => {
           if(err){ return callback(err); }
-          componentsCache.refresh(callback);
+          componentsCache.refresh((err, componentsList) => {
+            if(err){ return callback(err); }
+            componentsDetails.refresh(callback);
+          });
         });
       });
     },
