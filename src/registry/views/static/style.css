@@ -221,6 +221,12 @@ a.tab-link {
   color: #8B0000;
 }
 
+a.tab-link.selected {
+  background-color: #8b0000;
+  color: #fff;
+  text-decoration: none;
+}
+
 .bold {
   font-weight: bold;
 }
