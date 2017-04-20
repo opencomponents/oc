@@ -43,14 +43,15 @@ module.exports = (conf, cdn) => {
     }));
   };
 
+  const save = (data, callback) => cdn.putFileContent(JSON.stringify(data), filePath(), true, callback);
+
   const refresh = (componentsList, callback) => {
 
-    getFromJson((jsonErr, jsonDetails) => {
-      getFromDirectories({ componentsList, details: jsonDetails }, (dirErr, dirDetails) => {
-
+    getFromJson((jsonErr, details) => {
+      getFromDirectories({ componentsList, details }, (dirErr, dirDetails) => {
         if(dirErr){
           return returnError('components_details_get', dirErr, callback);
-        } else if(jsonErr || !_.isEqual(dirDetails.components, jsonDetails.components)){
+        } else if(jsonErr || !_.isEqual(dirDetails.components, details.components)){
           save(dirDetails, (saveErr) => {
             if(saveErr){
               return returnError('components_details_save', saveErr, callback);
@@ -64,8 +65,6 @@ module.exports = (conf, cdn) => {
       });
     });
   };
-
-  const save = (data, callback) => cdn.putFileContent(JSON.stringify(data), filePath(), true, callback);
 
   return {
     getFromJson,

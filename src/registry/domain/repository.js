@@ -19,7 +19,8 @@ module.exports = function(conf){
 
   const cdn = !conf.local && new S3(conf);
   const repositorySource = conf.local ? 'local repository' : 's3 cdn';
-  const componentsCache = new ComponentsCache(conf, cdn);
+  const componentsCache = ComponentsCache(conf, cdn);
+  const componentsDetails = ComponentsDetails(conf, cdn);
 
   const getFilePath = (component, version, filePath) => `${conf.s3.componentsDir}/${component}/${version}/${filePath}`;
 
@@ -80,8 +81,7 @@ module.exports = function(conf){
     }
   };
 
-
-  var repository = {
+  const repository = {
     getCompiledView: (componentName, componentVersion, callback) => {
       if(conf.local){
         return callback(null, local.getCompiledView(componentName, componentVersion));
@@ -154,7 +154,13 @@ module.exports = function(conf){
         callback(err, res ? _.keys(res.components) : null);
       });
     },
-    getComponentsDetails: callback => componentsDetails.getFromJson(callback),
+    getComponentsDetails: (callback) => {
+      if(conf.local){
+        return callback();
+      }
+
+      componentsDetails.getFromJson(callback);
+    },
     getComponentVersions: (componentName, callback) => {
       if(conf.local){
         return local.getComponentVersions(componentName, callback);
@@ -171,7 +177,7 @@ module.exports = function(conf){
 
       cdn.getFile(getFilePath(componentName, componentVersion, 'server.js'), callback);
     },
-    getStaticClientPath: () => 
+    getStaticClientPath: () =>
       `https:${conf.s3.path}${getFilePath('oc-client', packageInfo.version, 'src/oc-client.min.js')}`,
 
     getStaticClientMapPath: () =>
@@ -188,7 +194,8 @@ module.exports = function(conf){
       }
 
       componentsCache.load((err, componentsList) => {
-        componentsDetails.refresh(componentsList, callback);
+        if(err){ return callback(err); }
+        componentsDetails.refresh(componentsList, (err) => callback(err, componentsList));
       });
     },
     publishComponent: (pkgDetails, componentName, componentVersion, callback) => {
@@ -238,7 +245,7 @@ module.exports = function(conf){
           if(err){ return callback(err); }
           componentsCache.refresh((err, componentsList) => {
             if(err){ return callback(err); }
-            componentsDetails.refresh(callback);
+            componentsDetails.refresh(componentsList, callback);
           });
         });
       });
