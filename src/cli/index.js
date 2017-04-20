@@ -3,7 +3,7 @@
 const cli = require('yargs');
 const commands = require('./commands');
 const format = require('stringformat');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const Local = require('./domain/local');
 const logger = require('./logger');
@@ -18,7 +18,7 @@ const dependencies = {
 
 function validate(argv, level){
   if(argv._.length > level &&
-    !_.contains(_.keys(commands.commands), argv._[level])) {
+    !_.includes(_.keys(commands.commands), argv._[level])) {
     throw new Error(format(strings.messages.cli.NO_SUCH_COMMAND, argv._[level]));
   }
 
@@ -28,7 +28,7 @@ function validate(argv, level){
 function processCommand(command, commandName, cli, level, prefix){
   prefix = prefix || '';
   level = (level || 0) + 1;
-  const facade = require('./facade/' + prefix + commandName)(dependencies);
+  const facade = require(`./facade/${prefix}${commandName}`)(dependencies);
 
   cli
     .command(
@@ -45,8 +45,10 @@ function processCommand(command, commandName, cli, level, prefix){
           yargs
             .check((argv) => validate(argv, level))
             .epilogue(strings.messages.cli.HELP_HINT);
+
           const newPrefix = (prefix ? prefix + '-' : '') + commandName + '-';
-          _.mapObject(command.commands, (commandConfiguration, commandName) => {
+
+          _.mapValues(command.commands, (commandConfiguration, commandName) => {
             processCommand(commandConfiguration, commandName, yargs, level, newPrefix);
           });
         }

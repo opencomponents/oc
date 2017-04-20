@@ -4,7 +4,7 @@ const async = require('async');
 const colors = require('colors/safe');
 const express = require('express');
 const http = require('http');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const appStart = require('./app-start');
 const eventsHandler = require('./domain/events-handler');

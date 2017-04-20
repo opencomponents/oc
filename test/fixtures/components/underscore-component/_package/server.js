@@ -1,1 +1,0 @@
-"use strict";var _=require("underscore");module.exports.data=function(r,e){e(null,{magicNumber:_.first([5,4])})};

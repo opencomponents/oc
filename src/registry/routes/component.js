@@ -1,7 +1,7 @@
 'use strict';
 
 const GetComponentHelper = require('./helpers/get-component');
-const _ = require('underscore');
+const _ = require('lodash');
 
 module.exports = function(conf, repository){
 

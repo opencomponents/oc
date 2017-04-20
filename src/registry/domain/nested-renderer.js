@@ -1,7 +1,7 @@
 'use strict';
 
 const async = require('async');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const settings = require('../../resources/settings');
 const strings = require('../../resources');

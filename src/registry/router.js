@@ -1,7 +1,7 @@
 'use strict';
 
 const format = require('stringformat');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const ComponentRoute = require('./routes/component');
 const ComponentsRoute = require('./routes/components');

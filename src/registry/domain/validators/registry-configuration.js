@@ -1,7 +1,7 @@
 'use strict';
 
 const format = require('stringformat');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const auth = require('../authentication');
 const strings = require('../../../resources');

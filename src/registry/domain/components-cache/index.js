@@ -1,6 +1,6 @@
 'use strict';
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 const ComponentsList = require('./components-list');
 const eventsHandler = require('../events-handler');

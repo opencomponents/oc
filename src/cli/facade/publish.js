@@ -5,7 +5,7 @@ const colors = require('colors/safe');
 const format = require('stringformat');
 const path = require('path');
 const read = require('read');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const strings = require('../../resources/index');
 const wrapCliCallback = require('../wrap-cli-callback');

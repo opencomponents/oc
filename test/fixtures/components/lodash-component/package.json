@@ -1,5 +1,5 @@
 {
-  "name": "underscore-component",
+  "name": "lodash-component",
   "description": "",
   "version": "1.0.0",
   "repository": "",
@@ -15,6 +15,6 @@
     }
   },
   "dependencies": {
-    "underscore": "1.8.3"
+    "lodash": ""
   }
 }

@@ -6,7 +6,7 @@ const fs = require('fs-extra');
 const minifyFile = require('./minify-file');
 const nodeDir = require('node-dir');
 const path = require('path');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const strings = require('../../../resources');
 

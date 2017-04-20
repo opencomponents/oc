@@ -3,7 +3,7 @@
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const path = require('path');
-const _ = require('underscore');
+const _ = require('lodash');
 
 describe('utils : require-template', () => {
   const globals = {
@@ -34,7 +34,7 @@ describe('utils : require-template', () => {
     const template = requireTemplate('oc-template-jade');
     const templateAPIs = _.keys(template);
 
-    expect(_.contains(templateAPIs,
+    expect(_.includes(templateAPIs,
       'getInfo',
       'getCompiledTemplate',
       'compile',

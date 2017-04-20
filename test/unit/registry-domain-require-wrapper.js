@@ -12,7 +12,7 @@ describe('registry : domain : require-wrapper', () => {
     describe('when requiring a dependency', () => {
 
       const dependencies = [
-        'underscore'
+        'lodash'
       ];
 
       const context = {
@@ -20,7 +20,7 @@ describe('registry : domain : require-wrapper', () => {
         result: null
       };
 
-      const script = 'var _ = require(\'underscore\');\n' +
+      const script = 'var _ = require(\'lodash\');\n' +
                    'result = _.first([5, 4, 3, 2, 1]);';
 
       vm.runInNewContext(script, context);
@@ -53,7 +53,7 @@ describe('registry : domain : require-wrapper', () => {
     describe('when requiring a dependency with a relative path', () => {
 
       const dependencies = [
-        'underscore'
+        'lodash'
       ];
 
       const context = {
@@ -61,7 +61,7 @@ describe('registry : domain : require-wrapper', () => {
         result: null
       };
 
-      const script = 'var _ = require(\'underscore/underscore\');\n' +
+      const script = 'var _ = require(\'lodash/lodash\');\n' +
                    'result = _.first([5, 4, 3, 2, 1]);';
 
       vm.runInNewContext(script, context);
@@ -74,7 +74,7 @@ describe('registry : domain : require-wrapper', () => {
     describe('when requiring a dependency with a relative path that does not exist', () => {
 
       const dependencies = [
-        'underscore'
+        'lodash'
       ];
 
       const context = {
@@ -82,7 +82,7 @@ describe('registry : domain : require-wrapper', () => {
         result: null
       };
 
-      const script = 'var _ = require(\'underscore/foo\');\n' +
+      const script = 'var _ = require(\'lodash/foo\');\n' +
                    'result = _.first([5, 4, 3, 2, 1]);';
 
       it('should correctly throw an error', () => {

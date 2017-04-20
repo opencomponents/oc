@@ -2,7 +2,7 @@
 
 const expect = require('chai').expect;
 const sinon = require('sinon');
-const _ = require('underscore');
+const _ = require('lodash');
 
 describe('registry : routes : component', () => {
 
@@ -361,7 +361,7 @@ describe('registry : routes : component', () => {
             baseUrl: 'http://components.com/',
             plugins: {},
             dependencies: [
-              'underscore'
+              'lodash'
             ]
           },
           status: statusStub
@@ -412,7 +412,7 @@ describe('registry : routes : component', () => {
       });
 
       it('should respond with error message including missing dependency', () => {
-        expect(resJsonStub.args[0][0].error).to.equal('Component is trying to use unavailable dependencies: underscore');
+        expect(resJsonStub.args[0][0].error).to.equal('Component is trying to use unavailable dependencies: lodash');
       });
 
       it('should return component\'s name and request version', () => {
