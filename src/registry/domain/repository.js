@@ -8,12 +8,12 @@ const _ = require('lodash');
 const ComponentsCache = require('./components-cache');
 const ComponentsDetails = require('./components-details');
 const packageInfo = require('../../../package.json');
+const requireTemplate = require('../../utils/require-template');
 const S3 = require('./s3');
 const settings = require('../../resources/settings');
 const strings = require('../../resources');
 const validator = require('./validators');
 const versionHandler = require('./version-handler');
-const requireTemplate = require('../../utils/require-template');
 
 module.exports = function(conf){
 

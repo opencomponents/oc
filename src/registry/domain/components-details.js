@@ -1,7 +1,7 @@
 'use strict';
 
 const async = require('async');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const eventsHandler = require('./events-handler');
 const getUnixUTCTimestamp = require('../../utils/get-unix-utc-timestamp');
@@ -19,7 +19,7 @@ module.exports = (conf, cdn) => {
 
   const getFromDirectories = (options, callback) => {
 
-    const details = options.details || {};
+    const details = _.extend({}, _.cloneDeep(options.details));
     details.components = details.components || {};
 
     async.eachOfSeries(options.componentsList.components, (versions, name, done) => {
