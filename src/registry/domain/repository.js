@@ -80,7 +80,6 @@ module.exports = function(conf){
     }
   };
 
-
   const repository = {
     getCompiledView: (componentName, componentVersion, callback) => {
       if(conf.local){
