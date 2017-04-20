@@ -2,7 +2,7 @@
 
 const expect = require('chai').expect;
 const sinon = require('sinon');
-const _ = require('underscore');
+const _ = require('lodash');
 
 describe('registry : routes : helpers : nested-renderer', () => {
 

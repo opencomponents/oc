@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const fs = require('fs-extra');
 const path = require('path');
 const targz = require('targz');
-const _ = require('underscore');
+const _ = require('lodash');
 
 describe('The targz dependency', () => {
 

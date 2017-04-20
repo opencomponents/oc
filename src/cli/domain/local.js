@@ -3,7 +3,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const targz = require('targz');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const getComponentsByDir = require('./get-components-by-dir');
 const getLocalNpmModules = require('./get-local-npm-modules');

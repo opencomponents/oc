@@ -1,7 +1,7 @@
 'use strict';
 
 const async = require('async');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const dateStringified = require('../../utils/date-stringify');
 const packageInfo = require('../../../package.json');

@@ -20,7 +20,7 @@ describe('registry', () => {
         baseUrl: 'http://localhost:' + port + '/',
         env: { name: 'local' },
         verbosity: 0,
-        dependencies: ['underscore']
+        dependencies: ['lodash']
       };
     }
 

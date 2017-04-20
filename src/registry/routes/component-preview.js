@@ -1,6 +1,6 @@
 'use strict';
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 const urlBuilder = require('../domain/url-builder');
 const getComponentFallback = require('./helpers/get-component-fallback');

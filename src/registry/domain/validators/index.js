@@ -1,7 +1,7 @@
 'use strict';
 
 const semver = require('semver');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const ocCliVersionValidator = require('./oc-cli-version');
 const componentParametersValidator = require('./component-parameters');
@@ -23,7 +23,7 @@ module.exports = {
   validatePluginsRequirements: pluginsRequirementsValidator,
   validateRegistryConfiguration: registryConfigurationValidator,
   validateTemplateType: function(templateType){
-    return _.contains(['handlebars', 'jade'], templateType);
+    return _.includes(['handlebars', 'jade'], templateType);
   },
   validateVersion: function(version){
     return !!semver.valid(version);

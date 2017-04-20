@@ -3,7 +3,7 @@
 const request = require('minimal-request');
 const url = require('url');
 const urlBuilder = require('../../domain/url-builder');
-const _ = require('underscore');
+const _ = require('lodash');
 
 function getComponentFallbackForViewType(buildUrl, conf, req, res, registryError, callback) {
   const path = buildUrl({

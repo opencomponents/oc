@@ -4,7 +4,7 @@ const async = require('async');
 const colors = require('colors/safe');
 const format = require('stringformat');
 const path = require('path');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const getComponentsDependencies = require('../domain/get-components-deps');
 const getMissingDeps = require('../domain/get-missing-deps');

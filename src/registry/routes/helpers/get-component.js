@@ -5,7 +5,7 @@ const Cache = require('nice-cache');
 const Domain = require('domain');
 const format = require('stringformat');
 const vm = require('vm');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const applyDefaultValues = require('./apply-default-values');
 const Client = require('../../../../client');

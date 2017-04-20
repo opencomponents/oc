@@ -3,7 +3,7 @@
 const format = require('stringformat');
 const fs = require('fs-extra');
 const path = require('path');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const ComponentsCache = require('./components-cache');
 const packageInfo = require('../../../package.json');
@@ -65,7 +65,7 @@ module.exports = function(conf){
         return callback(null, [fs.readJsonSync(path.join(__dirname, '../../../package.json')).version]);
       }
 
-      if(!_.contains(local.getComponents(), componentName)){
+      if(!_.includes(local.getComponents(), componentName)){
         return callback(format(strings.errors.registry.COMPONENT_NOT_FOUND, componentName, repositorySource));
       }
 
