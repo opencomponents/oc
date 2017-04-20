@@ -96,17 +96,17 @@ module.exports = function(conf){
         componentVersion = undefined;
       }
 
-      repository.getComponentVersions(componentName, (err, availableVersions) => {
+      repository.getComponentVersions(componentName, (err, allVersions) => {
 
         if(err){
           return callback(err);
         }
 
-        if(availableVersions.length === 0){
+        if(allVersions.length === 0){
           return callback(format(strings.errors.registry.COMPONENT_NOT_FOUND, componentName, repositorySource));
         }
 
-        const version = versionHandler.getAvailableVersion(componentVersion, availableVersions);
+        const version = versionHandler.getAvailableVersion(componentVersion, allVersions);
 
         if(!version){
           return callback(format(strings.errors.registry.COMPONENT_VERSION_NOT_FOUND, componentName, componentVersion, repositorySource));
@@ -116,9 +116,7 @@ module.exports = function(conf){
           if(err){
             return callback(`component not available: ${err}`, null);
           }
-          callback(null, _.extend(component, {
-            allVersions: availableVersions
-          }));
+          callback(null, _.extend(component, { allVersions }));
         });
       });
     },
@@ -143,7 +141,7 @@ module.exports = function(conf){
     },
     getComponentPath: (componentName, componentVersion) => {
       const prefix = conf.local ? conf.baseUrl : `https:${conf.s3.path}${conf.s3.componentsDir}/`;
-      return`${prefix}${componentName}/${componentVersion}/`;
+      return `${prefix}${componentName}/${componentVersion}/`;
     },
     getComponents: (callback) => {
       if(conf.local){
@@ -221,7 +219,7 @@ module.exports = function(conf){
       }
 
       const validationResult = validator.validatePackageJson(_.extend(pkgDetails, {
-        componentName: componentName,
+        componentName,
         customValidator: conf.publishValidation
       }));
 
