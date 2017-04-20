@@ -7,7 +7,7 @@
 */
 'use strict';
 const format = require('stringformat');
-const _ = require('underscore');
+const _ = require('lodash');
 const strings = require('../../../../../resources');
 
 
@@ -15,7 +15,7 @@ module.exports = function externalDependenciesHandlers(dependencies){
   const deps = dependencies || {};
 
   const missingExternalDependecy = function(dep, dependencies) {
-    return !_.contains(_.keys(dependencies), dep);
+    return !_.includes(_.keys(dependencies), dep);
   };
 
   return [

@@ -4,7 +4,7 @@ const FormData = require('form-data');
 const fs = require('fs-extra');
 const path = require('path');
 const url = require('url');
-const _ = require('underscore');
+const _ = require('lodash');
 
 module.exports = function(urlPath, files, headers, callback) {
 

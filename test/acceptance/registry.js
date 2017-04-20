@@ -3,7 +3,7 @@
 const expect = require('chai').expect;
 const path = require('path');
 const request = require('minimal-request');
-const _ = require('underscore');
+const _ = require('lodash');
 
 describe('registry', () => {
 
@@ -31,7 +31,7 @@ describe('registry', () => {
       baseUrl: 'http://localhost:3030/',
       env: { name: 'local' },
       verbosity: 0,
-      dependencies: ['underscore']
+      dependencies: ['lodash']
     };
   };
 
@@ -287,8 +287,8 @@ describe('registry', () => {
         'http://localhost:3030/hello-world',
         'http://localhost:3030/hello-world-custom-headers',
         'http://localhost:3030/language',
+        'http://localhost:3030/lodash-component',
         'http://localhost:3030/no-containers',
-        'http://localhost:3030/underscore-component',
         'http://localhost:3030/welcome',
         'http://localhost:3030/welcome-with-optional-parameters',
         'http://localhost:3030/oc-client'
@@ -517,20 +517,20 @@ describe('registry', () => {
     });
   });
 
-  describe('GET /underscore-component', () => {
+  describe('GET /lodash-component', () => {
 
     before((done) => {
       request({
-        url: 'http://localhost:3030/underscore-component',
+        url: 'http://localhost:3030/lodash-component',
         json: true
       }, next(done));
     });
 
     it('should respond with the correct href', () => {
-      expect(result.href).to.eql('http://localhost:3030/underscore-component');
+      expect(result.href).to.eql('http://localhost:3030/lodash-component');
     });
 
-    it('should respond correctly after using underscore server dependency', () => {
+    it('should respond correctly after using lodash server dependency', () => {
       expect(result.html).to.equal('<div>The magic number is 5</div>');
     });
   });

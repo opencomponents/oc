@@ -3,7 +3,7 @@
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
-const _ = require('underscore');
+const _ = require('lodash');
 
 describe('registry : routes : helpers : get-component', () => {
   const fireStub = sinon.stub(),

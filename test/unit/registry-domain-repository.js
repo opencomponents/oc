@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const injectr = require('injectr');
 const path = require('path');
 const sinon = require('sinon');
-const _ = require('underscore');
+const _ = require('lodash');
 
 describe('registry : domain : repository', () => {
 
@@ -306,8 +306,8 @@ describe('registry : domain : repository', () => {
           'hello-world',
           'hello-world-custom-headers',
           'language',
+          'lodash-component',
           'no-containers',
-          'underscore-component',
           'welcome',
           'welcome-with-optional-parameters',
           'oc-client'

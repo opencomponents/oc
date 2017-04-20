@@ -3,7 +3,7 @@
 const colors = require('colors/safe');
 const fs = require('fs-extra');
 const path = require('path');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const settings = require('../../resources/settings');
 const strings = require('../../resources/');

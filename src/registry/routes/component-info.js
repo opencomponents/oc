@@ -1,7 +1,7 @@
 'use strict';
 
 const parseAuthor = require('parse-author');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const getComponentFallback = require('./helpers/get-component-fallback');
 const isUrlDiscoverable = require('./helpers/is-url-discoverable');
@@ -15,7 +15,7 @@ function getParams(component) {
       return !!param.mandatory && !!param.example;
     });
 
-    params = _.mapObject(_.pick(component.oc.parameters, mandatoryParams), (param) => param.example);
+    params = _.mapValues(_.pickBy(component.oc.parameters, mandatoryParams), x => x.example);
   }
 
   return params;

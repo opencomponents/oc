@@ -1,6 +1,6 @@
 'use strict';
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 const sanitise = {
   booleanParameter: function(variable){
@@ -47,7 +47,7 @@ module.exports = {
           sanitised = sanitise.parameter(requestParameter, expectedType);
 
         result[requestParameterName] = sanitised;
-      } else if(!_.contains(toRemove, requestParameterName)){
+      } else if(!_.includes(toRemove, requestParameterName)){
         result[requestParameterName] = requestParameter;
       }
     }, this);

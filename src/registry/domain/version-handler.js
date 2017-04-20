@@ -2,7 +2,7 @@
 
 const semver = require('semver');
 const semverExtra = require('semver-extra');
-const _ = require('underscore');
+const _ = require('lodash');
 
 module.exports = {
   getAvailableVersion: function(requestedVersion, availableVersions){
@@ -17,6 +17,6 @@ module.exports = {
     return version || (isLatest && max) || undefined;
   },
   validateNewVersion: function(requestedVersion, availableVersions){
-    return !_.contains(availableVersions, requestedVersion);
+    return !_.includes(availableVersions, requestedVersion);
   }
 };

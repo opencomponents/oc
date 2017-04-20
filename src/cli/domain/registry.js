@@ -4,7 +4,7 @@ const format = require('stringformat');
 const fs = require('fs-extra');
 const path = require('path');
 const request = require('minimal-request');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const put = require('../../utils/put');
 const settings = require('../../resources/settings');
@@ -57,7 +57,7 @@ module.exports = function(opts){
             res.registries = [];
           }
 
-          if(!_.contains(res.registries, registry)){
+          if(!_.includes(res.registries, registry)){
             res.registries.push(registry);
           }
 

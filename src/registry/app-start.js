@@ -3,7 +3,7 @@
 const colors = require('colors/safe');
 const format = require('stringformat');
 const path = require('path');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const packageInfo = require('../components/oc-client/_package/package');
 
@@ -25,7 +25,7 @@ module.exports = function(repository, options, callback){
 
     logger.log(format(colors.yellow('Ensuring oc-client@{0} is available on library...'), packageInfo.version));
 
-    if(!_.contains(componentInfo, packageInfo.version)){
+    if(!_.includes(componentInfo, packageInfo.version)){
 
       logger.log(colors.yellow('Component not found. Publishing it...'));
 

@@ -1,5 +1,5 @@
 'use strict';
-var _ = require('underscore');
+var _ = require('lodash');
 var commonConfig = require('./karma-common');
 
 module.exports = function(config) {

@@ -5,7 +5,7 @@ const format = require('stringformat');
 const fs = require('fs');
 const path = require('path');
 const semverSort = require('semver-sort');
-const _ = require('underscore');
+const _ = require('lodash');
 
 module.exports = function(grunt){
 
