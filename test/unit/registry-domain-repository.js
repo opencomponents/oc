@@ -9,11 +9,9 @@ const _ = require('underscore');
 describe('registry : domain : repository', () => {
 
   let response;
-  const saveResult = function(callback){
-    return function(err, res){
-      response = { error: err, result: res };
-      callback();
-    };
+  const saveResult = (callback) => (error, result) => {
+    response = { error, result };
+    callback();
   };
 
   describe('when on cdn configuration', () => {
@@ -32,9 +30,7 @@ describe('registry : domain : repository', () => {
       './s3': function(){
         return s3Mock;
       },
-      './components-cache': function(){
-        return componentsCacheMock;
-      }
+      './components-cache': () => componentsCacheMock
     });
 
     const cdnConfiguration = {

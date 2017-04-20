@@ -6,7 +6,7 @@ const ComponentsList = require('./components-list');
 const eventsHandler = require('../events-handler');
 const getUnixUTCTimestamp = require('../../../utils/get-unix-utc-timestamp');
 
-module.exports = function(conf, cdn){
+module.exports = (conf, cdn) => {
 
   let cachedComponentsList, refreshLoop;
 

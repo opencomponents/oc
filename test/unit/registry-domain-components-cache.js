@@ -38,7 +38,7 @@ describe('registry : domain : components-cache', () => {
       clearTimeout: clearTimeoutStub
     });
 
-    componentsCache = new ComponentsCache(baseOptions, mockedCdn);
+    componentsCache = ComponentsCache(baseOptions, mockedCdn);
   };
 
   describe('when library does not contain components.json', () => {
