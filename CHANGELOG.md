@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.36.26
+- [#468](https://github.com/opentable/oc/pull/468) Underscore to lodash
+
 ### v0.36.25
 - [#463](https://github.com/opentable/oc/pull/463) Components cache cleanup
 
