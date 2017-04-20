@@ -2,7 +2,7 @@
 
 const async = require('async');
 const semver = require('semver');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const getUnixUTCTimestamp = require('../../../utils/get-unix-utc-timestamp');
 

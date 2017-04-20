@@ -2,7 +2,7 @@
 
 const async = require('async');
 const format = require('stringformat');
-const _ = require('underscore');
+const _ = require('lodash');
 const DepGraph = require('dependency-graph').DepGraph;
 
 const strings = require('../../resources');

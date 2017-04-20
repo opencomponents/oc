@@ -2,7 +2,7 @@
 
 const querystring = require('querystring');
 const url = require('url');
-const _ = require('underscore');
+const _ = require('lodash');
 
 function componentForType(component, baseUrl, type) {
   if (_.isString(component)) {

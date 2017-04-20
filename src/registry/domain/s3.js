@@ -6,7 +6,7 @@ const Cache = require('nice-cache');
 const format = require('stringformat');
 const fs = require('fs-extra');
 const nodeDir = require('node-dir');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const getFileInfo = require('../../utils/get-file-info');
 const getNextYear = require('../../utils/get-next-year');

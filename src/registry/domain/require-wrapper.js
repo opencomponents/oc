@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const _ = require('underscore');
+const _ = require('lodash');
 const requirePackageName = require('require-package-name');
 
 const strings = require('../../resources');
@@ -10,7 +10,7 @@ module.exports = function(injectedDependencies){
   return function(requirePath){
     const moduleName = requirePackageName(requirePath);
 
-    if(!_.contains(injectedDependencies, moduleName)){
+    if(!_.includes(injectedDependencies, moduleName)){
       throw {
         code: strings.errors.registry.DEPENDENCY_NOT_FOUND_CODE,
         missing: [moduleName]

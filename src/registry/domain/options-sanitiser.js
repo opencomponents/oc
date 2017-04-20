@@ -1,6 +1,6 @@
 'use strict';
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 const settings = require('../../resources/settings');
 const auth = require('./authentication');

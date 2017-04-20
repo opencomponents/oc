@@ -2,7 +2,7 @@
 
 const path = require('path');
 const targz = require('targz');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const getPackageJsonFromTempDir = require('./get-package-json-from-temp-dir');
 

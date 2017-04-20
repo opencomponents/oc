@@ -2,7 +2,7 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const _ =  require('underscore');
+const _ =  require('lodash');
 const format = require('stringformat');
 const settings = require('../../resources');
 

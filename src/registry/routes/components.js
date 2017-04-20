@@ -2,7 +2,7 @@
 
 const async = require('async');
 const format = require('stringformat');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const GetComponentHelper = require('./helpers/get-component');
 const strings = require('../../resources');

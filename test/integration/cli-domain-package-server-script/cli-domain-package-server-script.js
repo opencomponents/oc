@@ -160,7 +160,7 @@ describe('cli : domain : package-server-script', () => {
     });
 
     describe('when component does require an npm module', () => {
-      const serverContent = 'var _ =require(\'underscore\');'
+      const serverContent = 'var _ =require(\'lodash\');'
         + '\nvar user = {name:\'John\'};\nmodule.exports.data=function(context,cb){'
         + '\nreturn cb(null, _.has(user, \'name\'));\n};';
 
@@ -170,7 +170,7 @@ describe('cli : domain : package-server-script', () => {
       });
 
       it('should save compiled data provider', (done) => {
-        const dependencies = {underscore: '1.8.3'};
+        const dependencies = {lodash: '1.8.3'};
 
         packageServerScript(
           {
@@ -204,7 +204,7 @@ describe('cli : domain : package-server-script', () => {
 
       describe('and required dependencies are not present in the package.json', () => {
         it('should throw an error with details', (done) => {
-          const dependencies = {lodash: '1.0.0'};
+          const dependencies = {underscore: '1.0.0'};
 
           packageServerScript(
             {
@@ -220,7 +220,7 @@ describe('cli : domain : package-server-script', () => {
             },
             (err) => {
               expect(err).to.not.be.null;
-              expect(err).to.contain('Missing dependencies from package.json => "underscore"');
+              expect(err).to.contain('Missing dependencies from package.json => "lodash"');
               done();
             }
           );

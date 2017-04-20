@@ -3,7 +3,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const async = require('async');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const packageServerScript = require('./package-server-script');
 const packageStaticFiles = require('./package-static-files');
@@ -20,7 +20,7 @@ module.exports = function(){
     const files = fs.readdirSync(componentPath),
       publishPath = path.join(componentPath, '_package');
 
-    if(_.contains(files, '_package')){
+    if(_.includes(files, '_package')){
       fs.removeSync(publishPath);
     }
 
