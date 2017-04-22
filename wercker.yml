@@ -1,0 +1,17 @@
+box: node:6
+build:
+  steps:
+    - npm-install
+    - npm-test
+deploy-to-ci:
+  box:
+    id: node:6
+    cmd: node src/oc-cli.js dev ./components
+  steps:
+    - internal/docker-push:
+        aws-access-key: $AWS_ACCESS_KEY_ID
+        aws-secret-key: $AWS_SECRET_ACCESS_KEY
+        aws-region: us-east-1
+        aws-registry-id: $AWS_REGISTRY_ID
+        repository: workflows-demo
+        tag: ci-$WERCKER_BRANCH_NAME
