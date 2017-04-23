@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const { getParams, getParams__, getParamsV2 } = require('../../src/registry/routes/helpers/get-params.js');
+const helper = require('../../src/registry/routes/helpers/get-params.js');
 
 const scenarios = [
   {
@@ -44,7 +44,7 @@ scenarios.forEach((scenario) => {
         }
       };
 
-      expect(getParams__(component)).to.deep.equal(getParamsV2(component));
+      expect(helper.getParams__(component)).to.deep.equal(helper.getParamsV2(component));
     });
   });
 });
@@ -58,7 +58,7 @@ scenarios.forEach((scenario) => {
         }
       };
 
-      expect(getParams(component)).to.deep.equal(getParamsV2(component));
+      expect(helper.getParams(component)).to.deep.equal(helper.getParamsV2(component));
     });
   });
 });
