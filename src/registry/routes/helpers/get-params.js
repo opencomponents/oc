@@ -29,7 +29,7 @@ function getParams__(component) {
   return params;
 }
 
-const getParamsV2 = (component) => {
+function getParamsV2(component) {
   const params = {};
   if (component.oc.parameters) {
     Object.keys(component.oc.parameters).forEach((key) => {
@@ -39,6 +39,6 @@ const getParamsV2 = (component) => {
     });
   }
   return params;
-};
+}
 
 module.exports = { getParams__, getParams, getParamsV2 };
