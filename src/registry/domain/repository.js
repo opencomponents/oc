@@ -148,16 +148,14 @@ module.exports = function(conf){
         return callback(null, local.getComponents());
       }
 
-      componentsCache.get((err, res) => {
-        callback(err, res ? _.keys(res.components) : null);
-      });
+      componentsCache.get((err, res) => callback(err, res ? _.keys(res.components) : null));
     },
     getComponentsDetails: (callback) => {
       if(conf.local){
         return callback();
       }
 
-      componentsDetails.getFromJson(callback);
+      componentsDetails.get(callback);
     },
     getComponentVersions: (componentName, callback) => {
       if(conf.local){
@@ -247,9 +245,6 @@ module.exports = function(conf){
           });
         });
       });
-    },
-    saveComponentsInfo: (componentsInfo, callback) => {
-      cdn.putFileContent(JSON.stringify(componentsInfo), `${conf.s3.componentsDir}/components.json`, true, callback);
     }
   };
 

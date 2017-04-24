@@ -21,16 +21,23 @@ describe('registry : domain : repository', () => {
       refresh: sinon.stub()
     };
 
+    const componentsDetailsMock = {
+      get: sinon.stub(),
+      refresh: sinon.stub()
+    };
+
     const s3Mock = {
       getJson: sinon.stub(),
-      putDir: sinon.stub()
+      putDir: sinon.stub(),
+      putFileContent: sinon.stub()
     };
 
     const Repository = injectr('../../src/registry/domain/repository.js', {
       './s3': function(){
         return s3Mock;
       },
-      './components-cache': () => componentsCacheMock
+      './components-cache': () => componentsCacheMock,
+      './components-details': () => componentsDetailsMock
     });
 
     const cdnConfiguration = {
@@ -188,9 +195,9 @@ describe('registry : domain : repository', () => {
       });
     });
 
-    describe('when trying to publish a component', () => {
+    describe('when publishing a component', () => {
 
-      describe('when component has not a valid name', () => {
+      describe('when component has a not valid name', () => {
 
         before((done) => {
           repository.publishComponent({}, 'blue velvet', '1.0.0', saveResult(done));
@@ -249,6 +256,8 @@ describe('registry : domain : repository', () => {
             componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
             componentsCacheMock.refresh = sinon.stub();
             componentsCacheMock.refresh.yields(null, 'yay');
+            componentsDetailsMock.get.yields(null, {});
+            componentsDetailsMock.refresh.yields(null, 'ok');
             s3Mock.putDir = sinon.stub();
             s3Mock.putDir.yields(null, 'done');
             repository.publishComponent(_.extend(pkg, {

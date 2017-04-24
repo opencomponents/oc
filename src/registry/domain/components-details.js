@@ -67,7 +67,7 @@ module.exports = (conf, cdn) => {
   };
 
   return {
-    getFromJson,
+    get: getFromJson,
     refresh
   };
 };
