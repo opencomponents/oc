@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.36.27
+- [#472](https://github.com/opentable/oc/pull/472) issue-with-component-info-get-params v2
+- [#469](https://github.com/opentable/oc/pull/469) Housekeeping
+
 ### v0.36.26
 - [#468](https://github.com/opentable/oc/pull/468) Underscore to lodash
 

@@ -15,7 +15,7 @@ function getParams(component) {
       return !!param.mandatory && !!param.example;
     });
 
-    params = _.mapValues(_.pickBy(component.oc.parameters, mandatoryParams), x => x.example);
+    params = _.mapValues(_.pick(component.oc.parameters, mandatoryParams), x => x.example);
   }
 
   return params;
