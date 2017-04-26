@@ -25,8 +25,7 @@ module.exports = function(repository){
 
       if(isHtmlRequest && !!res.conf.discovery){
 
-        let componentsInfo = [],
-          componentsReleases = 0;
+        let componentsInfo = [], componentsReleases = 0;
         const stateCounts = {};
 
         async.each(components, (component, callback) => repository.getComponent(component, (err, result) => {
@@ -42,13 +41,13 @@ module.exports = function(repository){
         }), (err) => {
           if(err){ return next(err); }
 
-          componentsInfo = _.sortBy(componentsInfo, (componentInfo) => componentInfo.name);
+          componentsInfo = _.sortBy(componentsInfo, 'name');
 
-          return res.render('list-components', _.extend(baseResponse, {
+          return res.render('index', _.extend(baseResponse, {
             availableDependencies: res.conf.dependencies,
             availablePlugins: res.conf.plugins,
             components: componentsInfo,
-            componentsReleases: componentsReleases,
+            componentsReleases,
             componentsList: _.map(componentsInfo, (component) => {
 
               const state = (!!component.oc && !!component.oc.state) ? component.oc.state : '';
@@ -60,11 +59,11 @@ module.exports = function(repository){
 
               return {
                 name: component.name,
-                state: state
+                state
               };
             }),
             q: req.query.q || '',
-            stateCounts: stateCounts
+            stateCounts
           }));
         });
       } else {
