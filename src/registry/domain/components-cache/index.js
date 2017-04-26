@@ -46,7 +46,9 @@ module.exports = (conf, cdn) => {
 
       callback(null, cachedComponentsList);
     },
+
     load: (callback) => {
+
       componentsList.getFromJson((jsonErr, jsonComponents) => {
         componentsList.getFromDirectories((dirErr, dirComponents) => {
           if(dirErr){
@@ -70,6 +72,7 @@ module.exports = (conf, cdn) => {
         if(err){
           return returnError('components_cache_refresh', err, callback);
         }
+
         cacheDataAndStartPolling(components, callback);
       });
     }
