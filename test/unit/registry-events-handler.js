@@ -12,13 +12,13 @@ describe('registry : events-handler', () => {
     const spy = sinon.spy();
     let handler2;
 
-    before(() => {
+    beforeAll(() => {
       eventsHandler.on('eventName', spy);
       handler2 = require('../../src/registry/domain/events-handler');
       handler2.fire('eventName', { a: 1234 });
     });
 
-    after(() => {
+    afterAll(() => {
       eventsHandler.reset();
     });
 
@@ -32,13 +32,13 @@ describe('registry : events-handler', () => {
     const spy = sinon.spy();
     let c = 0;
 
-    before(() => {
+    beforeAll(() => {
       eventsHandler.on('fire', (payload) => { spy(++c, payload); });
       eventsHandler.on('fire', (payload) => { spy(++c, payload); });
       eventsHandler.fire('fire', { hello: true });
     });
 
-    after(() => {
+    afterAll(() => {
       eventsHandler.reset();
     });
 

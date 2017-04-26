@@ -40,11 +40,11 @@ describe('registry', () => {
     registry.start(cb);
   };
 
-  before((done) => {
+  beforeAll((done) => {
     initializeRegistry(getDefaultTestConfiguration(), done);
   });
 
-  after((done) => { registry.close(done); });
+  afterAll((done) => { registry.close(done); });
 
   describe('when initialised with invalid configuration', () => {
 
@@ -60,7 +60,7 @@ describe('registry', () => {
   describe('GET /hello-world-custom-headers', () => {
 
     describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and strong version 1.0.0', () => {
-      before((done) => {
+      beforeAll((done) => {
         request({
           url: 'http://localhost:3030/hello-world-custom-headers/1.0.0',
           json: true
@@ -77,7 +77,7 @@ describe('registry', () => {
     });
 
     describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and weak version 1.x.x', () => {
-      before((done) => {
+      beforeAll((done) => {
         request({
           url: 'http://localhost:3030/hello-world-custom-headers/1.x.x',
           json: true
@@ -94,19 +94,19 @@ describe('registry', () => {
     });
 
     describe('with a custom configuration with customHeadersToSkipOnWeakVersion defined', () => {
-      before((done) => {
+      beforeAll((done) => {
         registry.close();
         initializeRegistry(_.extend(getDefaultTestConfiguration(), {customHeadersToSkipOnWeakVersion: ['Cache-Control']}), done);
       });
 
-      after((done) => {
+      afterAll((done) => {
         registry.close(() => {
           initializeRegistry(getDefaultTestConfiguration(), done);
         });
       });
 
       describe('when strong version is requested 1.0.0', () => {
-        before((done) => {
+        beforeAll((done) => {
           request({
             url: 'http://localhost:3030/hello-world-custom-headers/1.0.0',
             json: true
@@ -123,7 +123,7 @@ describe('registry', () => {
       });
 
       describe('when weak version is requested 1.x.x', () => {
-        before((done) => {
+        beforeAll((done) => {
           request({
             url: 'http://localhost:3030/hello-world-custom-headers/1.x.x',
             json: true
@@ -144,7 +144,7 @@ describe('registry', () => {
   describe('POST /hello-world-custom-headers', () => {
 
     describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and strong version 1.0.0', () => {
-      before((done) => {
+      beforeAll((done) => {
         request({
           url: 'http://localhost:3030',
           json: true,
@@ -171,7 +171,7 @@ describe('registry', () => {
     });
 
     describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and weak version 1.x.x', () => {
-      before((done) => {
+      beforeAll((done) => {
         request({
           url: 'http://localhost:3030',
           json: true,
@@ -198,19 +198,19 @@ describe('registry', () => {
     });
 
     describe('with a custom configuration with customHeadersToSkipOnWeakVersion defined', () => {
-      before((done) => {
+      beforeAll((done) => {
         registry.close();
         initializeRegistry(_.extend(getDefaultTestConfiguration(), {customHeadersToSkipOnWeakVersion: ['Cache-Control']}), done);
       });
 
-      after((done) => {
+      afterAll((done) => {
         registry.close(() => {
           initializeRegistry(getDefaultTestConfiguration(), done);
         });
       });
 
       describe('when strong version is requested 1.0.0', () => {
-        before((done) => {
+        beforeAll((done) => {
           request({
             url: 'http://localhost:3030',
             json: true,
@@ -237,7 +237,7 @@ describe('registry', () => {
       });
 
       describe('when weak version is requested 1.x.x', () => {
-        before((done) => {
+        beforeAll((done) => {
           request({
             url: 'http://localhost:3030',
             json: true,
@@ -267,7 +267,7 @@ describe('registry', () => {
 
   describe('GET /', () => {
 
-    before((done) => {
+    beforeAll((done) => {
       request({
         url: 'http://localhost:3030',
         json: true
@@ -298,7 +298,7 @@ describe('registry', () => {
 
   describe('GET /handlebars3-component', () => {
 
-    before((done) => {
+    beforeAll((done) => {
       request({
         url: 'http://localhost:3030/handlebars3-component',
         json: true
@@ -318,7 +318,7 @@ describe('registry', () => {
 
     describe('when Accept header not specified', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         request({
           url: 'http://localhost:3030/hello-world',
           json: true
@@ -353,7 +353,7 @@ describe('registry', () => {
 
     describe('when Accept header set to application/vnd.oc.unrendered+json', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         request({
           url: 'http://localhost:3030/hello-world',
           headers: {'Accept': 'application/vnd.oc.unrendered+json'},
@@ -389,7 +389,7 @@ describe('registry', () => {
 
   describe('GET /container-with-nested', () => {
 
-    before((done) => {
+    beforeAll((done) => {
       request({
         url: 'http://localhost:3030/container-with-nested',
         json: true
@@ -411,7 +411,7 @@ describe('registry', () => {
 
   describe('GET /container-with-multiple-nested', () => {
 
-    before((done) => {
+    beforeAll((done) => {
       request({
         url: 'http://localhost:3030/container-with-multiple-nested',
         json: true
@@ -435,7 +435,7 @@ describe('registry', () => {
 
     describe('when Accept header not specified', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         request({
           url: 'http://localhost:3030/no-containers',
           json: true
@@ -461,7 +461,7 @@ describe('registry', () => {
 
     describe('when Accept-Language: en-US', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         request({
           url: 'http://localhost:3030/language',
           json: true,
@@ -480,7 +480,7 @@ describe('registry', () => {
 
     describe('when Accept-Language: ja-JP', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         request({
           url: 'http://localhost:3030/language',
           json: true,
@@ -499,7 +499,7 @@ describe('registry', () => {
 
     describe('when Accept-Language: ja-JP but __ocAcceptLanguage overrides with en-US (client-side failover)', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         request({
           url: 'http://localhost:3030/language/?__ocAcceptLanguage=en-US',
           json: true,
@@ -519,7 +519,7 @@ describe('registry', () => {
 
   describe('GET /lodash-component', () => {
 
-    before((done) => {
+    beforeAll((done) => {
       request({
         url: 'http://localhost:3030/lodash-component',
         json: true
@@ -539,7 +539,7 @@ describe('registry', () => {
 
     describe('when body is malformed', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         request({
           url: 'http://localhost:3030/',
           method: 'post',
@@ -561,7 +561,7 @@ describe('registry', () => {
 
       describe('when Accept header not specified', () => {
 
-        before((done) => {
+        beforeAll((done) => {
           request({
             url: 'http://localhost:3030/',
             method: 'post',
@@ -591,7 +591,7 @@ describe('registry', () => {
       describe('when omitHref=true', () => {
         describe('when getting rendered components', () => {
 
-          before((done) => {
+          beforeAll((done) => {
             request({
               url: 'http://localhost:3030/',
               method: 'post',
@@ -614,7 +614,7 @@ describe('registry', () => {
 
         describe('when getting unrendered components', () => {
 
-          before((done) => {
+          beforeAll((done) => {
             request({
               url: 'http://localhost:3030/',
               method: 'post',
@@ -639,7 +639,7 @@ describe('registry', () => {
 
       describe('when Accept header set to application/vnd.oc.unrendered+json', () => {
 
-        before((done) => {
+        beforeAll((done) => {
           request({
             url: 'http://localhost:3030/',
             method: 'post',
@@ -665,7 +665,7 @@ describe('registry', () => {
       describe('when components require params', () => {
         describe('when each component requires different params', () => {
 
-          before((done) => {
+          beforeAll((done) => {
             request({
               url: 'http://localhost:3030/',
               method: 'post',
@@ -687,7 +687,7 @@ describe('registry', () => {
 
         describe('when components require same parameters', () => {
 
-          before((done) => {
+          beforeAll((done) => {
             request({
               url: 'http://localhost:3030/',
               method: 'post',
@@ -710,7 +710,7 @@ describe('registry', () => {
 
         describe('when components have some common parameters and some different', () => {
 
-          before((done) => {
+          beforeAll((done) => {
             request({
               url: 'http://localhost:3030/',
               method: 'post',
@@ -733,7 +733,7 @@ describe('registry', () => {
 
         describe('when components have global parameters with local overrides', () => {
 
-          before((done) => {
+          beforeAll((done) => {
             request({
               url: 'http://localhost:3030/',
               method: 'post',
@@ -756,7 +756,7 @@ describe('registry', () => {
 
         describe('when components accept optional parameters', () => {
 
-          before((done) => {
+          beforeAll((done) => {
             request({
               url: 'http://localhost:3030/',
               method: 'post',

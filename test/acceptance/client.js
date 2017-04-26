@@ -44,14 +44,14 @@ describe('The node.js OC client', () => {
 
   describe('when initialised providing registries properties', () => {
 
-    before((done) => {
+    beforeAll((done) => {
       client = new oc.Client(getClientConfig(3030));
       clientOfflineRegistry = new oc.Client(getClientConfig(1234));
       registry = new oc.Registry(conf);
       registry.start(done);
     });
 
-    after((done) => {
+    afterAll((done) => {
       registry.close(done);
     });
 
@@ -60,7 +60,7 @@ describe('The node.js OC client', () => {
         describe('when each component requires different params', () => {
           let $components;
           let $errs;
-          before((done) => {
+          beforeAll((done) => {
             client.renderComponents([{
               name: 'welcome',
               parameters: {
@@ -93,7 +93,7 @@ describe('The node.js OC client', () => {
         describe('when each component requires the same params', () => {
           let $components;
           let $errs;
-          before((done) => {
+          beforeAll((done) => {
             client.renderComponents([{
               name: 'welcome'
             }, {
@@ -125,7 +125,7 @@ describe('The node.js OC client', () => {
         describe('when components have some common parameters and some different', () => {
           let $components;
           let $errs;
-          before((done) => {
+          beforeAll((done) => {
             client.renderComponents([{
               name: 'welcome',
               parameters: {
@@ -164,7 +164,7 @@ describe('The node.js OC client', () => {
       describe('when rendering both on the server-side', () => {
         let $components;
         let $errs;
-        before((done) => {
+        beforeAll((done) => {
           client.renderComponents([{
             name: 'hello-world'
           }, {
@@ -192,7 +192,7 @@ describe('The node.js OC client', () => {
       describe('when the request body is malformed', () => {
         let error, result;
 
-        before((done) => {
+        beforeAll((done) => {
           client.renderComponents([{
             //Empty
           }, {
@@ -239,7 +239,7 @@ describe('The node.js OC client', () => {
 
       describe('when rendering both on the client-side', () => {
         let $components;
-        before((done) => {
+        beforeAll((done) => {
           client.renderComponents([{
             name: 'hello-world'
           }, {
@@ -261,7 +261,7 @@ describe('The node.js OC client', () => {
 
       describe('when rendering one on the server, one on the client', () => {
         let $components;
-        before((done) => {
+        beforeAll((done) => {
           client.renderComponents([{
             name: 'hello-world',
             render: 'server'
@@ -288,7 +288,7 @@ describe('The node.js OC client', () => {
 
       describe('when rendering one with container, one without container', () => {
         let $components;
-        before((done) => {
+        beforeAll((done) => {
           client.renderComponents([{
             name: 'hello-world',
             container: true
@@ -316,7 +316,7 @@ describe('The node.js OC client', () => {
 
       describe('when there are errors in some of them', () => {
         let $errs;
-        before((done) => {
+        beforeAll((done) => {
           client.renderComponents([{
             name: 'hello-world-i-dont-exist'
           }, {
@@ -346,7 +346,7 @@ describe('The node.js OC client', () => {
 
     describe('when server-side rendering an existing component linked to a responsive registry', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         client.renderComponent('hello-world', { container: true }, (err, html) => {
           $component = cheerio.load(html)('oc-component');
           done();
@@ -361,7 +361,7 @@ describe('The node.js OC client', () => {
 
     describe('when server-side rendering an existing component overriding registry urls', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         const options = {
           container: true,
           registries: {
@@ -384,7 +384,7 @@ describe('The node.js OC client', () => {
 
     describe('when client-side rendering an existing component overriding registry urls', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         const options = {
           container: true,
           registries: {
@@ -407,7 +407,7 @@ describe('The node.js OC client', () => {
 
     describe('when client-side rendering an existing component', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         clientOfflineRegistry.renderComponent('hello-world', { render: 'client' }, (err, html) => {
           $component = cheerio.load(html)('oc-component');
           done();
@@ -423,7 +423,7 @@ describe('The node.js OC client', () => {
       let error;
       let info;
 
-      before((done) => {
+      beforeAll((done) => {
         client.getComponentsInfo([{
           name: 'hello-world'
         }, {
@@ -467,7 +467,7 @@ describe('The node.js OC client', () => {
       let error;
       let info;
 
-      before((done) => {
+      beforeAll((done) => {
         client.getComponentsInfo([{
           name: 'hello-world'
         }, {
@@ -528,14 +528,14 @@ describe('The node.js OC client', () => {
 
   describe('when correctly initialised', () => {
 
-    before((done) => {
+    beforeAll((done) => {
       client = new oc.Client(getClientConfig(3030));
       clientOfflineRegistry = new oc.Client(getClientConfig(1234));
       registry = new oc.Registry(conf);
       registry.start(done);
     });
 
-    after((done) => {
+    afterAll((done) => {
       registry.close(done);
     });
 
@@ -556,7 +556,7 @@ describe('The node.js OC client', () => {
 
         let error;
 
-        before((done) => {
+        beforeAll((done) => {
           const options = { disableFailoverRendering: true };
 
           clientOfflineRegistry.renderComponent('hello-world', options, (err, html) => {
@@ -585,7 +585,7 @@ describe('The node.js OC client', () => {
         let $clientScript,
           error;
 
-        before((done) => {
+        beforeAll((done) => {
           clientOfflineRegistry.renderComponent('hello-world', (err, html) => {
             error = err;
             const $ = cheerio.load(html);
@@ -631,7 +631,7 @@ describe('The node.js OC client', () => {
           }
         };
 
-        before((done) => {
+        beforeAll((done) => {
           clientOfflineRegistry.renderComponent('hello-world', options, (err, html) => {
             error = err;
             const $ = cheerio.load(html);
@@ -677,7 +677,7 @@ describe('The node.js OC client', () => {
       describe('when the component is missing', () => {
         let error, result;
 
-        before((done) => {
+        beforeAll((done) => {
           client.renderComponent('non-existing-component', {
             disableFailoverRendering: true
           }, (err, html) => {
@@ -726,7 +726,7 @@ describe('The node.js OC client', () => {
           json: true
         };
 
-        before((done) => {
+        beforeAll((done) => {
           client.renderComponent('errors-component', {
             parameters: { errorType: 'timeout', timeout: 1000 },
             timeout: 0.01,
@@ -753,7 +753,7 @@ describe('The node.js OC client', () => {
 
       describe('when container option = true', () => {
         let error;
-        before((done) => {
+        beforeAll((done) => {
           client.renderComponent('hello-world', { container: true }, (err, html) => {
             error = err;
             $component = cheerio.load(html)('oc-component');
@@ -784,7 +784,7 @@ describe('The node.js OC client', () => {
       });
 
       describe('when container option = false', () => {
-        before((done) => {
+        beforeAll((done) => {
           client.renderComponent('hello-world', { container: false, renderInfo: false }, (err, html) => {
             result = html;
             done();
@@ -801,7 +801,7 @@ describe('The node.js OC client', () => {
       let error;
       let info;
 
-      before((done) => {
+      beforeAll((done) => {
         clientOfflineRegistry.getComponentsInfo([{
           name: 'hello-world'
         },{

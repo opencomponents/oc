@@ -95,5 +95,8 @@
     "watch": "0.19.1",
     "webpack": "2.2.0",
     "yargs": "^6.6.0"
+  },
+  "jest":{
+    "testMatch": ["**/test/(acceptance|integration|unit)/**/*.js"]
   }
 }

@@ -38,7 +38,7 @@ describe('cli : domain : package-template', () => {
       describe('when component view is not found', () => {
 
         let error;
-        before((done) => {
+        beforeAll((done) => {
 
           initialise({
             existsSync: sinon.stub().returns(false)
@@ -69,7 +69,7 @@ describe('cli : domain : package-template', () => {
       describe('when component view type is not valid', () => {
 
         let error;
-        before((done) => {
+        beforeAll((done) => {
 
           initialise();
 
@@ -98,7 +98,7 @@ describe('cli : domain : package-template', () => {
 
     describe('when component is valid', () => {
 
-      before((done) => {
+      beforeAll((done) => {
 
         initialise({
           readFileSync: sinon.stub().returns('div this is a jade view')

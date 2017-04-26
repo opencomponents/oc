@@ -84,7 +84,7 @@ describe('registry : domain : s3', () => {
 
     describe('when trying to access a path that doesn\'t exist', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         initialise();
         mockedS3Client.listObjects.yields(null, {
           CommonPrefixes: []
@@ -105,7 +105,7 @@ describe('registry : domain : s3', () => {
 
     describe('when getting a list of directories', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         initialise();
         mockedS3Client.listObjects.yields(null, {
           CommonPrefixes: [{
@@ -129,7 +129,7 @@ describe('registry : domain : s3', () => {
 
     describe('when getting a list of subdirectories', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         initialise();
         mockedS3Client.listObjects.yields(null, {
           CommonPrefixes: [{
@@ -155,7 +155,7 @@ describe('registry : domain : s3', () => {
 
       describe('when the file exists', () => {
 
-        before((done) => {
+        beforeAll((done) => {
           initialise();
           mockedS3Client.getObject.yields(null, { Body: 'Hello!' });
           execute('getFile', 'components/image/1.0.1/src/hello.txt', done);
@@ -173,7 +173,7 @@ describe('registry : domain : s3', () => {
 
       describe('when the file does not exists', () => {
 
-        before((done) => {
+        beforeAll((done) => {
           initialise();
           mockedS3Client.getObject.yields({ code: 'NoSuchKey' });
           execute('getFile', 'components/image/1.0.1/random-file.json', done);
@@ -191,7 +191,7 @@ describe('registry : domain : s3', () => {
 
       describe('when the file exists', () => {
 
-        before((done) => {
+        beforeAll((done) => {
           initialise();
           mockedS3Client.getObject.yields(null, { Body: JSON.stringify({ hello: 'world' }) });
           execute('getJson', 'components/image/1.0.1/src/hello.json', done);
@@ -209,7 +209,7 @@ describe('registry : domain : s3', () => {
 
       describe('when the file does not exists', () => {
 
-        before((done) => {
+        beforeAll((done) => {
           initialise();
           mockedS3Client.getObject.yields({ code: 'NoSuchKey' });
           execute('getJson', 'components/image/1.0.1/one-file.json', done);
@@ -224,7 +224,7 @@ describe('registry : domain : s3', () => {
 
       describe('when the file is not valid', () => {
 
-        before((done) => {
+        beforeAll((done) => {
           initialise();
           mockedS3Client.getObject.yields(null, { Body: 'no-json' });
           execute('getJson', 'components/image/1.0.2/random-file.json', done);
@@ -241,7 +241,7 @@ describe('registry : domain : s3', () => {
 
   describe('when publishing directory', () => {
 
-    before((done) => {
+    beforeAll((done) => {
       initialiseAndExecutePutDir(done);
     });
 
@@ -260,7 +260,7 @@ describe('registry : domain : s3', () => {
 
     describe('when putting private file', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         initialiseAndExecutePut('hello.txt', true, done);
       });
 
@@ -272,7 +272,7 @@ describe('registry : domain : s3', () => {
 
     describe('when putting public file', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         initialiseAndExecutePut('hello.txt', false, done);
       });
 
@@ -284,7 +284,7 @@ describe('registry : domain : s3', () => {
 
     describe('when putting js file', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         initialiseAndExecutePut('hello.js', false, done);
       });
 
@@ -296,7 +296,7 @@ describe('registry : domain : s3', () => {
 
     describe('when putting gzipped js file', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         initialiseAndExecutePut('hello.js.gz', false, done);
       });
 
@@ -313,7 +313,7 @@ describe('registry : domain : s3', () => {
 
     describe('when putting css file', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         initialiseAndExecutePut('hello.css', false, done);
       });
 
@@ -325,7 +325,7 @@ describe('registry : domain : s3', () => {
 
     describe('when putting gzipped css file', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         initialiseAndExecutePut('hello.css.gz', false, done);
       });
 
@@ -342,7 +342,7 @@ describe('registry : domain : s3', () => {
 
     describe('when putting jpg file', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         initialiseAndExecutePut('hello.jpg', false, done);
       });
 
@@ -354,7 +354,7 @@ describe('registry : domain : s3', () => {
 
     describe('when putting gif file', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         initialiseAndExecutePut('hello.gif', false, done);
       });
 
@@ -366,7 +366,7 @@ describe('registry : domain : s3', () => {
 
     describe('when putting png file', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         initialiseAndExecutePut('hello.png', false, done);
       });
 

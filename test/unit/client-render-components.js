@@ -34,7 +34,7 @@ describe('client : render-components', () => {
 
     let toDo;
 
-    before((done) => {
+    beforeAll((done) => {
       initialise(getCompiledTemplateStub);
 
       toDo = [{

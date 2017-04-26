@@ -19,7 +19,7 @@ describe('client : get-component-data', () => {
       timeout: 10
     };
 
-    before(done => {
+    beforeAll(done => {
       const getComponentDataPrototype = injectr('../../client/src/get-components-data.js', {
         'minimal-request': minimalRequestStub,
         './href-builder': function() {
@@ -90,7 +90,7 @@ describe('client : get-component-data', () => {
       version: '2.0.0'
     };
 
-    before(done => {
+    beforeAll(done => {
       const getComponentDataPrototype = injectr('../../client/src/get-components-data.js', {
         'minimal-request': minimalRequestStub,
         './href-builder': function() {

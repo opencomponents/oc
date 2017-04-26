@@ -16,7 +16,7 @@ describe('cli : domain : url-parser', () => {
 
   describe('when parsing http://www.registry.com/api/v2/component-name', () => {
 
-    before(() => {
+    beforeAll(() => {
       execute('http://www.registry.com/api/v2/component-name', '');
     });
 
@@ -43,7 +43,7 @@ describe('cli : domain : url-parser', () => {
 
   describe('when parsing http://www.registry.com/component-name/~1.0.0/?hello=world', () => {
 
-    before(() => {
+    beforeAll(() => {
       execute('http://www.registry.com/component-name/~1.0.0/?hello=world', '~1.0.0');
     });
 
@@ -70,7 +70,7 @@ describe('cli : domain : url-parser', () => {
 
   describe('when parsing http://www.registry.com/12345/~1.0.0?hello=world', () => {
 
-    before(() => {
+    beforeAll(() => {
       execute('http://www.registry.com/12345/~1.0.0?hello=world', '~1.0.0');
     });
 

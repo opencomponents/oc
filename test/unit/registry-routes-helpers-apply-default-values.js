@@ -19,7 +19,7 @@ describe('registry : routes : helpers : apply-default-values', () => {
       }
     };
 
-    before(() => {
+    beforeAll(() => {
       parameters = apply({ mandatory: 'request value' }, componentParameters);
     });
 
@@ -44,7 +44,7 @@ describe('registry : routes : helpers : apply-default-values', () => {
       };
 
       describe('when request doesn\'t specify values of optional parameters', () => {
-        before(() => {
+        beforeAll(() => {
           parameters = apply({ mandatory: 'request value' }, componentParameters);
         });
 
@@ -76,7 +76,7 @@ describe('registry : routes : helpers : apply-default-values', () => {
       };
 
       describe('when request specify values of optional parameters', () => {
-        before(() => {
+        beforeAll(() => {
           parameters = apply({ mandatory: 'request value', optional: 'custom value', optional2: true }, componentParameters);
         });
 
@@ -86,7 +86,7 @@ describe('registry : routes : helpers : apply-default-values', () => {
       });
 
       describe('when request specify values of some optional parameters', () => {
-        before(() => {
+        beforeAll(() => {
           parameters = apply({ mandatory: 'request value', optional: 'custom value' }, componentParameters);
         });
 
@@ -98,7 +98,7 @@ describe('registry : routes : helpers : apply-default-values', () => {
       describe('when request doesn\'t specify values of optional parameters', () => {
 
         describe('when string parameter is undefined', () => {
-          before(() => {
+          beforeAll(() => {
             parameters = apply({ mandatory: 'request value' }, componentParameters);
           });
 
@@ -109,7 +109,7 @@ describe('registry : routes : helpers : apply-default-values', () => {
         });
 
         describe('when string parameter is null', () => {
-          before(() => {
+          beforeAll(() => {
             parameters = apply({ mandatory: 'request value', optional: null }, componentParameters);
           });
 

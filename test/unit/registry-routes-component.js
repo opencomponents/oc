@@ -26,7 +26,7 @@ describe('registry : routes : component', () => {
   describe('when getting a component with server.js execution timeout', () => {
 
     let code, response;
-    before((done) => {
+    beforeAll((done) => {
       initialise(mockedComponents['timeout-component']);
       componentRoute = new ComponentRoute({}, mockedRepository);
 
@@ -68,7 +68,7 @@ describe('registry : routes : component', () => {
 
   describe('when getting a component with a server.js that returns undefined data', () => {
 
-    before(() => {
+    beforeAll(() => {
       initialise(mockedComponents['undefined-component']);
       componentRoute = new ComponentRoute({}, mockedRepository);
 
@@ -99,7 +99,7 @@ describe('registry : routes : component', () => {
 
   describe('when getting a component with server.js execution errors', () => {
 
-    before(() => {
+    beforeAll(() => {
       initialise(mockedComponents['error-component']);
       componentRoute = new ComponentRoute({}, mockedRepository);
 
@@ -135,7 +135,7 @@ describe('registry : routes : component', () => {
 
     describe('when has error that gets fired on first execution', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         initialise(mockedComponents['async-error-component']);
         componentRoute = new ComponentRoute({}, mockedRepository);
         statusStub.returns({
@@ -173,7 +173,7 @@ describe('registry : routes : component', () => {
 
     describe('when has error that gets fired on following executions', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         initialise(mockedComponents['async-error2-component']);
         componentRoute = new ComponentRoute({}, mockedRepository);
         statusStub.returns({
@@ -238,7 +238,7 @@ describe('registry : routes : component', () => {
 
     describe('when plugin not declared in package.json', () => {
 
-      before(() => {
+      beforeAll(() => {
         initialise(mockedComponents['plugin-component']);
         componentRoute = new ComponentRoute({}, mockedRepository);
 
@@ -424,7 +424,7 @@ describe('registry : routes : component', () => {
 
   describe('when getting a component with server.js that sets custom headers with empty customHeadersToSkipOnWeakVersion', () => {
 
-    before(() => {
+    beforeAll(() => {
       initialise(mockedComponents['response-headers-component']);
       componentRoute = new ComponentRoute({}, mockedRepository);
 
@@ -459,7 +459,7 @@ describe('registry : routes : component', () => {
 
   describe('when getting a component with server.js that sets custom headers with non-empty customHeadersToSkipOnWeakVersion', () => {
 
-    before((done) => {
+    beforeAll((done) => {
       initialise(mockedComponents['response-headers-component']);
       componentRoute = new ComponentRoute({}, mockedRepository);
 
@@ -501,7 +501,7 @@ describe('registry : routes : component', () => {
 
   describe('when getting a simple component with server.js after headers component no custom headers should be set', () => {
 
-    before((done) => {
+    beforeAll((done) => {
       const headersComponent = mockedComponents['another-response-headers-component'];
       const simpleComponent = mockedComponents['simple-component'];
 
@@ -595,7 +595,7 @@ describe('registry : routes : component', () => {
   });
 
   describe('when getting a component info for a component that sets custom headers', () => {
-    before(() => {
+    beforeAll(() => {
       initialise(mockedComponents['response-headers-component']);
       componentRoute = new ComponentRoute({}, mockedRepository);
 

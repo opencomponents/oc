@@ -26,7 +26,7 @@ describe('client : get-compiled-template', () => {
 
     const requestStub = sinon.stub().yields(403, errorExample);
 
-    before((done) => {
+    beforeAll((done) => {
       initialise(requestStub);
 
       const template = {

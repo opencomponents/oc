@@ -30,7 +30,7 @@ describe('registry : routes : helpers : get-component', () => {
 
   describe('when getting a component', () => {
 
-    before((done) => {
+    beforeAll((done) => {
       initialise(mockedComponents['async-error2-component']);
       getComponent = new GetComponent({}, mockedRepository);
 

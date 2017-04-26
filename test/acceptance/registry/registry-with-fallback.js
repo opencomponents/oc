@@ -31,7 +31,7 @@ describe('registry', () => {
       };
     }
 
-    before((done) => {
+    beforeAll((done) => {
       registry = new oc.Registry(retrieveRegistryConfiguration(3030, 'test/fixtures/components', 'http://localhost:3031'));
       fallbackRegistry = new oc.Registry(retrieveRegistryConfiguration(3031, 'test/fixtures/fallback-registry-components'));
       registry.start(() => {
@@ -39,7 +39,7 @@ describe('registry', () => {
       });
     });
 
-    after((done) => {
+    afterAll((done) => {
       registry.close(() => {
         fallbackRegistry.close(done);
       });
@@ -47,7 +47,7 @@ describe('registry', () => {
 
     describe('GET /welcome', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         request({
           url: 'http://localhost:3030/welcome',
           json: true
@@ -65,7 +65,7 @@ describe('registry', () => {
 
     describe('GET /fallback-hello-world', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         request({
           url: 'http://localhost:3030/fallback-hello-world',
           json: true
@@ -83,7 +83,7 @@ describe('registry', () => {
 
     describe('GET /fallback-hello-world/~info', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         request({
           url: 'http://localhost:3030/fallback-welcome-with-optional-parameters/~info',
           json: true
@@ -101,7 +101,7 @@ describe('registry', () => {
 
     describe('GET /fallback-hello-world/~preview', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         request({
           url: 'http://localhost:3030/fallback-welcome-with-optional-parameters/~preview',
           json: true

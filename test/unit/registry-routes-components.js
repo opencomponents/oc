@@ -55,7 +55,7 @@ describe('registry : routes : components', () => {
 
   describe('when making valid request for two components', () => {
 
-    before((done) => {
+    beforeAll((done) => {
       initialise(mockedComponents['async-error2-component']);
       componentsRoute = new ComponentsRoute({}, mockedRepository);
 
@@ -111,7 +111,7 @@ describe('registry : routes : components', () => {
 
   describe('when making request for 0 components', () => {
 
-    before((done) => {
+    beforeAll((done) => {
       makeRequest({ components: []}, done);
     });
 
@@ -126,7 +126,7 @@ describe('registry : routes : components', () => {
 
   describe('when making valid info request for two components', () => {
 
-    before((done) => {
+    beforeAll((done) => {
       initialise(mockedComponents['async-error2-component']);
       componentsRoute = new ComponentsRoute({}, mockedRepository);
 
@@ -174,7 +174,7 @@ describe('registry : routes : components', () => {
 
   describe('when making info request for 0 components', () => {
 
-    before((done) => {
+    beforeAll((done) => {
       makeInfoRequest({ components: []}, done);
     });
 
@@ -190,7 +190,7 @@ describe('registry : routes : components', () => {
   describe('when making not valid request', () => {
 
     describe('when not providing components property', () => {
-      before((done) => {
+      beforeAll((done) => {
         makeRequest({}, done);
       });
 
@@ -205,7 +205,7 @@ describe('registry : routes : components', () => {
     });
 
     describe('when components property is not an array', () => {
-      before((done) => {
+      beforeAll((done) => {
         makeRequest({ components: {}}, done);
       });
 
@@ -220,7 +220,7 @@ describe('registry : routes : components', () => {
     });
 
     describe('when component does not have name property', () => {
-      before((done) => {
+      beforeAll((done) => {
         makeRequest({
           components: [{
             version: '1.0.0',
@@ -240,7 +240,7 @@ describe('registry : routes : components', () => {
     });
 
     describe('when components do not have name property', () => {
-      before((done) => {
+      beforeAll((done) => {
         makeRequest({
           components: [{
             version: '1.0.0',
