@@ -3,7 +3,7 @@
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
-describe('registry : events-handler', () => {
+describe('registry : domain : events-handler', () => {
 
   const eventsHandler = require('../../src/registry/domain/events-handler');
 
