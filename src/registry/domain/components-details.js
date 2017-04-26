@@ -57,10 +57,10 @@ module.exports = (conf, cdn) => {
               return returnError('components_details_save', saveErr, callback);
             }
 
-            callback();
+            callback(null, dirDetails);
           });
         } else {
-          callback();
+          callback(null, details);
         }
       });
     });
