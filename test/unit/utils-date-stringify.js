@@ -10,7 +10,7 @@ describe('utils : dateStringify', () => {
   describe('when the date is provided', () => {
     let dateString;
 
-    before(() => {
+    beforeAll(() => {
       const mockedDate = new Date();
       sinon.stub(mockedDate, 'getFullYear').returns(2015);
       sinon.stub(mockedDate, 'getMonth').returns(8);

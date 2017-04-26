@@ -15,7 +15,7 @@ describe('registry : domain : url-builder', () => {
 
     describe('when building component with just component name', () => {
 
-      before(() => {
+      beforeAll(() => {
         execute('component-name', 'http://www.registry.com/api/v2/');
       });
 
@@ -26,7 +26,7 @@ describe('registry : domain : url-builder', () => {
 
     describe('when building component with version', () => {
 
-      before(() => {
+      beforeAll(() => {
         execute({
           name: 'component',
           version: '~1.2.3'
@@ -47,7 +47,7 @@ describe('registry : domain : url-builder', () => {
 
       describe('when building component with number parameter', () => {
 
-        before(() => {
+        beforeAll(() => {
           component.parameters = { age: 23 };
           execute(component, 'http://oc-registry.net');
         });
@@ -59,7 +59,7 @@ describe('registry : domain : url-builder', () => {
 
       describe('when building component with url parameter', () => {
 
-        before(() => {
+        beforeAll(() => {
           component.parameters = { returnUrl: 'http://www.website.com/?q=blabla&q2=hello' };
           execute(component, 'http://oc-registry.org');
         });
@@ -78,7 +78,7 @@ describe('registry : domain : url-builder', () => {
 
     describe('when building url with just component name', () => {
 
-      before(() => {
+      beforeAll(() => {
         execute('component-name', 'http://www.registry.com/api/v2/');
       });
 
@@ -89,7 +89,7 @@ describe('registry : domain : url-builder', () => {
 
     describe('when building url with version', () => {
 
-      before(() => {
+      beforeAll(() => {
         execute({
           name: 'component',
           version: '~1.2.3'
@@ -110,7 +110,7 @@ describe('registry : domain : url-builder', () => {
 
       describe('when building component with number parameter', () => {
 
-        before(() => {
+        beforeAll(() => {
           component.parameters = { age: 23 };
           execute(component, 'http://oc-registry.net');
         });
@@ -122,7 +122,7 @@ describe('registry : domain : url-builder', () => {
 
       describe('when building component with url parameter', () => {
 
-        before(() => {
+        beforeAll(() => {
           component.parameters = { returnUrl: 'http://www.website.com/?q=blabla&q2=hello' };
           execute(component, 'http://oc-registry.org');
         });

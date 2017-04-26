@@ -8,7 +8,7 @@ describe('registry : routes : helpers : is-url-discoverable', () => {
   describe('when url responds with application/json', () => {
 
     let result;
-    before((done) => {
+    beforeAll((done) => {
       const isDiscoverable = injectr('../../src/registry/routes/helpers/is-url-discoverable.js', {
         'minimal-request': (req, cb) => cb(null, '{}', {
           response: {
@@ -33,7 +33,7 @@ describe('registry : routes : helpers : is-url-discoverable', () => {
   describe('when url responds with text/html', () => {
 
     let result;
-    before((done) => {
+    beforeAll((done) => {
       const isDiscoverable = injectr('../../src/registry/routes/helpers/is-url-discoverable.js', {
         'minimal-request': (req, cb) => cb(null, '{}', {
           response: {

@@ -32,12 +32,12 @@ describe('registry (ui interface)', () => {
     registry.start(cb);
   };
 
-  before(done => initializeRegistry(conf, done));
+  beforeAll(done => initializeRegistry(conf, done));
 
-  after(done => registry.close(done));
+  afterAll(done => registry.close(done));
 
   describe('GET / with Accept: text/html', () => {
-    before((done) => {
+    beforeAll((done) => {
       request({
         url: 'http://localhost:3030',
         headers: { accept: 'text/html' }
@@ -55,7 +55,7 @@ describe('registry (ui interface)', () => {
   });
 
   describe('GET /oc-client/~info with Accept: text/html', () => {
-    before((done) => {
+    beforeAll((done) => {
       request({
         url: 'http://localhost:3030/oc-client/~info',
         headers: { accept: 'text/html' }

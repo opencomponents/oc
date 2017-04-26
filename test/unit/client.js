@@ -19,7 +19,7 @@ describe('client', () => {
   };
 
   describe('when not correctly initialised', () => {
-    before(() => {
+    beforeAll(() => {
       initialise();
       validatorStub.returns({ isValid: false, error: 'argh!' });
       init = function(){ Client(); };

@@ -68,7 +68,7 @@ describe('registry : domain : repository', () => {
 
     describe('when getting the list of available components', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
         repository.getComponents(saveResult(done));
       });
@@ -125,7 +125,7 @@ describe('registry : domain : repository', () => {
     describe('when trying to get a not valid component', () => {
 
       describe('when the component does not exist', () => {
-        before((done) => {
+        beforeAll((done) => {
           componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
           repository.getComponent('form-component', '1.0.0', saveResult(done));
         });
@@ -137,7 +137,7 @@ describe('registry : domain : repository', () => {
       });
 
       describe('when the component exists but version does not', () => {
-        before((done) => {
+        beforeAll((done) => {
           componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
           repository.getComponent('hello-world', '2.0.0', saveResult(done));
         });
@@ -151,7 +151,7 @@ describe('registry : domain : repository', () => {
 
     describe('when getting an existing component', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
         s3Mock.getJson.yields(null, { name: 'hello-world', version: '1.0.0'});
         repository.getComponent('hello-world', '1.0.0', saveResult(done));
@@ -179,7 +179,7 @@ describe('registry : domain : repository', () => {
     describe('when getting a static file url', () => {
 
       let url;
-      before(() => {
+      beforeAll(() => {
         url = repository.getStaticFilePath('hello-world', '1.0.0', 'hi.txt');
       });
 
@@ -192,7 +192,7 @@ describe('registry : domain : repository', () => {
 
       describe('when component has not a valid name', () => {
 
-        before((done) => {
+        beforeAll((done) => {
           repository.publishComponent({}, 'blue velvet', '1.0.0', saveResult(done));
         });
 
@@ -205,7 +205,7 @@ describe('registry : domain : repository', () => {
 
       describe('when component has a not valid version', () => {
 
-        before((done) => {
+        beforeAll((done) => {
           repository.publishComponent({}, 'hello-world', '1.0', saveResult(done));
         });
 
@@ -226,7 +226,7 @@ describe('registry : domain : repository', () => {
 
         describe('when component with same name and version is already in library', () => {
 
-          before((done) => {
+          beforeAll((done) => {
             componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
             repository.publishComponent(pkg, 'hello-world', '1.0.0', saveResult(done));
           });
@@ -244,7 +244,7 @@ describe('registry : domain : repository', () => {
 
         describe('when component with same name and version is not in library', () => {
 
-          before((done) => {
+          beforeAll((done) => {
             componentsCacheMock.get = sinon.stub();
             componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
             componentsCacheMock.refresh = sinon.stub();
@@ -289,7 +289,7 @@ describe('registry : domain : repository', () => {
 
     describe('when getting the list of available components', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         repository.getComponents(saveResult(done));
       });
 
@@ -318,7 +318,7 @@ describe('registry : domain : repository', () => {
     describe('when trying to get a not valid component', () => {
 
       describe('when the component does not exist', () => {
-        before((done) => {
+        beforeAll((done) => {
           repository.getComponent('form-component', '1.0.0', saveResult(done));
         });
 
@@ -329,7 +329,7 @@ describe('registry : domain : repository', () => {
       });
 
       describe('when the component exists but version does not', () => {
-        before((done) => {
+        beforeAll((done) => {
           repository.getComponent('hello-world', '2.0.0', saveResult(done));
         });
 
@@ -342,7 +342,7 @@ describe('registry : domain : repository', () => {
 
     describe('when getting an existing component', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         repository.getComponent('hello-world', '1.0.0', saveResult(done));
       });
 
@@ -360,7 +360,7 @@ describe('registry : domain : repository', () => {
     describe('when getting a static file url', () => {
 
       let url;
-      before(() => {
+      beforeAll(() => {
         url = repository.getStaticFilePath('hello-world', '1.0.0', 'hi.txt');
       });
 
@@ -373,7 +373,7 @@ describe('registry : domain : repository', () => {
 
       const componentDir = path.resolve('../fixtures/components/hello-world');
 
-      before((done) => {
+      beforeAll((done) => {
         repository.publishComponent(componentDir, 'hello-world', '1.0.0', saveResult(done));
       });
 

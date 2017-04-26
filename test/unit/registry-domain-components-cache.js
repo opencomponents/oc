@@ -45,7 +45,7 @@ describe('registry : domain : components-cache', () => {
 
     describe('when initialising the cache', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         mockedCdn.getJson = sinon.stub();
         mockedCdn.getJson.yields('not_found');
         mockedCdn.listSubDirectories = sinon.stub();
@@ -88,7 +88,7 @@ describe('registry : domain : components-cache', () => {
 
     describe('when initialising the cache', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         mockedCdn.getJson = sinon.stub();
         mockedCdn.getJson.yields(null, baseResponse());
         mockedCdn.listSubDirectories = sinon.stub();
@@ -131,7 +131,7 @@ describe('registry : domain : components-cache', () => {
 
     describe('when initialising the cache', () => {
 
-      before((done) => {
+      beforeAll((done) => {
         mockedCdn.getJson = sinon.stub();
         mockedCdn.getJson.yields(null, baseResponse());
         mockedCdn.listSubDirectories = sinon.stub();
@@ -182,7 +182,7 @@ describe('registry : domain : components-cache', () => {
 
       describe('when refresh errors', () => {
 
-        before((done) => {
+        beforeAll((done) => {
           mockedCdn.getJson = sinon.stub();
           mockedCdn.getJson.yields(null, baseResponse());
           mockedCdn.putFileContent = sinon.stub();
@@ -210,7 +210,7 @@ describe('registry : domain : components-cache', () => {
 
       describe('when refresh does not generate errors', () => {
 
-        before((done) => {
+        beforeAll((done) => {
           mockedCdn.getJson = sinon.stub();
           mockedCdn.getJson.yields(null, baseResponse());
           mockedCdn.putFileContent = sinon.stub();
