@@ -7,21 +7,20 @@ const _ = require('lodash');
 
 const ComponentsCache = require('./components-cache');
 const packageInfo = require('../../../package.json');
+const requireTemplate = require('../../utils/require-template');
 const S3 = require('./s3');
 const settings = require('../../resources/settings');
 const strings = require('../../resources');
 const validator = require('./validators');
 const versionHandler = require('./version-handler');
-const requireTemplate = require('../../utils/require-template');
 
 module.exports = function(conf){
 
-  const cdn = !conf.local && new S3(conf),
-    repositorySource = conf.local ? 'local repository' : 's3 cdn',
-    componentsCache = ComponentsCache(conf, cdn);
+  const cdn = !conf.local && new S3(conf);
+  const repositorySource = conf.local ? 'local repository' : 's3 cdn';
+  const componentsCache = ComponentsCache(conf, cdn);
 
-  const getFilePath = (component, version, filePath) =>
-    `${conf.s3.componentsDir}/${component}/${version}/${filePath}`;
+  const getFilePath = (component, version, filePath) => `${conf.s3.componentsDir}/${component}/${version}/${filePath}`;
 
   const coreTemplates = ['oc-template-jade', 'oc-template-handlebars'];
   const templates = _
@@ -51,8 +50,8 @@ module.exports = function(conf){
     getComponents: () => {
 
       const validComponents = fs.readdirSync(conf.path).filter((file) => {
-        const isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory(),
-          isValidComponent = isDir ? (fs.readdirSync(path.join(conf.path, file)).filter((file) => file === '_package').length === 1) : false;
+        const isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory();
+        const isValidComponent = isDir ? (fs.readdirSync(path.join(conf.path, file)).filter((file) => file === '_package').length === 1) : false;
 
         return isValidComponent;
       });
@@ -69,7 +68,7 @@ module.exports = function(conf){
         return callback(format(strings.errors.registry.COMPONENT_NOT_FOUND, componentName, repositorySource));
       }
 
-      callback(null, [fs.readJsonSync(path.join(conf.path, componentName + '/package.json')).version]);
+      callback(null, [fs.readJsonSync(path.join(conf.path, `${componentName}/package.json`)).version]);
     },
     getDataProvider: (componentName) => {
       if(componentName === 'oc-client'){
@@ -174,7 +173,7 @@ module.exports = function(conf){
       `https:${conf.s3.path}${getFilePath('oc-client', packageInfo.version, 'src/oc-client.min.map')}`,
 
     getStaticFilePath: (componentName, componentVersion, filePath) =>
-      repository.getComponentPath(componentName, componentVersion) + (conf.local ? settings.registry.localStaticRedirectorPath : '') + filePath,
+      `${repository.getComponentPath(componentName, componentVersion)}${(conf.local ? settings.registry.localStaticRedirectorPath : '')}${filePath}`,
 
     getTemplates: () => templates,
 
@@ -233,9 +232,6 @@ module.exports = function(conf){
           componentsCache.refresh(callback);
         });
       });
-    },
-    saveComponentsInfo: (componentsInfo, callback) => {
-      cdn.putFileContent(JSON.stringify(componentsInfo), `${conf.s3.componentsDir}/components.json`, true, callback);
     }
   };
 
