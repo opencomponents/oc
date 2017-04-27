@@ -48,13 +48,15 @@ describe('cli : domain : get-components-by-dir', () => {
         'a-component',
         'a-not-component-dir',
         'a-file.json',
-        '_package'
+        '_package',
+        'no-component-but-package-json'
       ]);
 
       data.fs.readJsonSync.onCall(0).returns({ oc: {}});
       data.fs.readJsonSync.onCall(1).throws(new Error('ENOENT: no such file or directory'));
       data.fs.readJsonSync.onCall(2).throws(new Error('ENOENT: no such file or directory'));
       data.fs.readJsonSync.onCall(3).returns({ oc: { packaged: true }});
+      data.fs.readJsonSync.onCall(4).returns({});
 
       executeComponentsListingByDir(data.local, (err, res) => {
         error = err;

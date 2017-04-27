@@ -22,6 +22,10 @@ module.exports = function(){
         return false;
       }
 
+      if (!content.oc) {
+        return false;
+      }
+
       const packagedProperty = content.oc && content.oc.packaged;
 
       return _.isUndefined(packagedProperty);
