@@ -6,6 +6,7 @@ const path = require('path');
 const _ = require('lodash');
 
 const ComponentsCache = require('./components-cache');
+const ComponentsDetails = require('./components-details');
 const packageInfo = require('../../../package.json');
 const requireTemplate = require('../../utils/require-template');
 const S3 = require('./s3');
@@ -19,6 +20,7 @@ module.exports = function(conf){
   const cdn = !conf.local && new S3(conf);
   const repositorySource = conf.local ? 'local repository' : 's3 cdn';
   const componentsCache = ComponentsCache(conf, cdn);
+  const componentsDetails = ComponentsDetails(conf, cdn);
 
   const getFilePath = (component, version, filePath) => `${conf.s3.componentsDir}/${component}/${version}/${filePath}`;
 
@@ -146,9 +148,14 @@ module.exports = function(conf){
         return callback(null, local.getComponents());
       }
 
-      componentsCache.get((err, res) => {
-        callback(err, res ? _.keys(res.components) : null);
-      });
+      componentsCache.get((err, res) => callback(err, res ? _.keys(res.components) : null));
+    },
+    getComponentsDetails: (callback) => {
+      if(conf.local){
+        return callback();
+      }
+
+      componentsDetails.get(callback);
     },
     getComponentVersions: (componentName, callback) => {
       if(conf.local){
@@ -182,7 +189,10 @@ module.exports = function(conf){
         return callback(null, 'ok');
       }
 
-      componentsCache.load(callback);
+      componentsCache.load((err, componentsList) => {
+        if(err){ return callback(err); }
+        componentsDetails.refresh(componentsList, (err) => callback(err, componentsList));
+      });
     },
     publishComponent: (pkgDetails, componentName, componentVersion, callback) => {
       if(conf.local){
@@ -229,7 +239,10 @@ module.exports = function(conf){
 
         cdn.putDir(pkgDetails.outputFolder, `${conf.s3.componentsDir}/${componentName}/${componentVersion}`, (err) => {
           if(err){ return callback(err); }
-          componentsCache.refresh(callback);
+          componentsCache.refresh((err, componentsList) => {
+            if(err){ return callback(err); }
+            componentsDetails.refresh(componentsList, callback);
+          });
         });
       });
     }

@@ -21,16 +21,23 @@ describe('registry : domain : repository', () => {
       refresh: sinon.stub()
     };
 
+    const componentsDetailsMock = {
+      get: sinon.stub(),
+      refresh: sinon.stub()
+    };
+
     const s3Mock = {
       getJson: sinon.stub(),
-      putDir: sinon.stub()
+      putDir: sinon.stub(),
+      putFileContent: sinon.stub()
     };
 
     const Repository = injectr('../../src/registry/domain/repository.js', {
       './s3': function(){
         return s3Mock;
       },
-      './components-cache': () => componentsCacheMock
+      './components-cache': () => componentsCacheMock,
+      './components-details': () => componentsDetailsMock
     });
 
     const cdnConfiguration = {
@@ -41,9 +48,7 @@ describe('registry : domain : repository', () => {
         return ok ? ok : { isValid: false, error: 'forbidden!!!'};
       },
       baseUrl: 'http://saymyname.com:3000/v2/',
-      env: {
-        name: 'prod'
-      },
+      env: { name: 'prod' },
       s3: {
         key: 'a-key',
         secret: 'secrety-key',
@@ -62,6 +67,10 @@ describe('registry : domain : repository', () => {
         'welcome': ['1.0.0'],
         'oc-client': ['1.0.0']
       }
+    };
+
+    const componentsDetailsBaseResponse = {
+      components: { 'hello-world': { '1.0.0': { publishDate: 1234567890 }}}
     };
 
     const repository = new Repository(cdnConfiguration);
@@ -86,6 +95,21 @@ describe('registry : domain : repository', () => {
       });
     });
 
+    describe('when getting the components details', () => {
+      before((done) => {
+        componentsDetailsMock.get.yields(null, componentsDetailsBaseResponse);
+        repository.getComponentsDetails(saveResult(done));
+      });
+
+      it('should not error', () => {
+        expect(response.error).to.be.null;
+      });
+
+      it('should return the result', () => {
+        expect(response.result).to.eql(componentsDetailsBaseResponse);
+      });
+    });
+
     describe('when getting the list of supported templates', () => {
       describe('when no templates are specificed on the configuaration', () => {
         it('should return core templates', () => {
@@ -97,10 +121,7 @@ describe('registry : domain : repository', () => {
 
       describe('when the templates specificed on the configuaration are core-templates', () => {
         it('should only return uniques templates', () => {
-          const conf = _.extend(
-            cdnConfiguration,
-            {templates: ['oc-template-jade']}
-          );
+          const conf = _.extend(cdnConfiguration, { templates: ['oc-template-jade'] });
           const repository = new Repository(conf);
           expect(repository.getTemplates().length).to.equal(2);
         });
@@ -108,10 +129,7 @@ describe('registry : domain : repository', () => {
 
       describe('when templates specificed on the configuaration are not installed', () => {
         it('should throw an error', () => {
-          const conf = _.extend(
-            cdnConfiguration,
-            {templates: ['oc-template-react']}
-          );
+          const conf = _.extend(cdnConfiguration, { templates: ['oc-template-react'] });
 
           try {
             Repository(conf);
@@ -125,6 +143,7 @@ describe('registry : domain : repository', () => {
     describe('when trying to get a not valid component', () => {
 
       describe('when the component does not exist', () => {
+
         before((done) => {
           componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
           repository.getComponent('form-component', '1.0.0', saveResult(done));
@@ -188,9 +207,9 @@ describe('registry : domain : repository', () => {
       });
     });
 
-    describe('when trying to publish a component', () => {
+    describe('when publishing a component', () => {
 
-      describe('when component has not a valid name', () => {
+      describe('when component has a not valid name', () => {
 
         before((done) => {
           repository.publishComponent({}, 'blue velvet', '1.0.0', saveResult(done));
@@ -232,9 +251,8 @@ describe('registry : domain : repository', () => {
           });
 
           it('should respond with an error', () => {
-            const message = 'Component "hello-world" with version "1.0.0" can\'t be ' +
-                          'published to s3 cdn because a component with the same ' +
-                          'name and version already exists';
+            const message = `Component "hello-world" with version "1.0.0" can't be published ` +
+              'to s3 cdn because a component with the same name and version already exists';
 
             expect(response.error).not.be.empty;
             expect(response.error.code).to.equal('already_exists');
@@ -248,7 +266,9 @@ describe('registry : domain : repository', () => {
             componentsCacheMock.get = sinon.stub();
             componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
             componentsCacheMock.refresh = sinon.stub();
-            componentsCacheMock.refresh.yields(null, 'yay');
+            componentsCacheMock.refresh.yields(null, componentsCacheBaseResponse);
+            componentsDetailsMock.get.yields(null, componentsDetailsBaseResponse);
+            componentsDetailsMock.refresh.yields(null, componentsDetailsBaseResponse);
             s3Mock.putDir = sinon.stub();
             s3Mock.putDir.yields(null, 'done');
             repository.publishComponent(_.extend(pkg, {
@@ -259,6 +279,11 @@ describe('registry : domain : repository', () => {
 
           it('should refresh cached components list', () => {
             expect(componentsCacheMock.refresh.called).to.be.true;
+          });
+
+          it('should refresh componens details', () => {
+            expect(componentsDetailsMock.refresh.called).to.be.true;
+            expect(componentsDetailsMock.refresh.args[0][0]).to.eql(componentsCacheBaseResponse);
           });
 
           it('should store the component in the correct directory', () => {
@@ -280,9 +305,7 @@ describe('registry : domain : repository', () => {
       port: 80,
       prefix: '/v2',
       baseUrl: 'http://localhost/v2/',
-      env: {
-        name: 'local'
-      }
+      env: { name: 'local' }
     };
 
     const repository = new Repository(localConfiguration);

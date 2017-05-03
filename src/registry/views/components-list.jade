@@ -1,0 +1,31 @@
+#components-list.box
+  form#filter-components
+    input.search(placeholder="Filter by component name")
+    .states
+      span Hide:
+      +selectedCheckbox("deprecated")
+      +selectedCheckbox("experimental")
+
+  .row.double.header.componentRow.table
+    div(class="title t-" + (isLocal ? '80' : '60'))
+    .t-10
+    .version.t-10 Latest version
+    if !isLocal
+      .date.t-10 Updated
+      .activity.t-10 Activity
+
+  each component in components
+    a(href=component.name + '/' + component.version + '/~info')
+      - var classes = ['componentRow', 'row', 'double', 'table'];
+      - if(component.oc.state === 'deprecated' || component.oc.state === 'experimental') classes.push('hide');
+      div(id="component-" + component.name, class=classes)
+        div(class="title t-" + (isLocal ? '80' : '60'))
+          p.name= component.name
+          span.description= component.description 
+        .state.t-10
+          if component.oc.state
+            span(class='component-state-' + component.oc.state.toLowerCase())= component.oc.state
+        .version.t-10= component.version
+        if !isLocal
+          .date.t-10.two-rows= component.oc.stringifiedDate
+          .activity.t-10= component.allVersions.length
