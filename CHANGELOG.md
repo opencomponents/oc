@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.37.0
+- [#467](https://github.com/opentable/oc/pull/467) [MLP-594] History
+
 ### v0.36.28
 - [#477](https://github.com/opentable/oc/pull/477) get-components-by-dir-issue
 - [#475](https://github.com/opentable/oc/pull/475) Housekeeping
