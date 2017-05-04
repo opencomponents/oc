@@ -57,6 +57,24 @@ describe('registry : domain : require-wrapper', () => {
       });
     });
 
+    describe('when requiring an unvetted core dependency', () => {
+
+      let f;
+      before(() => {
+        f = () => {
+          const script = `var url = require('url'); result = url.parse('www.google.com').href;`;
+          execute(['querystring'], script);
+        };
+      });
+
+      it('should correctly throw an error', () => {
+        expect(f).to.throw({
+          code: 'DEPENDENCY_MISSING_FROM_REGISTRY',
+          missing: ['url']
+        });
+      });
+    });
+
     describe('when requiring a dependency with a relative path', () => {
 
       before(() => {
