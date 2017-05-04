@@ -33,7 +33,7 @@ module.exports = function(injectedDependencies){
       try {
         return requireCoreDependency(requirePath);
       } catch (e) {
-        throw getError(moduleName);
+        throw getError(requirePath);
       }
     }
   };
