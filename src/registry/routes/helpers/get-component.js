@@ -316,7 +316,7 @@ module.exports = function(conf, repository){
             }
 
             const context = {
-              require: new RequireWrapper(conf.dependencies),
+              require: RequireWrapper(conf.dependencies),
               module: { exports: {}},
               console: conf.local ? console : { log: _.noop },
               setTimeout: setTimeout,

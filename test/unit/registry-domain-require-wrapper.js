@@ -11,7 +11,7 @@ describe('registry : domain : require-wrapper', () => {
 
     let result, error;
     const execute = (dependencies, script) => {
-      const context = { require: new RequireWrapper(dependencies), result: null, console };
+      const context = { require: RequireWrapper(dependencies), result: null, console };
       try {
         vm.runInNewContext(script, context);
         result = context.result;

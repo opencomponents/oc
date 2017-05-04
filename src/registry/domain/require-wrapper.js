@@ -25,22 +25,20 @@ const requireDependency = (requirePath) => {
   return require(modulePath);
 };
 
-module.exports = function(injectedDependencies){
-  return (requirePath) => { console.log(requirePath);
-    const moduleName = requirePackageName(requirePath);
+module.exports = (injectedDependencies) => (requirePath) => {
+  const moduleName = requirePackageName(requirePath);
 
-    if(!_.includes(injectedDependencies, moduleName)){
-      throw getError(moduleName);
-    }
+  if(!_.includes(injectedDependencies, moduleName)){
+    throw getError(moduleName);
+  }
 
+  try {
+    return requireDependency(requirePath);
+  } catch (e) {
     try {
-      return requireDependency(requirePath);
+      return requireCoreDependency(requirePath);
     } catch (e) {
-      try {
-        return requireCoreDependency(requirePath);
-      } catch (e) {
-        throw getError(requirePath);
-      }
+      throw getError(requirePath);
     }
-  };
+  }
 };
