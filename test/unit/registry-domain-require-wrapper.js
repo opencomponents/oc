@@ -11,7 +11,7 @@ describe('registry : domain : require-wrapper', () => {
 
     let context;
     const execute = (dependencies, script) => {
-      context = { require: new RequireWrapper(dependencies), result: null };
+      context = { require: new RequireWrapper(dependencies), result: null, console };
       vm.runInNewContext(script, context);
     };
 
@@ -42,6 +42,18 @@ describe('registry : domain : require-wrapper', () => {
           code: 'DEPENDENCY_MISSING_FROM_REGISTRY',
           missing: ['someModule']
         });
+      });
+    });
+
+    describe('when requiring a core dependency', () => {
+
+      before(() => {
+        const script = `var url = require('url'); result = url.parse('www.google.com').href;`;
+        execute(['url'], script);
+      });
+
+      it('should correctly require and use the dependency', () => {
+        expect(context.result).to.equal('www.google.com');
       });
     });
 
