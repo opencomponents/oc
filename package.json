@@ -28,7 +28,7 @@
     "oc"
   ],
   "devDependencies": {
-    "chai": "1.10.0",
+    "chai": "3.5.0",
     "cheerio": "0.22.0",
     "grunt": "^1.0.1",
     "grunt-eslint": "^19.0.0",
