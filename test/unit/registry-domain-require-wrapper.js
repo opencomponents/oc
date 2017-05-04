@@ -9,18 +9,18 @@ describe('registry : domain : require-wrapper', () => {
 
   describe('when using the require wrapper in a clear context', () => {
 
+    let context;
+    const execute = (dependencies, script) => {
+      context = { require: new RequireWrapper(dependencies), result: null };
+      vm.runInNewContext(script, context);
+    };
+
     describe('when requiring a dependency', () => {
 
-      const dependencies = ['lodash'];
-
-      const context = {
-        require: new RequireWrapper(dependencies),
-        result: null
-      };
-
-      const script = `var _ = require('lodash'); result = _.first([5, 4, 3, 2, 1]);`;
-
-      vm.runInNewContext(script, context);
+      before(() => {
+        const script = `var _ = require('lodash'); result = _.first([5, 4, 3, 2, 1]);`;
+        execute(['lodash'], script);
+      });
 
       it('should correctly make the dependency require-able', () => {
         expect(context.result).to.eql(5);
@@ -29,17 +29,16 @@ describe('registry : domain : require-wrapper', () => {
 
     describe('when requiring an unrecognised dependency', () => {
 
-      const dependencies = [];
-
-      const context = {
-        require: new RequireWrapper(dependencies),
-        result: null
-      };
-
-      const script = `var someModule = require('some-module'); result = someModule.someFunction('John Doe');`;
+      let f;
+      before(() => {
+        f = () => {
+          script = `var someModule = require('some-module'); result = someModule.someFunction('John Doe');`;
+          execute([], script);
+        };
+      });
 
       it('should correctly throw an error', () => {
-        expect(() => vm.runInNewContext(script, context)).to.throw({
+        expect(f).to.throw({
           code: 'DEPENDENCY_MISSING_FROM_REGISTRY',
           missing: ['someModule']
         });
@@ -48,16 +47,10 @@ describe('registry : domain : require-wrapper', () => {
 
     describe('when requiring a dependency with a relative path', () => {
 
-      const dependencies = ['lodash'];
-
-      const context = {
-        require: new RequireWrapper(dependencies),
-        result: null
-      };
-
-      const script = `var _ = require('lodash/lodash'); result = _.first([5, 4, 3, 2, 1]);`;
-
-      vm.runInNewContext(script, context);
+      before(() => {
+        const script = `var _ = require('lodash/lodash'); result = _.first([5, 4, 3, 2, 1]);`;
+        execute(['lodash'], script);
+      });
 
       it('should correctly make the dependency require-able', () => {
         expect(context.result).to.eql(5);
@@ -66,20 +59,16 @@ describe('registry : domain : require-wrapper', () => {
 
     describe('when requiring a dependency with a relative path that does not exist', () => {
 
-      const dependencies = [
-        'lodash'
-      ];
-
-      const context = {
-        require: new RequireWrapper(dependencies),
-        result: null
-      };
-
-      const script = 'var _ = require(\'lodash/foo\');\n' +
-                   'result = _.first([5, 4, 3, 2, 1]);';
+      let f;
+      before(() => {
+        f = () => {
+          const script = `var _ = require('lodash/foo'); result = _.first([5, 4, 3, 2, 1]);`;
+          execute(['lodash'], script);
+        };
+      });
 
       it('should correctly throw an error', () => {
-        expect(() => vm.runInNewContext(script, context)).to.throw({
+        expect(f).to.throw({
           code: 'DEPENDENCY_MISSING_FROM_REGISTRY',
           missing: ['someModule']
         });
