@@ -1,5 +1,6 @@
 'use strict';
 
+const coreModules = require('builtin-modules');
 const path = require('path');
 const _ = require('lodash');
 const requirePackageName = require('require-package-name');
@@ -11,7 +12,12 @@ const getError = (moduleName) => ({
   missing: [moduleName]
 });
 
-const requireCoreDependency = (requirePath) => require(requirePath);
+const requireCoreDependency = (requirePath) => {
+  if(_.includes(coreModules, requirePath)){
+    return require(requirePath);
+  }
+  throw new Error();
+};
 
 const requireDependency = (requirePath) => {
   const nodeModulesPath = path.resolve('.', 'node_modules');
@@ -20,7 +26,7 @@ const requireDependency = (requirePath) => {
 };
 
 module.exports = function(injectedDependencies){
-  return (requirePath) => {
+  return (requirePath) => { console.log(requirePath);
     const moduleName = requirePackageName(requirePath);
 
     if(!_.includes(injectedDependencies, moduleName)){
