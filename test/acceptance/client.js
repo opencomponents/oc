@@ -457,7 +457,7 @@ describe('The node.js OC client', () => {
       }];
 
       it('should return valid info', () => {
-        expect(error).to.be.null();
+        expect(error).to.be.null;
         expect(info).to.be.deep.equal(expectedInfo);
       });
 
@@ -600,7 +600,6 @@ describe('The node.js OC client', () => {
         });
 
         it('should return non rendered contents', () => {
-          expect($component).to.exist();
           expect($component.data('rendered')).to.be.undefined;
         });
 
@@ -762,7 +761,6 @@ describe('The node.js OC client', () => {
         });
 
         it('should return rendered contents', () => {
-          expect($component).to.exist();
           expect($component.data('rendered')).to.eql(true);
         });
 
@@ -837,7 +835,7 @@ describe('The node.js OC client', () => {
       const expectedError = new RegExp('Getting component info failed: request ' + exp + ' failed \\(Error: connect ECONNREFUSED(.*?)\\)');
 
       it('should fail and return an errors array with an error corresponding to every component requested', () => {
-        expect(error).to.not.be.undefined();
+        expect(error).to.not.be.undefined;
         expect(error).to.be.instanceof(Array);
         expect(error.length).to.be.equal(2);
 
@@ -846,12 +844,12 @@ describe('The node.js OC client', () => {
       });
 
       it('return an info array with components requested together with an error for every component', () => {
-        expect(info).to.not.be.undefined();
+        expect(info).to.not.be.undefined;
         expect(info).to.be.instanceof(Array);
         expect(info.length).to.be.equal(2);
 
         expect(info[0].componentName).to.be.equal('hello-world');
-        expect(info[0].requestedVersion).to.be.undefined();
+        expect(info[0].requestedVersion).to.be.undefined;
         expect(info[0].error).to.match(expectedError);
 
         expect(info[1].componentName).to.be.equal('other-component');
