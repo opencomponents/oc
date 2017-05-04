@@ -19,7 +19,7 @@ module.exports = function(components){
   components.forEach((c) => {
     const pkg = fs.readJsonSync(path.join(c, 'package.json'));
     const type = pkg.oc.files.template.type;
-    const dependencies = pkg.dependencies;
+    const dependencies = pkg.dependencies || {};
 
     if (!deps.templates[type] && !legacyTemplates[type]) {
       if (!dependencies[type]) {
@@ -43,7 +43,7 @@ module.exports = function(components){
   });
 
   return {
-    modules: _.union(coreModules, _.keys(deps.modules)),
+    modules: _.union(coreModules, _.keys(deps.modules)).sort(),
     withVersions: _.keys(deps.withVersions),
     templates: _.keys(deps.templates)
   };
