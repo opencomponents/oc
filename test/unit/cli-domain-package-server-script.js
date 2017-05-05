@@ -2,15 +2,12 @@
 
 const expect = require('chai').expect;
 
-const externalDependenciesHandlers =
-  require('../../src/cli/domain/package-server-script/bundle/config/externalDependenciesHandlers');
-const webpackConfigGenerator =
-  require('../../src/cli/domain/package-server-script/bundle/config');
-
+const externalDependenciesHandlers = require('../../src/cli/domain/package-server-script/bundle/config/external-dependencies-handlers');
+const webpackConfigGenerator = require('../../src/cli/domain/package-server-script/bundle/config');
 
 describe('cli : domain : package-server-script ', () => {
 
-  describe('bundle/config/externalDependenciesHandlers when configured with a dependencies hash', () => {
+  describe('bundle/config/external-dependencies-handlers when configured with a dependencies hash', () => {
     const handler = externalDependenciesHandlers({lodash: '4.17.14'});
 
     it('should return an array containing a function and a regular expression ', () => {

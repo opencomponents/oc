@@ -1,9 +1,11 @@
 'use strict';
 
+const coreModules = require('builtin-modules');
+const format = require('stringformat');
 const fs = require('fs-extra');
 const path = require('path');
 const _ =  require('lodash');
-const format = require('stringformat');
+
 const settings = require('../../resources');
 
 module.exports = function(components){
@@ -17,7 +19,7 @@ module.exports = function(components){
   components.forEach((c) => {
     const pkg = fs.readJsonSync(path.join(c, 'package.json'));
     const type = pkg.oc.files.template.type;
-    const dependencies = pkg.dependencies;
+    const dependencies = pkg.dependencies || {};
 
     if (!deps.templates[type] && !legacyTemplates[type]) {
       if (!dependencies[type]) {
@@ -28,9 +30,7 @@ module.exports = function(components){
 
     _.keys(dependencies).forEach((name) => {
       const version = dependencies[name];
-      const depToInstall = version.length > 0
-        ? (name + '@' + version)
-        : name;
+      const depToInstall = version.length > 0 ? `${name}@${version}` : name;
 
       if (!deps.withVersions[depToInstall]) {
         deps.withVersions[depToInstall] = true;
@@ -43,7 +43,7 @@ module.exports = function(components){
   });
 
   return {
-    modules: _.keys(deps.modules),
+    modules: _.union(coreModules, _.keys(deps.modules)),
     withVersions: _.keys(deps.withVersions),
     templates: _.keys(deps.templates)
   };

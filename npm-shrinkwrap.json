@@ -3996,6 +3996,11 @@
         }
       }
     },
+    "builtin-modules": {
+      "version": "1.1.1",
+      "from": "builtin-modules@latest",
+      "resolved": "https://registry.npmjs.org/builtin-modules/-/builtin-modules-1.1.1.tgz"
+    },
     "clean-css": {
       "version": "3.4.18",
       "from": "clean-css@3.4.18",
@@ -7161,6 +7166,11 @@
           }
         }
       }
+    },
+    "try-require": {
+      "version": "1.2.1",
+      "from": "try-require@latest",
+      "resolved": "https://registry.npmjs.org/try-require/-/try-require-1.2.1.tgz"
     },
     "uglify-js": {
       "version": "2.6.4",
