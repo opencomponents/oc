@@ -2,7 +2,7 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const _ = require('underscore');
+const _ = require('lodash');
 
 module.exports = function(){
 
@@ -22,6 +22,10 @@ module.exports = function(){
         return false;
       }
 
+      if (!content.oc) {
+        return false;
+      }
+
       const packagedProperty = content.oc && content.oc.packaged;
 
       return _.isUndefined(packagedProperty);
@@ -35,9 +39,7 @@ module.exports = function(){
       return callback(null, []);
     }
 
-    const components = dirContent.filter(isOcComponent).map(function(component) {
-      return path.resolve(componentsDir, component);
-    });
+    const components = dirContent.filter(isOcComponent).map((component) => path.resolve(componentsDir, component));
 
     callback(null, components);
   };

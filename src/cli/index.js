@@ -1,30 +1,24 @@
 'use strict';
 
 const cli = require('yargs');
-const _ = require('underscore');
-
 const commands = require('./commands');
 const format = require('stringformat');
+const _ = require('lodash');
+
 const Local = require('./domain/local');
+const logger = require('./logger');
 const Registry = require('./domain/registry');
 const strings = require('../resources');
 
-const logger = {
-  log: console.log,
-  logNoNewLine: function(msg){
-    return process.stdout.write(msg.toString());
-  }
-};
-
 const dependencies = {
   local: new Local(),
-  logger: logger,
+  logger,
   registry: new Registry()
 };
 
 function validate(argv, level){
   if(argv._.length > level &&
-    !_.contains(_.keys(commands.commands), argv._[level])) {
+    !_.includes(_.keys(commands.commands), argv._[level])) {
     throw new Error(format(strings.messages.cli.NO_SUCH_COMMAND, argv._[level]));
   }
 
@@ -34,13 +28,13 @@ function validate(argv, level){
 function processCommand(command, commandName, cli, level, prefix){
   prefix = prefix || '';
   level = (level || 0) + 1;
-  const facade = require('./facade/' + prefix + commandName)(dependencies);
+  const facade = require(`./facade/${prefix}${commandName}`)(dependencies);
 
   cli
     .command(
       command.cmd || commandName,
       command.description,
-      function(yargs){
+      (yargs) => {
         yargs.usage(command.usage);
 
         if(command.options){
@@ -49,12 +43,12 @@ function processCommand(command, commandName, cli, level, prefix){
 
         if(command.commands){
           yargs
-            .check(function(argv){
-              return validate(argv, level);
-            })
+            .check((argv) => validate(argv, level))
             .epilogue(strings.messages.cli.HELP_HINT);
+
           const newPrefix = (prefix ? prefix + '-' : '') + commandName + '-';
-          _.mapObject(command.commands, function(commandConfiguration, commandName){
+
+          _.mapValues(command.commands, (commandConfiguration, commandName) => {
             processCommand(commandConfiguration, commandName, yargs, level, newPrefix);
           });
         }
@@ -71,15 +65,13 @@ function processCommand(command, commandName, cli, level, prefix){
     );
 }
 
-_.forEach(commands.commands, function(command, commandName) {
+_.forEach(commands.commands, (command, commandName) => {
   processCommand(command, commandName, cli);
 });
 
 const argv = cli
   .completion()
-  .check(function(argv){
-    return validate(argv, 0);
-  })
+  .check((argv) => validate(argv, 0))
   .usage(commands.usage)
   .epilogue(strings.messages.cli.HELP_HINT)
   .help('h')

@@ -1,8 +1,7 @@
 'use strict';
 
-const colors = require('colors/safe');
 const format = require('stringformat');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const strings = require('../../resources/index');
 const wrapCliCallback = require('../wrap-cli-callback');
@@ -20,7 +19,7 @@ module.exports = function(dependencies){
 
     callback = wrapCliCallback(callback);
 
-    local.init(componentName, templateType, function(err){
+    local.init(componentName, templateType, (err) => {
       if(err){
         if(err === 'name not valid'){
           err = errors.NAME_NOT_VALID;
@@ -30,9 +29,9 @@ module.exports = function(dependencies){
           err = errors.TEMPLATE_TYPE_NOT_VALID;
         }
 
-        logger.log(colors.red(format(errors.INIT_FAIL, err)));
+        logger.err(format(errors.INIT_FAIL, err));
       } else {
-        logger.log(colors.green(format(strings.messages.cli.COMPONENT_INITED, componentName)));
+        logger.ok(format(strings.messages.cli.COMPONENT_INITED, componentName));
       }
 
       callback(err, componentName);

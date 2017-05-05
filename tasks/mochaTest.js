@@ -18,5 +18,8 @@ module.exports = {
     options: {
       reporter: 'progress'
     }
+  },
+  all: {
+    src: ['test/unit/**/*.js', 'test/integration/**/*.js', 'test/acceptance/**/*.js']
   }
 };

@@ -1,5 +1,6 @@
 'use strict';
 /* eslint no-var: 'off' */
+/* eslint prefer-arrow-callback: 'off' */
 
 var oc = oc || {};
 oc.cmd = oc.cmd || [];
@@ -49,6 +50,26 @@ oc.cmd.push(function(){
     return false;
   };
 
+  var initialiseTabs = function(){
+
+    var selectItem = function(target){
+      var $target = $(target);
+      $('.box').hide();
+      $target.show();
+      $('#menuList a').removeClass('selected');
+      $('#menuList a[href="' + target + '"]').addClass('selected');
+    };
+
+    var hash = (location.href.split("#")[1] || "");
+    var isHashValid = hash && $('#' + hash);
+    var target = isHashValid ? '#' + hash : $($('#menuList a')[0]).attr('href');
+    selectItem(target);
+
+    $('#menuList a').click(function(){
+      selectItem($(this).attr('href'));
+    });
+  };
+
   $('#filter-components').submit(componentsListChanged).keyup(componentsListChanged);
   $('#filter-components input[type=checkbox]').change(componentsListChanged);
 
@@ -57,4 +78,5 @@ oc.cmd.push(function(){
   }
 
   componentsListChanged();
+  initialiseTabs();
 });

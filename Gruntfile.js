@@ -1,12 +1,12 @@
 'use strict';
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 module.exports = function(grunt){
 
   const taskObject = { pkg: grunt.file.readJSON('package.json') };
 
-  grunt.file.expand('tasks/*.js', '!tasks/_*.js').forEach(function(file) {
+  grunt.file.expand('tasks/*.js', '!tasks/_*.js').forEach((file) => {
     let name = file.split('/');
     name = name[name.length - 1].replace('.js', '');
     const task = require('./' + file);
@@ -25,7 +25,7 @@ module.exports = function(grunt){
   grunt.registerTask('sauce', ['karma:sauce-linux', 'karma:sauce-osx', 'karma:sauce-windows']);
   grunt.registerTask('test-local', ['eslint', 'mochaTest:unit', 'mochaTest:acceptance', 'karma:local']);
   grunt.registerTask('test-local-silent', ['eslint', 'mochaTest:silent', 'karma:local']);
-  grunt.registerTask('test', ['eslint', 'mochaTest:unit', 'mochaTest:integration', 'mochaTest:acceptance']);
+  grunt.registerTask('test', ['eslint', 'mochaTest:all']);
   grunt.registerTask('git-stage', [
     'gitadd:versionFiles',
     'gitcommit:version',

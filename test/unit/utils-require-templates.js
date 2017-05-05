@@ -3,9 +3,9 @@
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const path = require('path');
-const _ = require('underscore');
+const _ = require('lodash');
 
-describe('utils : require-template', function(){
+describe('utils : require-template', () => {
   const globals = {
     '__dirname': '.',
   };
@@ -30,11 +30,11 @@ describe('utils : require-template', function(){
     '../../src/utils/require-template.js', deps, globals
   );
 
-  it('should return the template found if its of the correct type', function(){
+  it('should return the template found if its of the correct type', () => {
     const template = requireTemplate('oc-template-jade');
     const templateAPIs = _.keys(template);
 
-    expect(_.contains(templateAPIs,
+    expect(_.includes(templateAPIs,
       'getInfo',
       'getCompiledTemplate',
       'compile',
@@ -42,7 +42,7 @@ describe('utils : require-template', function(){
     ).to.be.true;
   });
 
-  it('should throw an error if the template found hasn\'t the right format', function(){
+  it('should throw an error if the template found hasn\'t the right format', () => {
     try {
       requireTemplate('handlebars');
     } catch (e) {

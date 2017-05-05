@@ -4,9 +4,9 @@ const expect = require('chai').expect;
 const injectr = require('injectr');
 const path = require('path');
 const sinon = require('sinon');
-const _ = require('underscore');
+const _ = require('lodash');
 
-describe('cli : domain : package-static-files', function(){
+describe('cli : domain : package-static-files', () => {
 
   let packageStaticFiles,
     error,
@@ -15,7 +15,7 @@ describe('cli : domain : package-static-files', function(){
 
   const initialise = function(mocks, params, cb){
     packageStaticFiles = injectr('../../src/cli/domain/package-static-files/index.js', mocks, { console: console });
-    packageStaticFiles(params, function(e){
+    packageStaticFiles(params, (e) => {
       error = e;
       cb();
     });
@@ -76,9 +76,9 @@ describe('cli : domain : package-static-files', function(){
 
   cleanup();
 
-  describe('when oc.files.static is empty', function(){
+  describe('when oc.files.static is empty', () => {
 
-    beforeEach(function(done){
+    beforeEach((done) => {
       initialise(mocks, {
         componentPath: '/path/to/component',
         minify: false,
@@ -89,17 +89,17 @@ describe('cli : domain : package-static-files', function(){
 
     afterEach(cleanup);
 
-    it('should do nothing', function(){
+    it('should do nothing', () => {
       expect(mocks['fs-extra'].copySync.called).to.be.false;
       expect(mocks['fs-extra'].writeFileSync.called).to.be.false;
     });
   });
 
-  describe('when oc.files.static contains not valid folder', function(){
+  describe('when oc.files.static contains not valid folder', () => {
 
-    describe('when folder does not exist', function(){
+    describe('when folder does not exist', () => {
 
-      beforeEach(function(done){
+      beforeEach((done) => {
         mocks['fs-extra'].existsSync = sinon.stub().returns(false);
 
         initialise(mocks, {
@@ -112,16 +112,16 @@ describe('cli : domain : package-static-files', function(){
 
       afterEach(cleanup);
 
-      it('should do nothing', function(){
+      it('should do nothing', () => {
         expect(mocks['fs-extra'].copySync.called).to.be.false;
         expect(mocks['fs-extra'].writeFileSync.called).to.be.false;
         expect(error).to.equal('"/path/to/component/thisDoesNotExist" not found');
       });
     });
 
-    describe('when folder is not a folder', function(){
+    describe('when folder is not a folder', () => {
 
-      beforeEach(function(done){
+      beforeEach((done) => {
         mocks['fs-extra'].lstatSync = sinon.stub().returns({
           isDirectory: function(){ return false; }
         });
@@ -136,7 +136,7 @@ describe('cli : domain : package-static-files', function(){
 
       afterEach(cleanup);
 
-      it('should do nothing', function(){
+      it('should do nothing', () => {
         expect(mocks['fs-extra'].copySync.called).to.be.false;
         expect(mocks['fs-extra'].writeFileSync.called).to.be.false;
         expect(error).to.equal('"/path/to/component/thisDoesNotExist" must be a directory');
@@ -144,10 +144,10 @@ describe('cli : domain : package-static-files', function(){
     });
   });
 
-  describe('when oc.files.static contains valid folder', function(){
+  describe('when oc.files.static contains valid folder', () => {
 
-    describe('when copying folder with image', function(){
-      beforeEach(function(done){
+    describe('when copying folder with image', () => {
+      beforeEach((done) => {
         mocks['node-dir'].paths.yields(null, {
           files: ['/path/to/component/img/file.png']
         });
@@ -162,21 +162,21 @@ describe('cli : domain : package-static-files', function(){
 
       afterEach(cleanup);
 
-      it('should not get an error', function(){
+      it('should not get an error', () => {
         expect(error).to.be.null;
       });
 
-      it('should copy the file in the folder', function(){
+      it('should copy the file in the folder', () => {
         expect(mocks['fs-extra'].copySync.calledOnce).to.be.true;
       });
 
-      it('should copy the file to the right destination', function(){
+      it('should copy the file to the right destination', () => {
         expect(mocks['fs-extra'].copySync.args[0][1]).to.equal('/path/to/component/_package/img/file.png');
       });
     });
 
-    describe('when copying folder with sub-folders', function(){
-      beforeEach(function(done){
+    describe('when copying folder with sub-folders', () => {
+      beforeEach((done) => {
         mocks['node-dir'].paths.yields(null, {
           files: [
             '/path/to/component/img/file.png',
@@ -194,23 +194,23 @@ describe('cli : domain : package-static-files', function(){
 
       afterEach(cleanup);
 
-      it('should not get an error', function(){
+      it('should not get an error', () => {
         expect(error).to.be.null;
       });
 
-      it('should copy the files to the folder', function(){
+      it('should copy the files to the folder', () => {
         expect(mocks['fs-extra'].copySync.calledTwice).to.be.true;
       });
 
-      it('should copy the files to the right destinations', function(){
+      it('should copy the files to the right destinations', () => {
         expect(mocks['fs-extra'].copySync.args[0][1]).to.equal('/path/to/component/_package/img/file.png');
         expect(mocks['fs-extra'].copySync.args[1][1]).to.equal('/path/to/component/_package/img/subfolder/file2.png');
       });
     });
 
-    describe('when copying folder with js file', function(){
+    describe('when copying folder with js file', () => {
 
-      beforeEach(function(){
+      beforeEach(() => {
         mocks['node-dir'].paths.yields(null, {
           files: ['/path/to/component/js/file.js']
         });
@@ -218,8 +218,8 @@ describe('cli : domain : package-static-files', function(){
 
       afterEach(cleanup);
 
-      describe('when minify=false', function(){
-        beforeEach(function(done){
+      describe('when minify=false', () => {
+        beforeEach((done) => {
           initialise(mocks, {
             componentPath: '/path/to/component',
             minify: false,
@@ -228,21 +228,21 @@ describe('cli : domain : package-static-files', function(){
           }, done);
         });
 
-        it('should not get an error', function(){
+        it('should not get an error', () => {
           expect(error).to.be.null;
         });
 
-        it('should copy the file in the folder', function(){
+        it('should copy the file in the folder', () => {
           expect(mocks['fs-extra'].copySync.calledOnce).to.be.true;
         });
 
-        it('should copy the file to the right destination', function(){
+        it('should copy the file to the right destination', () => {
           expect(mocks['fs-extra'].copySync.args[0][1]).to.equal('/path/to/component/_package/js/file.js');
         });
       });
 
-      describe('when minify=true', function(){
-        beforeEach(function(done){
+      describe('when minify=true', () => {
+        beforeEach((done) => {
           initialise(mocks, {
             componentPath: '/path/to/component',
             minify: true,
@@ -251,38 +251,38 @@ describe('cli : domain : package-static-files', function(){
           }, done);
         });
 
-        it('should not get an error', function(){
+        it('should not get an error', () => {
           expect(error).to.be.null;
         });
 
-        it('should first transpile and minify the file', function(){
+        it('should first transpile and minify the file', () => {
           const transformMock = minifyMocks['babel-core'].transform;
           expect(mocks['fs-extra'].readFileSync.calledOnce).to.be.true;
           expect(transformMock.calledOnce).to.be.true;
           expect(transformMock.args[0][1].presets[0][1].targets.uglify).to.be.true;
         });
 
-        it('should then minify the file', function(){
+        it('should then minify the file', () => {
           expect(minifyMocks['uglify-js'].minify.calledOnce).to.be.true;
         });
 
-        it('should save the file in the folder', function(){
+        it('should save the file in the folder', () => {
           expect(mocks['fs-extra'].writeFileSync.calledOnce).to.be.true;
         });
 
-        it('should save the file minified', function(){
+        it('should save the file minified', () => {
           expect(mocks['fs-extra'].writeFileSync.args[0][1]).to.equal('this-is-minified');
         });
 
-        it('should save the file to the right destination', function(){
+        it('should save the file to the right destination', () => {
           expect(mocks['fs-extra'].writeFileSync.args[0][0]).to.equal('/path/to/component/_package/js/file.js');
         });
       });
     });
 
-    describe('when copying folder with css file', function(){
+    describe('when copying folder with css file', () => {
 
-      beforeEach(function(){
+      beforeEach(() => {
         mocks['node-dir'].paths.yields(null, {
           files: ['/path/to/component/css/file.css']
         });
@@ -290,8 +290,8 @@ describe('cli : domain : package-static-files', function(){
 
       afterEach(cleanup);
 
-      describe('when minify=false', function(){
-        beforeEach(function(done){
+      describe('when minify=false', () => {
+        beforeEach((done) => {
           initialise(mocks, {
             componentPath: '/path/to/component',
             minify: false,
@@ -300,21 +300,21 @@ describe('cli : domain : package-static-files', function(){
           }, done);
         });
 
-        it('should not get an error', function(){
+        it('should not get an error', () => {
           expect(error).to.be.null;
         });
 
-        it('should copy the file in the folder', function(){
+        it('should copy the file in the folder', () => {
           expect(mocks['fs-extra'].copySync.calledOnce).to.be.true;
         });
 
-        it('should copy the file to the right destination', function(){
+        it('should copy the file to the right destination', () => {
           expect(mocks['fs-extra'].copySync.args[0][1]).to.equal('/path/to/component/_package/css/file.css');
         });
       });
 
-      describe('when minify=true', function(){
-        beforeEach(function(done){
+      describe('when minify=true', () => {
+        beforeEach((done) => {
           initialise(mocks, {
             componentPath: '/path/to/component',
             minify: true,
@@ -325,24 +325,24 @@ describe('cli : domain : package-static-files', function(){
 
         afterEach(cleanup);
 
-        it('should not get an error', function(){
+        it('should not get an error', () => {
           expect(error).to.be.null;
         });
 
-        it('should first minify the file', function(){
+        it('should first minify the file', () => {
           expect(mocks['fs-extra'].readFileSync.calledOnce).to.be.true;
           expect(minifyMocks['clean-css'].calledOnce).to.be.true;
         });
 
-        it('should save the file in the folder', function(){
+        it('should save the file in the folder', () => {
           expect(mocks['fs-extra'].writeFileSync.calledOnce).to.be.true;
         });
 
-        it('should save the file minified', function(){
+        it('should save the file minified', () => {
           expect(mocks['fs-extra'].writeFileSync.args[0][1]).to.equal('this-is-minified');
         });
 
-        it('should save the file to the right destination', function(){
+        it('should save the file to the right destination', () => {
           expect(mocks['fs-extra'].writeFileSync.args[0][0]).to.equal('/path/to/component/_package/css/file.css');
         });
       });

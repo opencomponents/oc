@@ -1,7 +1,7 @@
 'use strict';
 
 const async = require('async');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const settings = require('../../resources/settings');
 const strings = require('../../resources');
@@ -68,7 +68,7 @@ module.exports = function(renderer, conf){
         name: componentName,
         parameters: p.options.parameters || {},
         version: p.options.version || ''
-      }, function(result){
+      }, (result) => {
         if(result.response.error){
           return p.callback(result.response.error);
         } else {
@@ -81,14 +81,14 @@ module.exports = function(renderer, conf){
       const p = sanitise.componentsParams(components, renderOptions, callback);
       validate.componentsParams(p);
 
-      async.map(p.components, function(component, cb){
+      async.map(p.components, (component, cb) => {
         renderer({
           conf: conf,
           headers: sanitise.headers(p.options.headers),
           name: component.name,
           parameters: _.extend(_.clone(p.options.parameters) || {}, component.parameters || {}),
           version: component.version || ''
-        }, function(result){
+        }, (result) => {
           const error = result.response.error;
           cb(null, error ? new Error(error) : result.response.html);
         });

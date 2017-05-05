@@ -1,7 +1,7 @@
 'use strict';
 
 const format = require('stringformat');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const auth = require('../authentication');
 const strings = require('../../../resources');
@@ -52,7 +52,7 @@ module.exports = function(conf){
   if(!!routes && !_.isArray(routes)){
     return returnError(strings.errors.registry.CONFIGURATION_ROUTES_MUST_BE_ARRAY);
   } else {
-    _.forEach(routes, function(route){
+    _.forEach(routes, (route) => {
       if(!route.route || !route.handler || !route.method){
         return returnError(strings.errors.registry.CONFIGURATION_ROUTES_NOT_VALID);
       }
@@ -81,9 +81,7 @@ module.exports = function(conf){
       return returnError(strings.errors.registry.CONFIGURATION_HEADERS_TO_SKIP_MUST_BE_STRING_ARRAY);
     }
 
-    const hasNonStringElements = conf.customHeadersToSkipOnWeakVersion.find(function(element) {
-      return typeof(element) !== 'string';
-    });
+    const hasNonStringElements = conf.customHeadersToSkipOnWeakVersion.find((element) => typeof(element) !== 'string');
 
     if (hasNonStringElements) {
       return returnError(strings.errors.registry.CONFIGURATION_HEADERS_TO_SKIP_MUST_BE_STRING_ARRAY);

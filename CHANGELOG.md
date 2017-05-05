@@ -1,5 +1,42 @@
 ## Change Log
 
+### v0.37.1
+- [#479](https://github.com/opentable/oc/pull/479) Allow node core deps to be used and whitelisted
+- [#478](https://github.com/opentable/oc/pull/478) Upgrade chai
+
+### v0.37.0
+- [#467](https://github.com/opentable/oc/pull/467) [MLP-594] History
+
+### v0.36.28
+- [#477](https://github.com/opentable/oc/pull/477) get-components-by-dir-issue
+- [#475](https://github.com/opentable/oc/pull/475) Housekeeping
+
+### v0.36.27
+- [#472](https://github.com/opentable/oc/pull/472) issue-with-component-info-get-params v2
+- [#469](https://github.com/opentable/oc/pull/469) Housekeeping
+
+### v0.36.26
+- [#468](https://github.com/opentable/oc/pull/468) Underscore to lodash
+
+### v0.36.25
+- [#463](https://github.com/opentable/oc/pull/463) Components cache cleanup
+
+### v0.36.24
+- [#461](https://github.com/opentable/oc/pull/461) Registry start log fix
+
+### v0.36.23
+- [#460](https://github.com/opentable/oc/pull/460) Move to =>
+
+### v0.36.22
+- [#459](https://github.com/opentable/oc/pull/459) Fix manual build script
+- [#458](https://github.com/opentable/oc/pull/458) Cleanup
+- [#454](https://github.com/opentable/oc/pull/454) Logger cleanup
+- [#455](https://github.com/opentable/oc/pull/455) UI interface tests
+- [#457](https://github.com/opentable/oc/pull/457) Log error before exiting
+- [#456](https://github.com/opentable/oc/pull/456) Removed trailing spaces
+- [#452](https://github.com/opentable/oc/pull/452) var => let/const
+- [#453](https://github.com/opentable/oc/pull/453) Fix indentation
+
 ### v0.36.21
 - [#450](https://github.com/opentable/oc/pull/450) Replace jshint by eslint
 

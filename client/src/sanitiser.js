@@ -8,7 +8,7 @@ const _ = require('./utils/helpers');
 const lowerHeaderKeys = function(headers){
   const result = {};
 
-  _.each(headers, function(header, headerName){
+  _.each(headers, (header, headerName) => {
     result[headerName.toLowerCase()] = header;
   });
 

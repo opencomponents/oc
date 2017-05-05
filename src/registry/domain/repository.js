@@ -3,30 +3,31 @@
 const format = require('stringformat');
 const fs = require('fs-extra');
 const path = require('path');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const ComponentsCache = require('./components-cache');
+const ComponentsDetails = require('./components-details');
 const packageInfo = require('../../../package.json');
+const requireTemplate = require('../../utils/require-template');
 const S3 = require('./s3');
 const settings = require('../../resources/settings');
 const strings = require('../../resources');
 const validator = require('./validators');
 const versionHandler = require('./version-handler');
-const requireTemplate = require('../../utils/require-template');
 
 module.exports = function(conf){
 
-  const cdn = !conf.local && new S3(conf),
-    repositorySource = conf.local ? 'local repository' : 's3 cdn',
-    componentsCache = new ComponentsCache(conf, cdn);
+  const cdn = !conf.local && new S3(conf);
+  const repositorySource = conf.local ? 'local repository' : 's3 cdn';
+  const componentsCache = ComponentsCache(conf, cdn);
+  const componentsDetails = ComponentsDetails(conf, cdn);
 
-  const getFilePath = function(component, version, filePath){
-    return format('{0}/{1}/{2}/{3}', conf.s3.componentsDir, component, version, filePath);
-  };
+  const getFilePath = (component, version, filePath) => `${conf.s3.componentsDir}/${component}/${version}/${filePath}`;
 
   const coreTemplates = ['oc-template-jade', 'oc-template-handlebars'];
-  const templates = _.union(coreTemplates, conf.templates)
-    .map(function(template){
+  const templates = _
+    .union(coreTemplates, conf.templates)
+    .map((template) => {
       try {
         const ocTemplate = requireTemplate(template);
         const info = ocTemplate.getInfo();
@@ -41,20 +42,18 @@ module.exports = function(conf){
     });
 
   const local = {
-    getCompiledView: function(componentName){
+    getCompiledView: (componentName) => {
       if(componentName === 'oc-client'){
         return fs.readFileSync(path.join(__dirname, '../../components/oc-client/_package/template.js')).toString();
       }
 
-      return fs.readFileSync(path.join(conf.path, componentName + '/_package/template.js')).toString();
+      return fs.readFileSync(path.join(conf.path, `${componentName}/_package/template.js`)).toString();
     },
-    getComponents: function(){
+    getComponents: () => {
 
-      const validComponents = fs.readdirSync(conf.path).filter(function(file){
-        const isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory(),
-          isValidComponent = isDir ? (fs.readdirSync(path.join(conf.path, file)).filter(function(file){
-            return file === '_package';
-          }).length === 1) : false;
+      const validComponents = fs.readdirSync(conf.path).filter((file) => {
+        const isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory();
+        const isValidComponent = isDir ? (fs.readdirSync(path.join(conf.path, file)).filter((file) => file === '_package').length === 1) : false;
 
         return isValidComponent;
       });
@@ -62,78 +61,73 @@ module.exports = function(conf){
       validComponents.push('oc-client');
       return validComponents;
     },
-    getComponentVersions: function(componentName, callback){
+    getComponentVersions: (componentName, callback) => {
       if(componentName === 'oc-client'){
         return callback(null, [fs.readJsonSync(path.join(__dirname, '../../../package.json')).version]);
       }
 
-      if(!_.contains(local.getComponents(), componentName)){
+      if(!_.includes(local.getComponents(), componentName)){
         return callback(format(strings.errors.registry.COMPONENT_NOT_FOUND, componentName, repositorySource));
       }
 
-      callback(null, [fs.readJsonSync(path.join(conf.path, componentName + '/package.json')).version]);
+      callback(null, [fs.readJsonSync(path.join(conf.path, `${componentName}/package.json`)).version]);
     },
-    getDataProvider: function(componentName){
+    getDataProvider: (componentName) => {
       if(componentName === 'oc-client'){
         return fs.readFileSync(path.join(__dirname, '../../components/oc-client/_package/server.js')).toString();
       }
 
-      return fs.readFileSync(path.join(conf.path, componentName + '/_package/server.js')).toString();
+      return fs.readFileSync(path.join(conf.path, `${componentName}/_package/server.js`)).toString();
     }
   };
 
-
-  return {
-    getCompiledView: function(componentName, componentVersion, callback){
+  const repository = {
+    getCompiledView: (componentName, componentVersion, callback) => {
       if(conf.local){
         return callback(null, local.getCompiledView(componentName, componentVersion));
       }
 
       cdn.getFile(getFilePath(componentName, componentVersion, 'template.js'), callback);
     },
-    getComponent: function(componentName, componentVersion, callback){
+    getComponent: (componentName, componentVersion, callback) => {
 
-      const self = this;
-
-      if(typeof(componentVersion) === 'function'){
+      if(_.isFunction(componentVersion)){
         callback = componentVersion;
         componentVersion = undefined;
       }
 
-      this.getComponentVersions(componentName, function(err, availableVersions){
+      repository.getComponentVersions(componentName, (err, allVersions) => {
 
         if(err){
           return callback(err);
         }
 
-        if(availableVersions.length === 0){
+        if(allVersions.length === 0){
           return callback(format(strings.errors.registry.COMPONENT_NOT_FOUND, componentName, repositorySource));
         }
 
-        const version = versionHandler.getAvailableVersion(componentVersion, availableVersions);
+        const version = versionHandler.getAvailableVersion(componentVersion, allVersions);
 
         if(!version){
           return callback(format(strings.errors.registry.COMPONENT_VERSION_NOT_FOUND, componentName, componentVersion, repositorySource));
         }
 
-        self.getComponentInfo(componentName, version, function(err, component){
+        repository.getComponentInfo(componentName, version, (err, component) => {
           if(err){
-            return callback('component not available: ' + err, null);
+            return callback(`component not available: ${err}`, null);
           }
-          callback(null, _.extend(component, {
-            allVersions: availableVersions
-          }));
+          callback(null, _.extend(component, { allVersions }));
         });
       });
     },
-    getComponentInfo: function(componentName, componentVersion, callback){
+    getComponentInfo: (componentName, componentVersion, callback) => {
       if(conf.local){
         let componentInfo;
 
         if(componentName === 'oc-client'){
           componentInfo = fs.readJsonSync(path.join(__dirname, '../../components/oc-client/_package/package.json'));
         } else {
-          componentInfo = fs.readJsonSync(path.join(conf.path, componentName + '/_package/package.json'));
+          componentInfo = fs.readJsonSync(path.join(conf.path, `${componentName}/_package/package.json`));
         }
 
         if(componentInfo.version === componentVersion){
@@ -143,67 +137,64 @@ module.exports = function(conf){
         }
       }
 
-      cdn.getFile(getFilePath(componentName, componentVersion, 'package.json'), function(err, component){
-        let parsed;
-
-        try {
-          parsed = JSON.parse(component);
-        } catch(er){
-          return callback('parsing error');
-        }
-
-        callback(null, parsed);
-      });
+      cdn.getJson(getFilePath(componentName, componentVersion, 'package.json'), callback);
     },
-    getComponentPath: function(componentName, componentVersion){
-      const prefix = conf.local ? conf.baseUrl : ('https:' + conf.s3.path + conf.s3.componentsDir + '/');
-      return format('{0}{1}/{2}/', prefix, componentName, componentVersion);
+    getComponentPath: (componentName, componentVersion) => {
+      const prefix = conf.local ? conf.baseUrl : `https:${conf.s3.path}${conf.s3.componentsDir}/`;
+      return `${prefix}${componentName}/${componentVersion}/`;
     },
-    getComponents: function(callback){
+    getComponents: (callback) => {
       if(conf.local){
         return callback(null, local.getComponents());
       }
 
-      componentsCache.get(function(err, res){
-        callback(err, res ? _.keys(res.components) : null);
-      });
+      componentsCache.get((err, res) => callback(err, res ? _.keys(res.components) : null));
     },
-    getComponentVersions: function(componentName, callback){
+    getComponentsDetails: (callback) => {
+      if(conf.local){
+        return callback();
+      }
+
+      componentsDetails.get(callback);
+    },
+    getComponentVersions: (componentName, callback) => {
       if(conf.local){
         return local.getComponentVersions(componentName, callback);
       }
 
-      componentsCache.get(function(err, res){
+      componentsCache.get((err, res) => {
         callback(err, (!!res && !!_.has(res.components, componentName)) ? res.components[componentName] : []);
       });
     },
-    getDataProvider: function(componentName, componentVersion, callback){
+    getDataProvider: (componentName, componentVersion, callback) => {
       if(conf.local){
         return callback(null, local.getDataProvider(componentName));
       }
 
       cdn.getFile(getFilePath(componentName, componentVersion, 'server.js'), callback);
     },
-    getStaticClientPath: function(){
-      return 'https:' + conf.s3.path + getFilePath('oc-client', packageInfo.version, 'src/oc-client.min.js');
-    },
-    getStaticClientMapPath: function(){
-      return 'https:' + conf.s3.path + getFilePath('oc-client', packageInfo.version, 'src/oc-client.min.map');
-    },
-    getStaticFilePath: function(componentName, componentVersion, filePath){
-      return this.getComponentPath(componentName, componentVersion) + (conf.local ? settings.registry.localStaticRedirectorPath : '') + filePath;
-    },
-    getTemplates: function(){
-      return templates;
-    },
-    init: function(callback){
+    getStaticClientPath: () =>
+      `https:${conf.s3.path}${getFilePath('oc-client', packageInfo.version, 'src/oc-client.min.js')}`,
+
+    getStaticClientMapPath: () =>
+      `https:${conf.s3.path}${getFilePath('oc-client', packageInfo.version, 'src/oc-client.min.map')}`,
+
+    getStaticFilePath: (componentName, componentVersion, filePath) =>
+      `${repository.getComponentPath(componentName, componentVersion)}${(conf.local ? settings.registry.localStaticRedirectorPath : '')}${filePath}`,
+
+    getTemplates: () => templates,
+
+    init: (callback) => {
       if(conf.local){
         return callback(null, 'ok');
       }
 
-      componentsCache.load(callback);
+      componentsCache.load((err, componentsList) => {
+        if(err){ return callback(err); }
+        componentsDetails.refresh(componentsList, (err) => callback(err, componentsList));
+      });
     },
-    publishComponent: function(pkgDetails, componentName, componentVersion, callback){
+    publishComponent: (pkgDetails, componentName, componentVersion, callback) => {
       if(conf.local){
         return callback({
           code: strings.errors.registry.LOCAL_PUBLISH_NOT_ALLOWED_CODE,
@@ -226,7 +217,7 @@ module.exports = function(conf){
       }
 
       const validationResult = validator.validatePackageJson(_.extend(pkgDetails, {
-        componentName: componentName,
+        componentName,
         customValidator: conf.publishValidation
       }));
 
@@ -237,7 +228,7 @@ module.exports = function(conf){
         });
       }
 
-      this.getComponentVersions(componentName, function(err, componentVersions){
+      repository.getComponentVersions(componentName, (err, componentVersions) => {
 
         if(!versionHandler.validateNewVersion(componentVersion, componentVersions)){
           return callback({
@@ -246,14 +237,16 @@ module.exports = function(conf){
           });
         }
 
-        cdn.putDir(pkgDetails.outputFolder, conf.s3.componentsDir + '/' + componentName + '/' + componentVersion, function(err){
+        cdn.putDir(pkgDetails.outputFolder, `${conf.s3.componentsDir}/${componentName}/${componentVersion}`, (err) => {
           if(err){ return callback(err); }
-          componentsCache.refresh(callback);
+          componentsCache.refresh((err, componentsList) => {
+            if(err){ return callback(err); }
+            componentsDetails.refresh(componentsList, callback);
+          });
         });
       });
-    },
-    saveComponentsInfo: function(componentsInfo, callback){
-      cdn.putFileContent(JSON.stringify(componentsInfo), conf.s3.componentsDir + '/components.json', true, callback);
     }
   };
+
+  return repository;
 };

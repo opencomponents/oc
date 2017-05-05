@@ -3,9 +3,9 @@
 const expect = require('chai').expect;
 const path = require('path');
 const request = require('minimal-request');
-const _ = require('underscore');
+const _ = require('lodash');
 
-describe('registry', function(){
+describe('registry', () => {
 
   let registry,
     result,
@@ -31,7 +31,7 @@ describe('registry', function(){
       baseUrl: 'http://localhost:3030/',
       env: { name: 'local' },
       verbosity: 0,
-      dependencies: ['underscore']
+      dependencies: ['lodash']
     };
   };
 
@@ -40,16 +40,16 @@ describe('registry', function(){
     registry.start(cb);
   };
 
-  before(function(done){
+  before((done) => {
     initializeRegistry(getDefaultTestConfiguration(), done);
   });
 
-  after(function(done){ registry.close(done); });
+  after((done) => { registry.close(done); });
 
-  describe('when initialised with invalid configuration', function(){
+  describe('when initialised with invalid configuration', () => {
 
-    it('should throw an error', function(done){
-      expect(function(){
+    it('should throw an error', (done) => {
+      expect(() => {
         oc.Registry({});
       }).to.throw('Registry configuration is empty');
 
@@ -57,17 +57,17 @@ describe('registry', function(){
     });
   });
 
-  describe('GET /hello-world-custom-headers', function() {
+  describe('GET /hello-world-custom-headers', () => {
 
-    describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and strong version 1.0.0', function() {
-      before(function(done) {
+    describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and strong version 1.0.0', () => {
+      before((done) => {
         request({
           url: 'http://localhost:3030/hello-world-custom-headers/1.0.0',
           json: true
         }, next(done));
       });
 
-      it('should return the component with custom headers', function() {
+      it('should return the component with custom headers', () => {
         expect(result.version).to.equal('1.0.0');
         expect(result.name).to.equal('hello-world-custom-headers');
         expect(result.headers).to.be.undefined;
@@ -76,15 +76,15 @@ describe('registry', function(){
       });
     });
 
-    describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and weak version 1.x.x', function() {
-      before(function(done) {
+    describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and weak version 1.x.x', () => {
+      before((done) => {
         request({
           url: 'http://localhost:3030/hello-world-custom-headers/1.x.x',
           json: true
         }, next(done));
       });
 
-      it('should return the component with custom headers', function() {
+      it('should return the component with custom headers', () => {
         expect(result.version).to.equal('1.0.0');
         expect(result.name).to.equal('hello-world-custom-headers');
         expect(result.headers).to.be.undefined;
@@ -93,27 +93,27 @@ describe('registry', function(){
       });
     });
 
-    describe('with a custom configuration with customHeadersToSkipOnWeakVersion defined', function() {
-      before(function(done) {
+    describe('with a custom configuration with customHeadersToSkipOnWeakVersion defined', () => {
+      before((done) => {
         registry.close();
         initializeRegistry(_.extend(getDefaultTestConfiguration(), {customHeadersToSkipOnWeakVersion: ['Cache-Control']}), done);
       });
 
-      after(function(done){
-        registry.close(function() {
+      after((done) => {
+        registry.close(() => {
           initializeRegistry(getDefaultTestConfiguration(), done);
         });
       });
 
-      describe('when strong version is requested 1.0.0', function() {
-        before(function(done) {
+      describe('when strong version is requested 1.0.0', () => {
+        before((done) => {
           request({
             url: 'http://localhost:3030/hello-world-custom-headers/1.0.0',
             json: true
           }, next(done));
         });
 
-        it('should return the component with the custom headers', function() {
+        it('should return the component with the custom headers', () => {
           expect(result.version).to.equal('1.0.0');
           expect(result.name).to.equal('hello-world-custom-headers');
           expect(result.headers).to.be.undefined;
@@ -122,15 +122,15 @@ describe('registry', function(){
         });
       });
 
-      describe('when weak version is requested 1.x.x', function() {
-        before(function(done) {
+      describe('when weak version is requested 1.x.x', () => {
+        before((done) => {
           request({
             url: 'http://localhost:3030/hello-world-custom-headers/1.x.x',
             json: true
           }, next(done));
         });
 
-        it('should skip Cache-Control header', function() {
+        it('should skip Cache-Control header', () => {
           expect(result.version).to.equal('1.0.0');
           expect(result.name).to.equal('hello-world-custom-headers');
           expect(result.headers).to.be.undefined;
@@ -141,10 +141,10 @@ describe('registry', function(){
     });
   });
 
-  describe('POST /hello-world-custom-headers', function() {
+  describe('POST /hello-world-custom-headers', () => {
 
-    describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and strong version 1.0.0', function() {
-      before(function(done) {
+    describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and strong version 1.0.0', () => {
+      before((done) => {
         request({
           url: 'http://localhost:3030',
           json: true,
@@ -158,20 +158,20 @@ describe('registry', function(){
         }, next(done));
       });
 
-      it('should not set HTTP custom headers', function() {
+      it('should not set HTTP custom headers', () => {
         expect(headers).to.not.have.property('cache-control');
         expect(headers).to.not.have.property('test-header');
       });
 
-      it('should return the component with custom headers', function() {
+      it('should return the component with custom headers', () => {
         expect(result[0].response.version).to.equal('1.0.0');
         expect(result[0].response.name).to.equal('hello-world-custom-headers');
         expect(result[0].headers).to.be.deep.equal({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
       });
     });
 
-    describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and weak version 1.x.x', function() {
-      before(function(done) {
+    describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and weak version 1.x.x', () => {
+      before((done) => {
         request({
           url: 'http://localhost:3030',
           json: true,
@@ -185,32 +185,32 @@ describe('registry', function(){
         }, next(done));
       });
 
-      it('should not set HTTP custom headers', function() {
+      it('should not set HTTP custom headers', () => {
         expect(headers).to.not.have.property('cache-control');
         expect(headers).to.not.have.property('test-header');
       });
 
-      it('should return the component with custom headers in the response body', function() {
+      it('should return the component with custom headers in the response body', () => {
         expect(result[0].response.version).to.equal('1.0.0');
         expect(result[0].response.name).to.equal('hello-world-custom-headers');
         expect(result[0].headers).to.be.deep.equal({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
       });
     });
 
-    describe('with a custom configuration with customHeadersToSkipOnWeakVersion defined', function() {
-      before(function(done) {
+    describe('with a custom configuration with customHeadersToSkipOnWeakVersion defined', () => {
+      before((done) => {
         registry.close();
         initializeRegistry(_.extend(getDefaultTestConfiguration(), {customHeadersToSkipOnWeakVersion: ['Cache-Control']}), done);
       });
 
-      after(function(done){
-        registry.close(function() {
+      after((done) => {
+        registry.close(() => {
           initializeRegistry(getDefaultTestConfiguration(), done);
         });
       });
 
-      describe('when strong version is requested 1.0.0', function() {
-        before(function(done) {
+      describe('when strong version is requested 1.0.0', () => {
+        before((done) => {
           request({
             url: 'http://localhost:3030',
             json: true,
@@ -224,20 +224,20 @@ describe('registry', function(){
           }, next(done));
         });
 
-        it('should not set HTTP custom headers', function() {
+        it('should not set HTTP custom headers', () => {
           expect(headers).to.not.have.property('cache-control');
           expect(headers).to.not.have.property('test-header');
         });
 
-        it('should return the component with the custom headers', function() {
+        it('should return the component with the custom headers', () => {
           expect(result[0].response.version).to.equal('1.0.0');
           expect(result[0].response.name).to.equal('hello-world-custom-headers');
           expect(result[0].headers).to.be.deep.equal({'cache-control': 'public max-age=3600', 'test-header': 'Test-Value'});
         });
       });
 
-      describe('when weak version is requested 1.x.x', function() {
-        before(function(done) {
+      describe('when weak version is requested 1.x.x', () => {
+        before((done) => {
           request({
             url: 'http://localhost:3030',
             json: true,
@@ -251,12 +251,12 @@ describe('registry', function(){
           }, next(done));
         });
 
-        it('should not set HTTP custom headers', function() {
+        it('should not set HTTP custom headers', () => {
           expect(headers).to.not.have.property('cache-control');
           expect(headers).to.not.have.property('test-header');
         });
 
-        it('should skip Cache-Control header', function() {
+        it('should skip Cache-Control header', () => {
           expect(result[0].response.version).to.equal('1.0.0');
           expect(result[0].response.name).to.equal('hello-world-custom-headers');
           expect(result[0].headers).to.be.deep.equal({'test-header': 'Test-Value'});
@@ -265,20 +265,20 @@ describe('registry', function(){
     });
   });
 
-  describe('GET /', function(){
+  describe('GET /', () => {
 
-    before(function(done){
+    before((done) => {
       request({
         url: 'http://localhost:3030',
         json: true
       }, next(done));
     });
 
-    it('should respond with the correct href', function(){
+    it('should respond with the correct href', () => {
       expect(result.href).to.equal('http://localhost:3030/');
     });
 
-    it('should list the components', function(){
+    it('should list the components', () => {
       expect(result.components).to.eql([
         'http://localhost:3030/container-with-multiple-nested',
         'http://localhost:3030/container-with-nested',
@@ -287,8 +287,8 @@ describe('registry', function(){
         'http://localhost:3030/hello-world',
         'http://localhost:3030/hello-world-custom-headers',
         'http://localhost:3030/language',
+        'http://localhost:3030/lodash-component',
         'http://localhost:3030/no-containers',
-        'http://localhost:3030/underscore-component',
         'http://localhost:3030/welcome',
         'http://localhost:3030/welcome-with-optional-parameters',
         'http://localhost:3030/oc-client'
@@ -296,64 +296,64 @@ describe('registry', function(){
     });
   });
 
-  describe('GET /handlebars3-component', function(){
+  describe('GET /handlebars3-component', () => {
 
-    before(function(done){
+    before((done) => {
       request({
         url: 'http://localhost:3030/handlebars3-component',
         json: true
       }, next(done));
     });
 
-    it('should respond with 500 status code', function(){
+    it('should respond with 500 status code', () => {
       expect(error).to.equal(500);
     });
 
-    it('should respond with error for unsupported handlebars version', function(){
+    it('should respond with error for unsupported handlebars version', () => {
       expect(result.error).to.equal('The component can\'t be rendered because it was published with an older OC version');
     });
   });
 
-  describe('GET /hello-world', function(){
+  describe('GET /hello-world', () => {
 
-    describe('when Accept header not specified', function(){
+    describe('when Accept header not specified', () => {
 
-      before(function(done){
+      before((done) => {
         request({
           url: 'http://localhost:3030/hello-world',
           json: true
         }, next(done));
       });
 
-      it('should respond with the correct href', function(){
+      it('should respond with the correct href', () => {
         expect(result.href).to.eql('http://localhost:3030/hello-world');
       });
 
-      it('should respond with requested version', function(){
+      it('should respond with requested version', () => {
         expect(result.requestVersion).to.eql('');
       });
 
-      it('should respond with resolved version', function(){
+      it('should respond with resolved version', () => {
         expect(result.version).to.eql('1.0.0');
       });
 
-      it('should respond with component name', function(){
+      it('should respond with component name', () => {
         expect(result.name).to.eql('hello-world');
       });
 
-      it('should respond with the rendered template', function(){
+      it('should respond with the rendered template', () => {
         expect(result.html).to.exist;
         expect(result.html).to.match(/<oc-component (.*?)>Hello world!<script>(.*?)<\/script><\/oc-component>/g);
       });
 
-      it('should respond with render type = rendered', function(){
+      it('should respond with render type = rendered', () => {
         expect(result.renderMode).to.equal('rendered');
       });
     });
 
-    describe('when Accept header set to application/vnd.oc.unrendered+json', function(){
+    describe('when Accept header set to application/vnd.oc.unrendered+json', () => {
 
-      before(function(done){
+      before((done) => {
         request({
           url: 'http://localhost:3030/hello-world',
           headers: {'Accept': 'application/vnd.oc.unrendered+json'},
@@ -361,107 +361,107 @@ describe('registry', function(){
         }, next(done));
       });
 
-      it('should respond with the correct href', function(){
+      it('should respond with the correct href', () => {
         expect(result.href).to.eql('http://localhost:3030/hello-world');
       });
 
-      it('should respond with requested version', function(){
+      it('should respond with requested version', () => {
         expect(result.requestVersion).to.eql('');
       });
 
-      it('should respond with resolved version', function(){
+      it('should respond with resolved version', () => {
         expect(result.version).to.eql('1.0.0');
       });
 
-      it('should respond with component name', function(){
+      it('should respond with component name', () => {
         expect(result.name).to.eql('hello-world');
       });
 
-      it('should respond with the un-rendered template', function(){
+      it('should respond with the un-rendered template', () => {
         expect(result.template).to.exist;
       });
 
-      it('should respond with proper render type', function(){
+      it('should respond with proper render type', () => {
         expect(result.renderMode).to.equal('unrendered');
       });
     });
   });
 
-  describe('GET /container-with-nested', function(){
+  describe('GET /container-with-nested', () => {
 
-    before(function(done){
+    before((done) => {
       request({
         url: 'http://localhost:3030/container-with-nested',
         json: true
       }, next(done));
     });
 
-    it('should respond with the correct href', function(){
+    it('should respond with the correct href', () => {
       expect(result.href).to.eql('http://localhost:3030/container-with-nested');
     });
 
-    it('should respond with the rendered template including the nested rendered component', function(){
+    it('should respond with the rendered template including the nested rendered component', () => {
       expect(result.html).to.equal('<div>Hi, this is a nested component: Hello world!</div>');
     });
 
-    it('should respond with proper render type', function(){
+    it('should respond with proper render type', () => {
       expect(result.renderMode).to.equal('rendered');
     });
   });
 
-  describe('GET /container-with-multiple-nested', function(){
+  describe('GET /container-with-multiple-nested', () => {
 
-    before(function(done){
+    before((done) => {
       request({
         url: 'http://localhost:3030/container-with-multiple-nested',
         json: true
       }, next(done));
     });
 
-    it('should respond with the correct href', function(){
+    it('should respond with the correct href', () => {
       expect(result.href).to.eql('http://localhost:3030/container-with-multiple-nested');
     });
 
-    it('should respond with the rendered template including the nested rendered component', function(){
+    it('should respond with the rendered template including the nested rendered component', () => {
       expect(result.html).to.equal('<div>Hi, these are nested components:<ul><li><span>hi Jane Doe  </span></li><li><span>hi John Doe  </span></li></ul></div>');
     });
 
-    it('should respond with proper render type', function(){
+    it('should respond with proper render type', () => {
       expect(result.renderMode).to.equal('rendered');
     });
   });
 
-  describe('GET /no-containers', function(){
+  describe('GET /no-containers', () => {
 
-    describe('when Accept header not specified', function(){
+    describe('when Accept header not specified', () => {
 
-      before(function(done){
+      before((done) => {
         request({
           url: 'http://localhost:3030/no-containers',
           json: true
         }, next(done));
       });
 
-      it('should respond with the correct href', function(){
+      it('should respond with the correct href', () => {
         expect(result.href).to.eql('http://localhost:3030/no-containers');
       });
 
-      it('should respond with the rendered template without the outer container and without render info script', function(){
+      it('should respond with the rendered template without the outer container and without render info script', () => {
         expect(result.html).to.exist;
         expect(result.html).to.equal('Hello world!');
       });
 
-      it('should respond with proper render type', function(){
+      it('should respond with proper render type', () => {
         expect(result.renderMode).to.equal('rendered');
       });
     });
   });
 
-  describe('GET /language', function(){
+  describe('GET /language', () => {
 
-    describe('when Accept-Language: en-US', function(){
+    describe('when Accept-Language: en-US', () => {
 
-      before(function(done){
+      before((done) => {
         request({
           url: 'http://localhost:3030/language',
           json: true,
@@ -469,18 +469,18 @@ describe('registry', function(){
         }, next(done));
       });
 
-      it('should respond with correct href', function(){
+      it('should respond with correct href', () => {
         expect(result.href).to.equal('http://localhost:3030/language');
       });
 
-      it('should contain english language', function(){
+      it('should contain english language', () => {
         expect(result.html).to.equal('<p>selected language is english</p>');
       });
     });
 
-    describe('when Accept-Language: ja-JP', function(){
+    describe('when Accept-Language: ja-JP', () => {
 
-      before(function(done){
+      before((done) => {
         request({
           url: 'http://localhost:3030/language',
           json: true,
@@ -488,18 +488,18 @@ describe('registry', function(){
         }, next(done));
       });
 
-      it('should respond with correct href', function(){
+      it('should respond with correct href', () => {
         expect(result.href).to.equal('http://localhost:3030/language');
       });
 
-      it('should contain japanese language', function(){
+      it('should contain japanese language', () => {
         expect(result.html).to.equal('<p>selected language is japanese</p>');
       });
     });
 
-    describe('when Accept-Language: ja-JP but __ocAcceptLanguage overrides with en-US (client-side failover)', function(){
+    describe('when Accept-Language: ja-JP but __ocAcceptLanguage overrides with en-US (client-side failover)', () => {
 
-      before(function(done){
+      before((done) => {
         request({
           url: 'http://localhost:3030/language/?__ocAcceptLanguage=en-US',
           json: true,
@@ -507,39 +507,39 @@ describe('registry', function(){
         }, next(done));
       });
 
-      it('should respond with correct href', function(){
+      it('should respond with correct href', () => {
         expect(result.href).to.equal('http://localhost:3030/language');
       });
 
-      it('should contain japanese language', function(){
+      it('should contain japanese language', () => {
         expect(result.html).to.equal('<p>selected language is english</p>');
       });
     });
   });
 
-  describe('GET /underscore-component', function(){
+  describe('GET /lodash-component', () => {
 
-    before(function(done){
+    before((done) => {
       request({
-        url: 'http://localhost:3030/underscore-component',
+        url: 'http://localhost:3030/lodash-component',
         json: true
       }, next(done));
     });
 
-    it('should respond with the correct href', function(){
-      expect(result.href).to.eql('http://localhost:3030/underscore-component');
+    it('should respond with the correct href', () => {
+      expect(result.href).to.eql('http://localhost:3030/lodash-component');
     });
 
-    it('should respond correctly after using underscore server dependency', function(){
+    it('should respond correctly after using lodash server dependency', () => {
       expect(result.html).to.equal('<div>The magic number is 5</div>');
     });
   });
 
-  describe('POST /', function(){
+  describe('POST /', () => {
 
-    describe('when body is malformed', function(){
+    describe('when body is malformed', () => {
 
-      before(function(done){
+      before((done) => {
         request({
           url: 'http://localhost:3030/',
           method: 'post',
@@ -548,20 +548,20 @@ describe('registry', function(){
         }, next(done));
       });
 
-      it('should respond with 400 status code', function(){
+      it('should respond with 400 status code', () => {
         expect(error).to.equal(400);
       });
 
-      it('should respond with error', function(){
+      it('should respond with error', () => {
         expect(result.error).to.equal('The request body is malformed: components property is missing');
       });
     });
 
-    describe('when body contains multiple components', function(){
+    describe('when body contains multiple components', () => {
 
-      describe('when Accept header not specified', function(){
+      describe('when Accept header not specified', () => {
 
-        before(function(done){
+        before((done) => {
           request({
             url: 'http://localhost:3030/',
             method: 'post',
@@ -575,12 +575,12 @@ describe('registry', function(){
           }, next(done));
         });
 
-        it('should respond with two 200 status codes', function(){
+        it('should respond with two 200 status codes', () => {
           expect(result[0].status).to.equal(200);
           expect(result[1].status).to.equal(200);
         });
 
-        it('should respond with two rendered components', function() {
+        it('should respond with two rendered components', () => {
           expect(result[0].response.html).to.match(/<oc-component (.*?)>Hello world!<script>(.*?)<\/script><\/oc-component>/g);
           expect(result[0].response.renderMode).to.equal('rendered');
           expect(result[1].response.html).to.equal('Hello world!');
@@ -588,10 +588,10 @@ describe('registry', function(){
         });
       });
 
-      describe('when omitHref=true', function(){
-        describe('when getting rendered components', function(){
+      describe('when omitHref=true', () => {
+        describe('when getting rendered components', () => {
 
-          before(function(done){
+          before((done) => {
             request({
               url: 'http://localhost:3030/',
               method: 'post',
@@ -606,15 +606,15 @@ describe('registry', function(){
             }, next(done));
           });
 
-          it('should respond without href parameter', function(){
+          it('should respond without href parameter', () => {
             expect(result[0].response.href).not.to.exist;
             expect(result[1].response.href).not.to.exist;
           });
         });
 
-        describe('when getting unrendered components', function(){
+        describe('when getting unrendered components', () => {
 
-          before(function(done){
+          before((done) => {
             request({
               url: 'http://localhost:3030/',
               method: 'post',
@@ -630,16 +630,16 @@ describe('registry', function(){
             }, next(done));
           });
 
-          it('should respond without href parameter', function(){
+          it('should respond without href parameter', () => {
             expect(result[0].response.href).not.to.exist;
             expect(result[1].response.href).not.to.exist;
           });
         });
       });
 
-      describe('when Accept header set to application/vnd.oc.unrendered+json', function(){
+      describe('when Accept header set to application/vnd.oc.unrendered+json', () => {
 
-        before(function(done){
+        before((done) => {
           request({
             url: 'http://localhost:3030/',
             method: 'post',
@@ -654,7 +654,7 @@ describe('registry', function(){
           }, next(done));
         });
 
-        it('should respond with two unrendered components', function() {
+        it('should respond with two unrendered components', () => {
           expect(result[0].response.template).to.exist;
           expect(result[0].response.renderMode).to.equal('unrendered');
           expect(result[1].response.template).to.exist;
@@ -662,10 +662,10 @@ describe('registry', function(){
         });
       });
 
-      describe('when components require params', function(){
-        describe('when each component requires different params', function(){
+      describe('when components require params', () => {
+        describe('when each component requires different params', () => {
 
-          before(function(done){
+          before((done) => {
             request({
               url: 'http://localhost:3030/',
               method: 'post',
@@ -679,15 +679,15 @@ describe('registry', function(){
             }, next(done));
           });
 
-          it('should render components with expected parameters', function(){
+          it('should render components with expected parameters', () => {
             expect(result[0].response.href).to.equal('http://localhost:3030/welcome?firstName=Mickey&lastName=Mouse');
             expect(result[1].response.href).to.equal('http://localhost:3030/welcome?firstName=Donald&lastName=Duck');
           });
         });
 
-        describe('when components require same parameters', function(){
+        describe('when components require same parameters', () => {
 
-          before(function(done){
+          before((done) => {
             request({
               url: 'http://localhost:3030/',
               method: 'post',
@@ -702,15 +702,15 @@ describe('registry', function(){
             }, next(done));
           });
 
-          it('should render components with expected parameters', function(){
+          it('should render components with expected parameters', () => {
             expect(result[0].response.href).to.equal('http://localhost:3030/welcome?firstName=Donald&lastName=Duck');
             expect(result[1].response.href).to.equal('http://localhost:3030/welcome?firstName=Donald&lastName=Duck');
           });
         });
 
-        describe('when components have some common parameters and some different', function(){
+        describe('when components have some common parameters and some different', () => {
 
-          before(function(done){
+          before((done) => {
             request({
               url: 'http://localhost:3030/',
               method: 'post',
@@ -725,15 +725,15 @@ describe('registry', function(){
             }, next(done));
           });
 
-          it('should render components with expected parameters', function(){
+          it('should render components with expected parameters', () => {
             expect(result[0].response.href).to.equal('http://localhost:3030/welcome?firstName=Donald&lastName=Mouse');
             expect(result[1].response.href).to.equal('http://localhost:3030/welcome?firstName=Donald&lastName=Duck');
           });
         });
 
-        describe('when components have global parameters with local overrides', function(){
+        describe('when components have global parameters with local overrides', () => {
 
-          before(function(done){
+          before((done) => {
             request({
               url: 'http://localhost:3030/',
               method: 'post',
@@ -748,15 +748,15 @@ describe('registry', function(){
             }, next(done));
           });
 
-          it('should render components with expected parameters', function(){
+          it('should render components with expected parameters', () => {
             expect(result[0].response.href).to.equal('http://localhost:3030/welcome?firstName=Donald&lastName=Mouse');
             expect(result[1].response.href).to.equal('http://localhost:3030/welcome?firstName=Donald&lastName=Duck');
           });
         });
 
-        describe('when components accept optional parameters', function(){
+        describe('when components accept optional parameters', () => {
 
-          before(function(done){
+          before((done) => {
             request({
               url: 'http://localhost:3030/',
               method: 'post',
@@ -773,19 +773,19 @@ describe('registry', function(){
             }, next(done));
           });
 
-          it('should render first component with provided parameters', function(){
+          it('should render first component with provided parameters', () => {
             expect(result[0].response.html).to.equal('<span>hi John Smith (smithy)</span>');
             expect(result[0].response.href).to.equal('http://localhost:3030/welcome-with-optional-parameters?firstName=John&lastName=Smith&nick=smithy');
           });
 
-          it('should render second and third components with default value of nick', function(){
+          it('should render second and third components with default value of nick', () => {
             expect(result[1].response.html).to.equal('<span>hi John Smith (Johnny)</span>');
             expect(result[1].response.href).to.equal('http://localhost:3030/welcome-with-optional-parameters?firstName=John&lastName=Smith&nick=Johnny');
             expect(result[2].response.html).to.equal('<span>hi John Smith (Johnny)</span>');
             expect(result[2].response.href).to.equal('http://localhost:3030/welcome-with-optional-parameters?firstName=John&lastName=Smith&nick=Johnny');
           });
 
-          it('should render fourth component without value of lastName', function(){
+          it('should render fourth component without value of lastName', () => {
             expect(result[3].response.html).to.equal('<span>hi John  (smithy)</span>');
             expect(result[3].response.href).to.equal('http://localhost:3030/welcome-with-optional-parameters?firstName=John&nick=smithy');
           });

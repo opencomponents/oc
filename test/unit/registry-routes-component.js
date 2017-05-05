@@ -2,9 +2,9 @@
 
 const expect = require('chai').expect;
 const sinon = require('sinon');
-const _ = require('underscore');
+const _ = require('lodash');
 
-describe('registry : routes : component', function(){
+describe('registry : routes : component', () => {
 
   const ComponentRoute = require('../../src/registry/routes/component'),
     mockedComponents = require('../fixtures/mocked-components');
@@ -23,10 +23,10 @@ describe('registry : routes : component', function(){
     };
   };
 
-  describe('when getting a component with server.js execution timeout', function(){
+  describe('when getting a component with server.js execution timeout', () => {
 
     let code, response;
-    before(function(done){
+    before((done) => {
       initialise(mockedComponents['timeout-component']);
       componentRoute = new ComponentRoute({}, mockedRepository);
 
@@ -52,23 +52,23 @@ describe('registry : routes : component', function(){
       });
     });
 
-    it('should return 500 status code', function(){
+    it('should return 500 status code', () => {
       expect(code).to.be.equal(500);
     });
 
-    it('should respond with error message', function(){
+    it('should respond with error message', () => {
       expect(response.error).to.equal('Component execution error: timeout (100ms)');
     });
 
-    it('should return component\'s name and request version', function(){
+    it('should return component\'s name and request version', () => {
       expect(response.name).to.equal('timeout-component');
       expect(response.requestVersion).to.equal('1.X.X');
     });
   });
 
-  describe('when getting a component with a server.js that returns undefined data', function(){
+  describe('when getting a component with a server.js that returns undefined data', () => {
 
-    before(function(){
+    before(() => {
       initialise(mockedComponents['undefined-component']);
       componentRoute = new ComponentRoute({}, mockedRepository);
 
@@ -83,23 +83,23 @@ describe('registry : routes : component', function(){
       });
     });
 
-    it('should return 500 status code', function(){
+    it('should return 500 status code', () => {
       expect(statusStub.args[0][0]).to.be.equal(500);
     });
 
-    it('should respond with error message for undefined data', function(){
+    it('should respond with error message for undefined data', () => {
       expect(resJsonStub.args[0][0].error).to.equal('Component execution error: data object is undefined');
     });
 
-    it('should return component\'s name and request version', function(){
+    it('should return component\'s name and request version', () => {
       expect(resJsonStub.args[0][0].name).to.equal('undefined-component');
       expect(resJsonStub.args[0][0].requestVersion).to.equal('');
     });
   });
 
-  describe('when getting a component with server.js execution errors', function(){
+  describe('when getting a component with server.js execution errors', () => {
 
-    before(function(){
+    before(() => {
       initialise(mockedComponents['error-component']);
       componentRoute = new ComponentRoute({}, mockedRepository);
 
@@ -117,25 +117,25 @@ describe('registry : routes : component', function(){
       });
     });
 
-    it('should return 500 status code', function(){
+    it('should return 500 status code', () => {
       expect(statusStub.args[0][0]).to.be.equal(500);
     });
 
-    it('should respond with error message including missing plugin', function(){
+    it('should respond with error message including missing plugin', () => {
       expect(resJsonStub.args[0][0].error).to.equal('Component execution error: c is not defined');
     });
 
-    it('should return component\'s name and request version', function(){
+    it('should return component\'s name and request version', () => {
       expect(resJsonStub.args[0][0].name).to.equal('error-component');
       expect(resJsonStub.args[0][0].requestVersion).to.equal('');
     });
   });
 
-  describe('when getting a component with server.js asynchronous execution errors', function(){
+  describe('when getting a component with server.js asynchronous execution errors', () => {
 
-    describe('when has error that gets fired on first execution', function(){
+    describe('when has error that gets fired on first execution', () => {
 
-      before(function(done){
+      before((done) => {
         initialise(mockedComponents['async-error-component']);
         componentRoute = new ComponentRoute({}, mockedRepository);
         statusStub.returns({
@@ -157,23 +157,23 @@ describe('registry : routes : component', function(){
         });
       });
 
-      it('should return 500 status code', function(){
+      it('should return 500 status code', () => {
         expect(statusStub.args[0][0]).to.be.equal(500);
       });
 
-      it('should respond with error message for component execution error', function(){
+      it('should respond with error message for component execution error', () => {
         expect(resJsonStub.args[0][0].error).to.equal('Component execution error: thisDoesnotExist is not defined');
       });
 
-      it('should return component\'s name and request version', function(){
+      it('should return component\'s name and request version', () => {
         expect(resJsonStub.args[0][0].name).to.equal('async-error-component');
         expect(resJsonStub.args[0][0].requestVersion).to.equal('');
       });
     });
 
-    describe('when has error that gets fired on following executions', function(){
+    describe('when has error that gets fired on following executions', () => {
 
-      before(function(done){
+      before((done) => {
         initialise(mockedComponents['async-error2-component']);
         componentRoute = new ComponentRoute({}, mockedRepository);
         statusStub.returns({
@@ -209,23 +209,23 @@ describe('registry : routes : component', function(){
         });
       });
 
-      it('should return 200 status code for successful request', function(){
+      it('should return 200 status code for successful request', () => {
         expect(statusStub.args[0][0]).to.be.equal(200);
       });
 
-      it('should return 500 status code when error happens', function(){
+      it('should return 500 status code when error happens', () => {
         expect(statusStub.args[1][0]).to.be.equal(500);
       });
 
-      it('should respond without error for successful request', function(){
+      it('should respond without error for successful request', () => {
         expect(resJsonStub.args[0][0].error).to.be.empty;
       });
 
-      it('should respond with error message for component execution error', function(){
+      it('should respond with error message for component execution error', () => {
         expect(resJsonStub.args[1][0].error).to.equal('Component execution error: thisDoesnotExist is not defined');
       });
 
-      it('should return component\'s name and request version for both requests', function(){
+      it('should return component\'s name and request version for both requests', () => {
         expect(resJsonStub.args[0][0].name).to.equal('async-error2-component');
         expect(resJsonStub.args[0][0].requestVersion).to.equal('');
         expect(resJsonStub.args[1][0].name).to.equal('async-error2-component');
@@ -234,11 +234,11 @@ describe('registry : routes : component', function(){
     });
   });
 
-  describe('when getting a component that implements a plugin', function(){
+  describe('when getting a component that implements a plugin', () => {
 
-    describe('when plugin not declared in package.json', function(){
+    describe('when plugin not declared in package.json', () => {
 
-      before(function(){
+      before(() => {
         initialise(mockedComponents['plugin-component']);
         componentRoute = new ComponentRoute({}, mockedRepository);
 
@@ -254,36 +254,36 @@ describe('registry : routes : component', function(){
         });
       });
 
-      it('should return 501 status code', function(){
+      it('should return 501 status code', () => {
         expect(statusStub.args[0][0]).to.be.equal(501);
       });
 
-      it('should respond with PLUGIN_MISSING_FROM_COMPONENT error code', function(){
+      it('should respond with PLUGIN_MISSING_FROM_COMPONENT error code', () => {
         expect(resJsonStub.args[0][0].code).to.equal('PLUGIN_MISSING_FROM_COMPONENT');
       });
 
-      it('should respond with error message including missing plugin', function(){
+      it('should respond with error message including missing plugin', () => {
         expect(resJsonStub.args[0][0].error).to.equal('Component is trying to use un-registered plugins: doSomething');
       });
 
-      it('should return component\'s name and request version', function(){
+      it('should return component\'s name and request version', () => {
         expect(resJsonStub.args[0][0].name).to.equal('plugin-component');
         expect(resJsonStub.args[0][0].requestVersion).to.equal('');
       });
     });
 
-    describe('when plugin declared in package.json', function(){
+    describe('when plugin declared in package.json', () => {
 
-      beforeEach(function(){
+      beforeEach(() => {
         const component = _.clone(mockedComponents['plugin-component']);
         component.package.oc.plugins = ['doSomething'];
         initialise(component);
         componentRoute = new ComponentRoute({}, mockedRepository);
       });
 
-      describe('when registry implements plugin', function(){
+      describe('when registry implements plugin', () => {
 
-        beforeEach(function(){
+        beforeEach(() => {
           componentRoute({
             headers: {},
             params: { componentName: 'plugin-component' }
@@ -298,23 +298,23 @@ describe('registry : routes : component', function(){
           });
         });
 
-        it('should return 200 status code', function(){
+        it('should return 200 status code', () => {
           expect(statusStub.args[0][0]).to.be.equal(200);
         });
 
-        it('should use plugin inside compiledView', function(){
+        it('should use plugin inside compiledView', () => {
           expect(resJsonStub.args[0][0].html).to.contain('hello hello hello my friend John');
         });
 
-        it('should return component\'s name and request version', function(){
+        it('should return component\'s name and request version', () => {
           expect(resJsonStub.args[0][0].name).to.equal('plugin-component');
           expect(resJsonStub.args[0][0].requestVersion).to.equal('');
         });
       });
 
-      describe('when registry does not implement plugin', function(){
+      describe('when registry does not implement plugin', () => {
 
-        beforeEach(function(){
+        beforeEach(() => {
           componentRoute({
             headers: {},
             params: { componentName: 'plugin-component' }
@@ -324,19 +324,19 @@ describe('registry : routes : component', function(){
           });
         });
 
-        it('should return 501 status code', function(){
+        it('should return 501 status code', () => {
           expect(statusStub.args[0][0]).to.be.equal(501);
         });
 
-        it('should respond with PLUGIN_MISSING_FROM_REGISTRY error code', function(){
+        it('should respond with PLUGIN_MISSING_FROM_REGISTRY error code', () => {
           expect(resJsonStub.args[0][0].code).to.equal('PLUGIN_MISSING_FROM_REGISTRY');
         });
 
-        it('should respond with error message including missing plugin', function(){
+        it('should respond with error message including missing plugin', () => {
           expect(resJsonStub.args[0][0].error).to.equal('registry does not implement plugins: doSomething');
         });
 
-        it('should return component\'s name and request version', function(){
+        it('should return component\'s name and request version', () => {
           expect(resJsonStub.args[0][0].name).to.equal('plugin-component');
           expect(resJsonStub.args[0][0].requestVersion).to.equal('');
         });
@@ -344,11 +344,11 @@ describe('registry : routes : component', function(){
     });
   });
 
-  describe('when getting a component that requires a npm module', function(){
+  describe('when getting a component that requires a npm module', () => {
 
-    describe('when registry implements dependency', function(){
+    describe('when registry implements dependency', () => {
 
-      beforeEach(function(){
+      beforeEach(() => {
         initialise(mockedComponents['npm-component']);
         componentRoute = new ComponentRoute({}, mockedRepository);
 
@@ -361,30 +361,30 @@ describe('registry : routes : component', function(){
             baseUrl: 'http://components.com/',
             plugins: {},
             dependencies: [
-              'underscore'
+              'lodash'
             ]
           },
           status: statusStub
         });
       });
 
-      it('should return 200 status code', function(){
+      it('should return 200 status code', () => {
         expect(statusStub.args[0][0]).to.be.equal(200);
       });
 
-      it('should use plugin inside compiledView', function(){
+      it('should use plugin inside compiledView', () => {
         expect(resJsonStub.args[0][0].html).to.contain('bye John');
       });
 
-      it('should return component\'s name and request version', function(){
+      it('should return component\'s name and request version', () => {
         expect(resJsonStub.args[0][0].name).to.equal('npm-component');
         expect(resJsonStub.args[0][0].requestVersion).to.equal('');
       });
     });
 
-    describe('when registry does not implement dependency', function(){
+    describe('when registry does not implement dependency', () => {
 
-      beforeEach(function(){
+      beforeEach(() => {
         initialise(mockedComponents['npm-component']);
         componentRoute = new ComponentRoute({}, mockedRepository);
 
@@ -403,28 +403,28 @@ describe('registry : routes : component', function(){
         });
       });
 
-      it('should return 501 status code', function(){
+      it('should return 501 status code', () => {
         expect(statusStub.args[0][0]).to.be.equal(501);
       });
 
-      it('should respond with DEPENDENCY_MISSING_FROM_REGISTRY error code', function(){
+      it('should respond with DEPENDENCY_MISSING_FROM_REGISTRY error code', () => {
         expect(resJsonStub.args[0][0].code).to.equal('DEPENDENCY_MISSING_FROM_REGISTRY');
       });
 
-      it('should respond with error message including missing dependency', function(){
-        expect(resJsonStub.args[0][0].error).to.equal('Component is trying to use unavailable dependencies: underscore');
+      it('should respond with error message including missing dependency', () => {
+        expect(resJsonStub.args[0][0].error).to.equal('Component is trying to use unavailable dependencies: lodash');
       });
 
-      it('should return component\'s name and request version', function(){
+      it('should return component\'s name and request version', () => {
         expect(resJsonStub.args[0][0].name).to.equal('npm-component');
         expect(resJsonStub.args[0][0].requestVersion).to.equal('');
       });
     });
   });
 
-  describe('when getting a component with server.js that sets custom headers with empty customHeadersToSkipOnWeakVersion', function() {
+  describe('when getting a component with server.js that sets custom headers with empty customHeadersToSkipOnWeakVersion', () => {
 
-    before(function() {
+    before(() => {
       initialise(mockedComponents['response-headers-component']);
       componentRoute = new ComponentRoute({}, mockedRepository);
 
@@ -441,25 +441,25 @@ describe('registry : routes : component', function(){
       });
     });
 
-    it('should return 200 status code', function() {
+    it('should return 200 status code', () => {
       expect(statusStub.args[0][0]).to.be.equal(200);
     });
 
-    it('should set response headers', function() {
+    it('should set response headers', () => {
       expect(resJsonStub.args[0][0].headers).to.be.undefined;
       expect(resSetStub.args[0][0]).to.not.be.null;
       expect(resSetStub.args[0][0]['test-header']).to.equal('test-value');
     });
 
-    it('should return component\'s name and request version', function() {
+    it('should return component\'s name and request version', () => {
       expect(resJsonStub.args[0][0].name).to.equal('response-headers-component');
       expect(resJsonStub.args[0][0].requestVersion).to.equal('1.X.X');
     });
   });
 
-  describe('when getting a component with server.js that sets custom headers with non-empty customHeadersToSkipOnWeakVersion', function() {
+  describe('when getting a component with server.js that sets custom headers with non-empty customHeadersToSkipOnWeakVersion', () => {
 
-    before(function(done) {
+    before((done) => {
       initialise(mockedComponents['response-headers-component']);
       componentRoute = new ComponentRoute({}, mockedRepository);
 
@@ -484,24 +484,24 @@ describe('registry : routes : component', function(){
       });
     });
 
-    it('should return 200 status code', function() {
+    it('should return 200 status code', () => {
       expect(statusStub.args[0][0]).to.be.equal(200);
     });
 
-    it('should not set response headers', function() {
+    it('should not set response headers', () => {
       expect(resJsonStub.args[0][0].headers).to.be.undefined;
       expect(resSetStub.called).to.be.false;
     });
 
-    it('should return component\'s name and request version', function() {
+    it('should return component\'s name and request version', () => {
       expect(resJsonStub.args[0][0].name).to.equal('response-headers-component');
       expect(resJsonStub.args[0][0].requestVersion).to.equal('1.X.X');
     });
   });
 
-  describe('when getting a simple component with server.js after headers component no custom headers should be set', function() {
+  describe('when getting a simple component with server.js after headers component no custom headers should be set', () => {
 
-    before(function(done) {
+    before((done) => {
       const headersComponent = mockedComponents['another-response-headers-component'];
       const simpleComponent = mockedComponents['simple-component'];
 
@@ -564,38 +564,38 @@ describe('registry : routes : component', function(){
       });
     });
 
-    it('should return 200 status code for the first component', function() {
+    it('should return 200 status code for the first component', () => {
       expect(statusStub.args[0][0]).to.be.equal(200);
     });
 
-    it('should return "response-headers-component" name for the first component\'s name and request version', function() {
+    it('should return "response-headers-component" name for the first component\'s name and request version', () => {
       expect(resJsonStub.args[0][0].name).to.equal('another-response-headers-component');
       expect(resJsonStub.args[0][0].requestVersion).to.equal('1.X.X');
     });
 
-    it('should set response headers for the first component', function() {
+    it('should set response headers for the first component', () => {
       expect(resJsonStub.args[0][0].headers).to.be.undefined;
       expect(resSetStub.args[0][0]).to.not.be.null;
       expect(resSetStub.args[0][0]['another-test-header']).to.equal('another-test-value');
     });
 
-    it('should return 200 status code for the second component', function() {
+    it('should return 200 status code for the second component', () => {
       expect(statusStub.args[1][0]).to.be.equal(200);
     });
 
-    it('should return "simple-component" name for the second component\'s name and request version', function() {
+    it('should return "simple-component" name for the second component\'s name and request version', () => {
       expect(resJsonStub.args[1][0].name).to.equal('simple-component');
       expect(resJsonStub.args[1][0].requestVersion).to.equal('1.X.X');
     });
 
-    it('should not set custom response for the second component', function() {
+    it('should not set custom response for the second component', () => {
       expect(resJsonStub.args[1][0].headers).to.be.undefined;
       expect(resSetStub.calledTwice).to.be.false;
     });
   });
 
-  describe('when getting a component info for a component that sets custom headers', function() {
-    before(function() {
+  describe('when getting a component info for a component that sets custom headers', () => {
+    before(() => {
       initialise(mockedComponents['response-headers-component']);
       componentRoute = new ComponentRoute({}, mockedRepository);
 
@@ -612,21 +612,21 @@ describe('registry : routes : component', function(){
       });
     });
 
-    it('should return 200 status code', function() {
+    it('should return 200 status code', () => {
       expect(statusStub.args[0][0]).to.be.equal(200);
     });
 
-    it('should return no custom headers', function() {
+    it('should return no custom headers', () => {
       expect(resJsonStub.args[0][0].headers).to.be.undefined;
       expect(resSetStub.called).to.be.false;
     });
 
-    it('should return component\'s name and request version', function() {
+    it('should return component\'s name and request version', () => {
       expect(resJsonStub.args[0][0].name).to.equal('response-headers-component');
       expect(resJsonStub.args[0][0].requestVersion).to.equal('1.0.0');
     });
 
-    it('should not return rendered HTML', function() {
+    it('should not return rendered HTML', () => {
       expect(resJsonStub.args[0][0].html).to.be.undefined;
     });
   });

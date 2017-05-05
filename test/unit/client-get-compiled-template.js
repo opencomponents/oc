@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
 
-describe('client : get-compiled-template', function(){
+describe('client : get-compiled-template', () => {
 
   let getCompiledTemplate;
 
@@ -18,7 +18,7 @@ describe('client : get-compiled-template', function(){
     getCompiledTemplate = new GetCompiledTemplate();
   };
 
-  describe('when template file request fails', function(){
+  describe('when template file request fails', () => {
 
     let error;
     const errorExample = '<?xml version="1.0" encoding="UTF-8"?><Error><Code>AccessDenied</Code><Message>' +
@@ -26,7 +26,7 @@ describe('client : get-compiled-template', function(){
 
     const requestStub = sinon.stub().yields(403, errorExample);
 
-    before(function(done){
+    before((done) => {
       initialise(requestStub);
 
       const template = {
@@ -34,13 +34,13 @@ describe('client : get-compiled-template', function(){
         src: 'https://cdn.com/components/1.3.5/template.js'
       };
 
-      getCompiledTemplate(template, false, 5, function(err){
+      getCompiledTemplate(template, false, 5, (err) => {
         error = err;
         done();
       });
     });
 
-    it('should return an error containing the details', function(){
+    it('should return an error containing the details', () => {
       expect(error).to.eql({
         status: 403,
         response: {

@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const injectr = require('injectr');
 const path = require('path');
 const sinon = require('sinon');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const initialise = function(){
 
@@ -42,12 +42,12 @@ const executeGetLocalNpmModules = function(local){
   return local('.');
 };
 
-describe('cli : domain : get-local-npm-modules', function(){
+describe('cli : domain : get-local-npm-modules', () => {
 
-  describe('when reading modules from dir', function(){
+  describe('when reading modules from dir', () => {
 
     let result;
-    beforeEach(function(){
+    beforeEach(() => {
 
       const data = initialise();
 
@@ -66,15 +66,15 @@ describe('cli : domain : get-local-npm-modules', function(){
       result = executeGetLocalNpmModules(data.local);
     });
 
-    it('should return only the folders', function(){
+    it('should return only the folders', () => {
       expect(result).to.eql(['a-module', 'another-module']);
     });
   });
 
-  describe('when node_modules directory doesn\'t exist', function(){
+  describe('when node_modules directory doesn\'t exist', () => {
 
     let result;
-    beforeEach(function(){
+    beforeEach(() => {
 
       const data = initialise();
 
@@ -83,7 +83,7 @@ describe('cli : domain : get-local-npm-modules', function(){
       result = executeGetLocalNpmModules(data.local);
     });
 
-    it('should return an empty array', function(){
+    it('should return an empty array', () => {
       expect(result).to.eql([]);
     });
   });

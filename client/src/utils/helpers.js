@@ -28,7 +28,7 @@ const _ = {
       }
     };
 
-    _.each(obj, function(el){
+    _.each(obj, (el) => {
       fn(el, next);
     });
   },

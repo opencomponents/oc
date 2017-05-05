@@ -1,6 +1,5 @@
 'use strict';
 
-const colors = require('colors/safe');
 const format = require('stringformat');
 
 const strings = require('../../resources/index');
@@ -15,8 +14,8 @@ module.exports = function(dependencies){
 
     callback = wrapCliCallback(callback);
 
-    local.mock(opts, function(err, res){
-      logger.log(colors.green(format(strings.messages.cli.MOCKED_PLUGIN, opts.targetName, opts.targetValue)));
+    local.mock(opts, (err, res) => {
+      logger.ok(format(strings.messages.cli.MOCKED_PLUGIN, opts.targetName, opts.targetValue));
       callback(err, res);
     });
   };

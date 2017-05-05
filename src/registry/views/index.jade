@@ -1,0 +1,30 @@
+extends layout
+
+mixin selectedCheckbox(name)
+  input(type="checkbox", name=name, checked)
+  .state
+    span(class="component-state-" + name) #{name} (#{getCount(name)})
+
+block content
+  - var getCount = function(state){ return stateCounts[state] || 0; };
+  - var isLocal = (type !== 'oc-registry');
+  +property('Base url', href, true)
+  +property('Version', ocVersion)
+  +property('Components', components.length + ' (' + getCount('experimental') + ' experimental, ' + getCount('deprecated') + ' deprecated)')
+  if !isLocal
+    +property('Components releases', componentsReleases)
+  +property('Registry type', isLocal ? 'Local dev registry' : 'On-line registry')
+
+  h2#menuList
+    a(href="#components-list" class="tab-link") Components
+    if componentsHistory
+      | &nbsp;|&nbsp;
+      a(href="#components-history" class="tab-link") History
+  
+  include components-list
+  include components-history
+    
+block scripts
+  script
+    | var q = "#{encodeURIComponent(q)}", componentsList = !{JSON.stringify(componentsList)};
+    include:uglify-js static/index.js

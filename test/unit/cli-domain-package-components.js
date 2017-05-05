@@ -4,9 +4,9 @@ const expect = require('chai').expect;
 const injectr = require('injectr');
 const path = require('path');
 const sinon = require('sinon');
-const _ = require('underscore');
+const _ = require('lodash');
 
-describe('cli : domain : package-components', function(){
+describe('cli : domain : package-components', () => {
 
   let packageStaticFilesStub;
 
@@ -54,14 +54,14 @@ describe('cli : domain : package-components', function(){
     }, callback);
   };
 
-  describe('when packaging', function(){
+  describe('when packaging', () => {
 
-    describe('when component is valid', function(){
+    describe('when component is valid', () => {
 
-      describe('when minify=true', function(){
+      describe('when minify=true', () => {
 
         let component;
-        beforeEach(function(done){
+        beforeEach((done) => {
 
           const data = initialise();
 
@@ -86,27 +86,27 @@ describe('cli : domain : package-components', function(){
           executePackaging(data.packageComponents, true, done);
         });
 
-        it('should add version to package.json file', function(){
+        it('should add version to package.json file', () => {
           expect(component.oc.version).to.eql('1.2.3');
         });
 
-        it('should mark the package.json as a packaged', function(){
+        it('should mark the package.json as a packaged', () => {
           expect(component.oc.packaged).to.eql(true);
         });
 
-        it('should save hash for template in package.json', function(){
+        it('should save hash for template in package.json', () => {
           expect(component.oc.files.template.hashKey).not.be.empty;
         });
 
-        it('should minify static resources', function(){
+        it('should minify static resources', () => {
           expect(packageStaticFilesStub.args[0][0].minify).to.eql(true);
         });
       });
 
-      describe('when minify=false', function(){
+      describe('when minify=false', () => {
 
         let component;
-        beforeEach(function(done){
+        beforeEach((done) => {
 
           const data = initialise();
 
@@ -131,19 +131,19 @@ describe('cli : domain : package-components', function(){
           executePackaging(data.packageComponents, false, done);
         });
 
-        it('should add version to package.json file', function(){
+        it('should add version to package.json file', () => {
           expect(component.oc.version).to.eql('1.2.3');
         });
 
-        it('should mark the package.json as a packaged', function(){
+        it('should mark the package.json as a packaged', () => {
           expect(component.oc.packaged).to.eql(true);
         });
 
-        it('should save hash for template in package.json', function(){
+        it('should save hash for template in package.json', () => {
           expect(component.oc.files.template.hashKey).not.be.empty;
         });
 
-        it('should minify static resources', function(){
+        it('should minify static resources', () => {
           expect(packageStaticFilesStub.args[0][0].minify).to.eql(false);
         });
       });

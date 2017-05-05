@@ -28,12 +28,12 @@ module.exports = function(config, renderComponents){
     const urls = [],
       toWarmup = [];
 
-    _.each(config.components, function(version, name){
+    _.each(config.components, (version, name) => {
       const versionSegment = version ? (version + '/') : '';
       urls.push(config.registries.serverRendering + name + '/' + versionSegment + '~info');
     });
 
-    _.eachAsync(urls, function(url, next){
+    _.eachAsync(urls, (url, next) => {
 
       const requestDetails = {
         url: url,
@@ -43,7 +43,7 @@ module.exports = function(config, renderComponents){
         timeout: options.timeout
       };
 
-      request(requestDetails, function(err, componentInfo){
+      request(requestDetails, (err, componentInfo) => {
         if(err){
           return next(new Error(format(settings.warmupFailed, JSON.stringify(requestDetails), err)));
         }
@@ -56,7 +56,7 @@ module.exports = function(config, renderComponents){
           };
 
         if(parameters){
-          _.each(parameters, function(value, parameter){
+          _.each(parameters, (value, parameter) => {
             if(value.mandatory){
               componentToWarmup.parameters[parameter] = value.example;
             }
@@ -66,14 +66,14 @@ module.exports = function(config, renderComponents){
         toWarmup.push(componentToWarmup);
         next();
       });
-    }, function(err){
+    }, (err) => {
       if(err){ return cb(err); }
       options.renderInfo = false;
       options.container = false;
 
-      renderComponents(toWarmup, options, function(errors, results){
+      renderComponents(toWarmup, options, (errors, results) => {
         const response = {};
-        _.each(toWarmup, function(component, i){
+        _.each(toWarmup, (component, i) => {
           response[component.name] = results[i];
         });
 

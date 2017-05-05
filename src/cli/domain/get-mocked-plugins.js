@@ -3,13 +3,13 @@
 const colors = require('colors/safe');
 const fs = require('fs-extra');
 const path = require('path');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const settings = require('../../resources/settings');
 const strings = require('../../resources/');
 
 const registerStaticMocks = function(mocks, logger){
-  return _.map(mocks, function(mockedValue, pluginName){
+  return _.map(mocks, (mockedValue, pluginName) => {
     logger.log(colors.green('├── ' + pluginName + ' () => ' + mockedValue));
     return {
       name: pluginName,
@@ -26,18 +26,18 @@ const registerStaticMocks = function(mocks, logger){
 };
 
 const registerDynamicMocks = function(ocJsonLocation, mocks, logger){
-  return _.map(mocks, function(source, pluginName){
+  return _.map(mocks, (source, pluginName) => {
 
     let p;
     try {
       p = require(path.resolve(ocJsonLocation, source));
     } catch(er) {
-      logger.log(colors.red(er.toString()));
+      logger.err(er.toString());
       return;
     }
 
     if(!_.isFunction(p)){
-      logger.log(colors.red(strings.errors.cli.MOCK_PLUGIN_IS_NOT_A_FUNCTION));
+      logger.err(strings.errors.cli.MOCK_PLUGIN_IS_NOT_A_FUNCTION);
       return;
     }
 
@@ -51,7 +51,7 @@ const registerDynamicMocks = function(ocJsonLocation, mocks, logger){
         execute: p
       }
     };
-  }).filter(function(p){ return p; });
+  }).filter((p) => p);
 };
 
 const findPath = function(pathToResolve, fileName) {
@@ -91,10 +91,10 @@ module.exports = function(logger, componentsDir){
     return plugins;
   }
 
-  logger.log(colors.yellow(strings.messages.cli.REGISTERING_MOCKED_PLUGINS));
+  logger.warn(strings.messages.cli.REGISTERING_MOCKED_PLUGINS);
 
   plugins = plugins.concat(registerStaticMocks(content.mocks.plugins.static, logger));
-  plugins = plugins.concat(registerDynamicMocks(ocJsonLocation, content.mocks.plugins.dynamic,logger));
+  plugins = plugins.concat(registerDynamicMocks(ocJsonLocation, content.mocks.plugins.dynamic, logger));
 
   return plugins;
 };

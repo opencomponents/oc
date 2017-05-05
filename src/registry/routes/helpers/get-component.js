@@ -5,7 +5,7 @@ const Cache = require('nice-cache');
 const Domain = require('domain');
 const format = require('stringformat');
 const vm = require('vm');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const applyDefaultValues = require('./apply-default-values');
 const Client = require('../../../../client');
@@ -62,7 +62,7 @@ module.exports = function(conf, repository){
         parameters: options.parameters
       };
 
-    repository.getComponent(requestedComponent.name, requestedComponent.version, function(err, component){
+    repository.getComponent(requestedComponent.name, requestedComponent.version, (err, component) => {
 
       // check route exist for component and version
       if(err){
@@ -205,7 +205,7 @@ module.exports = function(conf, repository){
             };
 
           const returnResult = function(template){
-            client.renderTemplate(template, data, renderOptions, function(err, html){
+            client.renderTemplate(template, data, renderOptions, (err, html) => {
 
               if(err){
                 return callback({
@@ -228,7 +228,7 @@ module.exports = function(conf, repository){
           if(!!cached && !conf.hotReloading){
             returnResult(cached);
           } else {
-            repository.getCompiledView(component.name, component.version, function(err, templateText){
+            repository.getCompiledView(component.name, component.version, (err, templateText) => {
               let ocTemplate;
               let type = component.oc.files.template.type;
               if (type === 'jade') { type = 'oc-template-jade'; }
@@ -280,7 +280,7 @@ module.exports = function(conf, repository){
 
         const setCallbackTimeout = function(){
           if(conf.executionTimeout){
-            setTimeout(function(){
+            setTimeout(() => {
               returnComponent({
                 message: format('timeout ({0}ms)', conf.executionTimeout * 1000)
               });
@@ -293,7 +293,7 @@ module.exports = function(conf, repository){
           domain.on('error', returnComponent);
 
           try {
-            domain.run(function(){
+            domain.run(() => {
               cached(contextObj, returnComponent);
               setCallbackTimeout();
             });
@@ -301,7 +301,7 @@ module.exports = function(conf, repository){
             return returnComponent(e);
           }
         } else {
-          repository.getDataProvider(component.name, component.version, function(err, dataProcessorJs){
+          repository.getDataProvider(component.name, component.version, (err, dataProcessorJs) => {
 
             if(err){
               componentCallbackDone = true;
@@ -316,7 +316,7 @@ module.exports = function(conf, repository){
             }
 
             const context = {
-              require: new RequireWrapper(conf.dependencies),
+              require: RequireWrapper(conf.dependencies),
               module: { exports: {}},
               console: conf.local ? console : { log: _.noop },
               setTimeout: setTimeout,
@@ -363,7 +363,7 @@ module.exports = function(conf, repository){
               cache.set('file-contents', cacheKey, processData);
 
               domain.on('error', handleError);
-              domain.run(function(){
+              domain.run(() => {
                 processData(contextObj, returnComponent);
                 setCallbackTimeout();
               });

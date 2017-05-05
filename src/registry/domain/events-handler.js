@@ -1,6 +1,6 @@
 'use strict';
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 const strings = require('../../resources');
 
@@ -9,7 +9,7 @@ let subscriptions = {};
 module.exports = {
   fire: function(eventName, eventData){
     if(subscriptions[eventName]){
-      _.forEach(subscriptions[eventName], function(callback){
+      _.forEach(subscriptions[eventName], (callback) => {
         callback(eventData);
       });
     }

@@ -3,14 +3,14 @@
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
-describe('utils : dateStringify', function(){
+describe('utils : dateStringify', () => {
 
   const dateStringified = require('../../src/utils/date-stringify');
 
-  describe('when the date is provided', function(){
+  describe('when the date is provided', () => {
     let dateString;
 
-    before(function(){
+    before(() => {
       const mockedDate = new Date();
       sinon.stub(mockedDate, 'getFullYear').returns(2015);
       sinon.stub(mockedDate, 'getMonth').returns(8);
@@ -22,16 +22,16 @@ describe('utils : dateStringify', function(){
       dateString = dateStringified(mockedDate);
     });
 
-    it('should return the correct stringified date', function(){
+    it('should return the correct stringified date', () => {
       expect(dateString).to.equal('2015/09/18 17:11:04');
     });
   });
 
-  describe('when the provided data is not valid', function(){
+  describe('when the provided data is not valid', () => {
     const anyNotValidData = 'Not a date';
     const dateString = dateStringified(anyNotValidData);
 
-    it('should return empty string', function(){
+    it('should return empty string', () => {
       expect(dateString).to.be.empty;
     });
   });

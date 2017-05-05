@@ -3,7 +3,7 @@
 
 const webpack = require('webpack');
 const path = require('path');
-const externalDependenciesHandlers = require('./externalDependenciesHandlers');
+const externalDependenciesHandlers = require('./external-dependencies-handlers');
 const BabiliPlugin = require('babili-webpack-plugin');
 
 module.exports = function webpackConfigGenerator(params){

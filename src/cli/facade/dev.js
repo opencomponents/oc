@@ -4,7 +4,7 @@ const async = require('async');
 const colors = require('colors/safe');
 const format = require('stringformat');
 const path = require('path');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const getComponentsDependencies = require('../domain/get-components-deps');
 const getMissingDeps = require('../domain/get-missing-deps');
@@ -18,12 +18,6 @@ const wrapCliCallback = require('../wrap-cli-callback');
 module.exports = function(dependencies){
   const local = dependencies.local,
     logger = dependencies.logger;
-
-  const log = {
-    err: function(msg){ return logger.log(colors.red(msg)); },
-    ok: function(msg){ return logger.log(colors.green(msg)); },
-    warn: function(msg, noNewLine){ return logger[noNewLine ? 'logNoNewLine' : 'log'](colors.yellow(msg)); }
-  };
 
   return function(opts, callback){
 
@@ -40,10 +34,10 @@ module.exports = function(dependencies){
     const installMissingDeps = function(missing, cb){
       if(_.isEmpty(missing)){ return cb(); }
 
-      log.warn(format(strings.messages.cli.INSTALLING_DEPS, missing.join(', ')));
-      npmInstaller(missing, function(err){
+      logger.warn(format(strings.messages.cli.INSTALLING_DEPS, missing.join(', ')));
+      npmInstaller(missing, (err) => {
         if(err){
-          log.err(err.toString());
+          logger.err(err.toString());
           throw err;
         }
         cb();
@@ -51,13 +45,13 @@ module.exports = function(dependencies){
     };
 
     const watchForChanges = function(components, cb){
-      watch(components, componentsDir, function(err, changedFile){
+      watch(components, componentsDir, (err, changedFile) => {
         if(err){
-          log.err(format(strings.errors.generic, err));
+          logger.err(format(strings.errors.generic, err));
         } else {
-          log.warn(format(strings.messages.cli.CHANGES_DETECTED, changedFile));
+          logger.warn(format(strings.messages.cli.CHANGES_DETECTED, changedFile));
           if(!hotReloading){
-            log.warn(strings.messages.cli.HOT_RELOADING_DISABLED);
+            logger.warn(strings.messages.cli.HOT_RELOADING_DISABLED);
           } else {
             cb(components);
           }
@@ -72,9 +66,9 @@ module.exports = function(dependencies){
 
       if(!packaging){
         packaging = true;
-        log.warn(strings.messages.cli.PACKAGING_COMPONENTS, true);
+        logger.warn(strings.messages.cli.PACKAGING_COMPONENTS, true);
 
-        async.eachSeries(componentsDirs, function(dir, cb){
+        async.eachSeries(componentsDirs, (dir, cb) => {
 
           const packageOptions = {
             componentPath: dir,
@@ -82,22 +76,22 @@ module.exports = function(dependencies){
             verbose: opts.verbose
           };
 
-          local.package(packageOptions, function(err){
+          local.package(packageOptions, (err) => {
             if(!err){ i++; }
             cb(err);
           });
-        }, function(error){
+        }, (error) => {
           if(error){
             const errorDescription = ((error instanceof SyntaxError) || !!error.message) ? error.message : error;
-            log.err(format(strings.errors.cli.PACKAGING_FAIL, componentsDirs[i], errorDescription));
-            log.warn(strings.messages.cli.RETRYING_10_SECONDS);
-            setTimeout(function(){
+            logger.err(format(strings.errors.cli.PACKAGING_FAIL, componentsDirs[i], errorDescription));
+            logger.warn(strings.messages.cli.RETRYING_10_SECONDS);
+            setTimeout(() => {
               packaging = false;
               packageComponents(componentsDirs);
             }, 10000);
           } else {
             packaging = false;
-            log.ok('OK');
+            logger.ok('OK');
             cb();
           }
         });
@@ -105,18 +99,18 @@ module.exports = function(dependencies){
     };
 
     const loadDependencies = function(components, cb){
-      log.warn(strings.messages.cli.CHECKING_DEPENDENCIES, true);
+      logger.warn(strings.messages.cli.CHECKING_DEPENDENCIES, true);
 
       const dependencies = getComponentsDependencies(components),
         missing = getMissingDeps(dependencies.withVersions, components);
 
       if(_.isEmpty(missing)){
-        log.ok('OK');
+        logger.ok('OK');
         return cb(dependencies);
       }
 
-      log.err('FAIL');
-      installMissingDeps(missing, function(){
+      logger.err('FAIL');
+      installMissingDeps(missing, () => {
         loadDependencies(components, cb);
       });
     };
@@ -124,35 +118,35 @@ module.exports = function(dependencies){
     const registerPlugins = function(registry){
       const mockedPlugins = getMockedPlugins(logger, componentsDir);
 
-      mockedPlugins.forEach(function(p){
+      mockedPlugins.forEach((p) => {
         registry.register(p);
       });
 
-      registry.on('request', function(data){
+      registry.on('request', (data) => {
         if(data.errorCode === 'PLUGIN_MISSING_FROM_REGISTRY'){
-          log.err(format(strings.errors.cli.PLUGIN_MISSING_FROM_REGISTRY, data.errorDetails, colors.blue(strings.commands.cli.MOCK_PLUGIN)));
+          logger.err(format(strings.errors.cli.PLUGIN_MISSING_FROM_REGISTRY, data.errorDetails, colors.blue(strings.commands.cli.MOCK_PLUGIN)));
         } else if(data.errorCode === 'PLUGIN_MISSING_FROM_COMPONENT'){
-          log.err(format(strings.errors.cli.PLUGIN_MISSING_FROM_COMPONENT, data.errorDetails));
+          logger.err(format(strings.errors.cli.PLUGIN_MISSING_FROM_COMPONENT, data.errorDetails));
         }
       });
     };
 
-    log.warn(strings.messages.cli.SCANNING_COMPONENTS, true);
-    local.getComponentsByDir(componentsDir, function(err, components){
+    logger.warn(strings.messages.cli.SCANNING_COMPONENTS, true);
+    local.getComponentsByDir(componentsDir, (err, components) => {
 
       if(_.isEmpty(components)){
         err = format(errors.DEV_FAIL, errors.COMPONENTS_NOT_FOUND);
         callback(err);
-        return log.err(err);
+        return logger.err(err);
       }
 
-      log.ok('OK');
-      _.forEach(components, function(component){
+      logger.ok('OK');
+      _.forEach(components, (component) => {
         logger.log(colors.green('├── ') + component);
       });
 
-      loadDependencies(components, function(dependencies){
-        packageComponents(components, function(){
+      loadDependencies(components, (dependencies) => {
+        packageComponents(components, () => {
 
           const registry = new oc.Registry({
             local: true,
@@ -170,15 +164,16 @@ module.exports = function(dependencies){
 
           registerPlugins(registry);
 
-          log.warn(format(strings.messages.cli.REGISTRY_STARTING, baseUrl));
-          registry.start(function(err){
+          logger.warn(format(strings.messages.cli.REGISTRY_STARTING, baseUrl));
+          registry.start((err) => {
 
             if(err){
               if(err.code === 'EADDRINUSE'){
                 err = format(strings.errors.cli.PORT_IS_BUSY, port);
               }
-              callback(err);
-              return log.err(err);
+
+              logger.err(err);
+              return callback(err);
             }
 
             watchForChanges(components, packageComponents);

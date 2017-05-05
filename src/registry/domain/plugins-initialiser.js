@@ -2,7 +2,7 @@
 
 const async = require('async');
 const format = require('stringformat');
-const _ = require('underscore');
+const _ = require('lodash');
 const DepGraph = require('dependency-graph').DepGraph;
 
 const strings = require('../../resources');
@@ -10,7 +10,7 @@ const strings = require('../../resources');
 const validatePlugins = function(plugins){
   let c = 0;
 
-  plugins.forEach(function(plugin){
+  plugins.forEach((plugin) => {
     c++;
     if(!_.isObject(plugin.register) || !_.isFunction(plugin.register.register) ||
        !_.isFunction(plugin.register.execute) || !_.isString(plugin.name)){
@@ -23,16 +23,16 @@ const validatePlugins = function(plugins){
 const checkDependencies = function(plugins){
   const graph = new DepGraph();
 
-  plugins.forEach(function(p){
+  plugins.forEach((p) => {
     graph.addNode(p.name);
   });
 
-  plugins.forEach(function(p){
+  plugins.forEach((p) => {
     if(!p.register.dependencies){
       return;
     }
 
-    p.register.dependencies.forEach(function(d){
+    p.register.dependencies.forEach((d) => {
       try {
         graph.addDependency(p.name, d);
       }
@@ -69,7 +69,7 @@ module.exports.init = function(pluginsToRegister, callback){
     }
 
     let present = true;
-    dependencies.forEach(function(d) {
+    dependencies.forEach((d) => {
       if(!registered[d]){
         present = false;
       }

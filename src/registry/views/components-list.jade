@@ -1,22 +1,4 @@
-extends layout
-
-mixin selectedCheckbox(name)
-  input(type="checkbox", name=name, checked)
-  .state
-    span(class="component-state-" + name) #{name} (#{getCount(name)})
-
-block content
-  - var getCount = function(state){ return stateCounts[state] || 0; };
-  - var isLocal = (type !== 'oc-registry');
-  +property('Base url', href, true)
-  +property('Version', ocVersion)
-  +property('Components', components.length + ' (' + getCount('experimental') + ' experimental, ' + getCount('deprecated') + ' deprecated)')
-  if !isLocal
-    +property('Components releases', componentsReleases)
-  +property('Registry type', isLocal ? 'Local dev registry' : 'On-line registry')
-
-  h2 Components
-
+#components-list.box
   form#filter-components
     input.search(placeholder="Filter by component name")
     .states
@@ -47,8 +29,3 @@ block content
         if !isLocal
           .date.t-10.two-rows= component.oc.stringifiedDate
           .activity.t-10= component.allVersions.length
-
-block scripts
-  script
-    | var q = "#{encodeURIComponent(q)}", componentsList = !{JSON.stringify(componentsList)};
-    include:uglify-js static/list-components.js

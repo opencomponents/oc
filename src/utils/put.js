@@ -4,7 +4,7 @@ const FormData = require('form-data');
 const fs = require('fs-extra');
 const path = require('path');
 const url = require('url');
-const _ = require('underscore');
+const _ = require('lodash');
 
 module.exports = function(urlPath, files, headers, callback) {
 
@@ -22,25 +22,25 @@ module.exports = function(urlPath, files, headers, callback) {
     files = [files];
   }
 
-  _.forEach(files, function(file){
+  _.forEach(files, (file) => {
     const fileName = path.basename(file);
     form.append(fileName, fs.createReadStream(file));
   });
 
   options.headers = _.extend(headers, form.getHeaders());
 
-  form.submit(options, function(err, res){
+  form.submit(options, (err, res) => {
 
     if(err){
       callbackDone = true;
       return callback(err);
     }
 
-    res.on('data', function(chunk){
+    res.on('data', (chunk) => {
       body += chunk;
     });
 
-    res.on('end', function(){
+    res.on('end', () => {
       if(!callbackDone){
         callbackDone = true;
 

@@ -2,7 +2,7 @@
 
 const querystring = require('querystring');
 const url = require('url');
-const _ = require('underscore');
+const _ = require('lodash');
 
 function componentForType(component, baseUrl, type) {
   if (_.isString(component)) {
@@ -55,7 +55,7 @@ const build = {
     if (_.keys(parameters).length > 0) {
       qs += '?';
 
-      _.forEach(parameters, function (parameter, key) {
+      _.forEach(parameters, (parameter, key) => {
         qs += key + '=' + encodeURIComponent(parameter) + '&';
       });
 

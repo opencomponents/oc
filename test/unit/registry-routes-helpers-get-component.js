@@ -3,9 +3,9 @@
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
-const _ = require('underscore');
+const _ = require('lodash');
 
-describe('registry : routes : helpers : get-component', function(){
+describe('registry : routes : helpers : get-component', () => {
   const fireStub = sinon.stub(),
     mockedComponents = require('../fixtures/mocked-components'),
     GetComponent = injectr('../../src/registry/routes/helpers/get-component.js', {
@@ -28,9 +28,9 @@ describe('registry : routes : helpers : get-component', function(){
     };
   };
 
-  describe('when getting a component', function(){
+  describe('when getting a component', () => {
 
-    before(function(done){
+    before((done) => {
       initialise(mockedComponents['async-error2-component']);
       getComponent = new GetComponent({}, mockedRepository);
 
@@ -40,12 +40,12 @@ describe('registry : routes : helpers : get-component', function(){
         parameters: {},
         version: '1.X.X',
         conf: { baseUrl: 'http://components.com/' }
-      }, function(){
+      }, () => {
         done();
       });
     });
 
-    it('should fire a component-retrieved event', function(){
+    it('should fire a component-retrieved event', () => {
       expect(fireStub.args[0][0]).to.equal('component-retrieved');
       expect(fireStub.args[0][1].headers).to.eql({});
       expect(fireStub.args[0][1].name).to.equal('async-error2-component');

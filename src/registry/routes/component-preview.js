@@ -1,6 +1,6 @@
 'use strict';
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 const urlBuilder = require('../domain/url-builder');
 const getComponentFallback = require('./helpers/get-component-fallback');
@@ -34,10 +34,10 @@ function componentPreview(err, req, res, component, templates) {
 module.exports = function(conf, repository){
   return function(req, res){
 
-    repository.getComponent(req.params.componentName, req.params.componentVersion, function(registryError, component){
+    repository.getComponent(req.params.componentName, req.params.componentVersion, (registryError, component) => {
 
       if(registryError && conf.fallbackRegistryUrl) {
-        return getComponentFallback.getComponentPreview(conf, req, res, registryError, function(fallbackError, fallbackComponent){
+        return getComponentFallback.getComponentPreview(conf, req, res, registryError, (fallbackError, fallbackComponent) => {
           componentPreview(fallbackError, req, res, fallbackComponent, repository.getTemplates());
         });
       }

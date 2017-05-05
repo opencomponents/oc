@@ -1,13 +1,13 @@
 'use strict';
 
 const path = require('path');
-const _ = require('underscore');
+const _ = require('lodash');
 
-module.exports = function(dependencies){
+module.exports = (dependencies) => {
 
   const missing = [];
 
-  _.forEach(dependencies, function(npmModule){
+  _.forEach(dependencies, (npmModule) => {
 
     const index = npmModule.indexOf('@');
     let moduleName = npmModule;
@@ -15,6 +15,7 @@ module.exports = function(dependencies){
     if (index > 0) {
       moduleName = npmModule.substr(0, index);
     }
+
     const pathToModule = path.resolve('node_modules/', moduleName);
 
     try {
@@ -23,7 +24,7 @@ module.exports = function(dependencies){
       }
 
       require(pathToModule);
-    } catch (exception) {
+    } catch (e) {
       missing.push(npmModule);
     }
   });

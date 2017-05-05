@@ -2,7 +2,7 @@
 
 const path = require('path');
 const targz = require('targz');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const getPackageJsonFromTempDir = require('./get-package-json-from-temp-dir');
 
@@ -16,11 +16,11 @@ module.exports = function(files, callback){
   targz.decompress({
     src: packagePath,
     dest: packageUntarOutput
-  }, function(err){
+  }, (err) => {
 
     if(err){ return callback(err); }
 
-    getPackageJsonFromTempDir(packageOutput, function(err, packageJson){
+    getPackageJsonFromTempDir(packageOutput, (err, packageJson) => {
       callback(err, {
         outputFolder: packageOutput,
         packageJson: packageJson

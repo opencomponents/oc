@@ -19,13 +19,13 @@ module.exports = function packageServerScript(params, callback){
     dataPath: path.join(params.componentPath, params.ocOptions.files.data)
   };
 
-  bundle(bundleParams, function(err, bundledFiles){
+  bundle(bundleParams, (err, bundledServer) => {
     if (err) {
       return callback(err);
     } else {
-      async.eachOf(bundledFiles, function(bundledFileContent, bundledFileName, next){
+      async.eachOf(bundledFiles, (bundledFileContent, bundledFileName, next) => {
         fs.writeFile(path.join(publishPath, bundledFileName), bundledFileContent, next);
-      }, function(err){
+      }, (err) => {
         callback(err, {
           type: 'node.js',
           hashKey: hashBuilder.fromString(bundledFiles[fileName]),

@@ -1,10 +1,9 @@
 'use strict';
 
-const colors = require('colors/safe');
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
-describe('cli : facade : registry : ls', function(){
+describe('cli : facade : registry : ls', () => {
 
   const logSpy = {},
     Registry = require('../../src/cli/domain/registry'),
@@ -13,49 +12,51 @@ describe('cli : facade : registry : ls', function(){
     registryFacade = new RegistryFacade({ registry: registry, logger: logSpy });
 
   const execute = function(){
-    logSpy.log = sinon.spy();
-    registryFacade({}, function(){});
+    logSpy.err = sinon.spy();
+    logSpy.ok = sinon.spy();
+    logSpy.warn = sinon.spy();
+    registryFacade({}, () => {});
   };
 
 
-  describe('when no registries linked to the app', function(){
+  describe('when no registries linked to the app', () => {
 
-    beforeEach(function(){
+    beforeEach(() => {
       sinon.stub(registry, 'get').yields(null, []);
       execute();
     });
 
-    afterEach(function(){
+    afterEach(() => {
       registry.get.restore();
     });
 
-    it('should introduce the list of registries', function(){
-      expect(logSpy.log.args[0][0]).to.equal(colors.yellow('oc linked registries:'));
+    it('should introduce the list of registries', () => {
+      expect(logSpy.warn.args[0][0]).to.equal('oc linked registries:');
     });
 
-    it('should log an error', function(){
-      expect(logSpy.log.args[1][0]).to.equal(colors.red('oc registries not found. Run "oc registry add <registry href>"'));
+    it('should log an error', () => {
+      expect(logSpy.err.args[0][0]).to.equal('oc registries not found. Run "oc registry add <registry href>"');
     });
   });
 
-  describe('when registries linked to the app', function(){
+  describe('when registries linked to the app', () => {
 
-    beforeEach(function(){
+    beforeEach(() => {
       sinon.stub(registry, 'get').yields(null, ['http://www.registry.com', 'https://www.anotherregistry.com']);
       execute();
     });
 
-    afterEach(function(){
+    afterEach(() => {
       registry.get.restore();
     });
 
-    it('should introduce the list of registries', function(){
-      expect(logSpy.log.args[0][0]).to.equal(colors.yellow('oc linked registries:'));
+    it('should introduce the list of registries', () => {
+      expect(logSpy.warn.args[0][0]).to.equal('oc linked registries:');
     });
 
-    it('should list the linked registries', function(){
-      expect(logSpy.log.args[1][0]).to.equal(colors.green('http://www.registry.com'));
-      expect(logSpy.log.args[2][0]).to.equal(colors.green('https://www.anotherregistry.com'));
+    it('should list the linked registries', () => {
+      expect(logSpy.ok.args[0][0]).to.equal('http://www.registry.com');
+      expect(logSpy.ok.args[1][0]).to.equal('https://www.anotherregistry.com');
     });
   });
 });
