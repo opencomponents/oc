@@ -51,7 +51,7 @@ describe('cli : domain : get-components-deps', () => {
     });
 
     it('should return core dependencies + package depenndencies', () => {
-      expect(result.modules).to.eql(['fs', 'lodash', 'underscore', 'url']);
+      expect(result.modules.sort()).to.eql(['fs', 'lodash', 'underscore', 'url']);
     });
 
     it('should return just package dependencies with versions', () => {
@@ -82,7 +82,7 @@ describe('cli : domain : get-components-deps', () => {
     });
 
     it('should return core dependencies + package depenendencies', () => {
-      expect(result.modules).to.eql(['fs', 'oc-template-react', 'underscore', 'url']);
+      expect(result.modules.sort()).to.eql(['fs', 'oc-template-react', 'underscore', 'url']);
     });
 
     it('should return package dependencies with versions', () => {

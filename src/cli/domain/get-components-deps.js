@@ -43,7 +43,7 @@ module.exports = function(components){
   });
 
   return {
-    modules: _.union(coreModules, _.keys(deps.modules)).sort(),
+    modules: _.union(coreModules, _.keys(deps.modules)),
     withVersions: _.keys(deps.withVersions),
     templates: _.keys(deps.templates)
   };

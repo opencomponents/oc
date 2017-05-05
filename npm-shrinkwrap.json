@@ -7167,6 +7167,11 @@
         }
       }
     },
+    "try-require": {
+      "version": "1.2.1",
+      "from": "try-require@latest",
+      "resolved": "https://registry.npmjs.org/try-require/-/try-require-1.2.1.tgz"
+    },
     "uglify-js": {
       "version": "2.6.4",
       "from": "uglify-js@2.6.4",
