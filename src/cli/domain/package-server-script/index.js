@@ -19,7 +19,7 @@ module.exports = function packageServerScript(params, callback){
     dataPath: path.join(params.componentPath, params.ocOptions.files.data)
   };
 
-  bundle(bundleParams, (err, bundledServer) => {
+  bundle(bundleParams, (err, bundledFiles) => {
     if (err) {
       return callback(err);
     } else {
