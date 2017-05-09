@@ -10,28 +10,30 @@ const initPackage = require('./initPackage');
 const utils = require('./utils');
 
 module.exports = function (componentName, templateType, options, callback) {
+  const local = /^\.+\/|^\//.test(templateType);
+  const packageName=  utils.getPackageName(templateType);
+  const templatePath = path.resolve('node_modules', packageName);
   const config = {
     cli: options.cli || 'npm',
     componentName,
-    componentPath: path.join(process.cwd(), componentName ),
+    componentPath: path.join(process.cwd(), componentName),
+    packageName,
+    templatePath,
     templateType,
-    packageName: utils.getPackageName(templateType),
     logger: options.logger || console,
     callback,
-    local: /^\.\/|^\//.test(templateType)
+    local
   };
 
   createComponentDir(config);
 
   try {
     // If template available in the dev registry, generate boilerplate out of its blueprint
-    const templatePath = path.resolve('node_modules', config.packageName);
     require(templatePath);
-    return blueprint(_.extend({}, config, { templatePath }));
+    return blueprint(config);
   } catch (e) {
-    // Otherwise install the template
+    // Otherwise, first install the template then generate boilerplate files.
     initPackage(config);
-    const templatePath = path.resolve(process.cwd(), config.templateType);
-    return installTemplate(_.extend({}, config, { templatePath }), blueprint);
+    return installTemplate(config, blueprint);
   }
 };
