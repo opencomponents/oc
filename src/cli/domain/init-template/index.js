@@ -1,8 +1,6 @@
 'use strict';
 
 const path = require('path');
-const _ = require('underscore');
-
 const blueprint = require('./blueprint');
 const installTemplate = require('./installTemplate');
 const createComponentDir = require('./createComponentDir');

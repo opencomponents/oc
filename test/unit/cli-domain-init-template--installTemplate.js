@@ -26,7 +26,7 @@ describe('cli : domain : init-template installTemplate', () => {
       templateType: 'oc-template-jade',
       cli: 'npm',
       componentPath: 'path/to/component',
-      local: true,
+      local: false,
       packageName: 'myComponent',
       logger: {
         log: sinon.spy()
@@ -37,14 +37,13 @@ describe('cli : domain : init-template installTemplate', () => {
     installTemplate(config, callback);
 
     it('should spawn the right process', () => {
-      expect(deps['cross-spawn'].calledWith(
-        'npm',
-        ['install', "--save", "--save-exact", "oc-template-jade"],
-        {"cwd": "path/to/component", "silent": true}
-      )).to.equal(true);
+      expect(deps['cross-spawn'].args[0][0]).to.equal('npm');
+      expect(deps['cross-spawn'].args[0][1]).to.deep.equal(['install', '--save', '--save-exact', 'oc-template-jade']);
+      expect(deps['cross-spawn'].args[0][2].stdio).to.equal("inherit");
+      expect(deps['cross-spawn'].args[0][2].silent).to.equal(true);
     });
     it('should correctly start the spinner', () => {
-      expect(deps['cli-spinner'].Spinner.args[0][0]).to.equal('Installing myComponent from local...');
+      expect(deps['cli-spinner'].Spinner.args[0][0]).to.equal('Installing myComponent from npm...');
     });
     it('should correctly setup on error and on close listeners', () => {
       expect(proc.args[0][0]).to.equal('error');
