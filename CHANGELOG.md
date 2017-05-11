@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.37.2
+- [#481](https://github.com/opentable/oc/pull/481) issue-with-amd
+
 ### v0.37.1
 - [#479](https://github.com/opentable/oc/pull/479) Allow node core deps to be used and whitelisted
 - [#478](https://github.com/opentable/oc/pull/478) Upgrade chai
