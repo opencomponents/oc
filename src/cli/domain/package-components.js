@@ -10,6 +10,7 @@ const packageStaticFiles = require('./package-static-files');
 const packageTemplate = require('./package-template');
 const getUnixUtcTimestamp = require('../../utils/get-unix-utc-timestamp');
 const validator = require('../../registry/domain/validators');
+const requireTemplate = require('../../utils/require-template');
 
 module.exports = function(){
   return function(options, callback){
@@ -66,7 +67,18 @@ module.exports = function(){
           return cb(null, component);
         }
 
-        packageServerScript({
+        const type = component.oc.files.template.type;
+        let ocTemplate;
+
+        try {
+          ocTemplate = requireTemplate(type);
+        } catch (err) {
+          return cb(err);
+        }
+
+        const compileServer = ocTemplate.compileServer ? ocTemplate.compileServer : packageServerScript;
+
+        compileServer({
           componentPath: componentPath,
           dependencies: component.dependencies,
           ocOptions: component.oc,
@@ -78,8 +90,8 @@ module.exports = function(){
           component.oc.files.dataProvider = packagedServerScriptInfo;
           delete component.oc.files.data;
           cb(err, component);
-        });
-      },
+        }); 
+    },
       function(component, cb){
         // Packaging package.json
 
