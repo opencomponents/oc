@@ -710,7 +710,7 @@ describe('registry : domain : validator', () => {
 
   describe('when validating component package for new candidate', () => {
 
-    const validate = function(a, b){ return validator.validatePackage(a, b || {}); };
+    const validate = (a, b) => validator.validatePackage(a, b || {});
 
     describe('when package not valid', () => {
 
@@ -719,35 +719,32 @@ describe('registry : domain : validator', () => {
       });
 
       it('should not be valid when uploaded package consists of multiple files', () => {
-        expect(validate({ afile: {}, anotherFile: {}}).isValid).to.be.false;
+        expect(validate([{}, {}]).isValid).to.be.false;
       });
 
       it('should not be valid when file has not the proper file extension', () => {
-        expect(validate({ theFile: {
+        expect(validate([{
           fieldname: 'file.jpg',
           originalname: 'file.jpg',
-          name: 'file-1415986760368.jpg',
+          filename: 'file-1415986760368.jpg',
           encoding: '7bit',
           mimetype: 'application/octet-stream',
           path: 'temp/file-1415986760368.jpg',
-          extension: 'jpg',
-          size: 123,
-          truncated: false
-        }}).isValid).to.be.false;
+          size: 123
+        }]).isValid).to.be.false;
       });
 
       it('should not be valid when file has been truncated', () => {
-        expect(validate({ theFile: {
+        expect(validate([{
           fieldname: 'package.tar.gz',
           originalname: 'package.tar.gz',
-          name: 'theFile-1415986760368.tar.gz',
+          filename: 'theFile-1415986760368.tar.gz',
           encoding: '7bit',
           mimetype: 'application/octet-stream',
           path: 'temp/package-1415986760368.tar.gz',
-          extension: 'gz',
           size: 3707,
           truncated: true
-        }}).isValid).to.be.false;
+        }]).isValid).to.be.false;
       });
     });
 
@@ -796,20 +793,18 @@ describe('registry : domain : validator', () => {
     });
 
     describe('when package is valid', () => {
-      const _package = {
+      const result = validate([{
         fieldname: 'package.tar.gz',
         originalname: 'package.tar.gz',
-        name: 'theFile-1415986760368.tar.gz',
+        filename: 'theFile-1415986760368.tar.gz',
         encoding: '7bit',
         mimetype: 'application/octet-stream',
         path: 'temp/package-1415986760368.tar.gz',
-        extension: 'gz',
-        size: 3707,
-        truncated: false
-      };
+        size: 3707
+      }]);
 
       it('should be valid', () => {
-        expect(validate({ theFile: _package }).isValid).to.be.true;
+        expect(result.isValid).to.be.true;
       });
     });
   });

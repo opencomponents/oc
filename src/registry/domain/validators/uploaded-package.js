@@ -3,9 +3,7 @@
 const _ = require('lodash');
 
 module.exports = function(input){
-  const response = {
-    isValid: true
-  };
+  const response = { isValid: true };
 
   const returnError = function(message){
     response.isValid = false;
@@ -21,9 +19,9 @@ module.exports = function(input){
     return returnError('not_valid');
   }
 
-  const file = input[_.keys(input)[0]];
+  const file = input[0];
 
-  if(file.mimetype !== 'application/octet-stream' || !!file.truncated || file.extension !== 'gz' || file.path.indexOf('.tar.gz') < 0){
+  if(file.mimetype !== 'application/octet-stream' || file.truncated || file.filename.indexOf('.tar.gz') < 0){
     return returnError('not_valid');
   }
 
