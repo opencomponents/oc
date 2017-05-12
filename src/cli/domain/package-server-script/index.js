@@ -10,7 +10,7 @@ module.exports = function packageServerScript(params, callback){
   const bundleParams = {
     webpack: params.webpack || webpackParams,
     dependencies: params.dependencies || {},
-    fileName: params.fileName,
+    fileName: params.ocOptions.files.data,
     dataPath: path.join(params.componentPath, params.ocOptions.files.data)
   };
 

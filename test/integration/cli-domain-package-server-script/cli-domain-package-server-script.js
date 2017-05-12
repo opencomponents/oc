@@ -47,7 +47,6 @@ describe('cli : domain : package-server-script', () => {
         try {
           packageServerScript(
             {
-              fileName: serverName,
               componentPath: componentPath,
               ocOptions: {
                 files: {
@@ -84,7 +83,6 @@ describe('cli : domain : package-server-script', () => {
       it('should return compiled data provider', (done) => {
         packageServerScript(
           {
-            fileName: serverName,
             componentPath: componentPath,
             ocOptions: {
               files: {
@@ -128,7 +126,6 @@ describe('cli : domain : package-server-script', () => {
       it('should save compiled data provider encapsulating json content', (done) => {
         packageServerScript(
           {
-            fileName: serverName,
             componentPath: componentPath,
             ocOptions: {
               files: {
@@ -168,7 +165,6 @@ describe('cli : domain : package-server-script', () => {
 
         packageServerScript(
           {
-            fileName: serverName,
             componentPath: componentPath,
             ocOptions: {
               files: {
@@ -199,7 +195,7 @@ describe('cli : domain : package-server-script', () => {
 
           packageServerScript(
             {
-              fileName: serverName,
+
               componentPath: componentPath,
               ocOptions: {
                 files: {
@@ -234,7 +230,7 @@ describe('cli : domain : package-server-script', () => {
 
           packageServerScript(
             {
-              fileName: serverName,
+
               componentPath: componentPath,
               ocOptions: {
                 files: {
@@ -273,7 +269,6 @@ describe('cli : domain : package-server-script', () => {
       it('should save compiled data provider encapsulating js module content', (done) => {
         packageServerScript(
           {
-            fileName: serverName,
             componentPath: componentPath,
             ocOptions: {
               files: {
@@ -309,7 +304,6 @@ describe('cli : domain : package-server-script', () => {
       it('should transpile it to es2015 through Babel', (done) => {
         packageServerScript(
           {
-            fileName: serverName,
             componentPath: componentPath,
             ocOptions: {
               files: {
@@ -352,7 +346,6 @@ describe('cli : domain : package-server-script', () => {
       it('should wrap while/do/for;; loops with an iterator limit', (done) => {
         packageServerScript(
           {
-            fileName: serverName,
             componentPath: componentPath,
             ocOptions: {
               files: {
@@ -411,7 +404,6 @@ describe('cli : domain : package-server-script', () => {
               fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
               packageServerScript(
                 {
-                  fileName: serverName,
                   componentPath: componentPath,
                   ocOptions: {
                     files: {

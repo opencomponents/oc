@@ -77,13 +77,11 @@ module.exports = function(){
         }
 
         const compileServer = ocTemplate.compileServer ? ocTemplate.compileServer : packageServerScript;
-        const fileName = 'server.js';
 
         compileServer({
           componentPath: componentPath,
           dependencies: component.dependencies,
           ocOptions: component.oc,
-          fileName,
           verbose: options.verbose
         }, (err, bundledServer) => {
           if(err){ return cb(err); }
