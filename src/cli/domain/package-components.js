@@ -98,7 +98,7 @@ module.exports = function(){
             delete component.oc.files.data;
             return cb(err, component);
           });
-        }); 
+        });
       },
       function(component, cb){
         // Packaging package.json
