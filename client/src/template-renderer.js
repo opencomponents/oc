@@ -6,10 +6,7 @@ const requireTemplate = require('./utils/require-template');
 module.exports = function(){
   return function(template, model, options, callback){
 
-    let type = options.templateType;
-    if (type === 'jade') { type = 'oc-template-jade'; }
-    if (type === 'handlebars') { type = 'oc-template-handlebars'; }
-
+    const type = options.templateType;
     let ocTemplate;
     try {
       ocTemplate = requireTemplate(type);
