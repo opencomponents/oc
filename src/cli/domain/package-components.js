@@ -11,6 +11,7 @@ const packageTemplate = require('./package-template');
 const getUnixUtcTimestamp = require('../../utils/get-unix-utc-timestamp');
 const validator = require('../../registry/domain/validators');
 const requireTemplate = require('../../utils/require-template');
+const hashBuilder = require('../../utils/hash-builder');
 
 module.exports = function(){
   return function(options, callback){
@@ -67,9 +68,8 @@ module.exports = function(){
           return cb(null, component);
         }
 
-        const type = component.oc.files.template.type;
         let ocTemplate;
-
+        const type = component.oc.files.template.type;
         try {
           ocTemplate = requireTemplate(type);
         } catch (err) {
@@ -77,21 +77,29 @@ module.exports = function(){
         }
 
         const compileServer = ocTemplate.compileServer ? ocTemplate.compileServer : packageServerScript;
+        const fileName = 'server.js';
 
         compileServer({
           componentPath: componentPath,
           dependencies: component.dependencies,
           ocOptions: component.oc,
-          publishPath: publishPath,
+          fileName,
           verbose: options.verbose
-        }, (err, packagedServerScriptInfo) => {
+        }, (err, bundledServer) => {
           if(err){ return cb(err); }
 
-          component.oc.files.dataProvider = packagedServerScriptInfo;
-          delete component.oc.files.data;
-          cb(err, component);
+          fs.writeFile(path.join(publishPath, fileName), bundledServer, (err) => {
+            if(err){ return cb(err); }
+            component.oc.files.dataProvider = {
+              type: 'node.js',
+              hashKey: hashBuilder.fromString(bundledServer),
+              src: fileName
+            };
+            delete component.oc.files.data;
+            return cb(err, component);
+          });
         }); 
-    },
+      },
       function(component, cb){
         // Packaging package.json
 
