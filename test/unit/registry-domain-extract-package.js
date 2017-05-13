@@ -13,7 +13,7 @@ describe('registry : domain : extract-package', () => {
     targz: { decompress: decompressStub },
     path: { resolve: pathResolveStub },
     './get-package-json-from-temp-dir': sinon.stub().yields(null, { package: 'hello' })
-  }, { console: console});
+  });
 
   describe('when successfully extracting package', () => {
 
@@ -27,12 +27,10 @@ describe('registry : domain : extract-package', () => {
 
       decompressStub.yields();
 
-      extractPackage({
-        '1478279453422.tar.gz': {
-          name: '1478279453422.tar.gz',
-          path: '/some-path/registry/temp/1478279453422.tar.gz'
-        }
-      }, (err, res) => {
+      extractPackage([{
+        filename: '1478279453422.tar.gz',
+        path: '/some-path/registry/temp/1478279453422.tar.gz'
+      }], (err, res) => {
         response = res;
         done();
       });
@@ -65,12 +63,10 @@ describe('registry : domain : extract-package', () => {
 
       decompressStub.yields('error!');
 
-      extractPackage({
-        '1478279453422.tar.gz': {
-          name: '1478279453422.tar.gz',
-          path: '/some-path/registry/temp/1478279453422.tar.gz'
-        }
-      }, (err) => {
+      extractPackage([{
+        filename: '1478279453422.tar.gz',
+        path: '/some-path/registry/temp/1478279453422.tar.gz'
+      }], (err) => {
         error = err;
         done();
       });

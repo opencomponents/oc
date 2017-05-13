@@ -8,6 +8,7 @@ var oc = oc || {};
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module
     define(['exports', 'jquery'], function(exports, $) {
+      $.extend(exports, root.oc);
       factory((root.oc = exports), $, root.head, root.document, root.window);
     });
   } else if (typeof exports === 'object' && typeof exports.nodeName !== 'string') {
