@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.37.3
+- [#482](https://github.com/opentable/oc/pull/482) Upgrade multer
+
 ### v0.37.2
 - [#481](https://github.com/opentable/oc/pull/481) issue-with-amd
 
