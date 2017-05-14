@@ -301,7 +301,7 @@ module.exports = function(conf, repository){
             return returnComponent(e);
           }
         } else {
-          repository.getDataProvider(component.name, component.version, (err, dataProcessorJs) => {
+          repository.getDataProvider(component.name, component.version, (err, dataProcessorJs, dataFilePath) => {
 
             if(err){
               componentCallbackDone = true;
@@ -358,7 +358,12 @@ module.exports = function(conf, repository){
             };
 
             try {
-              vm.runInNewContext(dataProcessorJs, context);
+              const options = conf.local ? {
+                displayErrors: true,
+                filename: dataFilePath
+              } : {};
+
+              vm.runInNewContext(dataProcessorJs, context, options);
               const processData = context.module.exports.data;
               cache.set('file-contents', cacheKey, processData);
 

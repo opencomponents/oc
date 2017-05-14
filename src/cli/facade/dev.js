@@ -75,7 +75,7 @@ module.exports = function(dependencies){
             minify: false,
             verbose: opts.verbose
           };
-
+//return cb();
           local.package(packageOptions, (err) => {
             if(!err){ i++; }
             cb(err);

@@ -8,13 +8,15 @@ const BabiliPlugin = require('babili-webpack-plugin');
 
 module.exports = function webpackConfigGenerator(params){
   return {
-    devtool: '#cheap-module-source-map',
+    devtool: '#source-map',
     entry: params.dataPath,
     target: 'node',
     output: {
-      path: '/build',
+      path: path.join(params.dataPath, '../build'),
       filename: params.fileName,
       libraryTarget: 'commonjs2',
+      devtoolModuleFilenameTemplate: '[absolute-resource-path]',
+      devtoolFallbackModuleFilenameTemplate: '[absolute-resource-path]?[hash]'
     },
     externals: externalDependenciesHandlers(params.dependencies),
     module: {
@@ -30,6 +32,8 @@ module.exports = function webpackConfigGenerator(params){
               loader:  'babel-loader',
               options: {
                 cacheDirectory: true,
+                sourceMaps: true,
+                sourceRoot: path.join(params.dataPath, '..'),
                 'presets': [
                   [require.resolve('babel-preset-env'), {
                     'modules': false,

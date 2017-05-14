@@ -78,6 +78,7 @@ const argv = cli
   .alias('h', 'help')
   .version()
   .wrap(cli.terminalWidth())
+  .strict(false)
   .argv;
 
 if(argv._.length === 0 ) {
