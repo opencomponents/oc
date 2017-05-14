@@ -26,12 +26,10 @@ module.exports = function webpackConfigGenerator(params){
           exclude: /node_modules/,
           use: [
             {
-              loader:  'infinite-loop-loader'
-            },
-            {
               loader:  'babel-loader',
               options: {
                 cacheDirectory: true,
+                retainLines: true,
                 sourceMaps: true,
                 sourceRoot: path.join(params.dataPath, '..'),
                 'presets': [
@@ -43,8 +41,11 @@ module.exports = function webpackConfigGenerator(params){
                   }]
                 ]
               }
+            },
+            {
+              loader:  'infinite-loop-loader'
             }
-          ],
+          ]
         }
       ]
     },
