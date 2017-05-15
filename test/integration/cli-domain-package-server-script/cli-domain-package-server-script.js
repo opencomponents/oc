@@ -58,7 +58,7 @@ describe('cli : domain : package-server-script', () => {
             },
             (err) => {
               try {
-                expect(err.toString()).to.contain('Unexpected token, expected , (3:19)');
+                expect(err.toString()).to.contain('Unexpected token (3:19)');
                 return done();
               } catch(e) {
                 return done(e);
@@ -66,7 +66,7 @@ describe('cli : domain : package-server-script', () => {
             }
           );
         } catch (e) {
-          expect(e).to.contain.contain('Unexpected token, expected , (3:19)');
+          expect(e).to.contain.contain('Unexpected token (3:19)');
           return done();
         }
       });
