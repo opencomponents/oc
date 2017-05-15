@@ -22,6 +22,9 @@ function isValidTemplate(template){
 
 module.exports = function(template) {
   let ocTemplate;
+  if (template === 'jade') { template = 'oc-template-jade'; }
+  if (template === 'handlebars') { template = 'oc-template-handlebars'; }
+
   const localTemplate = path.join(__dirname, '../../', 'node_modules', template);
   const relativeTemplate = path.resolve('.', 'node_modules', template);
 

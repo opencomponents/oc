@@ -80,7 +80,7 @@ describe('cli : domain : package-server-script', () => {
         done();
       });
 
-      it('should save compiled data provider and return a hash for the script', (done) => {
+      it('should return compiled data provider', (done) => {
         packageServerScript(
           {
             componentPath: componentPath,
@@ -92,16 +92,12 @@ describe('cli : domain : package-server-script', () => {
             publishPath: publishPath,
             webpack: webpackOptions
           },
-          (err, res) => {
+          (err, bundle) => {
             if (err) {
               return done(err);
             }
             try {
-              expect(res.type).to.equal('node.js');
-              expect(res.src).to.equal('server.js');
-
-              const compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
-              expect(res.hashKey).to.equal(hashBuilder.fromString(compiledContent));
+              expect(hashBuilder.fromString(bundle)).to.equal("7785f4d30799791847dd04fef9c87f015aa52574");
               done();
             } catch(e) {
               done(e);
@@ -139,17 +135,12 @@ describe('cli : domain : package-server-script', () => {
             publishPath: publishPath,
             webpack: webpackOptions
           },
-          (err, res) => {
+          (err, bundle) => {
             if (err) {
               return done(err);
             }
             try {
-              const name = user.first;
-              const bundle = require(path.resolve(publishPath, res.src));
-              expect(bundle.data()).to.be.equal(name);
-
-              const compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
-              expect(compiledContent).to.contain('John');
+              expect(bundle).to.contain('John');
               done();
             } catch(e) {
               done(e);
@@ -184,16 +175,12 @@ describe('cli : domain : package-server-script', () => {
             webpack: webpackOptions,
             dependencies: dependencies
           },
-          (err, res) => {
+          (err, bundle) => {
             if (err) {
               return done(err);
             }
             try {
-              expect(res.type).to.equal('node.js');
-              expect(res.src).to.equal('server.js');
-
-              const compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
-              expect(res.hashKey).to.equal(hashBuilder.fromString(compiledContent));
+              expect('2d3ff75a97e724e9834f89d22fb215f4939fc57a').to.equal(hashBuilder.fromString(bundle));
               done();
             } catch(e) {
               done(e);
@@ -208,6 +195,7 @@ describe('cli : domain : package-server-script', () => {
 
           packageServerScript(
             {
+
               componentPath: componentPath,
               ocOptions: {
                 files: {
@@ -242,6 +230,7 @@ describe('cli : domain : package-server-script', () => {
 
           packageServerScript(
             {
+
               componentPath: componentPath,
               ocOptions: {
                 files: {
@@ -289,14 +278,12 @@ describe('cli : domain : package-server-script', () => {
             publishPath: publishPath,
             webpack: webpackOptions
           },
-          (err, res) => {
+          (err, bundle) => {
             if (err) {
               return done(err);
             }
             try {
-              const name = 'John';
-              const bundle = require(path.resolve(publishPath, res.src));
-              expect(bundle.data()).to.be.equal(name);
+              expect(bundle).to.be.contains("first:\'John\',last:\'Doe\'");
               done();
             } catch(e) {
               done(e);
@@ -326,16 +313,15 @@ describe('cli : domain : package-server-script', () => {
             publishPath: publishPath,
             webpack: webpackOptions
           },
-          (err, res) => {
+          (err, bundle) => {
             if (err) {
               return done(err);
             }
             try {
-              const compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
-              expect(compiledContent).to.not.contain('=>');
-              expect(compiledContent).to.not.contain('const');
-              expect(compiledContent).to.contain('var');
-              expect(compiledContent).to.contain('function');
+              expect(bundle).to.not.contain('=>');
+              expect(bundle).to.not.contain('const');
+              expect(bundle).to.contain('var');
+              expect(bundle).to.contain('function');
               done();
             } catch(e) {
               done(e);
@@ -369,15 +355,14 @@ describe('cli : domain : package-server-script', () => {
             publishPath: publishPath,
             webpack: webpackOptions
           },
-          (err, res) => {
+          (err, bundle) => {
             if (err) {
               return done(err);
             }
             try {
-              const compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
-              expect(compiledContent).to.contain('for(var r,a,t,i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");r=234,i--}');
-              expect(compiledContent).to.contain('for(var i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");a=546,i--}');
-              expect(compiledContent).to.contain('for(var i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");t=342,i--}');
+              expect(bundle).to.contain('for(var r,a,t,i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");r=234,i--}');
+              expect(bundle).to.contain('for(var i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");a=546,i--}');
+              expect(bundle).to.contain('for(var i=1e9;;){if(i<=0)throw new Error(\"loop exceeded maximum allowed iterations\");t=342,i--}');
               done();
             } catch(e) {
               done();
@@ -446,7 +431,8 @@ describe('cli : domain : package-server-script', () => {
             });
 
             it('save compiled data provide should work as expected', () => {
-              const bundle = require(path.resolve(publishPath, result.src));
+              fs.writeFileSync(path.resolve(publishPath, serverName), result);
+              const bundle = require(path.resolve(publishPath, serverName));
               const callback = sinon.spy();
               bundle.data({}, callback);
               expect(callback.args[0][0]).to.be.null;
@@ -454,8 +440,7 @@ describe('cli : domain : package-server-script', () => {
             });
 
             it('should wrap while/do/for;; loops with an iterator limit', () => {
-              const compiledContent = fs.readFileSync(path.resolve(publishPath, result.src), {encoding: 'utf8'});
-              expect(compiledContent.match(/Loop exceeded maximum allowed iterations/g).length).to.equal(3);
+              expect(result.match(/Loop exceeded maximum allowed iterations/g).length).to.equal(3);
             });
           });
         });
