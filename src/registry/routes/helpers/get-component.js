@@ -301,7 +301,7 @@ module.exports = function(conf, repository){
             return returnComponent(e);
           }
         } else {
-          repository.getDataProvider(component.name, component.version, (err, dataProcessorJs, dataFilePath) => {
+          repository.getDataProvider(component.name, component.version, (err, dataProvider) => {
 
             if(err){
               componentCallbackDone = true;
@@ -338,7 +338,7 @@ module.exports = function(conf, repository){
                 });
               }
 
-              const usedPlugins = detective.parse(dataProcessorJs),
+              const usedPlugins = detective.parse(dataProvider.content),
                 unRegisteredPlugins = _.difference(usedPlugins, _.keys(conf.plugins));
 
               if(!_.isEmpty(unRegisteredPlugins)){
@@ -360,10 +360,10 @@ module.exports = function(conf, repository){
             try {
               const options = conf.local ? {
                 displayErrors: true,
-                filename: dataFilePath
+                filename: dataProvider.filePath
               } : {};
 
-              vm.runInNewContext(dataProcessorJs, context, options);
+              vm.runInNewContext(dataProvider.content, context, options);
               const processData = context.module.exports.data;
               cache.set('file-contents', cacheKey, processData);
 

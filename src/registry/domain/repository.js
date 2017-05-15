@@ -171,11 +171,11 @@ module.exports = function(conf){
     },
     getDataProvider: (componentName, componentVersion, callback) => {
       if(conf.local){
-        const dataProvider = local.getDataProvider(componentName);
-        return callback(null, dataProvider.content, dataProvider.filePath);
+        return callback(null, local.getDataProvider(componentName));
       }
 
-      cdn.getFile(getFilePath(componentName, componentVersion, 'server.js'), callback);
+      const filePath = getFilePath(componentName, componentVersion, 'server.js');
+      cdn.getFile(filePath, (err, content) => callback(err, content ? { content, filePath } : null));
     },
     getStaticClientPath: () =>
       `https:${conf.s3.path}${getFilePath('oc-client', packageInfo.version, 'src/oc-client.min.js')}`,

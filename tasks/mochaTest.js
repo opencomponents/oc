@@ -8,16 +8,10 @@ module.exports = {
     src: ['test/acceptance/**/*.js']
   },
   integration: {
-    src: ['test/integration/**/*.js'],
-    options: {
-      timeout: 10000
-    }
+    src: ['test/integration/**/*.js']
   },
   unit: {
-    src: ['test/unit/**/*.js'],
-    options: {
-      timeout: 5000
-    }
+    src: ['test/unit/**/*.js']
   },
   silent: {
     src: ['test/unit/**/*.js', 'test/integration/**/*.js', 'test/acceptance/**/*.js'],
@@ -26,6 +20,9 @@ module.exports = {
     }
   },
   all: {
-    src: ['test/unit/**/*.js', 'test/integration/**/*.js', 'test/acceptance/**/*.js']
+    src: ['test/unit/**/*.js', 'test/integration/**/*.js', 'test/acceptance/**/*.js'],
+    options: {
+      timeout: 10000
+    }
   }
 };
