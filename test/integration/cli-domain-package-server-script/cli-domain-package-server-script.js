@@ -31,9 +31,7 @@ describe('cli : domain : package-server-script', () => {
     done();
   });
 
-  describe('when packaging component\'s server.js', function(){
-    this.timeout(15000);
-
+  describe('when packaging component\'s server.js', () => {
 
     describe('when component implements not-valid javascript', () => {
       const serverContent = '\nmodule.exports.data=function(context,cb){\nreturn cb(null,data; };';
@@ -111,7 +109,7 @@ describe('cli : domain : package-server-script', () => {
       });
     });
 
-    describe('when component require a json file', () => {
+    describe('when component requires a json file', () => {
       const user = {first: 'John',last:'Doe'};
       const jsonContent = JSON.stringify(user);
       const serverContent = 'var user = require(\'./user\');\nmodule.exports.data=function(){return user.first;};';
@@ -309,48 +307,50 @@ describe('cli : domain : package-server-script', () => {
     describe('when component uses es2015 javascript syntax', () => {
       const serverContent = 'const {first, last} = {first: "John", last: "Doe"};\nconst data = (context,cb) => cb(null, first, last)\nexport {data}';
 
+      let result, error;
+
       beforeEach((done) => {
         fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
-        done();
+
+        packageServerScript({
+          componentPath,
+          ocOptions: { files: { data: serverName }},
+          publishPath,
+          webpack: webpackOptions
+        }, (err, res) => {
+          error = err;
+          if(!err){
+            result = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
+          }
+          done();
+        });
       });
 
-      it('should transpile it to es2015 through Babel', (done) => {
-        packageServerScript(
-          {
-            componentPath: componentPath,
-            ocOptions: {
-              files: {
-                data: serverName
-              }
-            },
-            publishPath: publishPath,
-            webpack: webpackOptions
-          },
-          (err, res) => {
-            if (err) {
-              return done(err);
-            }
-            try {
-              const compiledContent = fs.readFileSync(path.resolve(publishPath, res.src), {encoding: 'utf8'});
-              expect(compiledContent).to.not.contain('=>');
-              expect(compiledContent).to.not.contain('const');
-              expect(compiledContent).to.contain('var');
-              expect(compiledContent).to.contain('function');
-              done();
-            } catch(e) {
-              done(e);
-            }
-          }
-        );
+      it('should not error', () => {
+        expect(error).to.be.null;
+      });
+
+      it('should transpile it to es2015 through Babel', () => {
+        expect(result).to.not.contain('=>');
+        expect(result).to.not.contain('const');
+        expect(result).to.contain('var');
+        expect(result).to.contain('function');
+      });
+
+      it('should create the sourcemap file for the server.js', () => {
+        const sourceMap = fs.readFileSync(path.resolve(publishPath, `server.js.map`), {encoding: 'utf8'});
+        expect(sourceMap).not.to.be.empty;
+        expect(sourceMap).to.contain(`"file":"server.js"`);
       });
     });
 
     describe('when component code includes a loop', () => {
-      const serverContent = 'module.exports.data=function(context,cb){ var x,y,z;'
-        + 'while(true){ x = 234; }'
-        + 'for(var i=1e12;;){ y = 546; }'
-        + 'do { z = 342; } while(true);'
-        + '}';
+      const serverContent = `module.exports.data=function(context,cb){
+        var x,y,z;
+        while(true){ x = 234; }
+        for(var i=1e12;;){ y = 546; }
+        do { z = 342; } while(true);
+      }`;
 
       beforeEach((done) => {
         fs.writeFileSync(path.resolve(componentPath, serverName), serverContent);
@@ -392,24 +392,24 @@ describe('cli : domain : package-server-script', () => {
         describe('and requires a json file', () => {
           describe('and includes for loops', () => {
             const someJsonContent = JSON.stringify({firstName: 'John', lastName: 'Doe'});
-            const someJsModuleContent = 'const infiniteLoops = () => {' +
-              'let x, y, z;' +
-              'while(true){ x = 234; }' +
-              'for(var i=1e12;;){ y = 546; }' +
-              'do { z = 342; } while(true);' +
-              '};' +
-              'const sayHello = (name) => {' +
-              '  if(name!=="John Doe") infiniteLoops();' +
-              '  return `Hello ${name}`;' +
-              '};' +
-              'export default sayHello;';
+            const someJsModuleContent = `const infiniteLoops = () => {
+              let x, y, z;
+              while(true){ x = 234; }
+              for(var i=1e12;;){ y = 546; }
+              do { z = 342; } while(true);
+              };
+              const sayHello = (name) => {
+                if(name!=="John Doe") infiniteLoops();
+                return ${'`Hello ${name}`'};
+              };
+              export default sayHello;`;
 
-            const serverContent = 'import sayHello from \'./someModule\';' +
-              'import user from \'./someData\';' +
-              'const {firstName: first, lastName: last} = user;' +
-              'const hello = sayHello(`${first} ${last}`);' +
-              'const data = (context, callback) => callback(null, { hello });' +
-              'export {data}';
+            const serverContent = `import sayHello from './someModule';
+              import user from './someData';
+              const {firstName: first, lastName: last} = user;
+              const hello = sayHello(${'`${first} ${last}`'});
+              const data = (context, callback) => callback(null, { hello });
+              export {data}`;
 
             let error, result;
 
