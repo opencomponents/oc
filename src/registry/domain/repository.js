@@ -73,11 +73,14 @@ module.exports = function(conf){
       callback(null, [fs.readJsonSync(path.join(conf.path, `${componentName}/package.json`)).version]);
     },
     getDataProvider: (componentName) => {
-      if(componentName === 'oc-client'){
-        return fs.readFileSync(path.join(__dirname, '../../components/oc-client/_package/server.js')).toString();
-      }
+      const filePath = componentName === 'oc-client' ?
+        path.join(__dirname, '../../components/oc-client/_package/server.js') :
+        path.join(conf.path, `${componentName}/_package/server.js`);
 
-      return fs.readFileSync(path.join(conf.path, `${componentName}/_package/server.js`)).toString();
+      return {
+        content: fs.readFileSync(filePath).toString(),
+        filePath
+      };
     }
   };
 
@@ -171,7 +174,8 @@ module.exports = function(conf){
         return callback(null, local.getDataProvider(componentName));
       }
 
-      cdn.getFile(getFilePath(componentName, componentVersion, 'server.js'), callback);
+      const filePath = getFilePath(componentName, componentVersion, 'server.js');
+      cdn.getFile(filePath, (err, content) => callback(err, content ? { content, filePath } : null));
     },
     getStaticClientPath: () =>
       `https:${conf.s3.path}${getFilePath('oc-client', packageInfo.version, 'src/oc-client.min.js')}`,

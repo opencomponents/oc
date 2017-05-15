@@ -20,6 +20,9 @@ module.exports = {
     }
   },
   all: {
-    src: ['test/unit/**/*.js', 'test/integration/**/*.js', 'test/acceptance/**/*.js']
+    src: ['test/unit/**/*.js', 'test/integration/**/*.js', 'test/acceptance/**/*.js'],
+    options: {
+      timeout: 10000
+    }
   }
 };

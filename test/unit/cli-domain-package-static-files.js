@@ -14,7 +14,7 @@ describe('cli : domain : package-static-files', () => {
     minifyMocks;
 
   const initialise = function(mocks, params, cb){
-    packageStaticFiles = injectr('../../src/cli/domain/package-static-files/index.js', mocks, { console: console });
+    packageStaticFiles = injectr('../../src/cli/domain/package-static-files/index.js', mocks, { console });
     packageStaticFiles(params, (e) => {
       error = e;
       cb();
@@ -250,6 +250,8 @@ describe('cli : domain : package-static-files', () => {
             publishPath: '/path/to/component/_package'
           }, done);
         });
+
+        afterEach(cleanup);
 
         it('should not get an error', () => {
           expect(error).to.be.null;
