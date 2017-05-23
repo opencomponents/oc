@@ -4032,10 +4032,63 @@
         }
       }
     },
+    "cli-spinner": {
+      "version": "0.2.6",
+      "from": "cli-spinner@0.2.6",
+      "resolved": "https://registry.npmjs.org/cli-spinner/-/cli-spinner-0.2.6.tgz"
+    },
     "colors": {
       "version": "1.1.2",
       "from": "colors@1.1.2",
       "resolved": "https://registry.npmjs.org/colors/-/colors-1.1.2.tgz"
+    },
+    "cross-spawn": {
+      "version": "5.1.0",
+      "from": "cross-spawn@5.1.0",
+      "resolved": "https://registry.npmjs.org/cross-spawn/-/cross-spawn-5.1.0.tgz",
+      "dependencies": {
+        "lru-cache": {
+          "version": "4.0.2",
+          "from": "lru-cache@>=4.0.1 <5.0.0",
+          "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-4.0.2.tgz",
+          "dependencies": {
+            "pseudomap": {
+              "version": "1.0.2",
+              "from": "pseudomap@>=1.0.1 <2.0.0",
+              "resolved": "https://registry.npmjs.org/pseudomap/-/pseudomap-1.0.2.tgz"
+            },
+            "yallist": {
+              "version": "2.1.2",
+              "from": "yallist@>=2.0.0 <3.0.0",
+              "resolved": "https://registry.npmjs.org/yallist/-/yallist-2.1.2.tgz"
+            }
+          }
+        },
+        "shebang-command": {
+          "version": "1.2.0",
+          "from": "shebang-command@>=1.2.0 <2.0.0",
+          "resolved": "https://registry.npmjs.org/shebang-command/-/shebang-command-1.2.0.tgz",
+          "dependencies": {
+            "shebang-regex": {
+              "version": "1.0.0",
+              "from": "shebang-regex@>=1.0.0 <2.0.0",
+              "resolved": "https://registry.npmjs.org/shebang-regex/-/shebang-regex-1.0.0.tgz"
+            }
+          }
+        },
+        "which": {
+          "version": "1.2.14",
+          "from": "which@>=1.2.9 <2.0.0",
+          "resolved": "https://registry.npmjs.org/which/-/which-1.2.14.tgz",
+          "dependencies": {
+            "isexe": {
+              "version": "2.0.0",
+              "from": "isexe@>=2.0.0 <3.0.0",
+              "resolved": "https://registry.npmjs.org/isexe/-/isexe-2.0.0.tgz"
+            }
+          }
+        }
+      }
     },
     "dependency-graph": {
       "version": "0.5.0",

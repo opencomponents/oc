@@ -2,13 +2,19 @@
 
 const expect = require('chai').expect;
 const sinon = require('sinon');
+const injectr = require('injectr');
 
 describe('cli : facade : init', () => {
+  const deps = {
+    './init-template': () => {
+      throw '💩';
+    }
+  };
 
   const logSpy = {},
     InitFacade = require('../../src/cli/facade/init'),
-    Local = require('../../src/cli/domain/local'),
-    local = new Local(),
+    Local = injectr('../../src/cli/domain/local.js', deps, {}),
+    local = new Local({ logger: { log: () => {} } }),
     initFacade = new InitFacade({ local: local, logger: logSpy });
 
   const execute = function(componentName, templateType){
