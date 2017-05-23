@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.37.4
+- [#486](https://github.com/opentable/oc/pull/486) Render trycatch
+
 ### v0.37.3
 - [#482](https://github.com/opentable/oc/pull/482) Upgrade multer
 
