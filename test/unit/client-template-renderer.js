@@ -25,7 +25,7 @@ describe('client : template-renderer', () => {
       './html-renderer': ({
         renderedComponent: x => `<transformed>${x.html}</transformed>`
       })
-    }, { console });
+    });
 
     templateRenderer = new TemplateRenderer();
   };
