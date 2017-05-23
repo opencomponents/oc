@@ -10,22 +10,14 @@ module.exports = function(){
     if (type === 'jade') { type = 'oc-template-jade'; }
     if (type === 'handlebars') { type = 'oc-template-handlebars'; }
 
-    let ocTemplate;
     try {
-      ocTemplate = requireTemplate(type);
+      const ocTemplate = requireTemplate(type);
+      ocTemplate.render({ template, model }, (err, html) => {
+        options.html = html;
+        return callback(err, htmlRenderer.renderedComponent(options));
+      });
     } catch (err) {
       return callback(err);
     }
-
-    ocTemplate.render(
-      {
-        template,
-        model
-      },
-      (err, html) => {
-        options.html = html;
-        return callback(err, htmlRenderer.renderedComponent(options));
-      }
-    );
   };
 };

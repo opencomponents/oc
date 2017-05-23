@@ -23,7 +23,7 @@ module.exports = function(grunt){
 
   grunt.registerTask('default', ['test-local', 'build']);
   grunt.registerTask('sauce', ['karma:sauce-linux', 'karma:sauce-osx', 'karma:sauce-windows']);
-  grunt.registerTask('test-local', ['eslint', 'mochaTest:unit', 'mochaTest:acceptance', 'karma:local']);
+  grunt.registerTask('test-local', ['eslint', 'mochaTest:all', 'karma:local']);
   grunt.registerTask('test-local-silent', ['eslint', 'mochaTest:silent', 'karma:local']);
   grunt.registerTask('test', ['eslint', 'mochaTest:all']);
   grunt.registerTask('git-stage', [

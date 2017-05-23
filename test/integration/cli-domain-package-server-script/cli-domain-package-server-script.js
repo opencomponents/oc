@@ -31,9 +31,7 @@ describe('cli : domain : package-server-script', () => {
     done();
   });
 
-  describe('when packaging component\'s server.js', function(){
-    this.timeout(15000);
-
+  describe('when packaging component\'s server.js', () => {
 
     describe('when component implements not-valid javascript', () => {
       const serverContent = '\nmodule.exports.data=function(context,cb){\nreturn cb(null,data; };';
