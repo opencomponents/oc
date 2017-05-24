@@ -46,7 +46,7 @@ describe('utils : require-template', () => {
     try {
       requireTemplate('handlebars');
     } catch (e) {
-      expect(e).to.equal('Error requiring oc-template: "handlebars" is not a valid oc-template');
+      expect(e.message).to.equal('Error requiring oc-template: "handlebars" is not a valid oc-template');
     }
   });
 });
