@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.37.5
+- [#495](https://github.com/opentable/oc/pull/495) issue w/ plugins detective
+
 ### v0.37.4
 - [#486](https://github.com/opentable/oc/pull/486) Render trycatch
 

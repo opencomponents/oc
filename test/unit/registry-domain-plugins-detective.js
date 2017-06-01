@@ -1,6 +1,7 @@
 'use strict';
 
 const expect = require('chai').expect;
+const code = require('../fixtures/mocked-components/package-server-with-plugin');
 
 describe('registry : domain : plugins-detective', () => {
 
@@ -29,6 +30,12 @@ describe('registry : domain : plugins-detective', () => {
 
       it('should detect it', () => {
         expect(detective.parse(code)).to.eql(['bla']);
+      });
+    });
+
+    describe('given a component that uses the `getTimezoneOffset` plugin', () => {
+      it('should detect it', () => {
+        expect(detective.parse(code)).to.eql(['getTimezoneOffset']);
       });
     });
   });
