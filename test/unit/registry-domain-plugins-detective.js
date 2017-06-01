@@ -1,7 +1,7 @@
 'use strict';
 
 const expect = require('chai').expect;
-const code = require('./code.js');
+const code = require('../fixtures/mocked-components/package-server-with-plugin');
 
 describe('registry : domain : plugins-detective', () => {
 
