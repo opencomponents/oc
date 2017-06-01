@@ -93,7 +93,7 @@
     "try-require": "^1.2.1",
     "uglify-js": "2.6.4",
     "watch": "0.19.1",
-    "webpack": "2.2.0",
+    "webpack": "2.6.1",
     "yargs": "^6.6.0"
   }
 }
