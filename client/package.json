@@ -17,7 +17,7 @@
     "minimal-request": "2.2.0",
     "nice-cache": "0.0.5",
     "oc-template-handlebars": "4.0.1",
-    "oc-template-jade": "4.0.1",
+    "oc-template-jade": "4.0.2",
     "stringformat": "0.0.5"
   },
   "engines": {
