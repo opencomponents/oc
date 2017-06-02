@@ -5,6 +5,7 @@ const _ = require('lodash');
 
 const dateStringified = require('../../utils/date-stringify');
 const getComponentsHistory = require('./helpers/get-components-history');
+const getAvailableDependencies = require('./helpers/get-available-dependencies');
 const packageInfo = require('../../../package.json');
 const urlBuilder = require('../domain/url-builder');
 
@@ -47,7 +48,7 @@ module.exports = function(repository){
           repository.getComponentsDetails((err, details) => {
 
             res.render('index', _.extend(baseResponse, {
-              availableDependencies: res.conf.dependencies,
+              availableDependencies: getAvailableDependencies(res.conf.dependencies),
               availablePlugins: res.conf.plugins,
               components: componentsInfo,
               componentsReleases,
