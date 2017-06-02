@@ -30,7 +30,7 @@ module.exports.bind = function(app, options){
   app.use(discoveryHandler);
 
   app.set('views', path.join(__dirname, '../views'));
-  app.set('view engine', 'jade');
+  app.set('view engine', 'pug');
   app.set('view cache', true);
 
   if(options.verbosity){
