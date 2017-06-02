@@ -18,6 +18,7 @@ We have been using for more than a year in production at OpenTable, for shared c
 [![npm version](https://img.shields.io/npm/v/oc.svg)](https://npmjs.org/package/oc)
 [![node version](https://img.shields.io/node/v/oc.svg)](https://npmjs.org/package/oc)
 [![Dependency Status](https://david-dm.org/opentable/oc.svg)](https://david-dm.org/opentable/oc)
+[![Known Vulnerabilities](https://snyk.io/test/github/opentable/oc/badge.svg)](https://snyk.io/test/github/opentable/oc)
 [![downloads](https://img.shields.io/npm/dm/oc.svg?label=downloads+from+npm)](https://npmjs.org/package/oc)
 [![Join the chat at https://gitter.im/opentable/oc](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/opentable/oc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
