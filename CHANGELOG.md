@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.37.6
+- [#499](https://github.com/opentable/oc/pull/499) Snyk
+- [#498](https://github.com/opentable/oc/pull/498) Fix build script
+- [#497](https://github.com/opentable/oc/pull/497) Fix vulnerabilities and remove npm shrinkwrap
+
 ### v0.37.5
 - [#495](https://github.com/opentable/oc/pull/495) issue w/ plugins detective
 
