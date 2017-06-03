@@ -1,6 +1,8 @@
 ![oc](https://raw.githubusercontent.com/opentable/oc/master/logo.png)
 =============
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/opentable/oc.svg)](https://greenkeeper.io/)
+
 OpenComponents, **serverless in the front-end world**.
 
 OpenComponents is an open-source framework that allows fast-moving teams to easily build and deploy front-end components. It abstracts away complicated infrastructure and leaves developers with very simple, but powerful building blocks that handle scale transparently.
