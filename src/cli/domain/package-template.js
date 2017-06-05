@@ -22,13 +22,6 @@ const compileView = function(viewPath, type, cb) {
   const template = fs.readFileSync(viewPath).toString();
   let ocTemplate;
 
-  if (type === 'jade') {
-    type = 'oc-template-jade';
-  }
-  if (type === 'handlebars') {
-    type = 'oc-template-handlebars';
-  }
-
   try {
     ocTemplate = requireTemplate(type);
   } catch (err) {
