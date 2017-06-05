@@ -18,12 +18,11 @@ block content
   h2#menuList
     a(href="#components-list" class="tab-link") Components
 
-    if componentsHistory
+    if !isLocal
       | &nbsp;|&nbsp;
       a(href="#components-history" class="tab-link") History
-
-    | &nbsp;|&nbsp;
-    a(href="#components-dependencies" class="tab-link") Available dependencies
+      | &nbsp;|&nbsp;
+      a(href="#components-dependencies" class="tab-link") Available dependencies
   
   include components-list
   include components-history
