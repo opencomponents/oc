@@ -1,5 +1,11 @@
 ## Change Log
 
+### v0.37.7
+- [#509](https://github.com/opentable/oc/pull/509) Cleancss fix
+- [#505](https://github.com/opentable/oc/pull/505) Node 8
+- [#502](https://github.com/opentable/oc/pull/502) Upgrade some dependencies
+- [#503](https://github.com/opentable/oc/pull/503) eof
+
 ### v0.37.6
 - [#499](https://github.com/opentable/oc/pull/499) Snyk
 - [#498](https://github.com/opentable/oc/pull/498) Fix build script
