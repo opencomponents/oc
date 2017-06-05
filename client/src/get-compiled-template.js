@@ -25,10 +25,7 @@ module.exports = function(cache){
           });
         }
 
-        let type = template.type;
-        if (type === 'jade') { type = 'oc-template-jade'; }
-        if (type === 'handlebars') { type = 'oc-template-handlebars'; }
-
+        const type = template.type;
         let ocTemplate;
         try {
           ocTemplate = requireTemplate(type);
