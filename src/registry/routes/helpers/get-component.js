@@ -230,9 +230,7 @@ module.exports = function(conf, repository){
           } else {
             repository.getCompiledView(component.name, component.version, (err, templateText) => {
               let ocTemplate;
-              let type = component.oc.files.template.type;
-              if (type === 'jade') { type = 'oc-template-jade'; }
-              if (type === 'handlebars') { type = 'oc-template-handlebars'; }
+              const type = component.oc.files.template.type;
 
               try {
                 ocTemplate = requireTemplate(type);
