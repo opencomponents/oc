@@ -69,6 +69,7 @@
     "fs-extra": "3.0.1",
     "infinite-loop-loader": "1.0.1",
     "jstransformer-clean-css": "^2.0.0",
+    "jstransformer-uglify-css": "^1.0.0",
     "jstransformer-uglify-js": "^1.2.0",
     "lodash": "^4.17.4",
     "memory-fs": "0.4.1",
