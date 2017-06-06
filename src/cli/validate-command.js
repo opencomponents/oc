@@ -1,3 +1,5 @@
+'use strict';
+
 const _ = require('lodash');
 const format = require('stringformat');
 const commands = require('./commands');
