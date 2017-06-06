@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.37.8
+- [#513](https://github.com/opentable/oc/pull/513) issue w/ registry add command
+- [#510](https://github.com/opentable/oc/pull/510) Hide available dependencies on dev mode
+- [#500](https://github.com/opentable/oc/pull/500) Show available dependencies in the UI
+
 ### v0.37.7
 - [#509](https://github.com/opentable/oc/pull/509) Cleancss fix
 - [#505](https://github.com/opentable/oc/pull/505) Node 8
