@@ -2,28 +2,19 @@
 
 const cli = require('yargs');
 const commands = require('./commands');
-const format = require('stringformat');
 const _ = require('lodash');
 
 const Local = require('./domain/local');
 const logger = require('./logger');
 const Registry = require('./domain/registry');
 const strings = require('../resources');
+const validateCommand = require('./validate-command');
 
 const dependencies = {
   local: new Local(),
   logger,
   registry: new Registry()
 };
-
-function validate(argv, level){
-  if(argv._.length > level &&
-    !_.includes(_.keys(commands.commands), argv._[level])) {
-    throw new Error(format(strings.messages.cli.NO_SUCH_COMMAND, argv._[level]));
-  }
-
-  return true;
-}
 
 function processCommand(command, commandName, cli, level, prefix){
   prefix = prefix || '';
@@ -43,7 +34,7 @@ function processCommand(command, commandName, cli, level, prefix){
 
         if(command.commands){
           yargs
-            .check((argv) => validate(argv, level))
+            .check((argv) => validateCommand(argv, level))
             .epilogue(strings.messages.cli.HELP_HINT);
 
           const newPrefix = (prefix ? prefix + '-' : '') + commandName + '-';
@@ -71,7 +62,7 @@ _.forEach(commands.commands, (command, commandName) => {
 
 const argv = cli
   .completion()
-  .check((argv) => validate(argv, 0))
+  .check((argv) => validateCommand(argv, 0))
   .usage(commands.usage)
   .epilogue(strings.messages.cli.HELP_HINT)
   .help('h')
