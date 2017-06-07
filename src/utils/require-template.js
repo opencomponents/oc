@@ -7,7 +7,11 @@ const templateNotFound = 'Error requiring oc-template: "{0}" not found';
 const templateNotValid =
   'Error requiring oc-template: "{0}" is not a valid oc-template';
 
+<<<<<<< HEAD
 function isValidTemplate(template, options) {
+=======
+function isValidTemplate(template, options){
+>>>>>>> required option
   if (typeof template !== 'object') {
     return false;
   }
