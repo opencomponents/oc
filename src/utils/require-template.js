@@ -23,7 +23,7 @@ function isValidTemplate(template, options){
 }
 
 module.exports = function(template, options) {
-  requireOptions = options || {};
+  const requireOptions = options || {};
   let ocTemplate;
   if (template === 'jade') { template = 'oc-template-jade'; }
   if (template === 'handlebars') { template = 'oc-template-handlebars'; }
