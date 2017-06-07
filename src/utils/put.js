@@ -7,8 +7,7 @@ const url = require('url');
 const _ = require('lodash');
 
 module.exports = function(urlPath, files, headers, callback) {
-
-  if(_.isFunction(headers)){
+  if (_.isFunction(headers)) {
     callback = headers;
     headers = {};
   }
@@ -18,11 +17,11 @@ module.exports = function(urlPath, files, headers, callback) {
   let body = '',
     callbackDone = false;
 
-  if(!_.isArray(files)){
+  if (!_.isArray(files)) {
     files = [files];
   }
 
-  _.forEach(files, (file) => {
+  _.forEach(files, file => {
     const fileName = path.basename(file);
     form.append(fileName, fs.createReadStream(file));
   });
@@ -30,21 +29,20 @@ module.exports = function(urlPath, files, headers, callback) {
   options.headers = _.extend(headers, form.getHeaders());
 
   form.submit(options, (err, res) => {
-
-    if(err){
+    if (err) {
       callbackDone = true;
       return callback(err);
     }
 
-    res.on('data', (chunk) => {
+    res.on('data', chunk => {
       body += chunk;
     });
 
     res.on('end', () => {
-      if(!callbackDone){
+      if (!callbackDone) {
         callbackDone = true;
 
-        if(res.statusCode !== 200){
+        if (res.statusCode !== 200) {
           callback(body);
         } else {
           callback(null, body);

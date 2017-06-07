@@ -12,7 +12,9 @@ const validateCommand = (argv, level) => {
   }
 
   if (argv._.length > level && !_.includes(keys, argv._[level])) {
-    throw new Error(format(strings.messages.cli.NO_SUCH_COMMAND, argv._[level]));
+    throw new Error(
+      format(strings.messages.cli.NO_SUCH_COMMAND, argv._[level])
+    );
   }
   return true;
 };

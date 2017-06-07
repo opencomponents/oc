@@ -6,7 +6,7 @@ const path = require('path');
 const bundle = require('./bundle');
 const hashBuilder = require('../../../utils/hash-builder');
 
-module.exports = function packageServerScript(params, callback){
+module.exports = function packageServerScript(params, callback) {
   const fileName = 'server.js';
   const publishPath = params.publishPath;
   const webpackParams = { stats: params.verbose ? 'verbose' : 'errors-only' };
@@ -22,7 +22,7 @@ module.exports = function packageServerScript(params, callback){
     if (err) {
       return callback(err);
     } else {
-      fs.writeFile(path.join(publishPath, fileName), bundledServer, (err) => {
+      fs.writeFile(path.join(publishPath, fileName), bundledServer, err => {
         callback(err, {
           type: 'node.js',
           hashKey: hashBuilder.fromString(bundledServer),

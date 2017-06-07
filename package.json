@@ -7,7 +7,14 @@
     "oc": "./src/oc-cli.js"
   },
   "scripts": {
+    "precommit": "lint-staged",
     "test": "grunt test"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier-eslint --single-quote --write",
+      "git add"
+    ]
   },
   "engines": {
     "node": ">=4"
@@ -35,6 +42,7 @@
     "grunt-git": "^1.0.0",
     "grunt-karma": "^2.0.0",
     "grunt-mocha-test": "^0.12.7",
+    "husky": "^0.13.4",
     "injectr": "0.5.1",
     "jasmine-core": "^2.5.1",
     "karma": "^1.3.0",
@@ -42,9 +50,11 @@
     "karma-phantomjs-launcher": "^1.0.2",
     "karma-sauce-launcher": "^1.0.0",
     "karma-sinon": "^1.0.5",
+    "lint-staged": "^3.6.0",
     "load-grunt-tasks": "^3.5.2",
     "mocha": "^3.0.2",
     "phantomjs-prebuilt": "^2.1.12",
+    "prettier-eslint-cli": "^4.0.4",
     "semver-sort": "0.0.4",
     "sinon": "^1.17.5"
   },
