@@ -6,7 +6,7 @@ const _ = require('lodash');
 
 function componentForType(component, baseUrl, type) {
   if (_.isString(component)) {
-    component = {name: component};
+    component = { name: component };
   }
 
   let href = url.resolve(baseUrl, component.name) + '/';
@@ -21,9 +21,9 @@ function componentForType(component, baseUrl, type) {
 }
 
 const build = {
-  component: function (component, baseUrl) {
+  component: function(component, baseUrl) {
     if (_.isString(component)) {
-      component = {name: component};
+      component = { name: component };
     }
 
     let componentUrl = url.resolve(baseUrl, component.name);
@@ -36,10 +36,10 @@ const build = {
 
     return componentUrl;
   },
-  componentInfo: function (component, baseUrl) {
+  componentInfo: function(component, baseUrl) {
     return componentForType(component, baseUrl, 'info');
   },
-  componentPreview: function (component, baseUrl) {
+  componentPreview: function(component, baseUrl) {
     let href = componentForType(component, baseUrl, 'preview');
     if (!!component.parameters && !_.isEmpty(component.parameters)) {
       href += '/?' + querystring.stringify(component.parameters);
@@ -49,7 +49,7 @@ const build = {
 
     return href;
   },
-  queryString: function (parameters) {
+  queryString: function(parameters) {
     let qs = '';
 
     if (_.keys(parameters).length > 0) {

@@ -7,7 +7,8 @@ const logger = {
   write: msg => process.stdout.write(msg.toString())
 };
 
-const log = (msg, color, newLine) => logger[newLine ? 'writeLn' : 'write'](color ? colors[color](msg) : msg);
+const log = (msg, color, newLine) =>
+  logger[newLine ? 'writeLn' : 'write'](color ? colors[color](msg) : msg);
 
 module.exports = {
   err: (msg, noNewLine) => log(msg, 'red', !noNewLine),

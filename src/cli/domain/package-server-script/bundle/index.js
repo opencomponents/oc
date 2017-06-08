@@ -33,11 +33,14 @@ module.exports = function bundle(params, callBack) {
 
     const log = stats.toString(params.webpack.stats);
 
-    if(log){
+    if (log) {
       console.log(log);
     }
 
-    const serverContentBundled = memoryFs.readFileSync('/build/server.js', 'UTF8');
+    const serverContentBundled = memoryFs.readFileSync(
+      '/build/server.js',
+      'UTF8'
+    );
     callBack(warning, serverContentBundled);
   });
 };

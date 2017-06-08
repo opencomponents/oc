@@ -4,19 +4,19 @@ const coreModules = require('builtin-modules');
 const format = require('stringformat');
 const fs = require('fs-extra');
 const path = require('path');
-const _ =  require('lodash');
+const _ = require('lodash');
 
 const settings = require('../../resources');
 
-module.exports = function(components){
+module.exports = function(components) {
   const deps = { modules: {}, withVersions: {}, templates: {} };
 
   const legacyTemplates = {
-    'jade': true,
-    'handlebars': true
+    jade: true,
+    handlebars: true
   };
 
-  components.forEach((c) => {
+  components.forEach(c => {
     const pkg = fs.readJsonSync(path.join(c, 'package.json'));
     const type = pkg.oc.files.template.type;
     const dependencies = pkg.dependencies || {};
@@ -28,7 +28,7 @@ module.exports = function(components){
       deps.templates[type] = true;
     }
 
-    _.keys(dependencies).forEach((name) => {
+    _.keys(dependencies).forEach(name => {
       const version = dependencies[name];
       const depToInstall = version.length > 0 ? `${name}@${version}` : name;
 

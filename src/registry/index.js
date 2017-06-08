@@ -15,93 +15,100 @@ const router = require('./router');
 const sanitiseOptions = require('./domain/options-sanitiser');
 const validator = require('./domain/validators');
 
-module.exports = function(options){
-
+module.exports = function(options) {
   let repository, server;
 
   const self = this,
     validationResult = validator.validateRegistryConfiguration(options),
     plugins = [];
 
-  if(!validationResult.isValid){
+  if (!validationResult.isValid) {
     throw validationResult.message;
   }
 
   options = sanitiseOptions(options);
   this.on = eventsHandler.on;
 
-  this.close = function(callback){
-    if(server){
+  this.close = function(callback) {
+    if (server) {
       server.close(callback);
     } else {
       callback('not opened');
     }
   };
 
-  this.init = function(){
+  this.init = function() {
     self.app = middleware.bind(express(), options);
     repository = new Repository(options);
   };
 
-  this.register = function(plugin, callback){
+  this.register = function(plugin, callback) {
     plugins.push(_.extend(plugin, { callback }));
   };
 
-  this.start = function(callback){
-
+  this.start = function(callback) {
     const ok = msg => console.log(colors.green(msg));
 
-    if(!_.isFunction(callback)){
+    if (!_.isFunction(callback)) {
       callback = _.noop;
     }
 
     router.create(this.app, options, repository);
 
-    async.waterfall([
+    async.waterfall(
+      [
+        cb => pluginsInitialiser.init(plugins, cb),
 
-      cb => pluginsInitialiser.init(plugins, cb),
+        (plugins, cb) => {
+          options.plugins = plugins;
+          repository.init(cb);
+        },
 
-      (plugins, cb) => {
-        options.plugins = plugins;
-        repository.init(cb);
-      },
-
-      (componentsInfo, cb) => {
-        appStart(repository, options, (err) => cb(err ? err.msg : null, componentsInfo));
-      }
-    ],
-    (err, componentsInfo) => {
-      if(err){ return callback(err); }
-
-      server = http.createServer(self.app);
-
-      server.listen(options.port, (err) => {
-
-        if(err){ return callback(err); }
-
-        eventsHandler.fire('start', {});
-
-        if(options.verbosity){
-
-          ok(`Registry started at port ${self.app.get('port')}`);
-
-          if(_.isObject(componentsInfo)){
-
-            const componentsNumber = _.keys(componentsInfo.components).length;
-            const componentsReleases = _.reduce(componentsInfo.components, (memo, component) => (parseInt(memo, 10) + component.length));
-
-            ok(`Registry serving ${componentsNumber} components for a total of ${componentsReleases} releases.`);
-          }
+        (componentsInfo, cb) => {
+          appStart(repository, options, err =>
+            cb(err ? err.msg : null, componentsInfo)
+          );
+        }
+      ],
+      (err, componentsInfo) => {
+        if (err) {
+          return callback(err);
         }
 
-        callback(null, { app: self.app, server });
-      });
+        server = http.createServer(self.app);
 
-      server.on('error', (message) => {
-        eventsHandler.fire('error', { code: 'EXPRESS_ERROR', message });
-        callback(message);
-      });
-    });
+        server.listen(options.port, err => {
+          if (err) {
+            return callback(err);
+          }
+
+          eventsHandler.fire('start', {});
+
+          if (options.verbosity) {
+            ok(`Registry started at port ${self.app.get('port')}`);
+
+            if (_.isObject(componentsInfo)) {
+              const componentsNumber = _.keys(componentsInfo.components).length;
+              const componentsReleases = _.reduce(
+                componentsInfo.components,
+                (memo, component) => parseInt(memo, 10) + component.length
+              );
+
+              ok(
+                `Registry serving ${componentsNumber} components for a total of ${componentsReleases} releases.`
+              );
+            }
+          }
+
+          callback(null, { app: self.app, server });
+        });
+
+        server.on('error', message => {
+          eventsHandler.fire('error', { code: 'EXPRESS_ERROR', message });
+          callback(message);
+        });
+      }
+    );
   };
 
   this.init();

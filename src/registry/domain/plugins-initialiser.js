@@ -7,36 +7,40 @@ const DepGraph = require('dependency-graph').DepGraph;
 
 const strings = require('../../resources');
 
-const validatePlugins = function(plugins){
+const validatePlugins = function(plugins) {
   let c = 0;
 
-  plugins.forEach((plugin) => {
+  plugins.forEach(plugin => {
     c++;
-    if(!_.isObject(plugin.register) || !_.isFunction(plugin.register.register) ||
-       !_.isFunction(plugin.register.execute) || !_.isString(plugin.name)){
-
-      throw new Error(format(strings.errors.registry.PLUGIN_NOT_VALID, plugin.name || c));
+    if (
+      !_.isObject(plugin.register) ||
+      !_.isFunction(plugin.register.register) ||
+      !_.isFunction(plugin.register.execute) ||
+      !_.isString(plugin.name)
+    ) {
+      throw new Error(
+        format(strings.errors.registry.PLUGIN_NOT_VALID, plugin.name || c)
+      );
     }
   });
 };
 
-const checkDependencies = function(plugins){
+const checkDependencies = function(plugins) {
   const graph = new DepGraph();
 
-  plugins.forEach((p) => {
+  plugins.forEach(p => {
     graph.addNode(p.name);
   });
 
-  plugins.forEach((p) => {
-    if(!p.register.dependencies){
+  plugins.forEach(p => {
+    if (!p.register.dependencies) {
       return;
     }
 
-    p.register.dependencies.forEach((d) => {
+    p.register.dependencies.forEach(d => {
       try {
         graph.addDependency(p.name, d);
-      }
-      catch(err) {
+      } catch (err) {
         throw new Error('unknown plugin dependency: ' + d);
       }
     });
@@ -46,31 +50,29 @@ const checkDependencies = function(plugins){
 };
 
 let deferredLoads = [];
-const defer = function(plugin, cb){
+const defer = function(plugin, cb) {
   deferredLoads.push(plugin);
   return cb();
 };
 
-module.exports.init = function(pluginsToRegister, callback){
-
+module.exports.init = function(pluginsToRegister, callback) {
   const registered = {};
 
   try {
     validatePlugins(pluginsToRegister);
     checkDependencies(pluginsToRegister);
-  }
-  catch(err){
+  } catch (err) {
     return callback(err);
   }
 
-  const dependenciesRegistered = function(dependencies){
-    if(dependencies.length === 0){
+  const dependenciesRegistered = function(dependencies) {
+    if (dependencies.length === 0) {
       return true;
     }
 
     let present = true;
-    dependencies.forEach((d) => {
-      if(!registered[d]){
+    dependencies.forEach(d => {
+      if (!registered[d]) {
         present = false;
       }
     });
@@ -78,28 +80,32 @@ module.exports.init = function(pluginsToRegister, callback){
     return present;
   };
 
-  const loadPlugin = function(plugin, cb){
-    if(registered[plugin.name]){
+  const loadPlugin = function(plugin, cb) {
+    if (registered[plugin.name]) {
       return cb();
     }
 
-    if(!plugin.register.dependencies){
+    if (!plugin.register.dependencies) {
       plugin.register.dependencies = [];
     }
 
-    if(!dependenciesRegistered(plugin.register.dependencies)){
+    if (!dependenciesRegistered(plugin.register.dependencies)) {
       return defer(plugin, cb);
     }
 
     const dependencies = _.pick(registered, plugin.register.dependencies);
 
-    plugin.register.register(plugin.options || {}, dependencies, plugin.callback || _.noop);
+    plugin.register.register(
+      plugin.options || {},
+      dependencies,
+      plugin.callback || _.noop
+    );
     registered[plugin.name] = plugin.register.execute;
     cb();
   };
 
-  const terminator = function(err){
-    if(deferredLoads.length > 0){
+  const terminator = function(err) {
+    if (deferredLoads.length > 0) {
       const deferredPlugins = _.clone(deferredLoads);
       deferredLoads = [];
 

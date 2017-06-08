@@ -9,13 +9,19 @@ const urlBuilder = require('../domain/url-builder');
 
 function getParams(component) {
   let params = {};
-  if(component.oc.parameters){
-    const mandatoryParams = _.filter(_.keys(component.oc.parameters), (paramName) => {
-      const param = component.oc.parameters[paramName];
-      return !!param.mandatory && !!param.example;
-    });
+  if (component.oc.parameters) {
+    const mandatoryParams = _.filter(
+      _.keys(component.oc.parameters),
+      paramName => {
+        const param = component.oc.parameters[paramName];
+        return !!param.mandatory && !!param.example;
+      }
+    );
 
-    params = _.mapValues(_.pick(component.oc.parameters, mandatoryParams), x => x.example);
+    params = _.mapValues(
+      _.pick(component.oc.parameters, mandatoryParams),
+      x => x.example
+    );
   }
 
   return params;
@@ -41,15 +47,15 @@ function addGetRepositoryUrlFunction(component) {
 }
 
 function componentInfo(err, req, res, component) {
-  if(err) {
+  if (err) {
     res.errorDetails = err.registryError || err;
     return res.status(404).json(err);
   }
 
-  const isHtmlRequest = !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
+  const isHtmlRequest =
+    !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
 
-  if(isHtmlRequest && !!res.conf.discovery){
-
+  if (isHtmlRequest && !!res.conf.discovery) {
     const params = getParams(component);
     const parsedAuthor = getParsedAuthor(component);
     let href = res.conf.baseUrl;
@@ -57,7 +63,7 @@ function componentInfo(err, req, res, component) {
     addGetRepositoryUrlFunction(component);
 
     isUrlDiscoverable(href, (err, result) => {
-      if(!result.isDiscoverable){
+      if (!result.isDiscoverable) {
         href = '//' + req.headers.host + res.conf.prefix;
       }
 
@@ -69,24 +75,35 @@ function componentInfo(err, req, res, component) {
         sandBoxDefaultQs: urlBuilder.queryString(params)
       });
     });
-
   } else {
-    res.status(200).json(_.extend(component, {
-      requestVersion: req.params.componentVersion || ''
-    }));
+    res.status(200).json(
+      _.extend(component, {
+        requestVersion: req.params.componentVersion || ''
+      })
+    );
   }
 }
 
-module.exports = function(conf, repository){
-  return function(req, res){
-    repository.getComponent(req.params.componentName, req.params.componentVersion, (registryError, component) => {
-      if(registryError && conf.fallbackRegistryUrl) {
-        return getComponentFallback.getComponentInfo(conf, req, res, registryError, (fallbackError, fallbackComponent) => {
-          componentInfo(fallbackError, req, res, fallbackComponent);
-        });
-      }
+module.exports = function(conf, repository) {
+  return function(req, res) {
+    repository.getComponent(
+      req.params.componentName,
+      req.params.componentVersion,
+      (registryError, component) => {
+        if (registryError && conf.fallbackRegistryUrl) {
+          return getComponentFallback.getComponentInfo(
+            conf,
+            req,
+            res,
+            registryError,
+            (fallbackError, fallbackComponent) => {
+              componentInfo(fallbackError, req, res, fallbackComponent);
+            }
+          );
+        }
 
-      componentInfo(registryError, req, res, component);
-    });
+        componentInfo(registryError, req, res, component);
+      }
+    );
   };
 };

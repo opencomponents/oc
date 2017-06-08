@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function(extension){
+module.exports = function(extension) {
   return {
     '.js': 'application/javascript',
     '.css': 'text/css',
