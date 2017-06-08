@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.37.9
+- [#515](https://github.com/opentable/oc/pull/515) Ignore the .git folder for the dev watcher
+- [#507](https://github.com/opentable/oc/pull/507) Pretty printed code
+
 ### v0.37.8
 - [#513](https://github.com/opentable/oc/pull/513) issue w/ registry add command
 - [#510](https://github.com/opentable/oc/pull/510) Hide available dependencies on dev mode
