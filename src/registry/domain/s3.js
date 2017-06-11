@@ -148,13 +148,7 @@ module.exports = function(conf) {
 
           putFile(file, url, relativeFile === '/server.js', cb);
         },
-        errors => {
-          if (errors) {
-            return callback(_.compact(errors));
-          }
-
-          callback(null, 'ok');
-        }
+        callback
       );
     });
   };
@@ -177,17 +171,17 @@ module.exports = function(conf) {
     if (fileInfo.gzip) {
       obj.ContentEncoding = 'gzip';
     }
-
-    getClient().putObject(obj, callback);
+    const upload = getClient().upload(obj);
+    upload.send(callback);
   };
 
   const putFile = (filePath, fileName, isPrivate, callback) => {
-    fs.readFile(filePath, (err, fileContent) => {
-      if (err) {
-        return callback(err);
-      }
-      putFileContent(fileContent, fileName, isPrivate, callback);
-    });
+    try {
+      const stream = fs.createReadStream(filePath);
+      putFileContent(stream, fileName, isPrivate, callback);
+    } catch (e) {
+      callback(e);
+    }
   };
 
   return {
