@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.37.10
+- [#516](https://github.com/opentable/oc/pull/516) Improve AWS upload mechanism and allow to override registry timeout settings
+
 ### v0.37.9
 - [#515](https://github.com/opentable/oc/pull/515) Ignore the .git folder for the dev watcher
 - [#507](https://github.com/opentable/oc/pull/507) Pretty printed code
