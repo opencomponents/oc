@@ -91,7 +91,11 @@ describe('cli : domain : package-template', () => {
         });
 
         it('should show error', () => {
+<<<<<<< HEAD
           expect(error).to.equal('template.wha compilation failed - Error: Error requiring oc-template: "whazaaa" not found');
+=======
+          expect(error).to.equal('template.wha compilation failed - Error requiring oc-template: "whazaaa-compiler" not found');
+>>>>>>> updated cli package-template test for split api
         });
       });
     });
