@@ -9,17 +9,15 @@ module.exports = function(input) {
   const options = _.clone(input);
 
   if (!options.publishAuth) {
-    options.beforePublish = function(req, res, next) {
-      next();
-    };
+    options.beforePublish = (req, res, next) => next();
   } else {
     options.beforePublish = auth.middleware(options.publishAuth);
   }
 
   if (!options.publishValidation) {
-    options.publishValidation = function() {
-      return { isValid: true };
-    };
+    options.publishValidation = () => ({
+      isValid: true
+    });
   }
 
   if (!options.prefix) {
@@ -50,6 +48,7 @@ module.exports = function(input) {
     .map(s => s.toLowerCase());
 
   options.port = process.env.PORT || options.port;
+  options.timeout = options.timeout || 1000 * 60 * 2;
 
   return options;
 };

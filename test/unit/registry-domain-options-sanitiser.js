@@ -1,22 +1,30 @@
 'use strict';
 
 const expect = require('chai').expect;
+const _ = require('lodash');
 
 describe('registry : domain : options-sanitiser', () => {
-
   const sanitise = require('../../src/registry/domain/options-sanitiser');
 
-  describe('when verbosity is undefined', () => {
-
+  describe('when options is empty', () => {
     const options = {};
+    const defaults = {
+      prefix: '/',
+      tempDir: './temp/',
+      hotReloading: false,
+      verbosity: 0,
+      customHeadersToSkipOnWeakVersion: [],
+      timeout: 120000
+    };
 
-    it('should set it to 0 as default', () => {
-      expect(sanitise(options).verbosity).to.equal(0);
+    _.each(defaults, (value, property) => {
+      it(`should set ${property} to ${JSON.stringify(value)}`, () => {
+        expect(sanitise(options)[property]).to.eql(value);
+      });
     });
   });
 
   describe('when verbosity is provided', () => {
-
     const options = { verbosity: 3 };
 
     it('should leave value untouched', () => {
@@ -25,39 +33,39 @@ describe('registry : domain : options-sanitiser', () => {
   });
 
   describe('customHeadersToSkipOnWeakVersion', () => {
-
-    describe('when customHeadersToSkipOnWeakVersion is undefined', () => {
-      const options = {};
-
-      it('should set it to an empty array', () => {
-        expect(sanitise(options).customHeadersToSkipOnWeakVersion).to.be.eql([]);
-      });
-    });
-
-    describe('when customHeadersToSkipOnWeakVersion contains valid elements', () => {
-      const options = {customHeadersToSkipOnWeakVersion: ['header1', 'HeAdEr-TwO', 'HEADER3']};
+    describe('when it contains valid elements', () => {
+      const options = {
+        customHeadersToSkipOnWeakVersion: ['header1', 'HeAdEr-TwO', 'HEADER3']
+      };
 
       it('should convert the array elements to lower case', () => {
-        expect(sanitise(options).customHeadersToSkipOnWeakVersion).to.be.eql(['header1', 'header-two', 'header3']);
+        expect(sanitise(options).customHeadersToSkipOnWeakVersion).to.be.eql([
+          'header1',
+          'header-two',
+          'header3'
+        ]);
       });
     });
   });
 
   describe('fallbackRegistryUrl', () => {
-
-    describe('when fallbackRegistryUrl doesn\'t contain / at the end of url', () => {
-      const options = {fallbackRegistryUrl: 'http://test-url.com'};
+    describe("when fallbackRegistryUrl doesn't contain / at the end of url", () => {
+      const options = { fallbackRegistryUrl: 'http://test-url.com' };
 
       it('should add `/` at the end of url', () => {
-        expect(sanitise(options).fallbackRegistryUrl).to.be.eql('http://test-url.com/');
+        expect(sanitise(options).fallbackRegistryUrl).to.be.eql(
+          'http://test-url.com/'
+        );
       });
     });
 
     describe('when fallbackRegistryUrl contains `/` at the end of url', () => {
-      const options = {fallbackRegistryUrl: 'http://test-url.com/'};
+      const options = { fallbackRegistryUrl: 'http://test-url.com/' };
 
       it('should not modify fallbackRegistryUrl url', () => {
-        expect(sanitise(options).fallbackRegistryUrl).to.be.eql('http://test-url.com/');
+        expect(sanitise(options).fallbackRegistryUrl).to.be.eql(
+          'http://test-url.com/'
+        );
       });
     });
   });
