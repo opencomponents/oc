@@ -6,14 +6,14 @@ const path = require('path');
 const externalDependenciesHandlers = require('./external-dependencies-handlers');
 const BabiliPlugin = require('babili-webpack-plugin');
 
-module.exports = function webpackConfigGenerator(params){
+module.exports = function webpackConfigGenerator(params) {
   return {
     entry: params.dataPath,
     target: 'node',
     output: {
       path: '/build',
       filename: params.fileName,
-      libraryTarget: 'commonjs2',
+      libraryTarget: 'commonjs2'
     },
     externals: externalDependenciesHandlers(params.dependencies),
     module: {
@@ -23,23 +23,26 @@ module.exports = function webpackConfigGenerator(params){
           exclude: /node_modules/,
           use: [
             {
-              loader:  'infinite-loop-loader'
+              loader: 'infinite-loop-loader'
             },
             {
-              loader:  'babel-loader',
+              loader: 'babel-loader',
               options: {
                 cacheDirectory: true,
-                'presets': [
-                  [require.resolve('babel-preset-env'), {
-                    'modules': false,
-                    'targets': {
-                      'node': 4
+                presets: [
+                  [
+                    require.resolve('babel-preset-env'),
+                    {
+                      modules: false,
+                      targets: {
+                        node: 4
+                      }
                     }
-                  }]
+                  ]
                 ]
               }
             }
-          ],
+          ]
         }
       ]
     },
@@ -50,7 +53,10 @@ module.exports = function webpackConfigGenerator(params){
       })
     ],
     resolveLoader: {
-      modules: ['node_modules', path.resolve(__dirname, '../../../../../../node_modules')]
+      modules: [
+        'node_modules',
+        path.resolve(__dirname, '../../../../../../node_modules')
+      ]
     }
   };
 };

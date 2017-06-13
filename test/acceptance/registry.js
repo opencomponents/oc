@@ -7,10 +7,7 @@ const _ = require('lodash');
 
 describe('registry', () => {
 
-  let registry,
-    result,
-    error,
-    headers;
+  let registry, result, error, headers, status;
 
   const oc = require('../../src/index');
 
@@ -19,6 +16,7 @@ describe('registry', () => {
       error = e;
       result = r;
       headers = d.response.headers;
+      status = d.response.statusCode;
       done();
     };
   };
@@ -286,6 +284,7 @@ describe('registry', () => {
         'http://localhost:3030/handlebars3-component',
         'http://localhost:3030/hello-world',
         'http://localhost:3030/hello-world-custom-headers',
+        'http://localhost:3030/jade-filters',
         'http://localhost:3030/language',
         'http://localhost:3030/lodash-component',
         'http://localhost:3030/no-containers',
@@ -311,6 +310,20 @@ describe('registry', () => {
 
     it('should respond with error for unsupported handlebars version', () => {
       expect(result.error).to.equal('The component can\'t be rendered because it was published with an older OC version');
+    });
+  });
+
+  describe.only('GET /jade-filters', () => {
+
+    before((done) => {
+      request({
+        url: 'http://localhost:3030/jade-filters',
+        json: true
+      }, next(done));
+    });
+
+    it('should respond with 200 status code', () => {
+      expect(status).to.equal(200);
     });
   });
 

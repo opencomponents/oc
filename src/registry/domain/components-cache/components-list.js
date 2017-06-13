@@ -7,26 +7,29 @@ const _ = require('lodash');
 const getUnixUTCTimestamp = require('../../../utils/get-unix-utc-timestamp');
 
 module.exports = (conf, cdn) => {
-
   const filePath = () => `${conf.s3.componentsDir}/components.json`;
 
   const componentsList = {
-
     getFromJson: callback => cdn.getJson(filePath(), true, callback),
 
-    getFromDirectories: (callback) => {
+    getFromDirectories: callback => {
       const componentsInfo = {};
 
       const getVersionsForComponent = (componentName, cb) => {
-        cdn.listSubDirectories(`${conf.s3.componentsDir}/${componentName}`, (err, versions) => {
-          if(err){ return cb(err); }
-          cb(null, versions.sort(semver.compare));
-        });
+        cdn.listSubDirectories(
+          `${conf.s3.componentsDir}/${componentName}`,
+          (err, versions) => {
+            if (err) {
+              return cb(err);
+            }
+            cb(null, versions.sort(semver.compare));
+          }
+        );
       };
 
       cdn.listSubDirectories(conf.s3.componentsDir, (err, components) => {
-        if(err){
-          if(err.code === 'dir_not_found'){
+        if (err) {
+          if (err.code === 'dir_not_found') {
             return callback(null, {
               lastEdit: getUnixUTCTimestamp(),
               components: []
@@ -37,7 +40,9 @@ module.exports = (conf, cdn) => {
         }
 
         async.map(components, getVersionsForComponent, (errors, versions) => {
-          if(errors){ return callback(errors); }
+          if (errors) {
+            return callback(errors);
+          }
 
           _.forEach(components, (component, i) => {
             componentsInfo[component] = versions[i];
@@ -51,17 +56,22 @@ module.exports = (conf, cdn) => {
       });
     },
 
-    refresh: (callback) => {
+    refresh: callback => {
       componentsList.getFromDirectories((err, components) => {
-        if(err){ return callback(err); }
-        componentsList.save(components, (err) => {
-          if(err){ return callback(err); }
+        if (err) {
+          return callback(err);
+        }
+        componentsList.save(components, err => {
+          if (err) {
+            return callback(err);
+          }
           callback(err, components);
         });
       });
     },
 
-    save: (data, callback) => cdn.putFileContent(JSON.stringify(data), filePath(), true, callback)
+    save: (data, callback) =>
+      cdn.putFileContent(JSON.stringify(data), filePath(), true, callback)
   };
 
   return componentsList;

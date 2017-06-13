@@ -7,25 +7,28 @@ const eventsHandler = require('../events-handler');
 const getUnixUTCTimestamp = require('../../../utils/get-unix-utc-timestamp');
 
 module.exports = (conf, cdn) => {
-
   let cachedComponentsList, refreshLoop;
 
   const componentsList = ComponentsList(conf, cdn);
 
-  const poll = () => setTimeout(() => {
-    componentsList.getFromJson((err, data) => {
-      if(err){
-        eventsHandler.fire('error', { code: 'components_list_get', message: err });
-      } else {
-        eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
+  const poll = () =>
+    setTimeout(() => {
+      componentsList.getFromJson((err, data) => {
+        if (err) {
+          eventsHandler.fire('error', {
+            code: 'components_list_get',
+            message: err
+          });
+        } else {
+          eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
 
-        if(data.lastEdit > cachedComponentsList.lastEdit){
-          cachedComponentsList = data;
+          if (data.lastEdit > cachedComponentsList.lastEdit) {
+            cachedComponentsList = data;
+          }
         }
-      }
-      refreshLoop = poll();
-    });
-  }, conf.pollingInterval * 1000);
+        refreshLoop = poll();
+      });
+    }, conf.pollingInterval * 1000);
 
   const cacheDataAndStartPolling = (data, callback) => {
     cachedComponentsList = data;
@@ -39,23 +42,29 @@ module.exports = (conf, cdn) => {
   };
 
   return {
-    get: (callback) => {
-      if(!cachedComponentsList){
-        return returnError('components_cache_empty', `The component's cache was empty`, callback);
+    get: callback => {
+      if (!cachedComponentsList) {
+        return returnError(
+          'components_cache_empty',
+          `The component's cache was empty`,
+          callback
+        );
       }
 
       callback(null, cachedComponentsList);
     },
 
-    load: (callback) => {
-
+    load: callback => {
       componentsList.getFromJson((jsonErr, jsonComponents) => {
         componentsList.getFromDirectories((dirErr, dirComponents) => {
-          if(dirErr){
+          if (dirErr) {
             return returnError('components_list_get', dirErr, callback);
-          } else if(jsonErr || !_.isEqual(dirComponents.components, jsonComponents.components)){
-            componentsList.save(dirComponents, (saveErr) => {
-              if(saveErr){
+          } else if (
+            jsonErr ||
+            !_.isEqual(dirComponents.components, jsonComponents.components)
+          ) {
+            componentsList.save(dirComponents, saveErr => {
+              if (saveErr) {
                 return returnError('components_list_save', saveErr, callback);
               }
               cacheDataAndStartPolling(dirComponents, callback);
@@ -66,10 +75,10 @@ module.exports = (conf, cdn) => {
         });
       });
     },
-    refresh: (callback) => {
+    refresh: callback => {
       clearTimeout(refreshLoop);
       componentsList.refresh((err, components) => {
-        if(err){
+        if (err) {
           return returnError('components_cache_refresh', err, callback);
         }
 

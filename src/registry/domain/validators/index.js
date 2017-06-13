@@ -12,8 +12,10 @@ const uploadedPackageValidator = require('./uploaded-package');
 const nodeVersionValidator = require('./node-version');
 
 module.exports = {
-  validateComponentName: function(componentName){
-    return !/[^a-zA-Z0-9\-\_]/.test(componentName) && componentName !== '_package';
+  validateComponentName: function(componentName) {
+    return (
+      !/[^a-zA-Z0-9\-\_]/.test(componentName) && componentName !== '_package'
+    );
   },
   validateComponentParameters: componentParametersValidator,
   validateNodeVersion: nodeVersionValidator,
@@ -22,10 +24,10 @@ module.exports = {
   validatePackageJson: packageJsonValidator,
   validatePluginsRequirements: pluginsRequirementsValidator,
   validateRegistryConfiguration: registryConfigurationValidator,
-  validateTemplateType: function(templateType){
+  validateTemplateType: function(templateType) {
     return _.includes(['handlebars', 'jade'], templateType);
   },
-  validateVersion: function(version){
+  validateVersion: function(version) {
     return !!semver.valid(version);
   }
 };

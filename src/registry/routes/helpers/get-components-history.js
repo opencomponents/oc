@@ -4,7 +4,7 @@ const _ = require('lodash');
 
 const dateStringified = require('../../../utils/date-stringify');
 
-module.exports = (history) => {
+module.exports = history => {
   const result = [];
 
   _.each(history.components, (versions, name) => {
@@ -17,12 +17,11 @@ module.exports = (history) => {
     });
   });
 
-  return _
-    .sortBy(result, 'publishDate')
-    .reverse()
-    .map(x => ({
-      name: x.name,
-      version: x.version,
-      publishDate: !x.publishDate ? 'Unknown' : dateStringified(new Date(x.publishDate))
-    }));
+  return _.sortBy(result, 'publishDate').reverse().map(x => ({
+    name: x.name,
+    version: x.version,
+    publishDate: !x.publishDate
+      ? 'Unknown'
+      : dateStringified(new Date(x.publishDate))
+  }));
 };

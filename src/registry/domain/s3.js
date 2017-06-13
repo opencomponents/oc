@@ -12,8 +12,7 @@ const getFileInfo = require('../../utils/get-file-info');
 const getNextYear = require('../../utils/get-next-year');
 const strings = require('../../resources');
 
-module.exports = function(conf){
-
+module.exports = function(conf) {
   AWS.config.update({
     accessKeyId: conf.s3.key,
     secretAccessKey: conf.s3.secret,
@@ -30,40 +29,48 @@ module.exports = function(conf){
   const getClient = () => new AWS.S3();
 
   const getFile = (filePath, force, callback) => {
-
-    if(_.isFunction(force)){
+    if (_.isFunction(force)) {
       callback = force;
       force = false;
     }
 
-    const getFromAws = (cb) => {
-      getClient().getObject({
-        Bucket: bucket,
-        Key: filePath
-      }, (err, data) => {
-        if(err){
-          return callback(err.code === 'NoSuchKey' ? {
-            code: strings.errors.s3.FILE_NOT_FOUND_CODE,
-            msg: format(strings.errors.s3.FILE_NOT_FOUND, filePath)
-          } : err);
-        }
+    const getFromAws = cb => {
+      getClient().getObject(
+        {
+          Bucket: bucket,
+          Key: filePath
+        },
+        (err, data) => {
+          if (err) {
+            return callback(
+              err.code === 'NoSuchKey'
+                ? {
+                  code: strings.errors.s3.FILE_NOT_FOUND_CODE,
+                  msg: format(strings.errors.s3.FILE_NOT_FOUND, filePath)
+                }
+                : err
+            );
+          }
 
-        cb(null, data.Body.toString());
-      });
+          cb(null, data.Body.toString());
+        }
+      );
     };
 
-    if(force){
+    if (force) {
       return getFromAws(callback);
     }
 
     const cached = cache.get('s3-file', filePath);
 
-    if(cached){
+    if (cached) {
       return callback(null, cached);
     }
 
     getFromAws((err, result) => {
-      if(err){ return callback(err); }
+      if (err) {
+        return callback(err);
+      }
       cache.set('s3-file', filePath, result);
       cache.sub('s3-file', filePath, getFromAws);
       callback(null, result);
@@ -71,18 +78,19 @@ module.exports = function(conf){
   };
 
   const getJson = (filePath, force, callback) => {
-
-    if(_.isFunction(force)){
+    if (_.isFunction(force)) {
       callback = force;
       force = false;
     }
 
     getFile(filePath, force, (err, file) => {
-      if(err){ return callback(err); }
+      if (err) {
+        return callback(err);
+      }
 
       try {
         callback(null, JSON.parse(file));
-      } catch(er){
+      } catch (er) {
         return callback({
           code: strings.errors.s3.FILE_NOT_VALID_CODE,
           msg: format(strings.errors.s3.FILE_NOT_VALID, filePath)
@@ -91,54 +99,61 @@ module.exports = function(conf){
     });
   };
 
-  const getUrl = (componentName, version, fileName) => `${conf.s3.path}${componentName}/${version}/${fileName}`;
+  const getUrl = (componentName, version, fileName) =>
+    `${conf.s3.path}${componentName}/${version}/${fileName}`;
 
   const listSubDirectories = (dir, callback) => {
+    const normalisedPath = dir.lastIndexOf('/') === dir.length - 1 &&
+      dir.length > 0
+      ? dir
+      : dir + '/';
 
-    const normalisedPath = dir.lastIndexOf('/') === (dir.length - 1) && dir.length > 0 ? dir : dir + '/';
+    getClient().listObjects(
+      {
+        Bucket: bucket,
+        Prefix: normalisedPath,
+        Delimiter: '/'
+      },
+      (err, data) => {
+        if (err) {
+          return callback(err);
+        }
 
-    getClient().listObjects({
-      Bucket: bucket,
-      Prefix: normalisedPath,
-      Delimiter: '/'
-    }, (err, data) => {
-      if(err){ return callback(err); }
+        if (data.CommonPrefixes.length === 0) {
+          return callback({
+            code: strings.errors.s3.DIR_NOT_FOUND_CODE,
+            msg: format(strings.errors.s3.DIR_NOT_FOUND, dir)
+          });
+        }
 
-      if(data.CommonPrefixes.length === 0){
-        return callback({
-          code: strings.errors.s3.DIR_NOT_FOUND_CODE,
-          msg: format(strings.errors.s3.DIR_NOT_FOUND, dir)
-        });
+        const result = _.map(data.CommonPrefixes, commonPrefix =>
+          commonPrefix.Prefix.substr(
+            normalisedPath.length,
+            commonPrefix.Prefix.length - normalisedPath.length - 1
+          )
+        );
+
+        callback(null, result);
       }
-
-      const result = _.map(data.CommonPrefixes, (commonPrefix) =>
-        commonPrefix.Prefix.substr(normalisedPath.length, commonPrefix.Prefix.length - normalisedPath.length - 1));
-
-      callback(null, result);
-    });
+    );
   };
 
   const putDir = (dirInput, dirOutput, callback) => {
-
     nodeDir.paths(dirInput, (err, paths) => {
+      async.each(
+        paths.files,
+        (file, cb) => {
+          const relativeFile = file.substr(dirInput.length),
+            url = (dirOutput + relativeFile).replace(/\\/g, '/');
 
-      async.each(paths.files, (file, cb) => {
-        const relativeFile = file.substr(dirInput.length),
-          url = (dirOutput + relativeFile).replace(/\\/g, '/');
-
-        putFile(file, url, relativeFile === '/server.js', cb);
-      }, (errors) => {
-        if(errors){
-          return callback(_.compact(errors));
-        }
-
-        callback(null, 'ok');
-      });
+          putFile(file, url, relativeFile === '/server.js', cb);
+        },
+        callback
+      );
     });
   };
 
   const putFileContent = (fileContent, fileName, isPrivate, callback) => {
-
     const fileInfo = getFileInfo(fileName),
       obj = {
         Bucket: bucket,
@@ -149,22 +164,24 @@ module.exports = function(conf){
         Expires: getNextYear()
       };
 
-    if(fileInfo.mimeType){
+    if (fileInfo.mimeType) {
       obj.ContentType = fileInfo.mimeType;
     }
 
-    if(fileInfo.gzip){
+    if (fileInfo.gzip) {
       obj.ContentEncoding = 'gzip';
     }
-
-    getClient().putObject(obj, callback);
+    const upload = getClient().upload(obj);
+    upload.send(callback);
   };
 
   const putFile = (filePath, fileName, isPrivate, callback) => {
-    fs.readFile(filePath, (err, fileContent) => {
-      if(err){ return callback(err); }
-      putFileContent(fileContent, fileName, isPrivate, callback);
-    });
+    try {
+      const stream = fs.createReadStream(filePath);
+      putFileContent(stream, fileName, isPrivate, callback);
+    } catch (e) {
+      callback(e);
+    }
   };
 
   return {

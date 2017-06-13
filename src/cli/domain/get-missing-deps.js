@@ -3,12 +3,10 @@
 const path = require('path');
 const _ = require('lodash');
 
-module.exports = (dependencies) => {
-
+module.exports = dependencies => {
   const missing = [];
 
-  _.forEach(dependencies, (npmModule) => {
-
+  _.forEach(dependencies, npmModule => {
     const index = npmModule.indexOf('@');
     let moduleName = npmModule;
 
@@ -19,7 +17,7 @@ module.exports = (dependencies) => {
     const pathToModule = path.resolve('node_modules/', moduleName);
 
     try {
-      if(require.cache[pathToModule]){
+      if (require.cache[pathToModule]) {
         delete require.cache[pathToModule];
       }
 

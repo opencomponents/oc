@@ -8,14 +8,17 @@ const strings = require('../../resources/');
 
 const builtin = {
   basic: {
-    validate: function(authConfig){
+    validate: function(authConfig) {
       const isValid = authConfig.username && authConfig.password;
       return {
         isValid: isValid,
-        message: isValid ? '' : strings.errors.registry.CONFIGURATION_PUBLISH_BASIC_AUTH_CREDENTIALS_MISSING
+        message: isValid
+          ? ''
+          : strings.errors.registry
+              .CONFIGURATION_PUBLISH_BASIC_AUTH_CREDENTIALS_MISSING
       };
     },
-    middleware: function(authConfig){
+    middleware: function(authConfig) {
       return basicAuth(authConfig.username, authConfig.password);
     }
   }
@@ -23,11 +26,10 @@ const builtin = {
 
 let scheme;
 
-module.exports.validate = function(authConfig){
-  if(builtin[authConfig.type]){
+module.exports.validate = function(authConfig) {
+  if (builtin[authConfig.type]) {
     scheme = builtin[authConfig.type];
-  }
-  else {
+  } else {
     const cwd = process.cwd();
     module.paths.push(cwd, path.join(cwd, 'node_modules'));
 
@@ -35,10 +37,13 @@ module.exports.validate = function(authConfig){
 
     try {
       scheme = require(moduleName);
-    } catch(err){
+    } catch (err) {
       return {
         isValid: false,
-        message: format(strings.errors.registry.CONFIGURATION_PUBLISH_AUTH_MODULE_NOT_FOUND, moduleName)
+        message: format(
+          strings.errors.registry.CONFIGURATION_PUBLISH_AUTH_MODULE_NOT_FOUND,
+          moduleName
+        )
       };
     }
   }
@@ -46,6 +51,6 @@ module.exports.validate = function(authConfig){
   return scheme.validate(authConfig);
 };
 
-module.exports.middleware = function(authConfig){
+module.exports.middleware = function(authConfig) {
   return scheme.middleware(authConfig);
 };

@@ -1,5 +1,31 @@
 ## Change Log
 
+### v0.37.10
+- [#516](https://github.com/opentable/oc/pull/516) Improve AWS upload mechanism and allow to override registry timeout settings
+
+### v0.37.9
+- [#515](https://github.com/opentable/oc/pull/515) Ignore the .git folder for the dev watcher
+- [#507](https://github.com/opentable/oc/pull/507) Pretty printed code
+
+### v0.37.8
+- [#513](https://github.com/opentable/oc/pull/513) issue w/ registry add command
+- [#510](https://github.com/opentable/oc/pull/510) Hide available dependencies on dev mode
+- [#500](https://github.com/opentable/oc/pull/500) Show available dependencies in the UI
+
+### v0.37.7
+- [#509](https://github.com/opentable/oc/pull/509) Cleancss fix
+- [#505](https://github.com/opentable/oc/pull/505) Node 8
+- [#502](https://github.com/opentable/oc/pull/502) Upgrade some dependencies
+- [#503](https://github.com/opentable/oc/pull/503) eof
+
+### v0.37.6
+- [#499](https://github.com/opentable/oc/pull/499) Snyk
+- [#498](https://github.com/opentable/oc/pull/498) Fix build script
+- [#497](https://github.com/opentable/oc/pull/497) Fix vulnerabilities and remove npm shrinkwrap
+
+### v0.37.5
+- [#495](https://github.com/opentable/oc/pull/495) issue w/ plugins detective
+
 ### v0.37.4
 - [#486](https://github.com/opentable/oc/pull/486) Render trycatch
 

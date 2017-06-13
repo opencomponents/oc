@@ -328,6 +328,7 @@ describe('registry : domain : repository', () => {
           'handlebars3-component',
           'hello-world',
           'hello-world-custom-headers',
+          'jade-filters',
           'language',
           'lodash-component',
           'no-containers',
