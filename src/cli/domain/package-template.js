@@ -23,7 +23,7 @@ const compileView = function(viewPath, type, cb) {
   let ocTemplate;
 
   try {
-    ocTemplate = requireTemplate(type, {compiler: true});
+    ocTemplate = requireTemplate(type, { compiler: true });
   } catch (err) {
     return cb(err);
   }
