@@ -45,13 +45,10 @@ module.exports = function() {
       [
         function(cb) {
           // Packaging template.js
-
           packageTemplate(
             {
-              componentName: component.name,
               componentPath: componentPath,
-              ocOptions: component.oc,
-              publishPath: publishPath
+              componentPackage: component
             },
             (err, packagedTemplateInfo) => {
               if (err) {
