@@ -11,8 +11,6 @@ module.exports = function() {
     const minify = options.minify === true;
     const publishPath = path.join(componentPath, '_package');
 
-    fs.emptyDirSync(publishPath);
-
     const componentPackagePath = path.join(componentPath, 'package.json');
     const ocPackagePath = path.join(__dirname, '../../../package.json');
 
@@ -21,6 +19,8 @@ module.exports = function() {
     } else if (!fs.existsSync(ocPackagePath)) {
       return callback(new Error('error resolving oc internal dependencies'));
     }
+
+    fs.emptyDirSync(publishPath);
 
     const componentPackage = fs.readJsonSync(componentPackagePath);
     const ocPackage = fs.readJsonSync(ocPackagePath);
