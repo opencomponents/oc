@@ -15,9 +15,9 @@ describe('utils : require-template', () => {
       { name: 'oc-template-jade' }
     ];
 
-    scenarios.forEach(({ name }) => {
-      it(name, () => {
-        const template = requireTemplate(name);
+    scenarios.forEach(scenario => {
+      it(scenario.name, () => {
+        const template = requireTemplate(scenario.name);
 
         [
           'compile',
@@ -34,10 +34,10 @@ describe('utils : require-template', () => {
   describe('not valid', () => {
     const scenarios = [{ name: 'lodash' }, { name: 'oc-invalid-template' }];
 
-    scenarios.forEach(({ name }) => {
-      it(name, () => {
+    scenarios.forEach(scenario => {
+      it(scenario.name, () => {
         const sut = () => {
-          requireTemplate(name);
+          requireTemplate(scenario.name);
         };
 
         expect(sut).to.throw();
