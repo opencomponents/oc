@@ -4,6 +4,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const _ = require('lodash');
 const requireTemplate = require('../../utils/require-template');
+const validator = require('../../registry/domain/validators');
 
 module.exports = function() {
   return function(options, callback) {
@@ -23,17 +24,19 @@ module.exports = function() {
     fs.emptyDirSync(publishPath);
 
     const componentPackage = fs.readJsonSync(componentPackagePath);
+
     const ocPackage = fs.readJsonSync(ocPackagePath);
 
     if (!validator.validateComponentName(componentPackage.name)) {
       return callback(new Error('name not valid'));
     }
 
-    const type = componentPackage.oc.template.type;
+    const type = componentPackage.oc.files.template.type;
     const compileOptions = {
       publishPath,
       componentPath,
       componentPackage,
+      ocPackage,
       minify
       // TODO: verbose,
       // TODO: logger,
