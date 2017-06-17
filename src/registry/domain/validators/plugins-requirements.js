@@ -2,17 +2,21 @@
 
 const _ = require('lodash');
 
-module.exports = function(componentRequirements, registryPlugins){
+module.exports = function(componentRequirements, registryPlugins) {
   const result = { isValid: true },
     missing = [];
 
-  _.forEach(componentRequirements || [], (requiredPlugin) => {
-    if(!registryPlugins || _.isEmpty(registryPlugins) || !_.includes(_.keys(registryPlugins), requiredPlugin)){
+  _.forEach(componentRequirements || [], requiredPlugin => {
+    if (
+      !registryPlugins ||
+      _.isEmpty(registryPlugins) ||
+      !_.includes(_.keys(registryPlugins), requiredPlugin)
+    ) {
       missing.push(requiredPlugin);
     }
   });
 
-  if(!_.isEmpty(missing)){
+  if (!_.isEmpty(missing)) {
     return {
       isValid: false,
       missing: missing

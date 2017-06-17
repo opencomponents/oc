@@ -1,0 +1,8 @@
+#components-dependencies.box
+  each dependency in availableDependencies
+    .componentRow.row.table
+      a(href=dependency.link, target="_blank")
+        if dependency.core
+            p.release #{dependency.name} (node.js core dependency)
+        else
+            p.release #{dependency.name}@#{dependency.version}

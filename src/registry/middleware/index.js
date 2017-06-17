@@ -11,8 +11,7 @@ const discoveryHandler = require('./discovery-handler');
 const fileUploads = require('./file-uploads');
 const requestHandler = require('./request-handler');
 
-module.exports.bind = function(app, options){
-
+module.exports.bind = function(app, options) {
   app.set('port', options.port);
   app.set('json spaces', 0);
 
@@ -33,11 +32,11 @@ module.exports.bind = function(app, options){
   app.set('view engine', 'pug');
   app.set('view cache', true);
 
-  if(options.verbosity){
+  if (options.verbosity) {
     app.use(morgan('dev'));
   }
 
-  if(options.local){
+  if (options.local) {
     app.use(errorhandler({ dumpExceptions: true, showStack: true }));
   }
 

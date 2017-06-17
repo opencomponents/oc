@@ -14,8 +14,7 @@ const _ = require('lodash');
 
 const strings = require('../../../../../resources');
 
-
-module.exports = function externalDependenciesHandlers(dependencies){
+module.exports = function externalDependenciesHandlers(dependencies) {
   const deps = dependencies || {};
 
   const missingExternalDependency = (dep, dependencies) =>
@@ -26,10 +25,20 @@ module.exports = function externalDependenciesHandlers(dependencies){
       if (/^[a-z@][a-z\-\/0-9]+$/i.test(req)) {
         let dependencyName = req;
         if (/\//g.test(dependencyName)) {
-          dependencyName = dependencyName.substring(0, dependencyName.indexOf('/'));
+          dependencyName = dependencyName.substring(
+            0,
+            dependencyName.indexOf('/')
+          );
         }
         if (missingExternalDependency(dependencyName, deps)) {
-          return callback(new Error(format(strings.errors.cli.SERVERJS_DEPENDENCY_NOT_DECLARED, JSON.stringify(dependencyName))));
+          return callback(
+            new Error(
+              format(
+                strings.errors.cli.SERVERJS_DEPENDENCY_NOT_DECLARED,
+                JSON.stringify(dependencyName)
+              )
+            )
+          );
         }
       }
       callback();
