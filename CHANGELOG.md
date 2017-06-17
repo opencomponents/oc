@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.37.11
+- [#488](https://github.com/opentable/oc/pull/488) yarn-support
+    
+    closes #487
+
 ### v0.37.10
 - [#516](https://github.com/opentable/oc/pull/516) Improve AWS upload mechanism and allow to override registry timeout settings
 
