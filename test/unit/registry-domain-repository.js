@@ -134,7 +134,7 @@ describe('registry : domain : repository', () => {
           try {
             Repository(conf);
           } catch (err) {
-            expect(err).to.equal('Error requiring oc-template: "oc-template-react" not found');
+            expect(err.message).to.equal('Error requiring oc-template: "oc-template-react" not found');
           }
         });
       });
