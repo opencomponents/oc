@@ -11,8 +11,8 @@ describe('utils : require-template', () => {
 
   describe('valid', () => {
     const scenarios = [
-      { name: 'oc-template-handlebars' },
-      { name: 'oc-template-jade' }
+      { name: 'oc-template-handlebars-compiler' },
+      { name: 'oc-template-jade-compiler' }
     ];
 
     scenarios.forEach(scenario => {
