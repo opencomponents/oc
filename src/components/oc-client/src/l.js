@@ -143,8 +143,8 @@
         (links[i].rel === 'stylesheet' || links[i].type === 'text/css') && (loaded[links[i].getAttribute('href').replace(/#.*$/, '')] = true);
       }
     }
-    //export ljs (as `head`)
-    window.head = loader;
+    //export ljs
+    window.ljs = loader;
     // eval inside tag code if any
   }
   // eval script tag content if needed
