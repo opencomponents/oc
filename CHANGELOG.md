@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.38.0
+- [#522](https://github.com/opentable/oc/pull/522) Issue w/ head.load
+
 ### v0.37.11
 - [#488](https://github.com/opentable/oc/pull/488) yarn-support
     
