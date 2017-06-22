@@ -3,7 +3,7 @@ examples/node_modules
 examples/**/_package/
 *.min.js
 client/src/renderers/support/jade-runtime.js
-src/components/oc-client/src/head.load.js
+src/components/oc-client/src/l.js
 src/components/oc-client/_package/**/*
 src/components/base-component-handlebars/_package/**/*
 src/components/base-component-handlebars/server.js

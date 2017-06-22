@@ -27,7 +27,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 OC wouldn't exist without some fantastic Open-Source libraries:
 
 * jQuery
-* head.js
+* l.js
 * Jade runtime
 * Handlebars runtime
 * jQuery-ajaxTransport-XDomainRequest
@@ -38,15 +38,28 @@ OC wouldn't exist without some fantastic Open-Source libraries:
 
 ====================
 
-///#source 1 1 /src/1.0.0/load.js
-/*! head.load - v1.0.3 */
+/* https://github.com/malko/l.js */
+/* l.js v0.1.1 */
 /*
- * HeadJS     The only script in your <HEAD>
- * Author     Tero Piirainen  (tipiirai)
- * Maintainer Robert Hoffmann (itechnology)
- * License    MIT / http://bit.ly/mit-license
- * WebSite    http://headjs.com
- */
+* script for js/css parallel loading with dependancies management
+* @author Jonathan Gotti < jgotti at jgotti dot net >
+* @licence dual licence mit / gpl
+* @since 2012-04-12
+* @todo add prefetching using text/cache for js files
+* @changelog
+*            - 2016-08-22 - remove global eval and fix issue #13
+*            - 2014-06-26 - bugfix in css loaded check when hashbang is used
+*            - 2014-05-25 - fallback support rewrite + null id bug correction + minification work
+*            - 2014-05-21 - add cdn fallback support with hashbang url
+*            - 2014-05-22 - add support for relative paths for stylesheets in checkLoaded
+*            - 2014-05-21 - add support for relative paths for scripts in checkLoaded
+*            - 2013-01-25 - add parrallel loading inside single load call
+*            - 2012-06-29 - some minifier optimisations
+*            - 2012-04-20 - now sharp part of url will be used as tag id
+*                         - add options for checking already loaded scripts at load time
+*            - 2012-04-19 - add addAliases method
+* @note coding style is implied by the target usage of this script not my habbits
+*/
 
 ====================
 

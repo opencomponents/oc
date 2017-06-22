@@ -53,13 +53,13 @@ describe('oc-client : renderByHref', function(){
       params[method](response);
     };
 
-    sinon.stub(head, 'load').yields(null, 'ok');
+    sinon.stub(ljs, 'load').yields(null, 'ok');
     console.log = function(){};
     return spy;
   };
 
   var cleanup = function(){
-    head.load.restore();
+    ljs.load.restore();
     console.log = originalConsoleLog;
     oc.$.ajax = originalAjax;
     delete oc.components;

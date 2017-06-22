@@ -206,7 +206,7 @@ var oc = oc || {};
     };
 
     if (needsToBeLoaded()) {
-      head.load(url, function() {
+      ljs.load(url, function() {
         callback(getObj());
       });
     } else {

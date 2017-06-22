@@ -47,7 +47,7 @@ describe('oc-client : renderUnloadedComponents', function(){
       p.success((isAnother ? anotherComponent : aComponent).response); 
     };
 
-    sinon.stub(head, 'load').yields(null, 'ok');
+    sinon.stub(ljs, 'load').yields(null, 'ok');
     console.log = function(){};
     
     var aComponentHtml = '<oc-component href="' + aComponent.response.href + '"></oc-component>',
@@ -60,7 +60,7 @@ describe('oc-client : renderUnloadedComponents', function(){
   };
 
   var cleanup = function(){
-    head.load.restore();
+    ljs.load.restore();
     console.log = originalConsoleLog;
     oc.events.reset();
     oc.$('body').find('oc-component').remove();

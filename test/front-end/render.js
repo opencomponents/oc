@@ -11,7 +11,7 @@ describe('oc-client : render', function(){
 
     var callback;
     beforeEach(function(){
-      sinon.stub(head, 'load').yields();
+      sinon.stub(ljs, 'load').yields();
       callback = sinon.spy();
       oc.render({
         src: 'https://my-cdn.com/components/a-component/1.2.123/template.js',
@@ -21,7 +21,7 @@ describe('oc-client : render', function(){
     });
 
     afterEach(function(){
-      head.load.restore();
+      ljs.load.restore();
     });
 
     it('should error', function(){
@@ -34,15 +34,15 @@ describe('oc-client : render', function(){
 
     describe('when handlebars runtime not loaded', function(){
 
-      var originalHandlebars, originalHeadLoad, callback, headSpy;
+      var originalHandlebars, originalLjsLoad, callback, headSpy;
 
       beforeEach(function(){
         originalHandlebars = Handlebars;
-        originalHeadLoad = head.load;
+        originalLjsLoad = ljs.load;
         headSpy = sinon.spy();
         Handlebars = undefined;
 
-        head.load = function(url, cb){
+        ljs.load = function(url, cb){
           headSpy(url, cb);
           Handlebars = originalHandlebars;
           cb();
@@ -60,7 +60,7 @@ describe('oc-client : render', function(){
 
       afterEach(function(){
         Handlebars = originalHandlebars;
-        head.load = originalHeadLoad;
+        ljs.load = originalLjsLoad;
       });
 
       it('should require and wait for it', function(){
@@ -79,7 +79,7 @@ describe('oc-client : render', function(){
 
       var callback, headSpy;
       beforeEach(function(){
-        headSpy = sinon.spy(head, 'load');
+        headSpy = sinon.spy(ljs, 'load');
         callback = sinon.spy();
         eval(handlebarsCompiledView);
         oc.render({
@@ -90,7 +90,7 @@ describe('oc-client : render', function(){
       });
 
       afterEach(function(){
-        head.load.restore();
+        ljs.load.restore();
       });
 
       it('should not require it', function(){
@@ -133,14 +133,14 @@ describe('oc-client : render', function(){
 
     describe('when jade runtime not loaded', function(){
 
-      var originalJade, originalHeadLoad, callback, headSpy;
+      var originalJade, originalLjsLoad, callback, headSpy;
       beforeEach(function(){
         originalJade = jade;
-        originalHeadLoad = head.load;
+        originalLjsLoad = ljs.load;
         headSpy = sinon.spy();
         jade = undefined;
 
-        head.load = function(url, cb){
+        ljs.load = function(url, cb){
           headSpy(url, cb);
           jade = originalJade;
           cb();
@@ -158,7 +158,7 @@ describe('oc-client : render', function(){
 
       afterEach(function(){
         jade = originalJade;
-        head.load = originalHeadLoad;
+        ljs.load = originalLjsLoad;
       });
 
       it('should require and wait for it', function(){
@@ -177,7 +177,7 @@ describe('oc-client : render', function(){
 
       var callback, headSpy;
       beforeEach(function(){
-        headSpy = sinon.spy(head, 'load');
+        headSpy = sinon.spy(ljs, 'load');
         callback = sinon.spy();
         eval(jadeCompiledView);
         oc.render({
@@ -188,7 +188,7 @@ describe('oc-client : render', function(){
       });
 
       afterEach(function(){
-        head.load.restore();
+        ljs.load.restore();
       });
 
       it('should not require it', function(){
@@ -207,7 +207,7 @@ describe('oc-client : render', function(){
 
     var callback, headSpy;
     beforeEach(function(){
-      headSpy = sinon.spy(head, 'load');
+      headSpy = sinon.spy(ljs, 'load');
       callback = sinon.spy();
       eval(jadeCompiledView);
       oc.render({
@@ -218,7 +218,7 @@ describe('oc-client : render', function(){
     });
 
     afterEach(function(){
-      head.load.restore();
+      ljs.load.restore();
     });
 
     it('should respond with error', function(){
@@ -229,12 +229,12 @@ describe('oc-client : render', function(){
 
   describe('when adding support to new template', function(){
     describe('and the new template client-dependency is not loaded', function(){
-      var originalEmoji, jEmoji, originalHeadLoad, callback, headSpy;
+      var originalEmoji, jEmoji, originalLjsLoad, callback, headSpy;
       beforeEach(function(){
-        originalHeadLoad = head.load;
+        originalLjsLoad = ljs.load;
         headSpy = sinon.spy();
 
-        head.load = function(url, cb){
+        ljs.load = function(url, cb){
           headSpy(url, cb);
           cb();
         };
@@ -257,7 +257,7 @@ describe('oc-client : render', function(){
       });
 
       afterEach(function(){
-        head.load = originalHeadLoad;
+        ljs.load = originalLjsLoad;
       });
 
       it('should require and wait for it', function(){
