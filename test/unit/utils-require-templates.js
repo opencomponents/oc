@@ -11,13 +11,13 @@ describe('utils : require-template', () => {
 
   describe('valid', () => {
     const scenarios = [
-      { name: 'oc-template-handlebars-compiler' },
-      { name: 'oc-template-jade-compiler' }
+      { name: 'oc-template-handlebars' },
+      { name: 'oc-template-jade' }
     ];
 
     scenarios.forEach(scenario => {
       it(scenario.name, () => {
-        const template = requireTemplate(scenario.name);
+        const template = requireTemplate(scenario.name, { compiler: true });
 
         [
           'compile',
