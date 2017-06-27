@@ -10,6 +10,7 @@ module.exports = function() {
   return function(options, callback) {
     const componentPath = options.componentPath;
     const minify = options.minify === true;
+    const verbose = options.verbose === true;
     const publishPath = path.join(componentPath, '_package');
 
     const componentPackagePath = path.join(componentPath, 'package.json');
@@ -37,8 +38,8 @@ module.exports = function() {
       componentPath,
       componentPackage,
       ocPackage,
-      minify
-      // TODO: verbose,
+      minify,
+      verbose
       // TODO: logger,
       // TODO: watch,
     };
