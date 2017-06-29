@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.38.1
+- [#527](https://github.com/opentable/oc/pull/527) Do not watch .DS_Store files
+
 ### v0.38.0
 - [#522](https://github.com/opentable/oc/pull/522) Issue w/ head.load
 
