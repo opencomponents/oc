@@ -14,7 +14,7 @@ module.exports = function(dirs, baseDir, changed) {
       (fileName, currentStat, previousStat) => {
         if (!!currentStat || !!previousStat) {
           if (
-            /node_modules|package\.tar\.gz|_package|\.sw[op]|\.git/gi.test(
+            /node_modules|package\.tar\.gz|_package|\.sw[op]|\.git|\.DS_Store/gi.test(
               fileName
             ) === false
           ) {
