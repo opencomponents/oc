@@ -59,8 +59,8 @@
   },
   "dependencies": {
     "accept-language-parser": "1.4.0",
-    "async": "2.4.1",
-    "aws-sdk": "2.67.0",
+    "async": "1.5.2",
+    "aws-sdk": "2.80.0",
     "babel-core": "6.21.0",
     "babel-loader": "7.0.0",
     "babel-preset-env": "1.1.8",
