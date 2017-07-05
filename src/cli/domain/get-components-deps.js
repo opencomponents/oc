@@ -21,14 +21,16 @@ module.exports = function(components) {
     const type = pkg.oc.files.template.type;
     const dependencies = pkg.dependencies || {};
     const devDependencies = pkg.devDependencies || {};
+    const templateCompiler = type + '-compiler';
 
     if (!deps.templates[type] && !legacyTemplates[type]) {
-      if (!devDependencies[type + '-compiler']) {
+      if (!devDependencies[templateCompiler]) {
         throw new Error(
           format(settings.errors.cli.TEMPLATE_DEP_MISSING, componentPath, type)
         );
       }
       deps.templates[type] = true;
+      dependencies[templateCompiler] = devDependencies[templateCompiler];
     }
 
     _.keys(dependencies).forEach(name => {

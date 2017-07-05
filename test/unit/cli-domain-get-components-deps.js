@@ -87,11 +87,15 @@ describe('cli : domain : get-components-deps', () => {
     });
 
     it('should return core dependencies + package depenendencies', () => {
-      expect(result.modules.sort()).to.eql(['fs', 'underscore', 'url']);
+      expect(result.modules.sort()).to.eql(
+        ['fs', 'underscore', 'url', 'oc-template-react-compiler'].sort()
+      );
     });
 
     it('should return package dependencies with versions', () => {
-      expect(result.withVersions).to.eql(['underscore@5.6.7']);
+      expect(result.withVersions.sort()).to.eql(
+        ['underscore@5.6.7', 'oc-template-react-compiler@1.2.3'].sort()
+      );
     });
 
     it('should return the custom templates', () => {
