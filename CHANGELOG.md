@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.38.3
+- [#530](https://github.com/opentable/oc/pull/530) Remove plugin detective logic
+
 ### v0.38.2
 - [#528](https://github.com/opentable/oc/pull/528) [OC-50] Log body fix
 
