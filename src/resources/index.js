@@ -108,9 +108,6 @@ module.exports = {
       PACKAGING_FAIL: 'an error happened while packaging {0}: {1}',
       PLUGIN_MISSING_FROM_REGISTRY:
         'Looks  like you are trying to use a plugin in the dev mode ({0}).\nYou need to mock it doing {1}',
-      PLUGIN_MISSING_FROM_COMPONENT:
-        "Looks like you are trying to use a plugin you haven't registered ({0})." +
-          "\nYou need to register it editing your component's package.json",
       PORT_IS_BUSY:
         'The port {0} is already in use. Specify the optional port parameter to use another port.',
       PUBLISHING_FAIL: 'An error happened when publishing the component: {0}',
