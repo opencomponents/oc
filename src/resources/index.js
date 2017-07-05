@@ -121,7 +121,7 @@ module.exports = {
       TEMPLATE_TYPE_NOT_VALID:
         'the template is not valid. Allowed values are handlebars and jade',
       TEMPLATE_DEP_MISSING:
-        'Template dependency missing. Run "$npm install --save {0}" to fix it.'
+        'Template dependency missing. To fix it run:\n\ncd {0} && npm install --save-dev {1}-compiler\n\n'
     },
     generic: 'An error occurred: {0}',
     s3: {
