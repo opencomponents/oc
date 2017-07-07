@@ -9,19 +9,19 @@ var oc = oc || {};
     // AMD. Register as an anonymous module
     define(['exports', 'jquery'], function(exports, $) {
       $.extend(exports, root.oc);
-      factory((root.oc = exports), $, root.head, root.document, root.window);
+      factory((root.oc = exports), $, root.ljs, root.document, root.window);
     });
   } else if (
     typeof exports === 'object' &&
     typeof exports.nodeName !== 'string'
   ) {
     // Common JS
-    factory(exports, require('jquery'), root.head, root.document, root.window);
+    factory(exports, require('jquery'), root.ljs, root.document, root.window);
   } else {
     // Browser globals
-    factory((root.oc = oc), root.$, root.head, root.document, root.window);
+    factory((root.oc = oc), root.$, root.ljs, root.document, root.window);
   }
-})(this, function(exports, $, head, $document, $window) {
+})(this, function(exports, $, ljs, $document, $window) {
   // jshint ignore:line
   // public variables
   oc.conf = oc.conf || {};
@@ -159,7 +159,7 @@ var oc = oc || {};
     return registeredTemplates;
   };
 
-  // A minimal require.js-ish that uses head.js
+  // A minimal require.js-ish that uses l.js
   oc.require = function(nameSpace, url, callback) {
     if (typeof url === 'function') {
       callback = url;
