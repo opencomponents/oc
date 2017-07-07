@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.38.5
+- [#532](https://github.com/opentable/oc/pull/532) fix-global-ljs
+
 ### v0.38.4
 - [#531](https://github.com/opentable/oc/pull/531) Fix register plugin
 
