@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.38.6
+- [#533](https://github.com/opentable/oc/pull/533) [OC-62] Loaders cleanup
+
 ### v0.38.5
 - [#532](https://github.com/opentable/oc/pull/532) fix-global-ljs
 
