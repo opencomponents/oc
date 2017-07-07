@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.38.4
+- [#531](https://github.com/opentable/oc/pull/531) Fix register plugin
+
 ### v0.38.3
 - [#530](https://github.com/opentable/oc/pull/530) Remove plugin detective logic
 
