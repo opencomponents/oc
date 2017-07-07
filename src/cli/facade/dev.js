@@ -138,8 +138,7 @@ module.exports = function(dependencies) {
 
     const registerPlugins = registry => {
       const mockedPlugins = getMockedPlugins(logger, componentsDir);
-
-      mockedPlugins.forEach(registry.register);
+      mockedPlugins.forEach(p => registry.register(p));
 
       registry.on('request', data => {
         if (data.errorCode === 'PLUGIN_MISSING_FROM_REGISTRY') {
