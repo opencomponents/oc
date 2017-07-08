@@ -1,7 +1,6 @@
 'use strict';
 
 const getOcClientBrowser = require('oc-client-browser');
-
 const TryGetCached = require('./try-get-cached');
 
 module.exports = function(cache) {
@@ -11,9 +10,7 @@ module.exports = function(cache) {
     tryGetCached(
       'scripts',
       'oc-client',
-      cb => {
-        getOcClientBrowser(cb);
-      },
+      cb => getOcClientBrowser(cb),
       callback
     );
   };
