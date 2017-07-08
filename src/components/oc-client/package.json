@@ -14,10 +14,7 @@
       "template": {
         "src": "template.jade",
         "type": "jade"
-      },
-      "static": [
-        "src"
-      ]
+      }
     }
   }
 }

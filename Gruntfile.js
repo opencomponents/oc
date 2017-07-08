@@ -21,13 +21,8 @@ module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt);
 
   grunt.registerTask('default', ['test-local', 'build']);
-  grunt.registerTask('sauce', [
-    'karma:sauce-linux',
-    'karma:sauce-osx',
-    'karma:sauce-windows'
-  ]);
-  grunt.registerTask('test-local', ['mochaTest:all', 'karma:local']);
-  grunt.registerTask('test-local-silent', ['mochaTest:silent', 'karma:local']);
+  grunt.registerTask('test-local', ['mochaTest:all']);
+  grunt.registerTask('test-local-silent', ['mochaTest:silent']);
   grunt.registerTask('test', ['mochaTest:all']);
   grunt.registerTask('git-stage', [
     'gitadd:versionFiles',
