@@ -13,7 +13,7 @@ before_script:
 - npm install -g grunt-cli
 
 script:
-  - grunt test
+  - grunt
   - "[ $SAUCE == false ] || [ $TRAVIS_SECURE_ENV_VARS == false ] || grunt sauce"
 
 notifications:
