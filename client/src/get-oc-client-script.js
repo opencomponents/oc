@@ -10,7 +10,7 @@ module.exports = function(cache) {
     tryGetCached(
       'scripts',
       'oc-client',
-      cb => getOcClientBrowser(cb),
+      cb => getOcClientBrowser.getLib(cb),
       callback
     );
   };
