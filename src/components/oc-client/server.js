@@ -1,6 +1,6 @@
 'use strict';
 
 export const data = (context, callback) => {
-  const { templates } = context;
-  return callback(null, { templates });
+  const { staticPath, templates } = context;
+  return callback(null, { staticPath, templates });
 };
