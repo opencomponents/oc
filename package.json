@@ -8,7 +8,7 @@
   },
   "scripts": {
     "precommit": "lint-staged",
-    "test": "grunt test"
+    "test": "grunt"
   },
   "lint-staged": {
     "*.js": [
