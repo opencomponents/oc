@@ -17,6 +17,6 @@ module.exports = function(grunt) {
       spaces: 2
     });
 
-    grunt.task.run(['test-local-silent', 'git-stage']);
+    grunt.task.run(['build', 'test-local-silent', 'git-stage']);
   });
 };
