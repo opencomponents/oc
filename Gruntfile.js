@@ -20,7 +20,7 @@ module.exports = function(grunt) {
   grunt.initConfig(taskObject);
   require('load-grunt-tasks')(grunt);
 
-  grunt.registerTask('default', ['test-local', 'build']);
+  grunt.registerTask('default', ['build', 'test-local']);
   grunt.registerTask('test-local', ['mochaTest:all']);
   grunt.registerTask('test-local-silent', ['mochaTest:silent']);
   grunt.registerTask('test', ['mochaTest:all']);
