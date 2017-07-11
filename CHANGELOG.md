@@ -3,30 +3,60 @@
 ### v0.38.7
 - [#535](https://github.com/opentable/oc/pull/535) Fix grunt build to override package version
 - [#534](https://github.com/opentable/oc/pull/534) [OC-60] Oc client browser
+
+### v0.38.6
 - [#533](https://github.com/opentable/oc/pull/533) [OC-62] Loaders cleanup
+
+### v0.38.5
 - [#532](https://github.com/opentable/oc/pull/532) fix-global-ljs
+
+### v0.38.4
 - [#531](https://github.com/opentable/oc/pull/531) Fix register plugin
+
+### v0.38.3
 - [#530](https://github.com/opentable/oc/pull/530) Remove plugin detective logic
+
+### v0.38.2
 - [#528](https://github.com/opentable/oc/pull/528) [OC-50] Log body fix
+
+### v0.38.1
 - [#527](https://github.com/opentable/oc/pull/527) Do not watch .DS_Store files
+
+### v0.38.0
 - [#522](https://github.com/opentable/oc/pull/522) Issue w/ head.load
+
+### v0.37.11
 - [#488](https://github.com/opentable/oc/pull/488) yarn-support
     
     closes #487
+
+### v0.37.10
 - [#516](https://github.com/opentable/oc/pull/516) Improve AWS upload mechanism and allow to override registry timeout settings
+
+### v0.37.9
 - [#515](https://github.com/opentable/oc/pull/515) Ignore the .git folder for the dev watcher
 - [#507](https://github.com/opentable/oc/pull/507) Pretty printed code
+
+### v0.37.8
 - [#513](https://github.com/opentable/oc/pull/513) issue w/ registry add command
 - [#510](https://github.com/opentable/oc/pull/510) Hide available dependencies on dev mode
 - [#500](https://github.com/opentable/oc/pull/500) Show available dependencies in the UI
+
+### v0.37.7
 - [#509](https://github.com/opentable/oc/pull/509) Cleancss fix
 - [#505](https://github.com/opentable/oc/pull/505) Node 8
 - [#502](https://github.com/opentable/oc/pull/502) Upgrade some dependencies
 - [#503](https://github.com/opentable/oc/pull/503) eof
+
+### v0.37.6
 - [#499](https://github.com/opentable/oc/pull/499) Snyk
 - [#498](https://github.com/opentable/oc/pull/498) Fix build script
 - [#497](https://github.com/opentable/oc/pull/497) Fix vulnerabilities and remove npm shrinkwrap
+
+### v0.37.5
 - [#495](https://github.com/opentable/oc/pull/495) issue w/ plugins detective
+
+### v0.37.4
 - [#486](https://github.com/opentable/oc/pull/486) Render trycatch
 
 ### v0.37.3
