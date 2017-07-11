@@ -22,6 +22,3 @@ install:
   - npm install -g grunt-cli
 
 build: off
-
-test_script:
-  - cmd: grunt

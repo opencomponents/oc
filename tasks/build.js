@@ -12,10 +12,9 @@ module.exports = function(grunt) {
     'Builds and minifies the oc-client component',
     function() {
       const done = this.async();
-      const version = ocClientBrowser.version;
       const clientComponentDir = '../src/components/oc-client/';
 
-      fs.emptyDirSync(path.join(__dirname, clientComponentDir + 'src'));
+      fs.emptyDirSync(path.join(__dirname, clientComponentDir, 'src'));
       ocClientBrowser.getLib((err, libContent) => {
         if (err) {
           grunt.log['error'](err);
