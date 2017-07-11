@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.38.8
+- [#537](https://github.com/opentable/oc/pull/537) No postinstall build
+
 ### v0.38.7
 - [#535](https://github.com/opentable/oc/pull/535) Fix grunt build to override package version
 - [#534](https://github.com/opentable/oc/pull/534) [OC-60] Oc client browser
