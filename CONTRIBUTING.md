@@ -23,7 +23,7 @@ A couple of coding rules:
 You need to be enabled for doing this.
 * `master` should be all green. If not, make it green first.
 * git checkout master
-* git pull
+* git pull --tags
 * Run `grunt version:<versionType>` for new version.
   * While on 0.X.X (not stable):
     * `grunt version:patch` for bugfixes, new features
