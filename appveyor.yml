@@ -10,7 +10,7 @@ version: "{build}"
 # what combinations to test
 environment:
   matrix:
-    - nodejs_version: 4.7.1
+    - nodejs_version: 6.11.0
 
 # Get the stable version of node
 install:
@@ -24,4 +24,4 @@ install:
 build: off
 
 test_script:
-  - cmd: grunt test
+  - cmd: npm test
