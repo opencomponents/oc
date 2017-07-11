@@ -9,7 +9,6 @@ const _ = require('lodash');
 
 const applyDefaultValues = require('./apply-default-values');
 const Client = require('../../../../client');
-const detective = require('../../domain/plugins-detective');
 const eventsHandler = require('../../domain/events-handler');
 const GetComponentRetrievingInfo = require('./get-component-retrieving-info');
 const getComponentFallback = require('./get-component-fallback');
@@ -34,13 +33,13 @@ module.exports = function(conf, repository) {
       retrievingInfo = new GetComponentRetrievingInfo(options);
     let responseHeaders = {};
 
-    const getLanguage = function() {
+    const getLanguage = () => {
       const paramOverride =
         !!options.parameters && options.parameters['__ocAcceptLanguage'];
       return paramOverride || options.headers['accept-language'];
     };
 
-    const callback = function(result) {
+    const callback = result => {
       if (result.response.error) {
         retrievingInfo.extend(result.response);
       }
@@ -55,13 +54,13 @@ module.exports = function(conf, repository) {
     };
 
     let componentCallbackDone = false;
-    const conf = options.conf,
-      acceptLanguage = getLanguage(),
-      requestedComponent = {
-        name: options.name,
-        version: options.version || '',
-        parameters: options.parameters
-      };
+    const conf = options.conf;
+    const acceptLanguage = getLanguage();
+    const requestedComponent = {
+      name: options.name,
+      version: options.version || '',
+      parameters: options.parameters
+    };
 
     repository.getComponent(
       requestedComponent.name,
@@ -122,9 +121,9 @@ module.exports = function(conf, repository) {
 
         // sanitise and check params
         const appliedParams = applyDefaultValues(
-          requestedComponent.parameters,
-          component.oc.parameters
-        ),
+            requestedComponent.parameters,
+            component.oc.parameters
+          ),
           params = sanitiser.sanitiseComponentParameters(
             appliedParams,
             component.oc.parameters
@@ -144,11 +143,11 @@ module.exports = function(conf, repository) {
           });
         }
 
-        const filterCustomHeaders = function(
+        const filterCustomHeaders = (
           headers,
           requestedVersion,
           actualVersion
-        ) {
+        ) => {
           const needFiltering =
             !_.isEmpty(headers) &&
             !_.isEmpty(conf.customHeadersToSkipOnWeakVersion) &&
@@ -159,7 +158,7 @@ module.exports = function(conf, repository) {
             : headers;
         };
 
-        const returnComponent = function(err, data) {
+        const returnComponent = (err, data) => {
           if (componentCallbackDone) {
             return;
           }
@@ -196,7 +195,8 @@ module.exports = function(conf, repository) {
           );
 
           const isUnrendered =
-            options.headers.accept === settings.registry.acceptUnrenderedHeader,
+              options.headers.accept ===
+              settings.registry.acceptUnrenderedHeader,
             renderMode = isUnrendered ? 'unrendered' : 'rendered';
 
           const response = {
@@ -241,16 +241,12 @@ module.exports = function(conf, repository) {
               })
             });
           } else {
-            const cacheKey = format(
-              '{0}/{1}/template.js',
-              component.name,
-              component.version
-            ),
+            const cacheKey = `${component.name}/${component.version}/template.js`,
               cached = cache.get('file-contents', cacheKey),
               key = component.oc.files.template.hashKey,
               renderOptions = {
                 href: componentHref,
-                key: key,
+                key,
                 version: component.version,
                 name: component.name,
                 templateType: component.oc.files.template.type,
@@ -258,7 +254,7 @@ module.exports = function(conf, repository) {
                 renderInfo: component.oc.renderInfo
               };
 
-            const returnResult = function(template) {
+            const returnResult = template => {
               client.renderTemplate(
                 template,
                 data,
@@ -277,7 +273,7 @@ module.exports = function(conf, repository) {
                   callback({
                     status: 200,
                     headers: responseHeaders,
-                    response: _.extend(response, { html: html })
+                    response: _.extend(response, { html })
                   });
                 }
               );
@@ -320,18 +316,14 @@ module.exports = function(conf, repository) {
         if (!component.oc.files.dataProvider) {
           returnComponent(null, {});
         } else {
-          const cacheKey = format(
-            '{0}/{1}/server.js',
-            component.name,
-            component.version
-          ),
+          const cacheKey = `${component.name}/${component.version}/server.js`,
             cached = cache.get('file-contents', cacheKey),
             domain = Domain.create(),
             contextObj = {
               acceptLanguage: acceptLanguageParser.parse(acceptLanguage),
               baseUrl: conf.baseUrl,
               env: conf.env,
-              params: params,
+              params,
               plugins: conf.plugins,
               renderComponent: nestedRenderer.renderComponent,
               renderComponents: nestedRenderer.renderComponents,
@@ -339,7 +331,7 @@ module.exports = function(conf, repository) {
               staticPath: repository
                 .getStaticFilePath(component.name, component.version, '')
                 .replace('https:', ''),
-              setHeader: function(header, value) {
+              setHeader: (header, value) => {
                 if (
                   !(typeof header === 'string' && typeof value === 'string')
                 ) {
@@ -355,15 +347,11 @@ module.exports = function(conf, repository) {
               templates: repository.getTemplates()
             };
 
-          const setCallbackTimeout = function() {
+          const setCallbackTimeout = () => {
             if (conf.executionTimeout) {
               setTimeout(() => {
-                returnComponent({
-                  message: format(
-                    'timeout ({0}ms)',
-                    conf.executionTimeout * 1000
-                  )
-                });
+                const message = `timeout (${conf.executionTimeout * 1000}ms)`;
+                returnComponent({ message });
                 domain.exit();
               }, conf.executionTimeout * 1000);
             }
@@ -401,11 +389,11 @@ module.exports = function(conf, repository) {
                   require: RequireWrapper(conf.dependencies),
                   module: { exports: {} },
                   console: conf.local ? console : { log: _.noop },
-                  setTimeout: setTimeout,
-                  Buffer: Buffer
+                  setTimeout,
+                  Buffer
                 };
 
-                const handleError = function(err) {
+                const handleError = err => {
                   if (err.code === 'DEPENDENCY_MISSING_FROM_REGISTRY') {
                     componentCallbackDone = true;
 
@@ -418,28 +406,6 @@ module.exports = function(conf, repository) {
                           err.missing.join(', ')
                         ),
                         missingDependencies: err.missing
-                      }
-                    });
-                  }
-
-                  const usedPlugins = detective.parse(dataProcessorJs),
-                    unRegisteredPlugins = _.difference(
-                      usedPlugins,
-                      _.keys(conf.plugins)
-                    );
-
-                  if (!_.isEmpty(unRegisteredPlugins)) {
-                    componentCallbackDone = true;
-
-                    return callback({
-                      status: 501,
-                      response: {
-                        code: 'PLUGIN_MISSING_FROM_COMPONENT',
-                        error: format(
-                          strings.errors.registry.PLUGIN_NOT_FOUND,
-                          unRegisteredPlugins.join(' ,')
-                        ),
-                        missingPlugins: unRegisteredPlugins
                       }
                     });
                   }

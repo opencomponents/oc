@@ -50,18 +50,18 @@ module.exports = function(conf, repository) {
       components,
       (component, callback) => {
         getComponent(
-          _.extend(component, {
+          {
             conf: res.conf,
+            name: component.name,
             headers: req.headers,
             omitHref: !!req.body.omitHref,
             parameters: _.extend(
               _.clone(req.body.parameters) || {},
               component.parameters || {}
-            )
-          }),
-          result => {
-            callback(null, result);
-          }
+            ),
+            version: component.version
+          },
+          result => callback(null, result)
         );
       },
       (err, results) => res.status(200).json(results)

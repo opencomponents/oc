@@ -93,10 +93,10 @@ module.exports = function(dependencies) {
           },
           error => {
             if (error) {
-              const errorDescription = error instanceof SyntaxError ||
-                !!error.message
-                ? error.message
-                : error;
+              const errorDescription =
+                error instanceof SyntaxError || !!error.message
+                  ? error.message
+                  : error;
               logger.err(
                 format(
                   strings.errors.cli.PACKAGING_FAIL,
@@ -136,12 +136,9 @@ module.exports = function(dependencies) {
       });
     };
 
-    const registerPlugins = function(registry) {
+    const registerPlugins = registry => {
       const mockedPlugins = getMockedPlugins(logger, componentsDir);
-
-      mockedPlugins.forEach(p => {
-        registry.register(p);
-      });
+      mockedPlugins.forEach(p => registry.register(p));
 
       registry.on('request', data => {
         if (data.errorCode === 'PLUGIN_MISSING_FROM_REGISTRY') {
@@ -150,13 +147,6 @@ module.exports = function(dependencies) {
               strings.errors.cli.PLUGIN_MISSING_FROM_REGISTRY,
               data.errorDetails,
               colors.blue(strings.commands.cli.MOCK_PLUGIN)
-            )
-          );
-        } else if (data.errorCode === 'PLUGIN_MISSING_FROM_COMPONENT') {
-          logger.err(
-            format(
-              strings.errors.cli.PLUGIN_MISSING_FROM_COMPONENT,
-              data.errorDetails
             )
           );
         }

@@ -1,5 +1,38 @@
 ## Change Log
 
+### v0.38.8
+- [#537](https://github.com/opentable/oc/pull/537) No postinstall build
+
+### v0.38.7
+- [#535](https://github.com/opentable/oc/pull/535) Fix grunt build to override package version
+- [#534](https://github.com/opentable/oc/pull/534) [OC-60] Oc client browser
+
+### v0.38.6
+- [#533](https://github.com/opentable/oc/pull/533) [OC-62] Loaders cleanup
+
+### v0.38.5
+- [#532](https://github.com/opentable/oc/pull/532) fix-global-ljs
+
+### v0.38.4
+- [#531](https://github.com/opentable/oc/pull/531) Fix register plugin
+
+### v0.38.3
+- [#530](https://github.com/opentable/oc/pull/530) Remove plugin detective logic
+
+### v0.38.2
+- [#528](https://github.com/opentable/oc/pull/528) [OC-50] Log body fix
+
+### v0.38.1
+- [#527](https://github.com/opentable/oc/pull/527) Do not watch .DS_Store files
+
+### v0.38.0
+- [#522](https://github.com/opentable/oc/pull/522) Issue w/ head.load
+
+### v0.37.11
+- [#488](https://github.com/opentable/oc/pull/488) yarn-support
+    
+    closes #487
+
 ### v0.37.10
 - [#516](https://github.com/opentable/oc/pull/516) Improve AWS upload mechanism and allow to override registry timeout settings
 

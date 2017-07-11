@@ -23,10 +23,10 @@ module.exports = function webpackConfigGenerator(params) {
           exclude: /node_modules/,
           use: [
             {
-              loader: 'infinite-loop-loader'
+              loader: require.resolve('infinite-loop-loader')
             },
             {
-              loader: 'babel-loader',
+              loader: require.resolve('babel-loader'),
               options: {
                 cacheDirectory: true,
                 presets: [
@@ -51,12 +51,6 @@ module.exports = function webpackConfigGenerator(params) {
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production')
       })
-    ],
-    resolveLoader: {
-      modules: [
-        'node_modules',
-        path.resolve(__dirname, '../../../../../../node_modules')
-      ]
-    }
+    ]
   };
 };
