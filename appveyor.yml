@@ -24,4 +24,4 @@ install:
 build: off
 
 test_script:
-  - cmd: grunt
+  - cmd: grunt test

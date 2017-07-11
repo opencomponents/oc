@@ -7,8 +7,9 @@
     "oc": "./src/oc-cli.js"
   },
   "scripts": {
+    "postinstall": "grunt build",
     "precommit": "lint-staged",
-    "test": "grunt"
+    "test": "grunt test"
   },
   "lint-staged": {
     "*.js": [
