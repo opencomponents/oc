@@ -5,6 +5,7 @@ const fs = require('fs-extra');
 const ocClientBrowser = require('oc-client-browser');
 const path = require('path');
 const uglifyJs = require('uglify-js');
+const packageJson = require('../package');
 
 module.exports = function(grunt) {
   grunt.registerTask(
@@ -12,13 +13,23 @@ module.exports = function(grunt) {
     'Builds and minifies the oc-client component',
     function() {
       const done = this.async();
+      const ocVersion = packageJson.version;
       const clientComponentDir = '../src/components/oc-client/';
+      const ocClientPackageInfo = require(`${clientComponentDir}package.json`);
 
       fs.emptyDirSync(path.join(__dirname, clientComponentDir, 'src'));
       ocClientBrowser.getLib((err, libContent) => {
         if (err) {
           grunt.log['error'](err);
         }
+
+        ocClientPackageInfo.version = ocVersion;
+        fs.writeJsonSync(
+          path.join(__dirname, clientComponentDir, 'package.json'),
+          ocClientPackageInfo,
+          { spaces: 2 }
+        );
+
         fs.writeFileSync(
           path.join(__dirname, clientComponentDir, 'src/oc-client.min.js'),
           libContent
