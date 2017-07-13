@@ -8,7 +8,7 @@ const vm = require('vm');
 const _ = require('lodash');
 
 const applyDefaultValues = require('./apply-default-values');
-const Client = require('../../../../client');
+const Client = require('oc-client');
 const eventsHandler = require('../../domain/events-handler');
 const GetComponentRetrievingInfo = require('./get-component-retrieving-info');
 const getComponentFallback = require('./get-component-fallback');
