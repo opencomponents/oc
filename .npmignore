@@ -1,6 +1,6 @@
 .eslintignore
 .eslintrc.json
-.node-version
+.npmrc
 .travis.yml
 appveyor.yml
 Gruntfile.js
