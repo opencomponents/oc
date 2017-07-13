@@ -80,7 +80,7 @@
     "node-dir": "0.1.16",
     "npm": "5.0.2",
     "oc-client-browser": "1.0.1",
-    "oc-client-node": "1.0.0",
+    "oc-client": "2.1.20",
     "oc-template-handlebars": "4.0.1",
     "oc-template-jade": "4.0.2",
     "opn": "5.0.0",
