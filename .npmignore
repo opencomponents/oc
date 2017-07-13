@@ -1,5 +1,8 @@
-tasks
-test
+.eslintignore
+.eslintrc.json
+.node-version
 .travis.yml
 appveyor.yml
 Gruntfile.js
+tasks
+test
