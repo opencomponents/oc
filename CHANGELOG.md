@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.39.0
+- [#542](https://github.com/opentable/oc/pull/542) Drop node4 tests
+- [#541](https://github.com/opentable/oc/pull/541) Housekeeping
+- [#538](https://github.com/opentable/oc/pull/538) [OC-69] Remove node client
+
 ### v0.38.8
 - [#537](https://github.com/opentable/oc/pull/537) No postinstall build
 
