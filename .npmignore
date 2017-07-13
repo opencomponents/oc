@@ -1,6 +1,7 @@
 .eslintignore
 .eslintrc.json
 .npmrc
+.vscode
 .travis.yml
 appveyor.yml
 Gruntfile.js
