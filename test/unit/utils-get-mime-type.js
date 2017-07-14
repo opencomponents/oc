@@ -3,11 +3,9 @@
 const expect = require('chai').expect;
 
 describe('utils : getMimeType', () => {
-
   const getMimeType = require('../../src/utils/get-mime-type');
 
   describe('when extension is known', () => {
-
     describe('and extension is .js', () => {
       const mimeType = getMimeType('.js');
 
@@ -61,6 +59,14 @@ describe('utils : getMimeType', () => {
 
       it('should return the correct myme type', () => {
         expect(mimeType).to.equal('image/svg+xml');
+      });
+    });
+
+    describe('and extension is .html', () => {
+      const mimeType = getMimeType('.html');
+
+      it('should return the correct myme type', () => {
+        expect(mimeType).to.equal('text/html');
       });
     });
   });
