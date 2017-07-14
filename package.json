@@ -35,11 +35,11 @@
     "oc"
   ],
   "devDependencies": {
-    "chai": "3.5.0",
+    "chai": "4.0.1",
     "cheerio": "0.22.0",
     "grunt": "^1.0.1",
     "grunt-git": "^1.0.0",
-    "grunt-mocha-test": "^0.12.7",
+    "grunt-mocha-test": "^0.13.2",
     "husky": "^0.13.4",
     "injectr": "0.5.1",
     "lint-staged": "^3.6.0",
@@ -47,7 +47,7 @@
     "mocha": "^3.0.2",
     "prettier-eslint-cli": "^4.0.4",
     "semver-sort": "0.0.4",
-    "sinon": "^1.17.5"
+    "sinon": "^2.3.2"
   },
   "dependencies": {
     "accept-language-parser": "1.4.0",
@@ -55,7 +55,7 @@
     "aws-sdk": "2.80.0",
     "babel-core": "6.21.0",
     "babel-loader": "7.0.0",
-    "babel-preset-env": "1.1.8",
+    "babel-preset-env": "1.5.1",
     "babili-webpack-plugin": "0.1.1",
     "basic-auth-connect": "^1.0.0",
     "body-parser": "1.17.2",
@@ -94,7 +94,7 @@
     "stringformat": "0.0.5",
     "targz": "1.0.1",
     "try-require": "^1.2.1",
-    "uglify-js": "2.6.4",
+    "uglify-js": "3.0.15",
     "watch": "1.0.2",
     "webpack": "2.6.1",
     "yargs": "8.0.1"
