@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.39.1
+- [#545](https://github.com/opentable/oc/pull/545) Added a mime type for html files.
+
 ### v0.39.0
 - [#542](https://github.com/opentable/oc/pull/542) Drop node4 tests
 - [#541](https://github.com/opentable/oc/pull/541) Housekeeping
