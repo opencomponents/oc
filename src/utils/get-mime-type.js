@@ -8,7 +8,6 @@ module.exports = function(extension) {
     '.gif': 'image/gif',
     '.jpg': 'image/jpeg',
     '.png': 'image/png',
-    '.svg': 'image/svg+xml',
-    '.html': 'text/html'
+    '.svg': 'image/svg+xml'
   }[extension];
 };
