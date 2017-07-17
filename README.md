@@ -1,8 +1,6 @@
 ![oc](https://raw.githubusercontent.com/opentable/oc/master/logo.png)
 =============
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/opentable/oc.svg)](https://greenkeeper.io/)
-
 OpenComponents, **serverless in the front-end world**.
 
 OpenComponents is an open-source framework that allows fast-moving teams to easily build and deploy front-end components. It abstracts away complicated infrastructure and leaves developers with very simple, but powerful building blocks that handle scale transparently.
@@ -23,6 +21,7 @@ We have been using for more than a year in production at OpenTable, for shared c
 [![Known Vulnerabilities](https://snyk.io/test/github/opentable/oc/badge.svg)](https://snyk.io/test/github/opentable/oc)
 [![downloads](https://img.shields.io/npm/dm/oc.svg?label=downloads+from+npm)](https://npmjs.org/package/oc)
 [![Join the chat at https://gitter.im/opentable/oc](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/opentable/oc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Greenkeeper badge](https://badges.greenkeeper.io/opentable/oc.svg)](https://greenkeeper.io/)
 
 ## Links
 
