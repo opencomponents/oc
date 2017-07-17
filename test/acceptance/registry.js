@@ -382,7 +382,7 @@ describe('registry', () => {
     });
   });
 
-  describe.only('GET /jade-filters', () => {
+  describe('GET /jade-filters', () => {
     before(done => {
       request(
         {
