@@ -57,7 +57,7 @@ module.exports = function() {
             name: componentName
           });
 
-        fs.outputJsonSync(componentPath, component);
+        fs.outputJsonSync(componentPath, component, { spaces: 2 });
 
         return callback(null, { ok: true });
       } catch (e) {
