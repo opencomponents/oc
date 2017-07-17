@@ -1,6 +1,6 @@
 {
   "name": "oc",
-  "version": "0.39.0",
+  "version": "0.39.1",
   "description": "A framework for developing and distributing html components",
   "main": "./src/index.js",
   "bin": {
@@ -35,7 +35,7 @@
     "oc"
   ],
   "devDependencies": {
-    "chai": "4.0.1",
+    "chai": "3.5.0",
     "cheerio": "0.22.0",
     "grunt": "^1.0.1",
     "grunt-git": "^1.0.0",
@@ -94,7 +94,7 @@
     "stringformat": "0.0.5",
     "targz": "1.0.1",
     "try-require": "^1.2.1",
-    "uglify-js": "3.0.25",
+    "uglify-js": "2.6.4",
     "watch": "1.0.2",
     "webpack": "3.3.0",
     "yargs": "8.0.1"
