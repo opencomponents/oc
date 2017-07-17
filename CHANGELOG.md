@@ -1,5 +1,15 @@
 ## Change Log
 
+### v0.39.2
+- [#552](https://github.com/opentable/oc/pull/552) remove .Only
+- [#550](https://github.com/opentable/oc/pull/550) Update uglify-js to the latest version 🚀
+- [#551](https://github.com/opentable/oc/pull/551) Update lint-staged to the latest version 🚀
+- [#549](https://github.com/opentable/oc/pull/549) Update webpack to the latest version 🚀
+- [#548](https://github.com/opentable/oc/pull/548) Update aws-sdk to the latest version 🚀
+- [#547](https://github.com/opentable/oc/pull/547) Update fs-extra to the latest version 🚀
+- [#501](https://github.com/opentable/oc/pull/501) Update dependencies to enable Greenkeeper 🌴
+- [#546](https://github.com/opentable/oc/pull/546) Fixing spacing when initializing component package
+
 ### v0.39.1
 - [#545](https://github.com/opentable/oc/pull/545) Added a mime type for html files.
 
