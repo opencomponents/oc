@@ -13,7 +13,7 @@ Then, **you publish it** to the OpenComponents registry and you wait a couple of
 
 Now, every web app in your private or public network can **consume the component** via its own HTTP endpoint during server-side rendering or just in the browser.
 
-We have been using for more than two years in production at OpenTable, for shared components, third party widgets, e-mails and more. [Learn more about OC](http://tech.opentable.co.uk/blog/2016/04/27/opencomponents-microservices-in-the-front-end-world/).
+We have been using it for more than two years in production at OpenTable, for shared components, third party widgets, e-mails and more. [Learn more about OC](http://tech.opentable.co.uk/blog/2016/04/27/opencomponents-microservices-in-the-front-end-world/).
 
 [![npm version](https://img.shields.io/npm/v/oc.svg)](https://npmjs.org/package/oc)
 [![node version](https://img.shields.io/node/v/oc.svg)](https://npmjs.org/package/oc)
