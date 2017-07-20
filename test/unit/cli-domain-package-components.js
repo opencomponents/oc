@@ -7,9 +7,9 @@ const sinon = require('sinon');
 const _ = require('lodash');
 
 describe('cli : domain : package-components', () => {
-  const initialise = function() {
+  const initialise = function(componentName) {
     const component = {
-      name: 'helloworld',
+      name: componentName || 'helloworld',
       oc: {
         files: {
           static: ['css'],
@@ -45,7 +45,6 @@ describe('cli : domain : package-components', () => {
           if (options.componentPath === '') {
             callback(new Error('Ouch'));
           }
-
         }
       };
     };
@@ -81,7 +80,7 @@ describe('cli : domain : package-components', () => {
       });
     });
 
-    describe('when component is not valid', () => {
+    describe('when component parameters are not valid', () => {
       const PackageComponents = initialise().PackageComponents;
       it('should add version to package.json file', done => {
         PackageComponents()(
@@ -91,6 +90,23 @@ describe('cli : domain : package-components', () => {
           },
           (err, info) => {
             expect(err.message).to.equal('Ouch');
+            expect(info).to.be.undefined;
+            done();
+          }
+        );
+      });
+    });
+
+    describe('when component name is not valid', () => {
+      const PackageComponents = initialise('h@lloworld').PackageComponents;
+      it('should add version to package.json file', done => {
+        PackageComponents()(
+          {
+            componentPath: '',
+            minify: true
+          },
+          (err, info) => {
+            expect(err.message).to.equal('name not valid');
             expect(info).to.be.undefined;
             done();
           }
