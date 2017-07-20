@@ -12,17 +12,16 @@ function isValidTemplate(template, options) {
     return false;
   }
 
+  let api = ['getInfo', 'getCompiledTemplate', 'render'];
+
   if (options.compiler === true) {
-    return typeof template.compile === 'function';
+    api = api.concat('compile');
   }
 
-  return ['getInfo', 'getCompiledTemplate', 'render'].every(
-    method => typeof template[method] === 'function'
-  );
+  return api.every(method => typeof template[method] === 'function');
 }
 
-
-const getOcTemplate = (path) => {
+const getOcTemplate = path => {
   if (require.cache && !!require.cache[path]) {
     delete require.cache[path];
   }
