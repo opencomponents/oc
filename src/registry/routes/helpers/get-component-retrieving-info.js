@@ -13,15 +13,11 @@ module.exports = function(options) {
   const start = process.hrtime();
 
   return {
-    extend: function(obj) {
-      eventData = _.extend(eventData, obj);
-    },
-    getData: function() {
-      const delta = process.hrtime(start),
-        nanosec = delta[0] * 1e9 + delta[1];
-
+    extend: obj => (eventData = _.extend(eventData, obj)),
+    getData: () => {
+      const delta = process.hrtime(start);
+      const nanosec = delta[0] * 1e9 + delta[1];
       eventData.duration = nanosec / 1e3;
-
       return eventData;
     }
   };

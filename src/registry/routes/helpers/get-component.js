@@ -44,6 +44,8 @@ module.exports = function(conf, repository) {
         retrievingInfo.extend(result.response);
       }
 
+      retrievingInfo.extend({ status: result.status });
+
       _.extend(result.response, {
         name: options.name,
         requestVersion: options.version || ''
