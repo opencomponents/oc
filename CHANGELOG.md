@@ -1,6 +1,9 @@
 ## Change Log
 
-### v0.39.2
+### v0.39.3
+- [#557](https://github.com/opentable/oc/pull/557) [OC-75] Add status to the component-retrieved event log
+- [#555](https://github.com/opentable/oc/pull/555) Update aws-sdk to the latest version 🚀
+- [#554](https://github.com/opentable/oc/pull/554) Update aws-sdk to the latest version 🚀
 - [#552](https://github.com/opentable/oc/pull/552) remove .Only
 - [#550](https://github.com/opentable/oc/pull/550) Update uglify-js to the latest version 🚀
 - [#551](https://github.com/opentable/oc/pull/551) Update lint-staged to the latest version 🚀
@@ -9,16 +12,10 @@
 - [#547](https://github.com/opentable/oc/pull/547) Update fs-extra to the latest version 🚀
 - [#501](https://github.com/opentable/oc/pull/501) Update dependencies to enable Greenkeeper 🌴
 - [#546](https://github.com/opentable/oc/pull/546) Fixing spacing when initializing component package
-
-### v0.39.1
 - [#545](https://github.com/opentable/oc/pull/545) Added a mime type for html files.
-
-### v0.39.0
 - [#542](https://github.com/opentable/oc/pull/542) Drop node4 tests
 - [#541](https://github.com/opentable/oc/pull/541) Housekeeping
 - [#538](https://github.com/opentable/oc/pull/538) [OC-69] Remove node client
-
-### v0.38.8
 - [#537](https://github.com/opentable/oc/pull/537) No postinstall build
 
 ### v0.38.7
