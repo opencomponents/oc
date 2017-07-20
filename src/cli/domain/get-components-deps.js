@@ -26,7 +26,7 @@ module.exports = function(components) {
     if (!deps.templates[type] && !legacyTemplates[type]) {
       if (!devDependencies[templateCompiler]) {
         throw new Error(
-          format(settings.errors.cli.TEMPLATE_DEP_MISSING, componentPath, type)
+          format(settings.errors.cli.TEMPLATE_DEP_MISSING, type, componentPath)
         );
       }
       deps.templates[type] = true;
