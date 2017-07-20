@@ -11,20 +11,22 @@ describe('utils : require-template', () => {
 
   describe('valid', () => {
     const scenarios = [
-      { name: 'oc-template-handlebars' },
+      { name: 'oc-template-handlebars', compiler: true },
+      { name: 'oc-template-jade', compiler: false },
       { name: 'oc-template-jade' }
     ];
 
     scenarios.forEach(scenario => {
       it(scenario.name, () => {
-        const template = requireTemplate(scenario.name, { compiler: true });
+        const template = requireTemplate(scenario.name, {
+          compiler: scenario.compiler
+        });
+        let api = ['getCompiledTemplate', 'getInfo', 'render'];
+        if (scenario.compiler) {
+          api = api.concat('compile');
+        }
 
-        [
-          'compile',
-          'getCompiledTemplate',
-          'getInfo',
-          'render'
-        ].forEach(method => {
+        api.forEach(method => {
           expect(template).to.have.property(method);
         });
       });
@@ -36,11 +38,7 @@ describe('utils : require-template', () => {
 
     scenarios.forEach(scenario => {
       it(scenario.name, () => {
-        const sut = () => {
-          requireTemplate(scenario.name);
-        };
-
-        expect(sut).to.throw();
+        expect(() => requireTemplate(scenario.name)).to.throw();
       });
     });
   });
