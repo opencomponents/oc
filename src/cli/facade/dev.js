@@ -121,9 +121,14 @@ module.exports = function(dependencies) {
 
     const loadDependencies = function(components, cb) {
       logger.warn(strings.messages.cli.CHECKING_DEPENDENCIES, true);
+      let dependencies;
+      try {
+        dependencies = getComponentsDependencies(components);
+      } catch (err) {
+        return logger.err(err);
+      }
 
-      const dependencies = getComponentsDependencies(components),
-        missing = getMissingDeps(dependencies.withVersions, components);
+      const missing = getMissingDeps(dependencies.withVersions, components);
 
       if (_.isEmpty(missing)) {
         logger.ok('OK');
