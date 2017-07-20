@@ -75,12 +75,16 @@ describe('cli : domain : get-components-deps', () => {
 
       readJsonStub.onFirstCall().returns({
         oc: baseOcFragment('oc-template-react'),
-        devDependencies: { 'oc-template-react-compiler': '1.2.3' }
+        devDependencies: {
+          'oc-template-react-compiler': '1.2.3',
+          prettier: '1.5.3'
+        }
       });
 
       readJsonStub.onSecondCall().returns({
         oc: baseOcFragment('handlebars'),
-        dependencies: { underscore: '5.6.7' }
+        dependencies: { underscore: '5.6.7' },
+        devDependencies: { prettier: '1.5.3' }
       });
 
       execute(readJsonStub);
@@ -121,10 +125,7 @@ describe('cli : domain : get-components-deps', () => {
 
     it('should error', () => {
       expect(error.toString()).to.include(
-        'Template dependency missing. To fix it run:\n\ncd'
-      );
-      expect(error.toString()).to.include(
-        '&& npm install --save-dev oc-template-handlebars-compiler\n\n'
+        'Error: Template dependency missing. To fix it run:\n\nnpm install --save-dev oc-template-handlebars-compiler --prefix /path/to/components/component1\n\n'
       );
     });
   });
