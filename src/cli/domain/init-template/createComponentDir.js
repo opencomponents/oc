@@ -3,6 +3,7 @@
 const Spinner = require('cli-spinner').Spinner;
 const fs = require('fs-extra');
 const colors = require('colors/safe');
+const strings = require('../../../resources');
 
 module.exports = function(config) {
   const logger = config.logger;
@@ -13,5 +14,5 @@ module.exports = function(config) {
   creating.start();
   fs.ensureDirSync(componentPath);
   creating.stop(true);
-  logger.log(`${colors.green('✔')} Created directory "${componentName}"`);
+  logger.log(strings.messages.cli.BlUEPRINT_CREATED_DIR(componentName));
 };

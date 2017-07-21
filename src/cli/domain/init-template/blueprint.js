@@ -4,22 +4,20 @@ const fs = require('fs-extra');
 const path = require('path');
 const colors = require('colors/safe');
 const Spinner = require('cli-spinner').Spinner;
+const strings = require('../../../resources');
 
 module.exports = function blueprint(config) {
-  const componentName =  config.componentName;
+  const componentName = config.componentName;
   const componentPath = config.componentPath;
   const templatePath = config.templatePath;
   const callback = config.callback;
   const logger = config.logger;
 
   try {
-    const bluprinting = new Spinner(`Blueprinting component...`);
+    const bluprinting = new Spinner(strings.messages.cli.BlUEPRINT_START);
     bluprinting.start();
 
-    const baseComponentPath = path.join(
-      templatePath,
-      'blueprint'
-    );
+    const baseComponentPath = path.join(templatePath, 'blueprint');
 
     const baseComponentFiles = path.join(baseComponentPath, 'src');
     fs.copySync(baseComponentFiles, componentPath);
@@ -34,9 +32,13 @@ module.exports = function blueprint(config) {
 
     fs.writeJsonSync(componentPath + '/package.json', packageContent);
     bluprinting.stop();
-    logger.log(`${colors.green('✔')} Files created at ${componentPath}`);
+    logger.log(strings.messages.cli.BlUEPRINT_SUCCESS(componentPath));
     return callback(null, { ok: true });
   } catch (error) {
-    return callback(`Blueprinting failed. Please open an issue on ${templatePackage.bugs.url} with the following information: ${error}`);
+    const url =
+      templatePackage.bugs && templatePackage.bugs.url
+        ? templatePackage.bugs.url
+        : `the ${templatePackage.name} repo`;
+    return callback(string.cli.error.BlUEPRINT_ERROR(url, error));
   }
 };

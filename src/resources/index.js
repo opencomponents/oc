@@ -1,4 +1,5 @@
 'use strict';
+const colors = require('colors/safe');
 
 module.exports = {
   commands: {
@@ -121,7 +122,9 @@ module.exports = {
       TEMPLATE_TYPE_NOT_VALID:
         'the template is not valid. Allowed values are handlebars and jade',
       TEMPLATE_DEP_MISSING:
-        'Template dependency missing. To fix it run:\n\nnpm install --save-dev {0}-compiler --prefix {1}\n\n'
+        'Template dependency missing. To fix it run:\n\nnpm install --save-dev {0}-compiler --prefix {1}\n\n',
+      BlUEPRINT_ERROR: (url, error) =>
+        `Blueprinting failed. Please open an issue on ${url} with the following information: ${error}`
     },
     generic: 'An error occurred: {0}',
     s3: {
@@ -135,6 +138,11 @@ module.exports = {
   },
   messages: {
     cli: {
+      BlUEPRINT_START: 'Blueprinting component...',
+      BlUEPRINT_SUCCESS: componentPath =>
+        `${colors.green('✔')} Files created at ${componentPath}`,
+      BlUEPRINT_CREATED_DIR: componentName =>
+        `${colors.green('✔')} Created directory "${componentName}"`,
       CHANGES_DETECTED: 'Changes detected on file: {0}',
       CHECKING_DEPENDENCIES: 'Ensuring dependencies are loaded...',
       COMPONENT_INITED: 'Component "{0}" created',
