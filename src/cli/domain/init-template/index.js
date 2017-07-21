@@ -7,9 +7,10 @@ const createComponentDir = require('./createComponentDir');
 const initPackage = require('./initPackage');
 const utils = require('./utils');
 
-module.exports = function (componentName, templateType, options, callback) {
+module.exports = function(options, callback) {
+  const { componentName, templateType } = options;
   const local = /^\.+\/|^\//.test(templateType);
-  const packageName=  utils.getPackageName(templateType);
+  const packageName = utils.getPackageName(templateType);
   const templatePath = path.resolve('node_modules', packageName);
   const config = {
     cli: options.cli || 'npm',

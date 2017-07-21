@@ -12,8 +12,8 @@ describe('cli : domain : init-template', () => {
         './installTemplate': sinon.stub().returnsArg(1),
         './createComponentDir': sinon.spy(),
         './initPackage': sinon.spy(),
-        './utils': { getPackageName : sinon.stub().returnsArg(0) },
-        'path': {
+        './utils': { getPackageName: sinon.stub().returnsArg(0) },
+        path: {
           join: sinon.stub().returnsArg(1),
           resolve: sinon.stub().returnsArg(1)
         }
@@ -25,26 +25,40 @@ describe('cli : domain : init-template', () => {
         }
       };
 
-      const initTemplate = injectr('../../src/cli/domain/init-template/index.js', deps, globals);
+      const initTemplate = injectr(
+        '../../src/cli/domain/init-template/index.js',
+        deps,
+        globals
+      );
 
       const options = {
+        componentName: 'myJadeComponent',
+        templateType: 'oc-template-jade',
         logger: {
           log: sinon.spy()
         }
       };
 
-      const result = initTemplate('myJadeComponent', 'oc-template-jade', options, () => {});
+      const result = initTemplate(options, () => {});
 
       it('should correctly call createComponentDir', () => {
         expect(deps['./createComponentDir'].calledOnce).to.equal(true);
-        expect(deps['./createComponentDir'].args[0][0].componentPath).to.equal('myJadeComponent');
-        expect(deps['./createComponentDir'].args[0][0].packageName).to.equal('oc-template-jade');
+        expect(deps['./createComponentDir'].args[0][0].componentPath).to.equal(
+          'myJadeComponent'
+        );
+        expect(deps['./createComponentDir'].args[0][0].packageName).to.equal(
+          'oc-template-jade'
+        );
         expect(deps['./createComponentDir'].args[0][0].cli).to.equal('npm');
-        expect(deps['./createComponentDir'].args[0][0].logger.log).to.equal(options.logger.log);
+        expect(deps['./createComponentDir'].args[0][0].logger.log).to.equal(
+          options.logger.log
+        );
       });
       it('should correctly call blueprint', () => {
         expect(deps['./blueprint'].calledOnce).to.equal(true);
-        expect(deps['./blueprint'].args[0][0].templatePath).to.equal('oc-template-jade');
+        expect(deps['./blueprint'].args[0][0].templatePath).to.equal(
+          'oc-template-jade'
+        );
       });
       it('should not call initPackage', () => {
         expect(deps['./initPackage'].notCalled).to.equal(true);
@@ -63,8 +77,8 @@ describe('cli : domain : init-template', () => {
         './installTemplate': sinon.stub().returnsArg(1),
         './createComponentDir': sinon.spy(),
         './initPackage': sinon.spy(),
-        './utils': { getPackageName : sinon.stub().returnsArg(0) },
-        'path': {
+        './utils': { getPackageName: sinon.stub().returnsArg(0) },
+        path: {
           join: sinon.stub().returnsArg(1),
           resolve: sinon.stub().returnsArg(1)
         }
@@ -77,36 +91,60 @@ describe('cli : domain : init-template', () => {
         require: sinon.stub().returns(true)
       };
 
-      const initTemplate = injectr('../../src/cli/domain/init-template/index.js', deps, globals);
+      const initTemplate = injectr(
+        '../../src/cli/domain/init-template/index.js',
+        deps,
+        globals
+      );
 
       const options = {
+        componentName: 'supaComp',
+        templateType: 'oc-template-hispter',
         logger: {
           log: sinon.spy()
         }
       };
 
-      const result = initTemplate('supaComp', 'oc-template-hispter', options, () => {});
+      const result = initTemplate(options, () => {});
 
       it('should correctly call createComponentDir', () => {
         expect(deps['./createComponentDir'].calledOnce).to.equal(true);
-        expect(deps['./createComponentDir'].args[0][0].componentPath).to.equal('supaComp');
-        expect(deps['./createComponentDir'].args[0][0].packageName).to.equal('oc-template-hispter');
+        expect(deps['./createComponentDir'].args[0][0].componentPath).to.equal(
+          'supaComp'
+        );
+        expect(deps['./createComponentDir'].args[0][0].packageName).to.equal(
+          'oc-template-hispter'
+        );
         expect(deps['./createComponentDir'].args[0][0].cli).to.equal('npm');
-        expect(deps['./createComponentDir'].args[0][0].logger.log).to.equal(options.logger.log);
+        expect(deps['./createComponentDir'].args[0][0].logger.log).to.equal(
+          options.logger.log
+        );
       });
       it('should correctly call initPackage', () => {
         expect(deps['./initPackage'].calledOnce).to.equal(true);
-        expect(deps['./initPackage'].args[0][0].componentPath).to.equal('supaComp');
-        expect(deps['./initPackage'].args[0][0].packageName).to.equal('oc-template-hispter');
+        expect(deps['./initPackage'].args[0][0].componentPath).to.equal(
+          'supaComp'
+        );
+        expect(deps['./initPackage'].args[0][0].packageName).to.equal(
+          'oc-template-hispter'
+        );
         expect(deps['./initPackage'].args[0][0].cli).to.equal('npm');
-        expect(deps['./initPackage'].args[0][0].logger.log).to.equal(options.logger.log);
+        expect(deps['./initPackage'].args[0][0].logger.log).to.equal(
+          options.logger.log
+        );
       });
       it('should correctly call installTemplate', () => {
         expect(deps['./installTemplate'].called).to.equal(true);
-        expect(deps['./installTemplate'].args[0][0].componentPath).to.equal('supaComp');
-        expect(deps['./installTemplate'].args[0][0].packageName).to.equal('oc-template-hispter');
+        expect(deps['./installTemplate'].args[0][0].componentPath).to.equal(
+          'supaComp'
+        );
+        expect(deps['./installTemplate'].args[0][0].packageName).to.equal(
+          'oc-template-hispter'
+        );
         expect(deps['./installTemplate'].args[0][0].cli).to.equal('npm');
-        expect(deps['./installTemplate'].args[0][0].logger.log).to.equal(options.logger.log);
+        expect(deps['./installTemplate'].args[0][0].logger.log).to.equal(
+          options.logger.log
+        );
       });
       it('should not directly call bluprint', () => {
         expect(deps['./blueprint'].notCalled).to.equal(true);

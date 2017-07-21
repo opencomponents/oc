@@ -35,14 +35,14 @@ module.exports = function() {
     },
     getComponentsByDir: getComponentsByDir(),
     getLocalNpmModules: getLocalNpmModules(),
-    init: function(componentName, templateType, options, callback){
-
-      if(!validator.validateComponentName(componentName)){
+    init: function(options, callback) {
+      const { componentName, templateType } = options;
+      if (!validator.validateComponentName(componentName)) {
         return callback('name not valid');
       }
 
       // LEGACY TEMPLATES
-      if(validator.validateTemplateType(templateType)){
+      if (validator.validateTemplateType(templateType)) {
         try {
           const pathDir = '../../components/base-component-' + templateType,
             baseComponentDir = path.resolve(__dirname, pathDir),
@@ -60,12 +60,12 @@ module.exports = function() {
           fs.outputJsonSync(componentPath, component);
 
           return callback(null, { ok: true });
-        } catch(e){
+        } catch (e) {
           return callback(e);
         }
       }
       try {
-        initTemplate(componentName, templateType, options, callback);
+        initTemplate(options, callback);
       } catch (e) {
         return callback('template type not valid');
       }
