@@ -16,16 +16,21 @@ module.exports = function(components) {
     handlebars: true
   };
 
-  components.forEach(c => {
-    const pkg = fs.readJsonSync(path.join(c, 'package.json'));
+  components.forEach(componentPath => {
+    const pkg = fs.readJsonSync(path.join(componentPath, 'package.json'));
     const type = pkg.oc.files.template.type;
     const dependencies = pkg.dependencies || {};
+    const devDependencies = pkg.devDependencies || {};
+    const templateCompiler = type + '-compiler';
 
     if (!deps.templates[type] && !legacyTemplates[type]) {
-      if (!dependencies[type]) {
-        throw new Error(format(settings.errors.cli.TEMPLATE_DEP_MISSING, type));
+      if (!devDependencies[templateCompiler]) {
+        throw new Error(
+          format(settings.errors.cli.TEMPLATE_DEP_MISSING, type, componentPath)
+        );
       }
       deps.templates[type] = true;
+      dependencies[templateCompiler] = devDependencies[templateCompiler];
     }
 
     _.keys(dependencies).forEach(name => {

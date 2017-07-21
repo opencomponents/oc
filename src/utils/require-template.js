@@ -7,25 +7,40 @@ const templateNotFound = 'Error requiring oc-template: "{0}" not found';
 const templateNotValid =
   'Error requiring oc-template: "{0}" is not a valid oc-template';
 
-function isValidTemplate(template) {
+function isValidTemplate(template, options) {
   if (typeof template !== 'object') {
     return false;
   }
 
-  return ['getInfo', 'getCompiledTemplate', 'compile', 'render'].every(
-    method => template[method]
-  );
+  let api = ['getInfo', 'getCompiledTemplate', 'render'];
+
+  if (options.compiler === true) {
+    api = api.concat('compile');
+  }
+
+  return api.every(method => typeof template[method] === 'function');
 }
 
-const getOcTemplate = (path) => {
+const getOcTemplate = path => {
   if (require.cache && !!require.cache[path]) {
     delete require.cache[path];
   }
   return require(path);
 };
 
-module.exports = function (template) {
+module.exports = function(template, options) {
+  const requireOptions = options || {};
   let ocTemplate;
+  if (template === 'jade') {
+    template = 'oc-template-jade';
+  }
+  if (template === 'handlebars') {
+    template = 'oc-template-handlebars';
+  }
+  if (requireOptions.compiler === true) {
+    template = template + '-compiler';
+  }
+
   const localTemplate = path.join(
     __dirname,
     '../../',
@@ -48,7 +63,7 @@ module.exports = function (template) {
     }
   }
 
-  if (!isValidTemplate(ocTemplate)) {
+  if (!isValidTemplate(ocTemplate, requireOptions)) {
     throw new Error(format(templateNotValid, template));
   }
 

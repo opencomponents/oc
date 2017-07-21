@@ -7,145 +7,110 @@ const sinon = require('sinon');
 const _ = require('lodash');
 
 describe('cli : domain : package-components', () => {
-
-  let packageStaticFilesStub;
-
-  const initialise = function(){
+  const initialise = function(componentName) {
+    const component = {
+      name: componentName || 'helloworld',
+      oc: {
+        files: {
+          static: ['css'],
+          template: {
+            type: 'jade',
+            src: 'template.jade'
+          }
+        }
+      },
+      dependencies: {}
+    };
 
     const fsMock = {
       existsSync: sinon.stub(),
-      lstatSync: sinon.stub(),
-      mkdirSync: sinon.spy(),
-      readdirSync: sinon.stub(),
-      readFileSync: sinon.stub(),
-      readJson: sinon.stub(),
-      readJsonSync: sinon.stub(),
-      writeFile: sinon.stub().yields(null, 'ok'),
-      writeJson: sinon.stub().yields(null, 'ok')
+      emptyDirSync: sinon.stub(),
+      readJsonSync: sinon.stub()
     };
+
+    fsMock.existsSync.returns(true);
+    fsMock.readJsonSync.onCall(0).returns(component);
+    fsMock.readJsonSync.onCall(1).returns({ version: '1.2.3' });
 
     const pathMock = {
-      extname: path.extname,
-      join: path.join,
-      resolve: function(){
-        return _.toArray(arguments).join('/');
-      }
+      join: () => ''
     };
 
-    packageStaticFilesStub = sinon.stub().yields(null, 'ok');
+    const requireTemplateMock = function() {
+      return {
+        compile: function(options, callback) {
+          if (options.componentPath === '.') {
+            callback(null, 'ok');
+          }
+          if (options.componentPath === '') {
+            callback(new Error('Ouch'));
+          }
+        }
+      };
+    };
 
-    const PackageComponents = injectr('../../src/cli/domain/package-components.js', {
-      'fs-extra': fsMock,
-      path: pathMock,
-      './package-static-files': packageStaticFilesStub,
-      './package-template': sinon.stub().yields(null, { type: 'jade', src: 'template.js', hashKey: '123456'})
-    }, { __dirname: ''});
+    const PackageComponents = injectr(
+      '../../src/cli/domain/package-components.js',
+      {
+        'fs-extra': fsMock,
+        path: pathMock,
+        '../../utils/require-template': requireTemplateMock
+      },
+      { __dirname: '' }
+    );
 
-    const packageComponents = new PackageComponents();
-
-    return { packageComponents: packageComponents, fs: fsMock };
-  };
-
-  const executePackaging = function(packageComponents, minify, callback){
-    return packageComponents({
-      componentPath: '.',
-      minify: minify,
-      verbose: false
-    }, callback);
+    return { PackageComponents: PackageComponents };
   };
 
   describe('when packaging', () => {
-
     describe('when component is valid', () => {
-
-      describe('when minify=true', () => {
-
-        let component;
-        beforeEach((done) => {
-
-          const data = initialise();
-
-          component = {
-            name: 'helloworld',
-            oc: {
-              files: {
-                static: ['css'],
-                template: {
-                  type: 'jade',
-                  src: 'template.jade'
-                }
-              }
-            },
-            dependencies: {}
-          };
-
-          data.fs.existsSync.returns(true);
-          data.fs.readJsonSync.onCall(0).returns(component);
-          data.fs.readJsonSync.onCall(1).returns({ version: '1.2.3' });
-
-          executePackaging(data.packageComponents, true, done);
-        });
-
-        it('should add version to package.json file', () => {
-          expect(component.oc.version).to.eql('1.2.3');
-        });
-
-        it('should mark the package.json as a packaged', () => {
-          expect(component.oc.packaged).to.eql(true);
-        });
-
-        it('should save hash for template in package.json', () => {
-          expect(component.oc.files.template.hashKey).not.be.empty;
-        });
-
-        it('should minify static resources', () => {
-          expect(packageStaticFilesStub.args[0][0].minify).to.eql(true);
-        });
+      const PackageComponents = initialise().PackageComponents;
+      it('should correctly invoke the callback when template succeed packaging', done => {
+        PackageComponents()(
+          {
+            componentPath: '.',
+            minify: true
+          },
+          (err, info) => {
+            expect(err).to.be.null;
+            expect(info).to.equal('ok');
+            done();
+          }
+        );
       });
+    });
 
-      describe('when minify=false', () => {
+    describe('when component parameters are not valid', () => {
+      const PackageComponents = initialise().PackageComponents;
+      it('should add version to package.json file', done => {
+        PackageComponents()(
+          {
+            componentPath: '',
+            minify: true
+          },
+          (err, info) => {
+            expect(err.message).to.equal('Ouch');
+            expect(info).to.be.undefined;
+            done();
+          }
+        );
+      });
+    });
 
-        let component;
-        beforeEach((done) => {
-
-          const data = initialise();
-
-          component = {
-            name: 'helloworld',
-            oc: {
-              files: {
-                static: ['css'],
-                template: {
-                  type: 'jade',
-                  src: 'template.jade'
-                }
-              }
-            },
-            dependencies: {}
-          };
-
-          data.fs.existsSync.returns(true);
-          data.fs.readJsonSync.onCall(0).returns(component);
-          data.fs.readJsonSync.onCall(1).returns({ version: '1.2.3' });
-
-          executePackaging(data.packageComponents, false, done);
-        });
-
-        it('should add version to package.json file', () => {
-          expect(component.oc.version).to.eql('1.2.3');
-        });
-
-        it('should mark the package.json as a packaged', () => {
-          expect(component.oc.packaged).to.eql(true);
-        });
-
-        it('should save hash for template in package.json', () => {
-          expect(component.oc.files.template.hashKey).not.be.empty;
-        });
-
-        it('should minify static resources', () => {
-          expect(packageStaticFilesStub.args[0][0].minify).to.eql(false);
-        });
+    describe('when component name is not valid', () => {
+      const PackageComponents = initialise('h@lloworld').PackageComponents;
+      it('should add version to package.json file', done => {
+        PackageComponents()(
+          {
+            componentPath: '',
+            minify: true
+          },
+          (err, info) => {
+            expect(err.message).to.equal('name not valid');
+            expect(info).to.be.undefined;
+            done();
+          }
+        );
       });
     });
   });
