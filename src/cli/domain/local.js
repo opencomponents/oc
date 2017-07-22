@@ -11,6 +11,7 @@ const packageComponents = require('./package-components');
 const mock = require('./mock');
 const validator = require('../../registry/domain/validators');
 const initTemplate = require('./init-template');
+const strings = require('../../resources');
 
 module.exports = function() {
   return _.extend(this, {
@@ -36,36 +37,27 @@ module.exports = function() {
     getComponentsByDir: getComponentsByDir(),
     getLocalNpmModules: getLocalNpmModules(),
     init: function(options, callback) {
-      const { componentName, templateType } = options;
+      let { componentName, templateType, logger } = options;
       if (!validator.validateComponentName(componentName)) {
         return callback('name not valid');
       }
 
-      // LEGACY TEMPLATES
+      // LEGACY TEMPLATES WARNING
       if (validator.validateTemplateType(templateType)) {
-        try {
-          const pathDir = '../../components/base-component-' + templateType,
-            baseComponentDir = path.resolve(__dirname, pathDir),
-            npmIgnorePath = path.resolve(__dirname, pathDir + '/.npmignore');
-
-          fs.ensureDirSync(componentName);
-          fs.copySync(baseComponentDir, componentName);
-          fs.copySync(npmIgnorePath, componentName + '/.gitignore');
-
-          const componentPath = path.resolve(componentName, 'package.json'),
-            component = _.extend(fs.readJsonSync(componentPath), {
-              name: componentName
-            });
-
-          fs.outputJsonSync(componentPath, component);
-
-          return callback(null, { ok: true });
-        } catch (e) {
-          return callback(e);
-        }
+        const legacyName = templateType;
+        templateType = legacyName.replace(
+          legacyName,
+          `oc-template-${legacyName}`
+        );
+        logger.warn(
+          strings.messages.cli.legacyTemplateDeprecationWarning(
+            legacyName,
+            templateType
+          )
+        );
       }
       try {
-        initTemplate(options, callback);
+        initTemplate({ componentName, templateType, logger }, callback);
       } catch (e) {
         return callback('template type not valid');
       }
