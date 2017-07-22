@@ -28,7 +28,9 @@ module.exports = function scaffold(options) {
     const componentPackage = require(componentPath + '/package.json');
     componentPackage.name = componentName;
     componentPackage.devDependencies[compiler] = compilerPackage.version;
-    fs.writeJsonSync(componentPath + '/package.json', componentPackage);
+    fs.writeJsonSync(componentPath + '/package.json', componentPackage, {
+      spaces: 2
+    });
 
     scaffold.stop();
     // logger.log(strings.messages.cli.scaffoldSuccess(componentPath));
