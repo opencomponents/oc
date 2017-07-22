@@ -1,38 +1,54 @@
 'use strict';
 
 const path = require('path');
-const blueprint = require('./blueprint');
-const installTemplate = require('./installTemplate');
-const createComponentDir = require('./createComponentDir');
-const initPackage = require('./initPackage');
+const scaffold = require('./scaffold');
+const installTemplate = require('./install-template');
+const createComponentDir = require('./create-component-dir');
+const initPackage = require('./init-package');
 const utils = require('./utils');
 
 module.exports = function(options, callback) {
-  const { componentName, templateType } = options;
-  const local = /^\.+\/|^\//.test(templateType);
-  const packageName = utils.getPackageName(templateType);
-  const templatePath = path.resolve('node_modules', packageName);
-  const config = {
-    cli: options.cli || 'npm',
+  const {
     componentName,
-    componentPath: path.join(process.cwd(), componentName),
-    packageName,
-    templatePath,
     templateType,
-    logger: options.logger || console,
-    callback,
-    local
-  };
+    logger = console,
+    cli = 'npm'
+  } = options;
+  const componentPath = path.join(process.cwd(), componentName);
+  const local = /^\.+\/|^\//.test(templateType);
+  const template = utils.getPackageName(templateType).replace('-compiler', '');
+  const compiler = `${template}-compiler`;
 
-  createComponentDir(config);
+  createComponentDir({ logger, componentName, componentPath });
 
   try {
-    // If template available in the dev registry, generate boilerplate out of its blueprint
-    require(templatePath);
-    return blueprint(config);
-  } catch (e) {
-    // Otherwise, first install the template then generate boilerplate files.
-    initPackage(config);
-    return installTemplate(config, blueprint);
+    // If the required compiler is already installed locally no need to install it from NPM again
+    const compilerPath = path.join(process.cwd(), 'node_modules', compiler);
+    require(compilerPath);
+
+    return scaffold({
+      compiler,
+      componentName,
+      componentPath,
+      compilerPath,
+      logger,
+      callback
+    });
+  } catch (error) {
+    initPackage({ cli, componentPath });
+    return installTemplate(
+      {
+        componentName,
+        templateType,
+        compiler,
+        cli,
+        componentPath,
+        local,
+        template,
+        logger,
+        callback
+      },
+      scaffold
+    );
   }
 };

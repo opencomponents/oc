@@ -23,7 +23,7 @@ const deps = {
 };
 
 const createComponentDir = injectr(
-  '../../src/cli/domain/init-template/createComponentDir.js',
+  '../../src/cli/domain/init-template/create-component-dir.js',
   deps,
   {}
 );
@@ -49,14 +49,7 @@ describe('cli : domain : init-template createComponentDir', () => {
     });
     it('should correctly invoke ensureDirSync', () => {
       expect(
-        deps['fs-extra'].ensureDirSync.calledWith(config.componentPath)
-      ).to.equal(true);
-    });
-    it('should correctly log to the provided logger', () => {
-      expect(
-        config.logger.log.calledWith(
-          `\u001b[32m✔\u001b[39m Created directory "${config.componentName}"`
-        )
+        deps['fs-extra'].ensureDirSync.calledWith('path/to/component')
       ).to.equal(true);
     });
   });

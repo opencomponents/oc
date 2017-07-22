@@ -18,8 +18,11 @@ const deps = {
   }
 };
 
-const installTemplate = injectr('../../src/cli/domain/init-template/installTemplate.js', deps, {});
-
+const installTemplate = injectr(
+  '../../src/cli/domain/init-template/install-template.js',
+  deps,
+  {}
+);
 describe('cli : domain : init-template installTemplate', () => {
   describe('when invoked', () => {
     const config = {
@@ -27,7 +30,8 @@ describe('cli : domain : init-template installTemplate', () => {
       cli: 'npm',
       componentPath: 'path/to/component',
       local: false,
-      packageName: 'myComponent',
+      compiler: 'oc-template-jade-compiler',
+      componentName: 'myComponent',
       logger: {
         log: sinon.spy()
       }
@@ -38,12 +42,17 @@ describe('cli : domain : init-template installTemplate', () => {
 
     it('should spawn the right process', () => {
       expect(deps['cross-spawn'].args[0][0]).to.equal('npm');
-      expect(deps['cross-spawn'].args[0][1]).to.deep.equal(['install', '--save', '--save-exact', 'oc-template-jade']);
-      expect(deps['cross-spawn'].args[0][2].stdio).to.equal("inherit");
-      expect(deps['cross-spawn'].args[0][2].silent).to.equal(true);
+      expect(deps['cross-spawn'].args[0][1]).to.deep.equal([
+        'install',
+        '--save-dev',
+        '--save-exact',
+        'oc-template-jade-compiler'
+      ]);
     });
     it('should correctly start the spinner', () => {
-      expect(deps['cli-spinner'].Spinner.args[0][0]).to.equal('Installing myComponent from npm...');
+      expect(deps['cli-spinner'].Spinner.args[0][0]).to.equal(
+        'Installing oc-template-jade-compiler from npm...'
+      );
     });
     it('should correctly setup on error and on close listeners', () => {
       expect(proc.args[0][0]).to.equal('error');

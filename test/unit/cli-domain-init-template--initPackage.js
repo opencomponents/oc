@@ -4,30 +4,33 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 const injectr = require('injectr');
 
-
 const deps = {
   'cross-spawn': {
     sync: sinon.spy()
   }
 };
 
-const initPackage = injectr('../../src/cli/domain/init-template/initPackage.js', deps, {});
+const initPackage = injectr(
+  '../../src/cli/domain/init-template/init-package.js',
+  deps,
+  {}
+);
 
 describe('cli : domain : init-template initPackage', () => {
   describe('when invoked', () => {
-    const config = {
+    const options = {
       componentPath: 'path/to/component',
       cli: 'npm'
     };
 
-    initPackage(config);
+    initPackage(options);
 
     it('should spawn the right process', () => {
-      expect(deps['cross-spawn'].sync.calledWith(
-        'npm',
-        ['init', "--yes"],
-        {"cwd": "path/to/component", "silent": true}
-      )).to.equal(true);
+      expect(
+        deps['cross-spawn'].sync.calledWith('npm', ['init', '--yes'], {
+          cwd: 'path/to/component'
+        })
+      ).to.equal(true);
     });
   });
 });
