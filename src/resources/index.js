@@ -123,8 +123,8 @@ module.exports = {
         'the template is not valid. Allowed values are handlebars and jade',
       TEMPLATE_DEP_MISSING:
         'Template dependency missing. To fix it run:\n\nnpm install --save-dev {0}-compiler --prefix {1}\n\n',
-      BlUEPRINT_ERROR: (url, error) =>
-        `Blueprinting failed. Please open an issue on ${url} with the following information: ${error}`
+      scaffoldError: (url, error) =>
+        `Scaffolding failed. Please open an issue on ${url} with the following information: ${error}`
     },
     generic: 'An error occurred: {0}',
     s3: {
@@ -138,14 +138,24 @@ module.exports = {
   },
   messages: {
     cli: {
-      BlUEPRINT_START: 'Blueprinting component...',
-      BlUEPRINT_SUCCESS: componentPath =>
+      installCompiler: (compiler, fromLocal) =>
+        `Installing ${compiler} from ${fromLocal ? 'local' : 'npm'}...`,
+      installCompilerSuccess: (template, compiler, version) =>
+        `${colors.green('✔')} Installed ${compiler} [${template.replace(
+          '-compiler',
+          ''
+        )} v${version}]`,
+      legacyTemplateDeprecationWarning: (legacyType, newType) =>
+        `Template-type "${legacyType}" has been deprecated and is now replaced by "${newType}"`,
+      startScaffold: () => `Scaffolding component...`,
+      scaffoldSuccess: componentPath =>
         `${colors.green('✔')} Files created at ${componentPath}`,
-      BlUEPRINT_CREATED_DIR: componentName =>
-        `${colors.green('✔')} Created directory "${componentName}"`,
+      creatingDir: () => `Creating directory...`,
+      createdDir: dirName =>
+        `${colors.green('✔')} Created directory "${dirName}"`,
       CHANGES_DETECTED: 'Changes detected on file: {0}',
       CHECKING_DEPENDENCIES: 'Ensuring dependencies are loaded...',
-      COMPONENT_INITED: 'Component "{0}" created',
+      COMPONENT_INITED: 'Success! Created "{0}"',
       COMPRESSING: 'Compressing -> {0}',
       COMPRESSED: 'Compressed -> {0}',
       ENTER_PASSWORD: 'Enter password:',

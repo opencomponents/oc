@@ -1,8 +1,10 @@
 'use strict';
 
 const format = require('stringformat');
+const path = require('path');
 const _ = require('lodash');
 
+const success = require('../domain/init-template/success');
 const strings = require('../../resources/index');
 const wrapCliCallback = require('../wrap-cli-callback');
 
@@ -13,7 +15,7 @@ module.exports = function(dependencies) {
   return function(opts, callback) {
     const componentName = opts.componentName,
       templateType = _.isUndefined(opts.templateType)
-        ? 'handlebars'
+        ? 'oc-template-handlebars'
         : opts.templateType,
       errors = strings.errors.cli;
 
@@ -31,7 +33,7 @@ module.exports = function(dependencies) {
 
         logger.err(format(errors.INIT_FAIL, err));
       } else {
-        logger.ok(format(strings.messages.cli.COMPONENT_INITED, componentName));
+        success(logger, componentName, path.join(process.cwd(), componentName));
       }
 
       callback(err, componentName);
