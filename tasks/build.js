@@ -4,7 +4,6 @@ const format = require('stringformat');
 const fs = require('fs-extra');
 const ocClientBrowser = require('oc-client-browser');
 const path = require('path');
-const uglifyJs = require('uglify-js');
 const packageJson = require('../package');
 
 module.exports = function(grunt) {
