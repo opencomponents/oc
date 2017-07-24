@@ -4,7 +4,7 @@ const _ = require('lodash');
 
 const ComponentsList = require('./components-list');
 const eventsHandler = require('../events-handler');
-const getUnixUTCTimestamp = require('../../../utils/get-unix-utc-timestamp');
+const getUnixUTCTimestamp = require('oc-get-unix-utc-timestamp');
 
 module.exports = (conf, cdn) => {
   let cachedComponentsList, refreshLoop;

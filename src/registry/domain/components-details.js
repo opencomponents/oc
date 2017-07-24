@@ -4,7 +4,7 @@ const async = require('async');
 const _ = require('lodash');
 
 const eventsHandler = require('./events-handler');
-const getUnixUTCTimestamp = require('../../utils/get-unix-utc-timestamp');
+const getUnixUTCTimestamp = require('oc-get-unix-utc-timestamp');
 
 module.exports = (conf, cdn) => {
   const returnError = (code, message, callback) => {
