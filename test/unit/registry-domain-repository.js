@@ -1,6 +1,7 @@
 'use strict';
 
 const expect = require('chai').expect;
+const fs = require('fs-extra');
 const injectr = require('injectr');
 const path = require('path');
 const sinon = require('sinon');
@@ -24,6 +25,16 @@ describe('registry : domain : repository', () => {
       refresh: sinon.stub()
     };
 
+    const fsMock = {
+      readFileSync: fs.readFileSync,
+      readdirSync: fs.readdirSync,
+      lstatSync: fs.lstatSync,
+      readJsonSync: fs.readJsonSync,
+      writeJSON: (path, content, cb) => {
+        cb(null);
+      }
+    };
+
     const s3Mock = {
       getJson: sinon.stub(),
       putDir: sinon.stub(),
@@ -34,6 +45,7 @@ describe('registry : domain : repository', () => {
       './s3': function() {
         return s3Mock;
       },
+      'fs-extra': fsMock,
       './components-cache': () => componentsCacheMock,
       './components-details': () => componentsDetailsMock
     });
@@ -268,7 +280,10 @@ describe('registry : domain : repository', () => {
           packageJson: {
             name: 'hello-world',
             author: 'blargh',
-            repository: 'asdfa'
+            repository: 'asdfa',
+            oc: {
+              date: 1234567890
+            }
           }
         };
 

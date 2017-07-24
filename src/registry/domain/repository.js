@@ -2,6 +2,7 @@
 
 const format = require('stringformat');
 const fs = require('fs-extra');
+const getUnixUtcTimestamp = require('oc-get-unix-utc-timestamp');
 const path = require('path');
 const _ = require('lodash');
 
@@ -359,19 +360,29 @@ module.exports = function(conf) {
             });
           }
 
-          cdn.putDir(
-            pkgDetails.outputFolder,
-            `${conf.s3.componentsDir}/${componentName}/${componentVersion}`,
+          pkgDetails.packageJson.oc.date = getUnixUtcTimestamp();
+          fs.writeJSON(
+            path.join(pkgDetails.outputFolder, 'package.json'),
+            pkgDetails.packageJson,
             err => {
               if (err) {
                 return callback(err);
               }
-              componentsCache.refresh((err, componentsList) => {
-                if (err) {
-                  return callback(err);
+              cdn.putDir(
+                pkgDetails.outputFolder,
+                `${conf.s3.componentsDir}/${componentName}/${componentVersion}`,
+                err => {
+                  if (err) {
+                    return callback(err);
+                  }
+                  componentsCache.refresh((err, componentsList) => {
+                    if (err) {
+                      return callback(err);
+                    }
+                    componentsDetails.refresh(componentsList, callback);
+                  });
                 }
-                componentsDetails.refresh(componentsList, callback);
-              });
+              );
             }
           );
         }
