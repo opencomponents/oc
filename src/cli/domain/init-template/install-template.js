@@ -12,7 +12,6 @@ module.exports = function installTemplate(options, scaffold) {
     componentName,
     templateType,
     compiler,
-    cli,
     componentPath,
     local,
     template,
@@ -25,16 +24,14 @@ module.exports = function installTemplate(options, scaffold) {
   );
   installing.start();
 
-  const args = {
-    npm: [
-      'install',
-      '--save-dev',
-      '--save-exact',
-      local ? path.resolve(process.cwd(), templateType) : compiler
-    ]
-  };
+  const args = [
+    'install',
+    '--save-dev',
+    '--save-exact',
+    local ? path.resolve(process.cwd(), templateType) : compiler
+  ];
 
-  const installProc = spawn(cli, args[cli], { cwd: componentPath });
+  const installProc = spawn('npm', args, { cwd: componentPath });
 
   installProc.on('error', () => callback('template type not valid'));
   installProc.on('close', code => {

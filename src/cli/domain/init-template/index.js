@@ -8,12 +8,7 @@ const initPackage = require('./init-package');
 const utils = require('./utils');
 
 module.exports = function(options, callback) {
-  const {
-    componentName,
-    templateType,
-    logger = console,
-    cli = 'npm'
-  } = options;
+  const { componentName, templateType, logger = console } = options;
   const componentPath = path.join(process.cwd(), componentName);
   const local = /^\.+\/|^\//.test(templateType);
   const template = utils.getPackageName(templateType).replace('-compiler', '');
@@ -35,13 +30,12 @@ module.exports = function(options, callback) {
       callback
     });
   } catch (error) {
-    initPackage({ cli, componentPath });
+    initPackage({ componentPath });
     return installTemplate(
       {
         componentName,
         templateType,
         compiler,
-        cli,
         componentPath,
         local,
         template,

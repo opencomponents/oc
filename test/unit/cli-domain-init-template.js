@@ -134,7 +134,6 @@ describe('cli : domain : init-template', () => {
         expect(deps['./init-package'].args[0][0].componentPath).to.equal(
           'supaComp'
         );
-        expect(deps['./init-package'].args[0][0].cli).to.equal('npm');
       });
       it('should correctly call installTemplate', () => {
         expect(deps['./install-template'].called).to.equal(true);
@@ -147,7 +146,6 @@ describe('cli : domain : init-template', () => {
         expect(deps['./install-template'].args[0][0].compiler).to.equal(
           'oc-template-hispter-compiler'
         );
-        expect(deps['./install-template'].args[0][0].cli).to.equal('npm');
         expect(deps['./install-template'].args[0][0].logger.log).to.equal(
           options.logger.log
         );
