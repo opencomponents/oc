@@ -8,14 +8,7 @@ const proc = sinon.stub();
 const deps = {
   'cross-spawn': sinon.stub().returns({
     on: proc
-  }),
-  'colors/safe': sinon.spy(),
-  'cli-spinner': {
-    Spinner: sinon.stub().returns({
-      start: sinon.spy(),
-      stop: sinon.spy()
-    })
-  }
+  })
 };
 
 const installTemplate = injectr(
@@ -48,11 +41,6 @@ describe('cli : domain : init-template installTemplate', () => {
         '--save-exact',
         'oc-template-jade-compiler'
       ]);
-    });
-    it('should correctly start the spinner', () => {
-      expect(deps['cli-spinner'].Spinner.args[0][0]).to.equal(
-        'Installing oc-template-jade-compiler from npm...'
-      );
     });
     it('should correctly setup on error and on close listeners', () => {
       expect(proc.args[0][0]).to.equal('error');

@@ -1,59 +1,46 @@
 'use strict';
 
-const Spinner = require('cli-spinner').Spinner;
-const spawn = require('cross-spawn');
 const path = require('path');
+const spawn = require('cross-spawn');
 const _ = require('lodash');
-const process = require('process');
+
 const strings = require('../../../resources');
 
-module.exports = function installTemplate(options, scaffold) {
+module.exports = function installTemplate(options, callback) {
   const {
     componentName,
     templateType,
     compiler,
     componentPath,
-    local,
-    template,
-    logger,
-    callback
+    logger
   } = options;
 
-  const installing = new Spinner(
-    strings.messages.cli.installCompiler(compiler, local)
-  );
-  installing.start();
+  logger.log(strings.messages.cli.installCompiler(compiler));
 
-  const args = [
-    'install',
-    '--save-dev',
-    '--save-exact',
-    local ? path.resolve(process.cwd(), templateType) : compiler
-  ];
-
-  const installProc = spawn('npm', args, { cwd: componentPath });
+  const args = ['install', '--save-dev', '--save-exact', compiler];
+  const installProc = spawn('npm', args, {
+    cwd: componentPath,
+    stdio: 'inherit'
+  });
 
   installProc.on('error', () => callback('template type not valid'));
   installProc.on('close', code => {
     if (code !== 0) {
       return callback('template type not valid');
     }
-    installing.stop(true);
-    const compilerPath = local
-      ? path.resolve(process.cwd(), templateType)
-      : path.join(componentPath, 'node_modules', compiler);
-    const version = require(compilerPath).getInfo().version;
+    const version = require(path.join(
+      componentPath,
+      'node_modules',
+      compiler
+    )).getInfo().version;
     logger.log(
-      strings.messages.cli.installCompilerSuccess(template, compiler, version)
+      strings.messages.cli.installCompilerSuccess(
+        templateType,
+        compiler,
+        version
+      )
     );
 
-    return scaffold({
-      compiler,
-      componentName,
-      componentPath,
-      compilerPath,
-      logger,
-      callback
-    });
+    return callback(null, { ok: true });
   });
 };

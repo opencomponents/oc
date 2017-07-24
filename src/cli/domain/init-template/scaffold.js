@@ -2,44 +2,42 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const Spinner = require('cli-spinner').Spinner;
+
 const strings = require('../../../resources');
 
-module.exports = function scaffold(options) {
+module.exports = function scaffold(options, callback) {
   const {
+    templateType,
     componentName,
     componentPath,
-    compilerPath,
-    callback,
     compiler,
+    compilerPath,
     logger
   } = options;
-  const compilerPackage = require(compilerPath + '/package.json');
+
+  const baseComponentPath = path.join(compilerPath, 'scaffold');
+  const baseComponentFiles = path.join(baseComponentPath, 'src');
+  const compilerPackage = fs.readJSONSync(
+    path.join(compilerPath, 'package.json')
+  );
 
   try {
-    const scaffold = new Spinner(strings.messages.cli.startScaffold());
-
-    scaffold.start();
-    const baseComponentPath = path.join(compilerPath, 'scaffold');
-    const baseComponentFiles = path.join(baseComponentPath, 'src');
-
     fs.copySync(baseComponentFiles, componentPath);
 
-    const componentPackage = require(componentPath + '/package.json');
+    const componentPackage = fs.readJSONSync(
+      path.join(componentPath, 'package.json')
+    );
     componentPackage.name = componentName;
     componentPackage.devDependencies[compiler] = compilerPackage.version;
     fs.writeJsonSync(componentPath + '/package.json', componentPackage, {
       spaces: 2
     });
 
-    scaffold.stop();
-    // logger.log(strings.messages.cli.scaffoldSuccess(componentPath));
-
     return callback(null, { ok: true });
   } catch (error) {
     const url =
       (compilerPackage.bugs && compilerPackage.bugs.url) ||
-      `the ${compilerPackage.name.replace('-compiler', '')} repo`;
+      `the ${templateType} repo`;
     return callback(strings.errors.cli.scaffoldError(url, error));
   }
 };

@@ -57,7 +57,7 @@ module.exports = function() {
         );
       }
       try {
-        initTemplate({ componentName, templateType, logger }, callback);
+        initTemplate(_.extend(options, { templateType }), callback);
       } catch (e) {
         return callback('template type not valid');
       }

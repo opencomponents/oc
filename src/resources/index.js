@@ -121,8 +121,7 @@ module.exports = {
       SERVERJS_DEPENDENCY_NOT_DECLARED:
         'Missing dependencies from package.json => {0}',
       TEMPLATE_NOT_FOUND: 'file {0} not found',
-      TEMPLATE_TYPE_NOT_VALID:
-        'the template is not valid. Allowed values are handlebars and jade',
+      TEMPLATE_TYPE_NOT_VALID: 'the template is not valid',
       TEMPLATE_DEP_MISSING:
         'Template dependency missing. To fix it run:\n\nnpm install --save-dev {0}-compiler --prefix {1}\n\n'
     },
@@ -138,21 +137,30 @@ module.exports = {
   },
   messages: {
     cli: {
-      createdDir: dirName =>
-        `${colors.green('✔')} Created directory "${dirName}"`,
-      creatingDir: () => `Creating directory...`,
-      installCompiler: (compiler, fromLocal) =>
-        `Installing ${compiler} from ${fromLocal ? 'local' : 'npm'}...`,
+      initSuccess: (componentName, componentPath) => `${colors.green(
+        'Success! Created ' + componentName + ' at ' + componentPath
+      )} 
+
+From here you can run several commands
+
+  ${colors.green('oc --help')}
+    To see a detailed list of all the commands available
+
+We suggest that you begin by typing:
+
+  ${colors.green('oc dev . 3030')}
+
+If you have questions, issues or feedback about OpenComponents, please, join us on Gitter:
+  ${colors.green('https://gitter.im/opentable/oc')}
+
+Happy coding
+
+`,
+      installCompiler: compiler => `Installing ${compiler} from npm...`,
       installCompilerSuccess: (template, compiler, version) =>
-        `${colors.green('✔')} Installed ${compiler} [${template.replace(
-          '-compiler',
-          ''
-        )} v${version}]`,
+        `${colors.green('✔')} Installed ${compiler} [${template} v${version}]`,
       legacyTemplateDeprecationWarning: (legacyType, newType) =>
         `Template-type "${legacyType}" has been deprecated and is now replaced by "${newType}"`,
-      scaffoldSuccess: componentPath =>
-        `${colors.green('✔')} Files created at ${componentPath}`,
-      startScaffold: () => `Scaffolding component...`,
       CHANGES_DETECTED: 'Changes detected on file: {0}',
       CHECKING_DEPENDENCIES: 'Ensuring dependencies are loaded...',
       COMPONENT_INITED: 'Success! Created "{0}"',

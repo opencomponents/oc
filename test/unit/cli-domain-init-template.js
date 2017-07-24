@@ -8,19 +8,15 @@ describe('cli : domain : init-template', () => {
   describe('when invoking init-template', () => {
     describe('when the template is available in the dev registry', () => {
       const deps = {
-        './scaffold': sinon.stub().returnsArg(0),
+        './scaffold': sinon.stub(),
         './install-template': sinon.stub().returnsArg(1),
         './create-component-dir': sinon.spy(),
         './init-package': sinon.spy(),
-        './utils': { getPackageName: sinon.stub().returnsArg(0) },
         path: {
-          join: sinon
-            .stub()
-            .onFirstCall()
-            .returnsArg(1)
-            .onSecondCall()
-            .returnsArg(2),
-          resolve: sinon.stub().returnsArg(2)
+          join: sinon.stub().onFirstCall().returnsArg(2)
+        },
+        'fs-extra': {
+          stat: (path, cb) => cb(null, true)
         }
       };
 
@@ -37,6 +33,8 @@ describe('cli : domain : init-template', () => {
       );
 
       const options = {
+        compiler: 'oc-template-jade-compiler',
+        componentPath: 'path/to/myJadeComponent',
         componentName: 'myJadeComponent',
         templateType: 'oc-template-jade',
         logger: {
@@ -49,25 +47,19 @@ describe('cli : domain : init-template', () => {
       it('should correctly call createComponentDir', () => {
         expect(deps['./create-component-dir'].calledOnce).to.equal(true);
         expect(deps['./create-component-dir'].args[0][0]).to.deep.equal({
-          logger: options.logger,
-          componentName: 'myJadeComponent',
-          componentPath: 'myJadeComponent'
+          componentPath: 'path/to/myJadeComponent'
         });
       });
       it('should correctly call scaffold', () => {
         expect(deps['./scaffold'].calledOnce).to.equal(true);
-        expect(deps['./scaffold'].args[0][0].compilerPath).to.equal(
-          'oc-template-jade-compiler'
-        );
-        expect(deps['./scaffold'].args[0][0].compilerPath).to.equal(
-          'oc-template-jade-compiler'
-        );
-        expect(deps['./scaffold'].args[0][0].componentName).to.equal(
-          'myJadeComponent'
-        );
-        expect(deps['./scaffold'].args[0][0].componentPath).to.equal(
-          'myJadeComponent'
-        );
+        expect(deps['./scaffold'].args[0][0]).to.deep.equal({
+          compiler: 'oc-template-jade-compiler',
+          compilerPath: 'oc-template-jade-compiler',
+          logger: options.logger,
+          componentPath: 'path/to/myJadeComponent',
+          componentName: 'myJadeComponent',
+          templateType: 'oc-template-jade'
+        });
       });
       it('should not call initPackage', () => {
         expect(deps['./init-package'].notCalled).to.equal(true);
@@ -75,15 +67,16 @@ describe('cli : domain : init-template', () => {
       it('should not call installTemplate', () => {
         expect(deps['./install-template'].notCalled).to.equal(true);
       });
-      it('should correctly return', () => {
-        expect(result.componentName).to.equal('myJadeComponent');
-      });
     });
 
     describe('when the template is not available in the dev registry', () => {
+      const installTemplate = (options, cb) => {
+        cb(null, 'foo');
+      };
+      const scaffold = sinon.spy();
       const deps = {
-        './scaffold': sinon.stub().returnsArg(1),
-        './install-template': sinon.stub().returnsArg(1),
+        './scaffold': scaffold,
+        './install-template': sinon.spy(installTemplate),
         './create-component-dir': sinon.spy(),
         './init-package': sinon.spy(),
         './utils': { getPackageName: sinon.stub().returnsArg(0) },
@@ -91,10 +84,12 @@ describe('cli : domain : init-template', () => {
           join: sinon
             .stub()
             .onFirstCall()
-            .returnsArg(1)
+            .returnsArg(2)
             .onSecondCall()
-            .returnsArg(2),
-          resolve: sinon.stub().returnsArg(1)
+            .returnsArg(0)
+        },
+        'fs-extra': {
+          stat: (path, cb) => cb(true)
         }
       };
 
@@ -112,8 +107,10 @@ describe('cli : domain : init-template', () => {
       );
 
       const options = {
+        compiler: 'oc-template-hipster-compiler',
         componentName: 'supaComp',
-        templateType: 'oc-template-hispter',
+        componentPath: 'path/to/supaComp',
+        templateType: 'oc-template-hipster',
         logger: {
           log: sinon.spy()
         }
@@ -124,37 +121,36 @@ describe('cli : domain : init-template', () => {
       it('should correctly call createComponentDir', () => {
         expect(deps['./create-component-dir'].calledOnce).to.equal(true);
         expect(deps['./create-component-dir'].args[0][0]).to.deep.equal({
-          logger: options.logger,
-          componentName: 'supaComp',
-          componentPath: 'supaComp'
+          componentPath: 'path/to/supaComp'
         });
       });
       it('should correctly call initPackage', () => {
         expect(deps['./init-package'].calledOnce).to.equal(true);
         expect(deps['./init-package'].args[0][0].componentPath).to.equal(
-          'supaComp'
+          'path/to/supaComp'
         );
       });
       it('should correctly call installTemplate', () => {
         expect(deps['./install-template'].called).to.equal(true);
-        expect(deps['./install-template'].args[0][0].componentPath).to.equal(
-          'supaComp'
-        );
-        expect(deps['./install-template'].args[0][0].template).to.equal(
-          'oc-template-hispter'
-        );
-        expect(deps['./install-template'].args[0][0].compiler).to.equal(
-          'oc-template-hispter-compiler'
-        );
-        expect(deps['./install-template'].args[0][0].logger.log).to.equal(
-          options.logger.log
-        );
+        expect(deps['./install-template'].args[0][0]).to.deep.equal({
+          compiler: 'oc-template-hipster-compiler',
+          compilerPath: 'path/to/supaComp',
+          logger: options.logger,
+          componentPath: 'path/to/supaComp',
+          componentName: 'supaComp',
+          templateType: 'oc-template-hipster'
+        });
       });
-      it('should not directly call scaffold', () => {
-        expect(deps['./scaffold'].notCalled).to.equal(true);
-      });
-      it('should correctly return', () => {
-        expect(result).to.equal(deps['./scaffold']);
+      it('should call scaffold on installTemplate success', () => {
+        expect(deps['./scaffold'].calledOnce).to.equal(true);
+        expect(deps['./scaffold'].args[0][0]).to.deep.equal({
+          compiler: 'oc-template-hipster-compiler',
+          compilerPath: 'path/to/supaComp',
+          logger: options.logger,
+          componentPath: 'path/to/supaComp',
+          componentName: 'supaComp',
+          templateType: 'oc-template-hipster'
+        });
       });
     });
   });

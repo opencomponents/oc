@@ -59,7 +59,7 @@ describe('cli : facade : init', () => {
 
       it('should show an error', () => {
         const expected =
-          'An error happened when initialising the component: the template is not valid. Allowed values are handlebars and jade';
+          'An error happened when initialising the component: the template is not valid';
         expect(logSpy.err.args[0][0]).to.equal(expected);
       });
     });
@@ -92,7 +92,7 @@ describe('cli : facade : init', () => {
       });
 
       it('should show a message', () => {
-        expect(logSpy.ok.args[0][0]).to.contain(
+        expect(logSpy.log.args[0][0]).to.contain(
           'Success! Created the-best-component at'
         );
       });
