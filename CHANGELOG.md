@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.39.5
+- [#569](https://github.com/opentable/oc/pull/569) Validation fix
+
 ### v0.39.4
 - [#568](https://github.com/opentable/oc/pull/568) Update aws-sdk to the latest version 🚀
 - [#565](https://github.com/opentable/oc/pull/565) Housekeeping
