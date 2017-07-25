@@ -20,9 +20,10 @@ module.exports = function(input) {
   }
 
   const file = input[0];
+  const validTypes = ['application/gzip', 'application/octet-stream'];
 
   if (
-    file.mimetype !== 'application/octet-stream' ||
+    !_.includes(validTypes, file.mimetype) ||
     file.truncated ||
     file.filename.indexOf('.tar.gz') < 0
   ) {
