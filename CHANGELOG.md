@@ -1,5 +1,14 @@
 ## Change Log
 
+### v0.39.4
+- [#568](https://github.com/opentable/oc/pull/568) Update aws-sdk to the latest version 🚀
+- [#565](https://github.com/opentable/oc/pull/565) Housekeeping
+- [#564](https://github.com/opentable/oc/pull/564) Removed uglify-js
+- [#560](https://github.com/opentable/oc/pull/560) Update oc-template-jade-compiler to the latest version 🚀
+- [#559](https://github.com/opentable/oc/pull/559) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#525](https://github.com/opentable/oc/pull/525) [OC-49] Templates
+- [#558](https://github.com/opentable/oc/pull/558) Update aws-sdk to the latest version 🚀
+
 ### v0.39.3
 - [#557](https://github.com/opentable/oc/pull/557) [OC-75] Add status to the component-retrieved event log
 - [#555](https://github.com/opentable/oc/pull/555) Update aws-sdk to the latest version 🚀
