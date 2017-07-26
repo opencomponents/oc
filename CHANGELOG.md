@@ -1,5 +1,13 @@
 ## Change Log
 
+### v0.39.6
+- [#566](https://github.com/opentable/oc/pull/566) [OC-9] Components history seems to have wrong dates
+- [#574](https://github.com/opentable/oc/pull/574) fix(package): update semver to version 5.4.1
+- [#570](https://github.com/opentable/oc/pull/570) Update oc-template-handlebars to the latest version 🚀
+- [#571](https://github.com/opentable/oc/pull/571) Update oc-template-jade-compiler to the latest version 🚀
+- [#572](https://github.com/opentable/oc/pull/572) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#573](https://github.com/opentable/oc/pull/573) Update aws-sdk to the latest version 🚀
+
 ### v0.39.5
 - [#569](https://github.com/opentable/oc/pull/569) Validation fix
 
