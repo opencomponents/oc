@@ -7,12 +7,12 @@ const strings = require('../../../resources');
 
 module.exports = function scaffold(options, callback) {
   const {
-    templateType,
-    componentName,
-    componentPath,
     compiler,
     compilerPath,
-    logger
+    componentName,
+    componentPath,
+    logger,
+    templateType
   } = options;
 
   const baseComponentPath = path.join(compilerPath, 'scaffold');

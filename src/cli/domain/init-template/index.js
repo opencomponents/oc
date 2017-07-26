@@ -11,11 +11,11 @@ const scaffold = require('./scaffold');
 
 module.exports = function(options, callback) {
   const {
-    templateType,
+    compiler,
     componentName,
-    logger,
     componentPath,
-    compiler
+    logger,
+    templateType
   } = options;
 
   createComponentDir({ componentPath });

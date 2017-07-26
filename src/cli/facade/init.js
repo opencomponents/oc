@@ -21,14 +21,12 @@ module.exports = function(dependencies) {
     const componentPath = path.join(process.cwd(), componentName);
 
     callback = wrapCliCallback(callback);
-
     local.init(
       {
         componentName,
-        templateType,
-        logger,
         componentPath,
-        compiler: `${templateType}-compiler`
+        templateType,
+        logger
       },
       err => {
         if (err) {

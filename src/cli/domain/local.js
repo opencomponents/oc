@@ -57,7 +57,13 @@ module.exports = function() {
         );
       }
       try {
-        initTemplate(_.extend(options, { templateType }), callback);
+        initTemplate(
+          _.extend(options, {
+            templateType,
+            compiler: `${templateType}-compiler`
+          }),
+          callback
+        );
       } catch (e) {
         return callback('template type not valid');
       }

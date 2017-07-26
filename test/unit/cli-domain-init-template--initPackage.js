@@ -19,8 +19,7 @@ const initPackage = injectr(
 describe('cli : domain : init-template initPackage', () => {
   describe('when invoked', () => {
     const options = {
-      componentPath: 'path/to/component',
-      cli: 'npm'
+      componentPath: 'path/to/component'
     };
 
     initPackage(options);

@@ -4,15 +4,16 @@ const path = require('path');
 const spawn = require('cross-spawn');
 const _ = require('lodash');
 
+const isValidTemplate = require('../../../utils/isValidTemplate');
 const strings = require('../../../resources');
 
 module.exports = function installTemplate(options, callback) {
   const {
-    componentName,
-    templateType,
     compiler,
+    componentName,
     componentPath,
-    logger
+    logger,
+    templateType
   } = options;
 
   logger.log(strings.messages.cli.installCompiler(compiler));
@@ -28,11 +29,16 @@ module.exports = function installTemplate(options, callback) {
     if (code !== 0) {
       return callback('template type not valid');
     }
-    const version = require(path.join(
+    const maybeCompiler = require(path.join(
       componentPath,
       'node_modules',
       compiler
-    )).getInfo().version;
+    ));
+
+    if (!isValidTemplate(maybeCompiler, { compiler: true })) {
+      return callback('template type not valid');
+    }
+    const version = maybeCompiler.getInfo().version;
     logger.log(
       strings.messages.cli.installCompilerSuccess(
         templateType,

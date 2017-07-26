@@ -20,9 +20,7 @@ describe('cli : domain : init-template installTemplate', () => {
   describe('when invoked', () => {
     const config = {
       templateType: 'oc-template-jade',
-      cli: 'npm',
       componentPath: 'path/to/component',
-      local: false,
       compiler: 'oc-template-jade-compiler',
       componentName: 'myComponent',
       logger: {
