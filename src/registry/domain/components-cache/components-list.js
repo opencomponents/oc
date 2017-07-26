@@ -4,7 +4,7 @@ const async = require('async');
 const semver = require('semver');
 const _ = require('lodash');
 
-const getUnixUTCTimestamp = require('../../../utils/get-unix-utc-timestamp');
+const getUnixUTCTimestamp = require('oc-get-unix-utc-timestamp');
 
 module.exports = (conf, cdn) => {
   const filePath = () => `${conf.s3.componentsDir}/components.json`;
