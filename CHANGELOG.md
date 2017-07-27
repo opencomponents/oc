@@ -1,6 +1,8 @@
 ## Change Log
 
-### v0.39.6
+### v0.39.7
+- [#480](https://github.com/opentable/oc/pull/480) [OC-28] Cli init allows for --templateType to be npm module
+- [#575](https://github.com/opentable/oc/pull/575) Update CONTRIBUTING.md
 - [#566](https://github.com/opentable/oc/pull/566) [OC-9] Components history seems to have wrong dates
 - [#574](https://github.com/opentable/oc/pull/574) fix(package): update semver to version 5.4.1
 - [#570](https://github.com/opentable/oc/pull/570) Update oc-template-handlebars to the latest version 🚀
