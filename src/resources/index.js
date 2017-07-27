@@ -1,4 +1,5 @@
 'use strict';
+const colors = require('colors/safe');
 
 module.exports = {
   commands: {
@@ -88,6 +89,8 @@ module.exports = {
       TEMPLATE_NOT_VALID: '{0} is not a valid oc-template'
     },
     cli: {
+      scaffoldError: (url, error) =>
+        `Scaffolding failed. Please open an issue on ${url} with the following information: ${error}`,
       COMPONENT_HREF_NOT_FOUND:
         "The specified path is not a valid component's url",
       COMPONENTS_NOT_FOUND: 'no components found in specified path',
@@ -118,8 +121,7 @@ module.exports = {
       SERVERJS_DEPENDENCY_NOT_DECLARED:
         'Missing dependencies from package.json => {0}',
       TEMPLATE_NOT_FOUND: 'file {0} not found',
-      TEMPLATE_TYPE_NOT_VALID:
-        'the template is not valid. Allowed values are handlebars and jade',
+      TEMPLATE_TYPE_NOT_VALID: 'the template is not valid',
       TEMPLATE_DEP_MISSING:
         'Template dependency missing. To fix it run:\n\nnpm install --save-dev {0}-compiler --prefix {1}\n\n'
     },
@@ -135,9 +137,33 @@ module.exports = {
   },
   messages: {
     cli: {
+      initSuccess: (componentName, componentPath) => `${colors.green(
+        'Success! Created ' + componentName + ' at ' + componentPath
+      )} 
+
+From here you can run several commands
+
+  ${colors.green('oc --help')}
+    To see a detailed list of all the commands available
+
+We suggest that you begin by typing:
+
+  ${colors.green('oc dev . 3030')}
+
+If you have questions, issues or feedback about OpenComponents, please, join us on Gitter:
+  ${colors.green('https://gitter.im/opentable/oc')}
+
+Happy coding
+
+`,
+      installCompiler: compiler => `Installing ${compiler} from npm...`,
+      installCompilerSuccess: (template, compiler, version) =>
+        `${colors.green('✔')} Installed ${compiler} [${template} v${version}]`,
+      legacyTemplateDeprecationWarning: (legacyType, newType) =>
+        `Template-type "${legacyType}" has been deprecated and is now replaced by "${newType}"`,
       CHANGES_DETECTED: 'Changes detected on file: {0}',
       CHECKING_DEPENDENCIES: 'Ensuring dependencies are loaded...',
-      COMPONENT_INITED: 'Component "{0}" created',
+      COMPONENT_INITED: 'Success! Created "{0}"',
       COMPRESSING: 'Compressing -> {0}',
       COMPRESSED: 'Compressed -> {0}',
       ENTER_PASSWORD: 'Enter password:',

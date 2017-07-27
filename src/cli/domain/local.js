@@ -10,6 +10,8 @@ const getLocalNpmModules = require('./get-local-npm-modules');
 const packageComponents = require('./package-components');
 const mock = require('./mock');
 const validator = require('../../registry/domain/validators');
+const initTemplate = require('./init-template');
+const strings = require('../../resources');
 
 module.exports = function() {
   return _.extend(this, {
@@ -34,34 +36,36 @@ module.exports = function() {
     },
     getComponentsByDir: getComponentsByDir(),
     getLocalNpmModules: getLocalNpmModules(),
-    init: function(componentName, templateType, callback) {
+    init: function(options, callback) {
+      let { componentName, templateType, logger } = options;
       if (!validator.validateComponentName(componentName)) {
         return callback('name not valid');
       }
 
-      if (!validator.validateTemplateType(templateType)) {
-        return callback('template type not valid');
+      // LEGACY TEMPLATES WARNING
+      if (validator.validateTemplateType(templateType)) {
+        const legacyName = templateType;
+        templateType = legacyName.replace(
+          legacyName,
+          `oc-template-${legacyName}`
+        );
+        logger.warn(
+          strings.messages.cli.legacyTemplateDeprecationWarning(
+            legacyName,
+            templateType
+          )
+        );
       }
-
       try {
-        const pathDir = '../../components/base-component-' + templateType,
-          baseComponentDir = path.resolve(__dirname, pathDir),
-          npmIgnorePath = path.resolve(__dirname, pathDir + '/.npmignore');
-
-        fs.ensureDirSync(componentName);
-        fs.copySync(baseComponentDir, componentName);
-        fs.copySync(npmIgnorePath, componentName + '/.gitignore');
-
-        const componentPath = path.resolve(componentName, 'package.json'),
-          component = _.extend(fs.readJsonSync(componentPath), {
-            name: componentName
-          });
-
-        fs.outputJsonSync(componentPath, component, { spaces: 2 });
-
-        return callback(null, { ok: true });
+        initTemplate(
+          _.extend(options, {
+            templateType,
+            compiler: `${templateType}-compiler`
+          }),
+          callback
+        );
       } catch (e) {
-        return callback(e);
+        return callback('template type not valid');
       }
     },
     mock: mock(),

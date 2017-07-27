@@ -1,6 +1,7 @@
 'use strict';
 
 const format = require('stringformat');
+const path = require('path');
 const _ = require('lodash');
 
 const strings = require('../../resources/index');
@@ -11,30 +12,43 @@ module.exports = function(dependencies) {
     logger = dependencies.logger;
 
   return function(opts, callback) {
-    const componentName = opts.componentName,
-      templateType = _.isUndefined(opts.templateType)
-        ? 'handlebars'
-        : opts.templateType,
-      errors = strings.errors.cli;
+    const componentName = opts.componentName;
+    const templateType = _.isUndefined(opts.templateType)
+      ? 'oc-template-handlebars'
+      : opts.templateType;
+    const errors = strings.errors.cli;
+    const messages = strings.messages.cli;
+    const componentPath = path.join(process.cwd(), componentName);
 
     callback = wrapCliCallback(callback);
+    local.init(
+      {
+        componentName,
+        componentPath,
+        templateType,
+        logger
+      },
+      err => {
+        if (err) {
+          if (err === 'name not valid') {
+            err = errors.NAME_NOT_VALID;
+          }
 
-    local.init(componentName, templateType, err => {
-      if (err) {
-        if (err === 'name not valid') {
-          err = errors.NAME_NOT_VALID;
+          if (err === 'template type not valid') {
+            err = errors.TEMPLATE_TYPE_NOT_VALID;
+          }
+          logger.err(format(errors.INIT_FAIL, err));
+        } else {
+          logger.log(
+            messages.initSuccess(
+              componentName,
+              path.join(process.cwd(), componentName)
+            )
+          );
         }
 
-        if (err === 'template type not valid') {
-          err = errors.TEMPLATE_TYPE_NOT_VALID;
-        }
-
-        logger.err(format(errors.INIT_FAIL, err));
-      } else {
-        logger.ok(format(strings.messages.cli.COMPONENT_INITED, componentName));
+        callback(err, componentName);
       }
-
-      callback(err, componentName);
-    });
+    );
   };
 };

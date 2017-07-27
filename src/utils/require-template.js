@@ -3,23 +3,11 @@
 const format = require('stringformat');
 const path = require('path');
 
+const isValidTemplate = require('./isValidTemplate');
+
 const templateNotFound = 'Error requiring oc-template: "{0}" not found';
 const templateNotValid =
   'Error requiring oc-template: "{0}" is not a valid oc-template';
-
-function isValidTemplate(template, options) {
-  if (typeof template !== 'object') {
-    return false;
-  }
-
-  let api = ['getInfo', 'getCompiledTemplate', 'render'];
-
-  if (options.compiler === true) {
-    api = api.concat('compile');
-  }
-
-  return api.every(method => typeof template[method] === 'function');
-}
 
 const getOcTemplate = path => {
   if (require.cache && !!require.cache[path]) {

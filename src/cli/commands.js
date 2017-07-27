@@ -38,7 +38,7 @@ module.exports = {
         cmd: '$0 init test-component jade'
       },
       description:
-        'Creates a new empty component [of either jade or handlebars template type] in the current folder',
+        'Creates a new empty component of a specific template type in the current folder [templateType default: oc-template-handlebars]',
       usage: 'Usage: $0 init <componentName> [templateType]'
     },
 
