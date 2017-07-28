@@ -1,5 +1,12 @@
 ## Change Log
 
+### v0.39.8
+- [#580](https://github.com/opentable/oc/pull/580) [OC-86] Logging href, renderMode on the component-retrieved events
+- [#578](https://github.com/opentable/oc/pull/578) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#579](https://github.com/opentable/oc/pull/579) Update oc-template-jade-compiler to the latest version 🚀
+- [#577](https://github.com/opentable/oc/pull/577) Update aws-sdk to the latest version 🚀
+- [#576](https://github.com/opentable/oc/pull/576) Update aws-sdk to the latest version 🚀
+
 ### v0.39.7
 - [#480](https://github.com/opentable/oc/pull/480) [OC-28] Cli init allows for --templateType to be npm module
 - [#575](https://github.com/opentable/oc/pull/575) Update CONTRIBUTING.md
