@@ -75,7 +75,7 @@
     "oc-client-browser": "1.0.1",
     "oc-client": "2.1.21",
     "oc-template-handlebars": "6.0.2",
-    "oc-template-handlebars-compiler": "6.0.7",
+    "oc-template-handlebars-compiler": "6.0.8",
     "oc-template-jade-compiler": "6.0.8",
     "oc-template-jade": "6.0.1",
     "oc-get-unix-utc-timestamp": "1.0.1",
