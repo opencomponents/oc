@@ -166,6 +166,26 @@ module.exports = function(conf, repository) {
           }
           componentCallbackDone = true;
 
+          const componentHref = urlBuilder.component(
+            {
+              name: component.name,
+              version: requestedComponent.version,
+              parameters: params
+            },
+            conf.baseUrl
+          );
+
+          const isUnrendered =
+              options.headers.accept ===
+              settings.registry.acceptUnrenderedHeader,
+            renderMode = isUnrendered ? 'unrendered' : 'rendered';
+
+          retrievingInfo.extend({
+            href: componentHref,
+            version: component.version,
+            renderMode
+          });
+
           if (!!err || !data) {
             err =
               err ||
@@ -187,37 +207,17 @@ module.exports = function(conf, repository) {
             });
           }
 
-          const componentHref = urlBuilder.component(
-            {
-              name: component.name,
-              version: requestedComponent.version,
-              parameters: params
-            },
-            conf.baseUrl
-          );
-
-          const isUnrendered =
-              options.headers.accept ===
-              settings.registry.acceptUnrenderedHeader,
-            renderMode = isUnrendered ? 'unrendered' : 'rendered';
-
           const response = {
             type: conf.local ? 'oc-component-local' : 'oc-component',
             version: component.version,
             requestVersion: requestedComponent.version,
             name: requestedComponent.name,
-            renderMode: renderMode
+            renderMode
           };
 
           if (!options.omitHref) {
             response.href = componentHref;
           }
-
-          retrievingInfo.extend({
-            href: componentHref,
-            version: component.version,
-            renderMode: renderMode
-          });
 
           responseHeaders = filterCustomHeaders(
             responseHeaders,
