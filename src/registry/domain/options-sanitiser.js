@@ -36,6 +36,10 @@ module.exports = function(input) {
     options.verbosity = 0;
   }
 
+  if (_.isUndefined(options.discovery)) {
+    options.discovery = true;
+  }
+
   if (
     !_.isUndefined(options.fallbackRegistryUrl) &&
     _.last(options.fallbackRegistryUrl) !== '/'
