@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.40.0
+- [#583](https://github.com/opentable/oc/pull/583) Saner registry default for config.discovery
+- [#581](https://github.com/opentable/oc/pull/581) [OC-79] Housekeeping
+
 ### v0.39.8
 - [#580](https://github.com/opentable/oc/pull/580) [OC-86] Logging href, renderMode on the component-retrieved events
 - [#578](https://github.com/opentable/oc/pull/578) Update oc-template-handlebars-compiler to the latest version 🚀
