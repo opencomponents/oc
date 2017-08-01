@@ -2,6 +2,7 @@ doctype html
 html
   head
     meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
   body
     - var baseUrl = href.replace('http\:\/\/', '\/\/').replace('https\:\/\/', '\/\/');
     oc-component(href=baseUrl+component.name+'/'+component.version+'/'+qs)
