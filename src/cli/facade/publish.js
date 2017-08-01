@@ -7,6 +7,7 @@ const path = require('path');
 const read = require('read');
 const _ = require('lodash');
 
+const loadDependencies = require('../domain/load-dependencies');
 const strings = require('../../resources/index');
 const wrapCliCallback = require('../wrap-cli-callback');
 
@@ -87,9 +88,9 @@ module.exports = function(dependencies) {
             });
           } else if (err.code === 'cli_version_not_valid') {
             const upgradeCommand = format(
-              strings.commands.cli.UPGRADE,
-              err.details.suggestedVersion
-            ),
+                strings.commands.cli.UPGRADE,
+                err.details.suggestedVersion
+              ),
               errorDetails = format(
                 strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE,
                 colors.blue(upgradeCommand)
@@ -128,42 +129,51 @@ module.exports = function(dependencies) {
         return callback(err);
       }
 
-      packageAndCompress((err, component) => {
-        if (err) {
-          errorMessage = format(strings.errors.cli.PACKAGE_CREATION_FAIL, err);
-          logger.err(errorMessage);
-          return callback(errorMessage);
-        }
-
-        async.eachSeries(
-          registryLocations,
-          (registryUrl, next) => {
-            const registryLength = registryUrl.length,
-              registryNormalised = registryUrl.slice(registryLength - 1) === '/'
-                ? registryUrl.slice(0, registryLength - 1)
-                : registryUrl,
-              componentRoute = format(
-                '{0}/{1}/{2}',
-                registryNormalised,
-                component.name,
-                component.version
+      loadDependencies(
+        { components: [componentPath], logger },
+        dependencies => {
+          packageAndCompress((err, component) => {
+            if (err) {
+              errorMessage = format(
+                strings.errors.cli.PACKAGE_CREATION_FAIL,
+                err
               );
+              logger.err(errorMessage);
+              return callback(errorMessage);
+            }
 
-            putComponentToRegistry(
-              { route: componentRoute, path: compressedPackagePath },
-              next
-            );
-          },
-          err => {
-            local.cleanup(compressedPackagePath, (err2, res) => {
-              if (err) {
-                return callback(err);
+            async.eachSeries(
+              registryLocations,
+              (registryUrl, next) => {
+                const registryLength = registryUrl.length,
+                  registryNormalised =
+                    registryUrl.slice(registryLength - 1) === '/'
+                      ? registryUrl.slice(0, registryLength - 1)
+                      : registryUrl,
+                  componentRoute = format(
+                    '{0}/{1}/{2}',
+                    registryNormalised,
+                    component.name,
+                    component.version
+                  );
+
+                putComponentToRegistry(
+                  { route: componentRoute, path: compressedPackagePath },
+                  next
+                );
+              },
+              err => {
+                local.cleanup(compressedPackagePath, (err2, res) => {
+                  if (err) {
+                    return callback(err);
+                  }
+                  callback(err2, res);
+                });
               }
-              callback(err2, res);
-            });
-          }
-        );
-      });
+            );
+          });
+        }
+      );
     });
   };
 };
