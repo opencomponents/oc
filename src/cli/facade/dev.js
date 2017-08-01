@@ -6,10 +6,8 @@ const format = require('stringformat');
 const path = require('path');
 const _ = require('lodash');
 
-const getComponentsDependencies = require('../domain/get-components-deps');
-const getMissingDeps = require('../domain/get-missing-deps');
 const getMockedPlugins = require('../domain/get-mocked-plugins');
-const npmInstaller = require('../domain/npm-installer');
+const loadDependencies = require('../domain/load-dependencies');
 const oc = require('../../index');
 const strings = require('../../resources/index');
 const watch = require('../domain/watch');
@@ -31,23 +29,6 @@ module.exports = function(dependencies) {
     let packaging = false;
 
     callback = wrapCliCallback(callback);
-
-    const installMissingDeps = function(missing, cb) {
-      if (_.isEmpty(missing)) {
-        return cb();
-      }
-
-      logger.warn(
-        format(strings.messages.cli.INSTALLING_DEPS, missing.join(', '))
-      );
-      npmInstaller(missing, err => {
-        if (err) {
-          logger.err(err.toString());
-          throw err;
-        }
-        cb();
-      });
-    };
 
     const watchForChanges = function(components, cb) {
       watch(components, componentsDir, (err, changedFile) => {
@@ -119,28 +100,6 @@ module.exports = function(dependencies) {
       }
     };
 
-    const loadDependencies = function(components, cb) {
-      logger.warn(strings.messages.cli.CHECKING_DEPENDENCIES, true);
-      let dependencies;
-      try {
-        dependencies = getComponentsDependencies(components);
-      } catch (err) {
-        return logger.err(err);
-      }
-
-      const missing = getMissingDeps(dependencies.withVersions, components);
-
-      if (_.isEmpty(missing)) {
-        logger.ok('OK');
-        return cb(dependencies);
-      }
-
-      logger.err('FAIL');
-      installMissingDeps(missing, () => {
-        loadDependencies(components, cb);
-      });
-    };
-
     const registerPlugins = registry => {
       const mockedPlugins = getMockedPlugins(logger, componentsDir);
       mockedPlugins.forEach(p => registry.register(p));
@@ -171,7 +130,7 @@ module.exports = function(dependencies) {
         logger.log(colors.green('├── ') + component);
       });
 
-      loadDependencies(components, dependencies => {
+      loadDependencies({ components, logger }, dependencies => {
         packageComponents(components, () => {
           const registry = new oc.Registry({
             local: true,
