@@ -1,5 +1,12 @@
 ## Change Log
 
+### v0.40.1
+- [#588](https://github.com/opentable/oc/pull/588) [OC-87] publish with the new template system
+- [#587](https://github.com/opentable/oc/pull/587) Update pug to the latest version 🚀
+- [#586](https://github.com/opentable/oc/pull/586) Update aws-sdk to the latest version 🚀
+- [#585](https://github.com/opentable/oc/pull/585) Update fs-extra to the latest version 🚀
+- [#584](https://github.com/opentable/oc/pull/584) Update accept-language-parser to the latest version 🚀
+
 ### v0.40.0
 - [#583](https://github.com/opentable/oc/pull/583) Saner registry default for config.discovery
 - [#581](https://github.com/opentable/oc/pull/581) [OC-79] Housekeeping
