@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.40.2
+- [#592](https://github.com/opentable/oc/pull/592) [OC-103]
+- [#590](https://github.com/opentable/oc/pull/590) Update aws-sdk to the latest version 🚀
+- [#589](https://github.com/opentable/oc/pull/589) Add viewport meta tag to component preview
+
 ### v0.40.1
 - [#588](https://github.com/opentable/oc/pull/588) [OC-87] publish with the new template system
 - [#587](https://github.com/opentable/oc/pull/587) Update pug to the latest version 🚀
