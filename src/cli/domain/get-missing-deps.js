@@ -21,7 +21,7 @@ module.exports = dependencies => {
         delete require.cache[pathToModule];
       }
 
-      require(pathToModule);
+      require.resolve(pathToModule);
     } catch (e) {
       missing.push(npmModule);
     }
