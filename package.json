@@ -46,7 +46,7 @@
     "mocha": "^3.0.2",
     "prettier-eslint-cli": "^4.0.4",
     "semver-sort": "0.0.4",
-    "sinon": "^2.3.2"
+    "sinon": "^3.0.0"
   },
   "dependencies": {
     "accept-language-parser": "1.4.1",
