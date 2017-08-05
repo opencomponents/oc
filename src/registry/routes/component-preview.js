@@ -21,6 +21,7 @@ function componentPreview(err, req, res, component, templates) {
       dependencies: _.keys(component.dependencies),
       href: res.conf.baseUrl,
       qs: urlBuilder.queryString(req.query),
+      prefix: res.conf.prefix,
       templates: templates
     });
   } else {

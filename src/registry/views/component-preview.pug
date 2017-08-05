@@ -5,10 +5,10 @@ html
     meta(name="viewport", content="width=device-width, initial-scale=1")
   body
     - var baseUrl = href.replace('http\:\/\/', '\/\/').replace('https\:\/\/', '\/\/');
-    oc-component(href=baseUrl+component.name+'/'+component.version+'/'+qs)
+    oc-component(href=baseUrl+prefix+component.name+'/'+component.version+'/'+qs)
     script.
       window.oc = window.oc || {};
       oc.conf = oc.conf || {};
       oc.conf.templates = oc.conf.templates || [];
       oc.conf.templates = oc.conf.templates.concat(!{JSON.stringify(templates)});
-    script(src=baseUrl+'oc-client/client.js')
+    script(src=baseUrl+prefix+'oc-client/client.js')
