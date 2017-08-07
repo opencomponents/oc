@@ -28,3 +28,4 @@ src/components/base-component-jade/_package
 
 test/fixtures/test.tar.gz
 test/fixtures/targz-test
+coverage

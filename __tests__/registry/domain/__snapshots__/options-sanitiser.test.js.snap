@@ -1,0 +1,151 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`options sanitiser baseUrl "/" and prefix "/-/" to equal baseUrl "/-/" 1`] = `
+Object {
+  "baseUrl": "/-/",
+  "beforePublish": [Function],
+  "customHeadersToSkipOnWeakVersion": Array [],
+  "discovery": true,
+  "hotReloading": false,
+  "port": undefined,
+  "prefix": "/-/",
+  "publishValidation": [Function],
+  "tempDir": "./temp/",
+  "timeout": 120000,
+  "verbosity": 0,
+}
+`;
+
+exports[`options sanitiser customHeadersToSkipOnWeakVersion to equal customHeadersToSkipOnWeakVersion.toLowerCase() 1`] = `
+Object {
+  "baseUrl": "/",
+  "beforePublish": [Function],
+  "customHeadersToSkipOnWeakVersion": Array [
+    "aaa",
+    "bbb",
+    "ccc-ccc",
+  ],
+  "discovery": true,
+  "hotReloading": false,
+  "port": undefined,
+  "prefix": "/",
+  "publishValidation": [Function],
+  "tempDir": "./temp/",
+  "timeout": 120000,
+  "verbosity": 0,
+}
+`;
+
+exports[`options sanitiser empty baseUrl and prefix "/-/" to equal baseUrl "/-/" 1`] = `
+Object {
+  "baseUrl": "/-/",
+  "beforePublish": [Function],
+  "customHeadersToSkipOnWeakVersion": Array [],
+  "discovery": true,
+  "hotReloading": false,
+  "port": undefined,
+  "prefix": "/-/",
+  "publishValidation": [Function],
+  "tempDir": "./temp/",
+  "timeout": 120000,
+  "verbosity": 0,
+}
+`;
+
+exports[`options sanitiser empty baseUrl to equal "/" 1`] = `
+Object {
+  "baseUrl": "/",
+  "beforePublish": [Function],
+  "customHeadersToSkipOnWeakVersion": Array [],
+  "discovery": true,
+  "hotReloading": false,
+  "port": undefined,
+  "prefix": "/",
+  "publishValidation": [Function],
+  "tempDir": "./temp/",
+  "timeout": 120000,
+  "verbosity": 0,
+}
+`;
+
+exports[`options sanitiser empty prefix to equal "/" 1`] = `
+Object {
+  "baseUrl": "/",
+  "beforePublish": [Function],
+  "customHeadersToSkipOnWeakVersion": Array [],
+  "discovery": true,
+  "hotReloading": false,
+  "port": undefined,
+  "prefix": "/",
+  "publishValidation": [Function],
+  "tempDir": "./temp/",
+  "timeout": 120000,
+  "verbosity": 0,
+}
+`;
+
+exports[`options sanitiser fallbackRegistryUrl to equal fallbackRegistryUrl + "/" 1`] = `
+Object {
+  "baseUrl": "/",
+  "beforePublish": [Function],
+  "customHeadersToSkipOnWeakVersion": Array [],
+  "discovery": true,
+  "fallbackRegistryUrl": "http://test-url.com/",
+  "hotReloading": false,
+  "port": undefined,
+  "prefix": "/",
+  "publishValidation": [Function],
+  "tempDir": "./temp/",
+  "timeout": 120000,
+  "verbosity": 0,
+}
+`;
+
+exports[`options sanitiser prefix "/-/" to equal "/-/" 1`] = `
+Object {
+  "baseUrl": "/-/",
+  "beforePublish": [Function],
+  "customHeadersToSkipOnWeakVersion": Array [],
+  "discovery": true,
+  "hotReloading": false,
+  "port": undefined,
+  "prefix": "/-/",
+  "publishValidation": [Function],
+  "tempDir": "./temp/",
+  "timeout": 120000,
+  "verbosity": 0,
+}
+`;
+
+exports[`options sanitiser publishAuth {} to equal beforePublish "auth middleware has been assigned" 1`] = `
+Object {
+  "baseUrl": "/",
+  "beforePublish": "auth middleware has been assigned",
+  "customHeadersToSkipOnWeakVersion": Array [],
+  "discovery": true,
+  "hotReloading": false,
+  "port": undefined,
+  "prefix": "/",
+  "publishAuth": Object {},
+  "publishValidation": [Function],
+  "tempDir": "./temp/",
+  "timeout": 120000,
+  "verbosity": 0,
+}
+`;
+
+exports[`options sanitiser verbosity 3 to equal 3 1`] = `
+Object {
+  "baseUrl": "/",
+  "beforePublish": [Function],
+  "customHeadersToSkipOnWeakVersion": Array [],
+  "discovery": true,
+  "hotReloading": false,
+  "port": undefined,
+  "prefix": "/",
+  "publishValidation": [Function],
+  "tempDir": "./temp/",
+  "timeout": 120000,
+  "verbosity": 3,
+}
+`;
