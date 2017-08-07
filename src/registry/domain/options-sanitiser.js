@@ -20,10 +20,6 @@ module.exports = function(input) {
     });
   }
 
-  if (options.prefix && !options.baseUrl.match(options.prefix)) {
-    options.baseUrl = options.baseUrl + options.prefix;
-  }
-
   if (!options.prefix) {
     options.prefix = '/';
     if (!options.baseUrl.match(/\/$/)) {
