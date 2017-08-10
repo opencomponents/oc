@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.40.3
+- [#600](https://github.com/opentable/oc/pull/600) Update oc-client-browser to the latest version 🚀
+- [#599](https://github.com/opentable/oc/pull/599) Update aws-sdk to the latest version 🚀
+- [#594](https://github.com/opentable/oc/pull/594) Update sinon to the latest version 🚀
+
 ### v0.40.2
 - [#592](https://github.com/opentable/oc/pull/592) [OC-103]
 - [#590](https://github.com/opentable/oc/pull/590) Update aws-sdk to the latest version 🚀
