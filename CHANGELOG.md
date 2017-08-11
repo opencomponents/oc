@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.40.5
+- [#601](https://github.com/opentable/oc/pull/601) Update aws-sdk to the latest version 🚀
+
 ### v0.40.4
 - [#602](https://github.com/opentable/oc/pull/602) Update oc-client to the latest version 🚀
 
