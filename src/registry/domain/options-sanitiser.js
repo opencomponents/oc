@@ -22,12 +22,10 @@ module.exports = function(input) {
 
   if (!options.prefix) {
     options.prefix = '/';
-    if (!options.baseUrl.match(/\/$/)) {
-      options.baseUrl = options.baseUrl + '/';
-    }
   }
 
-  if (options.prefix !== '/' && !options.baseUrl.match(options.prefix)) {
+  const hasTrailingPrefix = new RegExp(options.prefix + '$');
+  if (!options.baseUrl.match(hasTrailingPrefix)) {
     options.baseUrl = options.baseUrl.replace(/\/$/, '') + options.prefix;
   }
 

@@ -77,39 +77,46 @@ describe('registry : domain : options-sanitiser', () => {
     });
   });
 
-  describe('when prefix is not provided', () => {
-    const options = { baseUrl: 'http://my-registry.com' };
+  describe('prefix and baseUrl sanitaziation', () => {
+    const prefixAndBaseUrlSchenario = [
+      {
+        options: { baseUrl: 'http://my-registry.com' },
+        expected: { baseUrl: 'http://my-registry.com/', prefix: '/' }
+      },
+      {
+        options: { baseUrl: 'http://my-registry.com/' },
+        expected: { baseUrl: 'http://my-registry.com/', prefix: '/' }
+      },
+      {
+        options: { prefix: '/', baseUrl: 'http://my-registry.com' },
+        expected: { baseUrl: 'http://my-registry.com/', prefix: '/' }
+      },
+      {
+        options: { prefix: '/', baseUrl: 'http://my-registry.com/' },
+        expected: { baseUrl: 'http://my-registry.com/', prefix: '/' }
+      },
+      {
+        options: { prefix: '/-/', baseUrl: 'http://my-registry.com' },
+        expected: { baseUrl: 'http://my-registry.com/-/', prefix: '/-/' }
+      },
+      {
+        options: { prefix: '/-/', baseUrl: 'http://my-registry.com/' },
+        expected: { baseUrl: 'http://my-registry.com/-/', prefix: '/-/' }
+      },
+      {
+        options: { prefix: '/-/', baseUrl: 'http://my-registry.com/-/' },
+        expected: { baseUrl: 'http://my-registry.com/-/', prefix: '/-/' }
+      }
+    ];
 
-    it('should set it to "/"', () => {
-      expect(sanitise(options).prefix).to.equal('/');
-    });
-  });
-  describe('when prefix is provided', () => {
-    const options = { prefix: '/-/', baseUrl: 'http://my-registry.com' };
-
-    it('should leave value untouched', () => {
-      expect(sanitise(options).prefix).to.equal('/-/');
-    });
-
-    describe("and the baseUrl doesn't contain the prefix", () => {
-      it('should add the prefix to the baseUrl', () => {
-        expect(sanitise(options).baseUrl).to.equal('http://my-registry.com/-/');
-      });
-
-      describe('and the baseUrl end with a trailing slash', () => {
-        const options = { prefix: '/-/', baseUrl: 'http://my-registry.com/' };
-        it('should add the prefix to the baseUrl without duplicating slashes', () => {
-          expect(sanitise(options).baseUrl).to.equal(
-            'http://my-registry.com/-/'
-          );
-        });
-      });
-    });
-
-    describe('and the baseUrl already contain the prefix', () => {
-      const options = { prefix: '/-/', baseUrl: 'http://my-registry.com/-/' };
-      it('should leave value untouched', () => {
-        expect(sanitise(options).baseUrl).to.equal('http://my-registry.com/-/');
+    it('should support various scenarios correctly', () => {
+      prefixAndBaseUrlSchenario.forEach(scenario => {
+        expect(sanitise(scenario.options).prefix).to.equal(
+          scenario.expected.prefix
+        );
+        expect(sanitise(scenario.options).baseUrl).to.equal(
+          scenario.expected.baseUrl
+        );
       });
     });
   });
