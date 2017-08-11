@@ -78,7 +78,7 @@ describe('registry : domain : options-sanitiser', () => {
   });
 
   describe('prefix and baseUrl sanitaziation', () => {
-    const prefixAndBaseUrlSchenario = [
+    const prefixAndBaseUrlScenarios = [
       {
         options: { baseUrl: 'http://my-registry.com' },
         expected: { baseUrl: 'http://my-registry.com/', prefix: '/' }
@@ -110,7 +110,7 @@ describe('registry : domain : options-sanitiser', () => {
     ];
 
     it('should support various scenarios correctly', () => {
-      prefixAndBaseUrlSchenario.forEach(scenario => {
+      prefixAndBaseUrlScenarios.forEach(scenario => {
         expect(sanitise(scenario.options).prefix).to.equal(
           scenario.expected.prefix
         );
