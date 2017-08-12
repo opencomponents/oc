@@ -77,7 +77,7 @@ describe('registry : domain : options-sanitiser', () => {
     });
   });
 
-  describe('prefix and baseUrl sanitaziation', () => {
+  describe('prefix and baseUrl sanitization', () => {
     const prefixAndBaseUrlScenarios = [
       {
         options: { baseUrl: 'http://my-registry.com' },
