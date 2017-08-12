@@ -27,6 +27,11 @@ module.exports = {
           boolean: true,
           description: 'Verbosity',
           default: false
+        },
+        watch: {
+          boolean: true,
+          description: 'Watch for file changes',
+          default: true
         }
       },
       usage: 'Usage: $0 dev <dirName> [port] [baseUrl] [options]'

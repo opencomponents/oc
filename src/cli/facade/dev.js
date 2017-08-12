@@ -25,7 +25,8 @@ module.exports = function(dependencies) {
       fallbackRegistryUrl = opts.fallbackRegistryUrl,
       hotReloading = _.isUndefined(opts.hotReloading)
         ? true
-        : opts.hotReloading;
+        : opts.hotReloading,
+      optWatch = _.isUndefined(opts.watch) ? true : opts.watch;
     let packaging = false;
 
     callback = wrapCliCallback(callback);
@@ -159,7 +160,9 @@ module.exports = function(dependencies) {
               return callback(err);
             }
 
-            watchForChanges(components, packageComponents);
+            if (optWatch) {
+              watchForChanges(components, packageComponents);
+            }
             callback(null, registry);
           });
         });
