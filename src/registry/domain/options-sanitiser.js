@@ -24,6 +24,11 @@ module.exports = function(input) {
     options.prefix = '/';
   }
 
+  const hasTrailingPrefix = new RegExp(options.prefix + '$');
+  if (!options.baseUrl.match(hasTrailingPrefix)) {
+    options.baseUrl = options.baseUrl.replace(/\/$/, '') + options.prefix;
+  }
+
   if (!options.tempDir) {
     options.tempDir = settings.registry.defaultTempPath;
   }
