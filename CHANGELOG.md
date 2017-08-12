@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.40.6
+- [#595](https://github.com/opentable/oc/pull/595) Add ability to disable watching on local dev registry
+- [#603](https://github.com/opentable/oc/pull/603) Update aws-sdk to the latest version 🚀
+- [#597](https://github.com/opentable/oc/pull/597) [OC-120] Registry webUI: preview route/view bug
+
 ### v0.40.5
 - [#601](https://github.com/opentable/oc/pull/601) Update aws-sdk to the latest version 🚀
 
