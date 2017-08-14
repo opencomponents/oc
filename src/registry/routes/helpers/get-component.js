@@ -145,6 +145,15 @@ module.exports = function(conf, repository) {
           });
         }
 
+        // Support legacy templates
+        let templateType = component.oc.files.template.type;
+        if (templateType === 'jade') {
+          templateType = 'oc-template-jade';
+        }
+        if (templateType === 'handlebars') {
+          templateType = 'oc-template-handlebars';
+        }
+
         const filterCustomHeaders = (
           headers,
           requestedVersion,
@@ -176,9 +185,25 @@ module.exports = function(conf, repository) {
           );
 
           const isUnrendered =
-              options.headers.accept ===
-              settings.registry.acceptUnrenderedHeader,
-            renderMode = isUnrendered ? 'unrendered' : 'rendered';
+            options.headers.accept === settings.registry.acceptUnrenderedHeader;
+
+          const isClientRequest =
+            options.headers['user-agent'] &&
+            !!options.headers['user-agent'].match('oc-client-');
+
+          const isTemplateSupportedByClient = Boolean(
+            options.headers['user-agent'] &&
+              !!options.headers['user-agent'].match('oc-client-') &&
+              options.headers.templates &&
+              (options.headers.templates[component.oc.files.template.type] ||
+                options.headers.templates[templateType])
+          );
+
+          let renderMode = isUnrendered ? 'unrendered' : 'rendered';
+
+          if (isClientRequest && !isTemplateSupportedByClient) {
+            renderMode = 'rendered';
+          }
 
           retrievingInfo.extend({
             href: componentHref,
@@ -225,24 +250,10 @@ module.exports = function(conf, repository) {
             component.version
           );
 
-          if (isUnrendered) {
-            callback({
-              status: 200,
-              headers: responseHeaders,
-              response: _.extend(response, {
-                data: data,
-                template: {
-                  src: repository.getStaticFilePath(
-                    component.name,
-                    component.version,
-                    'template.js'
-                  ),
-                  type: component.oc.files.template.type,
-                  key: component.oc.files.template.hashKey
-                }
-              })
-            });
-          } else {
+          if (
+            (isClientRequest && !isTemplateSupportedByClient) ||
+            !isUnrendered
+          ) {
             const cacheKey = `${component.name}/${component.version}/template.js`,
               cached = cache.get('file-contents', cacheKey),
               key = component.oc.files.template.hashKey,
@@ -289,16 +300,9 @@ module.exports = function(conf, repository) {
                 component.version,
                 (err, templateText) => {
                   let ocTemplate;
-                  let type = component.oc.files.template.type;
-                  if (type === 'jade') {
-                    type = 'oc-template-jade';
-                  }
-                  if (type === 'handlebars') {
-                    type = 'oc-template-handlebars';
-                  }
 
                   try {
-                    ocTemplate = requireTemplate(type);
+                    ocTemplate = requireTemplate(templateType);
                   } catch (err) {
                     throw err;
                   }
@@ -312,6 +316,23 @@ module.exports = function(conf, repository) {
                 }
               );
             }
+          } else {
+            callback({
+              status: 200,
+              headers: responseHeaders,
+              response: _.extend(response, {
+                data: data,
+                template: {
+                  src: repository.getStaticFilePath(
+                    component.name,
+                    component.version,
+                    'template.js'
+                  ),
+                  type: component.oc.files.template.type,
+                  key: component.oc.files.template.hashKey
+                }
+              })
+            });
           }
         };
 
