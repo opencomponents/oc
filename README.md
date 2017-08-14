@@ -1,4 +1,4 @@
-![oc](https://raw.githubusercontent.com/opentable/oc/master/logo.png)
+![oc](https://raw.githubusercontent.com/opentable/oc/master/logo-type.png)
 =============
 
 OpenComponents, **serverless in the front-end world**.
