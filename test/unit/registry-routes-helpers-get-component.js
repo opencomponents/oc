@@ -129,7 +129,7 @@ describe('registry : routes : helpers : get-component', () => {
     });
   });
 
-  describe('when oc-client request an unrendered component and it support the correct template', () => {
+  describe('when oc-client requests an unrendered component and it support the correct template', () => {
     const headers = {
       'user-agent': 'oc-client-0/0-0-0',
       templates: { 'oc-template-jade': true },
