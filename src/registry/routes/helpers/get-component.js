@@ -249,19 +249,36 @@ module.exports = function(conf, repository) {
             component.version
           );
 
-          if (renderMode === 'rendered') {
-            const cacheKey = `${component.name}/${component.version}/template.js`,
-              cached = cache.get('file-contents', cacheKey),
-              key = component.oc.files.template.hashKey,
-              renderOptions = {
-                href: componentHref,
-                key,
-                version: component.version,
-                name: component.name,
-                templateType: component.oc.files.template.type,
-                container: component.oc.container,
-                renderInfo: component.oc.renderInfo
-              };
+          if (renderMode === 'unrendered') {
+            callback({
+              status: 200,
+              headers: responseHeaders,
+              response: _.extend(response, {
+                data: data,
+                template: {
+                  src: repository.getStaticFilePath(
+                    component.name,
+                    component.version,
+                    'template.js'
+                  ),
+                  type: component.oc.files.template.type,
+                  key: component.oc.files.template.hashKey
+                }
+              })
+            });
+          } else {
+            const cacheKey = `${component.name}/${component.version}/template.js`;
+            const cached = cache.get('file-contents', cacheKey);
+            const key = component.oc.files.template.hashKey;
+            const renderOptions = {
+              href: componentHref,
+              key,
+              version: component.version,
+              name: component.name,
+              templateType: component.oc.files.template.type,
+              container: component.oc.container,
+              renderInfo: component.oc.renderInfo
+            };
 
             const returnResult = template => {
               client.renderTemplate(
@@ -312,23 +329,6 @@ module.exports = function(conf, repository) {
                 }
               );
             }
-          } else {
-            callback({
-              status: 200,
-              headers: responseHeaders,
-              response: _.extend(response, {
-                data: data,
-                template: {
-                  src: repository.getStaticFilePath(
-                    component.name,
-                    component.version,
-                    'template.js'
-                  ),
-                  type: component.oc.files.template.type,
-                  key: component.oc.files.template.hashKey
-                }
-              })
-            });
           }
         };
 
