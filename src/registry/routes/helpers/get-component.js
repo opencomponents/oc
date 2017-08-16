@@ -147,11 +147,8 @@ module.exports = function(conf, repository) {
 
         // Support legacy templates
         let templateType = component.oc.files.template.type;
-        if (templateType === 'jade') {
-          templateType = 'oc-template-jade';
-        }
-        if (templateType === 'handlebars') {
-          templateType = 'oc-template-handlebars';
+        if (templateType === 'jade' || templateType === 'handlebars') {
+          templateType = `oc-template-${templateType}`;
         }
 
         const filterCustomHeaders = (
@@ -187,7 +184,7 @@ module.exports = function(conf, repository) {
           const isUnrendered =
             options.headers.accept === settings.registry.acceptUnrenderedHeader;
 
-          const isClientRequest =
+          const isValidClientRequest =
             options.headers['user-agent'] &&
             !!options.headers['user-agent'].match('oc-client-');
 
@@ -199,10 +196,12 @@ module.exports = function(conf, repository) {
                 options.headers.templates[templateType])
           );
 
-          let renderMode = isUnrendered ? 'unrendered' : 'rendered';
-
-          if (isClientRequest && !isTemplateSupportedByClient) {
-            renderMode = 'rendered';
+          let renderMode = 'rendered';
+          if (isUnrendered) {
+            renderMode = 'unrendered';
+            if (isValidClientRequest && !isTemplateSupportedByClient) {
+              renderMode = 'rendered';
+            }
           }
 
           retrievingInfo.extend({
@@ -250,10 +249,7 @@ module.exports = function(conf, repository) {
             component.version
           );
 
-          if (
-            (isClientRequest && !isTemplateSupportedByClient) ||
-            !isUnrendered
-          ) {
+          if (renderMode === 'rendered') {
             const cacheKey = `${component.name}/${component.version}/template.js`,
               cached = cache.get('file-contents', cacheKey),
               key = component.oc.files.template.hashKey,
