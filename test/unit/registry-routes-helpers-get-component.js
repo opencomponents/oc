@@ -96,4 +96,72 @@ describe('registry : routes : helpers : get-component', () => {
       expect(fireStub.args[0][1].status).to.equal(500);
     });
   });
+
+  describe("when oc-client request an unrendered component and it doesn't support the correct template", () => {
+    const headers = {
+      'user-agent': 'oc-client-0/0-0-0',
+      templates: {},
+      accept: 'application/vnd.oc.unrendered+json'
+    };
+    let callBack;
+
+    before(done => {
+      initialise(mockedComponents['async-error2-component']);
+      const getComponent = GetComponent({}, mockedRepository);
+      callBack = sinon.spy(() => done());
+      getComponent(
+        {
+          name: 'async-error2-component',
+          headers,
+          parameters: {},
+          version: '1.X.X',
+          conf: { baseUrl: 'http://components.com/' }
+        },
+        callBack
+      );
+    });
+
+    it('should return the rendered version instead', () => {
+      expect(callBack.args[0][0].response.template).to.equal(undefined);
+      expect(callBack.args[0][0].response.html).to.equal('<div>hello</div>');
+      expect(callBack.args[0][0].response.renderMode).to.equal('rendered');
+      expect(fireStub.args[0][1].renderMode).to.equal('rendered');
+    });
+  });
+
+  describe('when oc-client requests an unrendered component and it support the correct template', () => {
+    const headers = {
+      'user-agent': 'oc-client-0/0-0-0',
+      templates: { 'oc-template-jade': true },
+      accept: 'application/vnd.oc.unrendered+json'
+    };
+    let callBack;
+
+    before(done => {
+      initialise(mockedComponents['async-error2-component']);
+      const getComponent = GetComponent({}, mockedRepository);
+      callBack = sinon.spy(() => done());
+      getComponent(
+        {
+          name: 'async-error2-component',
+          headers,
+          parameters: {},
+          version: '1.X.X',
+          conf: { baseUrl: 'http://components.com/' }
+        },
+        callBack
+      );
+    });
+
+    it('should return the unrendered version', () => {
+      expect(callBack.args[0][0].response.html).to.equal(undefined);
+      expect(callBack.args[0][0].response.template).to.deep.equal({
+        key: '8c1fbd954f2b0d8cd5cf11c885fed4805225749f',
+        src: '//my-cdn.com/files/',
+        type: 'jade'
+      });
+      expect(callBack.args[0][0].response.renderMode).to.equal('unrendered');
+      expect(fireStub.args[0][1].renderMode).to.equal('unrendered');
+    });
+  });
 });

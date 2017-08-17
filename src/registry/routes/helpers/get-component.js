@@ -145,6 +145,12 @@ module.exports = function(conf, repository) {
           });
         }
 
+        // Support legacy templates
+        let templateType = component.oc.files.template.type;
+        if (templateType === 'jade' || templateType === 'handlebars') {
+          templateType = `oc-template-${templateType}`;
+        }
+
         const filterCustomHeaders = (
           headers,
           requestedVersion,
@@ -176,9 +182,27 @@ module.exports = function(conf, repository) {
           );
 
           const isUnrendered =
-              options.headers.accept ===
-              settings.registry.acceptUnrenderedHeader,
-            renderMode = isUnrendered ? 'unrendered' : 'rendered';
+            options.headers.accept === settings.registry.acceptUnrenderedHeader;
+
+          const isValidClientRequest =
+            options.headers['user-agent'] &&
+            !!options.headers['user-agent'].match('oc-client-');
+
+          const isTemplateSupportedByClient = Boolean(
+            options.headers['user-agent'] &&
+              !!options.headers['user-agent'].match('oc-client-') &&
+              options.headers.templates &&
+              (options.headers.templates[component.oc.files.template.type] ||
+                options.headers.templates[templateType])
+          );
+
+          let renderMode = 'rendered';
+          if (isUnrendered) {
+            renderMode = 'unrendered';
+            if (isValidClientRequest && !isTemplateSupportedByClient) {
+              renderMode = 'rendered';
+            }
+          }
 
           retrievingInfo.extend({
             href: componentHref,
@@ -225,7 +249,7 @@ module.exports = function(conf, repository) {
             component.version
           );
 
-          if (isUnrendered) {
+          if (renderMode === 'unrendered') {
             callback({
               status: 200,
               headers: responseHeaders,
@@ -243,18 +267,18 @@ module.exports = function(conf, repository) {
               })
             });
           } else {
-            const cacheKey = `${component.name}/${component.version}/template.js`,
-              cached = cache.get('file-contents', cacheKey),
-              key = component.oc.files.template.hashKey,
-              renderOptions = {
-                href: componentHref,
-                key,
-                version: component.version,
-                name: component.name,
-                templateType: component.oc.files.template.type,
-                container: component.oc.container,
-                renderInfo: component.oc.renderInfo
-              };
+            const cacheKey = `${component.name}/${component.version}/template.js`;
+            const cached = cache.get('file-contents', cacheKey);
+            const key = component.oc.files.template.hashKey;
+            const renderOptions = {
+              href: componentHref,
+              key,
+              version: component.version,
+              name: component.name,
+              templateType: component.oc.files.template.type,
+              container: component.oc.container,
+              renderInfo: component.oc.renderInfo
+            };
 
             const returnResult = template => {
               client.renderTemplate(
@@ -289,16 +313,9 @@ module.exports = function(conf, repository) {
                 component.version,
                 (err, templateText) => {
                   let ocTemplate;
-                  let type = component.oc.files.template.type;
-                  if (type === 'jade') {
-                    type = 'oc-template-jade';
-                  }
-                  if (type === 'handlebars') {
-                    type = 'oc-template-handlebars';
-                  }
 
                   try {
-                    ocTemplate = requireTemplate(type);
+                    ocTemplate = requireTemplate(templateType);
                   } catch (err) {
                     throw err;
                   }
