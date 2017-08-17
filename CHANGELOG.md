@@ -1,5 +1,14 @@
 ## Change Log
 
+### v0.40.7
+- [#605](https://github.com/opentable/oc/pull/605) [OC-102] Return rendered version if client doesn't support
+- [#610](https://github.com/opentable/oc/pull/610) Update oc-client to the latest version 🚀
+- [#608](https://github.com/opentable/oc/pull/608) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#607](https://github.com/opentable/oc/pull/607) Update aws-sdk to the latest version 🚀
+- [#609](https://github.com/opentable/oc/pull/609) Update oc-template-jade-compiler to the latest version 🚀
+- [#604](https://github.com/opentable/oc/pull/604) Updated logo
+- [#606](https://github.com/opentable/oc/pull/606) Update aws-sdk to the latest version 🚀
+
 ### v0.40.6
 - [#595](https://github.com/opentable/oc/pull/595) Add ability to disable watching on local dev registry
 - [#603](https://github.com/opentable/oc/pull/603) Update aws-sdk to the latest version 🚀
