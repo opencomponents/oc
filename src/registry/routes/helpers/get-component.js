@@ -2,13 +2,13 @@
 
 const acceptLanguageParser = require('accept-language-parser');
 const Cache = require('nice-cache');
+const Client = require('oc-client');
 const Domain = require('domain');
 const format = require('stringformat');
 const vm = require('vm');
 const _ = require('lodash');
 
 const applyDefaultValues = require('./apply-default-values');
-const Client = require('oc-client');
 const eventsHandler = require('../../domain/events-handler');
 const GetComponentRetrievingInfo = require('./get-component-retrieving-info');
 const getComponentFallback = require('./get-component-fallback');
@@ -147,8 +147,25 @@ module.exports = function(conf, repository) {
 
         // Support legacy templates
         let templateType = component.oc.files.template.type;
-        if (templateType === 'jade' || templateType === 'handlebars') {
+        const isLegacyTemplate =
+          templateType === 'jade' || templateType === 'handlebars';
+        if (isLegacyTemplate) {
           templateType = `oc-template-${templateType}`;
+        }
+
+        const supportedTemplates = repository.getTemplates().map(t => t.type);
+
+        if (!_.includes(supportedTemplates, templateType)) {
+          return callback({
+            status: 400,
+            response: {
+              code: 'TEMPLATE_NOT_SUPPORTED',
+              error: format(
+                strings.errors.registry.TEMPLATE_NOT_SUPPORTED,
+                templateType
+              )
+            }
+          });
         }
 
         const filterCustomHeaders = (
@@ -188,18 +205,30 @@ module.exports = function(conf, repository) {
             options.headers['user-agent'] &&
             !!options.headers['user-agent'].match('oc-client-');
 
+          const parseTemplatesHeader = t =>
+            t.split(';').map(t => t.split(',')[0]);
+          const supportedTemplates = options.headers.templates
+            ? parseTemplatesHeader(options.headers.templates)
+            : [];
+
           const isTemplateSupportedByClient = Boolean(
-            options.headers['user-agent'] &&
-              !!options.headers['user-agent'].match('oc-client-') &&
+            isValidClientRequest &&
               options.headers.templates &&
-              (options.headers.templates[component.oc.files.template.type] ||
-                options.headers.templates[templateType])
+              (_.includes(
+                supportedTemplates,
+                component.oc.files.template.type
+              ) ||
+                _.includes(supportedTemplates, templateType))
           );
 
           let renderMode = 'rendered';
           if (isUnrendered) {
             renderMode = 'unrendered';
-            if (isValidClientRequest && !isTemplateSupportedByClient) {
+            if (
+              isValidClientRequest &&
+              !isTemplateSupportedByClient &&
+              !isLegacyTemplate
+            ) {
               renderMode = 'rendered';
             }
           }

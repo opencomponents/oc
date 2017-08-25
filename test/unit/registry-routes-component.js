@@ -17,7 +17,18 @@ describe('registry : routes : component', () => {
       getCompiledView: sinon.stub().yields(null, params.view),
       getComponent: sinon.stub().yields(null, params.package),
       getDataProvider: sinon.stub().yields(null, params.data),
-      getTemplates: sinon.stub(),
+      getTemplates: sinon.stub().returns([
+        {
+          type: 'oc-template-jade',
+          version: '6.0.1',
+          externals: []
+        },
+        {
+          type: 'oc-template-handlebars',
+          version: '6.0.2',
+          externals: []
+        }
+      ]),
       getStaticFilePath: sinon.stub().returns('//my-cdn.com/files/')
     };
   };
@@ -568,7 +579,18 @@ describe('registry : routes : component', () => {
         getCompiledView: sinon.stub(),
         getComponent: sinon.stub(),
         getDataProvider: sinon.stub(),
-        getTemplates: sinon.stub(),
+        getTemplates: sinon.stub().returns([
+          {
+            type: 'oc-template-jade',
+            version: '6.0.1',
+            externals: []
+          },
+          {
+            type: 'oc-template-handlebars',
+            version: '6.0.2',
+            externals: []
+          }
+        ]),
         getStaticFilePath: sinon.stub().returns('//my-cdn.com/files/')
       };
 

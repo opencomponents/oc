@@ -86,7 +86,8 @@ module.exports = {
       PLUGIN_NOT_VALID: 'Plugin {0} is not valid',
       RESOLVING_ERROR: 'component resolving error',
       TEMPLATE_NOT_FOUND: 'Template {0} not found',
-      TEMPLATE_NOT_VALID: '{0} is not a valid oc-template'
+      TEMPLATE_NOT_VALID: '{0} is not a valid oc-template',
+      TEMPLATE_NOT_SUPPORTED: '{0} is not a supported oc-template'
     },
     cli: {
       scaffoldError: (url, error) =>
