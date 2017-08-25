@@ -4,71 +4,89 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 describe('registry : routes : components', () => {
-
   const ComponentsRoute = require('../../src/registry/routes/components'),
     mockedComponents = require('../fixtures/mocked-components');
 
-  let mockedRepository,
-    componentsRoute,
-    code,
-    response;
+  let mockedRepository, componentsRoute, code, response;
 
-  const initialise = function(params){
+  const initialise = function(params) {
     mockedRepository = {
       getCompiledView: sinon.stub().yields(null, params.view),
       getComponent: sinon.stub().yields(null, params.package),
       getDataProvider: sinon.stub().yields(null, params.data),
-      getTemplates: sinon.stub(),
+      getTemplates: sinon.stub().returns([
+        {
+          type: 'oc-template-jade',
+          version: '6.0.1',
+          externals: []
+        },
+        {
+          type: 'oc-template-handlebars',
+          version: '6.0.2',
+          externals: []
+        }
+      ]),
       getStaticFilePath: sinon.stub().returns('//my-cdn.com/files/')
     };
   };
 
-  const makeRequest = function(body, cb){
-    componentsRoute({ headers: {}, body: body }, {
-      conf: { baseUrl: 'http://components.com/' },
-      status: function(jsonCode){
-        code = jsonCode;
-        return {
-          json: function(jsonResponse){
-            response = jsonResponse;
-            cb();
-          }
-        };
+  const makeRequest = function(body, cb) {
+    componentsRoute(
+      { headers: {}, body: body },
+      {
+        conf: { baseUrl: 'http://components.com/' },
+        status: function(jsonCode) {
+          code = jsonCode;
+          return {
+            json: function(jsonResponse) {
+              response = jsonResponse;
+              cb();
+            }
+          };
+        }
       }
-    });
+    );
   };
 
-  const makeInfoRequest = function(body, cb){
-    componentsRoute({ headers: { accept: 'application/vnd.oc.info+json' }, body: body }, {
-      conf: { baseUrl: 'http://components.com/' },
-      status: function(jsonCode){
-        code = jsonCode;
-        return {
-          json: function(jsonResponse){
-            response = jsonResponse;
-            cb();
-          }
-        };
+  const makeInfoRequest = function(body, cb) {
+    componentsRoute(
+      { headers: { accept: 'application/vnd.oc.info+json' }, body: body },
+      {
+        conf: { baseUrl: 'http://components.com/' },
+        status: function(jsonCode) {
+          code = jsonCode;
+          return {
+            json: function(jsonResponse) {
+              response = jsonResponse;
+              cb();
+            }
+          };
+        }
       }
-    });
+    );
   };
 
   describe('when making valid request for two components', () => {
-
-    before((done) => {
+    before(done => {
       initialise(mockedComponents['async-error2-component']);
       componentsRoute = new ComponentsRoute({}, mockedRepository);
 
-      makeRequest({
-        components: [{
-          name: 'async-error2-component',
-          version: '1.X.X',
-          parameters: { error: true }
-        }, {
-          name: 'async-error2-component',
-          version: '1.0.0'
-        }]
-      }, done);
+      makeRequest(
+        {
+          components: [
+            {
+              name: 'async-error2-component',
+              version: '1.X.X',
+              parameters: { error: true }
+            },
+            {
+              name: 'async-error2-component',
+              version: '1.0.0'
+            }
+          ]
+        },
+        done
+      );
     });
 
     it('should return 200 status code', () => {
@@ -81,12 +99,16 @@ describe('registry : routes : components', () => {
 
     it('should return a response containing components in the correct order', () => {
       expect(response[0].response.href).to.be.undefined;
-      expect(response[1].response.href).to.be.equal('http://components.com/async-error2-component/1.0.0');
+      expect(response[1].response.href).to.be.equal(
+        'http://components.com/async-error2-component/1.0.0'
+      );
     });
 
     it('should return a response with error code and description for the first component', () => {
       expect(response[0].response.code).to.be.equal('GENERIC_ERROR');
-      expect(response[0].response.error).to.be.equal('Component execution error: thisDoesnotExist is not defined');
+      expect(response[0].response.error).to.be.equal(
+        'Component execution error: thisDoesnotExist is not defined'
+      );
     });
 
     it('should return a response with rendered html for second component', () => {
@@ -110,9 +132,8 @@ describe('registry : routes : components', () => {
   });
 
   describe('when making request for 0 components', () => {
-
-    before((done) => {
-      makeRequest({ components: []}, done);
+    before(done => {
+      makeRequest({ components: [] }, done);
     });
 
     it('should return 200 status code', () => {
@@ -125,20 +146,25 @@ describe('registry : routes : components', () => {
   });
 
   describe('when making valid info request for two components', () => {
-
-    before((done) => {
+    before(done => {
       initialise(mockedComponents['async-error2-component']);
       componentsRoute = new ComponentsRoute({}, mockedRepository);
 
-      makeInfoRequest({
-        components: [{
-          name: 'async-error2-component',
-          version: '1.X.X'
-        }, {
-          name: 'async-error2-component',
-          version: '1.0.0'
-        }]
-      }, done);
+      makeInfoRequest(
+        {
+          components: [
+            {
+              name: 'async-error2-component',
+              version: '1.X.X'
+            },
+            {
+              name: 'async-error2-component',
+              version: '1.0.0'
+            }
+          ]
+        },
+        done
+      );
     });
 
     it('should return 200 status code', () => {
@@ -149,23 +175,26 @@ describe('registry : routes : components', () => {
       expect(response.length).to.be.equal(2);
     });
 
-    const expectedResponse = [{
-      status: 200,
-      response: {
-        name: 'async-error2-component',
-        type: 'oc-component',
-        requestVersion: '1.X.X',
-        version: '1.0.0',
+    const expectedResponse = [
+      {
+        status: 200,
+        response: {
+          name: 'async-error2-component',
+          type: 'oc-component',
+          requestVersion: '1.X.X',
+          version: '1.0.0'
+        }
+      },
+      {
+        status: 200,
+        response: {
+          name: 'async-error2-component',
+          type: 'oc-component',
+          requestVersion: '1.0.0',
+          version: '1.0.0'
+        }
       }
-    }, {
-      status: 200,
-      response: {
-        name: 'async-error2-component',
-        type: 'oc-component',
-        requestVersion: '1.0.0',
-        version: '1.0.0',
-      }
-    }];
+    ];
 
     it('should return a response containing components in the correct order', () => {
       expect(response).to.be.eql(expectedResponse);
@@ -173,9 +202,8 @@ describe('registry : routes : components', () => {
   });
 
   describe('when making info request for 0 components', () => {
-
-    before((done) => {
-      makeInfoRequest({ components: []}, done);
+    before(done => {
+      makeInfoRequest({ components: [] }, done);
     });
 
     it('should return 200 status code', () => {
@@ -188,9 +216,8 @@ describe('registry : routes : components', () => {
   });
 
   describe('when making not valid request', () => {
-
     describe('when not providing components property', () => {
-      before((done) => {
+      before(done => {
         makeRequest({}, done);
       });
 
@@ -200,13 +227,15 @@ describe('registry : routes : components', () => {
 
       it('should return error details', () => {
         expect(response.code).to.be.equal('POST_BODY_NOT_VALID');
-        expect(response.error).to.be.equal('The request body is malformed: components property is missing');
+        expect(response.error).to.be.equal(
+          'The request body is malformed: components property is missing'
+        );
       });
     });
 
     describe('when components property is not an array', () => {
-      before((done) => {
-        makeRequest({ components: {}}, done);
+      before(done => {
+        makeRequest({ components: {} }, done);
       });
 
       it('should return 400 status code', () => {
@@ -215,18 +244,25 @@ describe('registry : routes : components', () => {
 
       it('should return error details', () => {
         expect(response.code).to.be.equal('POST_BODY_NOT_VALID');
-        expect(response.error).to.be.equal('The request body is malformed: components property is not an array');
+        expect(response.error).to.be.equal(
+          'The request body is malformed: components property is not an array'
+        );
       });
     });
 
     describe('when component does not have name property', () => {
-      before((done) => {
-        makeRequest({
-          components: [{
-            version: '1.0.0',
-            namse: 'whazaa'
-          }]
-        }, done);
+      before(done => {
+        makeRequest(
+          {
+            components: [
+              {
+                version: '1.0.0',
+                namse: 'whazaa'
+              }
+            ]
+          },
+          done
+        );
       });
 
       it('should return 400 status code', () => {
@@ -235,21 +271,29 @@ describe('registry : routes : components', () => {
 
       it('should return error details', () => {
         expect(response.code).to.be.equal('POST_BODY_NOT_VALID');
-        expect(response.error).to.be.equal('The request body is malformed: component 0 must have name property');
+        expect(response.error).to.be.equal(
+          'The request body is malformed: component 0 must have name property'
+        );
       });
     });
 
     describe('when components do not have name property', () => {
-      before((done) => {
-        makeRequest({
-          components: [{
-            version: '1.0.0',
-            namse: 'whazaa'
-          },{
-            version: '1.X.0',
-            nae: 'mispelled'
-          }]
-        }, done);
+      before(done => {
+        makeRequest(
+          {
+            components: [
+              {
+                version: '1.0.0',
+                namse: 'whazaa'
+              },
+              {
+                version: '1.X.0',
+                nae: 'mispelled'
+              }
+            ]
+          },
+          done
+        );
       });
 
       it('should return 400 status code', () => {
@@ -258,7 +302,9 @@ describe('registry : routes : components', () => {
 
       it('should return error details', () => {
         expect(response.code).to.be.equal('POST_BODY_NOT_VALID');
-        expect(response.error).to.be.equal('The request body is malformed: component 0 must have name property, component 1 must have name property');
+        expect(response.error).to.be.equal(
+          'The request body is malformed: component 0 must have name property, component 1 must have name property'
+        );
       });
     });
   });
