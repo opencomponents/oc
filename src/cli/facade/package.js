@@ -18,6 +18,7 @@ module.exports = function(dependencies) {
 
     logger.warn(format(strings.messages.cli.PACKAGING, packageDir));
     const packageOptions = {
+      build: 'production',
       componentPath: path.resolve(componentPath)
     };
     local.package(packageOptions, (err, component) => {

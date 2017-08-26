@@ -45,6 +45,7 @@ module.exports = function(dependencies) {
     const packageAndCompress = function(cb) {
       logger.warn(format(strings.messages.cli.PACKAGING, packageDir));
       const packageOptions = {
+        build: 'production',
         componentPath: path.resolve(componentPath)
       };
       local.package(packageOptions, (err, component) => {

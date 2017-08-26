@@ -8,6 +8,7 @@ const validator = require('../../registry/domain/validators');
 
 module.exports = function() {
   return function(options, callback) {
+    const build = options.build;
     const componentPath = options.componentPath;
     const minify = options.minify === true;
     const verbose = options.verbose === true;
@@ -39,7 +40,8 @@ module.exports = function() {
       componentPackage,
       ocPackage,
       minify,
-      verbose
+      verbose,
+      build
       // TODO: logger,
       // TODO: watch,
     };
