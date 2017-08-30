@@ -64,7 +64,7 @@ module.exports = function(dependencies) {
               componentPath: dir,
               minify: false,
               verbose: opts.verbose,
-              build: opts['P'] ? 'production' : 'development'
+              production: Boolean(opts['production'])
             };
 
             local.package(packageOptions, err => {
