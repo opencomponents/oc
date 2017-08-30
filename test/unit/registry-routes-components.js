@@ -8,13 +8,17 @@ describe('registry : routes : components', () => {
     mockedComponents = require('../fixtures/mocked-components');
 
   let mockedRepository, componentsRoute, code, response;
+  const templates = {
+    'oc-template-jade': require('oc-template-jade'),
+    'oc-template-handlebars': require('oc-template-handlebars')
+  };
 
   const initialise = function(params) {
     mockedRepository = {
       getCompiledView: sinon.stub().yields(null, params.view),
       getComponent: sinon.stub().yields(null, params.package),
       getDataProvider: sinon.stub().yields(null, params.data),
-      getTemplates: sinon.stub().returns([
+      getTemplatesInfo: sinon.stub().returns([
         {
           type: 'oc-template-jade',
           version: '6.0.1',
@@ -26,6 +30,7 @@ describe('registry : routes : components', () => {
           externals: []
         }
       ]),
+      getTemplate: type => templates[type],
       getStaticFilePath: sinon.stub().returns('//my-cdn.com/files/')
     };
   };

@@ -9,12 +9,12 @@ const _ = require('lodash');
 const ComponentsCache = require('./components-cache');
 const ComponentsDetails = require('./components-details');
 const packageInfo = require('../../../package.json');
-const requireTemplate = require('../../utils/require-template');
 const S3 = require('./s3');
 const settings = require('../../resources/settings');
 const strings = require('../../resources');
 const validator = require('./validators');
 const versionHandler = require('./version-handler');
+const registerTemplates = require('./register-templates');
 
 module.exports = function(conf) {
   const cdn = !conf.local && new S3(conf);
@@ -25,20 +25,9 @@ module.exports = function(conf) {
   const getFilePath = (component, version, filePath) =>
     `${conf.s3.componentsDir}/${component}/${version}/${filePath}`;
 
-  const coreTemplates = ['oc-template-jade', 'oc-template-handlebars'];
-  const templates = _.union(coreTemplates, conf.templates).map(template => {
-    try {
-      const ocTemplate = requireTemplate(template);
-      const info = ocTemplate.getInfo();
-      return {
-        type: info.type,
-        version: info.version,
-        externals: info.externals
-      };
-    } catch (err) {
-      throw err;
-    }
-  });
+  const { templatesHash, templatesInfo, templates } = registerTemplates(
+    conf.templates
+  );
 
   const local = {
     getCompiledView: componentName => {
@@ -276,7 +265,8 @@ module.exports = function(conf) {
         ? settings.registry.localStaticRedirectorPath
         : ''}${filePath}`,
 
-    getTemplates: () => templates,
+    getTemplatesInfo: () => templatesInfo,
+    getTemplate: type => templatesHash[type],
 
     init: callback => {
       if (conf.local) {
