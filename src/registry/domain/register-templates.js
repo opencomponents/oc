@@ -24,7 +24,6 @@ module.exports = function(extraTemplates) {
   });
 
   return {
-    templates,
     templatesHash,
     templatesInfo
   };

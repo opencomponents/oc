@@ -7,11 +7,10 @@ const sinon = require('sinon');
 describe('registry : domain : register-templates', () => {
   const registerTemplates = require('../../src/registry/domain/register-templates.js');
 
-  describe('when templates get registerd without additional templates', () => {
+  describe('when templates get registered without additional templates', () => {
     const registerd = registerTemplates();
 
     it('should correctly register core-templates', () => {
-      expect(registerd.templates.length).to.eql(2);
       expect(registerd.templatesHash).to.deep.eql({
         'oc-template-jade': require('oc-template-jade'),
         'oc-template-handlebars': require('oc-template-handlebars')
@@ -23,7 +22,7 @@ describe('registry : domain : register-templates', () => {
     });
   });
 
-  describe('when templates get registerd with additional templates', () => {
+  describe('when templates get registered with additional templates', () => {
     const templateMock = {
       getInfo() {
         return {
@@ -37,7 +36,6 @@ describe('registry : domain : register-templates', () => {
     const registerd = registerTemplates([templateMock]);
 
     it('should correctly register core-templates & extra templates', () => {
-      expect(registerd.templates.length).to.eql(3);
       expect(registerd.templatesHash).to.deep.eql({
         'oc-template-jade': require('oc-template-jade'),
         'oc-template-handlebars': require('oc-template-handlebars'),
@@ -54,7 +52,6 @@ describe('registry : domain : register-templates', () => {
       const registerd = registerTemplates([require('oc-template-jade')]);
 
       it('should correctly register core-templates only', () => {
-        expect(registerd.templates.length).to.eql(2);
         expect(registerd.templatesHash).to.deep.eql({
           'oc-template-jade': require('oc-template-jade'),
           'oc-template-handlebars': require('oc-template-handlebars')
