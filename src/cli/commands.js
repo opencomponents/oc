@@ -32,6 +32,11 @@ module.exports = {
           boolean: true,
           description: 'Watch for file changes',
           default: true
+        },
+        production: {
+          boolean: true,
+          description: 'Force packaging for production',
+          default: false
         }
       },
       usage: 'Usage: $0 dev <dirName> [port] [baseUrl] [options]'
