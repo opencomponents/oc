@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.40.9
+- [#615](https://github.com/opentable/oc/pull/615) [OC-93] Update oc-client
+
 ### v0.40.8
 - [#612](https://github.com/opentable/oc/pull/612) [OC-127] Fix templates breaking change
 
