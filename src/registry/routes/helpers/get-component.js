@@ -19,7 +19,6 @@ const settings = require('../../../resources/settings');
 const strings = require('../../../resources');
 const urlBuilder = require('../../domain/url-builder');
 const validator = require('../../domain/validators');
-const requireTemplate = require('../../../utils/require-template');
 
 module.exports = function(conf, repository) {
   const client = new Client(),
@@ -153,9 +152,7 @@ module.exports = function(conf, repository) {
           templateType = `oc-template-${templateType}`;
         }
 
-        const supportedTemplates = repository.getTemplates().map(t => t.type);
-
-        if (!_.includes(supportedTemplates, templateType)) {
+        if (!repository.getTemplate(templateType)) {
           return callback({
             status: 400,
             response: {
@@ -344,7 +341,7 @@ module.exports = function(conf, repository) {
                   let ocTemplate;
 
                   try {
-                    ocTemplate = requireTemplate(templateType);
+                    ocTemplate = repository.getTemplate(templateType);
                   } catch (err) {
                     throw err;
                   }
@@ -392,7 +389,7 @@ module.exports = function(conf, repository) {
                   responseHeaders[header.toLowerCase()] = value;
                 }
               },
-              templates: repository.getTemplates()
+              templates: repository.getTemplatesInfo()
             };
 
           const setCallbackTimeout = () => {

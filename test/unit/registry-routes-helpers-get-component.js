@@ -9,7 +9,10 @@ const _ = require('lodash');
 describe('registry : routes : helpers : get-component', () => {
   const mockedComponents = require('../fixtures/mocked-components');
   let fireStub, mockedRepository, GetComponent;
-
+  const templates = {
+    'oc-template-jade': require('oc-template-jade'),
+    'oc-template-handlebars': require('oc-template-handlebars')
+  };
   const initialise = function(params) {
     fireStub = sinon.stub();
     GetComponent = injectr(
@@ -18,13 +21,6 @@ describe('registry : routes : helpers : get-component', () => {
         '../../domain/events-handler': {
           on: _.noop,
           fire: fireStub
-        },
-        '../../../utils/require-template': type => {
-          if (type === 'oc-template-supported') {
-            return require('oc-template-jade');
-          } else {
-            return require(type);
-          }
         },
         'oc-client': function() {
           const client = new Client();
@@ -45,7 +41,7 @@ describe('registry : routes : helpers : get-component', () => {
       getCompiledView: sinon.stub().yields(null, params.view),
       getComponent: sinon.stub().yields(null, params.package),
       getDataProvider: sinon.stub().yields(null, params.data),
-      getTemplates: sinon.stub().returns([
+      getTemplatesInfo: sinon.stub().returns([
         {
           type: 'oc-template-jade',
           version: '6.0.1',
@@ -62,6 +58,10 @@ describe('registry : routes : helpers : get-component', () => {
           externals: []
         }
       ]),
+      getTemplate: type =>
+        type === 'oc-template-supported'
+          ? templates['oc-template-jade']
+          : templates[type],
       getStaticFilePath: sinon.stub().returns('//my-cdn.com/files/')
     };
   };
