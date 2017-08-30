@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.40.10
+- [#616](https://github.com/opentable/oc/pull/616) [OC-93] Update oc-client
+
 ### v0.40.9
 - [#615](https://github.com/opentable/oc/pull/615) [OC-93] Update oc-client
 
