@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.41.0
+- [#617](https://github.com/opentable/oc/pull/617) [OC-140] Declarative templates initialisation on a registry level
+- [#613](https://github.com/opentable/oc/pull/613) Pass option to the compiler for targeting specific build process
+
 ### v0.40.10
 - [#616](https://github.com/opentable/oc/pull/616) [OC-93] Update oc-client
 
