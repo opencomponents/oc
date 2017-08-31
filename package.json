@@ -91,6 +91,7 @@
     "targz": "1.0.1",
     "try-require": "^1.2.1",
     "watch": "1.0.2",
-    "yargs": "8.0.1"
+    "yargs": "8.0.1",
+    "proxy-agent": "^2.0.0"
   }
 }
