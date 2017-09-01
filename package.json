@@ -35,7 +35,7 @@
     "oc"
   ],
   "devDependencies": {
-    "chai": "4.1.2",
+    "chai": "3.5.0",
     "grunt": "^1.0.1",
     "grunt-git": "^1.0.0",
     "grunt-mocha-test": "^0.13.2",
@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "accept-language-parser": "1.4.1",
-    "async": "2.5.0",
+    "async": "1.5.2",
     "aws-sdk": "2.107.0",
     "basic-auth-connect": "^1.0.0",
     "body-parser": "1.17.2",
@@ -60,7 +60,7 @@
     "dependency-graph": "0.5.0",
     "errorhandler": "^1.5.0",
     "express": "4.15.4",
-    "form-data": "2.3.1",
+    "form-data": "2.1.4",
     "fs-extra": "4.0.1",
     "jstransformer-clean-css": "^2.0.0",
     "jstransformer-uglify-css": "^1.0.0",
