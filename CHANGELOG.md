@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.41.1
+- [#619](https://github.com/opentable/oc/pull/619) Issue #618 : Accessing s3 bucket over a proxy
+- [#621](https://github.com/opentable/oc/pull/621) Update aws-sdk to the latest version 🚀
+- [#620](https://github.com/opentable/oc/pull/620) Update dependencies to enable Greenkeeper 🌴
+
 ### v0.41.0
 - [#617](https://github.com/opentable/oc/pull/617) [OC-140] Declarative templates initialisation on a registry level
 - [#613](https://github.com/opentable/oc/pull/613) Pass option to the compiler for targeting specific build process
