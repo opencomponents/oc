@@ -11,12 +11,11 @@ const _ = require('lodash');
 const getFileInfo = require('../../utils/get-file-info');
 const getNextYear = require('../../utils/get-next-year');
 const strings = require('../../resources');
-const proxy = require('proxy-agent');
 
 module.exports = function(conf) {
   const httpOptions = { timeout: conf.s3.timeout || 10000 };
   if (conf.s3.agentProxy) {
-    httpOptions.agent = proxy(conf.s3.agentProxy);
+    httpOptions.agent = conf.s3.agentProxy;
   }
 
   AWS.config.update({
