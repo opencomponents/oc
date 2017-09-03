@@ -13,11 +13,16 @@ const getNextYear = require('../../utils/get-next-year');
 const strings = require('../../resources');
 
 module.exports = function(conf) {
+  const httpOptions = { timeout: conf.s3.timeout || 10000 };
+  if (conf.s3.agentProxy) {
+    httpOptions.agent = conf.s3.agentProxy;
+  }
+
   AWS.config.update({
     accessKeyId: conf.s3.key,
     secretAccessKey: conf.s3.secret,
     region: conf.s3.region,
-    httpOptions: { timeout: conf.s3.timeout || 10000 }
+    httpOptions
   });
 
   const bucket = conf.s3.bucket;
@@ -103,10 +108,10 @@ module.exports = function(conf) {
     `${conf.s3.path}${componentName}/${version}/${fileName}`;
 
   const listSubDirectories = (dir, callback) => {
-    const normalisedPath = dir.lastIndexOf('/') === dir.length - 1 &&
-      dir.length > 0
-      ? dir
-      : dir + '/';
+    const normalisedPath =
+      dir.lastIndexOf('/') === dir.length - 1 && dir.length > 0
+        ? dir
+        : dir + '/';
 
     getClient().listObjects(
       {
