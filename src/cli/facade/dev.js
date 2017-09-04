@@ -10,6 +10,7 @@ const getMockedPlugins = require('../domain/get-mocked-plugins');
 const loadDependencies = require('../domain/load-dependencies');
 const oc = require('../../index');
 const strings = require('../../resources/index');
+const requireTemplate = require('../../utils/require-template');
 const watch = require('../domain/watch');
 const wrapCliCallback = require('../wrap-cli-callback');
 
@@ -145,7 +146,7 @@ module.exports = function(dependencies) {
             baseUrl: baseUrl,
             env: { name: 'local' },
             dependencies: dependencies.modules,
-            templates: dependencies.templates
+            templates: dependencies.templates.map(requireTemplate)
           });
 
           registerPlugins(registry);
