@@ -1,6 +1,9 @@
 ## Change Log
 
-### v0.41.1
+### v0.41.2
+- [#626](https://github.com/opentable/oc/pull/626) Update oc-client
+- [#625](https://github.com/opentable/oc/pull/625) Update oc-client-browser
+- [#624](https://github.com/opentable/oc/pull/624) inititalzie the dev registry with the dynamic require templatee
 - [#619](https://github.com/opentable/oc/pull/619) Issue #618 : Accessing s3 bucket over a proxy
 - [#621](https://github.com/opentable/oc/pull/621) Update aws-sdk to the latest version 🚀
 - [#620](https://github.com/opentable/oc/pull/620) Update dependencies to enable Greenkeeper 🌴
