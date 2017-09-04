@@ -73,7 +73,7 @@
     "node-dir": "0.1.17",
     "npm": "5.3.0",
     "oc-client-browser": "1.0.4",
-    "oc-client": "2.1.25",
+    "oc-client": "2.1.26",
     "oc-template-handlebars": "6.0.5",
     "oc-template-handlebars-compiler": "6.0.10",
     "oc-template-jade-compiler": "6.0.10",
