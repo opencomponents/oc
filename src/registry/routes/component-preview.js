@@ -50,7 +50,7 @@ module.exports = function(conf, repository) {
                 req,
                 res,
                 fallbackComponent,
-                repository.getTemplatesInfo()
+                repository.getTemplates()
               );
             }
           );
@@ -61,7 +61,7 @@ module.exports = function(conf, repository) {
           req,
           res,
           component,
-          repository.getTemplatesInfo()
+          repository.getTemplates()
         );
       }
     );

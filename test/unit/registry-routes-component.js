@@ -9,10 +9,6 @@ describe('registry : routes : component', () => {
     mockedComponents = require('../fixtures/mocked-components');
   let mockedRepository, resJsonStub, resSetStub, statusStub, componentRoute;
 
-  const templates = {
-    'oc-template-jade': require('oc-template-jade'),
-    'oc-template-handlebars': require('oc-template-handlebars')
-  };
   const initialise = function(params) {
     resJsonStub = sinon.stub();
     resSetStub = sinon.stub();
@@ -21,7 +17,7 @@ describe('registry : routes : component', () => {
       getCompiledView: sinon.stub().yields(null, params.view),
       getComponent: sinon.stub().yields(null, params.package),
       getDataProvider: sinon.stub().yields(null, params.data),
-      getTemplatesInfo: sinon.stub().returns([
+      getTemplates: sinon.stub().returns([
         {
           type: 'oc-template-jade',
           version: '6.0.1',
@@ -33,7 +29,6 @@ describe('registry : routes : component', () => {
           externals: []
         }
       ]),
-      getTemplate: type => templates[type],
       getStaticFilePath: sinon.stub().returns('//my-cdn.com/files/')
     };
   };
@@ -579,16 +574,12 @@ describe('registry : routes : component', () => {
       const headersComponent =
         mockedComponents['another-response-headers-component'];
       const simpleComponent = mockedComponents['simple-component'];
-      const templates = {
-        'oc-template-jade': require('oc-template-jade'),
-        'oc-template-handlebars': require('oc-template-handlebars')
-      };
 
       mockedRepository = {
         getCompiledView: sinon.stub(),
         getComponent: sinon.stub(),
         getDataProvider: sinon.stub(),
-        getTemplatesInfo: sinon.stub().returns([
+        getTemplates: sinon.stub().returns([
           {
             type: 'oc-template-jade',
             version: '6.0.1',
@@ -600,7 +591,6 @@ describe('registry : routes : component', () => {
             externals: []
           }
         ]),
-        getTemplate: type => templates[type],
         getStaticFilePath: sinon.stub().returns('//my-cdn.com/files/')
       };
 

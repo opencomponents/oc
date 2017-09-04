@@ -128,11 +128,11 @@ describe('registry : domain : repository', () => {
     describe('when getting the list of supported templates', () => {
       describe('when no templates are specificed on the configuaration', () => {
         it('should return core templates', () => {
-          expect(repository.getTemplatesInfo().length).to.equal(2);
-          expect(repository.getTemplatesInfo()[0].type).to.equal(
+          expect(repository.getTemplates().length).to.equal(2);
+          expect(repository.getTemplates()[0].type).to.equal(
             'oc-template-jade'
           );
-          expect(repository.getTemplatesInfo()[1].type).to.equal(
+          expect(repository.getTemplates()[1].type).to.equal(
             'oc-template-handlebars'
           );
         });
@@ -141,23 +141,24 @@ describe('registry : domain : repository', () => {
       describe('when the templates specificed on the configuaration are core-templates', () => {
         it('should only return uniques templates', () => {
           const conf = _.extend(cdnConfiguration, {
-            templates: [require('oc-template-jade')]
+            templates: ['oc-template-jade']
           });
           const repository = new Repository(conf);
-          expect(repository.getTemplatesInfo().length).to.equal(2);
+          expect(repository.getTemplates().length).to.equal(2);
         });
       });
 
       describe('when templates specificed on the configuaration are not installed', () => {
         it('should throw an error', () => {
+          const conf = _.extend(cdnConfiguration, {
+            templates: ['oc-template-react']
+          });
+
           try {
-            const conf = _.extend(cdnConfiguration, {
-              templates: [require('oc-template-react')]
-            });
             Repository(conf);
           } catch (err) {
             expect(err.message).to.equal(
-              "Cannot find module 'oc-template-react'"
+              'Error requiring oc-template: "oc-template-react" not found'
             );
           }
         });
