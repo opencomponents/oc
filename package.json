@@ -81,7 +81,7 @@
     "oc-get-unix-utc-timestamp": "1.0.1",
     "opn": "5.1.0",
     "parse-author": "2.0.0",
-    "pug": "2.0.0-rc.3",
+    "pug": "2.0.0-rc.4",
     "read": "1.0.7",
     "require-package-name": "2.0.1",
     "response-time": "^2.3.2",
