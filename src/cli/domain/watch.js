@@ -8,6 +8,7 @@ module.exports = function(dirs, baseDir, changed) {
     watch.watchTree(
       path.resolve(baseDir),
       {
+        interval: 0.5,
         ignoreUnreadableDir: true,
         ignoreDotFiles: false
       },
@@ -18,7 +19,8 @@ module.exports = function(dirs, baseDir, changed) {
               fileName
             ) === false
           ) {
-            changed(null, fileName);
+            const componentDir = dirs.find(dir => Boolean(fileName.match(dir)));
+            changed(null, fileName, componentDir);
           }
         }
       }
