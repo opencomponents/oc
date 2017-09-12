@@ -53,7 +53,7 @@
     "async": "1.5.2",
     "aws-sdk": "2.113.0",
     "basic-auth-connect": "^1.0.0",
-    "body-parser": "1.18.0",
+    "body-parser": "1.18.1",
     "builtin-modules": "^1.1.1",
     "colors": "1.1.2",
     "cross-spawn": "^5.1.0",
