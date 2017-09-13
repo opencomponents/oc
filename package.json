@@ -1,6 +1,6 @@
 {
   "name": "oc",
-  "version": "0.41.2",
+  "version": "0.41.3",
   "description": "A framework for developing and distributing html components",
   "main": "./src/index.js",
   "bin": {
@@ -51,9 +51,9 @@
   "dependencies": {
     "accept-language-parser": "1.4.1",
     "async": "1.5.2",
-    "aws-sdk": "2.112.0",
+    "aws-sdk": "2.113.0",
     "basic-auth-connect": "^1.0.0",
-    "body-parser": "1.17.2",
+    "body-parser": "1.18.0",
     "builtin-modules": "^1.1.1",
     "colors": "1.1.2",
     "cross-spawn": "^5.1.0",
@@ -73,7 +73,7 @@
     "nice-cache": "0.0.5",
     "node-dir": "0.1.17",
     "npm": "5.3.0",
-    "oc-client": "2.1.26",
+    "oc-client": "2.1.27",
     "oc-client-browser": "1.0.4",
     "oc-get-unix-utc-timestamp": "1.0.1",
     "oc-template-handlebars": "6.0.5",
