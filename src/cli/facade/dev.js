@@ -34,7 +34,7 @@ module.exports = function(dependencies) {
     callback = wrapCliCallback(callback);
 
     const watchForChanges = function({ components, liveReloadServer }, cb) {
-      watch(components, componentsDir, (err, changedFile) => {
+      watch(components, componentsDir, (err, changedFile, componentDir) => {
         if (err) {
           logger.err(format(strings.errors.generic, err));
         } else {
@@ -44,7 +44,7 @@ module.exports = function(dependencies) {
           if (!hotReloading) {
             logger.warn(strings.messages.cli.HOT_RELOADING_DISABLED);
           } else {
-            cb(components, done => {
+            cb([componentDir], done => {
               liveReloadServer.refresh('/');
             });
           }
