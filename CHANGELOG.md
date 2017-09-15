@@ -1,5 +1,13 @@
 ## Change Log
 
+### v0.41.4
+- [#632](https://github.com/opentable/oc/pull/632) Improve watching for Dev registry
+- [#641](https://github.com/opentable/oc/pull/641) Update aws-sdk to the latest version 🚀
+- [#635](https://github.com/opentable/oc/pull/635) liveReload
+- [#639](https://github.com/opentable/oc/pull/639) Update fs-extra to the latest version 🚀
+- [#637](https://github.com/opentable/oc/pull/637) Update body-parser to the latest version 🚀
+- [#638](https://github.com/opentable/oc/pull/638) Update aws-sdk to the latest version 🚀
+
 ### v0.41.3
 - [#640](https://github.com/opentable/oc/pull/640) Update oc-client to the latest version 🚀
 - [#636](https://github.com/opentable/oc/pull/636) Update aws-sdk to the latest version 🚀
