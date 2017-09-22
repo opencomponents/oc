@@ -7,8 +7,14 @@
     "oc": "./src/oc-cli.js"
   },
   "scripts": {
+    "build": "node tasks/build.js && npm run test",
+    "changelog": "node tasks/changelog.js",
+    "git-stage": "node tasks/git-stage.js",
     "precommit": "lint-staged",
-    "test": "grunt build && grunt test"
+    "start": "npm run build",
+    "test": "node tasks/mochaTest.js",
+    "test-silent": "node tasks/mochaTest.js --silent",
+    "version": "node tasks/version.js"
   },
   "lint-staged": {
     "*.js": [
@@ -36,16 +42,17 @@
   ],
   "devDependencies": {
     "chai": "3.5.0",
-    "grunt": "^1.0.1",
-    "grunt-git": "^1.0.0",
-    "grunt-mocha-test": "^0.13.2",
+    "chalk": "^2.1.0",
+    "glob": "^7.1.2",
     "husky": "^0.14.3",
     "injectr": "0.5.1",
     "lint-staged": "^4.0.2",
-    "load-grunt-tasks": "^3.5.2",
+    "minimist": "^1.2.0",
     "mocha": "^3.0.2",
+    "node-emoji": "^1.8.1",
     "prettier-eslint-cli": "^4.0.4",
     "semver-sort": "0.0.4",
+    "simple-git": "^1.77.0",
     "sinon": "^3.0.0"
   },
   "dependencies": {
@@ -72,13 +79,13 @@
     "nice-cache": "0.0.5",
     "node-dir": "0.1.17",
     "npm": "5.3.0",
-    "oc-client-browser": "1.0.4",
     "oc-client": "2.1.26",
+    "oc-client-browser": "1.0.4",
+    "oc-get-unix-utc-timestamp": "1.0.1",
     "oc-template-handlebars": "6.0.5",
     "oc-template-handlebars-compiler": "6.0.10",
-    "oc-template-jade-compiler": "6.0.10",
     "oc-template-jade": "6.0.4",
-    "oc-get-unix-utc-timestamp": "1.0.1",
+    "oc-template-jade-compiler": "6.0.10",
     "opn": "5.1.0",
     "parse-author": "2.0.0",
     "pug": "2.0.0-rc.4",
