@@ -1,5 +1,23 @@
 ## Change Log
 
+### v0.41.4
+- [#632](https://github.com/opentable/oc/pull/632) Improve watching for Dev registry
+- [#641](https://github.com/opentable/oc/pull/641) Update aws-sdk to the latest version 🚀
+- [#635](https://github.com/opentable/oc/pull/635) liveReload
+- [#639](https://github.com/opentable/oc/pull/639) Update fs-extra to the latest version 🚀
+- [#637](https://github.com/opentable/oc/pull/637) Update body-parser to the latest version 🚀
+- [#638](https://github.com/opentable/oc/pull/638) Update aws-sdk to the latest version 🚀
+
+### v0.41.3
+- [#640](https://github.com/opentable/oc/pull/640) Update oc-client to the latest version 🚀
+- [#636](https://github.com/opentable/oc/pull/636) Update aws-sdk to the latest version 🚀
+- [#634](https://github.com/opentable/oc/pull/634) Update body-parser to the latest version 🚀
+- [#633](https://github.com/opentable/oc/pull/633) Update aws-sdk to the latest version 🚀
+- [#631](https://github.com/opentable/oc/pull/631) Update aws-sdk to the latest version 🚀
+- [#629](https://github.com/opentable/oc/pull/629) Update pug to the latest version 🚀
+- [#630](https://github.com/opentable/oc/pull/630) Update aws-sdk to the latest version 🚀
+- [#628](https://github.com/opentable/oc/pull/628) Update aws-sdk to the latest version 🚀
+
 ### v0.41.2
 - [#626](https://github.com/opentable/oc/pull/626) Update oc-client
 - [#625](https://github.com/opentable/oc/pull/625) Update oc-client-browser

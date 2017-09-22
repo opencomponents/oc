@@ -12,3 +12,4 @@ html
       oc.conf.templates = oc.conf.templates || [];
       oc.conf.templates = oc.conf.templates.concat(!{JSON.stringify(templates)});
     script(src=baseUrl+'oc-client/client.js')
+    | !{liveReload}

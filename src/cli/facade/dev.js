@@ -3,6 +3,7 @@
 const async = require('async');
 const colors = require('colors/safe');
 const format = require('stringformat');
+const livereload = require('livereload');
 const path = require('path');
 const _ = require('lodash');
 
@@ -32,8 +33,8 @@ module.exports = function(dependencies) {
 
     callback = wrapCliCallback(callback);
 
-    const watchForChanges = function(components, cb) {
-      watch(components, componentsDir, (err, changedFile) => {
+    const watchForChanges = function({ components, liveReloadServer }, cb) {
+      watch(components, componentsDir, (err, changedFile, componentDir) => {
         if (err) {
           logger.err(format(strings.errors.generic, err));
         } else {
@@ -43,7 +44,9 @@ module.exports = function(dependencies) {
           if (!hotReloading) {
             logger.warn(strings.messages.cli.HOT_RELOADING_DISABLED);
           } else {
-            cb(components);
+            cb([componentDir], done => {
+              liveReloadServer.refresh('/');
+            });
           }
         }
       });
@@ -135,6 +138,8 @@ module.exports = function(dependencies) {
 
       loadDependencies({ components, logger }, dependencies => {
         packageComponents(components, () => {
+          const liveReloadServer = livereload.createServer({ port: port + 1 });
+
           const registry = new oc.Registry({
             local: true,
             hotReloading: hotReloading,
@@ -163,7 +168,10 @@ module.exports = function(dependencies) {
             }
 
             if (optWatch) {
-              watchForChanges(components, packageComponents);
+              watchForChanges(
+                { components, liveReloadServer },
+                packageComponents
+              );
             }
             callback(null, registry);
           });

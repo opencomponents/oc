@@ -12,6 +12,12 @@ function componentPreview(err, req, res, component, templates) {
     return res.status(404).json(err);
   }
 
+  let liveReload = null;
+  if (res.conf.env.name === 'local') {
+    const liveReloadPort = res.conf.port + 1;
+    liveReload = `<script src="http://localhost:${liveReloadPort}/livereload.js?snipver=1"></script>`;
+  }
+
   const isHtmlRequest =
     !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
 
@@ -20,8 +26,9 @@ function componentPreview(err, req, res, component, templates) {
       component: component,
       dependencies: _.keys(component.dependencies),
       href: res.conf.baseUrl,
+      liveReload,
       qs: urlBuilder.queryString(req.query),
-      templates: templates
+      templates
     });
   } else {
     res.status(200).json(
