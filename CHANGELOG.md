@@ -1,5 +1,20 @@
 ## Change Log
 
+### v0.41.5
+- [#658](https://github.com/opentable/oc/pull/658) Update aws-sdk to the latest version 🚀
+- [#655](https://github.com/opentable/oc/pull/655) fix(package): update oc-template-jade-compiler to version 6.1.1
+- [#656](https://github.com/opentable/oc/pull/656) fix(package): update oc-template-handlebars-compiler to version 6.1.1
+- [#657](https://github.com/opentable/oc/pull/657) Update aws-sdk to the latest version 🚀
+- [#654](https://github.com/opentable/oc/pull/654) Update oc-client to the latest version 🚀
+- [#653](https://github.com/opentable/oc/pull/653) Update aws-sdk to the latest version 🚀
+- [#652](https://github.com/opentable/oc/pull/652) Update aws-sdk to the latest version 🚀
+- [#645](https://github.com/opentable/oc/pull/645) Update oc-template-handlebars to the latest version 🚀
+- [#647](https://github.com/opentable/oc/pull/647) Update oc-template-jade to the latest version 🚀
+- [#646](https://github.com/opentable/oc/pull/646) Update oc-template-jade-compiler to the latest version 🚀
+- [#644](https://github.com/opentable/oc/pull/644) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#648](https://github.com/opentable/oc/pull/648) Update aws-sdk to the latest version 🚀
+- [#643](https://github.com/opentable/oc/pull/643) Update oc-client to the latest version 🚀
+
 ### v0.41.4
 - [#632](https://github.com/opentable/oc/pull/632) Improve watching for Dev registry
 - [#641](https://github.com/opentable/oc/pull/641) Update aws-sdk to the latest version 🚀
