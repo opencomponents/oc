@@ -12,18 +12,40 @@ const getFileInfo = require('../../utils/get-file-info');
 const getNextYear = require('../../utils/get-next-year');
 const strings = require('../../resources');
 
+const getConfig = conf => {
+  const httpOptions = { timeout: conf.s3.timeout || 10000 };
+  if (conf.s3.agentProxy) {
+    httpOptions.agent = conf.s3.agentProxy;
+  }
+
+  const config = {
+    accessKeyId: conf.s3.key,
+    secretAccessKey: conf.s3.secret,
+    httpOptions
+  };
+
+  if (conf.s3.endpoint) {
+    config.endpoint = conf.s3.endpoint;
+  }
+  if (conf.s3.region) {
+    config.region = conf.s3.region;
+  }
+  if (conf.s3.signatureVersion) {
+    config.signatureVersion = conf.s3.signatureVersion;
+  }
+  if (conf.s3.s3ForcePathStyle) {
+    config.s3ForcePathStyle = conf.s3.s3ForcePathStyle;
+  }
+  return config;
+};
+
 module.exports = function(conf) {
   const httpOptions = { timeout: conf.s3.timeout || 10000 };
   if (conf.s3.agentProxy) {
     httpOptions.agent = conf.s3.agentProxy;
   }
 
-  AWS.config.update({
-    accessKeyId: conf.s3.key,
-    secretAccessKey: conf.s3.secret,
-    region: conf.s3.region,
-    httpOptions
-  });
+  AWS.config.update(getConfig(conf));
 
   const bucket = conf.s3.bucket;
   const cache = new Cache({
