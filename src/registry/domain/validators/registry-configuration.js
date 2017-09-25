@@ -89,7 +89,7 @@ module.exports = function(conf) {
     if (
       !conf.s3 ||
       !conf.s3.bucket ||
-      !conf.s3.region ||
+      (!conf.s3.region && !conf.s3.endpoint) ||
       (conf.s3.key && !conf.s3.secret) ||
       (!conf.s3.key && conf.s3.secret)
     ) {
