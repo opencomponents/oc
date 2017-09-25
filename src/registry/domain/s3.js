@@ -30,7 +30,7 @@ const getConfig = conf => {
   if (conf.s3.region) {
     config.region = conf.s3.region;
   }
-  if (conf.s3.region) {
+  if (conf.s3.signatureVersion) {
     config.signatureVersion = conf.s3.signatureVersion;
   }
   if (conf.s3.s3ForcePathStyle) {
