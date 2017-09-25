@@ -51,8 +51,8 @@ module.exports = function(conf) {
         const isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory();
         const isValidComponent = isDir
           ? fs
-              .readdirSync(path.join(conf.path, file))
-              .filter(file => file === '_package').length === 1
+            .readdirSync(path.join(conf.path, file))
+            .filter(file => file === '_package').length === 1
           : false;
 
         return isValidComponent;
@@ -196,9 +196,12 @@ module.exports = function(conf) {
       );
     },
     getComponentPath: (componentName, componentVersion) => {
+      const basePath = conf.s3.path.startsWith('http')
+        ? conf.s3.path
+        : `https:${conf.s3.path}`;
       const prefix = conf.local
         ? conf.baseUrl
-        : `https:${conf.s3.path}${conf.s3.componentsDir}/`;
+        : `${basePath}${conf.s3.componentsDir}/`;
       return `${prefix}${componentName}/${componentVersion}/`;
     },
     getComponents: callback => {
