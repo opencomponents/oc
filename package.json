@@ -1,6 +1,6 @@
 {
   "name": "oc",
-  "version": "0.41.4",
+  "version": "0.41.5",
   "description": "A framework for developing and distributing html components",
   "main": "./src/index.js",
   "bin": {
@@ -46,7 +46,7 @@
     "glob": "^7.1.2",
     "husky": "^0.14.3",
     "injectr": "0.5.1",
-    "lint-staged": "^4.0.2",
+    "lint-staged": "^4.2.3",
     "minimist": "^1.2.0",
     "mocha": "^3.0.2",
     "node-emoji": "^1.8.1",
@@ -58,9 +58,9 @@
   "dependencies": {
     "accept-language-parser": "1.4.1",
     "async": "1.5.2",
-    "aws-sdk": "2.121.0",
+    "aws-sdk": "2.122.0",
     "basic-auth-connect": "^1.0.0",
-    "body-parser": "1.18.1",
+    "body-parser": "1.18.2",
     "builtin-modules": "^1.1.1",
     "colors": "1.1.2",
     "cross-spawn": "^5.1.0",
