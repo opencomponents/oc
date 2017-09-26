@@ -53,7 +53,7 @@
     "prettier-eslint-cli": "^4.0.4",
     "semver-sort": "0.0.4",
     "simple-git": "^1.77.0",
-    "sinon": "^3.0.0"
+    "sinon": "^4.0.0"
   },
   "dependencies": {
     "accept-language-parser": "1.4.1",
