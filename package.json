@@ -59,7 +59,7 @@
     "cross-spawn": "^5.1.0",
     "dependency-graph": "0.5.0",
     "errorhandler": "^1.5.0",
-    "express": "4.15.4",
+    "express": "4.15.5",
     "form-data": "2.1.4",
     "fs-extra": "4.0.2",
     "jstransformer-clean-css": "^2.0.0",
