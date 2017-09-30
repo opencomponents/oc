@@ -228,8 +228,7 @@ module.exports = function(conf) {
     const updateACL = (fileName, isPrivate) => {
       const minioClient = getMinioClient();
       if (!minioClient || isPrivate) {
-        callback();
-        return;
+        callback;
       }
       minioClient.setBucketPolicy(
         bucket,
@@ -238,7 +237,7 @@ module.exports = function(conf) {
         err => {
           if (err) throw err;
           console.log('done ', bucket, fileName, isPrivate);
-          callback();
+          callback;
         }
       );
     };
