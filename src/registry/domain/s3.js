@@ -7,10 +7,28 @@ const format = require('stringformat');
 const fs = require('fs-extra');
 const nodeDir = require('node-dir');
 const _ = require('lodash');
+const minio = require('minio');
 
 const getFileInfo = require('../../utils/get-file-info');
 const getNextYear = require('../../utils/get-next-year');
+const parseUrl = require('../../utils/parse-url');
 const strings = require('../../resources');
+
+const getMinioConfig = conf => {
+  if (!conf.s3.minio) {
+    return undefined;
+  }
+  const parsedUrl = parseUrl(url);
+  const config = {
+    accessKeyId: conf.s3.key,
+    secretAccessKey: conf.s3.secret,
+    secure: parsedUrl.protocol,
+    endPoint: parsedUrl.hostname,
+    port: parsedUrl.port
+  };
+
+  return config;
+};
 
 const getConfig = conf => {
   const httpOptions = { timeout: conf.s3.timeout || 10000 };
@@ -54,6 +72,14 @@ module.exports = function(conf) {
   });
 
   const getClient = () => new AWS.S3();
+
+  const getMinioClient = () => {
+    const config = getMinioConfig(conf);
+    if (!config) {
+      return undefined;
+    }
+    return new minio.Client(getMinioConfig(conf));
+  };
 
   const getFile = (filePath, force, callback) => {
     if (_.isFunction(force)) {
@@ -199,7 +225,24 @@ module.exports = function(conf) {
       obj.ContentEncoding = 'gzip';
     }
     const upload = getClient().upload(obj);
-    upload.send(callback);
+    const updateACL = (fileName, isPrivate) => {
+      const minioClient = getMinioClient();
+      if (!minioClient || isPrivate) {
+        callback();
+        return;
+      }
+      minioClient.setBucketPolicy(
+        bucket,
+        fileName,
+        minio.Policy.READONLY,
+        err => {
+          if (err) throw err;
+          console.log('done ', bucket, fileName, isPrivate);
+          callback();
+        }
+      );
+    };
+    upload.send(updateACL(fileName, isPrivate));
   };
 
   const putFile = (filePath, fileName, isPrivate, callback) => {
