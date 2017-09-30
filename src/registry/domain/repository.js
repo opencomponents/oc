@@ -10,20 +10,20 @@ const ComponentsCache = require('./components-cache');
 const ComponentsDetails = require('./components-details');
 const packageInfo = require('../../../package.json');
 const registerTemplates = require('./register-templates');
-const S3 = require('./s3');
+const CDN = require('./storage-provider');
 const settings = require('../../resources/settings');
 const strings = require('../../resources');
 const validator = require('./validators');
 const versionHandler = require('./version-handler');
 
 module.exports = function(conf) {
-  const cdn = !conf.local && new S3(conf);
+  const cdn = !conf.local && new CDN(conf);
   const repositorySource = conf.local ? 'local repository' : 's3 cdn';
   const componentsCache = ComponentsCache(conf, cdn);
   const componentsDetails = ComponentsDetails(conf, cdn);
-
+  const componentsDir = conf.s3 ? conf.s3.componentsDir : conf.gs.componentsDir;
   const getFilePath = (component, version, filePath) =>
-    `${conf.s3.componentsDir}/${component}/${version}/${filePath}`;
+    `${componentsDir}/${component}/${version}/${filePath}`;
 
   const { templatesHash, templatesInfo } = registerTemplates(conf.templates);
 
@@ -198,7 +198,7 @@ module.exports = function(conf) {
     getComponentPath: (componentName, componentVersion) => {
       const prefix = conf.local
         ? conf.baseUrl
-        : `https:${conf.s3.path}${conf.s3.componentsDir}/`;
+        : `https:${conf.s3.path}${componentsDir}/`;
       return `${prefix}${componentName}/${componentVersion}/`;
     },
     getComponents: callback => {
@@ -358,7 +358,7 @@ module.exports = function(conf) {
               }
               cdn.putDir(
                 pkgDetails.outputFolder,
-                `${conf.s3.componentsDir}/${componentName}/${componentVersion}`,
+                `${componentsDir}/${componentName}/${componentVersion}`,
                 err => {
                   if (err) {
                     return callback(err);

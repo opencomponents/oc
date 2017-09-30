@@ -11,8 +11,8 @@ module.exports = (conf, cdn) => {
     eventsHandler.fire('error', { code, message });
     return callback(code);
   };
-
-  const filePath = () => `${conf.s3.componentsDir}/components-details.json`;
+  const componentsDir = conf.s3 ? conf.s3.componentsDir : conf.gs.componentsDir;
+  const filePath = () => `${componentsDir}/components-details.json`;
 
   const getFromJson = callback => cdn.getJson(filePath(), true, callback);
 
