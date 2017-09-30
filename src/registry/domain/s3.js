@@ -18,11 +18,11 @@ const getMinioConfig = conf => {
   if (!conf.s3.minio) {
     return undefined;
   }
-  const parsedUrl = parseUrl(url);
+  const parsedUrl = parseUrl(conf.s3.endpoint);
   const config = {
-    accessKeyId: conf.s3.key,
-    secretAccessKey: conf.s3.secret,
-    secure: parsedUrl.protocol,
+    accessKey: conf.s3.key,
+    secretKey: conf.s3.secret,
+    secure: parsedUrl.protocol === 'https' ? true : false,
     endPoint: parsedUrl.hostname,
     port: parsedUrl.port
   };

@@ -36,7 +36,7 @@ const getPort = url => {
   //find & remove "?"
   port = port.split('/')[0];
 
-  return port;
+  return parseInt(port);
 };
 
 module.exports = function(url) {
