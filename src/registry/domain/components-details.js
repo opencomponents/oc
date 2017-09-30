@@ -32,8 +32,11 @@ module.exports = (conf, cdn) => {
             if (details.components[name][version]) {
               next();
             } else {
+              const componentsDir = conf.s3
+                ? conf.s3.componentsDir
+                : conf.gs.componentsDir;
               cdn.getJson(
-                `${conf.s3.componentsDir}/${name}/${version}/package.json`,
+                `${componentsDir}/${name}/${version}/package.json`,
                 true,
                 (err, content) => {
                   if (err) {

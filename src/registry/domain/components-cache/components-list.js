@@ -15,7 +15,6 @@ module.exports = (conf, cdn) => {
 
     getFromDirectories: callback => {
       const componentsInfo = {};
-
       const getVersionsForComponent = (componentName, cb) => {
         cdn.listSubDirectories(
           `${componentsDir}/${componentName}`,
@@ -29,7 +28,6 @@ module.exports = (conf, cdn) => {
       };
 
       cdn.listSubDirectories(componentsDir, (err, components) => {
-        console.log('cdn.listSubDirectories', components);
         if (err) {
           if (err.code === 'dir_not_found') {
             return callback(null, {
@@ -72,8 +70,9 @@ module.exports = (conf, cdn) => {
       });
     },
 
-    save: (data, callback) =>
-      cdn.putFileContent(JSON.stringify(data), filePath(), true, callback)
+    save: (data, callback) => {
+      cdn.putFileContent(JSON.stringify(data), filePath(), true, callback);
+    }
   };
 
   return componentsList;

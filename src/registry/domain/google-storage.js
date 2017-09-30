@@ -27,8 +27,6 @@ module.exports = function(conf) {
   });
 
   const getFile = (filePath, force, callback) => {
-    console.log('!!!!!! get file');
-    console.log(filePath);
     if (_.isFunction(force)) {
       callback = force;
       force = false;
@@ -40,8 +38,6 @@ module.exports = function(conf) {
         .file(filePath)
         .download()
         .then(data => {
-          console.log(`gs://${bucketName}/${filePath}`);
-          console.log(data.toString());
           cb(null, data.toString());
         })
         .catch(err => {
@@ -78,7 +74,6 @@ module.exports = function(conf) {
   };
 
   const getJson = (filePath, force, callback) => {
-    console.log('getJson', filePath);
     if (_.isFunction(force)) {
       callback = force;
       force = false;
@@ -90,7 +85,6 @@ module.exports = function(conf) {
       }
 
       try {
-        console.log('parse: ', file);
         callback(null, JSON.parse(file));
       } catch (er) {
         return callback({
@@ -109,7 +103,6 @@ module.exports = function(conf) {
       dir.lastIndexOf('/') === dir.length - 1 && dir.length > 0
         ? dir
         : dir + '/';
-
     const options = {
       prefix: normalisedPath
     };
@@ -118,23 +111,33 @@ module.exports = function(conf) {
       .getFiles(options)
       .then(results => {
         const files = results[0];
+        //console.log(files);
         if (files.length === 0) {
           throw 'no files';
         }
+
+        // const result = files
+        //   .filter(file => file.name.split('/').length > normalisedPath.split('/').length)
+        //   .map(file => file.name.split('/')[1])
+        //   .filter(function(item, i, ar){ return ar.indexOf(item) === i; });
+
+        //This seems hacky I am not sure how to just get the directories.
+        //Would all components have a package.json?
         const result = files
-          .filter(file => file.includes('package.json'))
+          .filter(file => file.name.includes('package.json'))
           .map(file => {
             const fileName = file.name.replace(normalisedPath, '');
             const fileSplit = fileName.split('/');
             return fileSplit[0];
           });
-
         callback(null, result);
       })
-      .catch(err => callback({
-        code: strings.errors.s3.DIR_NOT_FOUND_CODE,
-        msg: format(strings.errors.s3.DIR_NOT_FOUND, dir)
-      }));
+      .catch(err =>
+        callback({
+          code: strings.errors.s3.DIR_NOT_FOUND_CODE,
+          msg: format(strings.errors.s3.DIR_NOT_FOUND, dir)
+        })
+      );
   };
 
   const putDir = (dirInput, dirOutput, callback) => {
@@ -167,25 +170,25 @@ module.exports = function(conf) {
       .upload(filePath, { destination: fileName })
       .then(() => {
         if (!isPrivate) {
-          console.log('making public', fileName);
           getClient()
             .bucket(bucketName)
             .file(fileName)
             .makePublic()
             .then(() => {
-              console.log(`gs://${bucketName}/${fileName} is now public.`);
+              callback();
             })
             .catch(err => {
               console.error('ERROR making public:', err);
               return callback({ code: err.code, msg: err.message });
             });
+        } else {
+          callback();
         }
       })
       .catch(err => {
         console.error('ERROR:', err.code);
         return callback({ code: err.code, msg: err.message });
       });
-    callback();
   };
 
   return {
