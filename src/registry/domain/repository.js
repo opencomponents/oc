@@ -196,12 +196,9 @@ module.exports = function(conf) {
       );
     },
     getComponentPath: (componentName, componentVersion) => {
-      const basePath = conf.s3.path.startsWith('http')
-        ? conf.s3.path
-        : `https:${conf.s3.path}`;
       const prefix = conf.local
         ? conf.baseUrl
-        : `${basePath}${conf.s3.componentsDir}/`;
+        : `https:${conf.s3.path}${conf.s3.componentsDir}/`;
       return `${prefix}${componentName}/${componentVersion}/`;
     },
     getComponents: callback => {

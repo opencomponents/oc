@@ -71,7 +71,7 @@ module.exports = function(conf) {
     refreshInterval: conf.refreshInterval
   });
 
-  const getClient = () => new AWS.S3();
+  const getS3Client = () => new AWS.S3();
 
   const getMinioClient = () => {
     const config = getMinioConfig(conf);
@@ -88,7 +88,7 @@ module.exports = function(conf) {
     }
 
     const getFromAws = cb => {
-      getClient().getObject(
+      getS3Client().getObject(
         {
           Bucket: bucket,
           Key: filePath
@@ -161,7 +161,7 @@ module.exports = function(conf) {
         ? dir
         : dir + '/';
 
-    getClient().listObjects(
+    getS3Client().listObjects(
       {
         Bucket: bucket,
         Prefix: normalisedPath,
@@ -224,7 +224,7 @@ module.exports = function(conf) {
     if (fileInfo.gzip) {
       obj.ContentEncoding = 'gzip';
     }
-    const upload = getClient().upload(obj);
+    const upload = getS3Client().upload(obj);
     const updateACL = (fileName, isPrivate) => {
       const minioClient = getMinioClient();
       if (!minioClient || isPrivate) {
