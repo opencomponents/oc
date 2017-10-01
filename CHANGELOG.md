@@ -1,5 +1,14 @@
 ## Change Log
 
+### v0.41.7
+- [#679](https://github.com/opentable/oc/pull/679) [Snyk Update] New fixes for 2 vulnerable dependency paths
+- [#678](https://github.com/opentable/oc/pull/678) Update aws-sdk to the latest version 🚀
+- [#677](https://github.com/opentable/oc/pull/677) Update aws-sdk to the latest version 🚀
+- [#673](https://github.com/opentable/oc/pull/673) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#675](https://github.com/opentable/oc/pull/675) Update oc-template-jade-compiler to the latest version 🚀
+- [#674](https://github.com/opentable/oc/pull/674) Update oc-template-handlebars to the latest version 🚀
+- [#676](https://github.com/opentable/oc/pull/676) Update oc-template-jade to the latest version 🚀
+
 ### v0.41.6
 - [#672](https://github.com/opentable/oc/pull/672) Update oc-client to the latest version 🚀
 - [#670](https://github.com/opentable/oc/pull/670) Update morgan to the latest version 🚀
