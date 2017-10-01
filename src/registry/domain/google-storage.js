@@ -40,17 +40,14 @@ module.exports = function(conf) {
         .then(data => {
           cb(null, data.toString());
         })
-        .catch(err => {
-          console.error('ERROR:', err.code);
-          return callback(
-            err.code === 404
-              ? {
-                code: strings.errors.s3.FILE_NOT_FOUND_CODE,
-                msg: format(strings.errors.s3.FILE_NOT_FOUND, filePath)
-              }
-              : err
-          );
-        });
+        .catch(err => callback(
+          err.code === 404
+            ? {
+              code: strings.errors.s3.FILE_NOT_FOUND_CODE,
+              msg: format(strings.errors.s3.FILE_NOT_FOUND, filePath)
+            }
+            : err
+        ));
     };
 
     if (force) {
@@ -111,25 +108,18 @@ module.exports = function(conf) {
       .getFiles(options)
       .then(results => {
         const files = results[0];
-        //console.log(files);
         if (files.length === 0) {
           throw 'no files';
         }
-
-        // const result = files
-        //   .filter(file => file.name.split('/').length > normalisedPath.split('/').length)
-        //   .map(file => file.name.split('/')[1])
-        //   .filter(function(item, i, ar){ return ar.indexOf(item) === i; });
-
-        //This seems hacky I am not sure how to just get the directories.
-        //Would all components have a package.json?
         const result = files
-          .filter(file => file.name.includes('package.json'))
-          .map(file => {
-            const fileName = file.name.replace(normalisedPath, '');
-            const fileSplit = fileName.split('/');
-            return fileSplit[0];
-          });
+          //remove prefix
+          .map(file => file.name.replace(normalisedPath, ''))
+          //only get files that aren't in root directory
+          .filter(file => file.split('/').length > 1)
+          //get directory names
+          .map(file => file.split('/')[0])
+          //reduce to unique directories
+          .filter((item, i, ar) => ar.indexOf(item) === i);
         callback(null, result);
       })
       .catch(err =>
@@ -177,18 +167,12 @@ module.exports = function(conf) {
             .then(() => {
               callback();
             })
-            .catch(err => {
-              console.error('ERROR making public:', err);
-              return callback({ code: err.code, msg: err.message });
-            });
+            .catch(err => callback({ code: err.code, msg: err.message }));
         } else {
           callback();
         }
       })
-      .catch(err => {
-        console.error('ERROR:', err.code);
-        return callback({ code: err.code, msg: err.message });
-      });
+      .catch(err => callback({ code: err.code, msg: err.message }));
   };
 
   return {

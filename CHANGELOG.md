@@ -1,5 +1,17 @@
 ## Change Log
 
+### v0.41.6
+- [#672](https://github.com/opentable/oc/pull/672) Update oc-client to the latest version 🚀
+- [#670](https://github.com/opentable/oc/pull/670) Update morgan to the latest version 🚀
+- [#671](https://github.com/opentable/oc/pull/671) Update oc-template-jade to the latest version 🚀
+- [#669](https://github.com/opentable/oc/pull/669) Upgrade Express as patch
+- [#666](https://github.com/opentable/oc/pull/666) Update oc-template-jade to the latest version 🚀
+- [#667](https://github.com/opentable/oc/pull/667) Update aws-sdk to the latest version 🚀
+- [#665](https://github.com/opentable/oc/pull/665) Update sinon to the latest version 🚀
+- [#664](https://github.com/opentable/oc/pull/664) chore(package): update lint-staged to version 4.2.3
+- [#660](https://github.com/opentable/oc/pull/660) Update body-parser to the latest version 🚀
+- [#661](https://github.com/opentable/oc/pull/661) Update aws-sdk to the latest version 🚀
+
 ### v0.41.5
 - [#658](https://github.com/opentable/oc/pull/658) Update aws-sdk to the latest version 🚀
 - [#655](https://github.com/opentable/oc/pull/655) fix(package): update oc-template-jade-compiler to version 6.1.1
