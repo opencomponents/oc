@@ -22,9 +22,17 @@ module.exports = function(conf) {
   const componentsCache = ComponentsCache(conf, cdn);
   const componentsDetails = ComponentsDetails(conf, cdn);
   const componentsDir = conf.s3 ? conf.s3.componentsDir : conf.gs.componentsDir;
+  const remotePath = conf.s3 ? conf.s3.path : conf.gs.path;
   const getFilePath = (component, version, filePath) =>
     `${componentsDir}/${component}/${version}/${filePath}`;
-
+  const getPath = () => {
+    let urlPath = remotePath;
+    if (!remotePath.startsWith('http')) {
+      urlPath = `http:${remotePath}`;
+    }
+    console.log(urlPath);
+    return urlPath;
+  };
   const { templatesHash, templatesInfo } = registerTemplates(conf.templates);
 
   const local = {
@@ -196,9 +204,12 @@ module.exports = function(conf) {
       );
     },
     getComponentPath: (componentName, componentVersion) => {
-      const prefix = conf.local
-        ? conf.baseUrl
-        : `https:${conf.s3.path}${componentsDir}/`;
+      let prefix;
+      if (conf.local) {
+        prefix = conf.baseUrl;
+      } else {
+        prefix = `${getPath()}${componentsDir}/`;
+      }
       return `${prefix}${componentName}/${componentVersion}/`;
     },
     getComponents: callback => {
@@ -242,14 +253,14 @@ module.exports = function(conf) {
       );
     },
     getStaticClientPath: () =>
-      `https:${conf.s3.path}${getFilePath(
+      `${getPath()}${getFilePath(
         'oc-client',
         packageInfo.version,
         'src/oc-client.min.js'
       )}`,
 
     getStaticClientMapPath: () =>
-      `https:${conf.s3.path}${getFilePath(
+      `${getPath()}${getFilePath(
         'oc-client',
         packageInfo.version,
         'src/oc-client.min.map'

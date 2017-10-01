@@ -375,7 +375,8 @@ module.exports = function(conf, repository) {
               requestHeaders: options.headers,
               staticPath: repository
                 .getStaticFilePath(component.name, component.version, '')
-                .replace('https:', ''),
+                .replace('https:', '')
+                .replace('http:', ''),
               setHeader: (header, value) => {
                 if (
                   !(typeof header === 'string' && typeof value === 'string')
