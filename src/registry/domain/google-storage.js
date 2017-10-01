@@ -40,14 +40,16 @@ module.exports = function(conf) {
         .then(data => {
           cb(null, data.toString());
         })
-        .catch(err => callback(
-          err.code === 404
-            ? {
-              code: strings.errors.s3.FILE_NOT_FOUND_CODE,
-              msg: format(strings.errors.s3.FILE_NOT_FOUND, filePath)
-            }
-            : err
-        ));
+        .catch(err =>
+          callback(
+            err.code === 404
+              ? {
+                code: strings.errors.s3.FILE_NOT_FOUND_CODE,
+                msg: format(strings.errors.s3.FILE_NOT_FOUND, filePath)
+              }
+              : err
+          )
+        );
     };
 
     if (force) {
@@ -147,11 +149,16 @@ module.exports = function(conf) {
 
   const putFileContent = (fileContent, fileName, isPrivate, callback) => {
     const tmp = require('tmp');
-    const name = tmp.tmpNameSync();
+
+    const tmpobj = tmp.fileSync();
 
     const fs = require('fs');
-    fs.writeFileSync(name, fileContent);
-    putFile(name, fileName, isPrivate, callback);
+    fs.writeFileSync(tmpobj.name, fileContent);
+    const cleanup = (v1, v2) => {
+      tmpobj.removeCallback();
+      callback(v1, v2);
+    };
+    putFile(tmpobj.name, fileName, isPrivate, cleanup);
   };
 
   const putFile = (filePath, fileName, isPrivate, callback) => {
