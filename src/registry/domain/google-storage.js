@@ -156,7 +156,8 @@ module.exports = function(conf) {
     fs.writeFileSync(tmpobj.name, fileContent);
     const cleanup = (v1, v2) => {
       tmpobj.removeCallback();
-      callback(v1, v2);
+      //TODO: not sure what parms to pass to callback.
+      callback();
     };
     putFile(tmpobj.name, fileName, isPrivate, cleanup);
   };
