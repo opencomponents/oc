@@ -63,7 +63,7 @@ describe('cli : domain : init-template installTemplate', () => {
         'Installing oc-template-jade-compiler from npm...'
       );
       expect(config.logger.log.args[1][0]).to.contain(
-        'Installed oc-template-jade-compiler [oc-template-jade v1.2.3'
+        'Installed oc-template-jade-compiler [oc-template-jade v1.2.3]'
       );
     });
   });
