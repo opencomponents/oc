@@ -1,10 +1,9 @@
 'use strict';
 
-const path = require('path');
-const spawn = require('cross-spawn');
-const _ = require('lodash');
+const tryRequire = require('try-require');
 
 const isValidTemplate = require('../../../utils/isValidTemplate');
+const npm = require('../../../utils/npm-utils');
 const strings = require('../../../resources');
 
 module.exports = function installTemplate(options, callback) {
@@ -16,29 +15,27 @@ module.exports = function installTemplate(options, callback) {
     templateType
   } = options;
 
+  const npmOptions = {
+    dependency: compiler,
+    installPath: componentPath,
+    isDev: true,
+    save: true
+  };
+
   logger.log(strings.messages.cli.installCompiler(compiler));
 
-  const args = ['install', '--save-dev', '--save-exact', compiler];
-  const installProc = spawn('npm', args, {
-    cwd: componentPath,
-    stdio: 'inherit'
-  });
-
-  installProc.on('error', () => callback('template type not valid'));
-  installProc.on('close', code => {
-    if (code !== 0) {
-      return callback('template type not valid');
+  npm.installDependency(npmOptions, (err, result) => {
+    const errorMessage = 'template type not valid';
+    if (err) {
+      return callback(errorMessage);
     }
-    const maybeCompiler = require(path.join(
-      componentPath,
-      'node_modules',
-      compiler
-    ));
 
-    if (!isValidTemplate(maybeCompiler, { compiler: true })) {
-      return callback('template type not valid');
+    const installedCompiler = tryRequire(result.dest);
+
+    if (!isValidTemplate(compiler, { compiler: true })) {
+      return callback(errorMessage);
     }
-    const version = maybeCompiler.getInfo().version;
+    const version = installedCompiler.getInfo().version;
     logger.log(
       strings.messages.cli.installCompilerSuccess(
         templateType,

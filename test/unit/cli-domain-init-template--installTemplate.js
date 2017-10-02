@@ -4,45 +4,67 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 const injectr = require('injectr');
 
-const proc = sinon.stub();
-const deps = {
-  'cross-spawn': sinon.stub().returns({
-    on: proc
-  })
-};
-
-const installTemplate = injectr(
-  '../../src/cli/domain/init-template/install-template.js',
-  deps,
-  {}
-);
 describe('cli : domain : init-template installTemplate', () => {
-  describe('when invoked', () => {
+  const npmUtils = { installDependency: sinon.stub() };
+  const isValidTemplate = sinon.stub();
+  const installTemplate = injectr(
+    '../../src/cli/domain/init-template/install-template.js',
+    {
+      '../../../utils/npm-utils': npmUtils,
+      '../../../utils/isValidTemplate': isValidTemplate,
+      'try-require': sinon.stub().returns({
+        getInfo: () => ({ version: '1.2.3' })
+      })
+    }
+  );
+
+  describe('when succeeds', () => {
     const config = {
       templateType: 'oc-template-jade',
       componentPath: 'path/to/component',
       compiler: 'oc-template-jade-compiler',
       componentName: 'myComponent',
-      logger: {
-        log: sinon.spy()
-      }
+      logger: { log: sinon.spy() }
     };
-    const callback = sinon.spy();
 
-    installTemplate(config, callback);
+    let error, result;
+    before(done => {
+      const dest = 'path/to/component/node_modules/oc-template-jade-compiler';
+      npmUtils.installDependency.reset();
+      npmUtils.installDependency.yields(null, { dest });
+      isValidTemplate.returns(true);
+      installTemplate(config, (err, res) => {
+        error = err;
+        result = res;
+        done();
+      });
+    });
 
     it('should spawn the right process', () => {
-      expect(deps['cross-spawn'].args[0][0]).to.equal('npm');
-      expect(deps['cross-spawn'].args[0][1]).to.deep.equal([
-        'install',
-        '--save-dev',
-        '--save-exact',
-        'oc-template-jade-compiler'
-      ]);
+      expect(npmUtils.installDependency.args[0][0]).to.deep.equal({
+        dependency: 'oc-template-jade-compiler',
+        installPath: 'path/to/component',
+        isDev: true,
+        save: true
+      });
     });
-    it('should correctly setup on error and on close listeners', () => {
-      expect(proc.args[0][0]).to.equal('error');
-      expect(proc.args[1][0]).to.equal('close');
+
+    it('should validate the template', () => {
+      expect(isValidTemplate.called).to.be.true;
+    });
+
+    it('should return no error', () => {
+      expect(error).to.be.null;
+      expect(result).to.deep.equal({ ok: true });
+    });
+
+    it('should log progress and success', () => {
+      expect(config.logger.log.args[0][0]).to.equal(
+        'Installing oc-template-jade-compiler from npm...'
+      );
+      expect(config.logger.log.args[1][0]).to.contain(
+        'Installed oc-template-jade-compiler [oc-template-jade v1.2.3'
+      );
     });
   });
 });
