@@ -83,7 +83,7 @@ module.exports = function(conf) {
     });
   }
 
-  if (!conf.local) {
+  if (!conf.local && !conf.storage) {
     // S3 settings should either specify both key/secret or
     // skip both when leveraging IAM Role based S3 access from EC2
     if (
@@ -94,6 +94,23 @@ module.exports = function(conf) {
       (!conf.s3.key && conf.s3.secret)
     ) {
       return returnError(strings.errors.registry.CONFIGURATION_S3_NOT_VALID);
+    }
+  }
+
+  if (!conf.local && conf.storage) {
+    if (!conf.storage.adapter) {
+      return returnError(strings.errors.registry.CONFIGURATION_S3_NOT_VALID);
+    }
+    const cdn = conf.storage.adapter(conf);
+    if (cdn.storageType === 's3') {
+      if (
+        !conf.storage.options.bucket ||
+        !conf.storage.options.region ||
+        (conf.storage.options.key && !conf.storage.options.secret) ||
+        (!conf.storage.options.key && conf.storage.options.secret)
+      ) {
+        return returnError(strings.errors.registry.CONFIGURATION_S3_NOT_VALID);
+      }
     }
   }
 

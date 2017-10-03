@@ -13,7 +13,14 @@ describe('registry : domain : components-details', () => {
       'oc-get-unix-utc-timestamp': () => 1234567890
     }
   );
-  const conf = { s3: { componentsDir: 'components' } };
+
+  const conf = {
+    storage: {
+      options: {
+        componentsDir: 'components'
+      }
+    }
+  };
 
   let error, result;
   const next = done => (err, res) => {

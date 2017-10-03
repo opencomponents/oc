@@ -53,11 +53,16 @@ module.exports = function(input) {
   }
 
   options.customHeadersToSkipOnWeakVersion = (options.customHeadersToSkipOnWeakVersion ||
-    [])
-    .map(s => s.toLowerCase());
+    []
+  ).map(s => s.toLowerCase());
 
   options.port = process.env.PORT || options.port;
   options.timeout = options.timeout || 1000 * 60 * 2;
 
+  if (options.s3) {
+    options.storage = {};
+    options.storage.adapter = require('./s3');
+    options.storage.options = options.s3;
+  }
   return options;
 };

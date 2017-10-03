@@ -17,8 +17,8 @@ module.exports = function(repository, options, callback) {
   logger.log(
     format(
       colors.yellow('Connecting to library: {0}/{1}'),
-      options.s3.bucket,
-      options.s3.componentsDir
+      options.storage.options.bucket,
+      options.storage.options.componentsDir
     )
   );
 
