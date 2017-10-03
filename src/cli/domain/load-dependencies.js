@@ -1,11 +1,13 @@
+'use strict';
+
 const format = require('stringformat');
+const path = require('path');
 const _ = require('lodash');
 
 const getComponentsDependencies = require('./get-components-deps');
 const getMissingDeps = require('./get-missing-deps');
-const npmInstaller = require('./npm-installer');
+const npm = require('../../utils/npm-utils');
 const strings = require('../../resources/index');
-const wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function loadDependencies({ components, logger }, cb) {
   logger.warn(strings.messages.cli.CHECKING_DEPENDENCIES, true);
@@ -35,7 +37,14 @@ function installMissingDeps({ missing, logger }, cb) {
   }
 
   logger.warn(format(strings.messages.cli.INSTALLING_DEPS, missing.join(', ')));
-  npmInstaller(missing, err => {
+
+  const options = {
+    dependencies: missing,
+    installPath: path.resolve('.'),
+    save: false
+  };
+
+  npm.installDependencies(options, err => {
     if (err) {
       logger.err(err.toString());
       throw err;
