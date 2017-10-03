@@ -7,7 +7,10 @@ const _ = require('lodash');
 const getUnixUTCTimestamp = require('oc-get-unix-utc-timestamp');
 
 module.exports = (conf, cdn) => {
-  const componentsDir = conf.s3 ? conf.s3.componentsDir : conf.gs.componentsDir;
+  //TODO not sure how to get tests to pass without this
+  const componentsDir = conf.s3
+    ? conf.s3.componentsDir
+    : conf.gs ? conf.gs.componentsDir : '';
   const filePath = () => `${componentsDir}/components.json`;
 
   const componentsList = {

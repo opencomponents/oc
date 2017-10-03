@@ -21,8 +21,12 @@ module.exports = function(conf) {
   const repositorySource = conf.local ? 'local repository' : 's3 cdn';
   const componentsCache = ComponentsCache(conf, cdn);
   const componentsDetails = ComponentsDetails(conf, cdn);
-  const componentsDir = conf.s3 ? conf.s3.componentsDir : conf.gs.componentsDir;
-  const remotePath = conf.s3 ? conf.s3.path : conf.gs.path;
+
+  //TODO not sure how to get tests to pass without this
+  const componentsDir = conf.s3
+    ? conf.s3.componentsDir
+    : conf.gs ? conf.gs.componentsDir : '';
+  const remotePath = conf.s3 ? conf.s3.path : conf.gs ? conf.gs.path : '';
   const getFilePath = (component, version, filePath) =>
     `${componentsDir}/${component}/${version}/${filePath}`;
   const getPath = () => {
