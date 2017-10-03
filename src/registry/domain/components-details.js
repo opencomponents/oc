@@ -11,8 +11,11 @@ module.exports = (conf, cdn) => {
     eventsHandler.fire('error', { code, message });
     return callback(code);
   };
-
-  const filePath = () => `${conf.s3.componentsDir}/components-details.json`;
+  //TODO not sure how to get tests to pass without this
+  const componentsDir = conf.s3
+    ? conf.s3.componentsDir
+    : conf.gs ? conf.gs.componentsDir : '';
+  const filePath = () => `${componentsDir}/components-details.json`;
 
   const getFromJson = callback => cdn.getJson(filePath(), true, callback);
 
@@ -32,8 +35,11 @@ module.exports = (conf, cdn) => {
             if (details.components[name][version]) {
               next();
             } else {
+              const componentsDir = conf.s3
+                ? conf.s3.componentsDir
+                : conf.gs.componentsDir;
               cdn.getJson(
-                `${conf.s3.componentsDir}/${name}/${version}/package.json`,
+                `${componentsDir}/${name}/${version}/package.json`,
                 true,
                 (err, content) => {
                   if (err) {

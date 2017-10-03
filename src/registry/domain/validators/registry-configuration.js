@@ -86,14 +86,29 @@ module.exports = function(conf) {
   if (!conf.local) {
     // S3 settings should either specify both key/secret or
     // skip both when leveraging IAM Role based S3 access from EC2
-    if (
-      !conf.s3 ||
-      !conf.s3.bucket ||
-      !conf.s3.region ||
-      (conf.s3.key && !conf.s3.secret) ||
-      (!conf.s3.key && conf.s3.secret)
-    ) {
+    if (!conf.s3 && !conf.gs) {
       return returnError(strings.errors.registry.CONFIGURATION_S3_NOT_VALID);
+    }
+    if (conf.gs) {
+      if (
+        !conf.gs.bucket ||
+        !conf.gs.projectId ||
+        !conf.gs.path ||
+        !conf.gs.componentsDir
+      ) {
+        return returnError(strings.errors.registry.CONFIGURATION_S3_NOT_VALID);
+      }
+    }
+    if (conf.s3) {
+      if (
+        !conf.s3 ||
+        !conf.s3.bucket ||
+        (!conf.s3.region && !conf.s3.endpoint) ||
+        (conf.s3.key && !conf.s3.secret) ||
+        (!conf.s3.key && conf.s3.secret)
+      ) {
+        return returnError(strings.errors.registry.CONFIGURATION_S3_NOT_VALID);
+      }
     }
   }
 

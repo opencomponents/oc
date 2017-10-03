@@ -7,17 +7,20 @@ const _ = require('lodash');
 const getUnixUTCTimestamp = require('oc-get-unix-utc-timestamp');
 
 module.exports = (conf, cdn) => {
-  const filePath = () => `${conf.s3.componentsDir}/components.json`;
+  //TODO not sure how to get tests to pass without this
+  const componentsDir = conf.s3
+    ? conf.s3.componentsDir
+    : conf.gs ? conf.gs.componentsDir : '';
+  const filePath = () => `${componentsDir}/components.json`;
 
   const componentsList = {
     getFromJson: callback => cdn.getJson(filePath(), true, callback),
 
     getFromDirectories: callback => {
       const componentsInfo = {};
-
       const getVersionsForComponent = (componentName, cb) => {
         cdn.listSubDirectories(
-          `${conf.s3.componentsDir}/${componentName}`,
+          `${componentsDir}/${componentName}`,
           (err, versions) => {
             if (err) {
               return cb(err);
@@ -27,7 +30,7 @@ module.exports = (conf, cdn) => {
         );
       };
 
-      cdn.listSubDirectories(conf.s3.componentsDir, (err, components) => {
+      cdn.listSubDirectories(componentsDir, (err, components) => {
         if (err) {
           if (err.code === 'dir_not_found') {
             return callback(null, {
@@ -70,8 +73,9 @@ module.exports = (conf, cdn) => {
       });
     },
 
-    save: (data, callback) =>
-      cdn.putFileContent(JSON.stringify(data), filePath(), true, callback)
+    save: (data, callback) => {
+      cdn.putFileContent(JSON.stringify(data), filePath(), true, callback);
+    }
   };
 
   return componentsList;

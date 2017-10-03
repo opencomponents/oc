@@ -10,21 +10,33 @@ const ComponentsCache = require('./components-cache');
 const ComponentsDetails = require('./components-details');
 const packageInfo = require('../../../package.json');
 const registerTemplates = require('./register-templates');
-const S3 = require('./s3');
+const CDN = require('./storage-provider');
 const settings = require('../../resources/settings');
 const strings = require('../../resources');
 const validator = require('./validators');
 const versionHandler = require('./version-handler');
 
 module.exports = function(conf) {
-  const cdn = !conf.local && new S3(conf);
+  const cdn = !conf.local && new CDN(conf);
   const repositorySource = conf.local ? 'local repository' : 's3 cdn';
   const componentsCache = ComponentsCache(conf, cdn);
   const componentsDetails = ComponentsDetails(conf, cdn);
 
+  //TODO not sure how to get tests to pass without this
+  const componentsDir = conf.s3
+    ? conf.s3.componentsDir
+    : conf.gs ? conf.gs.componentsDir : '';
+  const remotePath = conf.s3 ? conf.s3.path : conf.gs ? conf.gs.path : '';
   const getFilePath = (component, version, filePath) =>
-    `${conf.s3.componentsDir}/${component}/${version}/${filePath}`;
-
+    `${componentsDir}/${component}/${version}/${filePath}`;
+  const getPath = () => {
+    let urlPath = remotePath;
+    if (!remotePath.startsWith('http')) {
+      urlPath = `http:${remotePath}`;
+    }
+    console.log(urlPath);
+    return urlPath;
+  };
   const { templatesHash, templatesInfo } = registerTemplates(conf.templates);
 
   const local = {
@@ -51,8 +63,8 @@ module.exports = function(conf) {
         const isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory();
         const isValidComponent = isDir
           ? fs
-              .readdirSync(path.join(conf.path, file))
-              .filter(file => file === '_package').length === 1
+            .readdirSync(path.join(conf.path, file))
+            .filter(file => file === '_package').length === 1
           : false;
 
         return isValidComponent;
@@ -196,9 +208,12 @@ module.exports = function(conf) {
       );
     },
     getComponentPath: (componentName, componentVersion) => {
-      const prefix = conf.local
-        ? conf.baseUrl
-        : `https:${conf.s3.path}${conf.s3.componentsDir}/`;
+      let prefix;
+      if (conf.local) {
+        prefix = conf.baseUrl;
+      } else {
+        prefix = `${getPath()}${componentsDir}/`;
+      }
       return `${prefix}${componentName}/${componentVersion}/`;
     },
     getComponents: callback => {
@@ -242,14 +257,14 @@ module.exports = function(conf) {
       );
     },
     getStaticClientPath: () =>
-      `https:${conf.s3.path}${getFilePath(
+      `${getPath()}${getFilePath(
         'oc-client',
         packageInfo.version,
         'src/oc-client.min.js'
       )}`,
 
     getStaticClientMapPath: () =>
-      `https:${conf.s3.path}${getFilePath(
+      `${getPath()}${getFilePath(
         'oc-client',
         packageInfo.version,
         'src/oc-client.min.map'
@@ -358,7 +373,7 @@ module.exports = function(conf) {
               }
               cdn.putDir(
                 pkgDetails.outputFolder,
-                `${conf.s3.componentsDir}/${componentName}/${componentVersion}`,
+                `${componentsDir}/${componentName}/${componentVersion}`,
                 err => {
                   if (err) {
                     return callback(err);
