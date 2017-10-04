@@ -18,7 +18,6 @@ const getAppStart = function(mockedRepository, options, callback) {
 
 const basicOptions = {
   storage: {
-    adapterType: 's3',
     options: {
       bucket: 'test',
       path: 'path',

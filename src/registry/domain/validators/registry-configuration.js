@@ -100,15 +100,12 @@ module.exports = function(conf) {
   }
 
   if (!conf.local && conf.storage) {
-    if (!conf.storage.adapterType) {
-      return returnError(
-        format(
-          strings.errors.registry.CONFIGURATION_STORAGE_NOT_VALID,
-          'adapterType'
-        )
-      );
+    if (!conf.storage.adapter) {
+      //required since this is done before the options-sanitiser
+      conf.storage.adapter = require('../s3');
     }
-    if (conf.storage.adapterType === 's3') {
+    const cdn = conf.storage.adapter(conf.storage.options);
+    if (cdn.adapterType === 's3') {
       if (
         !conf.storage.options.bucket ||
         !conf.storage.options.region ||

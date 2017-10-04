@@ -61,8 +61,12 @@ module.exports = function(input) {
 
   if (options.s3) {
     options.storage = {};
-    options.storage.adapterType = 's3';
+    options.storage.adapter = require('./s3');
     options.storage.options = options.s3;
+  }
+
+  if (options.storage && !options.storage.adapter) {
+    options.storage.adapter = require('./s3');
   }
 
   if (options.refreshInterval && options.storage) {
@@ -71,19 +75,6 @@ module.exports = function(input) {
 
   if (options.verbosity && options.storage) {
     options.storage.options.verbosity = options.verbosity;
-  }
-  if (
-    options.storage &&
-    options.storage.adapterType &&
-    !options.storage.adapter
-  ) {
-    switch (options.storage.adapterType) {
-    case 's3':
-      options.storage.adapter = require('./s3');
-      break;
-    default:
-      options.storage.adapter = require('./s3');
-    }
   }
 
   return options;

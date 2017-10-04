@@ -20,7 +20,7 @@ module.exports = function(conf) {
   const options = !conf.local && conf.storage.options;
   const repositorySource = conf.local
     ? 'local repository'
-    : conf.storage.adapterType + ' cdn';
+    : cdn.adapterType + ' cdn';
   const componentsCache = ComponentsCache(conf, cdn);
   const componentsDetails = ComponentsDetails(conf, cdn);
 

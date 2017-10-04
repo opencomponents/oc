@@ -11,7 +11,6 @@ const _ = require('lodash');
 const getFileInfo = require('../../utils/get-file-info');
 const getNextYear = require('../../utils/get-next-year');
 const strings = require('../../resources');
-
 module.exports = function(conf) {
   const httpOptions = { timeout: conf.timeout || 10000 };
   if (conf.agentProxy) {
@@ -197,6 +196,7 @@ module.exports = function(conf) {
     maxConcurrentRequests: 20,
     putDir,
     putFile,
-    putFileContent
+    putFileContent,
+    adapterType: 's3'
   };
 };
