@@ -50,8 +50,8 @@ module.exports = function(conf) {
             return callback(
               err.code === 'NoSuchKey'
                 ? {
-                  code: strings.errors.s3.FILE_NOT_FOUND_CODE,
-                  msg: format(strings.errors.s3.FILE_NOT_FOUND, filePath)
+                  code: strings.errors.STORAGE.FILE_NOT_FOUND_CODE,
+                  msg: format(strings.errors.STORAGE.FILE_NOT_FOUND, filePath)
                 }
                 : err
             );
@@ -97,8 +97,8 @@ module.exports = function(conf) {
         callback(null, JSON.parse(file));
       } catch (er) {
         return callback({
-          code: strings.errors.s3.FILE_NOT_VALID_CODE,
-          msg: format(strings.errors.s3.FILE_NOT_VALID, filePath)
+          code: strings.errors.STORAGE.FILE_NOT_VALID_CODE,
+          msg: format(strings.errors.STORAGE.FILE_NOT_VALID, filePath)
         });
       }
     });
@@ -126,8 +126,8 @@ module.exports = function(conf) {
 
         if (data.CommonPrefixes.length === 0) {
           return callback({
-            code: strings.errors.s3.DIR_NOT_FOUND_CODE,
-            msg: format(strings.errors.s3.DIR_NOT_FOUND, dir)
+            code: strings.errors.STORAGE.DIR_NOT_FOUND_CODE,
+            msg: format(strings.errors.STORAGE.DIR_NOT_FOUND, dir)
           });
         }
 

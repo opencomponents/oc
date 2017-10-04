@@ -93,13 +93,20 @@ module.exports = function(conf) {
       (conf.s3.key && !conf.s3.secret) ||
       (!conf.s3.key && conf.s3.secret)
     ) {
-      return returnError(strings.errors.registry.CONFIGURATION_S3_NOT_VALID);
+      return returnError(
+        format(strings.errors.registry.CONFIGURATION_STORAGE_NOT_VALID, 'S3')
+      );
     }
   }
 
   if (!conf.local && conf.storage) {
     if (!conf.storage.adapterType) {
-      return returnError(strings.errors.registry.CONFIGURATION_S3_NOT_VALID);
+      return returnError(
+        format(
+          strings.errors.registry.CONFIGURATION_STORAGE_NOT_VALID,
+          'adapterType'
+        )
+      );
     }
     if (conf.storage.adapterType === 's3') {
       if (
@@ -108,7 +115,12 @@ module.exports = function(conf) {
         (conf.storage.options.key && !conf.storage.options.secret) ||
         (!conf.storage.options.key && conf.storage.options.secret)
       ) {
-        return returnError(strings.errors.registry.CONFIGURATION_S3_NOT_VALID);
+        return returnError(
+          format(
+            strings.errors.registry.CONFIGURATION_STORAGE_NOT_VALID,
+            conf.storage.adapterType.toUpperCase()
+          )
+        );
       }
     }
   }
