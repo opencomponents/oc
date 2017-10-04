@@ -18,7 +18,7 @@ const getAppStart = function(mockedRepository, options, callback) {
 
 const basicOptions = {
   storage: {
-    adapter: require('../../src/registry/domain/s3'),
+    adapterType: 's3',
     options: {
       bucket: 'test',
       path: 'path',
