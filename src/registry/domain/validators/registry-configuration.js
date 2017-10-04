@@ -98,11 +98,10 @@ module.exports = function(conf) {
   }
 
   if (!conf.local && conf.storage) {
-    if (!conf.storage.adapter) {
+    if (!conf.storage.adapterType) {
       return returnError(strings.errors.registry.CONFIGURATION_S3_NOT_VALID);
     }
-    const cdn = conf.storage.adapter(conf);
-    if (cdn.storageType === 's3') {
+    if (conf.storage.adapterType === 's3') {
       if (
         !conf.storage.options.bucket ||
         !conf.storage.options.region ||

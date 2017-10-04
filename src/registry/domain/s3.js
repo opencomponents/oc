@@ -13,20 +13,19 @@ const getNextYear = require('../../utils/get-next-year');
 const strings = require('../../resources');
 
 module.exports = function(conf) {
-  const s3 = conf.storage.options;
-  const httpOptions = { timeout: s3.timeout || 10000 };
-  if (s3.agentProxy) {
-    httpOptions.agent = s3.agentProxy;
+  const httpOptions = { timeout: conf.timeout || 10000 };
+  if (conf.agentProxy) {
+    httpOptions.agent = conf.agentProxy;
   }
 
   AWS.config.update({
-    accessKeyId: s3.key,
-    secretAccessKey: s3.secret,
-    region: s3.region,
+    accessKeyId: conf.key,
+    secretAccessKey: conf.secret,
+    region: conf.region,
     httpOptions
   });
 
-  const bucket = s3.bucket;
+  const bucket = conf.bucket;
   const cache = new Cache({
     verbose: !!conf.verbosity,
     refreshInterval: conf.refreshInterval
@@ -106,7 +105,7 @@ module.exports = function(conf) {
   };
 
   const getUrl = (componentName, version, fileName) =>
-    `${s3.path}${componentName}/${version}/${fileName}`;
+    `${conf.path}${componentName}/${version}/${fileName}`;
 
   const listSubDirectories = (dir, callback) => {
     const normalisedPath =
@@ -198,7 +197,6 @@ module.exports = function(conf) {
     maxConcurrentRequests: 20,
     putDir,
     putFile,
-    putFileContent,
-    storageType: 's3'
+    putFileContent
   };
 };

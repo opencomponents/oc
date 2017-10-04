@@ -16,11 +16,11 @@ const validator = require('./validators');
 const versionHandler = require('./version-handler');
 
 module.exports = function(conf) {
-  const cdn = !conf.local && new conf.storage.adapter(conf);
+  const cdn = !conf.local && new conf.storage.adapter(conf.storage.options);
   const options = !conf.local && conf.storage.options;
   const repositorySource = conf.local
     ? 'local repository'
-    : cdn.storageType + ' cdn';
+    : conf.storage.adapterType + ' cdn';
   const componentsCache = ComponentsCache(conf, cdn);
   const componentsDetails = ComponentsDetails(conf, cdn);
 

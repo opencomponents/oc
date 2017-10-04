@@ -38,8 +38,7 @@ describe('registry : domain : repository', () => {
     const s3Mock = {
       getJson: sinon.stub(),
       putDir: sinon.stub(),
-      putFileContent: sinon.stub(),
-      storageType: 's3'
+      putFileContent: sinon.stub()
     };
 
     const Repository = injectr('../../src/registry/domain/repository.js', {
@@ -61,6 +60,7 @@ describe('registry : domain : repository', () => {
         adapter: function() {
           return s3Mock;
         },
+        adapterType: 's3',
         options: {
           key: 'a-key',
           secret: 'secrety-key',
