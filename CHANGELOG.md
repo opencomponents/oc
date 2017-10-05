@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.41.9
+- [#693](https://github.com/opentable/oc/pull/693) [DX-198] Watch .github.io folders
+- [#694](https://github.com/opentable/oc/pull/694) Npm install for new module bugfix
+
 ### v0.41.8
 - [#692](https://github.com/opentable/oc/pull/692) [DX-197] Watcher bugfix
 - [#690](https://github.com/opentable/oc/pull/690) Update aws-sdk to the latest version 🚀
