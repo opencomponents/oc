@@ -32,7 +32,7 @@ module.exports = function installTemplate(options, callback) {
 
     const installedCompiler = tryRequire(result.dest);
 
-    if (!isValidTemplate(compiler, { compiler: true })) {
+    if (!isValidTemplate(installedCompiler, { compiler: true })) {
       return callback(errorMessage);
     }
     const version = installedCompiler.getInfo().version;
