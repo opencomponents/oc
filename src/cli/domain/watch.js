@@ -3,6 +3,8 @@
 const path = require('path');
 const watch = require('watch');
 
+const settings = require('../../resources/settings');
+
 module.exports = function(dirs, baseDir, changed) {
   try {
     watch.watchTree(
@@ -12,9 +14,7 @@ module.exports = function(dirs, baseDir, changed) {
         ignoreUnreadableDir: true,
         ignoreDotFiles: false,
         filter: fileOrDir =>
-          /node_modules|package\.tar\.gz|_package|\.sw[op]|\.git|\.DS_Store|oc\.json/.test(
-            fileOrDir
-          ) === false
+          settings.filesToIgnoreOnDevWatch.test(fileOrDir) === false
       },
       (fileName, currentStat, previousStat) => {
         if (!!currentStat || !!previousStat) {
