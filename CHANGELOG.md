@@ -1,5 +1,15 @@
 ## Change Log
 
+### v0.41.8
+- [#692](https://github.com/opentable/oc/pull/692) [DX-197] Watcher bugfix
+- [#690](https://github.com/opentable/oc/pull/690) Update aws-sdk to the latest version 🚀
+- [#689](https://github.com/opentable/oc/pull/689) ignoring lock files
+- [#687](https://github.com/opentable/oc/pull/687) Update aws-sdk to the latest version 🚀
+- [#686](https://github.com/opentable/oc/pull/686) [DX-185] Removed NPM as dependency
+- [#685](https://github.com/opentable/oc/pull/685) Update oc-client to the latest version 🚀
+- [#681](https://github.com/opentable/oc/pull/681) [DX-185] Refactoring
+- [#684](https://github.com/opentable/oc/pull/684) Update mocha to the latest version 🚀
+
 ### v0.41.7
 - [#679](https://github.com/opentable/oc/pull/679) [Snyk Update] New fixes for 2 vulnerable dependency paths
 - [#678](https://github.com/opentable/oc/pull/678) Update aws-sdk to the latest version 🚀
