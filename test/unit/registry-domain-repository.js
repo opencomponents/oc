@@ -38,13 +38,11 @@ describe('registry : domain : repository', () => {
     const s3Mock = {
       getJson: sinon.stub(),
       putDir: sinon.stub(),
-      putFileContent: sinon.stub()
+      putFileContent: sinon.stub(),
+      adapterType: 's3'
     };
 
     const Repository = injectr('../../src/registry/domain/repository.js', {
-      './s3': function() {
-        return s3Mock;
-      },
       'fs-extra': fsMock,
       './components-cache': () => componentsCacheMock,
       './components-details': () => componentsDetailsMock
@@ -59,13 +57,18 @@ describe('registry : domain : repository', () => {
       },
       baseUrl: 'http://saymyname.com:3000/v2/',
       env: { name: 'prod' },
-      s3: {
-        key: 'a-key',
-        secret: 'secrety-key',
-        bucket: 'walter-test',
-        region: 'us-west-2',
-        componentsDir: 'components',
-        path: '//s3.amazonaws.com/walter-test/'
+      storage: {
+        adapter: function() {
+          return s3Mock;
+        },
+        options: {
+          key: 'a-key',
+          secret: 'secrety-key',
+          bucket: 'walter-test',
+          region: 'us-west-2',
+          componentsDir: 'components',
+          path: '//s3.amazonaws.com/walter-test/'
+        }
       }
     };
 

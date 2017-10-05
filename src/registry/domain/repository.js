@@ -10,20 +10,22 @@ const ComponentsCache = require('./components-cache');
 const ComponentsDetails = require('./components-details');
 const packageInfo = require('../../../package.json');
 const registerTemplates = require('./register-templates');
-const S3 = require('./s3');
 const settings = require('../../resources/settings');
 const strings = require('../../resources');
 const validator = require('./validators');
 const versionHandler = require('./version-handler');
 
 module.exports = function(conf) {
-  const cdn = !conf.local && new S3(conf);
-  const repositorySource = conf.local ? 'local repository' : 's3 cdn';
+  const cdn = !conf.local && new conf.storage.adapter(conf.storage.options);
+  const options = !conf.local && conf.storage.options;
+  const repositorySource = conf.local
+    ? 'local repository'
+    : cdn.adapterType + ' cdn';
   const componentsCache = ComponentsCache(conf, cdn);
   const componentsDetails = ComponentsDetails(conf, cdn);
 
   const getFilePath = (component, version, filePath) =>
-    `${conf.s3.componentsDir}/${component}/${version}/${filePath}`;
+    `${options.componentsDir}/${component}/${version}/${filePath}`;
 
   const { templatesHash, templatesInfo } = registerTemplates(conf.templates);
 
@@ -51,8 +53,8 @@ module.exports = function(conf) {
         const isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory();
         const isValidComponent = isDir
           ? fs
-              .readdirSync(path.join(conf.path, file))
-              .filter(file => file === '_package').length === 1
+            .readdirSync(path.join(conf.path, file))
+            .filter(file => file === '_package').length === 1
           : false;
 
         return isValidComponent;
@@ -198,7 +200,7 @@ module.exports = function(conf) {
     getComponentPath: (componentName, componentVersion) => {
       const prefix = conf.local
         ? conf.baseUrl
-        : `https:${conf.s3.path}${conf.s3.componentsDir}/`;
+        : `https:${options.path}${options.componentsDir}/`;
       return `${prefix}${componentName}/${componentVersion}/`;
     },
     getComponents: callback => {
@@ -242,14 +244,14 @@ module.exports = function(conf) {
       );
     },
     getStaticClientPath: () =>
-      `https:${conf.s3.path}${getFilePath(
+      `https:${options.path}${getFilePath(
         'oc-client',
         packageInfo.version,
         'src/oc-client.min.js'
       )}`,
 
     getStaticClientMapPath: () =>
-      `https:${conf.s3.path}${getFilePath(
+      `https:${options.path}${getFilePath(
         'oc-client',
         packageInfo.version,
         'src/oc-client.min.map'
@@ -358,7 +360,7 @@ module.exports = function(conf) {
               }
               cdn.putDir(
                 pkgDetails.outputFolder,
-                `${conf.s3.componentsDir}/${componentName}/${componentVersion}`,
+                `${options.componentsDir}/${componentName}/${componentVersion}`,
                 err => {
                   if (err) {
                     return callback(err);

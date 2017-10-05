@@ -12,7 +12,8 @@ module.exports = (conf, cdn) => {
     return callback(code);
   };
 
-  const filePath = () => `${conf.s3.componentsDir}/components-details.json`;
+  const filePath = () =>
+    `${conf.storage.options.componentsDir}/components-details.json`;
 
   const getFromJson = callback => cdn.getJson(filePath(), true, callback);
 
@@ -33,7 +34,8 @@ module.exports = (conf, cdn) => {
               next();
             } else {
               cdn.getJson(
-                `${conf.s3.componentsDir}/${name}/${version}/package.json`,
+                `${conf.storage.options
+                  .componentsDir}/${name}/${version}/package.json`,
                 true,
                 (err, content) => {
                   if (err) {

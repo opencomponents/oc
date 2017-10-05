@@ -44,9 +44,11 @@ describe('registry : domain : s3', () => {
 
     s3 = new S3({
       cache: { refreshInterval: 60 },
-      s3: {
-        bucket: 'test-bucket',
-        path: '//s3.amazonaws.com/test-bucket/'
+      storage: {
+        options: {
+          bucket: 'test-bucket',
+          path: '//s3.amazonaws.com/test-bucket/'
+        }
       }
     });
   };

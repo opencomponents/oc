@@ -56,8 +56,8 @@ module.exports = {
         'Registry configuration is not valid: routes must be an array',
       CONFIGURATION_ROUTES_ROUTE_CONTAINS_PREFIX:
         'Registry configuration is not valid: route url can\'t contain "{0}"',
-      CONFIGURATION_S3_NOT_VALID:
-        'Registry configuration is not valid: S3 configuration is not valid',
+      CONFIGURATION_STORAGE_NOT_VALID:
+        'Registry configuration is not valid: {0} configuration is not valid',
       CONFIGURATION_HEADERS_TO_SKIP_MUST_BE_STRING_ARRAY:
         'Registry configuration is not valid: customHeadersToSkipOnWeakVersion must be an array of strings',
       DATA_OBJECT_IS_UNDEFINED: 'data object is undefined',
@@ -127,7 +127,7 @@ module.exports = {
         'Template dependency missing. To fix it run:\n\nnpm install --save-dev {0}-compiler --prefix {1}\n\n'
     },
     generic: 'An error occurred: {0}',
-    s3: {
+    STORAGE: {
       DIR_NOT_FOUND: 'Directory "{0}" not found',
       DIR_NOT_FOUND_CODE: 'dir_not_found',
       FILE_NOT_FOUND: 'File "{0}" not found',

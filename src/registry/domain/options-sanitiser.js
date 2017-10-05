@@ -53,11 +53,29 @@ module.exports = function(input) {
   }
 
   options.customHeadersToSkipOnWeakVersion = (options.customHeadersToSkipOnWeakVersion ||
-    [])
-    .map(s => s.toLowerCase());
+    []
+  ).map(s => s.toLowerCase());
 
   options.port = process.env.PORT || options.port;
   options.timeout = options.timeout || 1000 * 60 * 2;
+
+  if (options.s3) {
+    options.storage = {};
+    options.storage.adapter = require('./s3');
+    options.storage.options = options.s3;
+  }
+
+  if (options.storage && !options.storage.adapter) {
+    options.storage.adapter = require('./s3');
+  }
+
+  if (options.refreshInterval && options.storage) {
+    options.storage.options.refreshInterval = options.refreshInterval;
+  }
+
+  if (options.verbosity && options.storage) {
+    options.storage.options.verbosity = options.verbosity;
+  }
 
   return options;
 };
