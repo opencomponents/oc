@@ -18,7 +18,9 @@ module.exports = function(dirs, baseDir, changed) {
       },
       (fileName, currentStat, previousStat) => {
         if (!!currentStat || !!previousStat) {
-          const componentDir = dirs.find(dir => Boolean(fileName.match(dir)));
+          const componentDir = dirs.find(dir =>
+            Boolean(fileName.match(dir + path.sep))
+          );
           changed(null, fileName, componentDir);
         }
       }
