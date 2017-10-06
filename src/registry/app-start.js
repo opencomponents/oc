@@ -54,9 +54,7 @@ module.exports = function(repository, options, callback) {
             logger.log(colors.green('Component published.'));
           } else {
             logger.log(
-              colors.red(
-                format('Component not published: {0}', _.first(err).message)
-              )
+              colors.red(format('Component not published: {0}', err.message))
             );
           }
 
