@@ -1,5 +1,11 @@
 ## Change Log
 
+### v0.41.10
+- [#700](https://github.com/opentable/oc/pull/700) Error publish
+- [#699](https://github.com/opentable/oc/pull/699) Meaningful error shown when publish fails due to a generic API error
+- [#695](https://github.com/opentable/oc/pull/695) Update aws-sdk to the latest version 🚀
+- [#688](https://github.com/opentable/oc/pull/688) Decouple s3
+
 ### v0.41.9
 - [#693](https://github.com/opentable/oc/pull/693) [DX-198] Watch .github.io folders
 - [#694](https://github.com/opentable/oc/pull/694) Npm install for new module bugfix
