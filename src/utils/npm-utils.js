@@ -4,7 +4,7 @@ const path = require('path');
 const spawn = require('cross-spawn');
 
 const buildInstallCommand = options => {
-  const args = ['install'];
+  const args = ['install', '--prefix', options.installPath];
 
   if (options.save) {
     args.push('--save-exact');
@@ -39,8 +39,8 @@ module.exports = {
           ? null
           : {
             dest: dependencies.map(dependency =>
-                path.join(installPath, 'node_modules', moduleName(dependency))
-              )
+              path.join(installPath, 'node_modules', moduleName(dependency))
+            )
           }
       )
     );
@@ -57,10 +57,10 @@ module.exports = {
           ? null
           : {
             dest: path.join(
-                installPath,
-                'node_modules',
-                moduleName(dependency)
-              )
+              installPath,
+              'node_modules',
+              moduleName(dependency)
+            )
           }
       )
     );
