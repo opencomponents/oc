@@ -25,6 +25,8 @@ describe('utils : npm-utils', () => {
         },
         output: [
           'install',
+          '--prefix',
+          'path/to/component',
           '--save-exact',
           '--save-dev',
           'oc-template-jade-compiler'
@@ -37,7 +39,7 @@ describe('utils : npm-utils', () => {
           isDev: true,
           save: false
         },
-        output: ['install', 'lodash']
+        output: ['install', '--prefix', 'path/to/component', 'lodash']
       },
       {
         input: {
@@ -46,11 +48,18 @@ describe('utils : npm-utils', () => {
           isDev: false,
           save: true
         },
-        output: ['install', '--save-exact', '--save', 'underscore']
+        output: [
+          'install',
+          '--prefix',
+          'path/to/component',
+          '--save-exact',
+          '--save',
+          'underscore'
+        ]
       },
       {
         input: { dependency: 'oc-client@~1.2.3', installPath, save: false },
-        output: ['install', 'oc-client@~1.2.3']
+        output: ['install', '--prefix', 'path/to/component', 'oc-client@~1.2.3']
       }
     ];
 
@@ -104,6 +113,8 @@ describe('utils : npm-utils', () => {
         },
         output: [
           'install',
+          '--prefix',
+          'path/to/component',
           '--save-exact',
           '--save-dev',
           'oc-template-jade-compiler',
@@ -117,7 +128,7 @@ describe('utils : npm-utils', () => {
           isDev: true,
           save: false
         },
-        output: ['install', 'moment', 'lodash']
+        output: ['install', '--prefix', 'path/to/component', 'moment', 'lodash']
       },
       {
         input: {
@@ -126,7 +137,15 @@ describe('utils : npm-utils', () => {
           isDev: false,
           save: true
         },
-        output: ['install', '--save-exact', '--save', 'underscore', 'oc-client']
+        output: [
+          'install',
+          '--prefix',
+          'path/to/component',
+          '--save-exact',
+          '--save',
+          'underscore',
+          'oc-client'
+        ]
       },
       {
         input: {
@@ -134,7 +153,13 @@ describe('utils : npm-utils', () => {
           installPath,
           save: false
         },
-        output: ['install', 'oc-client@~1.2.3', 'oc-template-react-compiler']
+        output: [
+          'install',
+          '--prefix',
+          'path/to/component',
+          'oc-client@~1.2.3',
+          'oc-template-react-compiler'
+        ]
       }
     ];
 
