@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.41.11
+- [#703](https://github.com/opentable/oc/pull/703) Infinite npm i loop fix
+- [#702](https://github.com/opentable/oc/pull/702) Update dependency-graph to the latest version 🚀
+- [#701](https://github.com/opentable/oc/pull/701) Update aws-sdk to the latest version 🚀
+
 ### v0.41.10
 - [#700](https://github.com/opentable/oc/pull/700) Error publish
 - [#699](https://github.com/opentable/oc/pull/699) Meaningful error shown when publish fails due to a generic API error
