@@ -1,5 +1,6 @@
 'use strict';
 
+const async = require('async');
 const glob = require('glob');
 const Mocha = require('mocha');
 const minimist = require('minimist');
@@ -17,18 +18,15 @@ if (argv.silent) {
   mocha.reporter('progress');
 }
 
-// set up files to be tested by mocha
-const addTests = function() {
-  return new Promise(resolve => {
-    testDirs.forEach(dir => {
-      glob(path.join(__dirname, '..', dir), (err, files) => {
-        files.forEach(file => mocha.addFile(file));
-        resolve();
-      });
+async.each(
+  testDirs,
+  (dir, next) => {
+    glob(path.join(__dirname, '..', dir), (err, files) => {
+      files.forEach(file => mocha.addFile(file));
+      next();
     });
-  });
-};
-
-addTests().then(() => {
-  mocha.run(err => process.on('exit', () => process.exit(err)));
-});
+  },
+  () => {
+    mocha.run(err => process.on('exit', () => process.exit(err)));
+  }
+);
