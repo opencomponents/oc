@@ -113,6 +113,11 @@ module.exports = function(dependencies) {
             logger.err(errorMessage);
             return cb(errorMessage);
           } else {
+            if (_.isObject(err)) {
+              try {
+                err = JSON.stringify(err);
+              } catch (er) {}
+            }
             errorMessage = format(strings.errors.cli.PUBLISHING_FAIL, err);
             logger.err(errorMessage);
             return cb(errorMessage);

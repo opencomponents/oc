@@ -13,7 +13,11 @@ describe('registry : domain : components-cache', () => {
 
   const baseOptions = {
     pollingInterval: 5,
-    s3: { componentsDir: 'component' }
+    storage: {
+      options: {
+        componentsDir: 'component'
+      }
+    }
   };
 
   const baseResponse = () => ({

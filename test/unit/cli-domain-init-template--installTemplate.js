@@ -51,6 +51,7 @@ describe('cli : domain : init-template installTemplate', () => {
 
     it('should validate the template', () => {
       expect(isValidTemplate.called).to.be.true;
+      expect(typeof isValidTemplate.args[0][0].getInfo).to.equal('function');
     });
 
     it('should return no error', () => {

@@ -44,9 +44,11 @@ describe('registry : domain : s3', () => {
 
     s3 = new S3({
       cache: { refreshInterval: 60 },
-      s3: {
-        bucket: 'test-bucket',
-        path: '//s3.amazonaws.com/test-bucket/'
+      storage: {
+        options: {
+          bucket: 'test-bucket',
+          path: '//s3.amazonaws.com/test-bucket/'
+        }
       }
     });
   };
@@ -74,6 +76,30 @@ describe('registry : domain : s3', () => {
   const initialiseAndExecutePutDir = callback => {
     initialise();
     const send = sinon.stub().yields(null, 'ok');
+    mockedS3Client.upload.returns({ send });
+    s3.putDir(
+      '/absolute-path-to-dir',
+      'components\\componentName\\1.0.0',
+      (err, res) => {
+        error = err;
+        response = res;
+        callback();
+      }
+    );
+  };
+
+  const initialiseAndExecutePutDirWithError = callback => {
+    initialise();
+    const send = sinon.stub().yields({
+      code: 1234,
+      message: 'an error message',
+      retryable: true,
+      statusCode: 500,
+      time: new Date(),
+      hostname: 'hostname',
+      region: 'us-west2'
+    });
+
     mockedS3Client.upload.returns({ send });
     s3.putDir(
       '/absolute-path-to-dir',
@@ -248,24 +274,32 @@ describe('registry : domain : s3', () => {
   });
 
   describe('when publishing directory', () => {
-    before(done => {
-      initialiseAndExecutePutDir(done);
+    describe('on success', () => {
+      before(done => initialiseAndExecutePutDir(done));
+
+      it('should save all the files', () => {
+        expect(mockedS3Client.upload.args.length).to.equal(3);
+      });
+
+      it('should save the files using unix-styled path for s3 output locations', () => {
+        expect(mockedS3Client.upload.args[0][0].Key).to.eql(
+          'components/componentName/1.0.0/package.json'
+        );
+        expect(mockedS3Client.upload.args[1][0].Key).to.eql(
+          'components/componentName/1.0.0/server.js'
+        );
+        expect(mockedS3Client.upload.args[2][0].Key).to.eql(
+          'components/componentName/1.0.0/template.js'
+        );
+      });
     });
 
-    it('should save all the files', () => {
-      expect(mockedS3Client.upload.args.length).to.equal(3);
-    });
+    describe('on failure', () => {
+      before(done => initialiseAndExecutePutDirWithError(done));
 
-    it('should save the files using unix-styled path for s3 output locations', () => {
-      expect(mockedS3Client.upload.args[0][0].Key).to.eql(
-        'components/componentName/1.0.0/package.json'
-      );
-      expect(mockedS3Client.upload.args[1][0].Key).to.eql(
-        'components/componentName/1.0.0/server.js'
-      );
-      expect(mockedS3Client.upload.args[2][0].Key).to.eql(
-        'components/componentName/1.0.0/template.js'
-      );
+      it('should get the error', () => {
+        expect(error.message).to.equal('an error message');
+      });
     });
   });
 

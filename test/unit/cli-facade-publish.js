@@ -182,6 +182,25 @@ describe('cli : facade : publish', () => {
                 });
               });
 
+              describe('when a generic error happens from the api', () => {
+                beforeEach(done => {
+                  sinon
+                    .stub(registry, 'putComponent')
+                    .yields({ IgotAnError: true });
+                  execute(done);
+                });
+
+                afterEach(() => {
+                  registry.putComponent.restore();
+                });
+
+                it('should show an error', () => {
+                  expect(logSpy.err.args[0][0]).to.include(
+                    'An error happened when publishing the component: {"IgotAnError":true}'
+                  );
+                });
+              });
+
               describe('when using an old cli', () => {
                 beforeEach(done => {
                   sinon.stub(registry, 'putComponent').yields({

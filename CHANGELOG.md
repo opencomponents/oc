@@ -1,5 +1,30 @@
 ## Change Log
 
+### v0.41.11
+- [#703](https://github.com/opentable/oc/pull/703) Infinite npm i loop fix
+- [#702](https://github.com/opentable/oc/pull/702) Update dependency-graph to the latest version 🚀
+- [#701](https://github.com/opentable/oc/pull/701) Update aws-sdk to the latest version 🚀
+
+### v0.41.10
+- [#700](https://github.com/opentable/oc/pull/700) Error publish
+- [#699](https://github.com/opentable/oc/pull/699) Meaningful error shown when publish fails due to a generic API error
+- [#695](https://github.com/opentable/oc/pull/695) Update aws-sdk to the latest version 🚀
+- [#688](https://github.com/opentable/oc/pull/688) Decouple s3
+
+### v0.41.9
+- [#693](https://github.com/opentable/oc/pull/693) [DX-198] Watch .github.io folders
+- [#694](https://github.com/opentable/oc/pull/694) Npm install for new module bugfix
+
+### v0.41.8
+- [#692](https://github.com/opentable/oc/pull/692) [DX-197] Watcher bugfix
+- [#690](https://github.com/opentable/oc/pull/690) Update aws-sdk to the latest version 🚀
+- [#689](https://github.com/opentable/oc/pull/689) ignoring lock files
+- [#687](https://github.com/opentable/oc/pull/687) Update aws-sdk to the latest version 🚀
+- [#686](https://github.com/opentable/oc/pull/686) [DX-185] Removed NPM as dependency
+- [#685](https://github.com/opentable/oc/pull/685) Update oc-client to the latest version 🚀
+- [#681](https://github.com/opentable/oc/pull/681) [DX-185] Refactoring
+- [#684](https://github.com/opentable/oc/pull/684) Update mocha to the latest version 🚀
+
 ### v0.41.7
 - [#679](https://github.com/opentable/oc/pull/679) [Snyk Update] New fixes for 2 vulnerable dependency paths
 - [#678](https://github.com/opentable/oc/pull/678) Update aws-sdk to the latest version 🚀
