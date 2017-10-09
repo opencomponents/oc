@@ -10,11 +10,13 @@
     "build": "node tasks/build.js && npm run test",
     "changelog": "node tasks/changelog.js",
     "git-stage": "node tasks/git-stage.js",
+    "major": "node tasks/version.js --type=\"major\"",
+    "minor": "node tasks/version.js --type=\"minor\"",
+    "patch": "node tasks/version.js --type=\"patch\"",
     "precommit": "lint-staged",
     "start": "npm run build",
     "test": "node tasks/mochaTest.js",
-    "test-silent": "node tasks/mochaTest.js --silent",
-    "version": "node tasks/version.js"
+    "test-silent": "node tasks/mochaTest.js --silent"
   },
   "lint-staged": {
     "*.js": [
