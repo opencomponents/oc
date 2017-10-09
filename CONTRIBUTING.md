@@ -24,11 +24,11 @@ You need to be enabled for doing this.
 * `master` should be all green. If not, make it green first.
 * git checkout master
 * git pull --tags
-* Run `npm run version -- --type="<versionType>"` for new version.
+* Run `npm run <versionType>` for new version.
   * While on 0.X.X (not stable):
-    * `npm run version -- --type="patch"` for bugfixes, new features
-    * `npm run version -- --type="minor"` for all breaking changes
-    * `npm run version -- --type="major"` NOT YET. Still need to define milestones for 1.0.0.
+    * `npm run patch` for bugfixes, new features
+    * `npm run minor` for all breaking changes
+    * `npm run major` NOT YET. Still need to define milestones for 1.0.0.
 * [sudo] npm publish .
 * git push --follow-tags
 
