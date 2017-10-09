@@ -9,9 +9,9 @@
   "scripts": {
     "build": "node tasks/build.js",
     "git-stage": "node tasks/git-stage.js",
-    "major": "npm run version-major && npn run test-silent && npm run git-stage",
-    "minor": "npm run version-minor && npn run test-silent && npm run git-stage",
-    "patch": "npm run version-patch && npn run test-silent && npm run git-stage",
+    "major": "npm run version-major && npm run test-silent && npm run git-stage",
+    "minor": "npm run version-minor && npm run test-silent && npm run git-stage",
+    "patch": "npm run version-patch && npm run test-silent && npm run git-stage",
     "precommit": "lint-staged",
     "test": "npm run build && node tasks/mochaTest.js",
     "test-silent": "npm run build && node tasks/mochaTest.js --silent",
