@@ -11,7 +11,7 @@ If you find an issue, feel free to check the [issues](https://github.com/opentab
 
 If you want to send a Pull Request, ensure you join the conversation first on the [issues page](https://github.com/opentable/oc/issues)! This is to avoid multiple people working on the same thing. You can get in touch via the [chat](https://gitter.im/opentable/oc) too.
 
-When preparing a pull request, ensure all the tests pass locally running `grunt test-local`. If you have write/admin access, do it on a new branch on the upstream opentable repo. This allows all the test to run smoothly.
+When preparing a pull request, ensure all the tests pass locally running `npm test`. If you have write/admin access, do it on a new branch on the upstream opentable repo. This allows all the test to run smoothly.
 
 A couple of coding rules:
 - never play with git history
@@ -24,11 +24,11 @@ You need to be enabled for doing this.
 * `master` should be all green. If not, make it green first.
 * git checkout master
 * git pull --tags
-* Run `grunt version:<versionType>` for new version.
+* Run `npm run <versionType>` for new version.
   * While on 0.X.X (not stable):
-    * `grunt version:patch` for bugfixes, new features
-    * `grunt version:minor` for all breaking changes
-    * `grunt version:major` NOT YET. Still need to define milestones for 1.0.0.
+    * `npm run patch` for bugfixes, new features
+    * `npm run minor` for all breaking changes
+    * `npm run major` NOT YET. Still need to define milestones for 1.0.0.
 * [sudo] npm publish .
 * git push --follow-tags
 
