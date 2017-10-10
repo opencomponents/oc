@@ -1,5 +1,13 @@
 ## Change Log
 
+### v0.41.12
+- [#708](https://github.com/opentable/oc/pull/708) Update oc-client to the latest version 🚀
+- [#707](https://github.com/opentable/oc/pull/707) Update oc-client-browser to the latest version 🚀
+- [#706](https://github.com/opentable/oc/pull/706) Update oc-client-browser to the latest version 🚀
+- [#705](https://github.com/opentable/oc/pull/705) [DX-202] Changelog fix
+- [#704](https://github.com/opentable/oc/pull/704) [DX-202] Execute all the tests
+- [#659](https://github.com/opentable/oc/pull/659) Issue #464: Replaces Grunt with NPM scripts
+
 ### v0.41.11
 - [#703](https://github.com/opentable/oc/pull/703) Infinite npm i loop fix
 - [#702](https://github.com/opentable/oc/pull/702) Update dependency-graph to the latest version 🚀
