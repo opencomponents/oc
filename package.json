@@ -83,7 +83,7 @@
     "nice-cache": "0.0.5",
     "node-dir": "0.1.17",
     "oc-client": "2.1.31",
-    "oc-client-browser": "1.0.4",
+    "oc-client-browser": "1.1.0",
     "oc-get-unix-utc-timestamp": "1.0.1",
     "oc-template-handlebars": "6.0.7",
     "oc-template-handlebars-compiler": "6.1.3",
