@@ -12,4 +12,6 @@ git
   .add('.')
   .commit(ocVersion)
   .addAnnotatedTag(`v${ocVersion}`, `Package version upgrade to: ${ocVersion}`)
-  .exec(changelog().then(() => git.add('CHANGELOG.md').commit('changelog')));
+  .exec(() =>
+    changelog().then(() => git.add('CHANGELOG.md').commit('changelog'))
+  );
