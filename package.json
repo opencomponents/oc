@@ -7,16 +7,17 @@
     "oc": "./src/oc-cli.js"
   },
   "scripts": {
-    "build": "node tasks/build.js && npm run test",
-    "changelog": "node tasks/changelog.js",
+    "build": "node tasks/build.js",
     "git-stage": "node tasks/git-stage.js",
-    "major": "node tasks/version.js --type=\"major\"",
-    "minor": "node tasks/version.js --type=\"minor\"",
-    "patch": "node tasks/version.js --type=\"patch\"",
+    "major": "npm run version-major && npm run test-silent && npm run git-stage",
+    "minor": "npm run version-minor && npm run test-silent && npm run git-stage",
+    "patch": "npm run version-patch && npm run test-silent && npm run git-stage",
     "precommit": "lint-staged",
-    "start": "npm run build",
-    "test": "node tasks/mochaTest.js",
-    "test-silent": "node tasks/mochaTest.js --silent"
+    "test": "npm run build && node tasks/mochaTest.js",
+    "test-silent": "npm run build && node tasks/mochaTest.js --silent",
+    "version-major": "node tasks/version.js --type=\"major\"",
+    "version-minor": "node tasks/version.js --type=\"minor\"",
+    "version-patch": "node tasks/version.js --type=\"patch\""
   },
   "lint-staged": {
     "*.js": [

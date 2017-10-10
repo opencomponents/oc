@@ -8,7 +8,7 @@ const get = require('./git');
 
 module.exports = () =>
   new Promise(resolve => {
-    const writeChangelog = changelog => {
+    const writeChangelog = (changelog, cb) => {
       let result = '## Change Log';
       changelog.forEach(pr => {
         if (pr.changes.length > 0) {
@@ -19,7 +19,7 @@ module.exports = () =>
           );
         }
       });
-      fs.writeFileSync(path.join(__dirname, '../CHANGELOG.md'), result);
+      fs.writeFile(path.join(__dirname, '../CHANGELOG.md'), result, cb);
     };
 
     get.tags((err, tags) => {
@@ -32,12 +32,14 @@ module.exports = () =>
               tag,
               changes
             });
-            next();
+            next(err);
           });
         },
-        () => {
-          writeChangelog(result);
-          resolve();
+        err => {
+          if (err) {
+            return reject(err);
+          }
+          writeChangelog(result, resolve);
         }
       );
     });
