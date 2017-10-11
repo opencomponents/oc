@@ -7,13 +7,7 @@ const npm = require('../../../utils/npm-utils');
 const strings = require('../../../resources');
 
 module.exports = function installTemplate(options, callback) {
-  const {
-    compiler,
-    componentName,
-    componentPath,
-    logger,
-    templateType
-  } = options;
+  const { compiler, componentPath, logger, templateType } = options;
 
   const npmOptions = {
     dependency: compiler,

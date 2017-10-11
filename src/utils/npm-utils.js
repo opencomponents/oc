@@ -16,8 +16,8 @@ const buildInstallCommand = options => {
 
 const executeCommand = (options, callback) => {
   const cmd = spawn('npm', options.command, {
-    cwd: options.installPath,
-    stdio: 'inherit'
+    cwd: options.path,
+    stdio: options.silent ? 'ignore' : 'inherit'
   });
 
   cmd.on('error', () => callback('error'));
@@ -26,43 +26,37 @@ const executeCommand = (options, callback) => {
 
 const moduleName = dependency => dependency.split('@')[0];
 
+const getFullPath = ({ installPath, dependency }) =>
+  path.join(installPath, 'node_modules', moduleName(dependency));
+
 module.exports = {
+  init: (options, callback) => {
+    const { initPath, silent } = options;
+    const npminit = ['init', '--yes'];
+    const cmdOptions = { path: initPath, command: npminit, silent };
+
+    executeCommand(cmdOptions, callback);
+  },
   installDependencies: (options, callback) => {
     const { dependencies, installPath } = options;
     const npmi = buildInstallCommand(options);
-    const cmdOptions = { installPath, command: [...npmi, ...dependencies] };
+    const cmdOptions = {
+      path: installPath,
+      command: [...npmi, ...dependencies]
+    };
 
-    executeCommand(cmdOptions, err =>
-      callback(
-        err,
-        err
-          ? null
-          : {
-            dest: dependencies.map(dependency =>
-              path.join(installPath, 'node_modules', moduleName(dependency))
-            )
-          }
-      )
+    const dest = dependencies.map(dependency =>
+      getFullPath({ installPath, dependency })
     );
+
+    executeCommand(cmdOptions, err => callback(err, err ? null : { dest }));
   },
   installDependency: (options, callback) => {
     const { dependency, installPath } = options;
     const npmi = buildInstallCommand(options);
-    const cmdOptions = { installPath, command: [...npmi, dependency] };
+    const cmdOptions = { path: installPath, command: [...npmi, dependency] };
+    const dest = getFullPath({ installPath, dependency });
 
-    executeCommand(cmdOptions, err =>
-      callback(
-        err,
-        err
-          ? null
-          : {
-            dest: path.join(
-              installPath,
-              'node_modules',
-              moduleName(dependency)
-            )
-          }
-      )
-    );
+    executeCommand(cmdOptions, err => callback(err, err ? null : { dest }));
   }
 };

@@ -11,7 +11,6 @@ module.exports = function scaffold(options, callback) {
     compilerPath,
     componentName,
     componentPath,
-    logger,
     templateType
   } = options;
 

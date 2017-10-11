@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 const injectr = require('injectr');
 
-describe('cli : domain : init-template installTemplate', () => {
+describe('cli : domain : init-template : install-template', () => {
   const npmUtils = { installDependency: sinon.stub() };
   const isValidTemplate = sinon.stub();
   const installTemplate = injectr(
