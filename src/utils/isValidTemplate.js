@@ -7,7 +7,7 @@ module.exports = function isValidTemplate(template, options) {
 
   let api = ['getInfo', 'getCompiledTemplate', 'render'];
 
-  if (options.compiler === true) {
+  if (options && options.compiler === true) {
     api = api.concat('compile');
   }
 

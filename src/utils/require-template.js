@@ -3,18 +3,12 @@
 const format = require('stringformat');
 const path = require('path');
 
+const cleanRequire = require('./clean-require');
 const isValidTemplate = require('./isValidTemplate');
 
 const templateNotFound = 'Error requiring oc-template: "{0}" not found';
 const templateNotValid =
   'Error requiring oc-template: "{0}" is not a valid oc-template';
-
-const getOcTemplate = path => {
-  if (require.cache && !!require.cache[path]) {
-    delete require.cache[path];
-  }
-  return require(path);
-};
 
 module.exports = function(template, options) {
   const requireOptions = options || {};
@@ -36,19 +30,23 @@ module.exports = function(template, options) {
     template
   );
   const relativeTemplate = path.resolve('.', 'node_modules', template);
+  const componentRelativePath = path.join(
+    requireOptions.componentPath,
+    'node_modules',
+    template
+  );
 
-  try {
-    ocTemplate = getOcTemplate(template);
-  } catch (err) {
-    try {
-      ocTemplate = getOcTemplate(localTemplate);
-    } catch (err) {
-      try {
-        ocTemplate = getOcTemplate(relativeTemplate);
-      } catch (err) {
-        throw new Error(format(templateNotFound, template));
-      }
-    }
+  [
+    componentRelativePath,
+    template,
+    localTemplate,
+    relativeTemplate
+  ].forEach(pathToTry => {
+    ocTemplate = ocTemplate || cleanRequire(pathToTry, { justTry: true });
+  });
+
+  if (!ocTemplate) {
+    throw new Error(format(templateNotFound, template));
   }
 
   if (!isValidTemplate(ocTemplate, requireOptions)) {

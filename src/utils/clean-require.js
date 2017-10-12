@@ -1,0 +1,12 @@
+'use strict';
+
+const tryRequire = require('try-require');
+const _ = require('lodash');
+
+module.exports = (path, { justTry }) => {
+  const shouldThrow = !justTry;
+  if (require.cache && !!require.cache[path]) {
+    delete require.cache[path];
+  }
+  return shouldThrow ? require(path) : tryRequire(path);
+};

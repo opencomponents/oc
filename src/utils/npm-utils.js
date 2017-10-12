@@ -38,11 +38,12 @@ module.exports = {
     executeCommand(cmdOptions, callback);
   },
   installDependencies: (options, callback) => {
-    const { dependencies, installPath } = options;
+    const { dependencies, installPath, silent } = options;
     const npmi = buildInstallCommand(options);
     const cmdOptions = {
+      command: [...npmi, ...dependencies],
       path: installPath,
-      command: [...npmi, ...dependencies]
+      silent
     };
 
     const dest = dependencies.map(dependency =>
@@ -52,9 +53,13 @@ module.exports = {
     executeCommand(cmdOptions, err => callback(err, err ? null : { dest }));
   },
   installDependency: (options, callback) => {
-    const { dependency, installPath } = options;
+    const { dependency, installPath, silent } = options;
     const npmi = buildInstallCommand(options);
-    const cmdOptions = { path: installPath, command: [...npmi, dependency] };
+    const cmdOptions = {
+      command: [...npmi, dependency],
+      path: installPath,
+      silent
+    };
     const dest = getFullPath({ installPath, dependency });
 
     executeCommand(cmdOptions, err => callback(err, err ? null : { dest }));
