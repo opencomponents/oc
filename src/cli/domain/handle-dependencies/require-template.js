@@ -3,8 +3,8 @@
 const format = require('stringformat');
 const path = require('path');
 
-const cleanRequire = require('./clean-require');
-const isValidTemplate = require('./isValidTemplate');
+const cleanRequire = require('../../../utils/clean-require');
+const isTemplateValid = require('../../../utils/is-template-valid');
 
 const templateNotFound = 'Error requiring oc-template: "{0}" not found';
 const templateNotValid =
@@ -49,7 +49,7 @@ module.exports = function(template, options) {
     throw new Error(format(templateNotFound, template));
   }
 
-  if (!isValidTemplate(ocTemplate, requireOptions)) {
+  if (!isTemplateValid(ocTemplate, requireOptions)) {
     throw new Error(format(templateNotValid, template));
   }
 

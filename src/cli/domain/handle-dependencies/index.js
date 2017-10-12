@@ -7,7 +7,7 @@ const path = require('path');
 const _ = require('lodash');
 
 const cleanRequire = require('../../../utils/clean-require');
-const isValidTemplate = require('../../../utils/isValidTemplate');
+const isTemplateValid = require('../../../utils/is-template-valid');
 const npm = require('../../../utils/npm-utils');
 const strings = require('../../../resources');
 
@@ -92,7 +92,7 @@ module.exports = (options, callback) => {
             const { compiler, pkg, template } = options;
             if (!compiler) {
               return cb('Cannot require compiler');
-            } else if (!isValidTemplate(compiler)) {
+            } else if (!isTemplateValid(compiler)) {
               return cb('There was a problem while installing the compiler');
             }
 

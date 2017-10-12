@@ -2,7 +2,7 @@
 
 const tryRequire = require('try-require');
 
-const isValidTemplate = require('../../../utils/isValidTemplate');
+const isTemplateValid = require('../../../utils/is-template-valid');
 const npm = require('../../../utils/npm-utils');
 const strings = require('../../../resources');
 
@@ -26,7 +26,7 @@ module.exports = function installTemplate(options, callback) {
 
     const installedCompiler = tryRequire(result.dest);
 
-    if (!isValidTemplate(installedCompiler, { compiler: true })) {
+    if (!isTemplateValid(installedCompiler, { compiler: true })) {
       return callback(errorMessage);
     }
     const version = installedCompiler.getInfo().version;

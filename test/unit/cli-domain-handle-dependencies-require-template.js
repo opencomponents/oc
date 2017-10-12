@@ -2,9 +2,9 @@
 
 const expect = require('chai').expect;
 
-const requireTemplate = require('../../src/utils/require-template');
+const requireTemplate = require('../../src/cli/domain/handle-dependencies/require-template');
 
-describe('utils : require-template', () => {
+describe('cli : domain : handle-dependencies : require-template', () => {
   it('expect type of `requireTemplate` to be function', () => {
     expect(typeof requireTemplate).to.equal('function');
   });

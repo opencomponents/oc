@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function isValidTemplate(template, options) {
+module.exports = function isTemplateValid(template, options) {
   if (typeof template !== 'object') {
     return false;
   }
