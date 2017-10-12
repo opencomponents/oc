@@ -7,23 +7,14 @@ const path = require('path');
 const _ = require('lodash');
 
 const cleanRequire = require('../../../utils/clean-require');
+const getMissingDependencies = require('./get-missing-dependencies');
+const installCompiler = require('./install-compiler');
+const installMissingDependencies = require('./install-missing-dependencies');
 const isTemplateValid = require('../../../utils/is-template-valid');
-const npm = require('../../../utils/npm-utils');
 const strings = require('../../../resources');
 
 const getComponentPackageJson = (componentPath, cb) =>
   fs.readJson(path.join(componentPath, 'package.json'), cb);
-
-const getMissingDependencies = dependencies => {
-  const missing = [];
-  _.each(dependencies, (version, dependency) => {
-    const pathToModule = path.resolve('node_modules/', dependency);
-    if (!cleanRequire(pathToModule, { justTry: true })) {
-      missing.push(`${dependency}@${version || 'latest'}`);
-    }
-  });
-  return missing;
-};
 
 const isLegacy = template => template === 'jade' || template === 'handlebars';
 
@@ -71,22 +62,16 @@ module.exports = (options, callback) => {
               dependency += `@${pkg.devDependencies[compilerDep]}`;
             }
 
-            const npmOptions = {
-              dependency,
-              installPath: componentPath,
-              save: false,
-              silent: true
-            };
-
-            logger.warn(
-              `Installing ${dependency} for component ${pkg.name}...`,
-              true
+            installCompiler(
+              {
+                compilerPath,
+                componentName: pkg.name,
+                componentPath,
+                dependency,
+                logger
+              },
+              (err, compiler) => cb(err, _.extend(options, { compiler }))
             );
-            npm.installDependency(npmOptions, err => {
-              err ? logger.err('FAIL') : logger.ok('OK');
-              const compiler = cleanRequire(compilerPath, { justTry: true });
-              cb(null, _.extend(options, { compiler }));
-            });
           },
           (options, cb) => {
             const { compiler, pkg, template } = options;
@@ -122,26 +107,13 @@ module.exports = (options, callback) => {
         return callback(null, result);
       }
 
-      logger.warn(
-        `Installing missing dependencies: ${missing.join(', ')}...`,
-        true
-      );
-
-      const npmOptions = {
-        dependencies: missing,
-        installPath: path.resolve('.'),
-        save: false,
-        silent: true
+      const installOptions = {
+        allDependencies: dependencies,
+        logger,
+        missingDependencies: missing
       };
 
-      npm.installDependencies(npmOptions, err => {
-        if (err || !_.isEmpty(getMissingDependencies(dependencies))) {
-          logger.fail('FAIL');
-          return callback('There was a problem installing the dependencies');
-        }
-        logger.ok('OK');
-        callback(null, result);
-      });
+      installMissingDependencies(installOptions, err => callback(err, result));
     }
   );
 };
