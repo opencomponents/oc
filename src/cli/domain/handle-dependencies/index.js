@@ -1,12 +1,12 @@
 'use strict';
 
 const async = require('async');
-const format = require('stringformat');
 const fs = require('fs-extra');
 const path = require('path');
 const _ = require('lodash');
 
 const cleanRequire = require('../../../utils/clean-require');
+const ensureCompilerIsDeclaredAsDevDependency = require('./ensure-compiler-is-declared-as-devDependency');
 const getMissingDependencies = require('./get-missing-dependencies');
 const installCompiler = require('./install-compiler');
 const installMissingDependencies = require('./install-missing-dependencies');
@@ -17,7 +17,7 @@ const getComponentPackageJson = (componentPath, cb) =>
   fs.readJson(path.join(componentPath, 'package.json'), cb);
 
 const isTemplateLegacy = template =>
-  template === 'jade' || template === 'handlebars';
+  !!{ jade: true, handlebars: true }[template];
 
 module.exports = (options, callback) => {
   const { components, logger } = options;
@@ -37,25 +37,20 @@ module.exports = (options, callback) => {
             });
 
             const template = pkg.oc.files.template.type;
-            const compilerDep = `${template}-compiler`;
-            const isLegacy = isTemplateLegacy(template);
-            if (isLegacy) {
-              return cb(null, { pkg, isLegacy });
-            } else if (!pkg.devDependencies[compilerDep]) {
-              return cb(
-                format(
-                  strings.errors.cli.TEMPLATE_DEP_MISSING,
-                  template,
-                  componentPath
-                )
-              );
+            if (isTemplateLegacy(template)) {
+              return next();
             }
-            cb(null, { compilerDep, isLegacy, pkg, template });
+
+            cb(null, { componentPath, pkg, template });
           },
+
+          (options, cb) =>
+            ensureCompilerIsDeclaredAsDevDependency(
+              options,
+              (err, compilerDep) => cb(err, _.extend(options, { compilerDep }))
+            ),
+
           (options, cb) => {
-            if (options.isLegacy) {
-              return cb(null, options);
-            }
             const { compilerDep, pkg } = options;
             const compilerPath = path.join(
               componentPath,
@@ -85,10 +80,6 @@ module.exports = (options, callback) => {
             );
           },
           (options, cb) => {
-            if (options.isLegacy) {
-              return cb();
-            }
-
             const { compiler, pkg, template } = options;
             if (!compiler) {
               return cb('Cannot require compiler');
