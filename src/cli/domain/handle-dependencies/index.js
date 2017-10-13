@@ -16,7 +16,8 @@ const strings = require('../../../resources');
 const getComponentPackageJson = (componentPath, cb) =>
   fs.readJson(path.join(componentPath, 'package.json'), cb);
 
-const isLegacy = template => template === 'jade' || template === 'handlebars';
+const isTemplateLegacy = template =>
+  template === 'jade' || template === 'handlebars';
 
 module.exports = (options, callback) => {
   const { components, logger } = options;
@@ -31,9 +32,16 @@ module.exports = (options, callback) => {
         [
           cb => getComponentPackageJson(componentPath, cb),
           (pkg, cb) => {
+            _.each(pkg.dependencies || {}, (version, dependency) => {
+              dependencies[dependency] = version;
+            });
+
             const template = pkg.oc.files.template.type;
             const compilerDep = `${template}-compiler`;
-            if (!isLegacy(template) && !pkg.devDependencies[compilerDep]) {
+            const isLegacy = isTemplateLegacy(template);
+            if (isLegacy) {
+              return cb(null, { pkg, isLegacy });
+            } else if (!pkg.devDependencies[compilerDep]) {
               return cb(
                 format(
                   strings.errors.cli.TEMPLATE_DEP_MISSING,
@@ -42,9 +50,12 @@ module.exports = (options, callback) => {
                 )
               );
             }
-            cb(null, { compilerDep, pkg, template });
+            cb(null, { compilerDep, isLegacy, pkg, template });
           },
           (options, cb) => {
+            if (options.isLegacy) {
+              return cb(null, options);
+            }
             const { compilerDep, pkg } = options;
             const compilerPath = path.join(
               componentPath,
@@ -74,6 +85,10 @@ module.exports = (options, callback) => {
             );
           },
           (options, cb) => {
+            if (options.isLegacy) {
+              return cb();
+            }
+
             const { compiler, pkg, template } = options;
             if (!compiler) {
               return cb('Cannot require compiler');
@@ -82,9 +97,6 @@ module.exports = (options, callback) => {
             }
 
             templates[template] = compiler;
-            _.each(pkg.dependencies || {}, (version, dependency) => {
-              dependencies[dependency] = version;
-            });
             cb();
           }
         ],
