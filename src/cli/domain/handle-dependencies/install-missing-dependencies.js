@@ -1,16 +1,21 @@
 'use strict';
 
+const format = require('stringformat');
 const path = require('path');
 const _ = require('lodash');
 
 const getMissingDependencies = require('./get-missing-dependencies');
 const npm = require('../../../utils/npm-utils');
+const strings = require('../../../resources/index');
 
 module.exports = (options, cb) => {
   const { allDependencies, logger, missingDependencies } = options;
 
   logger.warn(
-    `Installing missing dependencies: ${missingDependencies.join(', ')}...`,
+    format(
+      strings.messages.cli.INSTALLING_DEPS,
+      missingDependencies.join(', ')
+    ),
     true
   );
 
@@ -24,7 +29,7 @@ module.exports = (options, cb) => {
   npm.installDependencies(npmOptions, err => {
     if (err || !_.isEmpty(getMissingDependencies(allDependencies))) {
       logger.fail('FAIL');
-      return callback('There was a problem installing the dependencies');
+      return callback(strings.messages.cli.DEPENDENCIES_INSTALL_FAIL);
     }
     logger.ok('OK');
     cb();

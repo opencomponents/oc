@@ -1,6 +1,7 @@
 'use strict';
 
 const async = require('async');
+const coreModules = require('builtin-modules');
 const fs = require('fs-extra');
 const path = require('path');
 const _ = require('lodash');
@@ -9,7 +10,6 @@ const ensureCompilerIsDeclaredAsDevDependency = require('./ensure-compiler-is-de
 const getCompiler = require('./get-compiler');
 const getMissingDependencies = require('./get-missing-dependencies');
 const installMissingDependencies = require('./install-missing-dependencies');
-const isTemplateValid = require('../../../utils/is-template-valid');
 const strings = require('../../../resources');
 
 const getComponentPackageJson = (componentPath, cb) =>
@@ -20,78 +20,75 @@ const isTemplateLegacy = template =>
 
 module.exports = (options, callback) => {
   const { components, logger } = options;
-  const templates = {};
+
   const dependencies = {};
+  const addDependencies = componentDependencies =>
+    _.each(componentDependencies || {}, (version, dependency) => {
+      dependencies[dependency] = version;
+    });
+
+  const templates = {};
+  const addTemplate = (templateName, template) => {
+    templates[templateName] = template;
+  };
+
+  const setupComponentDependencies = (componentPath, done) =>
+    async.waterfall(
+      [
+        cb => getComponentPackageJson(componentPath, cb),
+        (pkg, cb) => {
+          addDependencies(pkg.dependencies);
+
+          const template = pkg.oc.files.template.type;
+          if (isTemplateLegacy(template)) {
+            return done();
+          }
+
+          cb(null, { componentPath, logger, pkg, template });
+        },
+
+        (options, cb) =>
+          ensureCompilerIsDeclaredAsDevDependency(options, (err, compilerDep) =>
+            cb(err, _.extend(options, { compilerDep }))
+          ),
+
+        (options, cb) =>
+          getCompiler(options, (err, compiler) =>
+            cb(err, _.extend(options, { compiler }))
+          ),
+
+        (options, cb) => {
+          const { compiler, template } = options;
+          addTemplate(template, compiler);
+          cb();
+        }
+      ],
+      done
+    );
 
   logger.warn(strings.messages.cli.CHECKING_DEPENDENCIES);
-  async.eachSeries(
-    components,
-    (componentPath, next) => {
-      async.waterfall(
-        [
-          cb => getComponentPackageJson(componentPath, cb),
-          (pkg, cb) => {
-            _.each(pkg.dependencies || {}, (version, dependency) => {
-              dependencies[dependency] = version;
-            });
-
-            const template = pkg.oc.files.template.type;
-            if (isTemplateLegacy(template)) {
-              return next();
-            }
-
-            cb(null, { componentPath, logger, pkg, template });
-          },
-
-          (options, cb) =>
-            ensureCompilerIsDeclaredAsDevDependency(
-              options,
-              (err, compilerDep) => cb(err, _.extend(options, { compilerDep }))
-            ),
-
-          (options, cb) =>
-            getCompiler(options, (err, compiler) =>
-              cb(err, _.extend(options, { compiler }))
-            ),
-
-          (options, cb) => {
-            const { compiler, pkg, template } = options;
-            if (!compiler) {
-              return cb('Cannot require compiler');
-            } else if (!isTemplateValid(compiler)) {
-              return cb('There was a problem while installing the compiler');
-            }
-
-            templates[template] = compiler;
-            cb();
-          }
-        ],
-        next
-      );
-    },
-    err => {
-      if (err) {
-        return callback(err);
-      }
-
-      const result = {
-        modules: _.keys(dependencies),
-        templates: _.values(templates)
-      };
-
-      const missing = getMissingDependencies(dependencies);
-
-      if (_.isEmpty(missing)) {
-        return callback(null, result);
-      }
-
-      const installOptions = {
-        allDependencies: dependencies,
-        logger,
-        missingDependencies: missing
-      };
-
-      installMissingDependencies(installOptions, err => callback(err, result));
+  async.eachSeries(components, setupComponentDependencies, err => {
+    if (err) {
+      return callback(err);
     }
-  );
+
+    const result = {
+      modules: _.union(coreModules, _.keys(dependencies)),
+      templates: _.values(templates)
+    };
+
+    const missing = getMissingDependencies(dependencies);
+
+    if (_.isEmpty(missing)) {
+      return callback(null, result);
+    }
+
+    const installOptions = {
+      allDependencies: dependencies,
+      logger,
+      missingDependencies: missing
+    };
+
+    installMissingDependencies(installOptions, err => callback(err, result));
+  });
 };

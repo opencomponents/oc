@@ -1,15 +1,17 @@
 'use strict';
 
+const _ = require('lodash');
+
 module.exports = function isTemplateValid(template, options) {
-  if (typeof template !== 'object') {
+  if (!_.isObject(template)) {
     return false;
   }
 
-  let api = ['getInfo', 'getCompiledTemplate', 'render'];
+  const api = ['getInfo', 'getCompiledTemplate', 'render'];
 
   if (options && options.compiler === true) {
-    api = api.concat('compile');
+    api.push('compile');
   }
 
-  return api.every(method => typeof template[method] === 'function');
+  return api.every(method => _.isFunction(template[method]));
 };

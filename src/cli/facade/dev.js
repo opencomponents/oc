@@ -8,7 +8,7 @@ const path = require('path');
 const _ = require('lodash');
 
 const getMockedPlugins = require('../domain/get-mocked-plugins');
-const loadDependencies = require('../domain/handle-dependencies');
+const handleDependencies = require('../domain/handle-dependencies');
 const oc = require('../../index');
 const strings = require('../../resources/index');
 const watch = require('../domain/watch');
@@ -133,9 +133,9 @@ module.exports = function(dependencies) {
         logger.log(colors.green('├── ') + component);
       });
 
-      loadDependencies({ components, logger }, (err, dependencies) => {
+      handleDependencies({ components, logger }, (err, dependencies) => {
         if (err) {
-          logger.error(err);
+          logger.err(err);
           return callback(err);
         }
         packageComponents(components, () => {

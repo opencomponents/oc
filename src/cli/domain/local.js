@@ -35,7 +35,6 @@ module.exports = function() {
       );
     },
     getComponentsByDir: getComponentsByDir(),
-    getLocalNpmModules: getLocalNpmModules(),
     init: function(options, callback) {
       let { componentName, templateType, logger } = options;
       if (!validator.validateComponentName(componentName)) {
