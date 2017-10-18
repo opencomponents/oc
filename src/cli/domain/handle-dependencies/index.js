@@ -10,13 +10,11 @@ const ensureCompilerIsDeclaredAsDevDependency = require('./ensure-compiler-is-de
 const getCompiler = require('./get-compiler');
 const getMissingDependencies = require('./get-missing-dependencies');
 const installMissingDependencies = require('./install-missing-dependencies');
+const isTemplateLegacy = require('./is-template-legacy');
 const strings = require('../../../resources');
 
 const getComponentPackageJson = (componentPath, cb) =>
   fs.readJson(path.join(componentPath, 'package.json'), cb);
-
-const isTemplateLegacy = template =>
-  !!{ jade: true, handlebars: true }[template];
 
 module.exports = (options, callback) => {
   const { components, logger } = options;

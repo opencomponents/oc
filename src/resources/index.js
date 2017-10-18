@@ -123,8 +123,9 @@ module.exports = {
         'oc registries not found. Run "oc registry add <registry href>"',
       SERVERJS_DEPENDENCY_NOT_DECLARED:
         'Missing dependencies from package.json => {0}',
-      TEMPLATE_NOT_FOUND: 'file {0} not found',
-      TEMPLATE_TYPE_NOT_VALID: 'the template is not valid',
+      TEMPLATE_NOT_FOUND: 'Error requiring oc-template: "{0}" not found',
+      TEMPLATE_TYPE_NOT_VALID:
+        'Error requiring oc-template: "{0}" is not a valid oc-template',
       TEMPLATE_DEP_MISSING:
         'Template dependency missing. To fix it run:\n\nnpm install --save-dev {0}-compiler --prefix {1}\n\n'
     },

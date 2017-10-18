@@ -4,31 +4,23 @@ const format = require('stringformat');
 const path = require('path');
 
 const cleanRequire = require('../../../utils/clean-require');
+const isTemplateLegacy = require('./is-template-legacy');
 const isTemplateValid = require('../../../utils/is-template-valid');
-
-const templateNotFound = 'Error requiring oc-template: "{0}" not found';
-const templateNotValid =
-  'Error requiring oc-template: "{0}" is not a valid oc-template';
+const strings = require('../../../resources');
 
 module.exports = function(template, options) {
   const requireOptions = options || {};
   let ocTemplate;
-  if (template === 'jade') {
-    template = 'oc-template-jade';
-  }
-  if (template === 'handlebars') {
-    template = 'oc-template-handlebars';
-  }
-  if (requireOptions.compiler === true) {
-    template = template + '-compiler';
+
+  if (isTemplateLegacy(template)) {
+    template = `oc-template-${template}`;
   }
 
-  const localTemplate = path.join(
-    __dirname,
-    '../../',
-    'node_modules',
-    template
-  );
+  if (requireOptions.compiler) {
+    template = `${template}-compiler`;
+  }
+
+  const localTemplate = path.join(__dirname, '../../node_modules', template);
   const relativeTemplate = path.resolve('.', 'node_modules', template);
   const componentRelativePath = path.join(
     requireOptions.componentPath,
@@ -46,11 +38,13 @@ module.exports = function(template, options) {
   });
 
   if (!ocTemplate) {
-    throw new Error(format(templateNotFound, template));
+    throw new Error(format(strings.errors.cli.TEMPLATE_NOT_FOUND, template));
   }
 
   if (!isTemplateValid(ocTemplate, requireOptions)) {
-    throw new Error(format(templateNotValid, template));
+    throw new Error(
+      format(strings.errors.cli.TEMPLATE_TYPE_NOT_VALID, template)
+    );
   }
 
   return ocTemplate;
