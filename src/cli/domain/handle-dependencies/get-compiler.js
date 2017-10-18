@@ -19,14 +19,13 @@ module.exports = (options, cb) => {
     dependency += `@${pkg.devDependencies[compilerDep]}`;
   }
 
-  installCompiler(
-    {
-      compilerPath,
-      componentName: pkg.name,
-      componentPath,
-      dependency,
-      logger
-    },
-    cb
-  );
+  const installOptions = {
+    compilerPath,
+    componentName: pkg.name,
+    componentPath,
+    dependency,
+    logger
+  };
+
+  installCompiler(installOptions, cb);
 };
