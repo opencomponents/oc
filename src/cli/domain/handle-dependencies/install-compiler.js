@@ -30,6 +30,6 @@ module.exports = (options, cb) => {
     const compiler = cleanRequire(compilerPath, { justTry: true });
     const isOk = isTemplateValid(compiler);
     const errorMsg = 'There was a problem while installing the compiler';
-    cb(isOk ? null : errorMsg, compiler);
+    cb(!err && isOk ? null : errorMsg, compiler);
   });
 };
