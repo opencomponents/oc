@@ -1,7 +1,7 @@
 'use strict';
 
 const _ = require('lodash');
-const Local = require('./cli/domain/local');
+const Local = require('./domain/local');
 
 function wrap(cmdScript, withRegistry) {
   return function(options, cb) {
@@ -11,12 +11,12 @@ function wrap(cmdScript, withRegistry) {
     };
 
     if (withRegistry) {
-      const Registry = require('./cli/domain/registry');
+      const Registry = require('./domain/registry');
       dependencies.registry = new Registry({ registry: options.registry });
     }
 
     const opts = _.omit(options, 'logger', 'registry');
-    require(`./cli/facade/${cmdScript}.js`)(dependencies)(opts, cb);
+    require(`./facade/${cmdScript}`)(dependencies)(opts, cb);
   };
 }
 
