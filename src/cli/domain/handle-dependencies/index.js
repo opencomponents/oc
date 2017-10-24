@@ -75,18 +75,7 @@ module.exports = (options, callback) => {
       templates: _.values(templates)
     };
 
-    const missing = getMissingDependencies(dependencies);
-
-    if (_.isEmpty(missing)) {
-      return callback(null, result);
-    }
-
-    const installOptions = {
-      allDependencies: dependencies,
-      logger,
-      missingDependencies: missing
-    };
-
+    const installOptions = { dependencies, logger };
     installMissingDependencies(installOptions, err => callback(err, result));
   });
 };

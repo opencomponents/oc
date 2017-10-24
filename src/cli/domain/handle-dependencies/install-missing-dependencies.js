@@ -8,30 +8,33 @@ const getMissingDependencies = require('./get-missing-dependencies');
 const npm = require('../../../utils/npm-utils');
 const strings = require('../../../resources/index');
 
-module.exports = (options, cb) => {
-  const { allDependencies, logger, missingDependencies } = options;
+module.exports = (options, callback) => {
+  const { dependencies, logger } = options;
+
+  const missing = getMissingDependencies(dependencies);
+
+  if (_.isEmpty(missing)) {
+    return callback(null);
+  }
 
   logger.warn(
-    format(
-      strings.messages.cli.INSTALLING_DEPS,
-      missingDependencies.join(', ')
-    ),
+    format(strings.messages.cli.INSTALLING_DEPS, missing.join(', ')),
     true
   );
 
   const npmOptions = {
-    dependencies: missingDependencies,
+    dependencies: missing,
     installPath: path.resolve('.'),
     save: false,
     silent: true
   };
 
   npm.installDependencies(npmOptions, err => {
-    if (err || !_.isEmpty(getMissingDependencies(allDependencies))) {
+    if (err || !_.isEmpty(getMissingDependencies(dependencies))) {
       logger.fail('FAIL');
-      return callback(strings.messages.cli.DEPENDENCIES_INSTALL_FAIL);
+      return callback(strings.errors.cli.DEPENDENCIES_INSTALL_FAIL);
     }
     logger.ok('OK');
-    cb();
+    callback(null);
   });
 };
