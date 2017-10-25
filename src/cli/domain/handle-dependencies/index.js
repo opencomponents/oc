@@ -8,7 +8,6 @@ const _ = require('lodash');
 
 const ensureCompilerIsDeclaredAsDevDependency = require('./ensure-compiler-is-declared-as-devDependency');
 const getCompiler = require('./get-compiler');
-const getMissingDependencies = require('./get-missing-dependencies');
 const installMissingDependencies = require('./install-missing-dependencies');
 const isTemplateLegacy = require('./is-template-legacy');
 const strings = require('../../../resources');
@@ -71,7 +70,7 @@ module.exports = (options, callback) => {
     }
 
     const result = {
-      modules: _.union(coreModules, _.keys(dependencies)),
+      modules: _.union(coreModules, _.keys(dependencies)).sort(),
       templates: _.values(templates)
     };
 
