@@ -15,7 +15,7 @@ const buildInstallCommand = options => {
 };
 
 const executeCommand = (options, callback) => {
-  const cmd = spawn('npm', options.command, {
+  const cmd = spawn('npm', [...options.command, '--no-package-lock'], {
     cwd: options.path,
     stdio: options.silent ? 'ignore' : 'inherit'
   });

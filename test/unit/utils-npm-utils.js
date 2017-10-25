@@ -19,12 +19,12 @@ describe('utils : npm-utils', () => {
     const scenarios = [
       {
         input: { initPath },
-        output: ['init', '--yes'],
+        output: ['init', '--yes', '--no-package-lock'],
         cmdCall: { cwd: initPath, stdio: 'inherit' }
       },
       {
         input: { initPath, silent: true },
-        output: ['init', '--yes'],
+        output: ['init', '--yes', '--no-package-lock'],
         cmdCall: { cwd: initPath, stdio: 'ignore' }
       }
     ];
@@ -77,7 +77,8 @@ describe('utils : npm-utils', () => {
           'path/to/component',
           '--save-exact',
           '--save-dev',
-          'oc-template-jade-compiler'
+          'oc-template-jade-compiler',
+          '--no-package-lock'
         ]
       },
       {
@@ -87,7 +88,13 @@ describe('utils : npm-utils', () => {
           isDev: true,
           save: false
         },
-        output: ['install', '--prefix', 'path/to/component', 'lodash']
+        output: [
+          'install',
+          '--prefix',
+          'path/to/component',
+          'lodash',
+          '--no-package-lock'
+        ]
       },
       {
         input: {
@@ -102,12 +109,19 @@ describe('utils : npm-utils', () => {
           'path/to/component',
           '--save-exact',
           '--save',
-          'underscore'
+          'underscore',
+          '--no-package-lock'
         ]
       },
       {
         input: { dependency: 'oc-client@~1.2.3', installPath, save: false },
-        output: ['install', '--prefix', 'path/to/component', 'oc-client@~1.2.3']
+        output: [
+          'install',
+          '--prefix',
+          'path/to/component',
+          'oc-client@~1.2.3',
+          '--no-package-lock'
+        ]
       }
     ];
 
@@ -170,7 +184,8 @@ describe('utils : npm-utils', () => {
           '--save-exact',
           '--save-dev',
           'oc-template-jade-compiler',
-          'lodash'
+          'lodash',
+          '--no-package-lock'
         ]
       },
       {
@@ -180,7 +195,14 @@ describe('utils : npm-utils', () => {
           isDev: true,
           save: false
         },
-        output: ['install', '--prefix', 'path/to/component', 'moment', 'lodash']
+        output: [
+          'install',
+          '--prefix',
+          'path/to/component',
+          'moment',
+          'lodash',
+          '--no-package-lock'
+        ]
       },
       {
         input: {
@@ -196,7 +218,8 @@ describe('utils : npm-utils', () => {
           '--save-exact',
           '--save',
           'underscore',
-          'oc-client'
+          'oc-client',
+          '--no-package-lock'
         ]
       },
       {
@@ -210,7 +233,8 @@ describe('utils : npm-utils', () => {
           '--prefix',
           'path/to/component',
           'oc-client@~1.2.3',
-          'oc-template-react-compiler'
+          'oc-template-react-compiler',
+          '--no-package-lock'
         ]
       }
     ];
