@@ -55,10 +55,7 @@ module.exports = function(conf, repository) {
             name: component.name,
             headers: req.headers,
             omitHref: !!req.body.omitHref,
-            parameters: _.extend(
-              _.clone(req.body.parameters) || {},
-              component.parameters || {}
-            ),
+            parameters: _.extend({}, req.body.parameters, component.parameters),
             version: component.version
           },
           result => callback(null, result)
