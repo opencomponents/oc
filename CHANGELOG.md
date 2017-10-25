@@ -1,5 +1,23 @@
 ## Change Log
 
+### v0.41.13
+- [#725](https://github.com/opentable/oc/pull/725) [DX-221] Removing two clones
+- [#724](https://github.com/opentable/oc/pull/724) Update aws-sdk to the latest version 🚀
+- [#723](https://github.com/opentable/oc/pull/723) Update aws-sdk to the latest version 🚀
+- [#722](https://github.com/opentable/oc/pull/722) [DX-218] Expose cli to be used programmatically
+- [#719](https://github.com/opentable/oc/pull/719) Update dependency-graph to the latest version 🚀
+- [#721](https://github.com/opentable/oc/pull/721) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#720](https://github.com/opentable/oc/pull/720) Update oc-template-jade-compiler to the latest version 🚀
+- [#718](https://github.com/opentable/oc/pull/718) Update aws-sdk to the latest version 🚀
+- [#717](https://github.com/opentable/oc/pull/717) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#716](https://github.com/opentable/oc/pull/716) Update oc-template-jade-compiler to the latest version 🚀
+- [#715](https://github.com/opentable/oc/pull/715) Update oc-template-handlebars to the latest version 🚀
+- [#714](https://github.com/opentable/oc/pull/714) Update aws-sdk to the latest version 🚀
+- [#713](https://github.com/opentable/oc/pull/713) Update aws-sdk to the latest version 🚀
+- [#712](https://github.com/opentable/oc/pull/712) Update aws-sdk to the latest version 🚀
+- [#711](https://github.com/opentable/oc/pull/711) Update aws-sdk to the latest version 🚀
+- [#709](https://github.com/opentable/oc/pull/709) Update aws-sdk to the latest version 🚀
+
 ### v0.41.12
 - [#708](https://github.com/opentable/oc/pull/708) Update oc-client to the latest version 🚀
 - [#707](https://github.com/opentable/oc/pull/707) Update oc-client-browser to the latest version 🚀
