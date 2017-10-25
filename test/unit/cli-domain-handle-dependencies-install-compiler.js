@@ -34,8 +34,7 @@ describe('cli : domain : handle-dependencies : install-compiler', () => {
         '../../../utils/clean-require': cleanRequireStub,
         '../../../utils/is-template-valid': isTemplateValidStub,
         '../../../utils/npm-utils': { installDependency: installDependencyMock }
-      },
-      { console }
+      }
     );
 
     installCompiler(installOptions, (err, compiler) => {
