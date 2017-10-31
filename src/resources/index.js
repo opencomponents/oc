@@ -95,6 +95,8 @@ module.exports = {
       COMPONENT_HREF_NOT_FOUND:
         "The specified path is not a valid component's url",
       COMPONENTS_NOT_FOUND: 'no components found in specified path',
+      DEPENDENCIES_INSTALL_FAIL:
+        'An error happened when installing the dependencies',
       FOLDER_IS_NOT_A_FOLDER: '"{0}" must be a directory',
       FOLDER_NOT_FOUND: '"{0}" not found',
       DEV_FAIL: 'An error happened when initialising the dev runner: {0}',
@@ -121,8 +123,9 @@ module.exports = {
         'oc registries not found. Run "oc registry add <registry href>"',
       SERVERJS_DEPENDENCY_NOT_DECLARED:
         'Missing dependencies from package.json => {0}',
-      TEMPLATE_NOT_FOUND: 'file {0} not found',
-      TEMPLATE_TYPE_NOT_VALID: 'the template is not valid',
+      TEMPLATE_NOT_FOUND: 'Error requiring oc-template: "{0}" not found',
+      TEMPLATE_TYPE_NOT_VALID:
+        'Error requiring oc-template: "{0}" is not a valid oc-template',
       TEMPLATE_DEP_MISSING:
         'Template dependency missing. To fix it run:\n\nnpm install --save-dev {0}-compiler --prefix {1}\n\n'
     },
@@ -174,7 +177,7 @@ Happy coding
       HOT_RELOADING_DISABLED:
         'OC dev is running with hot reloading disabled so changes will be ignored',
       INSTALLING_DEPS:
-        "Trying to install missing modules: {0}\nIf you aren't connected to the internet, or npm isn't configured then this step will fail",
+        "Trying to install missing modules: {0}\nIf you aren't connected to the internet, or npm isn't configured then this step will fail...",
       MOCKED_PLUGIN: 'Mock for plugin has been registered: {0} () => {1}',
       NO_SUCH_COMMAND: "No such command '{0}'",
       NOT_VALID_REGISTRY_COMMAND:

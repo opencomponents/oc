@@ -5,153 +5,138 @@ const sinon = require('sinon');
 const injectr = require('injectr');
 
 describe('cli : domain : init-template', () => {
-  describe('when invoking init-template', () => {
-    describe('when the template is available in the dev registry', () => {
-      const deps = {
-        './scaffold': sinon.stub(),
-        './install-template': sinon.stub().returnsArg(1),
-        './create-component-dir': sinon.spy(),
-        './init-package': sinon.spy(),
-        path: {
-          join: sinon.stub().onFirstCall().returnsArg(2)
-        },
+  let error;
+  const initialise = stubs => cb => {
+    const initTemplate = injectr(
+      '../../src/cli/domain/init-template/index.js',
+      {
         'fs-extra': {
-          stat: (path, cb) => cb(null, true)
-        }
-      };
+          ensureDir: stubs.fsExtraStub
+        },
+        path: { join: (...args) => args.join('/') },
+        './install-template': stubs.installTemplateStub,
+        '../../../utils/npm-utils': {
+          init: stubs.npmStub
+        },
+        './scaffold': stubs.scaffoldStub
+      }
+    );
 
-      const globals = {
-        process: {
-          cwd: () => ''
-        }
-      };
+    const options = {
+      compiler: 'oc-template-react-compiler',
+      componentName: 'new-component',
+      componentPath: 'path/to/new-component',
+      logger: { log: () => {} },
+      templateType: 'oc-template-react'
+    };
 
-      const initTemplate = injectr(
-        '../../src/cli/domain/init-template/index.js',
-        deps,
-        globals
-      );
+    initTemplate(options, err => {
+      error = err;
+      cb();
+    });
+  };
 
-      const options = {
-        compiler: 'oc-template-jade-compiler',
-        componentPath: 'path/to/myJadeComponent',
-        componentName: 'myJadeComponent',
-        templateType: 'oc-template-jade',
-        logger: {
-          log: sinon.spy()
-        }
-      };
+  describe('happy path', () => {
+    const fsExtraStub = sinon.stub().yields(null, 'ok');
+    const npmStub = sinon.stub().yields(null, 'ok');
+    const installTemplateStub = sinon.stub().yields(null, 'ok');
+    const scaffoldStub = sinon.stub().yields(null, 'ok');
 
-      const result = initTemplate(options, () => {});
+    beforeEach(
+      initialise({
+        fsExtraStub,
+        npmStub,
+        installTemplateStub,
+        scaffoldStub
+      })
+    );
 
-      it('should correctly call createComponentDir', () => {
-        expect(deps['./create-component-dir'].calledOnce).to.equal(true);
-        expect(deps['./create-component-dir'].args[0][0]).to.deep.equal({
-          componentPath: 'path/to/myJadeComponent'
-        });
-      });
-      it('should correctly call scaffold', () => {
-        expect(deps['./scaffold'].calledOnce).to.equal(true);
-        expect(deps['./scaffold'].args[0][0]).to.deep.equal({
-          compiler: 'oc-template-jade-compiler',
-          compilerPath: 'oc-template-jade-compiler',
-          logger: options.logger,
-          componentPath: 'path/to/myJadeComponent',
-          componentName: 'myJadeComponent',
-          templateType: 'oc-template-jade'
-        });
-      });
-      it('should not call initPackage', () => {
-        expect(deps['./init-package'].notCalled).to.equal(true);
-      });
-      it('should not call installTemplate', () => {
-        expect(deps['./install-template'].notCalled).to.equal(true);
+    it('should return no error', () => {
+      expect(error).to.be.null;
+    });
+
+    it('should call ensureDir with correct params', () => {
+      expect(fsExtraStub.args[0][0]).to.equal('path/to/new-component');
+    });
+
+    it('should call npm init with correct parameters', () => {
+      expect(npmStub.args[0][0]).to.deep.equal({
+        initPath: 'path/to/new-component',
+        silent: true
       });
     });
 
-    describe('when the template is not available in the dev registry', () => {
-      const installTemplate = (options, cb) => {
-        cb(null, 'foo');
-      };
-      const scaffold = sinon.spy();
-      const deps = {
-        './scaffold': scaffold,
-        './install-template': sinon.spy(installTemplate),
-        './create-component-dir': sinon.spy(),
-        './init-package': sinon.spy(),
-        './utils': { getPackageName: sinon.stub().returnsArg(0) },
-        path: {
-          join: sinon
-            .stub()
-            .onFirstCall()
-            .returnsArg(2)
-            .onSecondCall()
-            .returnsArg(0)
-        },
-        'fs-extra': {
-          stat: (path, cb) => cb(true)
-        }
-      };
+    it('should call installTemplate with correct parameters', () => {
+      const o = installTemplateStub.args[0][0];
+      expect(o.compiler).to.equal('oc-template-react-compiler');
+      expect(o.componentPath).to.equal('path/to/new-component');
+      expect(o.logger.log).to.be.a('function');
+      expect(o.templateType).to.equal('oc-template-react');
+    });
 
-      const globals = {
-        process: {
-          cwd: () => ''
-        },
-        require: sinon.stub().returns(true)
-      };
-
-      const initTemplate = injectr(
-        '../../src/cli/domain/init-template/index.js',
-        deps,
-        globals
+    it('should call scaffold with correct parameters', () => {
+      const o = scaffoldStub.args[0][0];
+      expect(o.compiler).to.equal('oc-template-react-compiler');
+      expect(o.compilerPath).to.equal(
+        'path/to/new-component/node_modules/oc-template-react-compiler'
       );
+      expect(o.componentName).to.equal('new-component');
+      expect(o.componentPath).to.equal('path/to/new-component');
+      expect(o.templateType).to.equal('oc-template-react');
+    });
+  });
 
-      const options = {
-        compiler: 'oc-template-hipster-compiler',
-        componentName: 'supaComp',
-        componentPath: 'path/to/supaComp',
-        templateType: 'oc-template-hipster',
-        logger: {
-          log: sinon.spy()
-        }
-      };
+  describe('when component folder creation fails', () => {
+    beforeEach(
+      initialise({
+        fsExtraStub: sinon.stub().yields('folder creation error')
+      })
+    );
 
-      const result = initTemplate(options, () => {});
+    it('should return an error', () => {
+      expect(error).to.equal('folder creation error');
+    });
+  });
 
-      it('should correctly call createComponentDir', () => {
-        expect(deps['./create-component-dir'].calledOnce).to.equal(true);
-        expect(deps['./create-component-dir'].args[0][0]).to.deep.equal({
-          componentPath: 'path/to/supaComp'
-        });
-      });
-      it('should correctly call initPackage', () => {
-        expect(deps['./init-package'].calledOnce).to.equal(true);
-        expect(deps['./init-package'].args[0][0].componentPath).to.equal(
-          'path/to/supaComp'
-        );
-      });
-      it('should correctly call installTemplate', () => {
-        expect(deps['./install-template'].called).to.equal(true);
-        expect(deps['./install-template'].args[0][0]).to.deep.equal({
-          compiler: 'oc-template-hipster-compiler',
-          compilerPath: 'path/to/supaComp',
-          logger: options.logger,
-          componentPath: 'path/to/supaComp',
-          componentName: 'supaComp',
-          templateType: 'oc-template-hipster'
-        });
-      });
-      it('should call scaffold on installTemplate success', () => {
-        expect(deps['./scaffold'].calledOnce).to.equal(true);
-        expect(deps['./scaffold'].args[0][0]).to.deep.equal({
-          compiler: 'oc-template-hipster-compiler',
-          compilerPath: 'path/to/supaComp',
-          logger: options.logger,
-          componentPath: 'path/to/supaComp',
-          componentName: 'supaComp',
-          templateType: 'oc-template-hipster'
-        });
-      });
+  describe('when npm init fails', () => {
+    beforeEach(
+      initialise({
+        fsExtraStub: sinon.stub().yields(null, 'ok'),
+        npmStub: sinon.stub().yields('npm init failed')
+      })
+    );
+
+    it('should return an error', () => {
+      expect(error).to.equal('npm init failed');
+    });
+  });
+
+  describe('when template compiler installation fails', () => {
+    beforeEach(
+      initialise({
+        fsExtraStub: sinon.stub().yields(null, 'ok'),
+        npmStub: sinon.stub().yields(null, 'ok'),
+        installTemplateStub: sinon.stub().yields('npm install failed')
+      })
+    );
+
+    it('should return an error', () => {
+      expect(error).to.equal('npm install failed');
+    });
+  });
+
+  describe('when template compiler installation fails', () => {
+    beforeEach(
+      initialise({
+        fsExtraStub: sinon.stub().yields(null, 'ok'),
+        npmStub: sinon.stub().yields(null, 'ok'),
+        installTemplateStub: sinon.stub().yields(null, 'ok'),
+        scaffoldStub: sinon.stub().yields('scaffolding failed')
+      })
+    );
+
+    it('should return an error', () => {
+      expect(error).to.equal('scaffolding failed');
     });
   });
 });

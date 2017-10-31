@@ -59,7 +59,7 @@ describe('cli : facade : init', () => {
 
       it('should show an error', () => {
         const expected =
-          'An error happened when initialising the component: the template is not valid';
+          'An error happened when initialising the component: Error requiring oc-template: "invalid-type" is not a valid oc-template';
         expect(logSpy.err.args[0][0]).to.equal(expected);
       });
     });

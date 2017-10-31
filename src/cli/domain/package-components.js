@@ -3,7 +3,8 @@
 const fs = require('fs-extra');
 const path = require('path');
 const _ = require('lodash');
-const requireTemplate = require('../../utils/require-template');
+
+const requireTemplate = require('./handle-dependencies/require-template');
 const validator = require('../../registry/domain/validators');
 
 module.exports = function() {
@@ -13,7 +14,6 @@ module.exports = function() {
     const minify = options.minify === true;
     const verbose = options.verbose === true;
     const publishPath = path.join(componentPath, '_package');
-
     const componentPackagePath = path.join(componentPath, 'package.json');
     const ocPackagePath = path.join(__dirname, '../../../package.json');
 
@@ -26,7 +26,6 @@ module.exports = function() {
     fs.emptyDirSync(publishPath);
 
     const componentPackage = fs.readJsonSync(componentPackagePath);
-
     const ocPackage = fs.readJsonSync(ocPackagePath);
 
     if (!validator.validateComponentName(componentPackage.name)) {
@@ -47,13 +46,11 @@ module.exports = function() {
     };
 
     try {
-      const ocTemplate = requireTemplate(type, { compiler: true });
-      ocTemplate.compile(compileOptions, (err, info) => {
-        if (err) {
-          return callback(err);
-        }
-        return callback(null, info);
+      const ocTemplate = requireTemplate(type, {
+        compiler: true,
+        componentPath
       });
+      ocTemplate.compile(compileOptions, callback);
     } catch (err) {
       return callback(err);
     }

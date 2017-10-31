@@ -8,10 +8,9 @@ const path = require('path');
 const _ = require('lodash');
 
 const getMockedPlugins = require('../domain/get-mocked-plugins');
-const loadDependencies = require('../domain/load-dependencies');
+const handleDependencies = require('../domain/handle-dependencies');
 const oc = require('../../index');
 const strings = require('../../resources/index');
-const requireTemplate = require('../../utils/require-template');
 const watch = require('../domain/watch');
 const wrapCliCallback = require('../wrap-cli-callback');
 
@@ -44,9 +43,7 @@ module.exports = function(dependencies) {
           if (!hotReloading) {
             logger.warn(strings.messages.cli.HOT_RELOADING_DISABLED);
           } else {
-            cb([componentDir], done => {
-              liveReloadServer.refresh('/');
-            });
+            cb([componentDir], done => liveReloadServer.refresh('/'));
           }
         }
       });
@@ -136,22 +133,26 @@ module.exports = function(dependencies) {
         logger.log(colors.green('├── ') + component);
       });
 
-      loadDependencies({ components, logger }, dependencies => {
+      handleDependencies({ components, logger }, (err, dependencies) => {
+        if (err) {
+          logger.err(err);
+          return callback(err);
+        }
         packageComponents(components, () => {
           const liveReloadServer = livereload.createServer({ port: port + 1 });
 
           const registry = new oc.Registry({
-            local: true,
-            hotReloading: hotReloading,
-            fallbackRegistryUrl: fallbackRegistryUrl,
-            discovery: true,
-            verbosity: 1,
-            path: path.resolve(componentsDir),
-            port: port,
-            baseUrl: baseUrl,
-            env: { name: 'local' },
+            baseUrl,
             dependencies: dependencies.modules,
-            templates: dependencies.templates.map(requireTemplate)
+            discovery: true,
+            env: { name: 'local' },
+            fallbackRegistryUrl,
+            hotReloading,
+            local: true,
+            path: path.resolve(componentsDir),
+            port,
+            templates: dependencies.templates,
+            verbosity: 1
           });
 
           registerPlugins(registry);

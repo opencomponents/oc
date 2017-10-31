@@ -7,7 +7,7 @@ const path = require('path');
 const read = require('read');
 const _ = require('lodash');
 
-const loadDependencies = require('../domain/load-dependencies');
+const handleDependencies = require('../domain/handle-dependencies');
 const strings = require('../../resources/index');
 const wrapCliCallback = require('../wrap-cli-callback');
 
@@ -135,9 +135,13 @@ module.exports = function(dependencies) {
         return callback(err);
       }
 
-      loadDependencies(
-        { components: [componentPath], logger },
-        dependencies => {
+      handleDependencies(
+        { components: [path.resolve(componentPath)], logger },
+        (err, dependencies) => {
+          if (err) {
+            logger.err(err);
+            return callback(err);
+          }
           packageAndCompress((err, component) => {
             if (err) {
               errorMessage = format(

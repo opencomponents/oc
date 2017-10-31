@@ -4,14 +4,14 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 const injectr = require('injectr');
 
-describe('cli : domain : init-template installTemplate', () => {
+describe('cli : domain : init-template : install-template', () => {
   const npmUtils = { installDependency: sinon.stub() };
-  const isValidTemplate = sinon.stub();
+  const isTemplateValid = sinon.stub();
   const installTemplate = injectr(
     '../../src/cli/domain/init-template/install-template.js',
     {
       '../../../utils/npm-utils': npmUtils,
-      '../../../utils/isValidTemplate': isValidTemplate,
+      '../../../utils/is-template-valid': isTemplateValid,
       'try-require': sinon.stub().returns({
         getInfo: () => ({ version: '1.2.3' })
       })
@@ -32,7 +32,7 @@ describe('cli : domain : init-template installTemplate', () => {
       const dest = 'path/to/component/node_modules/oc-template-jade-compiler';
       npmUtils.installDependency.reset();
       npmUtils.installDependency.yields(null, { dest });
-      isValidTemplate.returns(true);
+      isTemplateValid.returns(true);
       installTemplate(config, (err, res) => {
         error = err;
         result = res;
@@ -50,8 +50,8 @@ describe('cli : domain : init-template installTemplate', () => {
     });
 
     it('should validate the template', () => {
-      expect(isValidTemplate.called).to.be.true;
-      expect(typeof isValidTemplate.args[0][0].getInfo).to.equal('function');
+      expect(isTemplateValid.called).to.be.true;
+      expect(typeof isTemplateValid.args[0][0].getInfo).to.equal('function');
     });
 
     it('should return no error', () => {

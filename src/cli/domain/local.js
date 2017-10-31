@@ -6,7 +6,6 @@ const targz = require('targz');
 const _ = require('lodash');
 
 const getComponentsByDir = require('./get-components-by-dir');
-const getLocalNpmModules = require('./get-local-npm-modules');
 const packageComponents = require('./package-components');
 const mock = require('./mock');
 const validator = require('../../registry/domain/validators');
@@ -35,7 +34,6 @@ module.exports = function() {
       );
     },
     getComponentsByDir: getComponentsByDir(),
-    getLocalNpmModules: getLocalNpmModules(),
     init: function(options, callback) {
       let { componentName, templateType, logger } = options;
       if (!validator.validateComponentName(componentName)) {
