@@ -101,8 +101,9 @@ module.exports = function(renderer, conf) {
               headers: sanitise.headers(p.options.headers),
               name: component.name,
               parameters: _.extend(
-                _.clone(p.options.parameters) || {},
-                component.parameters || {}
+                {},
+                p.options.parameters,
+                component.parameters
               ),
               version: component.version || ''
             },

@@ -1,6 +1,6 @@
 {
   "name": "oc",
-  "version": "0.41.12",
+  "version": "0.41.14",
   "description": "A framework for developing and distributing html components",
   "main": "./src/index.js",
   "bin": {
@@ -61,7 +61,7 @@
   "dependencies": {
     "accept-language-parser": "1.4.1",
     "async": "1.5.2",
-    "aws-sdk": "2.140.0",
+    "aws-sdk": "2.141.0",
     "basic-auth-connect": "^1.0.0",
     "body-parser": "1.18.2",
     "builtin-modules": "^1.1.1",
