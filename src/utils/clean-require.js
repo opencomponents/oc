@@ -1,7 +1,6 @@
 'use strict';
 
 const tryRequire = require('try-require');
-const _ = require('lodash');
 
 module.exports = (path, { justTry }) => {
   const shouldThrow = !justTry;
