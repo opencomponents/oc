@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.41.14
+- [#728](https://github.com/opentable/oc/pull/728) [DX-226] ]Minimal css for the preview view
+- [#727](https://github.com/opentable/oc/pull/727) Update aws-sdk to the latest version 🚀
+
 ### v0.41.13
 - [#725](https://github.com/opentable/oc/pull/725) [DX-221] Removing two clones
 - [#724](https://github.com/opentable/oc/pull/724) Update aws-sdk to the latest version 🚀
