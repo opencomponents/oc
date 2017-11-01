@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.41.15
+- [#710](https://github.com/opentable/oc/pull/710) [DX-185] install compiler inside each components' dir
+
 ### v0.41.14
 - [#728](https://github.com/opentable/oc/pull/728) [DX-226] ]Minimal css for the preview view
 - [#727](https://github.com/opentable/oc/pull/727) Update aws-sdk to the latest version 🚀
