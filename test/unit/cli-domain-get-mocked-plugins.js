@@ -6,27 +6,29 @@ const sinon = require('sinon');
 const _ = require('lodash');
 
 describe('cli : domain : get-mocked-plugins', () => {
+  const dynamicPluginModule = function(a) {
+      return a ? 'blarg' : 'flarg';
+    },
+    notAFunctionModule = { foo: 'bar' };
 
-  const dynamicPluginModule = function(a){ return a ? 'blarg' : 'flarg'; },
-    notAFunctionModule = { 'foo' : 'bar' };
+  let fsMock, getMockedPlugins;
 
-  let fsMock,
-    getMockedPlugins;
+  const initialise = function(fs, pathJoinStub) {
+    fsMock = _.extend(
+      {
+        existsSync: sinon.stub().returns(true),
+        readFileSync: sinon.stub().returns('file content'),
+        readJsonSync: sinon.stub().returns({ content: true }),
+        realpathSync: sinon.stub().returns('/root/'),
+        writeFile: sinon.stub().yields(null, 'ok')
+      },
+      fs || {}
+    );
 
-  const initialise = function(fs, pathJoinStub){
-
-    fsMock = _.extend({
-      existsSync: sinon.stub().returns(true),
-      readFileSync: sinon.stub().returns('file content'),
-      readJsonSync: sinon.stub().returns({ content: true }),
-      realpathSync: sinon.stub().returns('/root/'),
-      writeFile: sinon.stub().yields(null, 'ok')
-    }, fs || {});
-
-    const fakePathFunc = function(){
+    const fakePathFunc = function() {
       return _.toArray(arguments)
-              .map((x) => x.replace(/\.\//g, ''))
-              .join('');
+        .map(x => x.replace(/\.\//g, ''))
+        .join('');
     };
 
     getMockedPlugins = injectr('../../src/cli/domain/get-mocked-plugins.js', {
@@ -41,9 +43,7 @@ describe('cli : domain : get-mocked-plugins', () => {
   };
 
   describe('when setting up mocked plugins', () => {
-
     describe('when componentsDir parameter is undefined', () => {
-
       const joinStub = sinon.stub();
 
       beforeEach(() => {
@@ -57,7 +57,6 @@ describe('cli : domain : get-mocked-plugins', () => {
     });
 
     describe('when componentsDir parameter is omitted', () => {
-
       const joinStub = sinon.stub();
 
       beforeEach(() => {
@@ -71,7 +70,6 @@ describe('cli : domain : get-mocked-plugins', () => {
     });
 
     describe('when oc.json is in both root and component folder', () => {
-
       let result;
       const ocJsonComponent = {
         registries: [],
@@ -89,7 +87,10 @@ describe('cli : domain : get-mocked-plugins', () => {
           existsSync: sinon.stub().returns(true),
           readJsonSync: readMock
         });
-        result = getMockedPlugins({ log: () => {}, warn: () => {} }, '/root/components/');
+        result = getMockedPlugins(
+          { log: () => {}, warn: () => {} },
+          '/root/components/'
+        );
       });
 
       it('should use components folder oc.json as default', () => {
@@ -100,7 +101,6 @@ describe('cli : domain : get-mocked-plugins', () => {
     });
 
     describe('when oc.json is in root folder', () => {
-
       let result;
       const ocJsonComponent = {
         registries: [],
@@ -133,7 +133,10 @@ describe('cli : domain : get-mocked-plugins', () => {
           existsSync: existsMock,
           readJsonSync: readMock
         });
-        result = getMockedPlugins({ log: () => {}, warn: () => {} }, '/root/components/');
+        result = getMockedPlugins(
+          { log: () => {}, warn: () => {} },
+          '/root/components/'
+        );
       });
 
       it('should use root oc.json', () => {
@@ -193,7 +196,10 @@ describe('cli : domain : get-mocked-plugins', () => {
           existsSync: sinon.stub().returns(true),
           readJsonSync: sinon.stub().returns(ocJson)
         });
-        result = getMockedPlugins({ log: () => {}, warn: () => {} }, '/root/components/');
+        result = getMockedPlugins(
+          { log: () => {}, warn: () => {} },
+          '/root/components/'
+        );
       });
 
       it('should return the static plugin', () => {
@@ -224,7 +230,10 @@ describe('cli : domain : get-mocked-plugins', () => {
           existsSync: sinon.stub().returns(true),
           readJsonSync: sinon.stub().returns(ocJson)
         });
-        result = getMockedPlugins({ log: () => {}, warn: () => {} }, '/root/components/');
+        result = getMockedPlugins(
+          { log: () => {}, warn: () => {} },
+          '/root/components/'
+        );
       });
 
       it('should return the dynamic plugin', () => {
@@ -262,8 +271,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       });
 
       it('should log an error', () => {
-        expect(logger.err.args[0][0]).to.contain(
-          'Error: Cannot find module');
+        expect(logger.err.args[0][0]).to.contain('Error: Cannot find module');
       });
 
       it('should omit the broken plugin from the results', () => {
@@ -296,7 +304,8 @@ describe('cli : domain : get-mocked-plugins', () => {
 
       it('should log an error', () => {
         expect(logger.err.args[0][0]).to.contain(
-          'Looks like you are trying to register a dynamic mock plugin but the file you specified is not a function');
+          'Looks like you are trying to register a dynamic mock plugin but the file you specified is not a function'
+        );
       });
 
       it('should omit the broken plugin from the results', () => {

@@ -15,7 +15,7 @@ const builtin = {
         message: isValid
           ? ''
           : strings.errors.registry
-              .CONFIGURATION_PUBLISH_BASIC_AUTH_CREDENTIALS_MISSING
+            .CONFIGURATION_PUBLISH_BASIC_AUTH_CREDENTIALS_MISSING
       };
     },
     middleware: function(authConfig) {

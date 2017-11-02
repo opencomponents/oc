@@ -3,14 +3,13 @@
 const expect = require('chai').expect;
 
 describe('registry : routes : helpers : apply-default-values', () => {
-
   let parameters;
   const applyDefaultValues = require('../../src/registry/routes/helpers/apply-default-values');
   const apply = function(a, b) {
     return applyDefaultValues(a, b);
   };
 
-  describe('when component deesn\'t have optional parameters', () => {
+  describe("when component deesn't have optional parameters", () => {
     const componentParameters = {
       mandatory: {
         type: 'string',
@@ -43,9 +42,12 @@ describe('registry : routes : helpers : apply-default-values', () => {
         }
       };
 
-      describe('when request doesn\'t specify values of optional parameters', () => {
+      describe("when request doesn't specify values of optional parameters", () => {
         before(() => {
-          parameters = apply({ mandatory: 'request value' }, componentParameters);
+          parameters = apply(
+            { mandatory: 'request value' },
+            componentParameters
+          );
         });
 
         it('should return requestParameters', () => {
@@ -77,44 +79,73 @@ describe('registry : routes : helpers : apply-default-values', () => {
 
       describe('when request specify values of optional parameters', () => {
         before(() => {
-          parameters = apply({ mandatory: 'request value', optional: 'custom value', optional2: true }, componentParameters);
+          parameters = apply(
+            {
+              mandatory: 'request value',
+              optional: 'custom value',
+              optional2: true
+            },
+            componentParameters
+          );
         });
 
         it('should return requestParameters', () => {
-          expect(parameters).to.eql({ mandatory: 'request value', optional: 'custom value', optional2: true });
+          expect(parameters).to.eql({
+            mandatory: 'request value',
+            optional: 'custom value',
+            optional2: true
+          });
         });
       });
 
       describe('when request specify values of some optional parameters', () => {
         before(() => {
-          parameters = apply({ mandatory: 'request value', optional: 'custom value' }, componentParameters);
+          parameters = apply(
+            { mandatory: 'request value', optional: 'custom value' },
+            componentParameters
+          );
         });
 
         it('should return requestParameters', () => {
-          expect(parameters).to.eql({ mandatory: 'request value', optional: 'custom value', optional2: false });
+          expect(parameters).to.eql({
+            mandatory: 'request value',
+            optional: 'custom value',
+            optional2: false
+          });
         });
       });
 
-      describe('when request doesn\'t specify values of optional parameters', () => {
-
+      describe("when request doesn't specify values of optional parameters", () => {
         describe('when string parameter is undefined', () => {
           before(() => {
-            parameters = apply({ mandatory: 'request value' }, componentParameters);
+            parameters = apply(
+              { mandatory: 'request value' },
+              componentParameters
+            );
           });
 
           it('should return requestParameters with default values of optional parameters', () => {
-            expect(parameters).to.eql({ mandatory: 'request value', optional: 'default value of optional parameter', optional2: false
+            expect(parameters).to.eql({
+              mandatory: 'request value',
+              optional: 'default value of optional parameter',
+              optional2: false
             });
           });
         });
 
         describe('when string parameter is null', () => {
           before(() => {
-            parameters = apply({ mandatory: 'request value', optional: null }, componentParameters);
+            parameters = apply(
+              { mandatory: 'request value', optional: null },
+              componentParameters
+            );
           });
 
           it('should return requestParameters with default values of optional parameters', () => {
-            expect(parameters).to.eql({ mandatory: 'request value', optional: 'default value of optional parameter', optional2: false
+            expect(parameters).to.eql({
+              mandatory: 'request value',
+              optional: 'default value of optional parameter',
+              optional2: false
             });
           });
         });

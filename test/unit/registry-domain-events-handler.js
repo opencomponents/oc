@@ -4,11 +4,9 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 describe('registry : domain : events-handler', () => {
-
   const eventsHandler = require('../../src/registry/domain/events-handler');
 
   describe('when requiring it multiple times', () => {
-
     const spy = sinon.spy();
     let handler2;
 
@@ -28,13 +26,16 @@ describe('registry : domain : events-handler', () => {
   });
 
   describe('when firing an event that has multiple subscribers', () => {
-
     const spy = sinon.spy();
     let c = 0;
 
     before(() => {
-      eventsHandler.on('fire', (payload) => { spy(++c, payload); });
-      eventsHandler.on('fire', (payload) => { spy(++c, payload); });
+      eventsHandler.on('fire', payload => {
+        spy(++c, payload);
+      });
+      eventsHandler.on('fire', payload => {
+        spy(++c, payload);
+      });
       eventsHandler.fire('fire', { hello: true });
     });
 
@@ -54,14 +55,14 @@ describe('registry : domain : events-handler', () => {
   });
 
   describe('when subscribing a request event using a not valid handler', () => {
-
-    const execute = function(){
+    const execute = function() {
       eventsHandler.on('request', 'this is not a function');
     };
 
     it('should throw an error', () => {
-      expect(execute).to.throw('Registry configuration is not valid: registry.on\'s callback must be a function');
+      expect(execute).to.throw(
+        "Registry configuration is not valid: registry.on's callback must be a function"
+      );
     });
   });
-
 });

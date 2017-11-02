@@ -10,7 +10,7 @@ module.exports = function(repository) {
   return function(req, res) {
     let filePath;
     const clientPath =
-      (res.conf.prefix ? res.conf.prefix : '/') + 'oc-client/client.js',
+        (res.conf.prefix ? res.conf.prefix : '/') + 'oc-client/client.js',
       clientMapPath =
         (res.conf.prefix ? res.conf.prefix : '/') +
         'oc-client/oc-client.min.map';

@@ -17,7 +17,7 @@ describe('cli : validate-command : valid', () => {
     }
   ];
 
-  scenarios.forEach((scenario) => {
+  scenarios.forEach(scenario => {
     describe(`given "${scenario._.join(' ')}"`, () => {
       it(`"${scenario._[scenario.level]}" should be a valid command`, () => {
         const argv = {
@@ -43,7 +43,7 @@ describe('cli : validate-command : invalid', () => {
     }
   ];
 
-  scenarios.forEach((scenario) => {
+  scenarios.forEach(scenario => {
     describe(`given "${scenario._.join(' ')}"`, () => {
       it(`"${scenario._[scenario.level]}" should be an invalid command`, () => {
         const argv = {
@@ -51,7 +51,9 @@ describe('cli : validate-command : invalid', () => {
         };
         const level = scenario.level;
 
-        expect(() => { validate(argv, level); }).to.throw();
+        expect(() => {
+          validate(argv, level);
+        }).to.throw();
       });
     });
   });

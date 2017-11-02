@@ -17,11 +17,13 @@ module.exports = history => {
     });
   });
 
-  return _.sortBy(result, 'publishDate').reverse().map(x => ({
-    name: x.name,
-    version: x.version,
-    publishDate: !x.publishDate
-      ? 'Unknown'
-      : dateStringified(new Date(x.publishDate))
-  }));
+  return _.sortBy(result, 'publishDate')
+    .reverse()
+    .map(x => ({
+      name: x.name,
+      version: x.version,
+      publishDate: !x.publishDate
+        ? 'Unknown'
+        : dateStringified(new Date(x.publishDate))
+    }));
 };

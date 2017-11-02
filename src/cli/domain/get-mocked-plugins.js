@@ -62,7 +62,10 @@ const findPath = function(pathToResolve, fileName) {
       return undefined;
     } else {
       const getParent = function(x) {
-          return x.split('/').slice(0, -1).join('/');
+          return x
+            .split('/')
+            .slice(0, -1)
+            .join('/');
         },
         parentDir = pathToResolve ? getParent(pathToResolve) : rootDir;
 

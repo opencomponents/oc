@@ -5,14 +5,13 @@ const injectr = require('injectr');
 const sinon = require('sinon');
 
 describe('registry', () => {
-
   const repositoryInitStub = sinon.stub();
 
   const deps = {
     './app-start': sinon.stub(),
     './domain/events-handler': {},
-    'express': sinon.stub(),
-    'http': {
+    express: sinon.stub(),
+    http: {
       createServer: sinon.stub()
     },
     './middleware': { bind: sinon.stub() },
@@ -30,13 +29,16 @@ describe('registry', () => {
   const Registry = injectr('../../src/registry/index.js', deps);
 
   describe('when instanciated', () => {
-
     describe('when options are not valid', () => {
-
       let init;
       beforeEach(() => {
-        deps['./domain/validators'].validateRegistryConfiguration.returns({ isValid: false, message: 'blargh' });
-        init = function(){ Registry({}); };
+        deps['./domain/validators'].validateRegistryConfiguration.returns({
+          isValid: false,
+          message: 'blargh'
+        });
+        init = function() {
+          Registry({});
+        };
       });
 
       it('should throw an error', () => {
@@ -45,10 +47,11 @@ describe('registry', () => {
     });
 
     describe('when options are valid', () => {
-
       let registry;
       beforeEach(() => {
-        deps['./domain/validators'].validateRegistryConfiguration.returns({ isValid: true });
+        deps['./domain/validators'].validateRegistryConfiguration.returns({
+          isValid: true
+        });
         deps.express.returns('express instance');
         deps['./domain/options-sanitiser'].returns({ port: 3000 });
         registry = new Registry({});
@@ -70,13 +73,11 @@ describe('registry', () => {
       });
 
       describe('when starting it', () => {
-
         describe('when plugins initialiser fails', () => {
-
           let error;
-          beforeEach((done) => {
+          beforeEach(done => {
             deps['./domain/plugins-initialiser'].init.yields('error!');
-            registry.start((err) => {
+            registry.start(err => {
               error = err;
               done();
             });
@@ -88,15 +89,13 @@ describe('registry', () => {
         });
 
         describe('when plugins initialiser succeeds', () => {
-
           describe('when repository initialisation fails', () => {
-
             let error;
-            beforeEach((done) => {
+            beforeEach(done => {
               deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
               repositoryInitStub.yields('nope');
 
-              registry.start((err) => {
+              registry.start(err => {
                 error = err;
                 done();
               });
@@ -108,16 +107,14 @@ describe('registry', () => {
           });
 
           describe('when repository initialisation succeeds', () => {
-
             describe('when app fails to start', () => {
-
               let error;
-              beforeEach((done) => {
+              beforeEach(done => {
                 deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
                 repositoryInitStub.yields(null, 'ok');
-                deps['./app-start'].yields({ msg: 'I got a problem'});
+                deps['./app-start'].yields({ msg: 'I got a problem' });
 
-                registry.start((err) => {
+                registry.start(err => {
                   error = err;
                   done();
                 });
@@ -129,11 +126,9 @@ describe('registry', () => {
             });
 
             describe('when app starts', () => {
-
               describe('when http listener errors', () => {
-
                 let error;
-                beforeEach((done) => {
+                beforeEach(done => {
                   deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
                   repositoryInitStub.yields(null, 'ok');
                   deps['./app-start'].yields(null, 'ok');
@@ -143,7 +138,7 @@ describe('registry', () => {
                     on: sinon.stub()
                   });
 
-                  registry.start((err) => {
+                  registry.start(err => {
                     error = err;
                     done();
                   });
@@ -155,9 +150,8 @@ describe('registry', () => {
               });
 
               describe('when http listener succeeds', () => {
-
                 let error, result;
-                beforeEach((done) => {
+                beforeEach(done => {
                   deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
                   repositoryInitStub.yields(null, 'ok');
                   deps['./app-start'].yields(null, 'ok');
@@ -185,14 +179,16 @@ describe('registry', () => {
                 });
 
                 it('should emit a start event', () => {
-                  expect(deps['./domain/events-handler'].fire.args[0]).to.eql(['start', {}]);
+                  expect(deps['./domain/events-handler'].fire.args[0]).to.eql([
+                    'start',
+                    {}
+                  ]);
                 });
               });
 
               describe('when http listener emits an error before the listener to start', () => {
-
                 let error;
-                beforeEach((done) => {
+                beforeEach(done => {
                   deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
                   repositoryInitStub.yields(null, 'ok');
                   deps['./app-start'].yields(null, 'ok');
@@ -203,7 +199,7 @@ describe('registry', () => {
                     on: sinon.stub().yields('I failed for some reason')
                   });
 
-                  registry.start((err) => {
+                  registry.start(err => {
                     error = err;
                     done();
                   });
@@ -214,10 +210,13 @@ describe('registry', () => {
                 });
 
                 it('should emit an error event', () => {
-                  expect(deps['./domain/events-handler'].fire.args[0]).to.eql(['error', {
-                    code: 'EXPRESS_ERROR',
-                    message: 'I failed for some reason'
-                  }]);
+                  expect(deps['./domain/events-handler'].fire.args[0]).to.eql([
+                    'error',
+                    {
+                      code: 'EXPRESS_ERROR',
+                      message: 'I failed for some reason'
+                    }
+                  ]);
                 });
               });
             });

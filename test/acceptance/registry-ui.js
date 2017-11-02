@@ -6,10 +6,9 @@ const path = require('path');
 const request = require('minimal-request');
 
 describe('registry (ui interface)', () => {
-
   let registry, result, error, headers;
 
-  const next = (done) => (e, r, d) => {
+  const next = done => (e, r, d) => {
     error = e;
     result = r;
     headers = d.response.headers;
@@ -37,11 +36,14 @@ describe('registry (ui interface)', () => {
   after(done => registry.close(done));
 
   describe('GET / with Accept: text/html', () => {
-    before((done) => {
-      request({
-        url: 'http://localhost:3030',
-        headers: { accept: 'text/html' }
-      }, next(done));
+    before(done => {
+      request(
+        {
+          url: 'http://localhost:3030',
+          headers: { accept: 'text/html' }
+        },
+        next(done)
+      );
     });
 
     it('should not error', () => {
@@ -55,11 +57,14 @@ describe('registry (ui interface)', () => {
   });
 
   describe('GET /oc-client/~info with Accept: text/html', () => {
-    before((done) => {
-      request({
-        url: 'http://localhost:3030/oc-client/~info',
-        headers: { accept: 'text/html' }
-      }, next(done));
+    before(done => {
+      request(
+        {
+          url: 'http://localhost:3030/oc-client/~info',
+          headers: { accept: 'text/html' }
+        },
+        next(done)
+      );
     });
 
     it('should not error', () => {
