@@ -42,6 +42,8 @@ module.exports = function(dependencies) {
           );
           if (!hotReloading) {
             logger.warn(strings.messages.cli.HOT_RELOADING_DISABLED);
+          } else if (!componentDir) {
+            cb(components, done => liveReloadServer.refresh('/'));
           } else {
             cb([componentDir], done => liveReloadServer.refresh('/'));
           }
