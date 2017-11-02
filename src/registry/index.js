@@ -25,11 +25,10 @@ module.exports = function(options) {
   const plugins = [];
   const app = middleware.bind(express(), options);
   let server;
-  let serverListening = false;
   const repository = new Repository(options);
 
   const close = callback => {
-    if (server && serverListening) {
+    if (server && server.listening) {
       return server.close(callback);
     }
     return callback('not opened');
@@ -72,7 +71,6 @@ module.exports = function(options) {
           if (err) {
             return callback(err);
           }
-          serverListening = true;
           eventsHandler.fire('start', {});
 
           if (options.verbosity) {
