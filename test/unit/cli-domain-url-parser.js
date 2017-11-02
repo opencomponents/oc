@@ -3,9 +3,8 @@
 const expect = require('chai').expect;
 
 describe('cli : domain : url-parser', () => {
-
   let parsed;
-  const execute = function(url, returnVersion){
+  const execute = function(url, returnVersion) {
     const urlParser = require('../../src/cli/domain/url-parser');
 
     parsed = urlParser.parse({
@@ -15,7 +14,6 @@ describe('cli : domain : url-parser', () => {
   };
 
   describe('when parsing http://www.registry.com/api/v2/component-name', () => {
-
     before(() => {
       execute('http://www.registry.com/api/v2/component-name', '');
     });
@@ -37,14 +35,18 @@ describe('cli : domain : url-parser', () => {
     });
 
     it('clientHref should be http://www.registry.com/api/v2/oc-client/client.js', () => {
-      expect(parsed.clientHref).to.equal('http://www.registry.com/api/v2/oc-client/client.js');
+      expect(parsed.clientHref).to.equal(
+        'http://www.registry.com/api/v2/oc-client/client.js'
+      );
     });
   });
 
   describe('when parsing http://www.registry.com/component-name/~1.0.0/?hello=world', () => {
-
     before(() => {
-      execute('http://www.registry.com/component-name/~1.0.0/?hello=world', '~1.0.0');
+      execute(
+        'http://www.registry.com/component-name/~1.0.0/?hello=world',
+        '~1.0.0'
+      );
     });
 
     it('name should be component-name', () => {
@@ -59,17 +61,18 @@ describe('cli : domain : url-parser', () => {
       expect(parsed.registryUrl).to.equal('http://www.registry.com/');
     });
 
-    it('parameters should be { hello: \'world\'}', () => {
+    it("parameters should be { hello: 'world'}", () => {
       expect(parsed.parameters).to.eql({ hello: 'world' });
     });
 
     it('clientHref should be http://www.registry.com/oc-client/client.js', () => {
-      expect(parsed.clientHref).to.equal('http://www.registry.com/oc-client/client.js');
+      expect(parsed.clientHref).to.equal(
+        'http://www.registry.com/oc-client/client.js'
+      );
     });
   });
 
   describe('when parsing http://www.registry.com/12345/~1.0.0?hello=world', () => {
-
     before(() => {
       execute('http://www.registry.com/12345/~1.0.0?hello=world', '~1.0.0');
     });
@@ -86,12 +89,14 @@ describe('cli : domain : url-parser', () => {
       expect(parsed.registryUrl).to.equal('http://www.registry.com/');
     });
 
-    it('parameters should be { hello: \'world\'}', () => {
+    it("parameters should be { hello: 'world'}", () => {
       expect(parsed.parameters).to.eql({ hello: 'world' });
     });
 
     it('clientHref should be http://www.registry.com/oc-client/client.js', () => {
-      expect(parsed.clientHref).to.equal('http://www.registry.com/oc-client/client.js');
+      expect(parsed.clientHref).to.equal(
+        'http://www.registry.com/oc-client/client.js'
+      );
     });
   });
 });

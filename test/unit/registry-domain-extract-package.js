@@ -5,35 +5,49 @@ const injectr = require('injectr');
 const sinon = require('sinon');
 
 describe('registry : domain : extract-package', () => {
-
   const decompressStub = sinon.stub(),
     pathResolveStub = sinon.stub();
 
-  const extractPackage = injectr('../../src/registry/domain/extract-package.js', {
-    targz: { decompress: decompressStub },
-    path: { resolve: pathResolveStub },
-    './get-package-json-from-temp-dir': sinon.stub().yields(null, { package: 'hello' })
-  });
+  const extractPackage = injectr(
+    '../../src/registry/domain/extract-package.js',
+    {
+      targz: { decompress: decompressStub },
+      path: { resolve: pathResolveStub },
+      './get-package-json-from-temp-dir': sinon
+        .stub()
+        .yields(null, { package: 'hello' })
+    }
+  );
 
   describe('when successfully extracting package', () => {
-
     let response;
 
-    beforeEach((done) => {
+    beforeEach(done => {
       pathResolveStub.reset();
-      pathResolveStub.onCall(0).returns('/some-path/registry/temp/1478279453422.tar.gz');
-      pathResolveStub.onCall(1).returns('/some-path/registry/temp/1478279453422/');
-      pathResolveStub.onCall(2).returns('/some-path/registry/temp/1478279453422/_package/');
+      pathResolveStub
+        .onCall(0)
+        .returns('/some-path/registry/temp/1478279453422.tar.gz');
+      pathResolveStub
+        .onCall(1)
+        .returns('/some-path/registry/temp/1478279453422/');
+      pathResolveStub
+        .onCall(2)
+        .returns('/some-path/registry/temp/1478279453422/_package/');
 
       decompressStub.yields();
 
-      extractPackage([{
-        filename: '1478279453422.tar.gz',
-        path: '/some-path/registry/temp/1478279453422.tar.gz'
-      }], (err, res) => {
-        response = res;
-        done();
-      });
+      extractPackage(
+        [
+          {
+            filename: '1478279453422.tar.gz',
+            path: '/some-path/registry/temp/1478279453422.tar.gz'
+          }
+        ],
+        (err, res) => {
+          response = res;
+          done();
+        }
+      );
     });
 
     it('should decompress tar.gz file', () => {
@@ -52,24 +66,34 @@ describe('registry : domain : extract-package', () => {
   });
 
   describe('when extracting package fails', () => {
-
     let error;
 
-    beforeEach((done) => {
+    beforeEach(done => {
       pathResolveStub.reset();
-      pathResolveStub.onCall(0).returns('/some-path/registry/temp/1478279453422.tar.gz');
-      pathResolveStub.onCall(1).returns('/some-path/registry/temp/1478279453422/');
-      pathResolveStub.onCall(2).returns('/some-path/registry/temp/1478279453422/_package/');
+      pathResolveStub
+        .onCall(0)
+        .returns('/some-path/registry/temp/1478279453422.tar.gz');
+      pathResolveStub
+        .onCall(1)
+        .returns('/some-path/registry/temp/1478279453422/');
+      pathResolveStub
+        .onCall(2)
+        .returns('/some-path/registry/temp/1478279453422/_package/');
 
       decompressStub.yields('error!');
 
-      extractPackage([{
-        filename: '1478279453422.tar.gz',
-        path: '/some-path/registry/temp/1478279453422.tar.gz'
-      }], (err) => {
-        error = err;
-        done();
-      });
+      extractPackage(
+        [
+          {
+            filename: '1478279453422.tar.gz',
+            path: '/some-path/registry/temp/1478279453422.tar.gz'
+          }
+        ],
+        err => {
+          error = err;
+          done();
+        }
+      );
     });
 
     it('should respond with error', () => {

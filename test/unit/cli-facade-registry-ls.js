@@ -4,23 +4,20 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 describe('cli : facade : registry : ls', () => {
-
   const logSpy = {},
     Registry = require('../../src/cli/domain/registry'),
     registry = new Registry(),
     RegistryFacade = require('../../src/cli/facade/registry-ls'),
     registryFacade = new RegistryFacade({ registry: registry, logger: logSpy });
 
-  const execute = function(){
+  const execute = function() {
     logSpy.err = sinon.spy();
     logSpy.ok = sinon.spy();
     logSpy.warn = sinon.spy();
     registryFacade({}, () => {});
   };
 
-
   describe('when no registries linked to the app', () => {
-
     beforeEach(() => {
       sinon.stub(registry, 'get').yields(null, []);
       execute();
@@ -35,14 +32,20 @@ describe('cli : facade : registry : ls', () => {
     });
 
     it('should log an error', () => {
-      expect(logSpy.err.args[0][0]).to.equal('oc registries not found. Run "oc registry add <registry href>"');
+      expect(logSpy.err.args[0][0]).to.equal(
+        'oc registries not found. Run "oc registry add <registry href>"'
+      );
     });
   });
 
   describe('when registries linked to the app', () => {
-
     beforeEach(() => {
-      sinon.stub(registry, 'get').yields(null, ['http://www.registry.com', 'https://www.anotherregistry.com']);
+      sinon
+        .stub(registry, 'get')
+        .yields(null, [
+          'http://www.registry.com',
+          'https://www.anotherregistry.com'
+        ]);
       execute();
     });
 

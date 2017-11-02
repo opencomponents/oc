@@ -6,8 +6,7 @@ const path = require('path');
 const sinon = require('sinon');
 const _ = require('lodash');
 
-const initialise = function(){
-
+const initialise = function() {
   const fsMock = {
     existsSync: sinon.stub(),
     lstatSync: sinon.stub(),
@@ -23,35 +22,40 @@ const initialise = function(){
   const pathMock = {
     extname: path.extname,
     join: path.join,
-    resolve: function(){
+    resolve: function() {
       return _.toArray(arguments).join('/');
     }
   };
 
-  const Local = injectr('../../src/cli/domain/mock.js', {
-    'fs-extra': fsMock,
-    path: pathMock
-  }, { __dirname: '' });
+  const Local = injectr(
+    '../../src/cli/domain/mock.js',
+    {
+      'fs-extra': fsMock,
+      path: pathMock
+    },
+    { __dirname: '' }
+  );
 
   const local = new Local();
 
   return { local: local, fs: fsMock };
 };
 
-const executeMocking = function(local, type, name, value, cb){
-  return local({
-    targetType: type,
-    targetName: name,
-    targetValue: value
-  }, cb);
+const executeMocking = function(local, type, name, value, cb) {
+  return local(
+    {
+      targetType: type,
+      targetName: name,
+      targetValue: value
+    },
+    cb
+  );
 };
 
 describe('cli : domain : mock', () => {
-
   describe('when mocking a static plugin', () => {
-
     let data;
-    beforeEach((done) => {
+    beforeEach(done => {
       data = initialise();
 
       data.fs.readJson.yields(null, { something: 'hello' });
@@ -76,9 +80,8 @@ describe('cli : domain : mock', () => {
   });
 
   describe('when mocking a static plugin using a bool value', () => {
-
     let data;
-    beforeEach((done) => {
+    beforeEach(done => {
       data = initialise();
 
       data.fs.readJson.yields(null, { something: 'hello' });
@@ -103,9 +106,8 @@ describe('cli : domain : mock', () => {
   });
 
   describe('when mocking a dynamic plugin', () => {
-
     let data;
-    beforeEach((done) => {
+    beforeEach(done => {
       data = initialise();
 
       data.fs.readJson.yields(null, { something: 'hello' });

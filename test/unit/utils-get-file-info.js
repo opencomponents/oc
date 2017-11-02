@@ -3,7 +3,6 @@
 const expect = require('chai').expect;
 
 describe('utils : getFileInfo', () => {
-
   const getFileInfo = require('../../src/utils/get-file-info');
 
   describe('when extension is .js', () => {

@@ -4,21 +4,19 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 describe('cli : facade : registry : add', () => {
-
   const logSpy = {},
     Registry = require('../../src/cli/domain/registry'),
     registry = new Registry(),
     RegistryFacade = require('../../src/cli/facade/registry-add'),
     registryFacade = new RegistryFacade({ registry: registry, logger: logSpy });
 
-  const execute = function(){
+  const execute = function() {
     logSpy.err = sinon.spy();
     logSpy.ok = sinon.spy();
     registryFacade({}, () => {});
   };
 
   describe('when adding a not valid registry', () => {
-
     beforeEach(() => {
       sinon.stub(registry, 'add').yields('An error!!!', null);
       execute();
@@ -34,7 +32,6 @@ describe('cli : facade : registry : add', () => {
   });
 
   describe('when adding a valid registry', () => {
-
     beforeEach(() => {
       sinon.stub(registry, 'add').yields(null, 'ok!');
       execute();

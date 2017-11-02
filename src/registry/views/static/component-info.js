@@ -11,7 +11,9 @@ oc.cmd.push(function() {
   });
 
   $('.refresh-preview').click(function() {
-    var splitted = $('#href').val().split('?'),
+    var splitted = $('#href')
+        .val()
+        .split('?'),
       url = splitted[0],
       lang = $('#lang').val();
 

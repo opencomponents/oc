@@ -116,9 +116,9 @@ module.exports = function(opts) {
         requestsHeaders = _.extend(requestsHeaders, {
           Authorization:
             'Basic ' +
-              new Buffer(options.username + ':' + options.password).toString(
-                'base64'
-              )
+            new Buffer(options.username + ':' + options.password).toString(
+              'base64'
+            )
         });
       }
 

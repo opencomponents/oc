@@ -11,7 +11,11 @@ describe('registry', () => {
     let registry;
     let result;
 
-    function retrieveRegistryConfiguration(port, pathToComponents, fallbackRegistryUrl){
+    function retrieveRegistryConfiguration(
+      port,
+      pathToComponents,
+      fallbackRegistryUrl
+    ) {
       return {
         local: true,
         path: path.resolve(pathToComponents),
@@ -24,34 +28,47 @@ describe('registry', () => {
       };
     }
 
-    function next(done){
-      return function(e, r){
+    function next(done) {
+      return function(e, r) {
         result = r;
         done();
       };
     }
 
-    before((done) => {
-      registry = new oc.Registry(retrieveRegistryConfiguration(3030, 'test/fixtures/components', 'http://localhost:3031'));
-      fallbackRegistry = new oc.Registry(retrieveRegistryConfiguration(3031, 'test/fixtures/fallback-registry-components'));
+    before(done => {
+      registry = new oc.Registry(
+        retrieveRegistryConfiguration(
+          3030,
+          'test/fixtures/components',
+          'http://localhost:3031'
+        )
+      );
+      fallbackRegistry = new oc.Registry(
+        retrieveRegistryConfiguration(
+          3031,
+          'test/fixtures/fallback-registry-components'
+        )
+      );
       registry.start(() => {
         fallbackRegistry.start(done);
       });
     });
 
-    after((done) => {
+    after(done => {
       registry.close(() => {
         fallbackRegistry.close(done);
       });
     });
 
     describe('GET /welcome', () => {
-
-      before((done) => {
-        request({
-          url: 'http://localhost:3030/welcome',
-          json: true
-        }, next(done));
+      before(done => {
+        request(
+          {
+            url: 'http://localhost:3030/welcome',
+            json: true
+          },
+          next(done)
+        );
       });
 
       it('should respond with the local registry url', () => {
@@ -64,16 +81,20 @@ describe('registry', () => {
     });
 
     describe('GET /fallback-hello-world', () => {
-
-      before((done) => {
-        request({
-          url: 'http://localhost:3030/fallback-hello-world',
-          json: true
-        }, next(done));
+      before(done => {
+        request(
+          {
+            url: 'http://localhost:3030/fallback-hello-world',
+            json: true
+          },
+          next(done)
+        );
       });
 
       it('should respond with the fallback registry url', () => {
-        expect(result.href).to.eql('http://localhost:3031/fallback-hello-world');
+        expect(result.href).to.eql(
+          'http://localhost:3031/fallback-hello-world'
+        );
       });
 
       it('should respond the `Hello world!` html', () => {
@@ -82,12 +103,15 @@ describe('registry', () => {
     });
 
     describe('GET /fallback-hello-world/~info', () => {
-
-      before((done) => {
-        request({
-          url: 'http://localhost:3030/fallback-welcome-with-optional-parameters/~info',
-          json: true
-        }, next(done));
+      before(done => {
+        request(
+          {
+            url:
+              'http://localhost:3030/fallback-welcome-with-optional-parameters/~info',
+            json: true
+          },
+          next(done)
+        );
       });
 
       it('should respond with requested component', () => {
@@ -100,12 +124,15 @@ describe('registry', () => {
     });
 
     describe('GET /fallback-hello-world/~preview', () => {
-
-      before((done) => {
-        request({
-          url: 'http://localhost:3030/fallback-welcome-with-optional-parameters/~preview',
-          json: true
-        }, next(done));
+      before(done => {
+        request(
+          {
+            url:
+              'http://localhost:3030/fallback-welcome-with-optional-parameters/~preview',
+            json: true
+          },
+          next(done)
+        );
       });
 
       it('should respond with requested component', () => {

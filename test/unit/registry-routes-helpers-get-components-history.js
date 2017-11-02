@@ -3,12 +3,10 @@
 const expect = require('chai').expect;
 
 describe('registry : routes : helpers : get-components-history', () => {
-
   const getComponentsHistory = require('../../src/registry/routes/helpers/get-components-history');
   const ds = require('../../src/utils/date-stringify');
 
   describe('when components details are provided', () => {
-
     const details = {
       lastEdit: 1491478634575,
       components: {
@@ -39,7 +37,9 @@ describe('registry : routes : helpers : get-components-history', () => {
 
     describe('composing the single history object', () => {
       it('should return the publish date of a component', () => {
-        expect(componentsHistory[0].publishDate).to.equal(ds(new Date(1491402224345)));
+        expect(componentsHistory[0].publishDate).to.equal(
+          ds(new Date(1491402224345))
+        );
       });
 
       it('should return the version of a component', () => {
@@ -53,7 +53,9 @@ describe('registry : routes : helpers : get-components-history', () => {
 
     describe('sorting the entries by date', () => {
       it('should return the publish date of a component', () => {
-        expect(new Date(componentsHistory[0].publishDate)).to.be.above(new Date(componentsHistory[1].publishDate));
+        expect(new Date(componentsHistory[0].publishDate)).to.be.above(
+          new Date(componentsHistory[1].publishDate)
+        );
       });
     });
   });

@@ -18,7 +18,7 @@ module.exports = function(repository) {
       }
 
       const isHtmlRequest =
-        !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0,
+          !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0,
         baseResponse = {
           href: res.conf.baseUrl,
           ocVersion: packageInfo.version,
@@ -66,9 +66,10 @@ module.exports = function(repository) {
                   components: componentsInfo,
                   componentsReleases,
                   componentsList: _.map(componentsInfo, component => {
-                    const state = !!component.oc && !!component.oc.state
-                      ? component.oc.state
-                      : '';
+                    const state =
+                      !!component.oc && !!component.oc.state
+                        ? component.oc.state
+                        : '';
 
                     if (state) {
                       stateCounts[state] = stateCounts[state] || 0;
