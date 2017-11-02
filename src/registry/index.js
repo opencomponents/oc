@@ -16,45 +16,34 @@ const sanitiseOptions = require('./domain/options-sanitiser');
 const validator = require('./domain/validators');
 
 module.exports = function(options) {
-  let repository, server;
-
-  const self = this,
-    validationResult = validator.validateRegistryConfiguration(options),
-    plugins = [];
-
+  const validationResult = validator.validateRegistryConfiguration(options);
   if (!validationResult.isValid) {
     throw validationResult.message;
   }
-
   options = sanitiseOptions(options);
-  this.on = eventsHandler.on;
 
-  this.close = function(callback) {
-    if (server) {
-      server.close(callback);
-    } else {
-      callback('not opened');
+  const plugins = [];
+  const app = middleware.bind(express(), options);
+  let server;
+  const repository = new Repository(options);
+
+  const close = callback => {
+    if (server && server.listening) {
+      return server.close(callback);
     }
+    return callback('not opened');
   };
 
-  this.init = function() {
-    self.app = middleware.bind(express(), options);
-    repository = new Repository(options);
-  };
-
-  this.register = function(plugin, callback) {
+  const register = (plugin, callback) => {
     plugins.push(_.extend(plugin, { callback }));
   };
 
-  this.start = function(callback) {
+  const start = callback => {
     const ok = msg => console.log(colors.green(msg));
-
     if (!_.isFunction(callback)) {
       callback = _.noop;
     }
-
-    router.create(this.app, options, repository);
-
+    router.create(app, options, repository);
     async.waterfall(
       [
         cb => pluginsInitialiser.init(plugins, cb),
@@ -75,18 +64,17 @@ module.exports = function(options) {
           return callback(err);
         }
 
-        server = http.createServer(self.app);
+        server = http.createServer(app);
         server.timeout = options.timeout;
 
         server.listen(options.port, err => {
           if (err) {
             return callback(err);
           }
-
           eventsHandler.fire('start', {});
 
           if (options.verbosity) {
-            ok(`Registry started at port ${self.app.get('port')}`);
+            ok(`Registry started at port ${app.get('port')}`);
 
             if (_.isObject(componentsInfo)) {
               const componentsNumber = _.keys(componentsInfo.components).length;
@@ -101,7 +89,7 @@ module.exports = function(options) {
             }
           }
 
-          callback(null, { app: self.app, server });
+          callback(null, { app, server });
         });
 
         server.on('error', message => {
@@ -112,5 +100,10 @@ module.exports = function(options) {
     );
   };
 
-  this.init();
+  return {
+    close,
+    on: eventsHandler.on,
+    register,
+    start
+  };
 };
