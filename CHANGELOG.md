@@ -1,5 +1,11 @@
 ## Change Log
 
+### v0.41.16
+- [#733](https://github.com/opentable/oc/pull/733) Repackage all components when file is outside component dir
+- [#732](https://github.com/opentable/oc/pull/732) Prettify all the things
+- [#731](https://github.com/opentable/oc/pull/731) this-less cleanup
+- [#729](https://github.com/opentable/oc/pull/729) Update aws-sdk to the latest version 🚀
+
 ### v0.41.15
 - [#710](https://github.com/opentable/oc/pull/710) [DX-185] install compiler inside each components' dir
 
