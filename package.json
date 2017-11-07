@@ -60,7 +60,7 @@
   },
   "dependencies": {
     "accept-language-parser": "1.4.1",
-    "async": "1.5.2",
+    "async": "2.6.0",
     "aws-sdk": "2.145.0",
     "basic-auth-connect": "^1.0.0",
     "body-parser": "1.18.2",
