@@ -82,7 +82,7 @@
     "multer": "^1.3.0",
     "nice-cache": "0.0.5",
     "node-dir": "0.1.17",
-    "oc-client": "2.1.33",
+    "oc-client": "3.0.0",
     "oc-client-browser": "1.1.1",
     "oc-get-unix-utc-timestamp": "1.0.1",
     "oc-template-handlebars": "6.0.8",
