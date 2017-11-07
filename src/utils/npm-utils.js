@@ -4,7 +4,7 @@ const path = require('path');
 const spawn = require('cross-spawn');
 
 const buildInstallCommand = options => {
-  const args = ['install', '--prefix', options.installPath];
+  const args = ['install', '--prefix', '--no-package-lock', options.installPath];
 
   if (options.save) {
     args.push('--save-exact');
