@@ -1,5 +1,16 @@
 ## Change Log
 
+### v0.42.0
+- [#745](https://github.com/opentable/oc/pull/745) Update oc-client to the latest version 🚀
+- [#744](https://github.com/opentable/oc/pull/744) Update oc-template-handlebars to the latest version 🚀
+- [#743](https://github.com/opentable/oc/pull/743) Update aws-sdk to the latest version 🚀
+- [#742](https://github.com/opentable/oc/pull/742) Update oc-client to the latest version 🚀
+- [#739](https://github.com/opentable/oc/pull/739) Update aws-sdk to the latest version 🚀
+- [#737](https://github.com/opentable/oc/pull/737) Update oc-client to the latest version 🚀
+- [#736](https://github.com/opentable/oc/pull/736) Update aws-sdk to the latest version 🚀
+- [#735](https://github.com/opentable/oc/pull/735) Update aws-sdk to the latest version 🚀
+- [#734](https://github.com/opentable/oc/pull/734) Update aws-sdk to the latest version 🚀
+
 ### v0.41.16
 - [#733](https://github.com/opentable/oc/pull/733) Repackage all components when file is outside component dir
 - [#732](https://github.com/opentable/oc/pull/732) Prettify all the things
