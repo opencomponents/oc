@@ -64,7 +64,7 @@
     "aws-sdk": "2.149.0",
     "basic-auth-connect": "^1.0.0",
     "body-parser": "1.18.2",
-    "builtin-modules": "^1.1.1",
+    "builtin-modules": "^2.0.0",
     "colors": "1.1.2",
     "cross-spawn": "^5.1.0",
     "dependency-graph": "0.5.2",
