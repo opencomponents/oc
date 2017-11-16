@@ -8,7 +8,7 @@ const sinon = require('sinon');
 describe('registry : domain : s3', () => {
   let s3, mockedS3Client, error, response;
 
-  const S3 = injectr('../../src/registry/domain/s3.js', {
+  const S3 = injectr('../../node_modules/oc-s3-storage-adapter/index.js', {
     'fs-extra': {
       createReadStream: sinon.stub().returns('this is a stream'),
       readFile: sinon.stub().yields(null, 'file content!')
