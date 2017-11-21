@@ -37,6 +37,11 @@ module.exports = {
           boolean: true,
           description: 'Force packaging for production',
           default: false
+        },
+        prefix: {
+          boolean: false,
+          description: 'Url prefix for registry server',
+          default: ''
         }
       },
       usage: 'Usage: $0 dev <dirName> [port] [baseUrl] [options]'
