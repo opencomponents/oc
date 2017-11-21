@@ -1,5 +1,25 @@
 ## Change Log
 
+### v0.42.1
+- [#765](https://github.com/opentable/oc/pull/765) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#766](https://github.com/opentable/oc/pull/766) Update oc-template-jade-compiler to the latest version 🚀
+- [#763](https://github.com/opentable/oc/pull/763) passing prefix option to dev cmd
+- [#764](https://github.com/opentable/oc/pull/764) Revert "Update async to the latest version 🚀"
+- [#740](https://github.com/opentable/oc/pull/740) Update async to the latest version 🚀
+- [#761](https://github.com/opentable/oc/pull/761) fix(package): update oc-template-handlebars-compiler to version 6.1.7
+- [#649](https://github.com/opentable/oc/pull/649) Update yargs to the latest version 🚀
+- [#760](https://github.com/opentable/oc/pull/760) Update oc-template-jade-compiler to the latest version 🚀
+- [#759](https://github.com/opentable/oc/pull/759) Update aws-sdk to the latest version 🚀
+- [#758](https://github.com/opentable/oc/pull/758) Update aws-sdk to the latest version 🚀
+- [#753](https://github.com/opentable/oc/pull/753) Update lint-staged to the latest version 🚀
+- [#756](https://github.com/opentable/oc/pull/756) Update aws-sdk to the latest version 🚀
+- [#754](https://github.com/opentable/oc/pull/754) Update aws-sdk to the latest version 🚀
+- [#755](https://github.com/opentable/oc/pull/755) Update builtin-modules to the latest version 🚀
+- [#751](https://github.com/opentable/oc/pull/751) Update aws-sdk to the latest version 🚀
+- [#749](https://github.com/opentable/oc/pull/749) Update aws-sdk to the latest version 🚀
+- [#747](https://github.com/opentable/oc/pull/747) Update oc-template-jade-compiler to the latest version 🚀
+- [#746](https://github.com/opentable/oc/pull/746) Update oc-template-handlebars to the latest version 🚀
+
 ### v0.42.0
 - [#745](https://github.com/opentable/oc/pull/745) Update oc-client to the latest version 🚀
 - [#744](https://github.com/opentable/oc/pull/744) Update oc-template-handlebars to the latest version 🚀
