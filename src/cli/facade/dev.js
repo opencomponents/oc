@@ -145,6 +145,7 @@ module.exports = function(dependencies) {
 
           const registry = new oc.Registry({
             baseUrl,
+            prefix: opts.prefix || '',
             dependencies: dependencies.modules,
             discovery: true,
             env: { name: 'local' },
