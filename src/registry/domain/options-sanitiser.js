@@ -52,8 +52,8 @@ module.exports = function(input) {
     options.fallbackRegistryUrl += '/';
   }
 
-  options.customHeadersToSkipOnWeakVersion = (options.customHeadersToSkipOnWeakVersion ||
-    []
+  options.customHeadersToSkipOnWeakVersion = (
+    options.customHeadersToSkipOnWeakVersion || []
   ).map(s => s.toLowerCase());
 
   options.port = process.env.PORT || options.port;
@@ -61,12 +61,12 @@ module.exports = function(input) {
 
   if (options.s3) {
     options.storage = {};
-    options.storage.adapter = require('./s3');
+    options.storage.adapter = require('oc-s3-storage-adapter');
     options.storage.options = options.s3;
   }
 
   if (options.storage && !options.storage.adapter) {
-    options.storage.adapter = require('./s3');
+    options.storage.adapter = require('oc-s3-storage-adapter');
   }
 
   if (options.refreshInterval && options.storage) {
