@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.42.2
+- [#757](https://github.com/opentable/oc/pull/757) [DX-260] s3 storage adapter
+- [#767](https://github.com/opentable/oc/pull/767) Update oc-client to the latest version 🚀
+
 ### v0.42.1
 - [#765](https://github.com/opentable/oc/pull/765) Update oc-template-handlebars-compiler to the latest version 🚀
 - [#766](https://github.com/opentable/oc/pull/766) Update oc-template-jade-compiler to the latest version 🚀
