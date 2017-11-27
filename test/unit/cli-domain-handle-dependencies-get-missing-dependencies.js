@@ -30,11 +30,14 @@ describe('cli : domain : handle-dependencies - get-missing-dependencies', () => 
       dependencies
     )} and installed: ${JSON.stringify(installed)}`, () => {
       const pathResolveSpy = sinon.spy();
+      const cleanRequireSpy = sinon.spy();
       const getMissingDependencies = injectr(
         '../../src/cli/domain/handle-dependencies/get-missing-dependencies.js',
         {
-          '../../../utils/clean-require': x =>
-            installed[x] ? { dependency: true } : undefined,
+          '../../../utils/clean-require': (name, options) => {
+            cleanRequireSpy(name, options);
+            return installed[name] ? { dependency: true } : undefined;
+          },
           path: {
             resolve: (...args) => {
               pathResolveSpy(...args);
@@ -52,6 +55,13 @@ describe('cli : domain : handle-dependencies - get-missing-dependencies', () => 
         pathResolveSpy.args.forEach((pathResolveCall, i) => {
           expect(pathResolveCall[0]).to.equal('node_modules/');
           expect(pathResolveCall[1]).to.equal(_.keys(dependencies)[i]);
+        });
+        cleanRequireSpy.args.forEach((cleanRequireCall, i) => {
+          expect(cleanRequireCall[0]).to.equal(_.keys(dependencies)[i]);
+          expect(cleanRequireCall[1]).to.eql({
+            justTry: true,
+            resolve: true
+          });
         });
       });
     });
