@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.42.3
+- [#768](https://github.com/opentable/oc/pull/768) [DX-247] dev/publish cli mode - prevent some deps to run in an infinite loop
+
 ### v0.42.2
 - [#757](https://github.com/opentable/oc/pull/757) [DX-260] s3 storage adapter
 - [#767](https://github.com/opentable/oc/pull/767) Update oc-client to the latest version 🚀
