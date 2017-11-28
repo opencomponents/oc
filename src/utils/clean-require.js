@@ -2,10 +2,16 @@
 
 const tryRequire = require('try-require');
 
-module.exports = (path, { justTry }) => {
+module.exports = (path, { justTry, resolve }) => {
   const shouldThrow = !justTry;
   if (require.cache && !!require.cache[path]) {
     delete require.cache[path];
   }
-  return shouldThrow ? require(path) : tryRequire(path);
+
+  let action = shouldThrow ? require : tryRequire;
+  if (resolve) {
+    action = action.resolve;
+  }
+
+  return action(path);
 };
