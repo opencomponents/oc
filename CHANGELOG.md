@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.42.4
+- [#772](https://github.com/opentable/oc/pull/772) Update oc-client to the latest version 🚀
+- [#771](https://github.com/opentable/oc/pull/771) [DX-277] Pass the templates down to the client via the registry
+- [#770](https://github.com/opentable/oc/pull/770) Update oc-client-browser to the latest version 🚀
+
 ### v0.42.3
 - [#768](https://github.com/opentable/oc/pull/768) [DX-247] dev/publish cli mode - prevent some deps to run in an infinite loop
 
