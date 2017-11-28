@@ -21,7 +21,7 @@ const urlBuilder = require('../../domain/url-builder');
 const validator = require('../../domain/validators');
 
 module.exports = function(conf, repository) {
-  const client = new Client(),
+  const client = new Client({ templates: conf.templates }),
     cache = new Cache({
       verbose: !!conf.verbosity,
       refreshInterval: conf.refreshInterval
@@ -293,7 +293,9 @@ module.exports = function(conf, repository) {
               })
             });
           } else {
-            const cacheKey = `${component.name}/${component.version}/template.js`;
+            const cacheKey = `${component.name}/${
+              component.version
+            }/template.js`;
             const cached = cache.get('file-contents', cacheKey);
             const key = component.oc.files.template.hashKey;
             const renderOptions = {
