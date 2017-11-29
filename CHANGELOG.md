@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.42.5
+- [#773](https://github.com/opentable/oc/pull/773) [DX-283] Dependencies handler on packaging
+
 ### v0.42.4
 - [#772](https://github.com/opentable/oc/pull/772) Update oc-client to the latest version 🚀
 - [#771](https://github.com/opentable/oc/pull/771) [DX-277] Pass the templates down to the client via the registry
