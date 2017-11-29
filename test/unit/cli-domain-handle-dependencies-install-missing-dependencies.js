@@ -9,7 +9,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
   const initialise = (options, done) => {
     const { dependencies, stubs } = options;
     logger = {
-      fail: sinon.spy(),
+      err: sinon.spy(),
       ok: sinon.spy(),
       warn: sinon.spy()
     };
