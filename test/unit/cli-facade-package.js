@@ -101,15 +101,22 @@ describe('cli : facade : package', () => {
 
             execute(false, () => {
               local.compress.restore();
-              const warnMessage = logSpy.warn.args[0][0],
-                okMessage = logSpy.ok.args[0][0],
-                re = new RegExp('\\' + path.sep, 'g'),
-                warnMessageWithSlashesOnPath = warnMessage.replace(re, '/'),
-                okMessageWithSlashesOnPath = okMessage.replace(re, '/');
-
+              const warnMessage = logSpy.warn.args[0][0];
+              const warnDependenciesMessage = logSpy.warn.args[1][0];
+              const okMessage = logSpy.ok.args[0][0];
+              const re = new RegExp('\\' + path.sep, 'g');
+              const warnMessageWithSlashesOnPath = warnMessage.replace(re, '/');
+              const warnDependenciesMessageWithSlashesOnPath = warnDependenciesMessage.replace(
+                re,
+                '/'
+              );
+              const okMessageWithSlashesOnPath = okMessage.replace(re, '/');
+              expect(warnDependenciesMessageWithSlashesOnPath).to.include(
+                'Ensuring dependencies are loaded...'
+              );
               expect(warnMessageWithSlashesOnPath).to.include('Packaging -> ');
               expect(okMessageWithSlashesOnPath).to.include('Packaged -> ');
-              expect(logSpy.warn.args[1]).to.be.undefined;
+              expect(logSpy.warn.args[2]).to.be.undefined;
               done();
             });
           });
@@ -125,12 +132,23 @@ describe('cli : facade : package', () => {
 
             it('should show a message for success', done => {
               execute(true, () => {
-                const warnMessage = logSpy.warn.args[1][0],
-                  okMessage = logSpy.ok.args[1][0],
-                  re = new RegExp('\\' + path.sep, 'g'),
-                  warnMessageWithSlashesOnPath = warnMessage.replace(re, '/'),
-                  okMessageWithSlashesOnPath = okMessage.replace(re, '/');
+                const warnDependenciesMessage = logSpy.warn.args[1][0];
+                const warnMessage = logSpy.warn.args[2][0];
+                const okMessage = logSpy.ok.args[1][0];
+                const re = new RegExp('\\' + path.sep, 'g');
+                const warnMessageWithSlashesOnPath = warnMessage.replace(
+                  re,
+                  '/'
+                );
+                const warnDependenciesMessageWithSlashesOnPath = warnDependenciesMessage.replace(
+                  re,
+                  '/'
+                );
+                const okMessageWithSlashesOnPath = okMessage.replace(re, '/');
 
+                expect(warnDependenciesMessageWithSlashesOnPath).to.include(
+                  'Ensuring dependencies are loaded...'
+                );
                 expect(warnMessageWithSlashesOnPath).to.include(
                   'Compressing -> '
                 );
@@ -157,11 +175,22 @@ describe('cli : facade : package', () => {
 
             it('should show a message for failure', done => {
               execute(true, () => {
-                const warnMessage = logSpy.warn.args[1][0],
-                  errorMessage = logSpy.err.args[0][0],
-                  re = new RegExp('\\' + path.sep, 'g'),
-                  warnMessageWithSlashesOnPath = warnMessage.replace(re, '/');
+                const warnDependenciesMessage = logSpy.warn.args[1][0];
+                const warnMessage = logSpy.warn.args[2][0];
+                const errorMessage = logSpy.err.args[0][0];
+                const re = new RegExp('\\' + path.sep, 'g');
+                const warnMessageWithSlashesOnPath = warnMessage.replace(
+                  re,
+                  '/'
+                );
+                const warnDependenciesMessageWithSlashesOnPath = warnDependenciesMessage.replace(
+                  re,
+                  '/'
+                );
 
+                expect(warnDependenciesMessageWithSlashesOnPath).to.include(
+                  'Ensuring dependencies are loaded...'
+                );
                 expect(warnMessageWithSlashesOnPath).to.include(
                   'Compressing -> '
                 );
