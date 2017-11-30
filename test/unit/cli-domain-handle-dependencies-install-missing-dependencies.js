@@ -9,7 +9,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
   const initialise = (options, done) => {
     const { dependencies, stubs } = options;
     logger = {
-      fail: sinon.spy(),
+      err: sinon.spy(),
       ok: sinon.spy(),
       warn: sinon.spy()
     };
@@ -125,7 +125,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
       expect(logger.warn.args[0][0]).to.contain(
         "If you aren't connected to the internet, or npm isn't configured then this step will fail..."
       );
-      expect(logger.fail.args[0][0]).to.equal('FAIL');
+      expect(logger.err.args[0][0]).to.equal('FAIL');
     });
   });
 
@@ -160,7 +160,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
       expect(logger.warn.args[0][0]).to.contain(
         "If you aren't connected to the internet, or npm isn't configured then this step will fail..."
       );
-      expect(logger.fail.args[0][0]).to.equal('FAIL');
+      expect(logger.err.args[0][0]).to.equal('FAIL');
     });
   });
 });
