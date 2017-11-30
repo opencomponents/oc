@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.42.6
+- [#774](https://github.com/opentable/oc/pull/774) logger.fail bugfix
+
 ### v0.42.5
 - [#773](https://github.com/opentable/oc/pull/773) [DX-283] Dependencies handler on packaging
 
