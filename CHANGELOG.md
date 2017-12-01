@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.42.7
+- [#778](https://github.com/opentable/oc/pull/778) Update oc-client to the latest version 🚀
+- [#777](https://github.com/opentable/oc/pull/777) Update oc-client-browser to the latest version 🚀
+
 ### v0.42.6
 - [#774](https://github.com/opentable/oc/pull/774) logger.fail bugfix
 
