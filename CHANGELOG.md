@@ -1,5 +1,11 @@
 ## Change Log
 
+### v0.42.10
+- [#775](https://github.com/opentable/oc/pull/775) Add github issue/PR templates
+- [#780](https://github.com/opentable/oc/pull/780) Update oc-client to the latest version 🚀
+- [#779](https://github.com/opentable/oc/pull/779) Update oc-client-browser to the latest version 🚀
+- [#776](https://github.com/opentable/oc/pull/776) Update lint-staged to the latest version 🚀
+
 ### v0.42.7
 - [#778](https://github.com/opentable/oc/pull/778) Update oc-client to the latest version 🚀
 - [#777](https://github.com/opentable/oc/pull/777) Update oc-client-browser to the latest version 🚀
