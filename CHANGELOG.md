@@ -1,5 +1,14 @@
 ## Change Log
 
+### v0.42.12
+- [#786](https://github.com/opentable/oc/pull/786) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#787](https://github.com/opentable/oc/pull/787) Update oc-template-jade-compiler to the latest version 🚀
+- [#785](https://github.com/opentable/oc/pull/785) Update oc-client to the latest version 🚀
+- [#784](https://github.com/opentable/oc/pull/784) Update oc-client-browser to the latest version 🚀
+- [#782](https://github.com/opentable/oc/pull/782) Update oc-template-jade-compiler to the latest version 🚀
+- [#783](https://github.com/opentable/oc/pull/783) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#781](https://github.com/opentable/oc/pull/781) Update fs-extra to the latest version 🚀
+
 ### v0.42.10
 - [#775](https://github.com/opentable/oc/pull/775) Add github issue/PR templates
 - [#780](https://github.com/opentable/oc/pull/780) Update oc-client to the latest version 🚀
