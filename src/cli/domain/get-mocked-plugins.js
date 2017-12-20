@@ -65,8 +65,8 @@ const findPath = function(pathToResolve, fileName) {
     if (pathToResolve === rootDir) {
       return undefined;
     } else {
-      const getParent = x =>
-        x
+      const getParent = pathToResolve =>
+        pathToResolve
           .split('/')
           .slice(0, -1)
           .join('/');
