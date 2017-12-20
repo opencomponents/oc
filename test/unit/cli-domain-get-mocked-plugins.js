@@ -6,11 +6,14 @@ const sinon = require('sinon');
 const _ = require('lodash');
 
 describe('cli : domain : get-mocked-plugins', () => {
-  const dynamicPluginModule = function(a) {
-      return a ? 'blarg' : 'flarg';
-    },
-    notAFunctionModule = { foo: 'bar' };
+  const dynamicPluginModule = a => (a ? 'blarg' : 'flarg');
+  const notAFunctionModule = { foo: 'bar' };
+  const dynamicObjectPluginModule = {
+    register: (opts, deps, next) => next(),
+    execute: () => 'result'
+  };
 
+  const logMock = { err: _.noop, log: _.noop, ok: _.noop, warn: _.noop };
   let fsMock, getMockedPlugins;
 
   const initialise = function(fs, pathJoinStub) {
@@ -37,6 +40,7 @@ describe('cli : domain : get-mocked-plugins', () => {
         join: pathJoinStub || fakePathFunc,
         resolve: fakePathFunc
       },
+      '/root/components/dynamic-object-plugin.js': dynamicObjectPluginModule,
       '/root/components/dynamic-plugin.js': dynamicPluginModule,
       '/root/components/not-a-function.js': notAFunctionModule
     });
@@ -48,7 +52,7 @@ describe('cli : domain : get-mocked-plugins', () => {
 
       beforeEach(() => {
         initialise({}, joinStub);
-        getMockedPlugins({ log: _.noop }, undefined);
+        getMockedPlugins(logMock, undefined);
       });
 
       it('should use . as default', () => {
@@ -61,7 +65,7 @@ describe('cli : domain : get-mocked-plugins', () => {
 
       beforeEach(() => {
         initialise({}, joinStub);
-        getMockedPlugins({ log: _.noop });
+        getMockedPlugins(logMock);
       });
 
       it('should use . as default', () => {
@@ -87,10 +91,7 @@ describe('cli : domain : get-mocked-plugins', () => {
           existsSync: sinon.stub().returns(true),
           readJsonSync: readMock
         });
-        result = getMockedPlugins(
-          { log: () => {}, warn: () => {} },
-          '/root/components/'
-        );
+        result = getMockedPlugins(logMock, '/root/components/');
       });
 
       it('should use components folder oc.json as default', () => {
@@ -133,10 +134,7 @@ describe('cli : domain : get-mocked-plugins', () => {
           existsSync: existsMock,
           readJsonSync: readMock
         });
-        result = getMockedPlugins(
-          { log: () => {}, warn: () => {} },
-          '/root/components/'
-        );
+        result = getMockedPlugins(logMock, '/root/components/');
       });
 
       it('should use root oc.json', () => {
@@ -148,7 +146,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       let result;
       beforeEach(() => {
         initialise({ existsSync: sinon.stub().returns(false) });
-        result = getMockedPlugins(console, '/root/components/');
+        result = getMockedPlugins(logMock, '/root/components/');
       });
 
       it('should return an empty array', () => {
@@ -170,7 +168,7 @@ describe('cli : domain : get-mocked-plugins', () => {
           existsSync: sinon.stub().returns(true),
           readJsonSync: sinon.stub().returns(ocJson)
         });
-        result = getMockedPlugins({ warn: sinon.stub() }, '/root/components/');
+        result = getMockedPlugins(logMock, '/root/components/');
       });
 
       it('should return an empty array', () => {
@@ -196,10 +194,7 @@ describe('cli : domain : get-mocked-plugins', () => {
           existsSync: sinon.stub().returns(true),
           readJsonSync: sinon.stub().returns(ocJson)
         });
-        result = getMockedPlugins(
-          { log: () => {}, warn: () => {} },
-          '/root/components/'
-        );
+        result = getMockedPlugins(logMock, '/root/components/');
       });
 
       it('should return the static plugin', () => {
@@ -212,7 +207,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       });
     });
 
-    describe('when a dynamic plugin is specified', () => {
+    describe('when a dynamic plugin with a function signature is specified', () => {
       let result;
       const ocJson = {
         registries: [],
@@ -230,10 +225,7 @@ describe('cli : domain : get-mocked-plugins', () => {
           existsSync: sinon.stub().returns(true),
           readJsonSync: sinon.stub().returns(ocJson)
         });
-        result = getMockedPlugins(
-          { log: () => {}, warn: () => {} },
-          '/root/components/'
-        );
+        result = getMockedPlugins(logMock, '/root/components/');
       });
 
       it('should return the dynamic plugin', () => {
@@ -244,6 +236,37 @@ describe('cli : domain : get-mocked-plugins', () => {
       it('should set up the execute method to run the module', () => {
         expect(result[0].register.execute(false)).to.equal('flarg');
         expect(result[0].register.execute(true)).to.equal('blarg');
+      });
+    });
+
+    describe('when a dynamic plugin with an object signature is specified', () => {
+      let result;
+      const ocJson = {
+        registries: [],
+        mocks: {
+          plugins: {
+            dynamic: {
+              myPlugin: './dynamic-object-plugin.js'
+            }
+          }
+        }
+      };
+
+      beforeEach(() => {
+        initialise({
+          existsSync: sinon.stub().returns(true),
+          readJsonSync: sinon.stub().returns(ocJson)
+        });
+        result = getMockedPlugins(logMock, '/root/components/');
+      });
+
+      it('should return the dynamic plugin', () => {
+        expect(result.length).to.equal(1);
+        expect(result[0].name).to.equal('myPlugin');
+      });
+
+      it('should set up the execute method to run the module', () => {
+        expect(result[0].register.execute()).to.equal('result');
       });
     });
 
@@ -303,8 +326,9 @@ describe('cli : domain : get-mocked-plugins', () => {
       });
 
       it('should log an error', () => {
-        expect(logger.err.args[0][0]).to.contain(
-          'Looks like you are trying to register a dynamic mock plugin but the file you specified is not a function'
+        expect(logger.err.args[0][0]).to.contain('foo () => Error (skipping)');
+        expect(logger.err.args[1][0]).to.contain(
+          'Looks like you are trying to register a dynamic mock plugin but the file you specified is not a valid mock'
         );
       });
 
