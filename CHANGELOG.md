@@ -1,5 +1,12 @@
 ## Change Log
 
+### v0.42.13
+- [#794](https://github.com/opentable/oc/pull/794) [DX-296] Mocks can have the same signature as real plugins
+- [#793](https://github.com/opentable/oc/pull/793) Update oc-s3-storage-adapter to the latest version 🚀
+- [#790](https://github.com/opentable/oc/pull/790) Update oc-template-jade-compiler to the latest version 🚀
+- [#791](https://github.com/opentable/oc/pull/791) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#788](https://github.com/opentable/oc/pull/788) Update fs-extra to the latest version 🚀
+
 ### v0.42.12
 - [#786](https://github.com/opentable/oc/pull/786) Update oc-template-handlebars-compiler to the latest version 🚀
 - [#787](https://github.com/opentable/oc/pull/787) Update oc-template-jade-compiler to the latest version 🚀
