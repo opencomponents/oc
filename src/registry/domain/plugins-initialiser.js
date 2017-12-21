@@ -95,13 +95,12 @@ module.exports.init = function(pluginsToRegister, callback) {
 
     const dependencies = _.pick(registered, plugin.register.dependencies);
 
-    plugin.register.register(
-      plugin.options || {},
-      dependencies,
-      plugin.callback || _.noop
-    );
-    registered[plugin.name] = plugin.register.execute;
-    cb();
+    plugin.register.register(plugin.options || {}, dependencies, err => {
+      const pluginCallback = plugin.callback || _.noop;
+      pluginCallback(err);
+      registered[plugin.name] = plugin.register.execute;
+      cb(err);
+    });
   };
 
   const terminator = function(err) {
