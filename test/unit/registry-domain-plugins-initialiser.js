@@ -105,29 +105,24 @@ describe('registry : domain : plugins-initialiser', () => {
         {
           name: 'getValue',
           register: {
-            register: function(options, deps, cb) {
+            register: (options, deps, cb) => {
               passedOptions = options;
               cb();
             },
-            execute: function(key) {
-              return passedOptions[key];
-            }
+            execute: key => passedOptions[key]
           },
-          options: {
-            a: 123,
-            b: 456
-          }
+          options: { a: 123, b: 456 }
         },
         {
           name: 'isFlagged',
           register: {
-            register: function(options, deps, cb) {
-              flag = true;
-              cb();
+            register: (options, deps, cb) => {
+              setTimeout(() => {
+                flag = true;
+                cb();
+              }, 10);
             },
-            execute: function() {
-              return flag;
-            }
+            execute: () => flag
           }
         }
       ];
@@ -148,8 +143,8 @@ describe('registry : domain : plugins-initialiser', () => {
     });
 
     it('should be make the functionality usable', () => {
-      const a = result.getValue('a'),
-        flagged = result.isFlagged();
+      const a = result.getValue('a');
+      const flagged = result.isFlagged();
 
       expect(a).to.equal(123);
       expect(flagged).to.equal(true);

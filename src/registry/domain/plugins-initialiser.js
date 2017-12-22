@@ -81,8 +81,10 @@ module.exports.init = function(pluginsToRegister, callback) {
   };
 
   const loadPlugin = function(plugin, cb) {
+    const done = _.once(cb);
+
     if (registered[plugin.name]) {
-      return cb();
+      return done();
     }
 
     if (!plugin.register.dependencies) {
@@ -90,18 +92,17 @@ module.exports.init = function(pluginsToRegister, callback) {
     }
 
     if (!dependenciesRegistered(plugin.register.dependencies)) {
-      return defer(plugin, cb);
+      return defer(plugin, done);
     }
 
     const dependencies = _.pick(registered, plugin.register.dependencies);
 
-    plugin.register.register(
-      plugin.options || {},
-      dependencies,
-      plugin.callback || _.noop
-    );
-    registered[plugin.name] = plugin.register.execute;
-    cb();
+    plugin.register.register(plugin.options || {}, dependencies, err => {
+      const pluginCallback = plugin.callback || _.noop;
+      pluginCallback(err);
+      registered[plugin.name] = plugin.register.execute;
+      done(err);
+    });
   };
 
   const terminator = function(err) {
