@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.42.14
+- [#795](https://github.com/opentable/oc/pull/795)  [DX-324] full async plugins initialisation
+
 ### v0.42.13
 - [#794](https://github.com/opentable/oc/pull/794) [DX-296] Mocks can have the same signature as real plugins
 - [#793](https://github.com/opentable/oc/pull/793) Update oc-s3-storage-adapter to the latest version 🚀
