@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.42.15
+- [#798](https://github.com/opentable/oc/pull/798) Update oc-client to the latest version 🚀
+- [#797](https://github.com/opentable/oc/pull/797) Update oc-client-browser to the latest version 🚀
+
 ### v0.42.14
 - [#795](https://github.com/opentable/oc/pull/795)  [DX-324] full async plugins initialisation
 
