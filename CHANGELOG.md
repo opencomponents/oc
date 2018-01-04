@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.42.16
+- [#792](https://github.com/opentable/oc/pull/792) Add test for issue #789 showing error message [Object object]
+
 ### v0.42.15
 - [#798](https://github.com/opentable/oc/pull/798) Update oc-client to the latest version 🚀
 - [#797](https://github.com/opentable/oc/pull/797) Update oc-client-browser to the latest version 🚀
