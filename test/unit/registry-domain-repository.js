@@ -6,6 +6,7 @@ const injectr = require('injectr');
 const path = require('path');
 const sinon = require('sinon');
 const _ = require('lodash');
+const resources = require('../../src/resources');
 
 describe('registry : domain : repository', () => {
   let response;
@@ -181,7 +182,31 @@ describe('registry : domain : repository', () => {
           );
         });
       });
-
+      describe('when the get component info fails', () => {
+        before(done => {
+          componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
+          sinon
+            .stub(repository, 'getComponentInfo')
+            .callsFake((name, version, callback) => {
+              callback({
+                msg: resources.errors.STORAGE.FILE_NOT_VALID,
+                code: resources.errors.STORAGE.FILE_NOT_VALID_CODE
+              });
+            });
+          repository.getComponent('hello-world', '1.0.0', saveResult(done));
+        });
+        after(() => {
+          repository.getComponentInfo.restore();
+        });
+        it('should respond with a proper error', () => {
+          expect(response.error).not.to.be.empty;
+          expect(response.error).to.equal(
+            `component not available: ${
+              resources.errors.STORAGE.FILE_NOT_VALID
+            }`
+          );
+        });
+      });
       describe('when the component exists but version does not', () => {
         before(done => {
           componentsCacheMock.get.yields(null, componentsCacheBaseResponse);

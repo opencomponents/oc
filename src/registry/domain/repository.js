@@ -14,6 +14,7 @@ const settings = require('../../resources/settings');
 const strings = require('../../resources');
 const validator = require('./validators');
 const versionHandler = require('./version-handler');
+const errorToString = require('../../utils/error-to-string');
 
 module.exports = function(conf) {
   const cdn = !conf.local && new conf.storage.adapter(conf.storage.options);
@@ -161,7 +162,10 @@ module.exports = function(conf) {
           version,
           (err, component) => {
             if (err) {
-              return callback(`component not available: ${err}`, null);
+              return callback(
+                `component not available: ${errorToString(err)}`,
+                null
+              );
             }
             callback(null, _.extend(component, { allVersions }));
           }
@@ -258,12 +262,9 @@ module.exports = function(conf) {
       )}`,
 
     getStaticFilePath: (componentName, componentVersion, filePath) =>
-      `${repository.getComponentPath(
-        componentName,
-        componentVersion
-      )}${conf.local
-        ? settings.registry.localStaticRedirectorPath
-        : ''}${filePath}`,
+      `${repository.getComponentPath(componentName, componentVersion)}${
+        conf.local ? settings.registry.localStaticRedirectorPath : ''
+      }${filePath}`,
 
     getTemplatesInfo: () => templatesInfo,
     getTemplate: type => templatesHash[type],
