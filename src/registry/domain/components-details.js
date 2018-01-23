@@ -21,35 +21,34 @@ module.exports = (conf, cdn) => {
     const details = _.extend({}, _.cloneDeep(options.details));
     details.components = details.components || {};
 
-    async.eachOfSeries(
-      options.componentsList.components,
-      (versions, name, done) => {
-        details.components[name] = details.components[name] || {};
+    const missing = [];
+    _.each(options.componentsList.components, (versions, name) => {
+      details.components[name] = details.components[name] || {};
+      _.each(versions, version => {
+        if (!details.components[name][version]) {
+          missing.push({ name, version });
+        }
+      });
+    });
 
-        async.eachLimit(
-          versions,
-          cdn.maxConcurrentRequests,
-          (version, next) => {
-            if (details.components[name][version]) {
-              next();
-            } else {
-              cdn.getJson(
-                `${conf.storage.options
-                  .componentsDir}/${name}/${version}/package.json`,
-                true,
-                (err, content) => {
-                  if (err) {
-                    return next(err);
-                  }
-                  details.components[name][version] = {
-                    publishDate: content.oc.date || 0
-                  };
-                  next();
-                }
-              );
+    async.eachLimit(
+      missing,
+      cdn.maxConcurrentRequests,
+      ({ name, version }, next) => {
+        cdn.getJson(
+          `${conf.storage.options.componentsDir}/${name}/${
+            version
+          }/package.json`,
+          true,
+          (err, content) => {
+            if (err) {
+              return next(err);
             }
-          },
-          done
+            details.components[name][version] = {
+              publishDate: content.oc.date || 0
+            };
+            next();
+          }
         );
       },
       err =>
