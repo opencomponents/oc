@@ -1,5 +1,14 @@
 ## Change Log
 
+### v0.42.17
+- [#810](https://github.com/opentable/oc/pull/810) [DX-270] Async update
+- [#809](https://github.com/opentable/oc/pull/809) fix(package): update cross-spawn to version 6.0.3
+- [#806](https://github.com/opentable/oc/pull/806) Update minimal-request to the latest version 🚀
+- [#805](https://github.com/opentable/oc/pull/805) Update mocha to the latest version 🚀
+- [#804](https://github.com/opentable/oc/pull/804) Update dependency-graph to the latest version 🚀
+- [#802](https://github.com/opentable/oc/pull/802) Update semver to the latest version 🚀
+- [#801](https://github.com/opentable/oc/pull/801) Update opn to the latest version 🚀
+
 ### v0.42.16
 - [#792](https://github.com/opentable/oc/pull/792) Add test for issue #789 showing error message [Object object]
 
