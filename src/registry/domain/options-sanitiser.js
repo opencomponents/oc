@@ -77,5 +77,9 @@ module.exports = function(input) {
     options.storage.options.verbosity = options.verbosity;
   }
 
+  if (!options.env) {
+    options.env = {};
+  }
+
   return options;
 };

@@ -120,4 +120,20 @@ describe('registry : domain : options-sanitiser', () => {
       });
     });
   });
+
+  describe('when env', () => {
+    describe('is provided', () => {
+      const options = { baseUrl: 'dummy', env: { value: 'test' } };
+      it('should not modify it', () => {
+        expect(sanitise(options).env).to.deep.equal({ value: 'test' });
+      });
+    });
+
+    describe('is not provided', () => {
+      const options = { baseUrl: 'dummy' };
+      it('should initialize it as an empty {}', () => {
+        expect(sanitise(options).env).to.deep.equal({});
+      });
+    });
+  });
 });
