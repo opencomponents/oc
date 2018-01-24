@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.42.18
+- [#811](https://github.com/opentable/oc/pull/811) [DX-363] Registry conf.env sanitizer
+
 ### v0.42.17
 - [#810](https://github.com/opentable/oc/pull/810) [DX-270] Async update
 - [#809](https://github.com/opentable/oc/pull/809) fix(package): update cross-spawn to version 6.0.3
