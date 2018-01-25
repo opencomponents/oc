@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.42.19
+- [#813](https://github.com/opentable/oc/pull/813) [DX-366] Allow usage of protocol  in storage.options.path
+- [#812](https://github.com/opentable/oc/pull/812) Update oc-s3-storage-adapter to the latest version 🚀
+
 ### v0.42.18
 - [#811](https://github.com/opentable/oc/pull/811) [DX-363] Registry conf.env sanitizer
 
