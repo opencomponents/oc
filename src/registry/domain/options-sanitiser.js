@@ -77,6 +77,13 @@ module.exports = function(input) {
     options.storage.options.verbosity = options.verbosity;
   }
 
+  if (options.storage && options.storage.path) {
+    options.storage.path =
+      options.storage.path.indexOf('http') === 0
+        ? options.storage.path
+        : `https:${options.storage.path}`;
+  }
+
   if (!options.env) {
     options.env = {};
   }

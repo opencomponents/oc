@@ -19,10 +19,6 @@ const errorToString = require('../../utils/error-to-string');
 module.exports = function(conf) {
   const cdn = !conf.local && new conf.storage.adapter(conf.storage.options);
   const options = !conf.local && conf.storage.options;
-  const storagePath =
-    options && options.path.match(/^http/)
-      ? options.path
-      : `https:${options.path}`;
   const repositorySource = conf.local
     ? 'local repository'
     : cdn.adapterType + ' cdn';
@@ -208,7 +204,7 @@ module.exports = function(conf) {
     getComponentPath: (componentName, componentVersion) => {
       const prefix = conf.local
         ? conf.baseUrl
-        : `${storagePath}${options.componentsDir}/`;
+        : `${options.path}${options.componentsDir}/`;
       return `${prefix}${componentName}/${componentVersion}/`;
     },
     getComponents: callback => {
@@ -252,14 +248,14 @@ module.exports = function(conf) {
       );
     },
     getStaticClientPath: () =>
-      `${storagePath}${getFilePath(
+      `${options.path}${getFilePath(
         'oc-client',
         packageInfo.version,
         'src/oc-client.min.js'
       )}`,
 
     getStaticClientMapPath: () =>
-      `${storagePath}${getFilePath(
+      `${options.path}${getFilePath(
         'oc-client',
         packageInfo.version,
         'src/oc-client.min.map'
