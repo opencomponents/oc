@@ -136,4 +136,83 @@ describe('registry : domain : options-sanitiser', () => {
       });
     });
   });
+
+  describe('storage adapter configuration', () => {
+    describe('when legacy "s3" param', () => {
+      describe('is provided', () => {
+        const options = { s3: { some: 'data' }, baseUrl: 'dummy' };
+        it('should create a storage.adapter configuration accordingly', () => {
+          expect(sanitise(options).storage.options).to.deep.equal({
+            some: 'data'
+          });
+          expect(sanitise(options).storage.adapter).to.equal(
+            require('oc-s3-storage-adapter')
+          );
+        });
+      });
+    });
+    describe('when no storage adapter', () => {
+      describe('is provided', () => {
+        const options = { storage: {}, baseUrl: 'dummy' };
+        it('should default to the oc-s3-storage-adapter', () => {
+          expect(sanitise(options).storage.adapter).to.equal(
+            require('oc-s3-storage-adapter')
+          );
+        });
+      });
+    });
+
+    describe('when refreshInterval', () => {
+      describe('is provided', () => {
+        const options = {
+          refreshInterval: 666,
+          storage: { options: {} },
+          baseUrl: 'dummy'
+        };
+        it('should pass the refreshInterval to the storage options', () => {
+          expect(sanitise(options).storage.options.refreshInterval).to.equal(
+            666
+          );
+        });
+      });
+    });
+
+    describe('when verbosity', () => {
+      describe('is provided', () => {
+        const options = {
+          verbosity: true,
+          storage: { options: {} },
+          baseUrl: 'dummy'
+        };
+        it('should pass the verbosity to the storage options', () => {
+          expect(sanitise(options).storage.options.verbosity).to.equal(true);
+        });
+      });
+    });
+
+    describe('when storage.path', () => {
+      describe('does not include a protocol', () => {
+        const options = {
+          storage: { path: '//someprovider.com' },
+          baseUrl: 'dummy'
+        };
+        it('should sanitize the path to rely on the https protocol', () => {
+          expect(sanitise(options).storage.path).to.equal(
+            'https://someprovider.com'
+          );
+        });
+      });
+      describe('does include a prefix', () => {
+        const options = {
+          storage: { path: 'http://someprovider.com' },
+          baseUrl: 'dummy'
+        };
+        it('should not modify it', () => {
+          expect(sanitise(options).storage.path).to.equal(
+            'http://someprovider.com'
+          );
+        });
+      });
+    });
+  });
 });
