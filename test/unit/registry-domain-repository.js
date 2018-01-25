@@ -68,7 +68,7 @@ describe('registry : domain : repository', () => {
           bucket: 'walter-test',
           region: 'us-west-2',
           componentsDir: 'components',
-          path: '//s3.amazonaws.com/walter-test/'
+          path: 'https://s3.amazonaws.com/walter-test/'
         }
       }
     };

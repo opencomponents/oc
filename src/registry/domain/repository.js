@@ -204,7 +204,7 @@ module.exports = function(conf) {
     getComponentPath: (componentName, componentVersion) => {
       const prefix = conf.local
         ? conf.baseUrl
-        : `https:${options.path}${options.componentsDir}/`;
+        : `${options.path}${options.componentsDir}/`;
       return `${prefix}${componentName}/${componentVersion}/`;
     },
     getComponents: callback => {
@@ -248,14 +248,14 @@ module.exports = function(conf) {
       );
     },
     getStaticClientPath: () =>
-      `https:${options.path}${getFilePath(
+      `${options.path}${getFilePath(
         'oc-client',
         packageInfo.version,
         'src/oc-client.min.js'
       )}`,
 
     getStaticClientMapPath: () =>
-      `https:${options.path}${getFilePath(
+      `${options.path}${getFilePath(
         'oc-client',
         packageInfo.version,
         'src/oc-client.min.map'
