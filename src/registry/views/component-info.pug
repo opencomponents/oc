@@ -48,14 +48,14 @@ block content
   else
     #plugins.table
       .row.header
-        .t-25 Parameters 
-        .t-75
+        .parameter Parameters
+        .parameter-description
       each p, pName in component.oc.parameters
         .row
-          .t-25
+          .parameter
             span.bold=pName
             span (#{p.type}, #{p.mandatory ? 'mandatory' : 'optional'})
-          .t-75
+          .parameter-description
             if p.description
               span=p.description
               br
@@ -75,10 +75,10 @@ block content
     | to apply the change into the preview window.
   .field
     p Component's href:
-  textarea.search#href(placeholder="Insert component href here") #{href + component.name + '/' + component.version + '/' + sandBoxDefaultQs}
+  textarea.w-100#href(placeholder="Insert component href here") #{href + component.name + '/' + component.version + '/' + sandBoxDefaultQs}
   .field
     p Accept-Language header:
-  input.search#lang(value="*")
+  input.w-100#lang(type="text" value="*")
   h3
     | Preview 
     a.refresh-preview(href="#refresh") (Refresh)
