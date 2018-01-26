@@ -44,7 +44,7 @@
     "oc"
   ],
   "devDependencies": {
-    "chai": "4.1.2",
+    "chai": "3.5.0",
     "chalk": "^2.1.0",
     "glob": "^7.1.2",
     "husky": "^0.14.3",
@@ -101,6 +101,6 @@
     "targz": "1.0.1",
     "try-require": "^1.2.1",
     "watch": "1.0.2",
-    "yargs": "11.0.0"
+    "yargs": "9.0.1"
   }
 }
