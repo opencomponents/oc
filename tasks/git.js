@@ -26,7 +26,7 @@ const utils = {
 
         result.push(
           format(
-            '- [#{0}](https://github.com/opentable/oc/pull/{0}) {1}',
+            '- [#{0}](https://github.com/opencomponents/oc/pull/{0}) {1}',
             prNumber,
             commitMessage
           )
@@ -45,7 +45,7 @@ const utils = {
 
         result.push(
           format(
-            '- [#{0}](https://github.com/opentable/oc/pull/{0}) {1}',
+            '- [#{0}](https://github.com/opencomponents/oc/pull/{0}) {1}',
             prNumber,
             commitMessage
           )
