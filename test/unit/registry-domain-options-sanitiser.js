@@ -193,11 +193,11 @@ describe('registry : domain : options-sanitiser', () => {
     describe('when storage.path', () => {
       describe('does not include a protocol', () => {
         const options = {
-          storage: { path: '//someprovider.com' },
+          storage: { options: { path: '//someprovider.com' } },
           baseUrl: 'dummy'
         };
         it('should sanitize the path to rely on the https protocol', () => {
-          expect(sanitise(options).storage.path).to.equal(
+          expect(sanitise(options).storage.options.path).to.equal(
             'https://someprovider.com'
           );
         });
