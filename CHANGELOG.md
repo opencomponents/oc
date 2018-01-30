@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.42.21
+- [#823](https://github.com/opencomponents/oc/pull/823) [DX-390] Fix protocol sanitization
+- [#822](https://github.com/opencomponents/oc/pull/822) logo-type
+- [#821](https://github.com/opencomponents/oc/pull/821) Node builds matrix
+
 ### v0.42.20
 - [#820](https://github.com/opencomponents/oc/pull/820) [DX-353] Serialize exception
 - [#818](https://github.com/opencomponents/oc/pull/818) Update oc-s3-storage-adapter to the latest version 🚀
