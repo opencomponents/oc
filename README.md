@@ -40,6 +40,17 @@ We have been using it for more than two years in production at OpenTable, for sh
 Disclaimer: This project is still under heavy development and the API is likely to change at any time. In case you would find any issues, check the [troubleshooting page](CONTRIBUTING.md#troubleshooting).
 
 [![linux build](https://img.shields.io/travis/opencomponents/oc/master.svg?label=linux+build)](http://travis-ci.org/opencomponents/oc)
+
+| Node6             | Node7             | Node8            | 
+|-------------------|-------------------|-------------------|
+| [![Node6][1]][4] | [![Node7][2]][4] | [![Node8][3]][4] |
+
+[1]: https://travis-matrix-badges.herokuapp.com/repos/opencomponents/oc/branches/master/1
+[2]: https://travis-matrix-badges.herokuapp.com/repos/opencomponents/oc/branches/master/2
+[3]: https://travis-matrix-badges.herokuapp.com/repos/opencomponents/oc/branches/master/3
+[4]: https://travis-ci.org/opencomponents/oc
+
+
 [![windows build](https://img.shields.io/appveyor/ci/matteofigus/oc/master.svg?label=windows+build)](https://ci.appveyor.com/project/matteofigus/oc)
 
 ## License
