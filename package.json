@@ -97,6 +97,7 @@
     "response-time": "^2.3.2",
     "semver": "5.5.0",
     "semver-extra": "2.0.1",
+    "serialize-error": "^2.1.0",
     "stringformat": "0.0.5",
     "targz": "1.0.1",
     "try-require": "^1.2.1",

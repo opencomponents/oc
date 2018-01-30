@@ -1,6 +1,7 @@
 'use strict';
 
 const GetComponentHelper = require('./helpers/get-component');
+const serializeError = require('serialize-error');
 const _ = require('lodash');
 
 module.exports = function(conf, repository) {
@@ -17,6 +18,9 @@ module.exports = function(conf, repository) {
       },
       result => {
         if (result.response.error) {
+          if (_.isError(result.response.error)) {
+            result.response.error = serializeError(result.response.error);
+          }
           res.errorCode = result.response.code;
           res.errorDetails = result.response.error;
         }
