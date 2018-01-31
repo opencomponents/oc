@@ -29,8 +29,6 @@ You need to be enabled for doing this.
     * `npm run patch` for bugfixes, new features
     * `npm run minor` for all breaking changes
     * `npm run major` NOT YET. Still need to define milestones for 1.0.0.
-* [sudo] npm publish .
-* git push --follow-tags
 
 ## Code of Conduct
 
