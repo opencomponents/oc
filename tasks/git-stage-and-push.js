@@ -14,4 +14,5 @@ git
   .addAnnotatedTag(`v${ocVersion}`, `Package version upgrade to: ${ocVersion}`)
   .exec(() =>
     changelog().then(() => git.add('CHANGELOG.md').commit('changelog'))
-  );
+  )
+  .push('origin', 'master', { '--follow-tags': null });
