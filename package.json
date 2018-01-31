@@ -9,10 +9,10 @@
   "scripts": {
     "build": "node tasks/build.js",
     "git-stage-and-push": "node tasks/git-stage-and-push.js",
-    "major": "npm run version-major && npm run test-silent && npm run git-stage-and-push && npm run npm-publish",
-    "minor": "npm run version-minor && npm run test-silent && npm run git-stage-and-push && npm run npm-publish",
     "npm-publish": "node tasks/npm-publish.js",
-    "patch": "npm run version-patch && npm run test-silent && npm run git-stage-and-push && npm run npm-publish",
+    "publish-major": "npm run version-major && npm run test-silent && npm run git-stage-and-push && npm run npm-publish",
+    "publish-minor": "npm run version-minor && npm run test-silent && npm run git-stage-and-push && npm run npm-publish",
+    "publish-patch": "npm run version-patch && npm run test-silent && npm run git-stage-and-push && npm run npm-publish",
     "precommit": "lint-staged",
     "test": "npm run build && node tasks/mochaTest.js",
     "test-silent": "npm run build && node tasks/mochaTest.js --silent",

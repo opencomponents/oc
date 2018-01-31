@@ -26,9 +26,9 @@ You need to be enabled for doing this.
 * git pull --tags
 * Run `npm run <versionType>` for new version.
   * While on 0.X.X (not stable):
-    * `npm run patch` for bugfixes, new features
-    * `npm run minor` for all breaking changes
-    * `npm run major` NOT YET. Still need to define milestones for 1.0.0.
+    * `npm run publish-patch` for bugfixes, new features
+    * `npm run publish-minor` for all breaking changes
+    * `npm run publish-major` NOT YET. Still need to define milestones for 1.0.0.
 
 ## Code of Conduct
 
