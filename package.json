@@ -10,9 +10,12 @@
     "build": "node tasks/build.js",
     "git-stage-and-push": "node tasks/git-stage-and-push.js",
     "npm-publish": "node tasks/npm-publish.js",
-    "publish-major": "npm run version-major && npm run test-silent && npm run git-stage-and-push && npm run npm-publish",
-    "publish-minor": "npm run version-minor && npm run test-silent && npm run git-stage-and-push && npm run npm-publish",
-    "publish-patch": "npm run version-patch && npm run test-silent && npm run git-stage-and-push && npm run npm-publish",
+    "publish-major":
+      "npm run version-major && npm run test-silent && npm run git-stage-and-push && npm run npm-publish",
+    "publish-minor":
+      "npm run version-minor && npm run test-silent && npm run git-stage-and-push && npm run npm-publish",
+    "publish-patch":
+      "npm run version-patch && npm run test-silent && npm run git-stage-and-push && npm run npm-publish",
     "precommit": "lint-staged",
     "test": "npm run build && node tasks/mochaTest.js",
     "test-silent": "npm run build && node tasks/mochaTest.js --silent",
@@ -21,10 +24,7 @@
     "version-patch": "node tasks/version.js --type=\"patch\""
   },
   "lint-staged": {
-    "*.js": [
-      "prettier-eslint --single-quote --write",
-      "git add"
-    ]
+    "*.js": ["prettier-eslint --single-quote --write", "git add"]
   },
   "engines": {
     "node": ">=6"
@@ -39,11 +39,7 @@
     "url": "https://github.com/opencomponents/oc/issues"
   },
   "homepage": "https://github.com/opencomponents/oc",
-  "keywords": [
-    "open components",
-    "components",
-    "oc"
-  ],
+  "keywords": ["open components", "components", "oc"],
   "devDependencies": {
     "chai": "3.5.0",
     "chalk": "^2.1.0",
@@ -83,13 +79,13 @@
     "nice-cache": "0.0.5",
     "oc-client": "3.0.7",
     "oc-client-browser": "1.2.3",
-    "oc-get-unix-utc-timestamp": "1.0.1",
+    "oc-get-unix-utc-timestamp": "1.0.2",
     "oc-s3-storage-adapter": "1.1.2",
     "oc-storage-adapters-utils": "1.0.2",
-    "oc-template-handlebars": "6.0.10",
-    "oc-template-handlebars-compiler": "6.1.11",
-    "oc-template-jade": "6.0.9",
-    "oc-template-jade-compiler": "6.1.11",
+    "oc-template-handlebars": "6.0.11",
+    "oc-template-handlebars-compiler": "6.2.0",
+    "oc-template-jade": "6.0.10",
+    "oc-template-jade-compiler": "6.2.0",
     "opn": "5.2.0",
     "parse-author": "2.0.0",
     "pug": "2.0.0-rc.4",

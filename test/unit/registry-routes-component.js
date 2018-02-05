@@ -5,8 +5,8 @@ const sinon = require('sinon');
 const _ = require('lodash');
 
 describe('registry : routes : component', () => {
-  const ComponentRoute = require('../../src/registry/routes/component'),
-    mockedComponents = require('../fixtures/mocked-components');
+  const ComponentRoute = require('../../src/registry/routes/component');
+  const mockedComponents = require('../fixtures/mocked-components');
   let mockedRepository, resJsonStub, resSetStub, statusStub, componentRoute;
 
   const templates = {
@@ -20,7 +20,9 @@ describe('registry : routes : component', () => {
     mockedRepository = {
       getCompiledView: sinon.stub().yields(null, params.view),
       getComponent: sinon.stub().yields(null, params.package),
-      getDataProvider: sinon.stub().yields(null, params.data),
+      getDataProvider: sinon
+        .stub()
+        .yields(null, { content: params.data, filePath: '/path/to/server.js' }),
       getTemplatesInfo: sinon.stub().returns([
         {
           type: 'oc-template-jade',
@@ -621,12 +623,14 @@ describe('registry : routes : component', () => {
         .onCall(1)
         .yields(null, simpleComponent.package);
 
-      mockedRepository.getDataProvider
-        .onCall(0)
-        .yields(null, headersComponent.data);
-      mockedRepository.getDataProvider
-        .onCall(1)
-        .yields(null, simpleComponent.data);
+      mockedRepository.getDataProvider.onCall(0).yields(null, {
+        content: headersComponent.data,
+        filePath: '/path/to/server.js'
+      });
+      mockedRepository.getDataProvider.onCall(1).yields(null, {
+        content: simpleComponent.data,
+        filePath: '/path/to/another-server.js'
+      });
 
       componentRoute = new ComponentRoute({}, mockedRepository);
 

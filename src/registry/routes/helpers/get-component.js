@@ -419,7 +419,7 @@ module.exports = function(conf, repository) {
             repository.getDataProvider(
               component.name,
               component.version,
-              (err, dataProcessorJs) => {
+              (err, dataProvider) => {
                 if (err) {
                   componentCallbackDone = true;
 
@@ -460,8 +460,15 @@ module.exports = function(conf, repository) {
                   returnComponent(err);
                 };
 
+                const options = conf.local
+                  ? {
+                    displayErrors: true,
+                    filename: dataProvider.filePath
+                  }
+                  : {};
+
                 try {
-                  vm.runInNewContext(dataProcessorJs, context);
+                  vm.runInNewContext(dataProvider.content, context, options);
                   const processData = context.module.exports.data;
                   cache.set('file-contents', cacheKey, processData);
 
