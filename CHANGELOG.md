@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.42.24
+- [#825](https://github.com/opencomponents/oc/pull/825) [DX-385] Add sourcemaps to server.js during dev, add path to node's vm
+
 ### v0.42.21
 - [#823](https://github.com/opencomponents/oc/pull/823) [DX-390] Fix protocol sanitization
 - [#822](https://github.com/opencomponents/oc/pull/822) logo-type
