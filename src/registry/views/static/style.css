@@ -98,7 +98,6 @@ p {
 }
 
 .componentRow .release {
-  padding: 15px;
   font-size: 16px;
   margin: 0;
   width: 100%;
@@ -167,6 +166,7 @@ textarea {
   padding-left: 10px;
 }
 
+.release,
 .title,
 .filters > * {
   flex: 1 0;
