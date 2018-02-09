@@ -1,5 +1,13 @@
 ## Change Log
 
+### v0.42.26
+- [#829](https://github.com/opencomponents/oc/pull/829) Added author to components list view and author filter
+
+### v0.42.25
+- [#828](https://github.com/opencomponents/oc/pull/828) Update oc-client to the latest version 🚀
+- [#827](https://github.com/opencomponents/oc/pull/827) Update oc-client-browser to the latest version 🚀
+- [#826](https://github.com/opencomponents/oc/pull/826) Update oc-client to the latest version 🚀
+
 ### v0.42.24
 - [#825](https://github.com/opencomponents/oc/pull/825) [DX-385] Add sourcemaps to server.js during dev, add path to node's vm
 
