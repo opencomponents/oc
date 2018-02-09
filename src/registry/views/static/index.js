@@ -8,8 +8,10 @@ oc.cmd = oc.cmd || [];
 oc.cmd.push(function() {
   var componentsListChanged = function() {
     $('.componentRow').removeClass('hide');
-    var s = $('.search').val(),
+    var s = $('.search-filter').val(),
+      a = $('.author-filter').val(),
       r = new RegExp(s),
+      ar = new RegExp(a, 'i'),
       selectedCheckboxes = $('input[type=checkbox]:checked'),
       hiddenStates = [],
       hidden = 0,
@@ -21,6 +23,10 @@ oc.cmd.push(function() {
 
     for (i = 0; i < componentsList.length; i++) {
       var matches = !s || !!componentsList[i].name.match(r),
+        matchesAuthor =
+          !a ||
+          (componentsList[i].author.name &&
+            !!componentsList[i].author.name.match(ar)),
         selector = $('#component-' + componentsList[i].name),
         isHidden = false;
 
@@ -30,7 +36,7 @@ oc.cmd.push(function() {
         }
       }
 
-      var show = matches && !isHidden;
+      var show = matches && matchesAuthor && !isHidden;
       selector[show ? 'removeClass' : 'addClass']('hide');
       if (!show) {
         hidden += 1;
@@ -41,7 +47,13 @@ oc.cmd.push(function() {
       result = 'Showing ' + totalShowing + ' components';
 
     if (s) {
-      result += ' matching search query: ' + s;
+      result += ' matching search query: "' + s + '"';
+      if (a) {
+        result += ' and';
+      }
+    }
+    if (a) {
+      result += ' matching author query: "' + a + '"';
     }
 
     $('.componentRow.header .title').text(result);

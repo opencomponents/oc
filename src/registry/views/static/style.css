@@ -23,7 +23,6 @@ a {
 p {
   float: left;
   margin-top: 0;
-
 }
 
 .back {
@@ -48,35 +47,6 @@ p {
   float: left;
 }
 
-.t-80 {
-  width: 78%;
-  padding: 0 1% 1% 1%;
-}
-
-.t-75 {
-  width: 73%;
-  padding: 1% 1% 1% 1%;
-}
-
-.t-60 {
-  width: 58%;
-  padding: 0 1% 1% 1%;
-}
-
-.t-25 {
-  width: 23%;
-  padding: 1% 1% 1% 1%;
-}
-
-.t-10 {
-  width: 8%;
-  padding: 2% 1% 1% 1%;
-}
-
-.two-rows {
-  padding: 1%;
-}
-
 .w-100 {
   width: 100%;
 }
@@ -85,8 +55,12 @@ p {
   background-color: #F9F9F9;
   border: 1px solid #000;
   width: 100%;
-  float: none;
-  display: inline-block;
+  display: flex;
+  padding: 10px 0px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin-bottom: 4px;
 }
 
 .row.header {
@@ -97,7 +71,7 @@ p {
 .row.header div {
   font-weight: bold;
   margin: 0;
-  padding: 1%;
+  align-self: flex-start;
 }
 
 .row.double {
@@ -105,7 +79,6 @@ p {
 }
 
 .row div {
-  float: left;
   word-wrap: break-word;
 }
 
@@ -118,7 +91,6 @@ p {
 }
 
 .componentRow .title .name {
-  padding: 6px 0 0 0;
   font-weight: bold;
   font-size: 18px;
   margin: 0;
@@ -126,7 +98,6 @@ p {
 }
 
 .componentRow .release {
-  padding: 15px;
   font-size: 16px;
   margin: 0;
   width: 100%;
@@ -162,17 +133,73 @@ p {
   margin-right: 10px;
 }
 
-.search {
-  width: 98%;
+input[type=text],
+textarea {
+  height: 43px;
   font-family: Arial;
   border: 1px solid #8B0000;
   margin-bottom: 10px;
   font-size: 20px;
   padding: 10px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.filters {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.row > * {
+  flex: 0 1 8%;
+  padding: 0px 5px;
+  align-self: center;
+}
+
+.row > *:last-child {
+  padding-right: 10px;
+}
+
+.row > *:first-child {
+  padding-left: 10px;
+}
+
+.release,
+.title,
+.filters > * {
+  flex: 1 0;
+}
+
+.title {
+  display: flex;
+  flex-direction: column;
+}
+
+.author-filter {
+  flex: 0 1 30%;
+  margin-left: 15px;
+}
+
+.parameter {
+  flex: 1 0;
+  max-width: 25%;
+  align-self: flex-start;
+}
+
+.parameter-description {
+  flex: 1 0;
+  max-width: 70%;
+}
+
+.author {
+  flex: 0 1 15%;
+  word-break: break-all;
 }
 
 #href {
-  height: 30px;
+  height: 60px;
 }
 
 .states {
@@ -191,7 +218,7 @@ p {
 }
 
 .details-state span {
-  padding: 3px;
+  padding: 1px 5px;
   margin-left: 10px;
   font-size: 75%;
   font-weight: bold;
@@ -200,21 +227,34 @@ p {
   white-space: nowrap;
 }
 
-.state span {
-  padding: 3% 8% 3% 8%;
+.state {
+  margin-right: 10px;
   font-size: 75%;
   font-weight: bold;
   color: #FFF;
-  background-color: #1E42B9;
   white-space: nowrap;
 }
 
-span.component-state-experimental {
-  background-color: #B9961E;
+.table .state {
+  background-color: #1E42B9;
+  height: 17px;
+  padding: 1px 5px;
 }
 
-span.component-state-deprecated {
+.component-state-experimental,
+.details-state .component-state-experimental,
+.table .component-state-experimental {
+  background-color: #B9961E;
+  height: 17px;
+  padding: 1px 5px;
+}
+
+.component-state-deprecated,
+.details-state .component-state-deprecated,
+.table .component-state-deprecated {
   background-color: #B9381E;
+  height: 17px;
+  padding: 1px 5px;
 }
 
 a.tab-link {
