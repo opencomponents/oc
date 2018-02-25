@@ -75,7 +75,7 @@
     "jstransformer-clean-css": "^2.0.0",
     "jstransformer-uglify-css": "^1.0.0",
     "jstransformer-uglify-js": "^1.2.0",
-    "livereload": "^0.6.2",
+    "livereload": "^0.7.0",
     "lodash": "^4.17.4",
     "minimal-request": "3.0.0",
     "morgan": "1.9.0",
