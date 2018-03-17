@@ -40,6 +40,7 @@ We have been using it for more than two years in production at OpenTable, for sh
 Disclaimer: This project is still under heavy development and the API is likely to change at any time. In case you would find any issues, check the [troubleshooting page](CONTRIBUTING.md#troubleshooting).
 
 [![linux build](https://img.shields.io/travis/opencomponents/oc/master.svg?label=linux+build)](http://travis-ci.org/opencomponents/oc)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fopencomponents%2Foc.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fopencomponents%2Foc?ref=badge_shield)
 
 | Node6             | Node7             | Node8            | 
 |-------------------|-------------------|-------------------|
@@ -56,3 +57,6 @@ Disclaimer: This project is still under heavy development and the API is likely 
 ## License
 
 MIT
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fopencomponents%2Foc.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fopencomponents%2Foc?ref=badge_large)
