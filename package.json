@@ -86,7 +86,7 @@
     "oc-get-unix-utc-timestamp": "1.0.2",
     "oc-s3-storage-adapter": "1.1.2",
     "oc-storage-adapters-utils": "1.0.2",
-    "oc-template-handlebars": "6.0.11",
+    "oc-template-handlebars": "6.0.12",
     "oc-template-handlebars-compiler": "6.2.1",
     "oc-template-jade": "6.0.11",
     "oc-template-jade-compiler": "6.2.1",
