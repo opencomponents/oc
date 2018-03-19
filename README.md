@@ -21,7 +21,8 @@ We have been using it for more than two years in production at OpenTable, for sh
 [![Known Vulnerabilities](https://snyk.io/test/github/opencomponents/oc/badge.svg)](https://snyk.io/test/github/opencomponents/oc)
 [![downloads](https://img.shields.io/npm/dm/oc.svg?label=downloads+from+npm)](https://npmjs.org/package/oc)
 [![Join the chat at https://gitter.im/opentable/oc](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/opentable/oc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Greenkeeper badge](https://badges.greenkeeper.io/opencomponents/oc.svg)](https://greenkeeper.io/)
+[![Greenkeeper badge](https://badges.greenkeeper.io/opencomponents/oc.svg)](https://greenkeeper.io/) 
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fopencomponents%2Foc.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fopencomponents%2Foc?ref=badge_shield)
 
 ## Links
 
@@ -40,7 +41,6 @@ We have been using it for more than two years in production at OpenTable, for sh
 Disclaimer: This project is still under heavy development and the API is likely to change at any time. In case you would find any issues, check the [troubleshooting page](CONTRIBUTING.md#troubleshooting).
 
 [![linux build](https://img.shields.io/travis/opencomponents/oc/master.svg?label=linux+build)](http://travis-ci.org/opencomponents/oc)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fopencomponents%2Foc.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fopencomponents%2Foc?ref=badge_shield)
 
 | Node6             | Node7             | Node8            | 
 |-------------------|-------------------|-------------------|
@@ -57,6 +57,5 @@ Disclaimer: This project is still under heavy development and the API is likely 
 ## License
 
 MIT
-
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fopencomponents%2Foc.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fopencomponents%2Foc?ref=badge_large)
