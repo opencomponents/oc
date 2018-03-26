@@ -5,6 +5,7 @@ const Cache = require('nice-cache');
 const Client = require('oc-client');
 const Domain = require('domain');
 const format = require('stringformat');
+const emptyResponseHandler = require('oc-empty-response-handler');
 const vm = require('vm');
 const _ = require('lodash');
 
@@ -363,36 +364,38 @@ module.exports = function(conf, repository) {
         if (!component.oc.files.dataProvider) {
           returnComponent(null, {});
         } else {
-          const cacheKey = `${component.name}/${component.version}/server.js`,
-            cached = cache.get('file-contents', cacheKey),
-            domain = Domain.create(),
-            contextObj = {
-              acceptLanguage: acceptLanguageParser.parse(acceptLanguage),
-              baseUrl: conf.baseUrl,
-              env: conf.env,
-              params,
-              plugins: conf.plugins,
-              renderComponent: nestedRenderer.renderComponent,
-              renderComponents: nestedRenderer.renderComponents,
-              requestHeaders: options.headers,
-              staticPath: repository
-                .getStaticFilePath(component.name, component.version, '')
-                .replace('https:', ''),
-              setHeader: (header, value) => {
-                if (
-                  !(typeof header === 'string' && typeof value === 'string')
-                ) {
-                  throw strings.errors.registry
-                    .COMPONENT_SET_HEADER_PARAMETERS_NOT_VALID;
-                }
+          const cacheKey = `${component.name}/${component.version}/server.js`;
+          const cached = cache.get('file-contents', cacheKey);
+          const domain = Domain.create();
+          const setEmptyResponse = emptyResponseHandler.contextDecorator(
+            returnComponent
+          );
+          const contextObj = {
+            acceptLanguage: acceptLanguageParser.parse(acceptLanguage),
+            baseUrl: conf.baseUrl,
+            env: conf.env,
+            params,
+            plugins: conf.plugins,
+            renderComponent: nestedRenderer.renderComponent,
+            renderComponents: nestedRenderer.renderComponents,
+            requestHeaders: options.headers,
+            setEmptyResponse,
+            staticPath: repository
+              .getStaticFilePath(component.name, component.version, '')
+              .replace('https:', ''),
+            setHeader: (header, value) => {
+              if (!(typeof header === 'string' && typeof value === 'string')) {
+                throw strings.errors.registry
+                  .COMPONENT_SET_HEADER_PARAMETERS_NOT_VALID;
+              }
 
-                if (header && value) {
-                  responseHeaders = responseHeaders || {};
-                  responseHeaders[header.toLowerCase()] = value;
-                }
-              },
-              templates: repository.getTemplatesInfo()
-            };
+              if (header && value) {
+                responseHeaders = responseHeaders || {};
+                responseHeaders[header.toLowerCase()] = value;
+              }
+            },
+            templates: repository.getTemplatesInfo()
+          };
 
           const setCallbackTimeout = () => {
             if (conf.executionTimeout) {
