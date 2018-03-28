@@ -415,6 +415,7 @@ describe('registry : domain : repository', () => {
         expect(response.result).to.eql([
           'container-with-multiple-nested',
           'container-with-nested',
+          'empty',
           'handlebars3-component',
           'hello-world',
           'hello-world-custom-headers',
