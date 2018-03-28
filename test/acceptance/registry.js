@@ -9,7 +9,6 @@ describe('registry', () => {
   let registry, result, error, headers, status;
 
   const oc = require('../../src/index');
-  const componentFixturesPath = path.resolve('test/fixtures/components');
 
   const next = function(done) {
     return function(e, r, d) {
@@ -24,7 +23,7 @@ describe('registry', () => {
   const getDefaultTestConfiguration = function() {
     return {
       local: true,
-      path: componentFixturesPath,
+      path: path.resolve('test/fixtures/components'),
       port: 3030,
       baseUrl: 'http://localhost:3030/',
       env: { name: 'local' },
