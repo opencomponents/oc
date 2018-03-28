@@ -1,6 +1,7 @@
 'use strict';
 
 const expect = require('chai').expect;
+const emptyResponseHandler = require('oc-empty-response-handler');
 const path = require('path');
 const request = require('minimal-request');
 const _ = require('lodash');
@@ -644,22 +645,47 @@ describe('registry', () => {
   });
 
   describe('GET /empty', () => {
-    before(done => {
-      request(
-        {
-          url: 'http://localhost:3030/empty',
-          json: true
-        },
-        next(done)
-      );
+    describe('rendered', () => {
+      before(done => {
+        request(
+          {
+            url: 'http://localhost:3030/empty',
+            json: true
+          },
+          next(done)
+        );
+      });
+
+      it('should respond with the correct href', () => {
+        expect(result.href).to.eql('http://localhost:3030/empty');
+      });
+
+      it('should respond with an empty response', () => {
+        expect(result.html).to.equal('');
+      });
     });
 
-    it('should respond with the correct href', () => {
-      expect(result.href).to.eql('http://localhost:3030/empty');
-    });
+    describe('unrendered', () => {
+      before(done => {
+        request(
+          {
+            url: 'http://localhost:3030/empty',
+            headers: { Accept: 'application/vnd.oc.unrendered+json' },
+            json: true
+          },
+          next(done)
+        );
+      });
 
-    it('should respond with an empty response', () => {
-      expect(result.html).to.equal('');
+      it('should respond with the correct href', () => {
+        expect(result.href).to.eql('http://localhost:3030/empty');
+      });
+
+      it('should respond with a minimal empty view-model', () => {
+        expect(result.data).to.eql({
+          [emptyResponseHandler.viewModelEmptyKey]: true
+        });
+      });
     });
   });
 
