@@ -25,35 +25,30 @@ const componentsToPackage = fs
   .readdirSync('./test/fixtures/components')
   .filter(x => x !== 'handlebars3-component');
 
-async.eachSeries(
-  componentsToPackage,
-  (componentPath, next) =>
-    oc.cli.package(
-      {
-        componentPath: path.join('./test/fixtures/components', componentPath),
-        compress: false
-      },
-      err => next(err)
-    ),
-  err => {
-    if (err) {
-      log.error(`Error during test components packaging: ${err}`);
-      process.exit(1);
-    } else {
-      log.complete(`Test components packaged`);
-    }
+const packageComponent = (componentPath, done) =>
+  oc.cli.package(
+    {
+      componentPath: path.join('./test/fixtures/components', componentPath),
+      compress: false
+    },
+    err => done(err)
+  );
 
-    async.each(
-      testDirs,
-      (dir, next) => {
-        glob(path.join(__dirname, '..', dir), (err, files) => {
-          files.forEach(file => mocha.addFile(file));
-          next();
-        });
-      },
-      () => {
-        mocha.run(err => process.on('exit', () => process.exit(err)));
-      }
-    );
+const addTestSuite = (dir, done) =>
+  glob(path.join(__dirname, '..', dir), (err, files) => {
+    files.forEach(file => mocha.addFile(file));
+    done();
+  });
+
+async.eachSeries(componentsToPackage, packageComponent, err => {
+  if (err) {
+    log.error(`Error during test components packaging: ${err}`);
+    process.exit(1);
+  } else {
+    log.complete(`Test components packaged`);
   }
-);
+
+  async.each(testDirs, addTestSuite, () =>
+    mocha.run(err => process.on('exit', () => process.exit(err)))
+  );
+});
