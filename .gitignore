@@ -29,6 +29,16 @@ src/components/base-component-jade/_package
 
 test/fixtures/test.tar.gz
 test/fixtures/targz-test
+test/fixtures/components/container-with-multiple-nested/_package
+test/fixtures/components/container-with-nested/_package
+test/fixtures/components/hello-world/_package
+test/fixtures/components/hello-world-custom-headers/_package
+test/fixtures/components/jade-filters/_package
+test/fixtures/components/language/_package
+test/fixtures/components/lodash-component/_package
+test/fixtures/components/no-containers/_package
+test/fixtures/components/welcome/_package
+test/fixtures/components/welcome-with-optional-parameters/_package
 
 logintervals.md
 
