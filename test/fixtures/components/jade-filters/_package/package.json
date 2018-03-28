@@ -1,1 +1,0 @@
-{"name":"jade-filters","description":"","version":"1.0.0","repository":"","oc":{"files":{"template":{"type":"jade","hashKey":"97dafa34f2b84f419e1f89e167c5f0fd028d690a","src":"template.js"},"dataProvider":{"type":"node.js","hashKey":"46fc3cca37f747de97af6e9266895190bc6048ca","src":"server.js"},"static":[]},"version":"0.37.6","packaged":true,"date":1496678135008}}
