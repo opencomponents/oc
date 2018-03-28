@@ -11,6 +11,7 @@ const path = require('path');
 
 const mocha = new Mocha({ timeout: 20000 });
 const argv = minimist(process.argv.slice(2), { boolean: 'silent' });
+const componentsFixturesPath = './test/fixtures/components';
 const testDirs = [
   'test/unit/**/*.js',
   'test/integration/**/*.js',
@@ -22,13 +23,13 @@ if (argv.silent) {
 }
 
 const componentsToPackage = fs
-  .readdirSync('./test/fixtures/components')
+  .readdirSync(componentsFixturesPath)
   .filter(x => x !== 'handlebars3-component');
 
-const packageComponent = (componentPath, done) =>
+const packageComponent = (componentName, done) =>
   oc.cli.package(
     {
-      componentPath: path.join('./test/fixtures/components', componentPath),
+      componentPath: path.join(componentsFixturesPath, componentName),
       compress: false
     },
     err => done(err)
