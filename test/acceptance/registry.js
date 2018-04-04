@@ -1,6 +1,7 @@
 'use strict';
 
 const expect = require('chai').expect;
+const emptyResponseHandler = require('oc-empty-response-handler');
 const path = require('path');
 const request = require('minimal-request');
 const _ = require('lodash');
@@ -346,6 +347,7 @@ describe('registry', () => {
       expect(result.components).to.eql([
         'http://localhost:3030/container-with-multiple-nested',
         'http://localhost:3030/container-with-nested',
+        'http://localhost:3030/empty',
         'http://localhost:3030/handlebars3-component',
         'http://localhost:3030/hello-world',
         'http://localhost:3030/hello-world-custom-headers',
@@ -639,6 +641,51 @@ describe('registry', () => {
 
     it('should respond correctly after using lodash server dependency', () => {
       expect(result.html).to.equal('<div>The magic number is 5</div>');
+    });
+  });
+
+  describe('GET /empty', () => {
+    describe('rendered', () => {
+      before(done => {
+        request(
+          {
+            url: 'http://localhost:3030/empty',
+            json: true
+          },
+          next(done)
+        );
+      });
+
+      it('should respond with the correct href', () => {
+        expect(result.href).to.eql('http://localhost:3030/empty');
+      });
+
+      it('should respond with an empty response', () => {
+        expect(result.html).to.equal('');
+      });
+    });
+
+    describe('unrendered', () => {
+      before(done => {
+        request(
+          {
+            url: 'http://localhost:3030/empty',
+            headers: { Accept: 'application/vnd.oc.unrendered+json' },
+            json: true
+          },
+          next(done)
+        );
+      });
+
+      it('should respond with the correct href', () => {
+        expect(result.href).to.eql('http://localhost:3030/empty');
+      });
+
+      it('should respond with a minimal empty view-model', () => {
+        expect(result.data).to.eql({
+          [emptyResponseHandler.viewModelEmptyKey]: true
+        });
+      });
     });
   });
 

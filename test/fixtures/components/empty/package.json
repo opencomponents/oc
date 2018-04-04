@@ -1,0 +1,17 @@
+{
+  "name": "empty",
+  "description": "",
+  "version": "1.0.0",
+  "repository": "",
+  "oc": {
+    "renderInfo": true,
+    "container": true,
+    "files": {
+      "data": "server.js",
+      "template": {
+        "src": "template.jade",
+        "type": "jade"
+      }
+    }
+  }
+}

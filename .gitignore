@@ -22,6 +22,7 @@ results
 npm-debug.log
 node_modules
 package-lock.json
+yarn.lock
 
 src/components/oc.json
 src/components/base-component-handlebars/_package
@@ -31,6 +32,7 @@ test/fixtures/test.tar.gz
 test/fixtures/targz-test
 test/fixtures/components/container-with-multiple-nested/_package
 test/fixtures/components/container-with-nested/_package
+test/fixtures/components/empty/_package
 test/fixtures/components/hello-world/_package
 test/fixtures/components/hello-world-custom-headers/_package
 test/fixtures/components/jade-filters/_package
