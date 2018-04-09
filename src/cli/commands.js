@@ -1,4 +1,3 @@
-/* jshint maxlen: false */
 'use strict';
 
 module.exports = {
