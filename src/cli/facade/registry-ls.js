@@ -26,9 +26,7 @@ module.exports = function(dependencies) {
           return callback(err);
         }
 
-        _.forEach(registries, registryLocation => {
-          logger.ok(registryLocation);
-        });
+        _.forEach(registries, registryLocation => logger.ok(registryLocation));
 
         callback(null, registries);
       }

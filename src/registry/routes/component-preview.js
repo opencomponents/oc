@@ -23,7 +23,7 @@ function componentPreview(err, req, res, component, templates) {
 
   if (isHtmlRequest && !!res.conf.discovery) {
     return res.render('component-preview', {
-      component: component,
+      component,
       dependencies: _.keys(component.dependencies),
       href: res.conf.baseUrl,
       liveReload,

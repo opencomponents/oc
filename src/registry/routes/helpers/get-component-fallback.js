@@ -47,8 +47,7 @@ function getComponentFallbackForViewType(
       } catch (parseError) {
         return callback({
           registryError: registryError,
-          fallbackError:
-            'Could not parse fallback response: ' + fallbackResponse
+          fallbackError: `Could not parse fallback response: ${fallbackResponse}`
         });
       }
     }
@@ -65,9 +64,7 @@ module.exports = {
           host: url.parse(fallbackRegistryUrl).host
         }),
         json: true,
-        body: {
-          components: [component]
-        }
+        body: { components: [component] }
       },
       (err, res) => {
         if (err || !res || res.length === 0) {

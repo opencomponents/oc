@@ -11,7 +11,7 @@ const builtin = {
     validate: function(authConfig) {
       const isValid = authConfig.username && authConfig.password;
       return {
-        isValid: isValid,
+        isValid,
         message: isValid
           ? ''
           : strings.errors.registry
@@ -33,7 +33,7 @@ module.exports.validate = function(authConfig) {
     const cwd = process.cwd();
     module.paths.push(cwd, path.join(cwd, 'node_modules'));
 
-    const moduleName = 'oc-auth-' + authConfig.type;
+    const moduleName = `oc-auth-${authConfig.type}`;
 
     try {
       scheme = require(moduleName);

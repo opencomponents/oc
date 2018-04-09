@@ -64,14 +64,14 @@ function componentInfo(err, req, res, component) {
 
     isUrlDiscoverable(href, (err, result) => {
       if (!result.isDiscoverable) {
-        href = '//' + req.headers.host + res.conf.prefix;
+        href = `//${req.headers.host}${res.conf.prefix}`;
       }
 
       res.render('component-info', {
-        component: component,
+        component,
         dependencies: _.keys(component.dependencies),
-        href: href,
-        parsedAuthor: parsedAuthor,
+        href,
+        parsedAuthor,
         sandBoxDefaultQs: urlBuilder.queryString(params)
       });
     });

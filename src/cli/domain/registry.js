@@ -1,6 +1,5 @@
 'use strict';
 
-const format = require('stringformat');
 const fs = require('fs-extra');
 const path = require('path');
 const request = require('minimal-request');
@@ -22,13 +21,9 @@ module.exports = function(opts) {
   opts = opts || {};
 
   let requestsHeaders = {
-    'user-agent': format(
-      'oc-cli-{0}/{1}-{2}-{3}',
-      getOcVersion(),
-      process.version,
-      process.platform,
-      process.arch
-    )
+    'user-agent': `oc-cli-${getOcVersion()}/${process.version}-${
+      process.platform
+    }-${process.arch}`
   };
 
   return _.extend(this, {

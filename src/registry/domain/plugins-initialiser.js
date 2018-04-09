@@ -28,9 +28,7 @@ const validatePlugins = function(plugins) {
 const checkDependencies = function(plugins) {
   const graph = new DepGraph();
 
-  plugins.forEach(p => {
-    graph.addNode(p.name);
-  });
+  plugins.forEach(p => graph.addNode(p.name));
 
   plugins.forEach(p => {
     if (!p.register.dependencies) {
@@ -41,7 +39,7 @@ const checkDependencies = function(plugins) {
       try {
         graph.addDependency(p.name, d);
       } catch (err) {
-        throw new Error('unknown plugin dependency: ' + d);
+        throw new Error(`unknown plugin dependency: ${d}`);
       }
     });
   });
