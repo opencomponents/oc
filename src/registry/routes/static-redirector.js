@@ -1,6 +1,5 @@
 'use strict';
 
-const format = require('stringformat');
 const fs = require('fs-extra');
 const path = require('path');
 
@@ -9,11 +8,9 @@ const getFileInfo = require('oc-storage-adapters-utils').getFileInfo;
 module.exports = function(repository) {
   return function(req, res) {
     let filePath;
-    const clientPath =
-        (res.conf.prefix ? res.conf.prefix : '/') + 'oc-client/client.js',
-      clientMapPath =
-        (res.conf.prefix ? res.conf.prefix : '/') +
-        'oc-client/oc-client.min.map';
+    const clientPath = `${res.conf.prefix || '/'}oc-client/client.js`;
+    const clientMapPath = `${res.conf.prefix ||
+      '/'}oc-client/oc-client.min.map`;
 
     if (req.route.path === clientPath) {
       if (res.conf.local) {
@@ -46,7 +43,7 @@ module.exports = function(repository) {
     }
 
     if (!fs.existsSync(filePath)) {
-      res.errorDetails = format('File {0} not found', filePath);
+      res.errorDetails = `File ${filePath} not found`;
       return res.status(404).json({ err: res.errorDetails });
     }
 

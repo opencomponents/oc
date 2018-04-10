@@ -1,6 +1,5 @@
 'use strict';
 
-const format = require('stringformat');
 const semver = require('semver');
 
 const packageInfo = require('../../../../package.json');
@@ -8,11 +7,9 @@ const packageInfo = require('../../../../package.json');
 module.exports = function(userAgent) {
   const result = { isValid: false };
   const error = {
-    suggestedVersion: format(
-      '{0}.{1}.X',
-      semver.major(packageInfo.version),
-      semver.minor(packageInfo.version)
-    ),
+    suggestedVersion: `${semver.major(packageInfo.version)}.${semver.minor(
+      packageInfo.version
+    )}.X`,
     registryVersion: packageInfo.version,
     cliVersion: ''
   };

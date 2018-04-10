@@ -89,7 +89,7 @@ module.exports = function(repository) {
                     return {
                       name: component.name,
                       author: component.author,
-                      state: state
+                      state
                     };
                   }),
                   componentsHistory:

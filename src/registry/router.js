@@ -1,6 +1,5 @@
 'use strict';
 
-const format = require('stringformat');
 const _ = require('lodash');
 
 const ComponentRoute = require('./routes/component');
@@ -23,77 +22,63 @@ module.exports.create = function(app, conf, repository) {
     staticRedirector: new StaticRedirectorRoute(repository)
   };
 
-  if (conf.prefix !== '/') {
-    app.get('/', (req, res) => {
-      res.redirect(conf.prefix);
-    });
-    app.get(conf.prefix.substr(0, conf.prefix.length - 1), routes.index);
+  const prefix = conf.prefix;
+
+  if (prefix !== '/') {
+    app.get('/', (req, res) => res.redirect(prefix));
+    app.get(prefix.substr(0, prefix.length - 1), routes.index);
   }
 
-  app.get(conf.prefix + 'oc-client/client.js', routes.staticRedirector);
-  app.get(conf.prefix + 'oc-client/oc-client.min.map', routes.staticRedirector);
+  app.get(`${prefix}oc-client/client.js`, routes.staticRedirector);
+  app.get(`${prefix}oc-client/oc-client.min.map`, routes.staticRedirector);
 
   if (conf.local) {
     app.get(
-      format(
-        '{0}:componentName/:componentVersion/{1}*',
-        conf.prefix,
+      `${prefix}:componentName/:componentVersion/${
         settings.registry.localStaticRedirectorPath
-      ),
+      }*`,
       routes.staticRedirector
     );
   } else {
     app.put(
-      conf.prefix + ':componentName/:componentVersion',
+      `${prefix}:componentName/:componentVersion`,
       conf.beforePublish,
       routes.publish
     );
   }
 
-  app.get(conf.prefix, routes.index);
-  app.post(conf.prefix, routes.components);
+  app.get(prefix, routes.index);
+  app.post(prefix, routes.components);
 
   app.get(
-    format(
-      '{0}:componentName/:componentVersion{1}',
-      conf.prefix,
+    `${prefix}:componentName/:componentVersion${
       settings.registry.componentInfoPath
-    ),
+    }`,
     routes.componentInfo
   );
   app.get(
-    format(
-      '{0}:componentName{1}',
-      conf.prefix,
-      settings.registry.componentInfoPath
-    ),
+    `${prefix}:componentName${settings.registry.componentInfoPath}`,
     routes.componentInfo
   );
 
   app.get(
-    format(
-      '{0}:componentName/:componentVersion{1}',
-      conf.prefix,
+    `${prefix}:componentName/:componentVersion${
       settings.registry.componentPreviewPath
-    ),
+    }`,
     routes.componentPreview
   );
   app.get(
-    format(
-      '{0}:componentName{1}',
-      conf.prefix,
-      settings.registry.componentPreviewPath
-    ),
+    `${prefix}:componentName${settings.registry.componentPreviewPath}`,
     routes.componentPreview
   );
 
-  app.get(conf.prefix + ':componentName/:componentVersion', routes.component);
-  app.get(conf.prefix + ':componentName', routes.component);
+  app.get(`${prefix}:componentName/:componentVersion`, routes.component);
+  app.get(`${prefix}:componentName`, routes.component);
 
   if (conf.routes) {
-    _.forEach(conf.routes, route => {
-      app[route.method.toLowerCase()](route.route, route.handler);
-    });
+    _.forEach(conf.routes, route =>
+      app[route.method.toLowerCase()](route.route, route.handler)
+    );
   }
 
   app.set('etag', 'strong');

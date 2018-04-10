@@ -1,7 +1,6 @@
 'use strict';
 
 const colors = require('colors/safe');
-const format = require('stringformat');
 const path = require('path');
 const _ = require('lodash');
 
@@ -15,10 +14,10 @@ module.exports = function(repository, options, callback) {
   const logger = options.verbosity ? console : { log: _.noop };
 
   logger.log(
-    format(
-      colors.yellow('Connecting to library: {0}/{1}'),
-      options.storage.options.bucket,
-      options.storage.options.componentsDir
+    colors.yellow(
+      `Connecting to library: ${options.storage.options.bucket}/${
+        options.storage.options.componentsDir
+      }`
     )
   );
 
@@ -28,9 +27,8 @@ module.exports = function(repository, options, callback) {
     }
 
     logger.log(
-      format(
-        colors.yellow('Ensuring oc-client@{0} is available on library...'),
-        packageInfo.version
+      colors.yellow(
+        `Ensuring oc-client@${packageInfo.version} is available on library...`
       )
     );
 
@@ -53,9 +51,7 @@ module.exports = function(repository, options, callback) {
           if (!err) {
             logger.log(colors.green('Component published.'));
           } else {
-            logger.log(
-              colors.red(format('Component not published: {0}', err.message))
-            );
+            logger.log(colors.red(`Component not published: ${err.message}`));
           }
 
           callback(err, res);

@@ -21,7 +21,7 @@ module.exports = function(dependencies) {
   return function(opts, callback) {
     const componentsDir = opts.dirPath,
       port = opts.port || 3000,
-      baseUrl = opts.baseUrl || format('http://localhost:{0}/', port),
+      baseUrl = opts.baseUrl || `http://localhost:${port}/`,
       errors = strings.errors.cli,
       fallbackRegistryUrl = opts.fallbackRegistryUrl,
       hotReloading = _.isUndefined(opts.hotReloading)

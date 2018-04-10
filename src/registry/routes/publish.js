@@ -53,7 +53,7 @@ module.exports = function(repository) {
 
     extractPackage(req.files, (err, pkgDetails) => {
       if (err) {
-        res.errorDetails = format('Package is not valid: {0}', err);
+        res.errorDetails = `Package is not valid: ${err}`;
         return res
           .status(500)
           .json({ error: 'package is not valid', details: err });
@@ -66,28 +66,19 @@ module.exports = function(repository) {
         err => {
           if (err) {
             if (err.code === 'not_allowed') {
-              res.errorDetails = format('Publish not allowed: {0}', err.msg);
+              res.errorDetails = `Publish not allowed: ${err.msg}`;
               return res.status(403).json({ error: err.msg });
             } else if (err.code === 'already_exists') {
-              res.errorDetails = format(
-                'Component already exists: {0}',
-                err.msg
-              );
+              res.errorDetails = `Component already exists: ${err.msg}`;
               return res.status(403).json({ error: err.msg });
             } else if (err.code === 'name_not_valid') {
-              res.errorDetails = format(
-                'Component name not valid: {0}',
-                err.msg
-              );
+              res.errorDetails = `Component name not valid: ${err.msg}`;
               return res.status(409).json({ error: err.msg });
             } else if (err.code === 'version_not_valid') {
-              res.errorDetails = format(
-                'Component version not valid: {0}',
-                err.msg
-              );
+              res.errorDetails = `Component version not valid: ${err.msg}`;
               return res.status(409).json({ error: err.msg });
             } else {
-              res.errorDetails = format('Publish failed: {0}', err.msg);
+              res.errorDetails = `Publish failed: ${err.msg}`;
               return res.status(500).json({ error: err.msg });
             }
           }
