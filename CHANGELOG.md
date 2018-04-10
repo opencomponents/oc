@@ -1,5 +1,36 @@
 ## Change Log
 
+### v0.43.2
+- [#861](https://github.com/opencomponents/oc/pull/861) Housekeeping
+
+### v0.43.0
+- [#852](https://github.com/opencomponents/oc/pull/852) [DX-412] Empty response setter on context
+- [#860](https://github.com/opencomponents/oc/pull/860) Housekeeping
+- [#859](https://github.com/opencomponents/oc/pull/859) Update oc-client to the latest version 🚀
+- [#858](https://github.com/opencomponents/oc/pull/858) Update oc-client-browser to the latest version 🚀
+- [#857](https://github.com/opencomponents/oc/pull/857) Update oc-template-jade-compiler to the latest version 🚀
+- [#856](https://github.com/opencomponents/oc/pull/856) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#855](https://github.com/opencomponents/oc/pull/855) Update oc-template-jade to the latest version 🚀
+- [#853](https://github.com/opencomponents/oc/pull/853) Update oc-template-handlebars to the latest version 🚀
+- [#851](https://github.com/opencomponents/oc/pull/851) Update sinon to the latest version 🚀
+- [#849](https://github.com/opencomponents/oc/pull/849) Update pug to the latest version 🚀
+- [#848](https://github.com/opencomponents/oc/pull/848) Update accept-language-parser to the latest version 🚀
+- [#847](https://github.com/opencomponents/oc/pull/847) Update pug to the latest version 🚀
+- [#846](https://github.com/opencomponents/oc/pull/846) Update oc-client to the latest version 🚀
+- [#842](https://github.com/opencomponents/oc/pull/842) Update oc-template-handlebars to the latest version 🚀
+- [#843](https://github.com/opencomponents/oc/pull/843) Update oc-template-jade to the latest version 🚀
+- [#844](https://github.com/opencomponents/oc/pull/844) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#845](https://github.com/opencomponents/oc/pull/845) Update oc-template-jade-compiler to the latest version 🚀
+- [#841](https://github.com/opencomponents/oc/pull/841) Add license scan report and status
+- [#840](https://github.com/opencomponents/oc/pull/840) Update opn to the latest version 🚀
+- [#839](https://github.com/opencomponents/oc/pull/839) Update colors to the latest version 🚀
+- [#838](https://github.com/opencomponents/oc/pull/838) Update colors to the latest version 🚀
+- [#837](https://github.com/opencomponents/oc/pull/837) Update pug to the latest version 🚀
+- [#835](https://github.com/opencomponents/oc/pull/835) Update pug to the latest version 🚀
+- [#834](https://github.com/opencomponents/oc/pull/834) Update livereload to the latest version 🚀
+- [#832](https://github.com/opencomponents/oc/pull/832) Update lint-staged to the latest version 🚀
+- [#830](https://github.com/opencomponents/oc/pull/830) Update form-data to the latest version 🚀
+
 ### v0.42.26
 - [#829](https://github.com/opencomponents/oc/pull/829) Added author to components list view and author filter
 
