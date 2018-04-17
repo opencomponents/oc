@@ -12,10 +12,12 @@ describe('registry : domain : register-templates', () => {
 
     it('should correctly register core-templates', () => {
       expect(registerd.templatesHash).to.deep.eql({
+        'oc-template-es6': require('oc-template-es6'),
         'oc-template-jade': require('oc-template-jade'),
         'oc-template-handlebars': require('oc-template-handlebars')
       });
       expect(registerd.templatesInfo).to.deep.eql([
+        require('oc-template-es6').getInfo(),
         require('oc-template-jade').getInfo(),
         require('oc-template-handlebars').getInfo()
       ]);
@@ -37,11 +39,13 @@ describe('registry : domain : register-templates', () => {
 
     it('should correctly register core-templates & extra templates', () => {
       expect(registerd.templatesHash).to.deep.eql({
+        'oc-template-es6': require('oc-template-es6'),
         'oc-template-jade': require('oc-template-jade'),
         'oc-template-handlebars': require('oc-template-handlebars'),
         'new-tpl': templateMock
       });
       expect(registerd.templatesInfo).to.deep.eql([
+        require('oc-template-es6').getInfo(),
         require('oc-template-jade').getInfo(),
         require('oc-template-handlebars').getInfo(),
         templateMock.getInfo()
@@ -49,14 +53,16 @@ describe('registry : domain : register-templates', () => {
     });
 
     describe('and additional template is already part of core-templates', () => {
-      const registerd = registerTemplates([require('oc-template-jade')]);
+      const registered = registerTemplates([require('oc-template-jade')]);
 
       it('should correctly register core-templates only', () => {
-        expect(registerd.templatesHash).to.deep.eql({
+        expect(registered.templatesHash).to.deep.eql({
+          'oc-template-es6': require('oc-template-es6'),
           'oc-template-jade': require('oc-template-jade'),
           'oc-template-handlebars': require('oc-template-handlebars')
         });
-        expect(registerd.templatesInfo).to.deep.eql([
+        expect(registered.templatesInfo).to.deep.eql([
+          require('oc-template-es6').getInfo(),
           require('oc-template-jade').getInfo(),
           require('oc-template-handlebars').getInfo()
         ]);

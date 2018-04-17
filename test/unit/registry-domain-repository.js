@@ -132,11 +132,14 @@ describe('registry : domain : repository', () => {
     describe('when getting the list of supported templates', () => {
       describe('when no templates are specificed on the configuaration', () => {
         it('should return core templates', () => {
-          expect(repository.getTemplatesInfo().length).to.equal(2);
+          expect(repository.getTemplatesInfo().length).to.equal(3);
           expect(repository.getTemplatesInfo()[0].type).to.equal(
-            'oc-template-jade'
+            'oc-template-es6'
           );
           expect(repository.getTemplatesInfo()[1].type).to.equal(
+            'oc-template-jade'
+          );
+          expect(repository.getTemplatesInfo()[2].type).to.equal(
             'oc-template-handlebars'
           );
         });
@@ -148,7 +151,7 @@ describe('registry : domain : repository', () => {
             templates: [require('oc-template-jade')]
           });
           const repository = new Repository(conf);
-          expect(repository.getTemplatesInfo().length).to.equal(2);
+          expect(repository.getTemplatesInfo().length).to.equal(3);
         });
       });
 
