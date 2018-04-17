@@ -21,6 +21,6 @@
     }
   },
   "devDependencies": {
-    "oc-template-es6": "^1.0.1"    
+    "oc-template-es6": "^1.0.1"
   }
 }

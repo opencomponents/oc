@@ -49,10 +49,10 @@ module.exports = {
     init: {
       cmd: 'init <componentName> [templateType]',
       example: {
-        cmd: '$0 init test-component jade'
+        cmd: '$0 init test-component oc-template-es6'
       },
       description:
-        'Creates a new empty component of a specific template type in the current folder [templateType default: oc-template-handlebars]',
+        'Creates a new empty component of a specific template type in the current folder [templateType default: oc-template-es6]',
       usage: 'Usage: $0 init <componentName> [templateType]'
     },
 
