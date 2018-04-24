@@ -82,7 +82,7 @@
     "morgan": "1.9.0",
     "multer": "^1.3.0",
     "nice-cache": "0.0.5",
-    "oc-client": "3.0.11",
+    "oc-client": "3.1.0",
     "oc-client-browser": "1.3.1",
     "oc-empty-response-handler": "1.0.0",
     "oc-get-unix-utc-timestamp": "1.0.2",
