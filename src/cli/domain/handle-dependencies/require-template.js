@@ -28,14 +28,11 @@ module.exports = function(template, options) {
     template
   );
 
-  [
-    componentRelativePath,
-    template,
-    localTemplate,
-    relativeTemplate
-  ].forEach(pathToTry => {
-    ocTemplate = ocTemplate || cleanRequire(pathToTry, { justTry: true });
-  });
+  [componentRelativePath, template, localTemplate, relativeTemplate].forEach(
+    pathToTry => {
+      ocTemplate = ocTemplate || cleanRequire(pathToTry, { justTry: true });
+    }
+  );
 
   if (!ocTemplate) {
     throw new Error(format(strings.errors.cli.TEMPLATE_NOT_FOUND, template));

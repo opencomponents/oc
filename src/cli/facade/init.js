@@ -14,7 +14,7 @@ module.exports = function(dependencies) {
   return function(opts, callback) {
     const componentName = opts.componentName;
     const templateType = _.isUndefined(opts.templateType)
-      ? 'oc-template-handlebars'
+      ? 'oc-template-es6'
       : opts.templateType;
     const errors = strings.errors.cli;
     const messages = strings.messages.cli;

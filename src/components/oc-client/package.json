@@ -12,12 +12,15 @@
     "files": {
       "data": "server.js",
       "template": {
-        "src": "template.jade",
-        "type": "jade"
+        "src": "template.js",
+        "type": "oc-template-es6"
       },
       "static": [
         "src"
       ]
     }
+  },
+  "devDependencies": {
+    "oc-template-es6-compiler": "^1.0.1"
   }
 }
