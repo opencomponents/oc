@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.44.0
+- [#862](https://github.com/opencomponents/oc/pull/862) [DX-467] Add ES6 template as default core template
+- [#863](https://github.com/opencomponents/oc/pull/863) Update oc-client to the latest version 🚀
+
 ### v0.43.2
 - [#861](https://github.com/opencomponents/oc/pull/861) Housekeeping
 
