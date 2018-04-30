@@ -3,8 +3,7 @@ const styleCSS = require('../static/style');
 module.exports = vm => ({ content, head, scripts }) => {
   const href = vm.href.replace('http://', '//').replace('https://', '//');
 
-  return `<!DOCTYPE html>
-<html>
+  return `<!DOCTYPE html><html>
   <head>
     <title>${vm.title}</title>
     <meta name="robots" content="index, follow" />
