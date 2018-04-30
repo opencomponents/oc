@@ -4,6 +4,7 @@ const parseAuthor = require('parse-author');
 const _ = require('lodash');
 
 const getComponentFallback = require('./helpers/get-component-fallback');
+const infoView = require('../views/info');
 const isUrlDiscoverable = require('./helpers/is-url-discoverable');
 const urlBuilder = require('../domain/url-builder');
 
@@ -32,20 +33,6 @@ function getParsedAuthor(component) {
   return _.isString(author) ? parseAuthor(author) : author;
 }
 
-function addGetRepositoryUrlFunction(component) {
-  component.getRepositoryUrl = function() {
-    if (_.isObject(this.repository)) {
-      if (this.repository.url) {
-        return this.repository.url;
-      }
-    }
-    if (_.isString(this.repository)) {
-      return this.repository;
-    }
-    return null;
-  };
-}
-
 function componentInfo(err, req, res, component) {
   if (err) {
     res.errorDetails = err.registryError || err;
@@ -60,20 +47,28 @@ function componentInfo(err, req, res, component) {
     const parsedAuthor = getParsedAuthor(component);
     let href = res.conf.baseUrl;
 
-    addGetRepositoryUrlFunction(component);
+    const repositoryUrl = _.get(
+      component,
+      'repository.url',
+      _.isString(component.repository) ? component.repository : null
+    );
 
     isUrlDiscoverable(href, (err, result) => {
       if (!result.isDiscoverable) {
         href = `//${req.headers.host}${res.conf.prefix}`;
       }
 
-      res.render('component-info', {
-        component,
-        dependencies: _.keys(component.dependencies),
-        href,
-        parsedAuthor,
-        sandBoxDefaultQs: urlBuilder.queryString(params)
-      });
+      res.send(
+        infoView({
+          component,
+          dependencies: _.keys(component.dependencies),
+          href,
+          parsedAuthor,
+          repositoryUrl,
+          sandBoxDefaultQs: urlBuilder.queryString(params),
+          title: 'Component Info'
+        })
+      );
     });
   } else {
     res.status(200).json(
@@ -96,9 +91,8 @@ module.exports = function(conf, repository) {
             req,
             res,
             registryError,
-            (fallbackError, fallbackComponent) => {
-              componentInfo(fallbackError, req, res, fallbackComponent);
-            }
+            (fallbackError, fallbackComponent) =>
+              componentInfo(fallbackError, req, res, fallbackComponent)
           );
         }
 

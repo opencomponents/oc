@@ -1,6 +1,0 @@
-#components-history.box
-  each component in componentsHistory
-    a(href=component.name + '/' + component.version + '/~info')
-      .componentRow.row.table
-        p.release #{component.publishDate} - Published #{component.name}@#{component.version}
-        
