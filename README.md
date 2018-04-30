@@ -42,14 +42,16 @@ Disclaimer: This project is still under heavy development and the API is likely 
 
 [![linux build](https://img.shields.io/travis/opencomponents/oc/master.svg?label=linux+build)](http://travis-ci.org/opencomponents/oc)
 
-| Node6             | Node7             | Node8            | 
-|-------------------|-------------------|-------------------|
-| [![Node6][1]][4] | [![Node7][2]][4] | [![Node8][3]][4] |
+| Node 6          | Node 7           | Node 8           | Node 9           |  Node 10         | 
+|-----------------|------------------|------------------|------------------|------------------|
+| [![Node6][1]][6]| [![Node7][2]][6] | [![Node8][3]][6] | [![Node8][4]][6] | [![Node8][5]][6] |
 
 [1]: https://travis-matrix-badges.herokuapp.com/repos/opencomponents/oc/branches/master/1
 [2]: https://travis-matrix-badges.herokuapp.com/repos/opencomponents/oc/branches/master/2
 [3]: https://travis-matrix-badges.herokuapp.com/repos/opencomponents/oc/branches/master/3
-[4]: https://travis-ci.org/opencomponents/oc
+[4]: https://travis-matrix-badges.herokuapp.com/repos/opencomponents/oc/branches/master/4
+[5]: https://travis-matrix-badges.herokuapp.com/repos/opencomponents/oc/branches/master/5
+[6]: https://travis-ci.org/opencomponents/oc
 
 
 [![windows build](https://img.shields.io/appveyor/ci/matteofigus/oc/master.svg?label=windows+build)](https://ci.appveyor.com/project/matteofigus/oc)
