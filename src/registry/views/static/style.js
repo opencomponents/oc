@@ -1,4 +1,4 @@
-body {
+module.exports = `body {
   width: 1024px;
   margin: 0 auto;
   font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial;
@@ -274,3 +274,4 @@ a.tab-link.selected {
 .hide {
   display: none !important;
 }
+`;
