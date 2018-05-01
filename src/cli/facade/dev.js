@@ -141,10 +141,13 @@ module.exports = function(dependencies) {
           return callback(err);
         }
         packageComponents(components, () => {
-          const liveReloadServer = livereload.createServer({ port: port + 1 });
-          const refreshLiveReload = hotReloading
-            ? () => liveReloadServer.refresh('/')
-            : _.noop;
+          let refreshLiveReload = _.noop;
+          if (hotReloading) {
+            const liveReloadServer = livereload.createServer({
+              port: port + 1
+            });
+            refreshLiveReload = () => liveReloadServer.refresh('/');
+          }
 
           const registry = new oc.Registry({
             baseUrl,
