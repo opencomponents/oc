@@ -14,7 +14,7 @@ function componentPreview(err, req, res, component, templates) {
   }
 
   let liveReload = '';
-  if (res.conf.env.name === 'local') {
+  if (res.conf.env.name === 'local' && res.conf.hotReloading) {
     const liveReloadPort = res.conf.port + 1;
     liveReload = `<script src="http://localhost:${liveReloadPort}/livereload.js?snipver=1"></script>`;
   }
