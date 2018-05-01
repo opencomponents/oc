@@ -42,15 +42,15 @@ Disclaimer: This project is still under heavy development and the API is likely 
 
 [![linux build](https://img.shields.io/travis/opencomponents/oc/master.svg?label=linux+build)](http://travis-ci.org/opencomponents/oc)
 
-| Node 6          | Node 8           | Node 9           |  Node 10         | 
-|-----------------|------------------|------------------|------------------|------------------|
-| [![Node6][1]][6]| [![Node8][2]][6] | [![Node8][3]][6] | [![Node8][4]][6] |
+| Node 6| Node 8| Node 9| Node 10| 
+|-------|-------|-------|--------|
+| [![Node6][1]][5]| [![Node8][2]][5] | [![Node9][3]][5] | [![Node10][4]][5] |
 
 [1]: https://travis-matrix-badges.herokuapp.com/repos/opencomponents/oc/branches/master/1
 [2]: https://travis-matrix-badges.herokuapp.com/repos/opencomponents/oc/branches/master/2
 [3]: https://travis-matrix-badges.herokuapp.com/repos/opencomponents/oc/branches/master/3
 [4]: https://travis-matrix-badges.herokuapp.com/repos/opencomponents/oc/branches/master/4
-[6]: https://travis-ci.org/opencomponents/oc
+[5]: https://travis-ci.org/opencomponents/oc
 
 
 [![windows build](https://img.shields.io/appveyor/ci/matteofigus/oc/master.svg?label=windows+build)](https://ci.appveyor.com/project/matteofigus/oc)
