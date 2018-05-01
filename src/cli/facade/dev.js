@@ -3,6 +3,7 @@
 const async = require('async');
 const colors = require('colors/safe');
 const format = require('stringformat');
+const getPort = require('get-port');
 const livereload = require('livereload');
 const path = require('path');
 const _ = require('lodash');
@@ -141,50 +142,63 @@ module.exports = function(dependencies) {
           return callback(err);
         }
         packageComponents(components, () => {
-          let refreshLiveReload = _.noop;
-          if (hotReloading) {
-            const liveReloadServer = livereload.createServer({
-              port: port + 1
-            });
-            refreshLiveReload = () => liveReloadServer.refresh('/');
-          }
-
-          const registry = new oc.Registry({
-            baseUrl,
-            prefix: opts.prefix || '',
-            dependencies: dependencies.modules,
-            discovery: true,
-            env: { name: 'local' },
-            fallbackRegistryUrl,
-            hotReloading,
-            local: true,
-            path: path.resolve(componentsDir),
-            port,
-            templates: dependencies.templates,
-            verbosity: 1
-          });
-
-          registerPlugins(registry);
-
-          logger.warn(format(strings.messages.cli.REGISTRY_STARTING, baseUrl));
-          registry.start(err => {
-            if (err) {
-              if (err.code === 'EADDRINUSE') {
-                err = format(strings.errors.cli.PORT_IS_BUSY, port);
+          async.waterfall([
+            callback => {
+              if (hotReloading) {
+                getPort().then(port => {
+                  const liveReloadServer = livereload.createServer({ port });
+                  const refresher = () => liveReloadServer.refresh('/');
+                  callback(null, {
+                    refresher,
+                    port
+                  });
+                });
+              } else {
+                callback(null, { refresher: _.noop, port: null });
               }
+            },
+            (liveReload, callback) => {
+              const registry = new oc.Registry({
+                baseUrl,
+                prefix: opts.prefix || '',
+                dependencies: dependencies.modules,
+                discovery: true,
+                env: { name: 'local' },
+                fallbackRegistryUrl,
+                hotReloading,
+                liveReloadPort: liveReload.port,
+                local: true,
+                path: path.resolve(componentsDir),
+                port,
+                templates: dependencies.templates,
+                verbosity: 1
+              });
 
-              logger.err(err);
-              return callback(err);
-            }
+              registerPlugins(registry);
 
-            if (optWatch) {
-              watchForChanges(
-                { components, refreshLiveReload },
-                packageComponents
+              logger.warn(
+                format(strings.messages.cli.REGISTRY_STARTING, baseUrl)
               );
+              registry.start(err => {
+                if (err) {
+                  if (err.code === 'EADDRINUSE') {
+                    err = format(strings.errors.cli.PORT_IS_BUSY, port);
+                  }
+
+                  logger.err(err);
+                  return callback(err);
+                }
+
+                if (optWatch) {
+                  watchForChanges(
+                    { components, refreshLiveReload: liveReload.refresher },
+                    packageComponents
+                  );
+                }
+                callback(null, registry);
+              });
             }
-            callback(null, registry);
-          });
+          ]);
         });
       });
     });
