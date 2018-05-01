@@ -7,6 +7,7 @@ const _ = require('lodash');
 const dateStringified = require('../../utils/date-stringify');
 const getComponentsHistory = require('./helpers/get-components-history');
 const getAvailableDependencies = require('./helpers/get-available-dependencies');
+const indexView = require('../views');
 const packageInfo = require('../../../package.json');
 const urlBuilder = require('../domain/url-builder');
 
@@ -28,12 +29,12 @@ module.exports = function(repository) {
       }
 
       const isHtmlRequest =
-          !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0,
-        baseResponse = {
-          href: res.conf.baseUrl,
-          ocVersion: packageInfo.version,
-          type: res.conf.local ? 'oc-registry-local' : 'oc-registry'
-        };
+        !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
+      const baseResponse = {
+        href: res.conf.baseUrl,
+        ocVersion: packageInfo.version,
+        type: res.conf.local ? 'oc-registry-local' : 'oc-registry'
+      };
 
       if (isHtmlRequest && !!res.conf.discovery) {
         let componentsInfo = [],
@@ -44,9 +45,7 @@ module.exports = function(repository) {
           components,
           (component, callback) =>
             repository.getComponent(component, (err, result) => {
-              if (err) {
-                return callback(err);
-              }
+              if (err) return callback(err);
 
               if (result.oc && result.oc.date) {
                 result.oc.stringifiedDate = dateStringified(
@@ -59,45 +58,38 @@ module.exports = function(repository) {
               callback();
             }),
           err => {
-            if (err) {
-              return next(err);
-            }
+            if (err) return next(err);
 
             componentsInfo = _.sortBy(componentsInfo, 'name');
-
             repository.getComponentsDetails((err, details) => {
-              res.render(
-                'index',
-                _.extend(baseResponse, {
-                  availableDependencies: getAvailableDependencies(
-                    res.conf.dependencies
-                  ),
-                  availablePlugins: res.conf.plugins,
-                  components: componentsInfo,
-                  componentsReleases,
-                  componentsList: _.map(componentsInfo, component => {
-                    const state =
-                      !!component.oc && !!component.oc.state
-                        ? component.oc.state
-                        : '';
+              const vm = _.extend(baseResponse, {
+                availableDependencies: getAvailableDependencies(
+                  res.conf.dependencies
+                ),
+                availablePlugins: res.conf.plugins,
+                components: componentsInfo,
+                componentsReleases,
+                componentsList: _.map(componentsInfo, component => {
+                  const state = _.get(component, 'oc.state', '');
+                  if (state) {
+                    stateCounts[state] = stateCounts[state] || 0;
+                    stateCounts[state] += 1;
+                  }
 
-                    if (state) {
-                      stateCounts[state] = stateCounts[state] || 0;
-                      stateCounts[state] += 1;
-                    }
+                  return {
+                    name: component.name,
+                    author: component.author,
+                    state
+                  };
+                }),
+                componentsHistory:
+                  !res.conf.local && getComponentsHistory(details),
+                q: req.query.q || '',
+                stateCounts,
+                title: 'OpenComponents Registry'
+              });
 
-                    return {
-                      name: component.name,
-                      author: component.author,
-                      state
-                    };
-                  }),
-                  componentsHistory:
-                    !res.conf.local && getComponentsHistory(details),
-                  q: req.query.q || '',
-                  stateCounts
-                })
-              );
+              res.send(indexView(vm));
             });
           }
         );

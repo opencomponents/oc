@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.44.1
+- [#864](https://github.com/opencomponents/oc/pull/864) [DX-467] Remove Pug dependency from the UI
+- [#865](https://github.com/opencomponents/oc/pull/865) Integrate CI to modern node versions
+- [#866](https://github.com/opencomponents/oc/pull/866) Update colors to the latest version 🚀
+
 ### v0.44.0
 - [#862](https://github.com/opencomponents/oc/pull/862) [DX-467] Add ES6 template as default core template
 - [#863](https://github.com/opencomponents/oc/pull/863) Update oc-client to the latest version 🚀
