@@ -32,7 +32,7 @@ module.exports = function(dependencies) {
 
     callback = wrapCliCallback(callback);
 
-    const watchForChanges = function({ components, liveReloadServer }, cb) {
+    const watchForChanges = function({ components, refreshLiveReload }, cb) {
       watch(components, componentsDir, (err, changedFile, componentDir) => {
         if (err) {
           logger.err(format(strings.errors.generic, err));
@@ -43,9 +43,9 @@ module.exports = function(dependencies) {
           if (!hotReloading) {
             logger.warn(strings.messages.cli.HOT_RELOADING_DISABLED);
           } else if (!componentDir) {
-            cb(components, done => liveReloadServer.refresh('/'));
+            cb(components, refreshLiveReload);
           } else {
-            cb([componentDir], done => liveReloadServer.refresh('/'));
+            cb([componentDir], refreshLiveReload);
           }
         }
       });
@@ -142,6 +142,9 @@ module.exports = function(dependencies) {
         }
         packageComponents(components, () => {
           const liveReloadServer = livereload.createServer({ port: port + 1 });
+          const refreshLiveReload = hotReloading
+            ? () => liveReloadServer.refresh('/')
+            : _.noop;
 
           const registry = new oc.Registry({
             baseUrl,
@@ -173,7 +176,7 @@ module.exports = function(dependencies) {
 
             if (optWatch) {
               watchForChanges(
-                { components, liveReloadServer },
+                { components, refreshLiveReload },
                 packageComponents
               );
             }
