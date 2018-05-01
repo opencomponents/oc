@@ -110,9 +110,7 @@ module.exports = {
     },
     cli: {
       scaffoldError: (url, error) =>
-        `Scaffolding failed. Please open an issue on ${
-          url
-        } with the following information: ${error}`,
+        `Scaffolding failed. Please open an issue on ${url} with the following information: ${error}`,
       COMPONENT_HREF_NOT_FOUND:
         "The specified path is not a valid component's url",
       COMPONENTS_NOT_FOUND: 'no components found in specified path',
@@ -190,9 +188,7 @@ Happy coding
       installCompilerSuccess: (template, compiler, version) =>
         `${colors.green('✔')} Installed ${compiler} [${template} v${version}]`,
       legacyTemplateDeprecationWarning: (legacyType, newType) =>
-        `Template-type "${
-          legacyType
-        }" has been deprecated and is now replaced by "${newType}"`,
+        `Template-type "${legacyType}" has been deprecated and is now replaced by "${newType}"`,
       CHANGES_DETECTED: 'Changes detected on file: {0}',
       CHECKING_DEPENDENCIES: 'Ensuring dependencies are loaded...',
       COMPONENT_INITED: 'Success! Created "{0}"',
@@ -222,6 +218,8 @@ Happy coding
       REGISTRY_LIST: 'oc linked registries:',
       REGISTRY_REMOVED: 'oc registry deleted',
       REGISTRY_STARTING: 'Starting dev registry on {0} ...',
+      REGISTRY_LIVERELOAD_STARTING:
+        'Starting live-reload server on port {0} ... (to disable use "--hotReloading=false")',
       RETRYING_10_SECONDS: 'Retrying in 10 seconds...',
       SCANNING_COMPONENTS: 'Looking for components...'
     }

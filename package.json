@@ -73,6 +73,7 @@
     "express": "4.16.2",
     "form-data": "2.3.2",
     "fs-extra": "6.0.0",
+    "getport": "^0.1.0",
     "livereload": "^0.7.0",
     "lodash": "^4.17.4",
     "minimal-request": "3.0.0",
