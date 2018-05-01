@@ -13,6 +13,7 @@ const applyDefaultValues = require('./apply-default-values');
 const eventsHandler = require('../../domain/events-handler');
 const GetComponentRetrievingInfo = require('./get-component-retrieving-info');
 const getComponentFallback = require('./get-component-fallback');
+const isTemplateLegacy = require('../../../utils/is-template-legacy');
 const NestedRenderer = require('../../domain/nested-renderer');
 const RequireWrapper = require('../../domain/require-wrapper');
 const sanitiser = require('../../domain/sanitiser');
@@ -147,8 +148,7 @@ module.exports = function(conf, repository) {
 
         // Support legacy templates
         let templateType = component.oc.files.template.type;
-        const isLegacyTemplate =
-          templateType === 'jade' || templateType === 'handlebars';
+        const isLegacyTemplate = isTemplateLegacy(templateType);
         if (isLegacyTemplate) {
           templateType = `oc-template-${templateType}`;
         }

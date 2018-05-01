@@ -4,7 +4,7 @@ const format = require('stringformat');
 const path = require('path');
 
 const cleanRequire = require('../../../utils/clean-require');
-const isTemplateLegacy = require('./is-template-legacy');
+const isTemplateLegacy = require('../../../utils/is-template-legacy');
 const isTemplateValid = require('../../../utils/is-template-valid');
 const strings = require('../../../resources');
 

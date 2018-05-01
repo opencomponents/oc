@@ -765,33 +765,6 @@ describe('registry : domain : validator', () => {
     });
   });
 
-  describe('when validating template type for new candidate', () => {
-    const validate = function(a) {
-      return validator.validateTemplateType(a);
-    };
-
-    describe('when type is not handlebars or jade', () => {
-      const type = 'othertype';
-      it('should not be valid', () => {
-        expect(validate(type)).to.be.false;
-      });
-    });
-
-    describe('when type is handlebars', () => {
-      const type = 'handlebars';
-      it('should be valid', () => {
-        expect(validate(type)).to.be.true;
-      });
-    });
-
-    describe('when type is jade', () => {
-      const type = 'jade';
-      it('should be valid', () => {
-        expect(validate(type)).to.be.true;
-      });
-    });
-  });
-
   describe('when validating component version for new candidate', () => {
     const existingVersions = ['1.0.0', '1.0.1', '2.0.0', '2.1.0'],
       isValid = function(a, b) {

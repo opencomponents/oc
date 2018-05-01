@@ -24,9 +24,6 @@ module.exports = {
   validatePackageJson: packageJsonValidator,
   validatePluginsRequirements: pluginsRequirementsValidator,
   validateRegistryConfiguration: registryConfigurationValidator,
-  validateTemplateType: function(templateType) {
-    return _.includes(['handlebars', 'jade'], templateType);
-  },
   validateVersion: function(version) {
     return !!semver.valid(version);
   }

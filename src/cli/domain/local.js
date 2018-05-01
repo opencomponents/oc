@@ -6,11 +6,12 @@ const targz = require('targz');
 const _ = require('lodash');
 
 const getComponentsByDir = require('./get-components-by-dir');
-const packageComponents = require('./package-components');
-const mock = require('./mock');
-const validator = require('../../registry/domain/validators');
 const initTemplate = require('./init-template');
+const isTemplateLegacy = require('../../utils/is-template-legacy');
+const mock = require('./mock');
+const packageComponents = require('./package-components');
 const strings = require('../../resources');
+const validator = require('../../registry/domain/validators');
 
 module.exports = function() {
   return _.extend(this, {
@@ -41,7 +42,7 @@ module.exports = function() {
       }
 
       // LEGACY TEMPLATES WARNING
-      if (validator.validateTemplateType(templateType)) {
+      if (isTemplateLegacy(templateType)) {
         const legacyName = templateType;
         templateType = legacyName.replace(
           legacyName,

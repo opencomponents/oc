@@ -9,7 +9,7 @@ const _ = require('lodash');
 const ensureCompilerIsDeclaredAsDevDependency = require('./ensure-compiler-is-declared-as-devDependency');
 const getCompiler = require('./get-compiler');
 const installMissingDependencies = require('./install-missing-dependencies');
-const isTemplateLegacy = require('./is-template-legacy');
+const isTemplateLegacy = require('../../../utils/is-template-legacy');
 const strings = require('../../../resources');
 
 const getComponentPackageJson = (componentPath, cb) =>
