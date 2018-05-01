@@ -3,7 +3,7 @@
 const async = require('async');
 const colors = require('colors/safe');
 const format = require('stringformat');
-const getPort = require('get-port');
+const getPort = require('getport');
 const livereload = require('livereload');
 const path = require('path');
 const _ = require('lodash');
@@ -145,12 +145,18 @@ module.exports = function(dependencies) {
           async.waterfall([
             callback => {
               if (hotReloading) {
-                getPort().then(port => {
-                  const liveReloadServer = livereload.createServer({ port });
+                getPort(port + 1, (error, otherPort) => {
+                  if (error) {
+                    return callback(error);
+                  }
+                  const liveReloadServer = livereload.createServer({
+                    port: otherPort
+                  });
                   const refresher = () => liveReloadServer.refresh('/');
+
                   callback(null, {
                     refresher,
-                    port
+                    port: otherPort
                   });
                 });
               } else {
@@ -179,6 +185,14 @@ module.exports = function(dependencies) {
               logger.warn(
                 format(strings.messages.cli.REGISTRY_STARTING, baseUrl)
               );
+              if (liveReload.port) {
+                logger.warn(
+                  format(
+                    strings.messages.cli.REGISTRY_LIVERELOAD_STARTING,
+                    liveReload.port
+                  )
+                );
+              }
               registry.start(err => {
                 if (err) {
                   if (err.code === 'EADDRINUSE') {
