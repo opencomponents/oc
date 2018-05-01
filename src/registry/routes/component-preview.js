@@ -15,7 +15,6 @@ function componentPreview(err, req, res, component, templates) {
 
   let liveReload = '';
   if (res.conf.liveReloadPort) {
-    const liveReloadPort = res.conf.port + 1;
     liveReload = `<script src="http://localhost:${
       res.conf.liveReloadPort
     }/livereload.js?snipver=1"></script>`;
