@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.44.2
+- [#868](https://github.com/opencomponents/oc/pull/868) Live reload to work in dev only when hotReloading flag is on
+- [#867](https://github.com/opencomponents/oc/pull/867) Fix git script
+
 ### v0.44.1
 - [#864](https://github.com/opencomponents/oc/pull/864) [DX-467] Remove Pug dependency from the UI
 - [#865](https://github.com/opencomponents/oc/pull/865) Integrate CI to modern node versions
