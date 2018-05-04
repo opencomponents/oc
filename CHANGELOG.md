@@ -1,5 +1,11 @@
 ## Change Log
 
+### v0.44.3
+- [#872](https://github.com/opencomponents/oc/pull/872) [DX-497] OC Clean
+- [#871](https://github.com/opencomponents/oc/pull/871) [DX-467] Legacy cleanup Part I
+- [#869](https://github.com/opencomponents/oc/pull/869) [DX-496] Fix port allocation for liveReload
+- [#870](https://github.com/opencomponents/oc/pull/870) Update fs-extra to the latest version 🚀
+
 ### v0.44.2
 - [#868](https://github.com/opencomponents/oc/pull/868) Live reload to work in dev only when hotReloading flag is on
 - [#867](https://github.com/opencomponents/oc/pull/867) Fix git script
