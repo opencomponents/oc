@@ -1,5 +1,7 @@
 'use strict';
-const colors = require('colors/safe');
+const { green, yellow } = require('colors/safe');
+
+// Kind of long multi-string messages and functions
 
 const validFunctionMock = `// simplified mock signature
 module.exports = (a, b) => a+b;`;
@@ -19,6 +21,37 @@ module.exports.register = (options, dependencies, next) => {
 
 module.exports.execute = key => cache[key];
 `;
+
+const mockPluginIsNotValid = `Looks like you are trying to register a dynamic mock plugin but the file you specified is not a valid mock.
+The entry point should be a synchronous function or an object containing an asynchronous register() function and a synchronous execute() function.
+Example:
+
+${yellow(validFunctionMock)}
+
+${yellow(validMockObject)}`;
+
+const initSuccess = (componentName, componentPath) => {
+  const success = `Success! Created ${componentName} at ${componentPath}`;
+  return `${green(success)} 
+
+From here you can run several commands
+
+${green('oc --help')}
+To see a detailed list of all the commands available
+
+We suggest that you begin by typing:
+
+${green('oc dev . 3030')}
+
+If you have questions, issues or feedback about OpenComponents, please, join us on Gitter:
+${green('https://gitter.im/opentable/oc')}
+
+Happy coding
+
+`;
+};
+
+// Kind of concise string messages and functions
 
 module.exports = {
   commands: {
@@ -109,6 +142,8 @@ module.exports = {
       TEMPLATE_NOT_SUPPORTED: '{0} is not a supported oc-template'
     },
     cli: {
+      cleanRemoveError: err =>
+        `An error happened when removing the folders: ${err}`,
       scaffoldError: (url, error) =>
         `Scaffolding failed. Please open an issue on ${url} with the following information: ${error}`,
       COMPONENT_HREF_NOT_FOUND:
@@ -116,18 +151,12 @@ module.exports = {
       COMPONENTS_NOT_FOUND: 'no components found in specified path',
       DEPENDENCIES_INSTALL_FAIL:
         'An error happened when installing the dependencies',
+      DEV_FAIL: 'An error happened when initialising the dev runner: {0}',
       FOLDER_IS_NOT_A_FOLDER: '"{0}" must be a directory',
       FOLDER_NOT_FOUND: '"{0}" not found',
-      DEV_FAIL: 'An error happened when initialising the dev runner: {0}',
       INIT_FAIL: 'An error happened when initialising the component: {0}',
       INVALID_CREDENTIALS: 'Invalid credentials',
-      MOCK_PLUGIN_IS_NOT_VALID: `Looks like you are trying to register a dynamic mock plugin but the file you specified is not a valid mock.
-The entry point should be a synchronous function or an object containing an asynchronous register() function and a synchronous execute() function.
-Example:
-
-${colors.yellow(validFunctionMock)}
-
-${colors.yellow(validMockObject)}`,
+      MOCK_PLUGIN_IS_NOT_VALID: mockPluginIsNotValid,
       NAME_NOT_VALID:
         'the name is not valid. Allowed characters are alphanumeric, _, -',
       NODE_CLI_VERSION_NEEDS_UPGRADE:
@@ -165,28 +194,16 @@ ${colors.yellow(validMockObject)}`,
   },
   messages: {
     cli: {
-      initSuccess: (componentName, componentPath) => `${colors.green(
-        'Success! Created ' + componentName + ' at ' + componentPath
-      )} 
-
-From here you can run several commands
-
-  ${colors.green('oc --help')}
-    To see a detailed list of all the commands available
-
-We suggest that you begin by typing:
-
-  ${colors.green('oc dev . 3030')}
-
-If you have questions, issues or feedback about OpenComponents, please, join us on Gitter:
-  ${colors.green('https://gitter.im/opentable/oc')}
-
-Happy coding
-
-`,
+      cleanAlreadyClean: `The folders are already clean`,
+      cleanList: list =>
+        `The following folders will be removed:\n${list.join('\n')}`,
+      cleanPrompt: 'Proceed? [Y/n]',
+      cleanPromptDefault: 'Y',
+      cleanSuccess: `Folders removed`,
+      initSuccess,
       installCompiler: compiler => `Installing ${compiler} from npm...`,
       installCompilerSuccess: (template, compiler, version) =>
-        `${colors.green('✔')} Installed ${compiler} [${template} v${version}]`,
+        `${green('✔')} Installed ${compiler} [${template} v${version}]`,
       legacyTemplateDeprecationWarning: (legacyType, newType) =>
         `Template-type "${legacyType}" has been deprecated and is now replaced by "${newType}"`,
       CHANGES_DETECTED: 'Changes detected on file: {0}',

@@ -5,6 +5,7 @@ const path = require('path');
 const targz = require('targz');
 const _ = require('lodash');
 
+const clean = require('./clean');
 const getComponentsByDir = require('./get-components-by-dir');
 const initTemplate = require('./init-template');
 const isTemplateLegacy = require('../../utils/is-template-legacy');
@@ -15,6 +16,7 @@ const validator = require('../../registry/domain/validators');
 
 module.exports = function() {
   return _.extend(this, {
+    clean,
     cleanup: function(compressedPackagePath, callback) {
       return fs.unlink(compressedPackagePath, callback);
     },
@@ -26,7 +28,7 @@ module.exports = function() {
           tar: {
             map: function(file) {
               return _.extend(file, {
-                name: '_package/' + file.name
+                name: `_package/${file.name}`
               });
             }
           }
