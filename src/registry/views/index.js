@@ -1,8 +1,9 @@
 module.exports = vm => {
   const tabs = {
-    list: require('./partials/components-list')(vm),
+    dependencies: require('./partials/components-dependencies')(vm),
     history: require('./partials/components-history')(vm),
-    dependencies: require('./partials/components-dependencies')(vm)
+    list: require('./partials/components-list')(vm),
+    templates: require('./partials/components-templates')(vm)
   };
 
   const indexJS = require('./static/index');
@@ -18,6 +19,7 @@ module.exports = vm => {
 
   const extraLinks =
     ` | <a href="#components-history" class="tab-link">History</a>` +
+    ` | <a href="#components-templates" class="tab-link">Available templates</a>` +
     ` | <a href="#components-dependencies" class="tab-link">Available dependencies</a>`;
 
   const registryType = isLocal ? 'Local dev registry' : 'On-line registry';
@@ -35,7 +37,10 @@ module.exports = vm => {
       <a href="#components-list" class="tab-link">Components</a>
       ${!isLocal ? extraLinks : ''}
     </h2>
-    ${tabs.list + tabs.history + tabs.dependencies}`;
+    ${tabs.list}
+    ${tabs.history}
+    ${tabs.templates}
+    ${tabs.dependencies}`;
 
   const scripts = `<script>
     var q = "${encodeURIComponent(vm.q)}", componentsList = ${JSON.stringify(
