@@ -6,6 +6,7 @@ module.exports = vm => {
   const infoJS = require('./static/info');
   const layout = require('./partials/layout')(vm);
   const property = require('./partials/property')(vm);
+  const isTemplateLegacy = require('../../utils/is-template-legacy');
 
   const showArray = (title, arr) =>
     property(title, !!arr && arr.length > 0 ? arr.join(', ') : 'none');
@@ -24,6 +25,14 @@ module.exports = vm => {
     ? `OC CLI ${component.oc.version}`
     : 'not available';
 
+  const templateType = component.oc.files.template.type;
+  const compiler = `${templateType}-compiler`;
+  const template = `${templateType} (${
+    isTemplateLegacy(templateType)
+      ? 'legacy'
+      : compiler + '@' + component.devDependencies[compiler]
+  })`;
+
   const content = `<a class="back" href="${href}">&lt;&lt; All components</a>
     <h2>${component.name} &nbsp;${componentVersions()}</h2>
     <p class="w-100">${component.description} ${componentState()}</p>
@@ -32,6 +41,7 @@ module.exports = vm => {
     ${componentAuthor()}
     ${property('Publish date', publishDate)}
     ${property('Publish agent', publishAgent)}
+    ${property('Template', template)}
     ${showArray('Node.js dependencies', dependencies)}
     ${showArray('Plugin dependencies', component.oc.plugins)}
     ${componentParameters()}
