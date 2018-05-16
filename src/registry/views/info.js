@@ -30,7 +30,7 @@ module.exports = vm => {
   const template = `${templateType} (${
     isTemplateLegacy(templateType)
       ? 'legacy'
-      : compiler + '@' + component.devDependencies[compiler]
+      : compiler + '@' + component.oc.files.template.version
   })`;
 
   const content = `<a class="back" href="${href}">&lt;&lt; All components</a>
