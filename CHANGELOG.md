@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.44.4
+- [#875](https://github.com/opencomponents/oc/pull/875) [DX-502] Add templates info into OC UI
+- [#874](https://github.com/opencomponents/oc/pull/874) Update body-parser to the latest version 🚀
+
 ### v0.44.3
 - [#872](https://github.com/opencomponents/oc/pull/872) [DX-497] OC Clean
 - [#871](https://github.com/opencomponents/oc/pull/871) [DX-467] Legacy cleanup Part I
