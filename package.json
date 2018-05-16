@@ -75,7 +75,7 @@
     "fs-extra": "6.0.0",
     "getport": "^0.1.0",
     "livereload": "^0.7.0",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.10",
     "minimal-request": "3.0.0",
     "morgan": "1.9.0",
     "multer": "^1.3.0",
