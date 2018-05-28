@@ -142,6 +142,10 @@ module.exports = function(opts) {
       });
     },
     remove: function(registry, callback) {
+      if (registry.slice(registry.length - 1) !== '/') {
+        registry += '/';
+      }
+
       fs.readJson(settings.configFile.src, (err, res) => {
         if (err) {
           res = {};
