@@ -1,5 +1,13 @@
 ## Change Log
 
+### v0.44.5
+- [#881](https://github.com/opencomponents/oc/pull/881) chore(package): update sinon to version 5.0.10
+- [#884](https://github.com/opencomponents/oc/pull/884) ensuring trailing slash to the registry url before removing
+- [#882](https://github.com/opencomponents/oc/pull/882) Update builtin-modules to the latest version 🚀
+- [#878](https://github.com/opencomponents/oc/pull/878) Update colors to the latest version 🚀
+- [#876](https://github.com/opencomponents/oc/pull/876) Upgrade lodash
+- [#877](https://github.com/opencomponents/oc/pull/877) UI bugfix
+
 ### v0.44.4
 - [#875](https://github.com/opencomponents/oc/pull/875) [DX-502] Add templates info into OC UI
 - [#874](https://github.com/opencomponents/oc/pull/874) Update body-parser to the latest version 🚀
