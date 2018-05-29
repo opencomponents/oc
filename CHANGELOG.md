@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.44.6
+- [#886](https://github.com/opencomponents/oc/pull/886) Lock broken version of es6-compiler
+
 ### v0.44.5
 - [#881](https://github.com/opencomponents/oc/pull/881) chore(package): update sinon to version 5.0.10
 - [#884](https://github.com/opencomponents/oc/pull/884) ensuring trailing slash to the registry url before removing
