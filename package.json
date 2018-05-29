@@ -54,7 +54,7 @@
     "minimist": "^1.2.0",
     "mocha": "^5.0.0",
     "node-emoji": "^1.8.1",
-    "oc-template-es6-compiler": "^1.0.1",
+    "oc-template-es6-compiler": "1.1.0",
     "prettier-eslint-cli": "^4.0.4",
     "semver-sort": "0.0.4",
     "simple-git": "^1.77.0",
