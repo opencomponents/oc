@@ -34,6 +34,13 @@ describe('resources : settings', () => {
       });
     });
 
+    describe('when something in the .idea folder changes', () => {
+      it('should ignore it', () => {
+        const result = execute('/path/to/.idea/HEAD');
+        expect(result).to.be.true;
+      });
+    });
+
     describe('when node_modules changes', () => {
       it('should ignore it', () => {
         const result = execute('/path/to/node_modules/something-changed');
