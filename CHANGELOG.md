@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.44.7
+- [#885](https://github.com/opencomponents/oc/pull/885) Add .idea/ in files patterns to ignore
+
 ### v0.44.6
 - [#886](https://github.com/opencomponents/oc/pull/886) Lock broken version of es6-compiler
 
