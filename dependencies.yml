@@ -1,0 +1,9 @@
+version: 2
+dependencies:
+
+  - type: js
+    path: /
+    manifest_updates:
+      filters:
+      - name: ".*"
+        versions: "Y.Y.Y"
