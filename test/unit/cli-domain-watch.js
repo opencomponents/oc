@@ -5,7 +5,7 @@ const injectr = require('injectr');
 const sinon = require('sinon');
 
 describe('cli : domain : watch', () => {
-  const execute = (fileChanged, cb) => {
+  const execute = (fileChanged, separator, cb) => {
     class Stats {
       constructor(settings) {
         this.stuff = settings.stuff;
@@ -15,7 +15,7 @@ describe('cli : domain : watch', () => {
     const watch = injectr('../../src/cli/domain/watch.js', {
       path: {
         resolve: x => x,
-        sep: '/'
+        sep: separator
       },
       watch: {
         watchTree: sinon
@@ -30,6 +30,7 @@ describe('cli : domain : watch', () => {
 
     watch(
       [
+        'C:\\Windows-like\\path\\to\\yet-another-component',
         '/path/to/my-component',
         '/path/to/my-component2',
         '/path/to/some-other-component'
@@ -44,6 +45,7 @@ describe('cli : domain : watch', () => {
     before(done => {
       execute(
         '/path/to/my-component/server.js',
+        '/',
         (error, fileName, componentDir) => {
           result = { error, fileName, componentDir };
           done();
@@ -69,6 +71,7 @@ describe('cli : domain : watch', () => {
     before(done => {
       execute(
         '/path/to/my-component2/server.js',
+        '/',
         (error, fileName, componentDir) => {
           result = { error, fileName, componentDir };
           done();
@@ -86,6 +89,36 @@ describe('cli : domain : watch', () => {
 
     it('should return the component folder', () => {
       expect(result.componentDir).to.equal('/path/to/my-component2');
+    });
+  });
+
+  describe('when a file from a component on Windows-like path changes', () => {
+    let result;
+    before(done => {
+      execute(
+        'C:\\Windows-like\\path\\to\\yet-another-component\\server.js',
+        '\\',
+        (error, fileName, componentDir) => {
+          result = { error, fileName, componentDir };
+          done();
+        }
+      );
+    });
+
+    it('should return no error', () => {
+      expect(result.error).to.be.null;
+    });
+
+    it('should return the fileName', () => {
+      expect(result.fileName).to.equal(
+        'C:\\Windows-like\\path\\to\\yet-another-component\\server.js'
+      );
+    });
+
+    it('should return the component folder', () => {
+      expect(result.componentDir).to.equal(
+        'C:\\Windows-like\\path\\to\\yet-another-component'
+      );
     });
   });
 });
