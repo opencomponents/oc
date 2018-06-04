@@ -1,5 +1,12 @@
 ## Change Log
 
+### v0.44.8
+- [#896](https://github.com/opencomponents/oc/pull/896) Update compilers
+- [#891](https://github.com/opencomponents/oc/pull/891) Update oc-client-browser in package.json from 1.3.1 to 1.3.2
+- [#890](https://github.com/opencomponents/oc/pull/890) Update fs-extra in package.json from 6.0.0 to 6.0.1
+- [#889](https://github.com/opencomponents/oc/pull/889) Update express in package.json from 4.16.2 to 4.16.3
+- [#888](https://github.com/opencomponents/oc/pull/888) Switch from Greenkeeper to dependencies.io
+
 ### v0.44.7
 - [#885](https://github.com/opencomponents/oc/pull/885) Add .idea/ in files patterns to ignore
 
