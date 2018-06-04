@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.44.9
+- [#897](https://github.com/opencomponents/oc/pull/897) [DX-515] Async waterfall was calling the wrong callback
+
 ### v0.44.8
 - [#896](https://github.com/opencomponents/oc/pull/896) Update compilers
 - [#891](https://github.com/opencomponents/oc/pull/891) Update oc-client-browser in package.json from 1.3.1 to 1.3.2
