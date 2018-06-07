@@ -1,5 +1,13 @@
 ## Change Log
 
+### v0.44.10
+- [#902](https://github.com/opencomponents/oc/pull/902) Update oc-client in package.json from 3.2.0 to 3.2.1
+- [#895](https://github.com/opencomponents/oc/pull/895) Update chai in package.json from 3.5.0 to 4.1.2
+- [#903](https://github.com/opencomponents/oc/pull/903) Update oc-client-browser in package.json from 1.3.2 to 1.3.3
+- [#899](https://github.com/opencomponents/oc/pull/899) Fix oc-cli breaking on Windows when modifying files
+- [#901](https://github.com/opencomponents/oc/pull/901) Update dependency-graph in package.json from 0.7.0 to 0.7.1
+- [#900](https://github.com/opencomponents/oc/pull/900) Update oc-client in package.json from 3.1.0 to 3.2.0
+
 ### v0.44.9
 - [#897](https://github.com/opencomponents/oc/pull/897) [DX-515] Async waterfall was calling the wrong callback
 
