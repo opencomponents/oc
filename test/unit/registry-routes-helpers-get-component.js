@@ -96,7 +96,7 @@ describe('registry : routes : helpers : get-component', () => {
       );
       expect(fireStub.args[0][1].version).to.equal('1.0.0');
       expect(fireStub.args[0][1].renderMode).to.equal('rendered');
-      expect(fireStub.args[0][1].duration).not.to.be.empty;
+      expect(fireStub.args[0][1].duration).to.be.above(0);
       expect(fireStub.args[0][1].status).to.equal(200);
     });
   });
@@ -129,7 +129,7 @@ describe('registry : routes : helpers : get-component', () => {
       );
       expect(fireStub.args[0][1].version).to.equal('1.0.0');
       expect(fireStub.args[0][1].renderMode).to.equal('rendered');
-      expect(fireStub.args[0][1].duration).not.to.be.empty;
+      expect(fireStub.args[0][1].duration).to.be.above(0);
       expect(fireStub.args[0][1].status).to.equal(500);
     });
   });
