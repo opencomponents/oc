@@ -1033,7 +1033,7 @@ describe('registry : domain : validator', () => {
       });
 
       it('should not return an error', () => {
-        expect(result.error).to.be.empty;
+        expect(result.error).to.be.undefined;
       });
     });
 
@@ -1045,7 +1045,7 @@ describe('registry : domain : validator', () => {
       });
 
       it('should not return an error', () => {
-        expect(result.error).to.be.empty;
+        expect(result.error).to.be.undefined;
       });
     });
   });
@@ -1108,7 +1108,7 @@ describe('registry : domain : validator', () => {
       });
 
       it('should not return an error', () => {
-        expect(result.error).to.be.empty;
+        expect(result.error).to.be.undefined;
       });
     });
 
@@ -1120,7 +1120,7 @@ describe('registry : domain : validator', () => {
       });
 
       it('should not return an error', () => {
-        expect(result.error).to.be.empty;
+        expect(result.error).to.be.undefined;
       });
     });
   });

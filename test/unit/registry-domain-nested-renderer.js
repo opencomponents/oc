@@ -279,10 +279,8 @@ describe('registry : routes : helpers : nested-renderer', () => {
         });
 
         it('should return error in result callback', () => {
-          expect(result).to.eql([
-            new Error('Component not found!'),
-            new Error('Component not found!')
-          ]);
+          expect(result[0].toString()).to.equal('Error: Component not found!');
+          expect(result[1].toString()).to.equal('Error: Component not found!');
         });
       });
     });

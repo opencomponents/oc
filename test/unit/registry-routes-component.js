@@ -260,7 +260,7 @@ describe('registry : routes : component', () => {
       });
 
       it('should respond without error for successful request', () => {
-        expect(resJsonStub.args[0][0].error).to.be.empty;
+        expect(resJsonStub.args[0][0].error).to.be.undefined;
       });
 
       it('should respond with error message for component execution error', () => {
