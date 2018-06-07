@@ -19,7 +19,7 @@ module.exports = function(dirs, baseDir, changed) {
       (fileName, currentStat, previousStat) => {
         if (!!currentStat || !!previousStat) {
           const componentDir = dirs.find(dir =>
-            Boolean(fileName.match(dir + path.sep))
+            Boolean(fileName.match(escapeRegularExpression(dir + path.sep)))
           );
           changed(null, fileName, componentDir);
         }
@@ -29,3 +29,7 @@ module.exports = function(dirs, baseDir, changed) {
     changed(err);
   }
 };
+
+function escapeRegularExpression(text) {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+}
