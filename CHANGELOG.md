@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.44.11
+- [#904](https://github.com/opencomponents/oc/pull/904) Upgrade deps
+
 ### v0.44.10
 - [#902](https://github.com/opencomponents/oc/pull/902) Update oc-client in package.json from 3.2.0 to 3.2.1
 - [#895](https://github.com/opencomponents/oc/pull/895) Update chai in package.json from 3.5.0 to 4.1.2
