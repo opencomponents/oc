@@ -46,6 +46,12 @@ module.exports = function(repository) {
       res.errorDetails = `File ${filePath} not found`;
       return res.status(404).json({ err: res.errorDetails });
     }
+    
+    const stats = fs.statSync(filePath);
+    if (stats.isDirectory()) {
+      res.errorDetails = 'Forbidden: Directory Listing Denied';
+      return res.status(403).json({ err: res.errorDetails });
+    }
 
     const fileStream = fs.createReadStream(filePath),
       fileInfo = getFileInfo(filePath);
