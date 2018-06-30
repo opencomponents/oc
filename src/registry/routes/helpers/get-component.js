@@ -374,6 +374,7 @@ module.exports = function(conf, repository) {
             acceptLanguage: acceptLanguageParser.parse(acceptLanguage),
             baseUrl: conf.baseUrl,
             env: conf.env,
+            componentName: component.name,
             params,
             plugins: conf.plugins,
             renderComponent: nestedRenderer.renderComponent,
