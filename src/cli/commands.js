@@ -60,6 +60,23 @@ module.exports = {
       usage: 'Usage: $0 dev <dirPath> [port] [baseUrl] [options]'
     },
 
+    doctor: {
+      cmd: 'doctor <dirPath>',
+      example: {
+        cmd: '$0 doctor ./components --fix'
+      },
+      description:
+        'Check your OC components for potential problems. Doctor exits with a non-zero status if any problems are found',
+      options: {
+        fix: {
+          boolean: true,
+          description: 'Interactive mode to fix potential problems',
+          default: false
+        }
+      },
+      usage: 'Usage: $0 doctor <dirPath>'
+    },
+
     init: {
       cmd: 'init <componentName> [templateType]',
       example: {
