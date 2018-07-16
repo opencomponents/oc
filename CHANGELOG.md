@@ -1,5 +1,14 @@
 ## Change Log
 
+### v0.44.12
+- [#915](https://github.com/opencomponents/oc/pull/915) Update oc-storage-adapters-utils in package.json from 1.0.2 to 1.0.3
+- [#914](https://github.com/opencomponents/oc/pull/914) Update sinon in package.json from 6.1.0 to 6.1.3
+- [#910](https://github.com/opencomponents/oc/pull/910) Update yargs in package.json from ^11.0.0 to 12.0.1
+- [#912](https://github.com/opencomponents/oc/pull/912) Update sinon in package.json from 6.0.1 to 6.1.0
+- [#909](https://github.com/opencomponents/oc/pull/909) fix for issue 907
+- [#908](https://github.com/opencomponents/oc/pull/908) Update sinon in package.json from 6.0.0 to 6.0.1
+- [#905](https://github.com/opencomponents/oc/pull/905) Update sinon in package.json from ^5.0.10 to 6.0.0
+
 ### v0.44.11
 - [#904](https://github.com/opencomponents/oc/pull/904) Upgrade deps
 
