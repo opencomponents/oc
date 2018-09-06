@@ -104,6 +104,7 @@ module.exports = function(options) {
     close,
     on: eventsHandler.on,
     register,
-    start
+    start,
+    app
   };
 };
