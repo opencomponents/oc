@@ -1,5 +1,20 @@
 ## Change Log
 
+### v0.44.13
+- [#933](https://github.com/opencomponents/oc/pull/933) Update morgan in package.json from 1.9.0 to 1.9.1
+- [#926](https://github.com/opencomponents/oc/pull/926) Update dependency-graph in package.json from 0.7.1 to 0.7.2
+- [#937](https://github.com/opencomponents/oc/pull/937) Update opn in package.json from 5.3.0 to 5.4.0
+- [#924](https://github.com/opencomponents/oc/pull/924) Update semver in package.json from 5.5.0 to 5.5.1
+- [#925](https://github.com/opencomponents/oc/pull/925) Update colors in package.json from 1.3.1 to 1.3.2
+- [#930](https://github.com/opencomponents/oc/pull/930) Update oc-s3-storage-adapter in package.json from 1.1.3 to 1.1.4
+- [#932](https://github.com/opencomponents/oc/pull/932) Update yargs in package.json from 12.0.1 to 12.0.2
+- [#931](https://github.com/opencomponents/oc/pull/931) expose express app to registry
+- [#923](https://github.com/opencomponents/oc/pull/923) Update sinon in package.json from 6.1.4 to 6.1.5
+- [#920](https://github.com/opencomponents/oc/pull/920) Update colors in package.json from 1.3.0 to 1.3.1
+- [#919](https://github.com/opencomponents/oc/pull/919) Update sinon in package.json from 6.1.3 to 6.1.4
+- [#917](https://github.com/opencomponents/oc/pull/917) Update fs-extra in package.json from 6.0.1 to 7.0.0
+- [#916](https://github.com/opencomponents/oc/pull/916) Update oc-s3-storage-adapter in package.json from 1.1.2 to 1.1.3
+
 ### v0.44.12
 - [#915](https://github.com/opencomponents/oc/pull/915) Update oc-storage-adapters-utils in package.json from 1.0.2 to 1.0.3
 - [#914](https://github.com/opencomponents/oc/pull/914) Update sinon in package.json from 6.1.0 to 6.1.3
