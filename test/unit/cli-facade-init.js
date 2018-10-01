@@ -17,12 +17,12 @@ describe('cli : facade : init', () => {
     local = new Local({ logger: { log: () => {} } }),
     initFacade = new InitFacade({ local: local, logger: logSpy });
 
-  const execute = function(componentName, templateType) {
+  const execute = function(componentPath, templateType) {
     logSpy.err = sinon.spy();
     logSpy.ok = sinon.spy();
     logSpy.log = sinon.spy();
     initFacade(
-      { componentName: componentName, templateType: templateType },
+      { componentPath: componentPath, templateType: templateType },
       () => {}
     );
   };
@@ -77,6 +77,29 @@ describe('cli : facade : init', () => {
       it('should show an error', () => {
         expect(logSpy.err.args[0][0]).to.equal(
           'An error happened when initialising the component: nope!'
+        );
+      });
+    });
+
+    describe('when the component has relative path', () => {
+      beforeEach(() => {
+        sinon.stub(local, 'init').yields(null, 'yes man');
+        execute('this/is/relative/path/to/the-best-component', 'jade');
+      });
+
+      afterEach(() => {
+        local.init.restore();
+      });
+
+      it('should show a correct name in the log message', () => {
+        expect(logSpy.log.args[0][0]).to.contain(
+          'Success! Created the-best-component at'
+        );
+      });
+
+      it('should show a correct path in the log message', () => {
+        expect(logSpy.log.args[0][0]).to.contain(
+          '/this/is/relative/path/to/the-best-component'
         );
       });
     });

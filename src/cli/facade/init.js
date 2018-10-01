@@ -12,13 +12,13 @@ module.exports = function(dependencies) {
     logger = dependencies.logger;
 
   return function(opts, callback) {
-    const componentName = opts.componentName;
     const templateType = _.isUndefined(opts.templateType)
       ? 'oc-template-es6'
       : opts.templateType;
     const errors = strings.errors.cli;
     const messages = strings.messages.cli;
-    const componentPath = path.join(process.cwd(), componentName);
+    const componentPath = path.join(process.cwd(), opts.componentPath);
+    const componentName = path.basename(componentPath);
 
     callback = wrapCliCallback(callback);
     local.init(
@@ -39,12 +39,7 @@ module.exports = function(dependencies) {
           }
           logger.err(format(errors.INIT_FAIL, err));
         } else {
-          logger.log(
-            messages.initSuccess(
-              componentName,
-              path.join(process.cwd(), componentName)
-            )
-          );
+          logger.log(messages.initSuccess(componentName, componentPath));
         }
 
         callback(err, componentName);
