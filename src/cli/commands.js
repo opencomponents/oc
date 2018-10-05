@@ -61,13 +61,13 @@ module.exports = {
     },
 
     init: {
-      cmd: 'init <componentName> [templateType]',
+      cmd: 'init <componentPath> [templateType]',
       example: {
         cmd: '$0 init test-component oc-template-es6'
       },
       description:
-        'Create a new empty component of a specific template type in the current folder [templateType default: oc-template-es6]',
-      usage: 'Usage: $0 init <componentName> [templateType]'
+        'Create a new empty component of a specific template type in the current folder or in directory indicated by (relative) componentPath [templateType default: oc-template-es6]',
+      usage: 'Usage: $0 init <componentPath> [templateType]'
     },
 
     mock: {
