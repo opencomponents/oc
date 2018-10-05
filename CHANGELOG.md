@@ -1,5 +1,13 @@
 ## Change Log
 
+### v0.45.0
+- [#941](https://github.com/opencomponents/oc/pull/941) [Suggestion] Handling relative path when initiating component
+- [#944](https://github.com/opencomponents/oc/pull/944) Update sinon in package.json from 6.3.4 to 6.3.5
+- [#945](https://github.com/opencomponents/oc/pull/945) Update husky in package.json from 1.0.1 to 1.1.1
+- [#940](https://github.com/opencomponents/oc/pull/940) Update husky in package.json from ^0.14.3 to 1.0.1
+- [#936](https://github.com/opencomponents/oc/pull/936) Update sinon in package.json from 6.1.5 to 6.3.4
+- [#939](https://github.com/opencomponents/oc/pull/939) Update chai in package.json from 4.1.2 to 4.2.0
+
 ### v0.44.13
 - [#933](https://github.com/opencomponents/oc/pull/933) Update morgan in package.json from 1.9.0 to 1.9.1
 - [#926](https://github.com/opencomponents/oc/pull/926) Update dependency-graph in package.json from 0.7.1 to 0.7.2
