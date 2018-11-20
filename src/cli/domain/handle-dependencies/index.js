@@ -9,6 +9,7 @@ const _ = require('lodash');
 const ensureCompilerIsDeclaredAsDevDependency = require('./ensure-compiler-is-declared-as-devDependency');
 const getCompiler = require('./get-compiler');
 const installMissingDependencies = require('./install-missing-dependencies');
+const linkMissingDependencies = require('./link-missing-dependencies');
 const isTemplateLegacy = require('../../../utils/is-template-legacy');
 const strings = require('../../../resources');
 
@@ -16,7 +17,7 @@ const getComponentPackageJson = (componentPath, cb) =>
   fs.readJson(path.join(componentPath, 'package.json'), cb);
 
 module.exports = (options, callback) => {
-  const { components, logger } = options;
+  const { components, logger, useComponentDependencies } = options;
 
   const dependencies = {};
   const addDependencies = componentDependencies =>
@@ -73,8 +74,11 @@ module.exports = (options, callback) => {
       modules: _.union(coreModules, _.keys(dependencies)).sort(),
       templates: _.values(templates)
     };
-
-    const installOptions = { dependencies, logger };
-    installMissingDependencies(installOptions, err => callback(err, result));
+    const options = { dependencies, logger };
+    if (useComponentDependencies) {
+      options.componentPath = components[0];
+      return linkMissingDependencies(options, err => callback(err, result));
+    }
+    installMissingDependencies(options, err => callback(err, result));
   });
 };

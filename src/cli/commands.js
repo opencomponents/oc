@@ -102,6 +102,12 @@ module.exports = {
           boolean: true,
           description: 'Create zipped file',
           default: false
+        },
+        useComponentDependencies: {
+          boolean: true,
+          description:
+            'will allow to reuse already installed dependencies of component to save packing time and network resource',
+          default: false
         }
       },
       description: 'Create the packaged component ready to be published',

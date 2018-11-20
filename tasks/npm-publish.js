@@ -9,9 +9,7 @@ const ocVersion = fs.readJsonSync('./package.json').version;
 
 if (builtVersion !== ocVersion) {
   log.fatal(
-    `The oc-client built version (${
-      builtVersion
-    }) doesn't match the npm package version (${ocVersion})`
+    `The oc-client built version (${builtVersion}) doesn't match the npm package version (${ocVersion})`
   );
   process.exit(1);
 }
@@ -27,7 +25,7 @@ cmd.on('error', () => {
 
 cmd.on('close', code => {
   if (code === 0) {
-    log.complete('npm publish succeded');
+    log.complete('npm publish succeeded');
   }
 
   process.exit(code);

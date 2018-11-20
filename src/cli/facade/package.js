@@ -12,6 +12,7 @@ module.exports = function(dependencies) {
 
   return function(opts, callback) {
     const componentPath = opts.componentPath,
+      useComponentDependencies = opts.useComponentDependencies,
       packageDir = path.resolve(componentPath, '_package'),
       compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
 
@@ -19,7 +20,11 @@ module.exports = function(dependencies) {
 
     logger.warn(format(strings.messages.cli.PACKAGING, packageDir));
     handleDependencies(
-      { components: [path.resolve(componentPath)], logger },
+      {
+        components: [path.resolve(componentPath)],
+        logger,
+        useComponentDependencies
+      },
       (err, dependencies) => {
         if (err) {
           logger.err(err);
