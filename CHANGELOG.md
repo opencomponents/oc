@@ -1,5 +1,24 @@
 ## Change Log
 
+### v0.45.1
+- [#971](https://github.com/opencomponents/oc/pull/971) oc package now is able to reuse modules in component path
+- [#951](https://github.com/opencomponents/oc/pull/951) Update form-data in package.json from 2.3.2 to 2.3.3
+- [#970](https://github.com/opencomponents/oc/pull/970) Update lint-staged in package.json from 8.0.5 to 8.1.0
+- [#969](https://github.com/opencomponents/oc/pull/969) Update husky in package.json from 1.1.2 to 1.2.0
+- [#968](https://github.com/opencomponents/oc/pull/968) Update yargs in package.json from 12.0.2 to 12.0.5
+- [#966](https://github.com/opencomponents/oc/pull/966) Update lint-staged in package.json from 8.0.4 to 8.0.5
+- [#958](https://github.com/opencomponents/oc/pull/958) Update fs-extra in package.json from 7.0.0 to 7.0.1
+- [#963](https://github.com/opencomponents/oc/pull/963) Update node dependency to >= 8
+- [#960](https://github.com/opencomponents/oc/pull/960) Added editorconfig file
+- [#956](https://github.com/opencomponents/oc/pull/956) Update sinon in package.json from 7.1.0 to 7.1.1
+- [#955](https://github.com/opencomponents/oc/pull/955) Update lint-staged in package.json from 8.0.0 to 8.0.4
+- [#953](https://github.com/opencomponents/oc/pull/953) Update lint-staged in package.json from ^7.0.0 to 8.0.0
+- [#946](https://github.com/opencomponents/oc/pull/946) Update serialize-error in package.json from ^2.1.0 to 3.0.0
+- [#952](https://github.com/opencomponents/oc/pull/952) Update sinon in package.json from 6.3.5 to 7.1.0
+- [#949](https://github.com/opencomponents/oc/pull/949) Update semver in package.json from 5.5.1 to 5.6.0
+- [#948](https://github.com/opencomponents/oc/pull/948) Update husky in package.json from 1.1.1 to 1.1.2
+- [#947](https://github.com/opencomponents/oc/pull/947) Update express in package.json from 4.16.3 to 4.16.4
+
 ### v0.45.0
 - [#941](https://github.com/opencomponents/oc/pull/941) [Suggestion] Handling relative path when initiating component
 - [#944](https://github.com/opencomponents/oc/pull/944) Update sinon in package.json from 6.3.4 to 6.3.5
