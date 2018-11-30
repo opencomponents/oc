@@ -106,7 +106,7 @@ module.exports = {
         useComponentDependencies: {
           boolean: true,
           description:
-            'will allow to reuse already installed dependencies of component to save packing time and network resource',
+            'Reuse already installed dependencies to save packaging time and network bandwidth',
           default: false
         }
       },
