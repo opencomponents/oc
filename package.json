@@ -88,7 +88,7 @@
     "oc-storage-adapters-utils": "1.0.3",
     "oc-template-es6": "^1.0.1",
     "oc-template-handlebars": "6.0.13",
-    "oc-template-handlebars-compiler": "6.2.4",
+    "oc-template-handlebars-compiler": "6.2.6",
     "oc-template-jade": "6.0.12",
     "oc-template-jade-compiler": "6.2.4",
     "opn": "5.4.0",
