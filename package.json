@@ -89,7 +89,7 @@
     "oc-template-es6": "^1.0.1",
     "oc-template-handlebars": "6.0.13",
     "oc-template-handlebars-compiler": "6.2.4",
-    "oc-template-jade": "6.0.12",
+    "oc-template-jade": "6.0.13",
     "oc-template-jade-compiler": "6.2.6",
     "opn": "5.4.0",
     "parse-author": "2.0.0",
