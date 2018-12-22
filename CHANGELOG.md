@@ -1,5 +1,16 @@
 ## Change Log
 
+### v0.45.2
+- [#983](https://github.com/opencomponents/oc/pull/983) Update oc-template-handlebars-compiler in package.json from 6.2.4 to 6.2.6
+- [#985](https://github.com/opencomponents/oc/pull/985) Update oc-template-jade-compiler in package.json from 6.2.4 to 6.2.6
+- [#984](https://github.com/opencomponents/oc/pull/984) Update oc-template-es6-compiler in package.json from 1.1.3 to 1.1.5
+- [#979](https://github.com/opencomponents/oc/pull/979) Update oc-template-jade in package.json from 6.0.12 to 6.0.13
+- [#975](https://github.com/opencomponents/oc/pull/975) Update dependency-graph in package.json from 0.7.2 to 0.8.0
+- [#978](https://github.com/opencomponents/oc/pull/978) Update husky in package.json from 1.2.1 to 1.3.0
+- [#976](https://github.com/opencomponents/oc/pull/976) Update sinon in package.json from 7.1.1 to 7.2.2
+- [#977](https://github.com/opencomponents/oc/pull/977) Update husky in package.json from 1.2.0 to 1.2.1
+- [#973](https://github.com/opencomponents/oc/pull/973) Update colors in package.json from 1.3.2 to 1.3.3
+
 ### v0.45.1
 - [#971](https://github.com/opencomponents/oc/pull/971) oc package now is able to reuse modules in component path
 - [#951](https://github.com/opencomponents/oc/pull/951) Update form-data in package.json from 2.3.2 to 2.3.3
