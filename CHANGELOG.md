@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.45.4
+- [#1001](https://github.com/opencomponents/oc/pull/1001) [Snyk] Fix for 1 vulnerable dependencies
+
 ### v0.45.3
 - [#1000](https://github.com/opencomponents/oc/pull/1000) [Snyk] Fix for 1 vulnerable dependencies
 - [#997](https://github.com/opencomponents/oc/pull/997) Update yargs in package.json from 13.2.0 to 13.2.1
