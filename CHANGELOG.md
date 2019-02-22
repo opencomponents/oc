@@ -1,5 +1,20 @@
 ## Change Log
 
+### v0.45.3
+- [#1000](https://github.com/opencomponents/oc/pull/1000) [Snyk] Fix for 1 vulnerable dependencies
+- [#997](https://github.com/opencomponents/oc/pull/997) Update yargs in package.json from 13.2.0 to 13.2.1
+- [#999](https://github.com/opencomponents/oc/pull/999) Update sinon in package.json from 7.2.3 to 7.2.4
+- [#998](https://github.com/opencomponents/oc/pull/998) Update mocha in package.json from ^5.0.0 to 6.0.0
+- [#996](https://github.com/opencomponents/oc/pull/996) Update yargs in package.json from 13.1.0 to 13.2.0
+- [#995](https://github.com/opencomponents/oc/pull/995) Update lint-staged in package.json from 8.1.3 to 8.1.4
+- [#994](https://github.com/opencomponents/oc/pull/994) Update yargs in package.json from 12.0.5 to 13.1.0
+- [#993](https://github.com/opencomponents/oc/pull/993) Update oc-client in package.json from 3.2.2 to 3.2.3
+- [#992](https://github.com/opencomponents/oc/pull/992) Update lint-staged in package.json from 8.1.2 to 8.1.3
+- [#991](https://github.com/opencomponents/oc/pull/991) Update lint-staged in package.json from 8.1.1 to 8.1.2
+- [#990](https://github.com/opencomponents/oc/pull/990) Update lint-staged in package.json from 8.1.0 to 8.1.1
+- [#988](https://github.com/opencomponents/oc/pull/988) Update sinon in package.json from 7.2.2 to 7.2.3
+- [#986](https://github.com/opencomponents/oc/pull/986) Update husky in package.json from 1.3.0 to 1.3.1
+
 ### v0.45.2
 - [#983](https://github.com/opencomponents/oc/pull/983) Update oc-template-handlebars-compiler in package.json from 6.2.4 to 6.2.6
 - [#985](https://github.com/opencomponents/oc/pull/985) Update oc-template-jade-compiler in package.json from 6.2.4 to 6.2.6
