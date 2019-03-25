@@ -1,5 +1,19 @@
 ## Change Log
 
+### v0.46.0
+- [#1013](https://github.com/opencomponents/oc/pull/1013) Update oc-client in package.json from 3.2.4 to 3.2.5
+- [#1012](https://github.com/opencomponents/oc/pull/1012) Remove support for node 6
+- [#1010](https://github.com/opencomponents/oc/pull/1010) Update serialize-error in package.json from 3.0.0 to 4.0.0
+- [#1011](https://github.com/opencomponents/oc/pull/1011) Update sinon in package.json from 7.2.7 to 7.3.0
+- [#1009](https://github.com/opencomponents/oc/pull/1009) Update opn in package.json from 5.4.0 to 5.5.0
+- [#1008](https://github.com/opencomponents/oc/pull/1008) Update yargs in package.json from 13.2.1 to 13.2.2
+- [#1007](https://github.com/opencomponents/oc/pull/1007) Update sinon in package.json from 7.2.6 to 7.2.7
+- [#1005](https://github.com/opencomponents/oc/pull/1005) Update lint-staged in package.json from 8.1.4 to 8.1.5
+- [#1006](https://github.com/opencomponents/oc/pull/1006) Update sinon in package.json from 7.2.5 to 7.2.6
+- [#1004](https://github.com/opencomponents/oc/pull/1004) Update sinon in package.json from 7.2.4 to 7.2.5
+- [#1003](https://github.com/opencomponents/oc/pull/1003) Update mocha in package.json from 6.0.1 to 6.0.2
+- [#1002](https://github.com/opencomponents/oc/pull/1002) Update mocha in package.json from 6.0.0 to 6.0.1
+
 ### v0.45.4
 - [#1001](https://github.com/opencomponents/oc/pull/1001) [Snyk] Fix for 1 vulnerable dependencies
 
