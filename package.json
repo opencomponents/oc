@@ -91,7 +91,7 @@
     "oc-template-handlebars-compiler": "6.2.7",
     "oc-template-jade": "6.0.13",
     "oc-template-jade-compiler": "6.2.6",
-    "opn": "5.5.0",
+    "opn": "6.0.0",
     "parse-author": "2.0.0",
     "read": "1.0.7",
     "require-package-name": "2.0.1",
