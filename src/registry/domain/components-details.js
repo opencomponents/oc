@@ -64,6 +64,9 @@ module.exports = (conf, cdn) => {
 
   const refresh = (componentsList, callback) => {
     getFromJson((jsonErr, details) => {
+      if (jsonErr) {
+        return returnError('cnd_get_json', jsonErr, callback);
+      }
       getFromDirectories({ componentsList, details }, (dirErr, dirDetails) => {
         if (dirErr) {
           return returnError('components_details_get', dirErr, callback);
