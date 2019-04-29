@@ -186,9 +186,9 @@ describe('registry', () => {
         );
       });
 
-      it('should not set HTTP custom headers', () => {
-        expect(headers).to.not.have.property('cache-control');
-        expect(headers).to.not.have.property('test-header');
+      it('should set HTTP custom headers', () => {
+        expect(headers).to.have.property('cache-control');
+        expect(headers).to.have.property('test-header');
       });
 
       it('should return the component with custom headers', () => {
@@ -198,6 +198,35 @@ describe('registry', () => {
           'cache-control': 'public max-age=3600',
           'test-header': 'Test-Value'
         });
+      });
+    });
+
+    describe('request with two components', () => {
+      before(done => {
+        request(
+          {
+            url: 'http://localhost:3030',
+            json: true,
+            method: 'post',
+            body: {
+              components: [
+                {
+                  name: 'hello-world-custom-headers',
+                  version: '1.0.0'
+                },
+                {
+                  name: 'hello-world',
+                  version: '1.0.0'
+                }
+              ]
+            }
+          },
+          next(done)
+        );
+      });
+
+      it('should not set HTTP custom headers', () => {
+        expect(headers).to.not.have.property('test-header');
       });
     });
 
@@ -221,9 +250,9 @@ describe('registry', () => {
         );
       });
 
-      it('should not set HTTP custom headers', () => {
-        expect(headers).to.not.have.property('cache-control');
-        expect(headers).to.not.have.property('test-header');
+      it('should set HTTP custom headers', () => {
+        expect(headers).to.have.property('cache-control');
+        expect(headers).to.have.property('test-header');
       });
 
       it('should return the component with custom headers in the response body', () => {
@@ -273,9 +302,9 @@ describe('registry', () => {
           );
         });
 
-        it('should not set HTTP custom headers', () => {
-          expect(headers).to.not.have.property('cache-control');
-          expect(headers).to.not.have.property('test-header');
+        it('should set HTTP custom headers', () => {
+          expect(headers).to.have.property('cache-control');
+          expect(headers).to.have.property('test-header');
         });
 
         it('should return the component with the custom headers', () => {
@@ -310,9 +339,8 @@ describe('registry', () => {
           );
         });
 
-        it('should not set HTTP custom headers', () => {
-          expect(headers).to.not.have.property('cache-control');
-          expect(headers).to.not.have.property('test-header');
+        it('should have HTTP custom headers', () => {
+          expect(headers).to.have.property('test-header');
         });
 
         it('should skip Cache-Control header', () => {

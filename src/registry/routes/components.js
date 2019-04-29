@@ -9,7 +9,12 @@ const strings = require('../../resources');
 
 module.exports = function(conf, repository) {
   const getComponent = new GetComponentHelper(conf, repository);
-  const setHeaders = (results, res) => results.forEach(result => _.isEmpty(result.headers) || res.set(result.headers));
+  const setHeaders = (results, res) => {
+    if (!results || results.length !== 1 || !results[0] || !res.set) {
+      return;
+    }
+    res.set(results[0].headers);
+  };
 
   return function(req, res) {
     const components = req.body.components,
@@ -63,7 +68,7 @@ module.exports = function(conf, repository) {
         );
       },
       (err, results) => {
-        setHeaders(results,res); 
+        setHeaders(results, res);
         res.status(200).json(results);
       }
     );
