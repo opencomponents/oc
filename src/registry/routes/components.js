@@ -9,6 +9,12 @@ const strings = require('../../resources');
 
 module.exports = function(conf, repository) {
   const getComponent = new GetComponentHelper(conf, repository);
+  const setHeaders = (results, res) => {
+    if (!results || results.length !== 1 || !results[0] || !res.set) {
+      return;
+    }
+    res.set(results[0].headers);
+  };
 
   return function(req, res) {
     const components = req.body.components,
@@ -61,7 +67,10 @@ module.exports = function(conf, repository) {
           result => callback(null, result)
         );
       },
-      (err, results) => res.status(200).json(results)
+      (err, results) => {
+        setHeaders(results, res);
+        res.status(200).json(results);
+      }
     );
   };
 };
