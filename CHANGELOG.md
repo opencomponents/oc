@@ -1,5 +1,18 @@
 ## Change Log
 
+### v0.47.0
+- [#1024](https://github.com/opencomponents/oc/pull/1024) set headers for getComponents
+- [#1028](https://github.com/opencomponents/oc/pull/1028) Update body-parser in package.json from 1.18.3 to 1.19.0
+- [#1027](https://github.com/opencomponents/oc/pull/1027) Update husky in package.json from 1.3.1 to 2.1.0
+- [#1026](https://github.com/opencomponents/oc/pull/1026) Update mocha in package.json from 6.1.3 to 6.1.4
+- [#1025](https://github.com/opencomponents/oc/pull/1025) Update sinon in package.json from 7.3.1 to 7.3.2
+- [#1021](https://github.com/opencomponents/oc/pull/1021) Update mocha in package.json from 6.1.2 to 6.1.3
+- [#1019](https://github.com/opencomponents/oc/pull/1019) Update mocha in package.json from 6.1.1 to 6.1.2
+- [#1018](https://github.com/opencomponents/oc/pull/1018) Update mocha in package.json from 6.0.2 to 6.1.1
+- [#1017](https://github.com/opencomponents/oc/pull/1017) Update serialize-error in package.json from 4.0.0 to 4.1.0
+- [#1016](https://github.com/opencomponents/oc/pull/1016) Update semver in package.json from 5.6.0 to 6.0.0
+- [#1015](https://github.com/opencomponents/oc/pull/1015) Update sinon in package.json from 7.3.0 to 7.3.1
+
 ### v0.46.0
 - [#1013](https://github.com/opencomponents/oc/pull/1013) Update oc-client in package.json from 3.2.4 to 3.2.5
 - [#1012](https://github.com/opencomponents/oc/pull/1012) Remove support for node 6
