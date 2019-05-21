@@ -14,6 +14,8 @@ const validateParameter = function(parameter, expectedType) {
     return _.isNumber(parameter);
   } else if (expected === 'string') {
     return _.isString(parameter);
+  } else if (expected === 'base64url-json') {
+    return /^[a-zA-Z0-9_-]+$/.test(parameter);
   }
 
   return false;
