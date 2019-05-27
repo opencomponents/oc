@@ -74,7 +74,7 @@
     "form-data": "2.3.3",
     "fs-extra": "8.0.1",
     "getport": "^0.1.0",
-    "livereload": "^0.7.0",
+    "livereload": "0.8.0",
     "lodash": "^4.17.10",
     "minimal-request": "3.0.0",
     "morgan": "1.9.1",
