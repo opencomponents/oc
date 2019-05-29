@@ -1,5 +1,22 @@
 ## Change Log
 
+### v0.47.1
+- [#1048](https://github.com/opencomponents/oc/pull/1048) Update semver in package.json from 6.1.0 to 6.1.1
+- [#1047](https://github.com/opencomponents/oc/pull/1047) Update oc-template-jade-compiler in package.json from 6.2.6 to 6.2.7
+- [#1045](https://github.com/opencomponents/oc/pull/1045) Update oc-client in package.json from 3.2.5 to 3.2.6
+- [#1046](https://github.com/opencomponents/oc/pull/1046) Update oc-s3-storage-adapter in package.json from 1.1.4 to 1.1.5
+- [#1044](https://github.com/opencomponents/oc/pull/1044) Update oc-template-es6-compiler in package.json from 1.1.5 to 1.1.6
+- [#1043](https://github.com/opencomponents/oc/pull/1043) [Snyk] Fix for 1 vulnerable dependencies
+- [#1041](https://github.com/opencomponents/oc/pull/1041) Update express in package.json from 4.16.4 to 4.17.1
+- [#1039](https://github.com/opencomponents/oc/pull/1039) Update semver in package.json from 6.0.0 to 6.1.0
+- [#1040](https://github.com/opencomponents/oc/pull/1040) Update livereload in package.json from ^0.7.0 to 0.8.0
+- [#1033](https://github.com/opencomponents/oc/pull/1033) Update fs-extra in package.json from 7.0.1 to 8.0.1
+- [#1035](https://github.com/opencomponents/oc/pull/1035) Update husky in package.json from 2.2.0 to 2.3.0
+- [#1034](https://github.com/opencomponents/oc/pull/1034) Update lint-staged in package.json from 8.1.6 to 8.1.7
+- [#1032](https://github.com/opencomponents/oc/pull/1032) Update yargs in package.json from 13.2.2 to 13.2.4
+- [#1030](https://github.com/opencomponents/oc/pull/1030) Update lint-staged in package.json from 8.1.5 to 8.1.6
+- [#1029](https://github.com/opencomponents/oc/pull/1029) Update husky in package.json from 2.1.0 to 2.2.0
+
 ### v0.47.0
 - [#1024](https://github.com/opencomponents/oc/pull/1024) set headers for getComponents
 - [#1028](https://github.com/opencomponents/oc/pull/1028) Update body-parser in package.json from 1.18.3 to 1.19.0
