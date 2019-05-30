@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.48.0
+- [#1051](https://github.com/opencomponents/oc/pull/1051) Update oc-template-jade-compiler in package.json from 6.2.7 to 7.0.0
+- [#1050](https://github.com/opencomponents/oc/pull/1050) Update oc-template-jade in package.json from 6.0.13 to 7.0.0
+- [#1049](https://github.com/opencomponents/oc/pull/1049) Update oc-template-es6-compiler in package.json from 1.1.6 to 1.1.7
+
 ### v0.47.1
 - [#1048](https://github.com/opencomponents/oc/pull/1048) Update semver in package.json from 6.1.0 to 6.1.1
 - [#1047](https://github.com/opencomponents/oc/pull/1047) Update oc-template-jade-compiler in package.json from 6.2.6 to 6.2.7
