@@ -10,6 +10,8 @@ const cors = require('./cors');
 const discoveryHandler = require('./discovery-handler');
 const fileUploads = require('./file-uploads');
 const requestHandler = require('./request-handler');
+const bodyParserJsonArgument = {inflate: true};
+const bodyParserUrlEncodedArgument = {extended: true};
 
 module.exports.bind = function(app, options) {
   app.set('port', options.port);
@@ -21,8 +23,15 @@ module.exports.bind = function(app, options) {
   });
 
   app.use(requestHandler());
-  app.use(bodyParser.json({ inflate: true }));
-  app.use(bodyParser.urlencoded({ extended: true }));
+
+  if (options.postRequestPayloadSize) {
+      bodyParserJsonArgument.limit = options.postRequestPayloadSize;
+      bodyParserUrlEncodedArgument.limit = options.postRequestPayloadSize;
+  }
+
+  app.use(bodyParser.json(bodyParserJsonArgument));
+  app.use(bodyParser.urlencoded(bodyParserUrlEncodedArgument));
+
   app.use(cors);
   app.use(fileUploads);
   app.use(baseUrlHandler);
