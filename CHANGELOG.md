@@ -1,5 +1,12 @@
 ## Change Log
 
+### v0.48.1
+- [#1056](https://github.com/opencomponents/oc/pull/1056) Added the support for changing the post request payload size
+- [#1055](https://github.com/opencomponents/oc/pull/1055) Update husky in package.json from 2.4.0 to 2.4.1
+- [#1057](https://github.com/opencomponents/oc/pull/1057) Update lint-staged in package.json from 8.2.0 to 8.2.1
+- [#1053](https://github.com/opencomponents/oc/pull/1053) Update lint-staged in package.json from 8.1.7 to 8.2.0
+- [#1052](https://github.com/opencomponents/oc/pull/1052) Update husky in package.json from 2.3.0 to 2.4.0
+
 ### v0.48.0
 - [#1051](https://github.com/opencomponents/oc/pull/1051) Update oc-template-jade-compiler in package.json from 6.2.7 to 7.0.0
 - [#1050](https://github.com/opencomponents/oc/pull/1050) Update oc-template-jade in package.json from 6.0.13 to 7.0.0
