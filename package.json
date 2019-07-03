@@ -50,7 +50,7 @@
     "glob": "^7.1.2",
     "husky": "2.5.0",
     "injectr": "0.5.1",
-    "lint-staged": "8.2.1",
+    "lint-staged": "9.0.2",
     "minimist": "^1.2.0",
     "mocha": "6.1.4",
     "node-emoji": "^1.8.1",
