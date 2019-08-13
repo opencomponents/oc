@@ -68,8 +68,13 @@ module.exports = function(conf, repository) {
         );
       },
       (err, results) => {
-        setHeaders(results, res);
-        res.status(200).json(results);
+        try {
+          setHeaders(results, res);
+          res.status(200).json(results);
+        } catch (e) {
+          console.log(results);
+          res.status(500).send('Error: ', e);
+        }
       }
     );
   };
