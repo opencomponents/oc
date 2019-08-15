@@ -73,7 +73,7 @@ module.exports = function(conf, repository) {
           res.status(200).json(results);
         } catch (e) {
           console.log(results);
-          res.status(500).send('Error: ', e);
+          res.status(500).json({});
         }
       }
     );
