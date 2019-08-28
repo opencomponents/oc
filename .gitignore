@@ -30,6 +30,7 @@ src/components/base-component-jade/_package
 
 test/fixtures/test.tar.gz
 test/fixtures/targz-test
+test/fixtures/components/circular-json-error/_package
 test/fixtures/components/container-with-multiple-nested/_package
 test/fixtures/components/container-with-nested/_package
 test/fixtures/components/empty/_package
