@@ -1,5 +1,37 @@
 ## Change Log
 
+### v0.48.2
+- [#1101](https://github.com/opencomponents/oc/pull/1101) Update cross-spawn in package.json from ^6.0.3 to 7.0.0
+- [#1100](https://github.com/opencomponents/oc/pull/1100) Update sinon in package.json from 7.4.1 to 7.4.2
+- [#1099](https://github.com/opencomponents/oc/pull/1099) Update husky in package.json from 3.0.4 to 3.0.5
+- [#1087](https://github.com/opencomponents/oc/pull/1087) Add catch and additional logging. #1086
+- [#1096](https://github.com/opencomponents/oc/pull/1096) Circular json handler - tests and improvements
+- [#1098](https://github.com/opencomponents/oc/pull/1098) Update oc-client in package.json from 3.2.7 to 3.2.8
+- [#1097](https://github.com/opencomponents/oc/pull/1097) Update form-data in package.json from 2.5.0 to 2.5.1
+- [#1095](https://github.com/opencomponents/oc/pull/1095) Update lint-staged in package.json from 9.2.3 to 9.2.5
+- [#1093](https://github.com/opencomponents/oc/pull/1093) Update oc-s3-storage-adapter in package.json from 1.1.5 to 1.1.6
+- [#1092](https://github.com/opencomponents/oc/pull/1092) Update oc-client-browser in package.json from 1.3.4 to 1.3.5
+- [#1088](https://github.com/opencomponents/oc/pull/1088) Update semver-extra in package.json from 2.0.1 to 3.0.0
+- [#1090](https://github.com/opencomponents/oc/pull/1090) Update husky in package.json from 3.0.2 to 3.0.4
+- [#1089](https://github.com/opencomponents/oc/pull/1089) Update lint-staged in package.json from 9.2.1 to 9.2.3
+- [#1084](https://github.com/opencomponents/oc/pull/1084) Update sinon in package.json from 7.3.2 to 7.4.1
+- [#1082](https://github.com/opencomponents/oc/pull/1082) Update husky in package.json from 3.0.1 to 3.0.2
+- [#1081](https://github.com/opencomponents/oc/pull/1081) Update lint-staged in package.json from 9.2.0 to 9.2.1
+- [#1080](https://github.com/opencomponents/oc/pull/1080) Update semver in package.json from 6.2.0 to 6.3.0
+- [#1079](https://github.com/opencomponents/oc/pull/1079) Update mocha in package.json from 6.1.4 to 6.2.0
+- [#1078](https://github.com/opencomponents/oc/pull/1078) Update husky in package.json from 3.0.0 to 3.0.1
+- [#1065](https://github.com/opencomponents/oc/pull/1065) Update fs-extra in package.json from 8.0.1 to 8.1.0
+- [#1075](https://github.com/opencomponents/oc/pull/1075) Update lint-staged in package.json from 8.2.1 to 9.2.0
+- [#1076](https://github.com/opencomponents/oc/pull/1076) Update yargs in package.json from 13.2.4 to 13.3.0
+- [#1068](https://github.com/opencomponents/oc/pull/1068) Update semver in package.json from 6.1.1 to 6.2.0
+- [#1069](https://github.com/opencomponents/oc/pull/1069) Update husky in package.json from 2.5.0 to 3.0.0
+- [#1071](https://github.com/opencomponents/oc/pull/1071) Update form-data in package.json from 2.4.0 to 2.5.0
+- [#1061](https://github.com/opencomponents/oc/pull/1061) Update async in package.json from ^2.6.0 to 3.1.0
+- [#1063](https://github.com/opencomponents/oc/pull/1063) Update husky in package.json from 2.4.1 to 2.5.0
+- [#1058](https://github.com/opencomponents/oc/pull/1058) Update prettier-eslint-cli in package.json from ^4.0.4 to 5.0.0
+- [#1059](https://github.com/opencomponents/oc/pull/1059) Update form-data in package.json from 2.3.3 to 2.4.0
+- [#1060](https://github.com/opencomponents/oc/pull/1060) Update oc-client in package.json from 3.2.6 to 3.2.7
+
 ### v0.48.1
 - [#1056](https://github.com/opencomponents/oc/pull/1056) Added the support for changing the post request payload size
 - [#1055](https://github.com/opencomponents/oc/pull/1055) Update husky in package.json from 2.4.0 to 2.4.1
