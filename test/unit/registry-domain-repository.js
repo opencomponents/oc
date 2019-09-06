@@ -204,9 +204,7 @@ describe('registry : domain : repository', () => {
         it('should respond with a proper error', () => {
           expect(response.error).not.to.be.empty;
           expect(response.error).to.equal(
-            `component not available: ${
-              resources.errors.STORAGE.FILE_NOT_VALID
-            }`
+            `component not available: ${resources.errors.STORAGE.FILE_NOT_VALID}`
           );
         });
       });
@@ -416,6 +414,7 @@ describe('registry : domain : repository', () => {
 
       it('should list the components', () => {
         expect(response.result).to.eql([
+          'circular-json-error',
           'container-with-multiple-nested',
           'container-with-nested',
           'empty',

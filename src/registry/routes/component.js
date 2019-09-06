@@ -1,8 +1,11 @@
 'use strict';
 
-const GetComponentHelper = require('./helpers/get-component');
+const format = require('stringformat');
 const serializeError = require('serialize-error');
 const _ = require('lodash');
+
+const GetComponentHelper = require('./helpers/get-component');
+const strings = require('../../resources');
 
 module.exports = function(conf, repository) {
   const getComponent = new GetComponentHelper(conf, repository);
@@ -25,11 +28,22 @@ module.exports = function(conf, repository) {
           res.errorDetails = result.response.error;
         }
 
-        if (!_.isEmpty(result.headers)) {
-          res.set(result.headers);
-        }
+        try {
+          if (!_.isEmpty(result.headers)) {
+            res.set(result.headers);
+          }
 
-        return res.status(result.status).json(result.response);
+          res.status(result.status).json(result.response);
+        } catch (e) {
+          res.status(500).json({
+            code: 'RENDER_ERROR',
+            error: format(
+              strings.errors.registry.RENDER_ERROR,
+              `${result.response.name}@${result.response.version}`,
+              e.toString()
+            )
+          });
+        }
       }
     );
   };
