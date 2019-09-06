@@ -139,7 +139,8 @@ module.exports = {
       RESOLVING_ERROR: 'component resolving error',
       TEMPLATE_NOT_FOUND: 'Template {0} not found',
       TEMPLATE_NOT_VALID: '{0} is not a valid oc-template',
-      TEMPLATE_NOT_SUPPORTED: '{0} is not a supported oc-template'
+      TEMPLATE_NOT_SUPPORTED: '{0} is not a supported oc-template',
+      RENDER_ERROR: 'Render Error for {0}: {1}'
     },
     cli: {
       cleanRemoveError: err =>

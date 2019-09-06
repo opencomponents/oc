@@ -373,6 +373,7 @@ describe('registry', () => {
 
     it('should list the components', () => {
       expect(result.components).to.eql([
+        'http://localhost:3030/circular-json-error',
         'http://localhost:3030/container-with-multiple-nested',
         'http://localhost:3030/container-with-nested',
         'http://localhost:3030/empty',
@@ -387,6 +388,54 @@ describe('registry', () => {
         'http://localhost:3030/welcome-with-optional-parameters',
         'http://localhost:3030/oc-client'
       ]);
+    });
+  });
+
+  describe('POST / (with circular-json)', () => {
+    before(done => {
+      request(
+        {
+          headers: { accept: 'application/vnd.oc.unrendered+json' },
+          url: 'http://localhost:3030/',
+          method: 'post',
+          json: true,
+          body: { components: [{ name: 'circular-json-error' }] }
+        },
+        next(done)
+      );
+    });
+
+    it('should respond with 500 status code', () => {
+      expect(status).to.equal(500);
+    });
+
+    it('should respond with rendering error', () => {
+      expect(result.error).to.equal(
+        'Render Error for circular-json-error@1.0.0: TypeError: Converting circular structure to JSON'
+      );
+    });
+  });
+
+  describe('GET /circular-json-error', () => {
+    before(done => {
+      request(
+        {
+          headers: { accept: 'application/vnd.oc.unrendered+json' },
+          url: 'http://localhost:3030/circular-json-error',
+          json: true
+        },
+        next(done)
+      );
+    });
+
+    it('should respond with 500 status code', () => {
+      expect(error).to.equal(500);
+    });
+
+    it('should respond with rendering error', () => {
+      expect(result.error).to.equal(
+        'Render Error for circular-json-error@1.0.0: TypeError: Converting circular structure to JSON'
+      );
     });
   });
 

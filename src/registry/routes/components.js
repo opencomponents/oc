@@ -68,8 +68,25 @@ module.exports = function(conf, repository) {
         );
       },
       (err, results) => {
-        setHeaders(results, res);
-        res.status(200).json(results);
+        try {
+          setHeaders(results, res);
+          res.status(200).json(results);
+        } catch (e) {
+          if (results.code && results.error) {
+            res.status(500).json({ code: results.code, error: results.error });
+          } else {
+            res.status(500).json({
+              code: 'RENDER_ERROR',
+              error: format(
+                strings.errors.registry.RENDER_ERROR,
+                results
+                  .map(x => `${x.response.name}@${x.response.version}`)
+                  .join(', '),
+                e.toString()
+              )
+            });
+          }
+        }
       }
     );
   };
