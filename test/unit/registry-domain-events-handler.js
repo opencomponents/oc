@@ -80,9 +80,7 @@ describe('registry : domain : events-handler', () => {
       );
     });
     it('should not throw an error if event name is not registered', () => {
-      expect(execute).not.to.throw(
-        "Registry configuration is not valid: registry.off's callback must be a function"
-      );
+      expect(execute).not.to.throw();
     });
     it('should remove the specific callback but not the others', () => {
       const spy = sinon.spy();
