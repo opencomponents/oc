@@ -92,6 +92,8 @@ module.exports = {
       CONFIGURATION_EMPTY: 'Registry configuration is empty',
       CONFIGURATION_ONREQUEST_MUST_BE_FUNCTION:
         "Registry configuration is not valid: registry.on's callback must be a function",
+      CONFIGURATION_OFFREQUEST_MUST_BE_FUNCTION:
+        "Registry configuration is not valid: registry.off's callback must be a function",
       CONFIGURATION_PUBLISH_BASIC_AUTH_CREDENTIALS_MISSING:
         'Registry configuration is not valid: basic auth requires username and password',
       CONFIGURATION_PUBLISH_AUTH_MODULE_NOT_FOUND:

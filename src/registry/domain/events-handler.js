@@ -25,6 +25,15 @@ module.exports = {
 
     subscriptions[eventName].push(callback);
   },
+  off: function(eventName, callback) {
+    if (!_.isFunction(callback)) {
+      throw strings.errors.registry.CONFIGURATION_OFFREQUEST_MUST_BE_FUNCTION;
+    }
+
+    if (subscriptions[eventName]) {
+      _.pull(subscriptions[eventName], callback);
+    }
+  },
   reset: function() {
     subscriptions = {};
   }

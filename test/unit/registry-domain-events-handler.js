@@ -65,4 +65,35 @@ describe('registry : domain : events-handler', () => {
       );
     });
   });
+
+  describe('when unsubscribing a request event', () => {
+    const executeNonFunction = function() {
+      eventsHandler.off('request', 'this is not a function');
+    };
+    const execute = function() {
+      eventsHandler.off('request', () => {});
+    };
+
+    it('should throw an error if callback is not a function', () => {
+      expect(executeNonFunction).to.throw(
+        "Registry configuration is not valid: registry.off's callback must be a function"
+      );
+    });
+    it('should not throw an error if event name is not registered', () => {
+      expect(execute).not.to.throw();
+    });
+    it('should remove the specific callback but not the others', () => {
+      const spy = sinon.spy();
+      const spyToBeRemoved = sinon.spy();
+      eventsHandler.on('eventName', spy);
+      eventsHandler.on('eventName', spyToBeRemoved);
+
+      eventsHandler.off('eventName', spyToBeRemoved);
+      eventsHandler.fire('eventName', {});
+
+      expect(spy.called).to.be.true;
+      expect(spyToBeRemoved.called).not.to.be.true;
+      eventsHandler.reset();
+    });
+  });
 });
