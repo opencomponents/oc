@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.48.3
+- [#1102](https://github.com/opencomponents/oc/pull/1102) add off method (like EventListener.off)
+
 ### v0.48.2
 - [#1101](https://github.com/opencomponents/oc/pull/1101) Update cross-spawn in package.json from ^6.0.3 to 7.0.0
 - [#1100](https://github.com/opencomponents/oc/pull/1100) Update sinon in package.json from 7.4.1 to 7.4.2
