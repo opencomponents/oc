@@ -1,5 +1,19 @@
 ## Change Log
 
+### v0.48.4
+- [#1114](https://github.com/opencomponents/oc/pull/1114) Update oc-template-es6-compiler in package.json from 1.1.7 to 1.1.8
+- [#1117](https://github.com/opencomponents/oc/pull/1117) Update oc-template-jade-compiler in package.json from 7.0.0 to 7.0.1
+- [#1118](https://github.com/opencomponents/oc/pull/1118) Update various dependencies
+- [#1113](https://github.com/opencomponents/oc/pull/1113) Update livereload in package.json from 0.8.1 to 0.8.2
+- [#1112](https://github.com/opencomponents/oc/pull/1112) Update husky in package.json from 3.0.7 to 3.0.8
+- [#1111](https://github.com/opencomponents/oc/pull/1111) Update lint-staged in package.json from 9.4.0 to 9.4.1
+- [#1109](https://github.com/opencomponents/oc/pull/1109) Update husky in package.json from 3.0.5 to 3.0.7
+- [#1110](https://github.com/opencomponents/oc/pull/1110) Update mocha in package.json from 6.2.0 to 6.2.1
+- [#1108](https://github.com/opencomponents/oc/pull/1108) Update lint-staged in package.json from 9.3.0 to 9.4.0
+- [#1107](https://github.com/opencomponents/oc/pull/1107) Update sinon in package.json from 7.4.2 to 7.5.0
+- [#1104](https://github.com/opencomponents/oc/pull/1104) Update lint-staged in package.json from 9.2.5 to 9.3.0
+- [#1103](https://github.com/opencomponents/oc/pull/1103) Update livereload in package.json from 0.8.0 to 0.8.1
+
 ### v0.48.3
 - [#1102](https://github.com/opencomponents/oc/pull/1102) add off method (like EventListener.off)
 
