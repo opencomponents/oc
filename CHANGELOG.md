@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.48.5
+- [#1124](https://github.com/opencomponents/oc/pull/1124) Rollback handlebars
+
 ### v0.48.4
 - [#1114](https://github.com/opencomponents/oc/pull/1114) Update oc-template-es6-compiler in package.json from 1.1.7 to 1.1.8
 - [#1117](https://github.com/opencomponents/oc/pull/1117) Update oc-template-jade-compiler in package.json from 7.0.0 to 7.0.1
