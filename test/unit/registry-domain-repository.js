@@ -163,9 +163,7 @@ describe('registry : domain : repository', () => {
             });
             Repository(conf);
           } catch (err) {
-            expect(err.message).to.equal(
-              "Cannot find module 'oc-template-react'"
-            );
+            expect(err.message == "Cannot find module 'oc-template-react'");
           }
         });
       });
