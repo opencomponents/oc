@@ -410,10 +410,8 @@ describe('registry', () => {
     });
 
     it('should respond with rendering error', () => {
-      console.log('err: ' + result.error);
-      expect(
-        result.error ==
-          'Render Error for circular-json-error@1.0.0: TypeError: Converting circular structure to JSON'
+      expect(result.error).to.have.contain(
+        'Render Error for circular-json-error@1.0.0: TypeError: Converting circular structure to JSON'
       );
     });
   });
@@ -435,9 +433,8 @@ describe('registry', () => {
     });
 
     it('should respond with rendering error', () => {
-      expect(
-        result.error ==
-          'Render Error for circular-json-error@1.0.0: TypeError: Converting circular structure to JSON'
+      expect(result.error).to.have.contain(
+        'Render Error for circular-json-error@1.0.0: TypeError: Converting circular structure to JSON'
       );
     });
   });
