@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.48.6
+- [#1123](https://github.com/opencomponents/oc/pull/1123) update travis.yml for node version 12
+
 ### v0.48.5
 - [#1124](https://github.com/opencomponents/oc/pull/1124) Rollback handlebars
 
