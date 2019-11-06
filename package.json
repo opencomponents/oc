@@ -71,7 +71,7 @@
     "dependency-graph": "0.8.0",
     "errorhandler": "^1.5.0",
     "express": "4.17.1",
-    "form-data": "2.5.1",
+    "form-data": "3.0.0",
     "fs-extra": "8.1.0",
     "getport": "^0.1.0",
     "livereload": "0.8.2",
