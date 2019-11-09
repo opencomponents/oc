@@ -46,7 +46,7 @@
   ],
   "devDependencies": {
     "chai": "4.2.0",
-    "chalk": "^2.1.0",
+    "chalk": "3.0.0",
     "glob": "^7.1.2",
     "husky": "3.0.9",
     "injectr": "0.5.1",
