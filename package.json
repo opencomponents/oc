@@ -52,7 +52,7 @@
     "injectr": "0.5.1",
     "lint-staged": "9.4.2",
     "minimist": "^1.2.0",
-    "mocha": "6.2.2",
+    "mocha": "7.0.1",
     "node-emoji": "^1.8.1",
     "oc-template-es6-compiler": "1.1.8",
     "prettier-eslint-cli": "5.0.0",
