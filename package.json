@@ -96,7 +96,7 @@
     "read": "1.0.7",
     "require-package-name": "2.0.1",
     "response-time": "^2.3.2",
-    "semver": "6.3.0",
+    "semver": "7.1.2",
     "semver-extra": "3.0.0",
     "serialize-error": "4.1.0",
     "stringformat": "0.0.5",
