@@ -92,6 +92,7 @@ describe('utils : npm-utils', () => {
           'install',
           '--prefix',
           'path/to/component',
+          '--no-save',
           'lodash',
           '--no-package-lock'
         ]
@@ -119,6 +120,7 @@ describe('utils : npm-utils', () => {
           'install',
           '--prefix',
           'path/to/component',
+          '--no-save',
           'oc-client@~1.2.3',
           '--no-package-lock'
         ]
@@ -199,6 +201,7 @@ describe('utils : npm-utils', () => {
           'install',
           '--prefix',
           'path/to/component',
+          '--no-save',
           'moment',
           'lodash',
           '--no-package-lock'
@@ -232,6 +235,7 @@ describe('utils : npm-utils', () => {
           'install',
           '--prefix',
           'path/to/component',
+          '--no-save',
           'oc-client@~1.2.3',
           'oc-template-react-compiler',
           '--no-package-lock'
