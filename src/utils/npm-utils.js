@@ -9,6 +9,8 @@ const buildInstallCommand = options => {
   if (options.save) {
     args.push('--save-exact');
     args.push(options.isDev ? '--save-dev' : '--save');
+  } else {
+    args.push('--no-save');
   }
 
   return args;
