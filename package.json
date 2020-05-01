@@ -18,7 +18,9 @@
     "test-silent": "npm run build && node tasks/mochaTest.js --silent",
     "version-major": "node tasks/version.js --type=\"major\"",
     "version-minor": "node tasks/version.js --type=\"minor\"",
-    "version-patch": "node tasks/version.js --type=\"patch\""
+    "version-patch": "node tasks/version.js --type=\"patch\"",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "lint-staged": {
     "*.js": [
@@ -103,6 +105,8 @@
     "targz": "1.0.1",
     "try-require": "^1.2.1",
     "watch": "1.0.2",
-    "yargs": "13.3.0"
-  }
+    "yargs": "13.3.0",
+    "snyk": "^1.316.1"
+  },
+  "snyk": true
 }
