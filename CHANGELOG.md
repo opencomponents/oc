@@ -1,5 +1,15 @@
 ## Change Log
 
+### v0.48.9
+- [#1170](https://github.com/opencomponents/oc/pull/1170) [SFX-2153] - Upgrading Handlerbars render to latest version
+- [#1158](https://github.com/opencomponents/oc/pull/1158) Update mocha in package.json from 6.2.2 to 7.0.1
+- [#1157](https://github.com/opencomponents/oc/pull/1157) Update async in package.json from 3.1.0 to 3.1.1
+- [#1165](https://github.com/opencomponents/oc/pull/1165) prevent package.json changing when calling oc dev
+- [#1126](https://github.com/opencomponents/oc/pull/1126) Update mocha in package.json from 6.2.1 to 6.2.2
+- [#1125](https://github.com/opencomponents/oc/pull/1125) Update husky in package.json from 3.0.8 to 3.0.9
+- [#1121](https://github.com/opencomponents/oc/pull/1121) Update lint-staged in package.json from 9.4.1 to 9.4.2
+- [#1119](https://github.com/opencomponents/oc/pull/1119) Update cross-spawn in package.json from 7.0.0 to 7.0.1
+
 ### v0.48.6
 - [#1123](https://github.com/opencomponents/oc/pull/1123) update travis.yml for node version 12
 
@@ -1074,7 +1084,8 @@ closes #487
 
 ### v0.28.9
 - [#214](https://github.com/opencomponents/oc/pull/214) S3 validation
-- [#216](https://github.com/opencomponents/oc/pull/216) Looks good
+- [#216](https://github.com/opencomponents/oc/pull/216) Looks good;
+tested
 
 ### v0.28.8
 - [#215](https://github.com/opencomponents/oc/pull/215) mock bugfix for when a value is not a string
