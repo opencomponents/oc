@@ -1,6 +1,6 @@
 {
   "name": "oc",
-  "version": "0.48.10",
+  "version": "0.48.11",
   "description": "A framework for developing and distributing html components",
   "main": "./src/index.js",
   "bin": {
