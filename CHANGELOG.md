@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.48.12
+- [#1172](https://github.com/opencomponents/oc/pull/1172) [Snyk] Security upgrade oc-client from 3.2.10 to 3.2.11
+
 ### v0.48.9
 - [#1170](https://github.com/opencomponents/oc/pull/1170) [SFX-2153] - Upgrading Handlerbars render to latest version
 - [#1158](https://github.com/opencomponents/oc/pull/1158) Update mocha in package.json from 6.2.2 to 7.0.1
