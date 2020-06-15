@@ -1,7 +1,7 @@
 ## Change Log
 
-### v0.48.13
-- Bump Release
+### v0.48.14
+- [#1173](https://github.com/opencomponents/oc/pull/1173) [SFX-2153] - Upgraded Handlebars Compiler
 
 ### v0.48.12
 - [#1172](https://github.com/opencomponents/oc/pull/1172) [Snyk] Security upgrade oc-client from 3.2.10 to 3.2.11
