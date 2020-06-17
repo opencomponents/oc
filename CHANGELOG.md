@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.48.15
+- [#1174](https://github.com/opencomponents/oc/pull/1174) Handlebars OC Upgrade
+
 ### v0.48.14
 - [#1173](https://github.com/opencomponents/oc/pull/1173) [SFX-2153] - Upgraded Handlebars Compiler
 
