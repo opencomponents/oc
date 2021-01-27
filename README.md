@@ -32,7 +32,6 @@ We have been using it for more than two years in production at OpenTable, for sh
 - [Code of conduct](CONTRIBUTING.md#code-of-conduct)
 - [Troubleshooting](CONTRIBUTING.md#troubleshooting)
 - [Gitter chat](https://gitter.im/opentable/oc)
-- oc@opentable.com
 
 ## Requirements and build status
 
