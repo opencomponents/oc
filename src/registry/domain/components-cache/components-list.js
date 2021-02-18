@@ -42,7 +42,7 @@ module.exports = (conf, cdn) => {
             return callback(err);
           }
 
-          async.map(components, getVersionsForComponent, (errors, versions) => {
+          async.mapLimit(components, cdn.maxConcurrentRequests, getVersionsForComponent, (errors, versions) => {
             if (errors) {
               return callback(errors);
             }
