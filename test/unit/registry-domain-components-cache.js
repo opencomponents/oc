@@ -8,7 +8,8 @@ describe('registry : domain : components-cache', () => {
   const mockedCdn = {
     getJson: sinon.stub(),
     listSubDirectories: sinon.stub(),
-    putFileContent: sinon.stub()
+    putFileContent: sinon.stub(),
+    maxConcurrentRequests: 10
   };
 
   const baseOptions = {
