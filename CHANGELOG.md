@@ -1,15 +1,11 @@
 ## Change Log
 
-### v0.48.15
+### v0.48.16
+- [#1180](https://github.com/opencomponents/oc/pull/1180) Respect cdn.maxConcurrentRequests in components-list
+- [#1177](https://github.com/opencomponents/oc/pull/1177) Remove unsupported email address
 - [#1174](https://github.com/opencomponents/oc/pull/1174) Handlebars OC Upgrade
-
-### v0.48.14
 - [#1173](https://github.com/opencomponents/oc/pull/1173) [SFX-2153] - Upgraded Handlebars Compiler
-
-### v0.48.12
 - [#1172](https://github.com/opencomponents/oc/pull/1172) [Snyk] Security upgrade oc-client from 3.2.10 to 3.2.11
-
-### v0.48.9
 - [#1170](https://github.com/opencomponents/oc/pull/1170) [SFX-2153] - Upgrading Handlerbars render to latest version
 - [#1158](https://github.com/opencomponents/oc/pull/1158) Update mocha in package.json from 6.2.2 to 7.0.1
 - [#1157](https://github.com/opencomponents/oc/pull/1157) Update async in package.json from 3.1.0 to 3.1.1
@@ -1093,8 +1089,7 @@ closes #487
 
 ### v0.28.9
 - [#214](https://github.com/opencomponents/oc/pull/214) S3 validation
-- [#216](https://github.com/opencomponents/oc/pull/216) Looks good;
-tested
+- [#216](https://github.com/opencomponents/oc/pull/216) Looks good
 
 ### v0.28.8
 - [#215](https://github.com/opencomponents/oc/pull/215) mock bugfix for when a value is not a string
