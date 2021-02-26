@@ -27,7 +27,6 @@ describe('utils : stripVersion', () => {
 
   describe('when a scoped dependency is provided', () => {
     const dependency = '/path/to/@the-scoped/package';
-    const name = stripVersion(dependency);
 
     describe('including a version', () => {
       const name = stripVersion(dependency + '@1.2.3');
