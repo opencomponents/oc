@@ -6,8 +6,7 @@ const path = require('path');
 const fs = require('fs-extra');
 const getMissingDependencies = require('./get-missing-dependencies');
 const strings = require('../../../resources/index');
-
-const getModuleName = dependency => dependency.split('@')[0];
+const stripVersion = require('../../../utils/strip-version');
 
 module.exports = (options, callback) => {
   const { componentPath, dependencies, logger } = options;
@@ -29,7 +28,7 @@ module.exports = (options, callback) => {
   const symLinkType = 'dir';
   let symLinkError = false;
   _.each(missingDependencies, dependency => {
-    const moduleName = getModuleName(dependency);
+    const moduleName = stripVersion(dependency);
     const pathToComponentModule = path.resolve(
       componentPath,
       'node_modules',
