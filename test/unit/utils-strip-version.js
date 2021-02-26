@@ -8,7 +8,7 @@ describe('utils : stripVersion', () => {
   describe('when a non scoped dependency is provided', () => {
     const dependency = '/path/to/dependency';
 
-    describe('including a version', () => {
+    describe('when a version is included', () => {
       const name = stripVersion(dependency + '@1.0.0');
 
       it('should return the dependency without the version', () => {
@@ -16,7 +16,7 @@ describe('utils : stripVersion', () => {
       });
     });
 
-    describe('without a version', () => {
+    describe('when a version is not included', () => {
       const name = stripVersion(dependency);
 
       it('should return the unmodified dependency', () => {
@@ -28,7 +28,7 @@ describe('utils : stripVersion', () => {
   describe('when a scoped dependency is provided', () => {
     const dependency = '/path/to/@the-scoped/package';
 
-    describe('including a version', () => {
+    describe('when a version is included', () => {
       const name = stripVersion(dependency + '@1.2.3');
 
       it('should return the dependency without the version', () => {
@@ -36,7 +36,7 @@ describe('utils : stripVersion', () => {
       });
     });
 
-    describe('without a version', () => {
+    describe('when a version is not included', () => {
       const name = stripVersion(dependency);
 
       it('should return the unmodified dependency', () => {
