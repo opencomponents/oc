@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.48.17
+- [#1181](https://github.com/opencomponents/oc/pull/1181) Handle scoped packages when removing version
+
 ### v0.48.16
 - [#1180](https://github.com/opencomponents/oc/pull/1180) Respect cdn.maxConcurrentRequests in components-list
 - [#1177](https://github.com/opencomponents/oc/pull/1177) Remove unsupported email address
