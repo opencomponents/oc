@@ -2,6 +2,7 @@
 
 const path = require('path');
 const spawn = require('cross-spawn');
+const stripVersion = require('./strip-version');
 
 const buildInstallCommand = options => {
   const args = ['install', '--prefix', options.installPath];
@@ -26,10 +27,8 @@ const executeCommand = (options, callback) => {
   cmd.on('close', code => callback(code !== 0 ? code : null));
 };
 
-const moduleName = dependency => dependency.split('@')[0];
-
 const getFullPath = ({ installPath, dependency }) =>
-  path.join(installPath, 'node_modules', moduleName(dependency));
+  path.join(installPath, 'node_modules', stripVersion(dependency));
 
 module.exports = {
   init: (options, callback) => {
