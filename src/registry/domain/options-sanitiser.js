@@ -5,6 +5,8 @@ const _ = require('lodash');
 const settings = require('../../resources/settings');
 const auth = require('./authentication');
 
+const DEFAULT_NODE_KEEPALIVE_MS = 5000;
+
 module.exports = function(input) {
   const options = _.clone(input);
 
@@ -58,6 +60,8 @@ module.exports = function(input) {
 
   options.port = process.env.PORT || options.port;
   options.timeout = options.timeout || 1000 * 60 * 2;
+  options.keepAliveTimeout =
+    options.keepAliveTimeout || DEFAULT_NODE_KEEPALIVE_MS;
 
   if (options.s3) {
     options.storage = {};
