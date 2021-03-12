@@ -66,6 +66,7 @@ module.exports = function(options) {
 
         server = http.createServer(app);
         server.timeout = options.timeout;
+        server.keepAliveTimeout = options.keepAliveTimeout;
 
         server.listen(options.port, err => {
           if (err) {
