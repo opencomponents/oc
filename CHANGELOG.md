@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.48.18
+- [#1184](https://github.com/opencomponents/oc/pull/1184) Add support for custom keepAliveTimeout config
+
 ### v0.48.17
 - [#1181](https://github.com/opencomponents/oc/pull/1181) Handle scoped packages when removing version
 
