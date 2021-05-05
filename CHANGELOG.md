@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.48.19
+- [#1185](https://github.com/opencomponents/oc/pull/1185) update oc-client-browser package
+
 ### v0.48.18
 - [#1184](https://github.com/opencomponents/oc/pull/1184) Add support for custom keepAliveTimeout config
 
