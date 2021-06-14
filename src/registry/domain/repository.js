@@ -283,6 +283,29 @@ module.exports = function(conf) {
         );
       });
     },
+
+    overrideTemplateUnpkg: (pkgDetails, callback) => {
+      const templateJs = pkgDetails.outputFolder + '/template.js';
+      fs.access(templateJs, fs.F_OK, err => {
+        if (err) {
+          return callback(err);
+        }
+        fs.readFile(templateJs, 'utf8', (err, data) => {
+          if (err) {
+            return callback(err);
+          }
+          const result = data.replace(
+            /https:\/\/unpkg.com/g,
+            conf.unpkgTemplateOverride
+          );
+          fs.writeFile(templateJs, result, 'utf8', (err) => {
+            if (err) {
+              return callback(err);
+            }
+          });
+        });
+      });
+    },
     publishComponent: (
       pkgDetails,
       componentName,
@@ -358,6 +381,9 @@ module.exports = function(conf) {
             err => {
               if (err) {
                 return callback(err);
+              }
+              if (conf.unpkgTemplateOverride) {
+                repository.overrideTemplateUnpkg(pkgDetails, callback);
               }
               cdn.putDir(
                 pkgDetails.outputFolder,
