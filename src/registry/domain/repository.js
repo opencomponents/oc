@@ -284,7 +284,7 @@ module.exports = function(conf) {
       });
     },
 
-    overrideTemplateUnpkg: (pkgDetails, callback) => {
+    overrideTemplates: (pkgDetails, templateOverrides, callback) => {
       const templateJs = pkgDetails.outputFolder + '/template.js';
       fs.access(templateJs, fs.F_OK, err => {
         if (err) {
@@ -294,11 +294,10 @@ module.exports = function(conf) {
           if (err) {
             return callback(err);
           }
-          const result = data.replace(
-            /https:\/\/unpkg.com/g,
-            conf.unpkgTemplateOverride
-          );
-          fs.writeFile(templateJs, result, 'utf8', (err) => {
+          templateOverrides.forEach(o => {
+            data = data.replace(o.findRegex, o.override);
+          });
+          fs.writeFile(templateJs, data, 'utf8', err => {
             if (err) {
               return callback(err);
             }
@@ -382,8 +381,12 @@ module.exports = function(conf) {
               if (err) {
                 return callback(err);
               }
-              if (conf.unpkgTemplateOverride) {
-                repository.overrideTemplateUnpkg(pkgDetails, callback);
+              if (conf.templateOverrides) {
+                repository.overrideTemplates(
+                  pkgDetails,
+                  conf.templateOverrides,
+                  callback
+                );
               }
               cdn.putDir(
                 pkgDetails.outputFolder,
