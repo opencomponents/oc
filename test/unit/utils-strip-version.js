@@ -1,6 +1,7 @@
 'use strict';
 
 const expect = require('chai').expect;
+const path = require('path');
 
 describe('utils : stripVersion', () => {
   const stripVersion = require('../../src/utils/strip-version');
@@ -12,7 +13,7 @@ describe('utils : stripVersion', () => {
       const name = stripVersion(dependency + '@1.0.0');
 
       it('should return the dependency without the version', () => {
-        expect(name).to.equal('/path/to/dependency');
+        expect(name).to.equal(path.join('/path/to/dependency'));
       });
     });
 
@@ -20,7 +21,7 @@ describe('utils : stripVersion', () => {
       const name = stripVersion(dependency);
 
       it('should return the unmodified dependency', () => {
-        expect(name).to.equal('/path/to/dependency');
+        expect(name).to.equal(path.join('/path/to/dependency'));
       });
     });
   });
@@ -32,7 +33,7 @@ describe('utils : stripVersion', () => {
       const name = stripVersion(dependency + '@1.2.3');
 
       it('should return the dependency without the version', () => {
-        expect(name).to.equal('/path/to/@the-scoped/package');
+        expect(name).to.equal(path.join('/path/to/@the-scoped/package'));
       });
     });
 
@@ -40,7 +41,7 @@ describe('utils : stripVersion', () => {
       const name = stripVersion(dependency);
 
       it('should return the unmodified dependency', () => {
-        expect(name).to.equal('/path/to/@the-scoped/package');
+        expect(name).to.equal(path.join('/path/to/@the-scoped/package'));
       });
     });
   });

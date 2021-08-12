@@ -1,5 +1,6 @@
 'use strict';
 
+const path = require('path');
 const expect = require('chai').expect;
 const sinon = require('sinon');
 const injectr = require('injectr');
@@ -99,7 +100,7 @@ describe('cli : facade : init', () => {
 
       it('should show a correct path in the log message', () => {
         expect(logSpy.log.args[0][0]).to.contain(
-          '/this/is/relative/path/to/the-best-component'
+          path.join('/this/is/relative/path/to/the-best-component')
         );
       });
     });
