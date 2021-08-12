@@ -3,13 +3,13 @@
 const path = require('path');
 const _ = require('lodash');
 
-const cleanRequire = require('../../../utils/clean-require');
+const moduleExists = require('../../../utils/module-exists');
 
-module.exports = dependencies => {
+module.exports = (dependencies) => {
   const missing = [];
   _.each(dependencies, (version, dependency) => {
     const pathToModule = path.resolve('node_modules/', dependency);
-    if (!cleanRequire(pathToModule, { justTry: true, resolve: true })) {
+    if (!moduleExists(pathToModule)) {
       missing.push(`${dependency}@${version || 'latest'}`);
     }
   });
