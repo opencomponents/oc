@@ -24,19 +24,19 @@ describe('cli : domain : handle-dependencies - get-missing-dependencies', () => 
     }
   ];
 
-  scenarios.forEach(scenario => {
+  scenarios.forEach((scenario) => {
     const { dependencies, installed, output } = scenario;
     describe(`When dependencies: ${JSON.stringify(
       dependencies
     )} and installed: ${JSON.stringify(installed)}`, () => {
       const pathResolveSpy = sinon.spy();
-      const cleanRequireSpy = sinon.spy();
+      const moduleExistsSpy = sinon.spy();
       const getMissingDependencies = injectr(
         '../../src/cli/domain/handle-dependencies/get-missing-dependencies.js',
         {
-          '../../../utils/clean-require': (name, options) => {
-            cleanRequireSpy(name, options);
-            return installed[name] ? { dependency: true } : undefined;
+          '../../../utils/module-exists': (name) => {
+            moduleExistsSpy(name);
+            return installed[name];
           },
           path: {
             resolve: (...args) => {
@@ -56,12 +56,8 @@ describe('cli : domain : handle-dependencies - get-missing-dependencies', () => 
           expect(pathResolveCall[0]).to.equal('node_modules/');
           expect(pathResolveCall[1]).to.equal(_.keys(dependencies)[i]);
         });
-        cleanRequireSpy.args.forEach((cleanRequireCall, i) => {
-          expect(cleanRequireCall[0]).to.equal(_.keys(dependencies)[i]);
-          expect(cleanRequireCall[1]).to.eql({
-            justTry: true,
-            resolve: true
-          });
+        moduleExistsSpy.args.forEach((moduleExistsCall, i) => {
+          expect(moduleExistsCall[0]).to.equal(_.keys(dependencies)[i]);
         });
       });
     });
