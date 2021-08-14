@@ -127,6 +127,11 @@ module.exports = {
         username: {
           description:
             'username used to authenticate when publishing to registry'
+        },
+        skipPackage: {
+          boolean: true,
+          description: 'Skip packaging step',
+          default: false
         }
       },
       description: 'Publish a component',

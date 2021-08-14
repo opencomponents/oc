@@ -4,5 +4,5 @@
   "semi": true,
   "singleQuote": true,
   "useTabs": false,
-  "arrowParens": "always"
+  "arrowParens": "avoid"
 }
