@@ -363,7 +363,7 @@ describe('cli : facade : publish', () => {
           execute(
             () => {
               expect(logSpy.err.args[0][0]).to.equal(
-                'Could not find a _package folder to publish'
+                'Could not find a _package folder to publish. Try running "oc package" first, or do not skip packaging'
               );
               done();
             },
