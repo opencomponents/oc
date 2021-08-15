@@ -13,17 +13,16 @@
     "publish-major": "npm run version-major && npm run test-silent && npm run git-stage-and-push && npm run npm-publish",
     "publish-minor": "npm run version-minor && npm run test-silent && npm run git-stage-and-push && npm run npm-publish",
     "publish-patch": "npm run version-patch && npm run test-silent && npm run git-stage-and-push && npm run npm-publish",
-    "precommit": "lint-staged",
     "test": "npm run build && node tasks/mochaTest.js",
     "test-silent": "npm run build && node tasks/mochaTest.js --silent",
     "version-major": "node tasks/version.js --type=\"major\"",
     "version-minor": "node tasks/version.js --type=\"minor\"",
-    "version-patch": "node tasks/version.js --type=\"patch\""
+    "version-patch": "node tasks/version.js --type=\"patch\"",
+    "prepare": "husky install"
   },
   "lint-staged": {
     "*.js": [
-      "prettier-eslint --single-quote --write",
-      "git add"
+      "prettier-eslint --single-quote --write"
     ]
   },
   "engines": {
@@ -48,9 +47,8 @@
     "chai": "4.2.0",
     "chalk": "^2.1.0",
     "glob": "^7.1.2",
-    "husky": "3.0.9",
     "injectr": "0.5.1",
-    "lint-staged": "9.4.2",
+    "lint-staged": "^11.1.2",
     "minimist": "^1.2.0",
     "mocha": "7.0.1",
     "node-emoji": "^1.8.1",
@@ -58,7 +56,8 @@
     "prettier-eslint-cli": "5.0.0",
     "semver-sort": "0.0.4",
     "simple-git": "^1.77.0",
-    "sinon": "7.5.0"
+    "sinon": "7.5.0",
+    "husky": "^7.0.0"
   },
   "dependencies": {
     "accept-language-parser": "1.5.0",
