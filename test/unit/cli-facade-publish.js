@@ -13,26 +13,41 @@ describe('cli : facade : publish', () => {
     Local = require('../../src/cli/domain/local'),
     local = new Local(),
     readStub = sinon.stub().yields(null, 'test'),
-    PublishFacade = injectr('../../src/cli/facade/publish.js', {
-      read: readStub
-    }),
-    publishFacade = new PublishFacade({
-      registry,
-      local,
-      logger: logSpy
-    });
+    mockComponent = {
+      name: 'hello-world',
+      version: '1.0.0'
+    };
 
-  const execute = function(cb, creds) {
-    creds = creds || {};
+  const execute = function(
+    cb,
+    { creds = {}, skipPackage = false, fs = {} } = {}
+  ) {
     logSpy.err = sinon.stub();
     logSpy.log = sinon.stub();
     logSpy.ok = sinon.stub();
     logSpy.warn = sinon.stub();
+    const fsMock = Object.assign(
+        {
+          existsSync: sinon.stub().returns(true),
+          readJson: sinon.stub().yields(null, mockComponent)
+        },
+        fs
+      ),
+      PublishFacade = injectr('../../src/cli/facade/publish.js', {
+        'fs-extra': fsMock,
+        read: readStub
+      }),
+      publishFacade = new PublishFacade({
+        registry,
+        local,
+        logger: logSpy
+      });
     publishFacade(
       {
         componentPath: 'test/fixtures/components/hello-world/',
         username: creds.username,
-        password: creds.password
+        password: creds.password,
+        skipPackage
       },
       () => {
         cb();
@@ -106,10 +121,7 @@ describe('cli : facade : publish', () => {
 
         describe('when a component is valid', () => {
           beforeEach(() => {
-            sinon.stub(local, 'package').yields(null, {
-              name: 'hello-world',
-              version: '1.0.0'
-            });
+            sinon.stub(local, 'package').yields(null, mockComponent);
           });
 
           afterEach(() => {
@@ -279,8 +291,10 @@ describe('cli : facade : publish', () => {
                 beforeEach(done => {
                   sinon.stub(registry, 'putComponent').yields('Unauthorized');
                   execute(done, {
-                    username: 'myuser',
-                    password: 'password'
+                    creds: {
+                      username: 'myuser',
+                      password: 'password'
+                    }
                   });
                 });
 
@@ -321,6 +335,60 @@ describe('cli : facade : publish', () => {
               });
             });
           });
+        });
+      });
+      describe('when skipping packaging', () => {
+        beforeEach(() => {
+          sinon.stub(local, 'compress').yields(null);
+        });
+
+        afterEach(() => {
+          local.compress.restore();
+        });
+
+        it('should publish the package to all registries', done => {
+          sinon.stub(registry, 'putComponent').yields(null, 'ok');
+          execute(
+            () => {
+              registry.putComponent.restore();
+
+              expect(logSpy.ok.args[0][0]).to.include('http://www.api.com');
+              expect(logSpy.ok.args[1][0]).to.include('http://www.api2.com');
+              done();
+            },
+            { skipPackage: true }
+          );
+        });
+        it('should skip packaging', done => {
+          sinon.stub(registry, 'putComponent').yields(null, 'ok');
+          sinon.stub(local, 'package');
+          execute(
+            () => {
+              registry.putComponent.restore();
+
+              expect(local.package.called).to.be.false;
+
+              local.package.restore();
+              done();
+            },
+            { skipPackage: true }
+          );
+        });
+        it('should show an error message if the package folder does not exist', done => {
+          execute(
+            () => {
+              expect(logSpy.err.args[0][0]).to.equal(
+                'Could not find a _package folder to publish. Try running "oc package" first, or do not skip packaging'
+              );
+              done();
+            },
+            {
+              skipPackage: true,
+              fs: {
+                existsSync: sinon.stub().returns(false)
+              }
+            }
+          );
         });
       });
     });

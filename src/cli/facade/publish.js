@@ -4,6 +4,7 @@ const async = require('async');
 const colors = require('colors/safe');
 const format = require('stringformat');
 const path = require('path');
+const fs = require('fs-extra');
 const read = require('read');
 const _ = require('lodash');
 
@@ -18,12 +19,16 @@ module.exports = function(dependencies) {
 
   return function(opts, callback) {
     const componentPath = opts.componentPath,
+      skipPackage = opts.skipPackage,
       packageDir = path.resolve(componentPath, '_package'),
       compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
 
     let errorMessage;
 
     callback = wrapCliCallback(callback);
+
+    const readPackageJson = cb =>
+      fs.readJson(path.join(packageDir, 'package.json'), cb);
 
     const getCredentials = function(cb) {
       if (opts.username && opts.password) {
@@ -42,12 +47,17 @@ module.exports = function(dependencies) {
       });
     };
 
+    const compress = cb => {
+      local.compress(packageDir, compressedPackagePath, cb);
+    };
+
     const packageAndCompress = function(cb) {
       logger.warn(format(strings.messages.cli.PACKAGING, packageDir));
       const packageOptions = {
         production: true,
         componentPath: path.resolve(componentPath)
       };
+
       local.package(packageOptions, (err, component) => {
         if (err) {
           return cb(err);
@@ -57,7 +67,7 @@ module.exports = function(dependencies) {
           format(strings.messages.cli.COMPRESSING, compressedPackagePath)
         );
 
-        local.compress(packageDir, compressedPackagePath, err => {
+        compress(err => {
           if (err) {
             return cb(err);
           }
@@ -129,61 +139,78 @@ module.exports = function(dependencies) {
       });
     };
 
+    const publishToRegistries = (registryLocations, component) => {
+      async.eachSeries(
+        registryLocations,
+        (registryUrl, next) => {
+          const registryNormalised = registryUrl.replace(/\/$/, ''),
+            componentRoute = `${registryNormalised}/${component.name}/${component.version}`;
+          putComponentToRegistry(
+            { route: componentRoute, path: compressedPackagePath },
+            next
+          );
+        },
+        err => {
+          local.cleanup(compressedPackagePath, (err2, res) => {
+            if (err) {
+              return callback(err);
+            }
+            callback(err2, res);
+          });
+        }
+      );
+    };
+
     registry.get((err, registryLocations) => {
       if (err) {
         logger.err(err);
         return callback(err);
       }
 
-      handleDependencies(
-        { components: [path.resolve(componentPath)], logger },
-        (err, dependencies) => {
-          if (err) {
-            logger.err(err);
-            return callback(err);
-          }
-          packageAndCompress((err, component) => {
+      if (!skipPackage) {
+        handleDependencies(
+          { components: [path.resolve(componentPath)], logger },
+          err => {
             if (err) {
-              errorMessage = format(
-                strings.errors.cli.PACKAGE_CREATION_FAIL,
-                err
-              );
-              logger.err(errorMessage);
-              return callback(errorMessage);
+              logger.err(err);
+              return callback(err);
             }
-
-            async.eachSeries(
-              registryLocations,
-              (registryUrl, next) => {
-                const registryLength = registryUrl.length,
-                  registryNormalised =
-                    registryUrl.slice(registryLength - 1) === '/'
-                      ? registryUrl.slice(0, registryLength - 1)
-                      : registryUrl,
-                  componentRoute = format(
-                    '{0}/{1}/{2}',
-                    registryNormalised,
-                    component.name,
-                    component.version
-                  );
-
-                putComponentToRegistry(
-                  { route: componentRoute, path: compressedPackagePath },
-                  next
+            packageAndCompress((err, component) => {
+              if (err) {
+                errorMessage = format(
+                  strings.errors.cli.PACKAGE_CREATION_FAIL,
+                  err
                 );
-              },
-              err => {
-                local.cleanup(compressedPackagePath, (err2, res) => {
-                  if (err) {
-                    return callback(err);
-                  }
-                  callback(err2, res);
-                });
+                logger.err(errorMessage);
+                return callback(errorMessage);
               }
-            );
+
+              publishToRegistries(registryLocations, component);
+            });
+          }
+        );
+      } else {
+        if (fs.existsSync(packageDir)) {
+          readPackageJson((err, component) => {
+            if (err) {
+              logger.err(err);
+              return callback(err);
+            }
+            compress(err => {
+              if (err) {
+                logger.err(err);
+                return callback(err);
+              }
+
+              publishToRegistries(registryLocations, component);
+            });
           });
+        } else {
+          errorMessage = strings.errors.cli.PACKAGE_FOLDER_MISSING;
+          logger.err(errorMessage);
+          return callback(errorMessage);
         }
-      );
+      }
     });
   };
 };
