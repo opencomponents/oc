@@ -359,6 +359,21 @@ describe('cli : facade : publish', () => {
             { skipPackage: true }
           );
         });
+        it('should skip packaging', done => {
+          sinon.stub(registry, 'putComponent').yields(null, 'ok');
+          sinon.stub(local, 'package');
+          execute(
+            () => {
+              registry.putComponent.restore();
+
+              expect(local.package.called).to.be.false;
+
+              local.package.restore();
+              done();
+            },
+            { skipPackage: true }
+          );
+        });
         it('should show an error message if the package folder does not exist', done => {
           execute(
             () => {
