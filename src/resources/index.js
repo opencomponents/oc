@@ -173,7 +173,8 @@ module.exports = {
         'the version of used OC CLI is invalid. Try to upgrade OC CLI running {0}',
       PACKAGE_CREATION_FAIL: 'An error happened when creating the package: {0}',
       PACKAGING_FAIL: 'an error happened while packaging {0}: {1}',
-      PACKAGE_FOLDER_MISSING: 'Could not find a _package folder to publish',
+      PACKAGE_FOLDER_MISSING:
+        'Could not find a _package folder to publish. Try running "oc package" first, or do not skip packaging',
       PLUGIN_MISSING_FROM_REGISTRY:
         'Looks  like you are trying to use a plugin in the dev mode ({0}).\nYou need to mock it doing {1}',
       PORT_IS_BUSY:
