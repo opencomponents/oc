@@ -98,6 +98,7 @@ module.exports.init = function(pluginsToRegister, callback) {
     plugin.register.register(plugin.options || {}, dependencies, err => {
       const pluginCallback = plugin.callback || _.noop;
       pluginCallback(err);
+      plugin.register.execute.toString = () => plugin.description || '';
       registered[plugin.name] = plugin.register.execute;
       done(err);
     });

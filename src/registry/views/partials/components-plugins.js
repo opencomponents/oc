@@ -1,16 +1,20 @@
 module.exports = vm => {
-  const pluginRow = name => `<div class="componentRow row table">
+  const pluginRow = ([
+    name,
+    description
+  ]) => `<div class="componentRow row table">
     <p class="release">
-      ${name}
+      <span style="font-weight: bold">${name +
+        (description ? ':' : '')}</span>${description}
     </p>
   </div>
 `;
 
-  const pluginNames = Object.keys(vm.availablePlugins);
+  const plugins = Object.entries(
+    vm.availablePlugins
+  ).map(([pluginName, fn]) => [pluginName, fn.toString()]);
 
   return `<div id="components-plugins" class="box">${
-    pluginNames.length
-      ? pluginNames.map(pluginRow).join('')
-      : 'No plugins registered'
+    plugins.length ? plugins.map(pluginRow).join('') : 'No plugins registered'
   }</div>`;
 };
