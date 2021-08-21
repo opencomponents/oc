@@ -8,8 +8,9 @@ const ComponentInfoRoute = require('./routes/component-info');
 const ComponentPreviewRoute = require('./routes/component-preview');
 const IndexRoute = require('./routes');
 const PublishRoute = require('./routes/publish');
-const settings = require('../resources/settings');
 const StaticRedirectorRoute = require('./routes/static-redirector');
+const PluginsRoute = require('./routes/plugins');
+const settings = require('../resources/settings');
 
 module.exports.create = function(app, conf, repository) {
   const routes = {
@@ -19,7 +20,8 @@ module.exports.create = function(app, conf, repository) {
     componentPreview: new ComponentPreviewRoute(conf, repository),
     index: new IndexRoute(repository),
     publish: new PublishRoute(repository),
-    staticRedirector: new StaticRedirectorRoute(repository)
+    staticRedirector: new StaticRedirectorRoute(repository),
+    plugins: new PluginsRoute(conf)
   };
 
   const prefix = conf.prefix;
@@ -32,11 +34,11 @@ module.exports.create = function(app, conf, repository) {
   app.get(`${prefix}oc-client/client.js`, routes.staticRedirector);
   app.get(`${prefix}oc-client/oc-client.min.map`, routes.staticRedirector);
 
+  app.get(`${prefix}~registry/plugins`, routes.plugins);
+
   if (conf.local) {
     app.get(
-      `${prefix}:componentName/:componentVersion/${
-        settings.registry.localStaticRedirectorPath
-      }*`,
+      `${prefix}:componentName/:componentVersion/${settings.registry.localStaticRedirectorPath}*`,
       routes.staticRedirector
     );
   } else {
@@ -51,9 +53,7 @@ module.exports.create = function(app, conf, repository) {
   app.post(prefix, routes.components);
 
   app.get(
-    `${prefix}:componentName/:componentVersion${
-      settings.registry.componentInfoPath
-    }`,
+    `${prefix}:componentName/:componentVersion${settings.registry.componentInfoPath}`,
     routes.componentInfo
   );
   app.get(
@@ -62,9 +62,7 @@ module.exports.create = function(app, conf, repository) {
   );
 
   app.get(
-    `${prefix}:componentName/:componentVersion${
-      settings.registry.componentPreviewPath
-    }`,
+    `${prefix}:componentName/:componentVersion${settings.registry.componentPreviewPath}`,
     routes.componentPreview
   );
   app.get(
