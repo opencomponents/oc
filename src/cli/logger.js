@@ -3,6 +3,7 @@
 const colors = require('colors/safe');
 
 const logger = {
+  // eslint-disable-next-line no-console
   writeLn: console.log,
   write: msg => process.stdout.write(msg.toString())
 };

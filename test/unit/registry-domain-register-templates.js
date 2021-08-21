@@ -1,8 +1,6 @@
 'use strict';
 
 const expect = require('chai').expect;
-const injectr = require('injectr');
-const sinon = require('sinon');
 
 describe('registry : domain : register-templates', () => {
   const registerTemplates = require('../../src/registry/domain/register-templates.js');

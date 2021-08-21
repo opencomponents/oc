@@ -3,11 +3,8 @@
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
-const _ = require('lodash');
 
 describe('cli : domain : handle-dependencies : require-template', () => {
-  const isTemplateValid = sinon.stub().returns(true);
-
   let result, error;
   const execute = options => {
     error = null;

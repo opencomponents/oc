@@ -5,6 +5,7 @@ const nodeEmoji = require('node-emoji');
 
 const log = (col, style, emoji) =>
   function(msg) {
+    // eslint-disable-next-line no-console
     console.log(
       chalk[style][col](msg) + (emoji ? ` ${nodeEmoji.get(emoji)}` : '')
     );

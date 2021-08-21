@@ -2,7 +2,6 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const _ = require('lodash');
 
 const requireTemplate = require('./handle-dependencies/require-template');
 const validator = require('../../registry/domain/validators');
@@ -41,8 +40,6 @@ module.exports = function() {
       minify,
       verbose,
       production
-      // TODO: logger,
-      // TODO: watch,
     };
 
     try {

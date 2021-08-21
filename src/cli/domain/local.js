@@ -37,7 +37,8 @@ module.exports = function() {
     },
     getComponentsByDir: getComponentsByDir(),
     init: function(options, callback) {
-      let { componentName, templateType, logger } = options;
+      const { componentName, logger } = options;
+      let { templateType } = options;
       if (!validator.validateComponentName(componentName)) {
         return callback('name not valid');
       }
