@@ -98,6 +98,8 @@ module.exports.init = function(pluginsToRegister, callback) {
     plugin.register.register(plugin.options || {}, dependencies, err => {
       const pluginCallback = plugin.callback || _.noop;
       pluginCallback(err);
+      // Overriding toString so implementation details of plugins do not
+      // leak to OC consumers
       plugin.register.execute.toString = () => plugin.description || '';
       registered[plugin.name] = plugin.register.execute;
       done(err);
