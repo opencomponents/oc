@@ -29,7 +29,7 @@ module.exports = function(dependencies) {
     );
 
   const removeFolders = (list, cb) =>
-    remove(list, (err, result) => {
+    remove(list, err => {
       if (err) {
         logger.err(strings.errors.cli.cleanRemoveError(err));
         return cb(err);

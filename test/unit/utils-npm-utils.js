@@ -37,7 +37,7 @@ describe('utils : npm-utils', () => {
           onStub = sinon.stub();
           crossSpawnStub.reset();
           crossSpawnStub.returns({ on: onStub });
-          npmUtils.init(scenario.input, (err, res) => {
+          npmUtils.init(scenario.input, err => {
             error = err;
             done();
           });
