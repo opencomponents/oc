@@ -83,7 +83,7 @@
     "no-caller": "error",
     "no-catch-shadow": "off",
     "no-compare-neg-zero": "error",
-    "no-confusing-arrow": "error",
+    "no-confusing-arrow": "off",
     "no-continue": "off",
     "no-console": "warn",
     "no-div-regex": "error",

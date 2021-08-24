@@ -8,13 +8,7 @@ const npm = require('../../../utils/npm-utils');
 const strings = require('../../../resources/index');
 
 module.exports = (options, cb) => {
-  const {
-    compilerPath,
-    componentName,
-    componentPath,
-    dependency,
-    logger
-  } = options;
+  const { compilerPath, componentPath, dependency, logger } = options;
 
   logger.warn(format(strings.messages.cli.INSTALLING_DEPS, dependency), true);
 

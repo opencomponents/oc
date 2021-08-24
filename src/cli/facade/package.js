@@ -25,7 +25,7 @@ module.exports = function(dependencies) {
         logger,
         useComponentDependencies
       },
-      (err, dependencies) => {
+      err => {
         if (err) {
           logger.err(err);
           return callback(err);

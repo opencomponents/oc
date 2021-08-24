@@ -3,15 +3,14 @@
 const bodyParser = require('body-parser');
 const errorhandler = require('errorhandler');
 const morgan = require('morgan');
-const path = require('path');
 
 const baseUrlHandler = require('./base-url-handler');
 const cors = require('./cors');
 const discoveryHandler = require('./discovery-handler');
 const fileUploads = require('./file-uploads');
 const requestHandler = require('./request-handler');
-const bodyParserJsonArgument = {inflate: true};
-const bodyParserUrlEncodedArgument = {extended: true};
+const bodyParserJsonArgument = { inflate: true };
+const bodyParserUrlEncodedArgument = { extended: true };
 
 module.exports.bind = function(app, options) {
   app.set('port', options.port);
@@ -25,8 +24,8 @@ module.exports.bind = function(app, options) {
   app.use(requestHandler());
 
   if (options.postRequestPayloadSize) {
-      bodyParserJsonArgument.limit = options.postRequestPayloadSize;
-      bodyParserUrlEncodedArgument.limit = options.postRequestPayloadSize;
+    bodyParserJsonArgument.limit = options.postRequestPayloadSize;
+    bodyParserUrlEncodedArgument.limit = options.postRequestPayloadSize;
   }
 
   app.use(bodyParser.json(bodyParserJsonArgument));

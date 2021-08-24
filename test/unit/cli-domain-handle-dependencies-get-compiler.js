@@ -6,7 +6,7 @@ const sinon = require('sinon');
 const _ = require('lodash');
 
 describe('cli : domain : handle-dependencies : get-compiler', () => {
-  let cleanRequireStub, error, installCompilerStub, result;
+  let cleanRequireStub, error, installCompilerStub;
   const execute = (opts, done) => {
     done = done || opts;
     const compilerVersion = opts.compilerVersionEmpty ? '' : '1.2.3';
@@ -31,9 +31,8 @@ describe('cli : domain : handle-dependencies : get-compiler', () => {
       }
     );
 
-    getCompiler(_.cloneDeep(options), (err, res) => {
+    getCompiler(_.cloneDeep(options), err => {
       error = err;
-      result = res;
       done();
     });
   };

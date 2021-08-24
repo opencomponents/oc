@@ -7,7 +7,7 @@ const sinon = require('sinon');
 describe('cli : facade : clean', () => {
   const logSpy = {};
 
-  let error, result, readMock;
+  let readMock;
   const execute = (options, done) => {
     logSpy.ok = sinon.spy();
     logSpy.err = sinon.spy();
@@ -27,9 +27,7 @@ describe('cli : facade : clean', () => {
     });
 
     const cleanFacade = new CleanFacade({ local, logger: logSpy });
-    cleanFacade(options.params, (err, res) => {
-      error = err;
-      result = res;
+    cleanFacade(options.params, () => {
       done();
     });
   };

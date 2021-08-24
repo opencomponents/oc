@@ -1,7 +1,6 @@
 'use strict';
 
 const semver = require('semver');
-const _ = require('lodash');
 
 const ocCliVersionValidator = require('./oc-cli-version');
 const componentParametersValidator = require('./component-parameters');

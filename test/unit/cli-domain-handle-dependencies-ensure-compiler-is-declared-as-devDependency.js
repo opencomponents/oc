@@ -35,7 +35,7 @@ describe('cli : domain : handle-dependencies : ensure-compiler-is-declared-as-de
   });
 
   describe('when compiler is not declared as devDependency', () => {
-    let error, result;
+    let error;
     beforeEach(done => {
       ensure(
         {
@@ -45,9 +45,8 @@ describe('cli : domain : handle-dependencies : ensure-compiler-is-declared-as-de
           },
           template: 'oc-template-react'
         },
-        (err, compilerDep) => {
+        err => {
           error = err;
-          result = compilerDep;
           done();
         }
       );

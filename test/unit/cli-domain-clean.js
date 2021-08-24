@@ -40,15 +40,14 @@ describe('cli : domain : clean', () => {
     });
 
     describe('getComponentsByDir error', () => {
-      let error, result;
+      let error;
       beforeEach(done => {
         const clean = initialize({
           getComponentsByDirError: new Error('oops')
         });
 
-        clean.fetchList('my-components-folder', (err, res) => {
+        clean.fetchList('my-components-folder', err => {
           error = err;
-          result = res;
           done();
         });
       });
@@ -60,13 +59,12 @@ describe('cli : domain : clean', () => {
 
   describe('when removing the folders to clean', () => {
     describe('happy path', () => {
-      let error, result, removeMock;
+      let error, removeMock;
       beforeEach(done => {
         removeMock = sinon.stub().yields(null, 'ok');
         const clean = initialize({ removeMock });
-        clean.remove(['path/to/my-component1/node_modules'], (err, res) => {
+        clean.remove(['path/to/my-component1/node_modules'], err => {
           error = err;
-          result = res;
           done();
         });
       });
@@ -82,13 +80,12 @@ describe('cli : domain : clean', () => {
     });
 
     describe('fs.remove error', () => {
-      let error, result, removeMock;
+      let error, removeMock;
       beforeEach(done => {
         removeMock = sinon.stub().yields(new Error('nope'));
         const clean = initialize({ removeMock });
-        clean.remove(['path/to/my-component1/node_modules'], (err, res) => {
+        clean.remove(['path/to/my-component1/node_modules'], err => {
           error = err;
-          result = res;
           done();
         });
       });
