@@ -1,6 +1,13 @@
 ## Change Log
 
-### v0.48.19
+### v0.48.20
+- [#1198](https://github.com/opencomponents/oc/pull/1198) Upgrade oc client browser
+- [#1194](https://github.com/opencomponents/oc/pull/1194) Available plugins
+- [#1196](https://github.com/opencomponents/oc/pull/1196) clean eslint rule warnings/errors
+- [#1191](https://github.com/opencomponents/oc/pull/1191) Add cli argument to skip dependencies packaging
+- [#1192](https://github.com/opencomponents/oc/pull/1192) Update husky config
+- [#1190](https://github.com/opencomponents/oc/pull/1190) Fix handling of missing dependencies
+- [#1189](https://github.com/opencomponents/oc/pull/1189) Fix tests for windows
 - [#1185](https://github.com/opencomponents/oc/pull/1185) update oc-client-browser package
 
 ### v0.48.18
@@ -12,9 +19,17 @@
 ### v0.48.16
 - [#1180](https://github.com/opencomponents/oc/pull/1180) Respect cdn.maxConcurrentRequests in components-list
 - [#1177](https://github.com/opencomponents/oc/pull/1177) Remove unsupported email address
+
+### v0.48.15
 - [#1174](https://github.com/opencomponents/oc/pull/1174) Handlebars OC Upgrade
+
+### v0.48.14
 - [#1173](https://github.com/opencomponents/oc/pull/1173) [SFX-2153] - Upgraded Handlebars Compiler
+
+### v0.48.12
 - [#1172](https://github.com/opencomponents/oc/pull/1172) [Snyk] Security upgrade oc-client from 3.2.10 to 3.2.11
+
+### v0.48.9
 - [#1170](https://github.com/opencomponents/oc/pull/1170) [SFX-2153] - Upgrading Handlerbars render to latest version
 - [#1158](https://github.com/opencomponents/oc/pull/1158) Update mocha in package.json from 6.2.2 to 7.0.1
 - [#1157](https://github.com/opencomponents/oc/pull/1157) Update async in package.json from 3.1.0 to 3.1.1
@@ -1098,7 +1113,8 @@ closes #487
 
 ### v0.28.9
 - [#214](https://github.com/opencomponents/oc/pull/214) S3 validation
-- [#216](https://github.com/opencomponents/oc/pull/216) Looks good
+- [#216](https://github.com/opencomponents/oc/pull/216) Looks good;
+tested
 
 ### v0.28.8
 - [#215](https://github.com/opencomponents/oc/pull/215) mock bugfix for when a value is not a string
