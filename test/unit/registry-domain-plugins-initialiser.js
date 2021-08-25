@@ -104,6 +104,7 @@ describe('registry : domain : plugins-initialiser', () => {
       const plugins = [
         {
           name: 'getValue',
+          description: 'Function description',
           register: {
             register: (options, deps, cb) => {
               passedOptions = options;
@@ -140,6 +141,11 @@ describe('registry : domain : plugins-initialiser', () => {
     it('should expose the functionalities using the plugin names', () => {
       expect(result.getValue).to.be.a('function');
       expect(result.isFlagged).to.be.a('function');
+    });
+
+    it('should expose descriptions on the plugin functions if defined', () => {
+      expect(result.getValue.toString()).to.equal('Function description');
+      expect(result.isFlagged.toString()).to.equal('');
     });
 
     it('should be make the functionality usable', () => {
