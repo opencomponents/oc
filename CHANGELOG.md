@@ -1,6 +1,7 @@
 ## Change Log
 
-### v0.48.20
+### v0.48.21
+- [#1199](https://github.com/opencomponents/oc/pull/1199) Publish new version
 - [#1198](https://github.com/opencomponents/oc/pull/1198) Upgrade oc client browser
 - [#1194](https://github.com/opencomponents/oc/pull/1194) Available plugins
 - [#1196](https://github.com/opencomponents/oc/pull/1196) clean eslint rule warnings/errors
@@ -8,6 +9,8 @@
 - [#1192](https://github.com/opencomponents/oc/pull/1192) Update husky config
 - [#1190](https://github.com/opencomponents/oc/pull/1190) Fix handling of missing dependencies
 - [#1189](https://github.com/opencomponents/oc/pull/1189) Fix tests for windows
+
+### v0.48.19
 - [#1185](https://github.com/opencomponents/oc/pull/1185) update oc-client-browser package
 
 ### v0.48.18
