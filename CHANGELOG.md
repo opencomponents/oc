@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.48.22
+- [#1200](https://github.com/opencomponents/oc/pull/1200) upgrade oc-client to have es6 template by default
+
 ### v0.48.21
 - [#1199](https://github.com/opencomponents/oc/pull/1199) Publish new version
 - [#1198](https://github.com/opencomponents/oc/pull/1198) Upgrade oc client browser
