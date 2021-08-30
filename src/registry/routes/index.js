@@ -102,7 +102,8 @@ module.exports = function(repository) {
           _.extend(baseResponse, {
             components: _.map(components, component =>
               urlBuilder.component(component, res.conf.baseUrl)
-            )
+            ),
+            dependencies: getAvailableDependencies(res.conf.dependencies)
           })
         );
       }

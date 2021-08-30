@@ -10,6 +10,7 @@ const IndexRoute = require('./routes');
 const PublishRoute = require('./routes/publish');
 const StaticRedirectorRoute = require('./routes/static-redirector');
 const PluginsRoute = require('./routes/plugins');
+const DependenciesRoute = require('./routes/dependencies');
 const settings = require('../resources/settings');
 
 module.exports.create = function(app, conf, repository) {
@@ -21,7 +22,8 @@ module.exports.create = function(app, conf, repository) {
     index: new IndexRoute(repository),
     publish: new PublishRoute(repository),
     staticRedirector: new StaticRedirectorRoute(repository),
-    plugins: new PluginsRoute(conf)
+    plugins: new PluginsRoute(conf),
+    dependencies: new DependenciesRoute(conf)
   };
 
   const prefix = conf.prefix;
@@ -35,6 +37,7 @@ module.exports.create = function(app, conf, repository) {
   app.get(`${prefix}oc-client/oc-client.min.map`, routes.staticRedirector);
 
   app.get(`${prefix}~registry/plugins`, routes.plugins);
+  app.get(`${prefix}~registry/dependencies`, routes.dependencies);
 
   if (conf.local) {
     app.get(
