@@ -1,33 +1,29 @@
 'use strict';
 
 const path = require('path');
-const watch = require('watch');
+const chokidar = require('chokidar');
 
 const settings = require('../../resources/settings');
 
 module.exports = function(dirs, baseDir, changed) {
-  try {
-    watch.watchTree(
-      path.resolve(baseDir),
-      {
-        interval: 0.5,
-        ignoreUnreadableDir: true,
-        ignoreDotFiles: false,
-        filter: fileOrDir =>
-          settings.filesToIgnoreOnDevWatch.test(fileOrDir) === false
-      },
-      (fileName, currentStat, previousStat) => {
-        if (!!currentStat || !!previousStat) {
-          const componentDir = dirs.find(dir =>
-            Boolean(fileName.match(escapeRegularExpression(dir + path.sep)))
-          );
-          changed(null, fileName, componentDir);
-        }
-      }
+  const watcher = chokidar.watch(path.resolve(baseDir), {
+    ignored: settings.filesToIgnoreOnDevWatch,
+    persistent: true,
+    ignoreInitial: true,
+    usePolling: false
+  });
+  const onChange = fileName => {
+    const componentDir = dirs.find(dir =>
+      Boolean(fileName.match(escapeRegularExpression(dir + path.sep)))
     );
-  } catch (err) {
-    changed(err);
-  }
+    changed(null, fileName, componentDir);
+  };
+
+  watcher
+    .on('add', onChange)
+    .on('change', onChange)
+    .on('unlink', onChange)
+    .on('error', changed);
 };
 
 function escapeRegularExpression(text) {

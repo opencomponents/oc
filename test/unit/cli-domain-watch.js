@@ -6,25 +6,15 @@ const sinon = require('sinon');
 
 describe('cli : domain : watch', () => {
   const execute = (fileChanged, separator, cb) => {
-    class Stats {
-      constructor(settings) {
-        this.stuff = settings.stuff;
-      }
-    }
-
     const watch = injectr('../../src/cli/domain/watch.js', {
       path: {
         resolve: x => x,
         sep: separator
       },
-      watch: {
-        watchTree: sinon
-          .stub()
-          .yields(
-            fileChanged,
-            new Stats('some stuff about current state'),
-            new Stats('previous stuff about the previous state')
-          )
+      chokidar: {
+        watch: sinon.stub().returns({
+          on: sinon.stub().yields(fileChanged)
+        })
       }
     });
 
