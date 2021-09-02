@@ -12,3 +12,4 @@ src/components/base-component-jade/server.js
 test/fixtures
 test/front-end
 test/configuration
+oc.d.ts

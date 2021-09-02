@@ -1,6 +1,7 @@
-import { Request, Response } from 'express';
+import { Express, Request, Response } from 'express';
+import { Server } from 'http';
 
-type Callback<T> = (err: Error | null, data: T) => void;
+type Callback<T = unknown> = (err: Error | null, data: T) => void;
 
 interface Template {}
 
@@ -109,3 +110,59 @@ interface RegistryConfiguration {
   timeout?: number;
   verbosity?: number;
 }
+
+interface Plugin<T = unknown> {
+  name: string;
+  register: {
+    register: (options: T, dependencies: any, next: any) => void;
+    execute: (...args: any[]) => any;
+    dependencies?: string[];
+  };
+  options?: T;
+}
+
+interface RequestData
+  extends Pick<
+      Request,
+      'body' | 'headers' | 'method' | 'path' | 'originalUrl' | 'query'
+    >,
+    Pick<Response, 'statusCode'> {
+  duration: number;
+  url: string;
+}
+
+interface ComponentData extends Pick<Request, 'headers'> {
+  name: string;
+  parameters: Record<string, string>;
+  version: string;
+  status: number;
+  duration: number;
+  href: string;
+  renderMode: 'rendered' | 'unrendered';
+  error?: string;
+  code?: string;
+}
+
+interface EventListener {
+  (eventName: 'start', listener: () => void): void;
+  (
+    eventName: 'error',
+    listener: (data: { code: string; message: string }) => void
+  ): void;
+  (eventName: 'cache-poll', listener: (timestamp: number) => void): void;
+  (eventName: 'request', listener: (data: RequestData) => void): void;
+  (
+    eventName: 'component-retrieved',
+    listener: (data: ComponentData) => void
+  ): void;
+}
+
+export function Registry(
+  options: RegistryConfiguration
+): {
+  close: (cb: Callback) => void;
+  on: EventListener;
+  register: (plugin: Plugin, cb?: Callback<unknown>) => void;
+  start: (cb?: Callback<{ app: Express; server: Server }>) => void;
+  app: Express;
+};
