@@ -7,7 +7,7 @@ const auth = require('./authentication');
 
 const DEFAULT_NODE_KEEPALIVE_MS = 5000;
 
-module.exports = function(input) {
+module.exports = function (input) {
   const options = _.clone(input);
 
   if (!options.publishAuth) {
@@ -45,6 +45,14 @@ module.exports = function(input) {
 
   if (_.isUndefined(options.discovery)) {
     options.discovery = true;
+  }
+
+  if (_.isUndefined(options.pollingInterval)) {
+    options.pollingInterval = 5;
+  }
+
+  if (_.isUndefined(options.templates)) {
+    options.templates = [];
   }
 
   if (
