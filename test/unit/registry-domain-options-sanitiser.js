@@ -121,6 +121,22 @@ describe('registry : domain : options-sanitiser', () => {
     });
   });
 
+  describe('when pollingInterval', () => {
+    describe('is provided', () => {
+      const options = { baseUrl: 'dummy', pollingInterval: 10 };
+      it('should not modify it', () => {
+        expect(sanitise(options).pollingInterval).to.deep.equal(10);
+      });
+    });
+
+    describe('is not provided', () => {
+      const options = { baseUrl: 'dummy' };
+      it('should initialize it as 5000', () => {
+        expect(sanitise(options).pollingInterval).to.deep.equal(5);
+      });
+    });
+  });
+
   describe('when env', () => {
     describe('is provided', () => {
       const options = { baseUrl: 'dummy', env: { value: 'test' } };
