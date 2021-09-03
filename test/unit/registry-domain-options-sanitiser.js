@@ -137,6 +137,22 @@ describe('registry : domain : options-sanitiser', () => {
     });
   });
 
+  describe('when templates', () => {
+    describe('is provided', () => {
+      const options = { baseUrl: 'dummy', templates: [{ name: 'hi' }] };
+      it('should not modify it', () => {
+        expect(sanitise(options).templates).to.deep.equal([{ name: 'hi' }]);
+      });
+    });
+
+    describe('is not provided', () => {
+      const options = { baseUrl: 'dummy' };
+      it('should initialize it as 5000', () => {
+        expect(sanitise(options).templates).to.deep.equal([]);
+      });
+    });
+  });
+
   describe('when env', () => {
     describe('is provided', () => {
       const options = { baseUrl: 'dummy', env: { value: 'test' } };
