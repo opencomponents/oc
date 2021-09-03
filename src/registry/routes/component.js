@@ -1,7 +1,7 @@
 'use strict';
 
 const format = require('stringformat');
-const serializeError = require('serialize-error');
+const { serializeError } = require('serialize-error');
 const _ = require('lodash');
 
 const GetComponentHelper = require('./helpers/get-component');
