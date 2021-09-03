@@ -2,7 +2,6 @@
 
 const async = require('async');
 const colors = require('colors/safe');
-const format = require('stringformat');
 const path = require('path');
 const fs = require('fs-extra');
 const read = require('read');
@@ -52,7 +51,7 @@ module.exports = function(dependencies) {
     };
 
     const packageAndCompress = function(cb) {
-      logger.warn(format(strings.messages.cli.PACKAGING, packageDir));
+      logger.warn(strings.messages.cli.PACKAGING(packageDir));
       const packageOptions = {
         production: true,
         componentPath: path.resolve(componentPath)
@@ -63,9 +62,7 @@ module.exports = function(dependencies) {
           return cb(err);
         }
 
-        logger.warn(
-          format(strings.messages.cli.COMPRESSING, compressedPackagePath)
-        );
+        logger.warn(strings.messages.cli.COMPRESSING(compressedPackagePath));
 
         compress(err => {
           if (err) {
@@ -77,15 +74,14 @@ module.exports = function(dependencies) {
     };
 
     const putComponentToRegistry = function(options, cb) {
-      logger.warn(format(strings.messages.cli.PUBLISHING, options.route));
+      logger.warn(strings.messages.cli.PUBLISHING(options.route));
 
       registry.putComponent(options, err => {
         if (err) {
           if (err === 'Unauthorized') {
             if (!!options.username || !!options.password) {
               logger.err(
-                format(
-                  strings.errors.cli.PUBLISHING_FAIL,
+                strings.errors.cli.PUBLISHING_FAIL(
                   strings.errors.cli.INVALID_CREDENTIALS
                 )
               );
@@ -98,28 +94,22 @@ module.exports = function(dependencies) {
               putComponentToRegistry(_.extend(options, credentials), cb);
             });
           } else if (err.code === 'cli_version_not_valid') {
-            const upgradeCommand = format(
-                strings.commands.cli.UPGRADE,
+            const upgradeCommand = strings.commands.cli.UPGRADE(
                 err.details.suggestedVersion
               ),
-              errorDetails = format(
-                strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE,
+              errorDetails = strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE(
                 colors.blue(upgradeCommand)
               );
 
-            errorMessage = format(
-              strings.errors.cli.PUBLISHING_FAIL,
-              errorDetails
-            );
+            errorMessage = strings.errors.cli.PUBLISHING_FAIL(errorDetails);
             logger.err(errorMessage);
             return cb(errorMessage);
           } else if (err.code === 'node_version_not_valid') {
-            const details = format(
-              strings.errors.cli.NODE_CLI_VERSION_NEEDS_UPGRADE,
+            const details = strings.errors.cli.NODE_CLI_VERSION_NEEDS_UPGRADE(
               err.details.suggestedVersion
             );
 
-            errorMessage = format(strings.errors.cli.PUBLISHING_FAIL, details);
+            errorMessage = strings.errors.cli.PUBLISHING_FAIL(details);
             logger.err(errorMessage);
             return cb(errorMessage);
           } else {
@@ -128,12 +118,12 @@ module.exports = function(dependencies) {
                 err = JSON.stringify(err);
               } catch (er) {}
             }
-            errorMessage = format(strings.errors.cli.PUBLISHING_FAIL, err);
+            errorMessage = strings.errors.cli.PUBLISHING_FAIL(err);
             logger.err(errorMessage);
             return cb(errorMessage);
           }
         } else {
-          logger.ok(format(strings.messages.cli.PUBLISHED, options.route));
+          logger.ok(strings.messages.cli.PUBLISHED(options.route));
           return cb(null, 'ok');
         }
       });
@@ -177,10 +167,7 @@ module.exports = function(dependencies) {
             }
             packageAndCompress((err, component) => {
               if (err) {
-                errorMessage = format(
-                  strings.errors.cli.PACKAGE_CREATION_FAIL,
-                  err
-                );
+                errorMessage = strings.errors.cli.PACKAGE_CREATION_FAIL(err);
                 logger.err(errorMessage);
                 return callback(errorMessage);
               }

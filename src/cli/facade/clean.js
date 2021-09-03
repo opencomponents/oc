@@ -1,6 +1,5 @@
 'use strict';
 
-const format = require('stringformat');
 const read = require('read');
 
 const strings = require('../../resources/index');
@@ -44,7 +43,7 @@ module.exports = function(dependencies) {
 
     fetchList(opts.dirPath, (err, list) => {
       if (err) {
-        logger.err(format(strings.errors.generic, err));
+        logger.err(strings.errors.generic(err));
         return callback(err);
       }
 

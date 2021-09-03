@@ -1,6 +1,5 @@
 'use strict';
 
-const format = require('stringformat');
 const path = require('path');
 const _ = require('lodash');
 
@@ -17,10 +16,7 @@ module.exports = (options, callback) => {
     return callback(null);
   }
 
-  logger.warn(
-    format(strings.messages.cli.INSTALLING_DEPS, missing.join(', ')),
-    true
-  );
+  logger.warn(strings.messages.cli.INSTALLING_DEPS(missing.join(', ')), true);
 
   const npmOptions = {
     dependencies: missing,

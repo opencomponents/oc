@@ -1,7 +1,5 @@
 'use strict';
 
-const format = require('stringformat');
-
 const cleanRequire = require('../../../utils/clean-require');
 const isTemplateValid = require('../../../utils/is-template-valid');
 const npm = require('../../../utils/npm-utils');
@@ -10,7 +8,7 @@ const strings = require('../../../resources/index');
 module.exports = (options, cb) => {
   const { compilerPath, componentPath, dependency, logger } = options;
 
-  logger.warn(format(strings.messages.cli.INSTALLING_DEPS, dependency), true);
+  logger.warn(strings.messages.cli.INSTALLING_DEPS(dependency), true);
 
   const npmOptions = {
     dependency,

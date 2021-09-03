@@ -1,7 +1,5 @@
 'use strict';
 
-const format = require('stringformat');
-
 const strings = require('../../resources/index');
 const wrapCliCallback = require('../wrap-cli-callback');
 
@@ -14,11 +12,7 @@ module.exports = function(dependencies) {
 
     local.mock(opts, (err, res) => {
       logger.ok(
-        format(
-          strings.messages.cli.MOCKED_PLUGIN,
-          opts.targetName,
-          opts.targetValue
-        )
+        strings.messages.cli.MOCKED_PLUGIN(opts.targetName, opts.targetValue)
       );
       callback(err, res);
     });

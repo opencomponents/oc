@@ -1,6 +1,5 @@
 'use strict';
 
-const format = require('stringformat');
 const _ = require('lodash');
 const path = require('path');
 const fs = require('fs-extra');
@@ -18,10 +17,7 @@ module.exports = (options, callback) => {
   }
 
   logger.warn(
-    format(
-      strings.messages.cli.LINKING_DEPENDENCIES,
-      missingDependencies.join(', ')
-    ),
+    strings.messages.cli.LINKING_DEPENDENCIES(missingDependencies.join(', ')),
     true
   );
 
@@ -39,9 +35,7 @@ module.exports = (options, callback) => {
       fs.ensureSymlinkSync(pathToComponentModule, pathToModule, symLinkType);
     } catch (err) {
       symLinkError = true;
-      logger.err(
-        format(strings.errors.cli.DEPENDENCY_LINK_FAIL, moduleName, err)
-      );
+      logger.err(strings.errors.cli.DEPENDENCY_LINK_FAIL(moduleName, err));
     }
   });
   return !symLinkError
