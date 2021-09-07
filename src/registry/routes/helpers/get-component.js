@@ -4,7 +4,6 @@ const acceptLanguageParser = require('accept-language-parser');
 const Cache = require('nice-cache');
 const Client = require('oc-client');
 const Domain = require('domain');
-const format = require('stringformat');
 const emptyResponseHandler = require('oc-empty-response-handler');
 const vm = require('vm');
 const _ = require('lodash');
@@ -113,8 +112,7 @@ module.exports = function(conf, repository) {
             status: 501,
             response: {
               code: 'PLUGIN_MISSING_FROM_REGISTRY',
-              error: format(
-                strings.errors.registry.PLUGIN_NOT_IMPLEMENTED,
+              error: strings.errors.registry.PLUGIN_NOT_IMPLEMENTED(
                 pluginsCompatibility.missing.join(', ')
               ),
               missingPlugins: pluginsCompatibility.missing
@@ -158,8 +156,7 @@ module.exports = function(conf, repository) {
             status: 400,
             response: {
               code: 'TEMPLATE_NOT_SUPPORTED',
-              error: format(
-                strings.errors.registry.TEMPLATE_NOT_SUPPORTED,
+              error: strings.errors.registry.TEMPLATE_NOT_SUPPORTED(
                 templateType
               )
             }
@@ -245,8 +242,7 @@ module.exports = function(conf, repository) {
               status: 500,
               response: {
                 code: 'GENERIC_ERROR',
-                error: format(
-                  strings.errors.registry.COMPONENT_EXECUTION_ERROR,
+                error: strings.errors.registry.COMPONENT_EXECUTION_ERROR(
                   err.message || ''
                 ),
                 details: {
@@ -294,9 +290,7 @@ module.exports = function(conf, repository) {
               })
             });
           } else {
-            const cacheKey = `${component.name}/${
-              component.version
-            }/template.js`;
+            const cacheKey = `${component.name}/${component.version}/template.js`;
             const cached = cache.get('file-contents', cacheKey);
             const key = component.oc.files.template.hashKey;
             const renderOptions = {
@@ -451,8 +445,7 @@ module.exports = function(conf, repository) {
                       status: 501,
                       response: {
                         code: err.code,
-                        error: format(
-                          strings.errors.registry.DEPENDENCY_NOT_FOUND,
+                        error: strings.errors.registry.DEPENDENCY_NOT_FOUND(
                           err.missing.join(', ')
                         ),
                         missingDependencies: err.missing

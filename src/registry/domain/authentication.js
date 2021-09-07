@@ -1,7 +1,6 @@
 'use strict';
 
 const basicAuth = require('basic-auth-connect');
-const format = require('stringformat');
 const path = require('path');
 
 const strings = require('../../resources/');
@@ -40,8 +39,7 @@ module.exports.validate = function(authConfig) {
     } catch (err) {
       return {
         isValid: false,
-        message: format(
-          strings.errors.registry.CONFIGURATION_PUBLISH_AUTH_MODULE_NOT_FOUND,
+        message: strings.errors.registry.CONFIGURATION_PUBLISH_AUTH_MODULE_NOT_FOUND(
           moduleName
         )
       };

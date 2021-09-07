@@ -2,7 +2,6 @@
 
 const cli = require('yargs');
 const commands = require('./commands');
-const format = require('stringformat');
 const semver = require('semver');
 const _ = require('lodash');
 
@@ -16,8 +15,7 @@ const currentNodeVersion = process.version;
 const minSupportedVersion = '6.0.0';
 if (semver.lt(currentNodeVersion, minSupportedVersion)) {
   logger.err(
-    format(
-      strings.errors.cli.NODE_CLI_VERSION_UNSUPPORTED,
+    strings.errors.cli.NODE_CLI_VERSION_UNSUPPORTED(
       currentNodeVersion,
       minSupportedVersion
     )

@@ -1,6 +1,5 @@
 'use strict';
 
-const format = require('stringformat');
 const path = require('path');
 
 const cleanRequire = require('../../../utils/clean-require');
@@ -35,13 +34,11 @@ module.exports = function(template, options) {
   );
 
   if (!ocTemplate) {
-    throw new Error(format(strings.errors.cli.TEMPLATE_NOT_FOUND, template));
+    throw new Error(strings.errors.cli.TEMPLATE_NOT_FOUND(template));
   }
 
   if (!isTemplateValid(ocTemplate, requireOptions)) {
-    throw new Error(
-      format(strings.errors.cli.TEMPLATE_TYPE_NOT_VALID, template)
-    );
+    throw new Error(strings.errors.cli.TEMPLATE_TYPE_NOT_VALID(template));
   }
 
   return ocTemplate;

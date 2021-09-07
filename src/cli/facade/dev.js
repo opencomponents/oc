@@ -2,7 +2,6 @@
 
 const async = require('async');
 const colors = require('colors/safe');
-const format = require('stringformat');
 const getPort = require('getport');
 const livereload = require('livereload');
 const path = require('path');
@@ -36,9 +35,9 @@ module.exports = function(dependencies) {
     const watchForChanges = function({ components, refreshLiveReload }, cb) {
       watch(components, componentsDir, (err, changedFile, componentDir) => {
         if (err) {
-          logger.err(format(strings.errors.generic, err));
+          logger.err(strings.errors.generic(err));
         } else {
-          logger.warn(format(cliMessages.CHANGES_DETECTED, changedFile));
+          logger.warn(cliMessages.CHANGES_DETECTED(changedFile));
           if (!hotReloading) {
             logger.warn(cliMessages.HOT_RELOADING_DISABLED);
           } else if (!componentDir) {
@@ -81,11 +80,7 @@ module.exports = function(dependencies) {
                   ? error.message
                   : error;
               logger.err(
-                format(
-                  cliErrors.PACKAGING_FAIL,
-                  componentsDirs[i],
-                  errorDescription
-                )
+                cliErrors.PACKAGING_FAIL(componentsDirs[i], errorDescription)
               );
               logger.warn(cliMessages.RETRYING_10_SECONDS);
               setTimeout(() => {
@@ -109,8 +104,7 @@ module.exports = function(dependencies) {
       registry.on('request', data => {
         if (data.errorCode === 'PLUGIN_MISSING_FROM_REGISTRY') {
           logger.err(
-            format(
-              cliErrors.PLUGIN_MISSING_FROM_REGISTRY,
+            cliErrors.PLUGIN_MISSING_FROM_REGISTRY(
               data.errorDetails,
               colors.blue(strings.commands.cli.MOCK_PLUGIN)
             )
@@ -122,7 +116,7 @@ module.exports = function(dependencies) {
     logger.warn(cliMessages.SCANNING_COMPONENTS, true);
     local.getComponentsByDir(componentsDir, (err, components) => {
       if (_.isEmpty(components)) {
-        err = format(cliErrors.DEV_FAIL, cliErrors.COMPONENTS_NOT_FOUND);
+        err = cliErrors.DEV_FAIL(cliErrors.COMPONENTS_NOT_FOUND);
         callback(err);
         return logger.err(err);
       }
@@ -181,19 +175,16 @@ module.exports = function(dependencies) {
 
               registerPlugins(registry);
 
-              logger.warn(format(cliMessages.REGISTRY_STARTING, baseUrl));
+              logger.warn(cliMessages.REGISTRY_STARTING(baseUrl));
               if (liveReload.port) {
                 logger.warn(
-                  format(
-                    cliMessages.REGISTRY_LIVERELOAD_STARTING,
-                    liveReload.port
-                  )
+                  cliMessages.REGISTRY_LIVERELOAD_STARTING(liveReload.port)
                 );
               }
               registry.start(err => {
                 if (err) {
                   if (err.code === 'EADDRINUSE') {
-                    err = format(cliErrors.PORT_IS_BUSY, port);
+                    err = cliErrors.PORT_IS_BUSY(port);
                   }
 
                   logger.err(err);

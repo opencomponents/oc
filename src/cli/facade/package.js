@@ -2,7 +2,6 @@
 
 const strings = require('../../resources/index');
 const wrapCliCallback = require('../wrap-cli-callback');
-const format = require('stringformat');
 const path = require('path');
 const handleDependencies = require('../domain/handle-dependencies');
 
@@ -18,7 +17,7 @@ module.exports = function(dependencies) {
 
     callback = wrapCliCallback(callback);
 
-    logger.warn(format(strings.messages.cli.PACKAGING, packageDir));
+    logger.warn(strings.messages.cli.PACKAGING(packageDir));
     handleDependencies(
       {
         components: [path.resolve(componentPath)],
@@ -36,27 +35,23 @@ module.exports = function(dependencies) {
         };
         local.package(packageOptions, (err, component) => {
           if (err) {
-            logger.err(format(strings.errors.cli.PACKAGE_CREATION_FAIL, err));
+            logger.err(strings.errors.cli.PACKAGE_CREATION_FAIL(err));
             return callback(err);
           }
 
-          logger.ok(format(strings.messages.cli.PACKAGED, packageDir));
+          logger.ok(strings.messages.cli.PACKAGED(packageDir));
 
           if (opts.compress) {
             logger.warn(
-              format(strings.messages.cli.COMPRESSING, compressedPackagePath)
+              strings.messages.cli.COMPRESSING(compressedPackagePath)
             );
 
             local.compress(packageDir, compressedPackagePath, err => {
               if (err) {
-                logger.err(
-                  format(strings.errors.cli.PACKAGE_CREATION_FAIL, err)
-                );
+                logger.err(strings.errors.cli.PACKAGE_CREATION_FAIL(err));
                 return callback(err);
               }
-              logger.ok(
-                format(strings.messages.cli.COMPRESSED, compressedPackagePath)
-              );
+              logger.ok(strings.messages.cli.COMPRESSED(compressedPackagePath));
               callback(null, component);
             });
           } else {

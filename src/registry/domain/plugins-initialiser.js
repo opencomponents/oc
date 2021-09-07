@@ -1,7 +1,6 @@
 'use strict';
 
 const async = require('async');
-const format = require('stringformat');
 const _ = require('lodash');
 const DepGraph = require('dependency-graph').DepGraph;
 
@@ -19,7 +18,7 @@ const validatePlugins = function(plugins) {
       !_.isString(plugin.name)
     ) {
       throw new Error(
-        format(strings.errors.registry.PLUGIN_NOT_VALID, plugin.name || c)
+        strings.errors.registry.PLUGIN_NOT_VALID(plugin.name || c)
       );
     }
   });

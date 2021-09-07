@@ -1,6 +1,5 @@
 'use strict';
 
-const format = require('stringformat');
 const _ = require('lodash');
 
 const strings = require('../../../resources');
@@ -81,8 +80,7 @@ module.exports = function(requestParameters, expectedParameters) {
         .join('')
         .slice(0, -2);
 
-      errorString += format(
-        strings.errors.registry.MANDATORY_PARAMETER_MISSING,
+      errorString += strings.errors.registry.MANDATORY_PARAMETER_MISSING(
         missingParams
       );
     }
@@ -99,10 +97,7 @@ module.exports = function(requestParameters, expectedParameters) {
         .join('')
         .slice(0, -2);
 
-      errorString += format(
-        strings.errors.registry.PARAMETER_WRONG_FORMAT,
-        badParams
-      );
+      errorString += strings.errors.registry.PARAMETER_WRONG_FORMAT(badParams);
     }
     return errorString;
   })();

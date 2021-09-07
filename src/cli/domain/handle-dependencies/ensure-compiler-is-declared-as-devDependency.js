@@ -1,7 +1,5 @@
 'use strict';
 
-const format = require('stringformat');
-
 const strings = require('../../../resources');
 
 module.exports = (options, cb) => {
@@ -11,7 +9,7 @@ module.exports = (options, cb) => {
 
   const err = isOk
     ? null
-    : format(strings.errors.cli.TEMPLATE_DEP_MISSING, template, componentPath);
+    : strings.errors.cli.TEMPLATE_DEP_MISSING(template, componentPath);
 
   cb(err, compilerDep);
 };
