@@ -1,6 +1,5 @@
 'use strict';
 
-const format = require('stringformat');
 const fs = require('fs-extra');
 const getUnixUtcTimestamp = require('oc-get-unix-utc-timestamp');
 const path = require('path');
@@ -73,8 +72,7 @@ module.exports = function(conf) {
 
       if (!_.includes(local.getComponents(), componentName)) {
         return callback(
-          format(
-            strings.errors.registry.COMPONENT_NOT_FOUND,
+          strings.errors.registry.COMPONENT_NOT_FOUND(
             componentName,
             repositorySource
           )
@@ -128,8 +126,7 @@ module.exports = function(conf) {
 
         if (allVersions.length === 0) {
           return callback(
-            format(
-              strings.errors.registry.COMPONENT_NOT_FOUND,
+            strings.errors.registry.COMPONENT_NOT_FOUND(
               componentName,
               repositorySource
             )
@@ -143,8 +140,7 @@ module.exports = function(conf) {
 
         if (!version) {
           return callback(
-            format(
-              strings.errors.registry.COMPONENT_VERSION_NOT_FOUND,
+            strings.errors.registry.COMPONENT_VERSION_NOT_FOUND(
               componentName,
               componentVersion,
               repositorySource
@@ -306,8 +302,7 @@ module.exports = function(conf) {
       if (!validator.validateVersion(componentVersion)) {
         return callback({
           code: strings.errors.registry.COMPONENT_VERSION_NOT_VALID_CODE,
-          msg: format(
-            strings.errors.registry.COMPONENT_VERSION_NOT_VALID,
+          msg: strings.errors.registry.COMPONENT_VERSION_NOT_VALID(
             componentVersion
           )
         });
@@ -323,8 +318,7 @@ module.exports = function(conf) {
       if (!validationResult.isValid) {
         return callback({
           code: strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL_CODE,
-          msg: format(
-            strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL,
+          msg: strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL(
             validationResult.error
           )
         });
@@ -342,8 +336,7 @@ module.exports = function(conf) {
             return callback({
               code:
                 strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND_CODE,
-              msg: format(
-                strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND,
+              msg: strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND(
                 componentName,
                 componentVersion,
                 repositorySource

@@ -1,6 +1,5 @@
 'use strict';
 
-const format = require('stringformat');
 const { serializeError } = require('serialize-error');
 const _ = require('lodash');
 
@@ -37,8 +36,7 @@ module.exports = function(conf, repository) {
         } catch (e) {
           res.status(500).json({
             code: 'RENDER_ERROR',
-            error: format(
-              strings.errors.registry.RENDER_ERROR,
+            error: strings.errors.registry.RENDER_ERROR(
               `${result.response.name}@${result.response.version}`,
               e.toString()
             )

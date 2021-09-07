@@ -99,7 +99,6 @@
     "semver": "7.3.5",
     "semver-extra": "3.0.0",
     "serialize-error": "8.1.0",
-    "stringformat": "0.0.5",
     "targz": "1.0.1",
     "try-require": "^1.2.1",
     "yargs": "17.1.1"

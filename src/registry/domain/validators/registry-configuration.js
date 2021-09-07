@@ -1,6 +1,5 @@
 'use strict';
 
-const format = require('stringformat');
 const _ = require('lodash');
 
 const auth = require('../authentication');
@@ -74,8 +73,7 @@ module.exports = function(conf) {
 
       if (route.route.indexOf(prefix) === 0) {
         return returnError(
-          format(
-            strings.errors.registry.CONFIGURATION_ROUTES_ROUTE_CONTAINS_PREFIX,
+          strings.errors.registry.CONFIGURATION_ROUTES_ROUTE_CONTAINS_PREFIX(
             prefix
           )
         );
@@ -94,7 +92,7 @@ module.exports = function(conf) {
       (!conf.s3.key && conf.s3.secret)
     ) {
       return returnError(
-        format(strings.errors.registry.CONFIGURATION_STORAGE_NOT_VALID, 'S3')
+        strings.errors.registry.CONFIGURATION_STORAGE_NOT_VALID('S3')
       );
     }
   }
@@ -113,8 +111,7 @@ module.exports = function(conf) {
         (!conf.storage.options.key && conf.storage.options.secret)
       ) {
         return returnError(
-          format(
-            strings.errors.registry.CONFIGURATION_STORAGE_NOT_VALID,
+          strings.errors.registry.CONFIGURATION_STORAGE_NOT_VALID(
             conf.storage.adapterType.toUpperCase()
           )
         );

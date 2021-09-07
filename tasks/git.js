@@ -3,7 +3,6 @@
 const path = require('path');
 const simpleGit = require('simple-git');
 const git = simpleGit(path.join(__dirname, '..'));
-const format = require('stringformat');
 const fs = require('fs');
 
 const utils = {
@@ -25,11 +24,7 @@ const utils = {
         commitMessage = commit.body;
 
         result.push(
-          format(
-            '- [#{0}](https://github.com/opencomponents/oc/pull/{0}) {1}',
-            prNumber,
-            commitMessage
-          )
+          `- [#${prNumber}](https://github.com/opencomponents/oc/pull/${prNumber}) ${commitMessage}`
         );
       } else if (isSquashedPr) {
         const lines = commit.message.split('\n');
@@ -44,11 +39,7 @@ const utils = {
         commitMessage = commitLine.substr(0, prNumberStartIndex).trim();
 
         result.push(
-          format(
-            '- [#{0}](https://github.com/opencomponents/oc/pull/{0}) {1}',
-            prNumber,
-            commitMessage
-          )
+          `- [#${prNumber}](https://github.com/opencomponents/oc/pull/${prNumber}) ${commitMessage}`
         );
       }
     });

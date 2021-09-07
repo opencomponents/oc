@@ -6,7 +6,6 @@ const injectr = require('injectr');
 const path = require('path');
 const sinon = require('sinon');
 const _ = require('lodash');
-const resources = require('../../src/resources');
 
 describe('registry : domain : repository', () => {
   let response;
@@ -192,8 +191,8 @@ describe('registry : domain : repository', () => {
             .stub(repository, 'getComponentInfo')
             .callsFake((name, version, callback) => {
               callback({
-                msg: resources.errors.STORAGE.FILE_NOT_VALID,
-                code: resources.errors.STORAGE.FILE_NOT_VALID_CODE
+                msg: 'File not valid',
+                code: 'file_not_valid'
               });
             });
           repository.getComponent('hello-world', '1.0.0', saveResult(done));
@@ -204,7 +203,7 @@ describe('registry : domain : repository', () => {
         it('should respond with a proper error', () => {
           expect(response.error).not.to.be.empty;
           expect(response.error).to.equal(
-            `component not available: ${resources.errors.STORAGE.FILE_NOT_VALID}`
+            `component not available: File not valid`
           );
         });
       });

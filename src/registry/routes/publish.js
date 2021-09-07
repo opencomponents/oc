@@ -1,7 +1,5 @@
 'use strict';
 
-const format = require('stringformat');
-
 const extractPackage = require('../domain/extract-package');
 const strings = require('../../resources/index');
 const validator = require('../domain/validators');
@@ -22,8 +20,7 @@ module.exports = function(repository) {
       req.headers['user-agent']
     );
     if (!validationResult.isValid) {
-      res.errorDetails = format(
-        strings.errors.registry.OC_CLI_VERSION_IS_NOT_VALID,
+      res.errorDetails = strings.errors.registry.OC_CLI_VERSION_IS_NOT_VALID(
         validationResult.error.registryVersion,
         validationResult.error.cliVersion
       );
@@ -39,8 +36,7 @@ module.exports = function(repository) {
       process.version
     );
     if (!validationResult.isValid) {
-      res.errorDetails = format(
-        strings.errors.registry.NODE_CLI_VERSION_IS_NOT_VALID,
+      res.errorDetails = strings.errors.registry.NODE_CLI_VERSION_IS_NOT_VALID(
         validationResult.error.registryNodeVersion,
         validationResult.error.cliNodeVersion
       );

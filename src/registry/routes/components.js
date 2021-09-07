@@ -1,7 +1,6 @@
 'use strict';
 
 const async = require('async');
-const format = require('stringformat');
 const _ = require('lodash');
 
 const GetComponentHelper = require('./helpers/get-component');
@@ -23,7 +22,7 @@ module.exports = function(conf, repository) {
     const returnError = function(message) {
       return res.status(400).json({
         code: registryErrors.BATCH_ROUTE_BODY_NOT_VALID_CODE,
-        error: format(registryErrors.BATCH_ROUTE_BODY_NOT_VALID, message)
+        error: registryErrors.BATCH_ROUTE_BODY_NOT_VALID(message)
       });
     };
 
@@ -39,10 +38,7 @@ module.exports = function(conf, repository) {
       const errors = _.compact(
         _.map(components, (component, index) => {
           if (!component.name) {
-            return format(
-              registryErrors.BATCH_ROUTE_COMPONENT_NAME_MISSING,
-              index
-            );
+            return registryErrors.BATCH_ROUTE_COMPONENT_NAME_MISSING(index);
           }
         })
       );
@@ -77,8 +73,7 @@ module.exports = function(conf, repository) {
           } else {
             res.status(500).json({
               code: 'RENDER_ERROR',
-              error: format(
-                strings.errors.registry.RENDER_ERROR,
+              error: strings.errors.registry.RENDER_ERROR(
                 results
                   .map(x => `${x.response.name}@${x.response.version}`)
                   .join(', '),

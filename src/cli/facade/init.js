@@ -1,6 +1,5 @@
 'use strict';
 
-const format = require('stringformat');
 const path = require('path');
 const _ = require('lodash');
 
@@ -35,9 +34,9 @@ module.exports = function(dependencies) {
           }
 
           if (err === 'template type not valid') {
-            err = format(errors.TEMPLATE_TYPE_NOT_VALID, templateType);
+            err = errors.TEMPLATE_TYPE_NOT_VALID(templateType);
           }
-          logger.err(format(errors.INIT_FAIL, err));
+          logger.err(errors.INIT_FAIL(err));
         } else {
           logger.log(messages.initSuccess(componentName, componentPath));
         }

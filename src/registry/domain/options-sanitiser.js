@@ -47,6 +47,14 @@ module.exports = function(input) {
     options.discovery = true;
   }
 
+  if (_.isUndefined(options.pollingInterval)) {
+    options.pollingInterval = 5;
+  }
+
+  if (_.isUndefined(options.templates)) {
+    options.templates = [];
+  }
+
   if (
     !_.isUndefined(options.fallbackRegistryUrl) &&
     _.last(options.fallbackRegistryUrl) !== '/'

@@ -1,6 +1,5 @@
 'use strict';
 
-const format = require('stringformat');
 const _ = require('lodash');
 
 const strings = require('../../resources/index');
@@ -15,7 +14,7 @@ module.exports = function(dependencies) {
 
     registry.get((err, registries) => {
       if (err) {
-        logger.err(format(strings.errors.generic, err));
+        logger.err(strings.errors.generic(err));
         return callback(err);
       } else {
         logger.warn(strings.messages.cli.REGISTRY_LIST);
