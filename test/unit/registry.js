@@ -19,7 +19,7 @@ describe('registry', () => {
     './domain/repository': sinon.stub().returns({
       init: repositoryInitStub
     }),
-    './router': sinon.stub(),
+    './router': { create: sinon.stub() },
     './domain/options-sanitiser': sinon.stub(),
     './domain/validators': {
       validateRegistryConfiguration: sinon.stub()

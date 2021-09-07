@@ -5,17 +5,17 @@ const injectr = require('injectr');
 const sinon = require('sinon');
 
 describe('cli : facade : preview', () => {
-  let opnSpy, logSpy, registryStub;
+  let openSpy, logSpy, registryStub;
 
   const execute = function(error, url) {
-    opnSpy = sinon.spy();
+    openSpy = sinon.spy();
     registryStub = {
       getComponentPreviewUrlByUrl: sinon.stub().yields(error, url)
     };
     logSpy = { err: sinon.spy() };
 
     const PreviewFacade = injectr('../../src/cli/facade/preview.js', {
-        opn: opnSpy
+        open: openSpy
       }),
       previewFacade = new PreviewFacade({
         logger: logSpy,
@@ -34,7 +34,7 @@ describe('cli : facade : preview', () => {
     });
 
     it('should not open any preview', () => {
-      expect(opnSpy.called).to.be.false;
+      expect(openSpy.called).to.be.false;
     });
 
     it('should show error message', () => {
@@ -50,7 +50,7 @@ describe('cli : facade : preview', () => {
     });
 
     it('should open /component/~preview/', () => {
-      expect(opnSpy.args[0][0]).to.equal(
+      expect(openSpy.args[0][0]).to.equal(
         'http://registry.com/component/~preview/'
       );
     });

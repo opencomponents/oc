@@ -1,6 +1,6 @@
 'use strict';
 
-const opn = require('opn');
+const open = require('open');
 
 const strings = require('../../resources/index');
 const wrapCliCallback = require('../wrap-cli-callback');
@@ -17,7 +17,7 @@ module.exports = function(dependencies) {
         logger.err(strings.errors.cli.COMPONENT_HREF_NOT_FOUND);
         return callback(strings.errors.cli.COMPONENT_HREF_NOT_FOUND);
       }
-      opn(href);
+      open(href);
       callback(null, href);
     });
   };

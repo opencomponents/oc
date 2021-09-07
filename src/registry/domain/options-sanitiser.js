@@ -7,7 +7,7 @@ const auth = require('./authentication');
 
 const DEFAULT_NODE_KEEPALIVE_MS = 5000;
 
-module.exports = function (input) {
+module.exports = function(input) {
   const options = _.clone(input);
 
   if (!options.publishAuth) {
