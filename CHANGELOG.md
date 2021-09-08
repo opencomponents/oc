@@ -1,5 +1,14 @@
 ## Change Log
 
+### v0.49.0
+- [#1207](https://github.com/opencomponents/oc/pull/1207) [BREAKING] Update oc-client-browser to 1.5.3
+- [#1205](https://github.com/opencomponents/oc/pull/1205) update packages
+- [#1206](https://github.com/opencomponents/oc/pull/1206) remove stringformat
+- [#1204](https://github.com/opencomponents/oc/pull/1204) sanitise templates and pollinginterval options
+- [#1202](https://github.com/opencomponents/oc/pull/1202) Use chokidar
+- [#1201](https://github.com/opencomponents/oc/pull/1201) add route for dependencies
+- [#1203](https://github.com/opencomponents/oc/pull/1203) Drop support for Node 8/10
+
 ### v0.48.22
 - [#1200](https://github.com/opencomponents/oc/pull/1200) upgrade oc-client to have es6 template by default
 
