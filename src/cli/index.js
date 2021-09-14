@@ -67,7 +67,13 @@ function processCommand(command, commandName, cli, level, prefix) {
 
       return yargs;
     },
-    facade
+    options => {
+      facade(options, error => {
+        if (error) {
+          return process.exit(1);
+        }
+      });
+    }
   );
 }
 

@@ -12,7 +12,6 @@ const handleDependencies = require('../domain/handle-dependencies');
 const oc = require('../../index');
 const strings = require('../../resources/index');
 const watch = require('../domain/watch');
-const wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies) {
   const { local, logger } = dependencies;
@@ -29,8 +28,6 @@ module.exports = function(dependencies) {
         : opts.hotReloading,
       optWatch = _.isUndefined(opts.watch) ? true : opts.watch;
     let packaging = false;
-
-    callback = wrapCliCallback(callback);
 
     const watchForChanges = function({ components, refreshLiveReload }, cb) {
       watch(components, componentsDir, (err, changedFile, componentDir) => {

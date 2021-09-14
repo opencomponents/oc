@@ -9,7 +9,6 @@ const _ = require('lodash');
 
 const handleDependencies = require('../domain/handle-dependencies');
 const strings = require('../../resources/index');
-const wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies) {
   const registry = dependencies.registry,
@@ -23,8 +22,6 @@ module.exports = function(dependencies) {
       compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
 
     let errorMessage;
-
-    callback = wrapCliCallback(callback);
 
     const readPackageJson = cb =>
       fs.readJson(path.join(packageDir, 'package.json'), cb);
