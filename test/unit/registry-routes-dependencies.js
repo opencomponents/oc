@@ -40,7 +40,7 @@ describe('registry : routes : plugins', () => {
         dependencies: ['fs', 'got'],
         discovery: false
       };
-      dependenciesRoute = new DependenciesRoute(conf);
+      dependenciesRoute = DependenciesRoute(conf);
 
       dependenciesRoute({ headers: {} }, { conf, status: statusStub });
     });
@@ -57,7 +57,7 @@ describe('registry : routes : plugins', () => {
         dependencies: ['fs', 'got'],
         discovery: true
       };
-      dependenciesRoute = new DependenciesRoute(conf);
+      dependenciesRoute = DependenciesRoute(conf);
 
       dependenciesRoute({ headers: {} }, { conf, status: statusStub });
     });

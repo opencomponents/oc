@@ -74,7 +74,7 @@ describe('registry : routes : components', () => {
   describe('when making valid request for two components', () => {
     before(done => {
       initialise(mockedComponents['async-error2-component']);
-      componentsRoute = new ComponentsRoute({}, mockedRepository);
+      componentsRoute = ComponentsRoute({}, mockedRepository);
 
       makeRequest(
         {
@@ -153,7 +153,7 @@ describe('registry : routes : components', () => {
   describe('when making valid info request for two components', () => {
     before(done => {
       initialise(mockedComponents['async-error2-component']);
-      componentsRoute = new ComponentsRoute({}, mockedRepository);
+      componentsRoute = ComponentsRoute({}, mockedRepository);
 
       makeInfoRequest(
         {

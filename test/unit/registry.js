@@ -54,7 +54,7 @@ describe('registry', () => {
         });
         deps.express.returns('express instance');
         deps['./domain/options-sanitiser'].returns({ port: 3000 });
-        registry = new Registry({});
+        registry = Registry({});
       });
 
       it('should instantiate express', () => {

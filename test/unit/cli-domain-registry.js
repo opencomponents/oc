@@ -29,7 +29,7 @@ const getRegistry = function(dependencies, opts) {
     }
   );
 
-  return new Registry(opts);
+  return Registry(opts);
 };
 
 describe('cli : domain : registry', () => {

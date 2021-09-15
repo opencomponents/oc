@@ -22,15 +22,15 @@ const urlBuilder = require('../../domain/url-builder');
 const validator = require('../../domain/validators');
 
 module.exports = function(conf, repository) {
-  const client = new Client({ templates: conf.templates }),
+  const client = Client({ templates: conf.templates }),
     cache = new Cache({
       verbose: !!conf.verbosity,
       refreshInterval: conf.refreshInterval
     });
 
   const renderer = function(options, cb) {
-    const nestedRenderer = new NestedRenderer(renderer, options.conf),
-      retrievingInfo = new GetComponentRetrievingInfo(options);
+    const nestedRenderer = NestedRenderer(renderer, options.conf),
+      retrievingInfo = GetComponentRetrievingInfo(options);
     let responseHeaders = {};
 
     const getLanguage = () => {

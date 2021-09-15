@@ -7,8 +7,8 @@ describe('cli : facade : dev', () => {
   const logSpy = {},
     DevFacade = require('../../src/cli/facade/dev'),
     Local = require('../../src/cli/domain/local'),
-    local = new Local(),
-    devFacade = new DevFacade({ local, logger: logSpy });
+    local = Local(),
+    devFacade = DevFacade({ local, logger: logSpy });
 
   const execute = function(dirName, port) {
     logSpy.err = sinon.spy();

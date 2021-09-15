@@ -26,7 +26,7 @@ describe('cli : facade : clean', () => {
       read: readMock
     });
 
-    const cleanFacade = new CleanFacade({ local, logger: logSpy });
+    const cleanFacade = CleanFacade({ local, logger: logSpy });
     cleanFacade(options.params, () => {
       done();
     });

@@ -157,7 +157,7 @@ module.exports = function(dependencies) {
                 return callback(err);
               }
 
-              const registry = new oc.Registry({
+              const registry = oc.Registry({
                 baseUrl,
                 prefix: opts.prefix || '',
                 dependencies: dependencies.modules,

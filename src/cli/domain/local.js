@@ -14,7 +14,7 @@ const strings = require('../../resources');
 const validator = require('../../registry/domain/validators');
 
 module.exports = function() {
-  return _.extend(this, {
+  return {
     clean,
     cleanup: function(compressedPackagePath, callback) {
       return fs.unlink(compressedPackagePath, callback);
@@ -71,5 +71,5 @@ module.exports = function() {
     },
     mock: mock(),
     package: packageComponents()
-  });
+  };
 };
