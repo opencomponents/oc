@@ -71,8 +71,8 @@ module.exports = (options, callback) => {
     }
 
     const result = {
-      modules: _.union(coreModules, _.keys(dependencies)).sort(),
-      templates: _.values(templates)
+      modules: _.union(coreModules, Object.keys(dependencies)).sort(),
+      templates: Object.values(templates)
     };
     const options = { dependencies, logger };
     if (useComponentDependencies) {

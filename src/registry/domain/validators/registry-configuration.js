@@ -14,7 +14,7 @@ module.exports = function(conf) {
     return response;
   };
 
-  if (!conf || !_.isObject(conf) || _.keys(conf).length === 0) {
+  if (!conf || !_.isObject(conf) || Object.keys(conf).length === 0) {
     return returnError(strings.errors.registry.CONFIGURATION_EMPTY);
   }
 

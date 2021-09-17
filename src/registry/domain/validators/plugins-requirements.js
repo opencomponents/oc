@@ -10,7 +10,7 @@ module.exports = function(componentRequirements, registryPlugins) {
     if (
       !registryPlugins ||
       _.isEmpty(registryPlugins) ||
-      !_.includes(_.keys(registryPlugins), requiredPlugin)
+      !_.includes(Object.keys(registryPlugins), requiredPlugin)
     ) {
       missing.push(requiredPlugin);
     }
