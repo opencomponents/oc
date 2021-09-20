@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.49.1
+- [#1215](https://github.com/opencomponents/oc/pull/1215) add default empty object for object keys
+- [#1213](https://github.com/opencomponents/oc/pull/1213) replace _.keys and _.values with their Object methods
+- [#1212](https://github.com/opencomponents/oc/pull/1212) add request ip to the context obj
+
 ### v0.49.0
 - [#1207](https://github.com/opencomponents/oc/pull/1207) [BREAKING] Update oc-client-browser to 1.5.3
 - [#1205](https://github.com/opencomponents/oc/pull/1205) update packages
