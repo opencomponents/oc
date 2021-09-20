@@ -25,7 +25,7 @@ function componentPreview(err, req, res, component, templates) {
     return res.send(
       previewView({
         component,
-        dependencies: Object.keys(component.dependencies),
+        dependencies: Object.keys(component.dependencies || {}),
         href: res.conf.baseUrl,
         liveReload,
         qs: urlBuilder.queryString(req.query),
