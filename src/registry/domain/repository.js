@@ -204,7 +204,7 @@ module.exports = function(conf) {
       }
 
       componentsCache.get((err, res) =>
-        callback(err, res ? _.keys(res.components) : null)
+        callback(err, res ? Object.keys(res.components) : null)
       );
     },
     getComponentsDetails: callback => {

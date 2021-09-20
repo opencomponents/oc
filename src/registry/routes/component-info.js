@@ -12,7 +12,7 @@ function getParams(component) {
   let params = {};
   if (component.oc.parameters) {
     const mandatoryParams = _.filter(
-      _.keys(component.oc.parameters),
+      Object.keys(component.oc.parameters),
       paramName => {
         const param = component.oc.parameters[paramName];
         return !!param.mandatory && !!param.example;
@@ -61,7 +61,7 @@ function componentInfo(err, req, res, component) {
       res.send(
         infoView({
           component,
-          dependencies: _.keys(component.dependencies),
+          dependencies: Object.keys(component.dependencies),
           href,
           parsedAuthor,
           repositoryUrl,

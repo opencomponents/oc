@@ -78,7 +78,8 @@ module.exports = function(options) {
             ok(`Registry started at port ${app.get('port')}`);
 
             if (_.isObject(componentsInfo)) {
-              const componentsNumber = _.keys(componentsInfo.components).length;
+              const componentsNumber = Object.keys(componentsInfo.components)
+                .length;
               const componentsReleases = _.reduce(
                 componentsInfo.components,
                 (memo, component) => parseInt(memo, 10) + component.length

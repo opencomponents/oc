@@ -3,7 +3,6 @@
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
-const _ = require('lodash');
 
 describe('cli : domain : handle-dependencies - get-missing-dependencies', () => {
   const scenarios = [
@@ -24,7 +23,7 @@ describe('cli : domain : handle-dependencies - get-missing-dependencies', () => 
     }
   ];
 
-  scenarios.forEach((scenario) => {
+  scenarios.forEach(scenario => {
     const { dependencies, installed, output } = scenario;
     describe(`When dependencies: ${JSON.stringify(
       dependencies
@@ -34,7 +33,7 @@ describe('cli : domain : handle-dependencies - get-missing-dependencies', () => 
       const getMissingDependencies = injectr(
         '../../src/cli/domain/handle-dependencies/get-missing-dependencies.js',
         {
-          '../../../utils/module-exists': (name) => {
+          '../../../utils/module-exists': name => {
             moduleExistsSpy(name);
             return installed[name];
           },
@@ -54,10 +53,10 @@ describe('cli : domain : handle-dependencies - get-missing-dependencies', () => 
       it('should resolve the dependency relative to where the oc cli is running', () => {
         pathResolveSpy.args.forEach((pathResolveCall, i) => {
           expect(pathResolveCall[0]).to.equal('node_modules/');
-          expect(pathResolveCall[1]).to.equal(_.keys(dependencies)[i]);
+          expect(pathResolveCall[1]).to.equal(Object.keys(dependencies)[i]);
         });
         moduleExistsSpy.args.forEach((moduleExistsCall, i) => {
-          expect(moduleExistsCall[0]).to.equal(_.keys(dependencies)[i]);
+          expect(moduleExistsCall[0]).to.equal(Object.keys(dependencies)[i]);
         });
       });
     });

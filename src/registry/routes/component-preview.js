@@ -15,9 +15,7 @@ function componentPreview(err, req, res, component, templates) {
 
   let liveReload = '';
   if (res.conf.liveReloadPort) {
-    liveReload = `<script src="http://localhost:${
-      res.conf.liveReloadPort
-    }/livereload.js?snipver=1"></script>`;
+    liveReload = `<script src="http://localhost:${res.conf.liveReloadPort}/livereload.js?snipver=1"></script>`;
   }
 
   const isHtmlRequest =
@@ -27,7 +25,7 @@ function componentPreview(err, req, res, component, templates) {
     return res.send(
       previewView({
         component,
-        dependencies: _.keys(component.dependencies),
+        dependencies: Object.keys(component.dependencies),
         href: res.conf.baseUrl,
         liveReload,
         qs: urlBuilder.queryString(req.query),

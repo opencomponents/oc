@@ -52,14 +52,14 @@ const build = {
   queryString: function(parameters) {
     let qs = '';
 
-    if (_.keys(parameters).length > 0) {
+    if (Object.keys(parameters).length > 0) {
       qs += '?';
 
       _.forEach(parameters, (parameter, key) => {
         qs += key + '=' + encodeURIComponent(parameter) + '&';
       });
 
-      if (_.keys(parameters).length > 0) {
+      if (Object.keys(parameters).length > 0) {
         qs = qs.slice(0, -1);
       }
     }

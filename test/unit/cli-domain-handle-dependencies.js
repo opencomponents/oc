@@ -75,7 +75,7 @@ describe('cli : domain : handle-dependencies', () => {
       };
 
       handleDependencies(
-        { components: _.keys(components), logger },
+        { components: Object.keys(components), logger },
         (err, res) => {
           error = err;
           result = res;

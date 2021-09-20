@@ -5,9 +5,9 @@ const commands = require('./commands');
 const strings = require('../resources');
 
 const validateCommand = (argv, level) => {
-  let keys = _.keys(commands.commands);
+  let keys = Object.keys(commands.commands);
   if (level === 1) {
-    keys = _.keys(commands.commands[argv._[0]].commands);
+    keys = Object.keys(commands.commands[argv._[0]].commands);
   }
 
   if (argv._.length > level && !_.includes(keys, argv._[level])) {

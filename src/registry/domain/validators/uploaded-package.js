@@ -11,11 +11,11 @@ module.exports = function(input) {
     return response;
   };
 
-  if (!input || !_.isObject(input) || _.keys(input).length === 0) {
+  if (!input || !_.isObject(input) || Object.keys(input).length === 0) {
     return returnError('empty');
   }
 
-  if (_.keys(input).length !== 1) {
+  if (Object.keys(input).length !== 1) {
     return returnError('not_valid');
   }
 
