@@ -71,7 +71,7 @@ module.exports = function(requestParameters, expectedParameters) {
   result.errors.message = (function() {
     let errorString = '';
 
-    if (Object.keys(result.errors.mandatory).length > 0) {
+    if (Object.keys(result.errors.mandatory || {}).length > 0) {
       const missingParams = _.map(
         result.errors.mandatory,
         (mandatoryParameter, mandatoryParameterName) =>
@@ -85,7 +85,7 @@ module.exports = function(requestParameters, expectedParameters) {
       );
     }
 
-    if (Object.keys(result.errors.types).length > 0) {
+    if (Object.keys(result.errors.types || {}).length > 0) {
       if (errorString.length > 0) {
         errorString += '; ';
       }

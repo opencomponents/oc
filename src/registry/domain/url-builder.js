@@ -49,7 +49,7 @@ const build = {
 
     return href;
   },
-  queryString: function(parameters) {
+  queryString: function(parameters = {}) {
     let qs = '';
 
     if (Object.keys(parameters).length > 0) {
