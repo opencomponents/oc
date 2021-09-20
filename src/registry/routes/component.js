@@ -14,6 +14,7 @@ module.exports = function(conf, repository) {
       {
         conf: res.conf,
         headers: req.headers,
+        ip: req.ip,
         name: req.params.componentName,
         parameters: req.query,
         version: req.params.componentVersion

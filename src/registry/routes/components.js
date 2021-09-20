@@ -56,6 +56,7 @@ module.exports = function(conf, repository) {
             conf: res.conf,
             name: component.name,
             headers: req.headers,
+            ip: req.ip,
             omitHref: !!req.body.omitHref,
             parameters: _.extend({}, req.body.parameters, component.parameters),
             version: component.version

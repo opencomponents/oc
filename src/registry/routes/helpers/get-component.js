@@ -373,6 +373,7 @@ module.exports = function(conf, repository) {
             renderComponent: nestedRenderer.renderComponent,
             renderComponents: nestedRenderer.renderComponents,
             requestHeaders: options.headers,
+            requestIp: options.ip,
             setEmptyResponse,
             staticPath: repository
               .getStaticFilePath(component.name, component.version, '')
