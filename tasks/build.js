@@ -49,6 +49,10 @@ ocClientBrowser.getLib((err, libContent) => {
     };
 
     local.package(packageOptions, err => {
+      fs.copySync(
+        path.join(__dirname, clientComponentDir),
+        path.join(__dirname, clientComponentDir.replace('src', 'dist'))
+      );
       log[err ? 'error' : 'complete'](
         err ? err : 'Client has been built and packaged'
       );
