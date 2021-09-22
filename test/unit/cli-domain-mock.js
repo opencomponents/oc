@@ -36,7 +36,7 @@ const initialise = function() {
     { __dirname: '' }
   );
 
-  const local = new Local();
+  const local = Local();
 
   return { local: local, fs: fsMock };
 };

@@ -6,13 +6,13 @@ const Local = require('./domain/local');
 function wrap(cmdScript, withRegistry) {
   return function(options, cb) {
     const dependencies = {
-      local: new Local(),
+      local: Local(),
       logger: options.logger || { log() {}, err() {}, ok() {}, warn() {} }
     };
 
     if (withRegistry) {
       const Registry = require('./domain/registry');
-      dependencies.registry = new Registry({ registry: options.registry });
+      dependencies.registry = Registry({ registry: options.registry });
     }
 
     const opts = _.omit(options, 'logger', 'registry');

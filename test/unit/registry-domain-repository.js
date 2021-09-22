@@ -86,7 +86,7 @@ describe('registry : domain : repository', () => {
       components: { 'hello-world': { '1.0.0': { publishDate: 1234567890 } } }
     };
 
-    const repository = new Repository(cdnConfiguration);
+    const repository = Repository(cdnConfiguration);
 
     describe('when getting the list of available components', () => {
       before(done => {
@@ -149,7 +149,7 @@ describe('registry : domain : repository', () => {
           const conf = _.extend(cdnConfiguration, {
             templates: [require('oc-template-jade')]
           });
-          const repository = new Repository(conf);
+          const repository = Repository(conf);
           expect(repository.getTemplatesInfo().length).to.equal(3);
         });
       });
@@ -400,7 +400,7 @@ describe('registry : domain : repository', () => {
       env: { name: 'local' }
     };
 
-    const repository = new Repository(localConfiguration);
+    const repository = Repository(localConfiguration);
 
     describe('when getting the list of available components', () => {
       before(done => {

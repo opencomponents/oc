@@ -15,15 +15,15 @@ const settings = require('../resources/settings');
 
 module.exports.create = function(app, conf, repository) {
   const routes = {
-    component: new ComponentRoute(conf, repository),
-    components: new ComponentsRoute(conf, repository),
-    componentInfo: new ComponentInfoRoute(conf, repository),
-    componentPreview: new ComponentPreviewRoute(conf, repository),
-    index: new IndexRoute(repository),
-    publish: new PublishRoute(repository),
-    staticRedirector: new StaticRedirectorRoute(repository),
-    plugins: new PluginsRoute(conf),
-    dependencies: new DependenciesRoute(conf)
+    component: ComponentRoute(conf, repository),
+    components: ComponentsRoute(conf, repository),
+    componentInfo: ComponentInfoRoute(conf, repository),
+    componentPreview: ComponentPreviewRoute(conf, repository),
+    index: IndexRoute(repository),
+    publish: PublishRoute(repository),
+    staticRedirector: StaticRedirectorRoute(repository),
+    plugins: PluginsRoute(conf),
+    dependencies: DependenciesRoute(conf)
   };
 
   const prefix = conf.prefix;

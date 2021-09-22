@@ -15,8 +15,8 @@ describe('cli : facade : init', () => {
   const logSpy = {},
     InitFacade = require('../../src/cli/facade/init'),
     Local = injectr('../../src/cli/domain/local.js', deps, {}),
-    local = new Local({ logger: { log: () => {} } }),
-    initFacade = new InitFacade({ local: local, logger: logSpy });
+    local = Local({ logger: { log: () => {} } }),
+    initFacade = InitFacade({ local: local, logger: logSpy });
 
   const execute = function(componentPath, templateType) {
     logSpy.err = sinon.spy();

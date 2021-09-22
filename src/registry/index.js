@@ -25,7 +25,7 @@ module.exports = function(options) {
   const plugins = [];
   const app = middleware.bind(express(), options);
   let server;
-  const repository = new Repository(options);
+  const repository = Repository(options);
 
   const close = callback => {
     if (server && server.listening) {

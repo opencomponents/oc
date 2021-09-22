@@ -20,7 +20,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
       renderer = sinon.stub().yields(rendererMocks);
     }
 
-    nestedRenderer = new NestedRenderer(renderer, conf || {});
+    nestedRenderer = NestedRenderer(renderer, conf || {});
   };
 
   describe('when rendering nested component', () => {

@@ -36,14 +36,14 @@ describe('registry', () => {
     }
 
     before(done => {
-      registry = new oc.Registry(
+      registry = oc.Registry(
         retrieveRegistryConfiguration(
           3030,
           'test/fixtures/components',
           'http://localhost:3031'
         )
       );
-      fallbackRegistry = new oc.Registry(
+      fallbackRegistry = oc.Registry(
         retrieveRegistryConfiguration(
           3031,
           'test/fixtures/fallback-registry-components'

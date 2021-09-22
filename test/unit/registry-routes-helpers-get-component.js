@@ -23,7 +23,7 @@ describe('registry : routes : helpers : get-component', () => {
           fire: fireStub
         },
         'oc-client': function() {
-          const client = new Client();
+          const client = Client();
           return {
             renderTemplate: (template, data, renderOptions, cb) => {
               if (renderOptions.templateType === 'oc-template-supported') {

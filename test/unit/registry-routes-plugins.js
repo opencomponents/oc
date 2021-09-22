@@ -27,7 +27,7 @@ describe('registry : routes : plugins', () => {
         plugins,
         discovery: false
       };
-      pluginsRoute = new PluginsRoute(conf);
+      pluginsRoute = PluginsRoute(conf);
 
       pluginsRoute({ headers: {} }, { conf, status: statusStub });
     });
@@ -44,7 +44,7 @@ describe('registry : routes : plugins', () => {
         plugins,
         discovery: true
       };
-      pluginsRoute = new PluginsRoute(conf);
+      pluginsRoute = PluginsRoute(conf);
 
       pluginsRoute({ headers: {} }, { conf, status: statusStub });
     });

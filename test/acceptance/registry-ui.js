@@ -27,7 +27,7 @@ describe('registry (ui interface)', () => {
   };
 
   const initializeRegistry = (configuration, cb) => {
-    registry = new oc.Registry(configuration);
+    registry = oc.Registry(configuration);
     registry.start(cb);
   };
 

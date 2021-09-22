@@ -7,7 +7,7 @@ const GetComponentHelper = require('./helpers/get-component');
 const strings = require('../../resources');
 
 module.exports = function(conf, repository) {
-  const getComponent = new GetComponentHelper(conf, repository);
+  const getComponent = GetComponentHelper(conf, repository);
 
   return function(req, res) {
     getComponent(

@@ -26,7 +26,7 @@ module.exports = function(opts) {
     }-${process.arch}`
   };
 
-  return _.extend(this, {
+  return {
     add: function(registry, callback) {
       if (registry.slice(registry.length - 1) !== '/') {
         registry += '/';
@@ -159,5 +159,5 @@ module.exports = function(opts) {
         fs.writeJson(settings.configFile.src, res, callback);
       });
     }
-  });
+  };
 };

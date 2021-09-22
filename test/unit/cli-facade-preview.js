@@ -17,7 +17,7 @@ describe('cli : facade : preview', () => {
     const PreviewFacade = injectr('../../src/cli/facade/preview.js', {
         open: openSpy
       }),
-      previewFacade = new PreviewFacade({
+      previewFacade = PreviewFacade({
         logger: logSpy,
         registry: registryStub
       });

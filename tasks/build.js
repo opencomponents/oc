@@ -41,7 +41,7 @@ ocClientBrowser.getLib((err, libContent) => {
     );
 
     const Local = require('../src/cli/domain/local');
-    const local = new Local();
+    const local = Local();
     const packageOptions = {
       componentPath: path.join(__dirname, clientComponentDir),
       production: true,

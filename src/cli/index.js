@@ -23,9 +23,9 @@ if (semver.lt(currentNodeVersion, minSupportedVersion)) {
 }
 
 const dependencies = {
-  local: new Local(),
+  local: Local(),
   logger,
-  registry: new Registry()
+  registry: Registry()
 };
 
 function processCommand(command, commandName, cli, level, prefix) {

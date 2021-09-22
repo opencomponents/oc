@@ -16,7 +16,7 @@ const versionHandler = require('./version-handler');
 const errorToString = require('../../utils/error-to-string');
 
 module.exports = function(conf) {
-  const cdn = !conf.local && new conf.storage.adapter(conf.storage.options);
+  const cdn = !conf.local && conf.storage.adapter(conf.storage.options);
   const options = !conf.local && conf.storage.options;
   const repositorySource = conf.local
     ? 'local repository'

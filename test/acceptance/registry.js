@@ -34,7 +34,7 @@ describe('registry', () => {
   };
 
   const initializeRegistry = function(configuration, cb) {
-    registry = new oc.Registry(configuration);
+    registry = oc.Registry(configuration);
     registry.start(cb);
   };
 
