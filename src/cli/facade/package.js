@@ -1,7 +1,6 @@
 'use strict';
 
 const strings = require('../../resources/index');
-const wrapCliCallback = require('../wrap-cli-callback');
 const path = require('path');
 const handleDependencies = require('../domain/handle-dependencies');
 
@@ -14,8 +13,6 @@ module.exports = function(dependencies) {
       useComponentDependencies = opts.useComponentDependencies,
       packageDir = path.resolve(componentPath, '_package'),
       compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
-
-    callback = wrapCliCallback(callback);
 
     logger.warn(strings.messages.cli.PACKAGING(packageDir));
     handleDependencies(

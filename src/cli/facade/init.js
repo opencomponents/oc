@@ -4,7 +4,6 @@ const path = require('path');
 const _ = require('lodash');
 
 const strings = require('../../resources/index');
-const wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies) {
   const local = dependencies.local,
@@ -19,7 +18,6 @@ module.exports = function(dependencies) {
     const componentPath = path.join(process.cwd(), opts.componentPath);
     const componentName = path.basename(componentPath);
 
-    callback = wrapCliCallback(callback);
     local.init(
       {
         componentName,

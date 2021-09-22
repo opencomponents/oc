@@ -3,7 +3,6 @@
 const read = require('read');
 
 const strings = require('../../resources/index');
-const wrapCliCallback = require('../wrap-cli-callback');
 
 module.exports = function(dependencies) {
   const { local, logger } = dependencies;
@@ -39,8 +38,6 @@ module.exports = function(dependencies) {
     });
 
   return function(opts, callback) {
-    callback = wrapCliCallback(callback);
-
     fetchList(opts.dirPath, (err, list) => {
       if (err) {
         logger.err(strings.errors.generic(err));
