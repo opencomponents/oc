@@ -30,6 +30,7 @@ module.exports.validate = function(authConfig) {
     scheme = builtin[authConfig.type];
   } else {
     const cwd = process.cwd();
+    // @ts-ignore
     module.paths.push(cwd, path.join(cwd, 'node_modules'));
 
     const moduleName = `oc-auth-${authConfig.type}`;

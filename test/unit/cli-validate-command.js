@@ -2,7 +2,7 @@ const validate = require('../../src/cli/validate-command');
 const expect = require('chai').expect;
 
 describe('cli : validate-command : valid', () => {
-  scenarios = [
+  const scenarios = [
     {
       _: ['registry', 'add'],
       level: 0
@@ -32,7 +32,7 @@ describe('cli : validate-command : valid', () => {
 });
 
 describe('cli : validate-command : invalid', () => {
-  scenarios = [
+  const scenarios = [
     {
       _: ['foo', 'bar'],
       level: 0

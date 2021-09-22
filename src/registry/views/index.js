@@ -9,7 +9,7 @@ module.exports = vm => {
 
   const indexJS = require('./static/index');
   const layout = require('./partials/layout')(vm);
-  const property = require('./partials/property')(vm);
+  const property = require('./partials/property')();
 
   const getCount = state => vm.stateCounts[state] || 0;
   const isLocal = vm.type !== 'oc-registry';

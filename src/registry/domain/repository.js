@@ -7,6 +7,7 @@ const _ = require('lodash');
 
 const ComponentsCache = require('./components-cache');
 const ComponentsDetails = require('./components-details');
+// @ts-ignore
 const packageInfo = require('../../../package.json');
 const registerTemplates = require('./register-templates');
 const settings = require('../../resources/settings');
@@ -104,6 +105,7 @@ module.exports = function(conf) {
       if (conf.local) {
         return callback(
           null,
+          // @ts-ignore
           local.getCompiledView(componentName, componentVersion)
         );
       }

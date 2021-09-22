@@ -36,7 +36,7 @@ const registerDynamicMocks = (ocJsonLocation, mocks, logger) =>
     try {
       pluginMock = require(path.resolve(ocJsonLocation, source));
     } catch (er) {
-      logger.err(er.toString());
+      logger.err(String(er));
       return;
     }
 

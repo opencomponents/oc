@@ -8,6 +8,7 @@ module.exports = function() {
   return responseTime((req, res, time) => {
     const data = {
       body: req.body,
+      // @ts-ignore
       duration: parseInt(time * 1000, 10),
       headers: req.headers,
       method: req.method,

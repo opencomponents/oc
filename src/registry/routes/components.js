@@ -78,7 +78,7 @@ module.exports = function(conf, repository) {
                 results
                   .map(x => `${x.response.name}@${x.response.version}`)
                   .join(', '),
-                e.toString()
+                String(e)
               )
             });
           }

@@ -39,7 +39,7 @@ module.exports = function(conf, repository) {
             code: 'RENDER_ERROR',
             error: strings.errors.registry.RENDER_ERROR(
               `${result.response.name}@${result.response.version}`,
-              e.toString()
+              String(e)
             )
           });
         }

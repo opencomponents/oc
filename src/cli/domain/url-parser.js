@@ -29,7 +29,7 @@ module.exports = {
     return {
       clientHref: registryUrl + 'oc-client/client.js',
       name: componentName,
-      parameters: querystring.parse(href.query),
+      parameters: querystring.parse(href.query || ''),
       registryUrl: registryUrl,
       version: requestedVersion
     };

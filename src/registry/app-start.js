@@ -4,6 +4,7 @@ const colors = require('colors/safe');
 const path = require('path');
 const _ = require('lodash');
 
+// @ts-ignore
 const packageInfo = require('../components/oc-client/_package/package');
 
 module.exports = function(repository, options, callback) {
@@ -15,9 +16,7 @@ module.exports = function(repository, options, callback) {
 
   logger.log(
     colors.yellow(
-      `Connecting to library: ${options.storage.options.bucket}/${
-        options.storage.options.componentsDir
-      }`
+      `Connecting to library: ${options.storage.options.bucket}/${options.storage.options.componentsDir}`
     )
   );
 
