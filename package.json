@@ -46,17 +46,17 @@
   "devDependencies": {
     "chai": "4.3.4",
     "chalk": "4.1.2",
-    "glob": "7.1.7",
+    "glob": "7.2.0",
     "husky": "7.0.2",
     "injectr": "0.5.1",
     "lint-staged": "11.1.2",
     "minimist": "1.2.5",
     "mocha": "9.1.1",
     "node-emoji": "1.11.0",
-    "oc-template-es6-compiler": "1.1.8",
+    "oc-template-es6-compiler": "1.1.10",
     "prettier-eslint-cli": "5.0.1",
     "semver-sort": "0.0.4",
-    "simple-git": "2.45.0",
+    "simple-git": "2.45.1",
     "sinon": "11.1.2"
   },
   "dependencies": {
@@ -82,15 +82,15 @@
     "nice-cache": "0.0.5",
     "oc-client": "3.2.12",
     "oc-client-browser": "1.5.3",
-    "oc-empty-response-handler": "1.0.0",
-    "oc-get-unix-utc-timestamp": "1.0.2",
+    "oc-empty-response-handler": "1.0.1",
+    "oc-get-unix-utc-timestamp": "1.0.3",
     "oc-s3-storage-adapter": "1.1.6",
     "oc-storage-adapters-utils": "1.0.3",
-    "oc-template-es6": "1.0.1",
-    "oc-template-handlebars": "6.0.19",
-    "oc-template-handlebars-compiler": "6.2.13",
-    "oc-template-jade": "7.0.0",
-    "oc-template-jade-compiler": "7.0.1",
+    "oc-template-es6": "1.0.3",
+    "oc-template-handlebars": "6.0.21",
+    "oc-template-handlebars-compiler": "6.2.15",
+    "oc-template-jade": "7.0.2",
+    "oc-template-jade-compiler": "7.0.3",
     "open": "8.2.1",
     "parse-author": "2.0.0",
     "read": "1.0.7",
@@ -101,6 +101,6 @@
     "serialize-error": "8.1.0",
     "targz": "1.0.1",
     "try-require": "^1.2.1",
-    "yargs": "17.1.1"
+    "yargs": "17.2.0"
   }
 }
