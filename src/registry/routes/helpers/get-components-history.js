@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 
-const dateStringified = require('../../../utils/date-stringify');
+const dateStringified = require('../../../utils/date-stringify').default;
 
 module.exports = history => {
   const result = [];

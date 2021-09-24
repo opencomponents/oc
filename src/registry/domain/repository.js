@@ -14,7 +14,7 @@ const settings = require('../../resources/settings').default;
 const strings = require('../../resources').default;
 const validator = require('./validators');
 const versionHandler = require('./version-handler');
-const errorToString = require('../../utils/error-to-string');
+const errorToString = require('../../utils/error-to-string').default;
 
 module.exports = function(conf) {
   const cdn = !conf.local && conf.storage.adapter(conf.storage.options);
