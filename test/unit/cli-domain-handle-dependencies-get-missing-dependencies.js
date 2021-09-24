@@ -31,7 +31,7 @@ describe('cli : domain : handle-dependencies - get-missing-dependencies', () => 
       const pathResolveSpy = sinon.spy();
       const moduleExistsSpy = sinon.spy();
       const getMissingDependencies = injectr(
-        '../../src/cli/domain/handle-dependencies/get-missing-dependencies.js',
+        '../../dist/cli/domain/handle-dependencies/get-missing-dependencies.js',
         {
           '../../../utils/module-exists': name => {
             moduleExistsSpy(name);

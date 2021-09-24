@@ -8,7 +8,7 @@ describe('cli : domain : init-template', () => {
   let error;
   const initialise = stubs => cb => {
     const initTemplate = injectr(
-      '../../src/cli/domain/init-template/index.js',
+      '../../dist/cli/domain/init-template/index.js',
       {
         'fs-extra': {
           ensureDir: stubs.fsExtraStub

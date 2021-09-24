@@ -3,7 +3,7 @@
 const expect = require('chai').expect;
 
 describe('registry : domain : url-builder', () => {
-  const urlBuilder = require('../../src/registry/domain/url-builder');
+  const urlBuilder = require('../../dist/registry/domain/url-builder');
 
   let builtUrl;
 

@@ -8,7 +8,7 @@ describe('cli : domain : init-template : install-template', () => {
   const npmUtils = { installDependency: sinon.stub() };
   const isTemplateValid = sinon.stub();
   const installTemplate = injectr(
-    '../../src/cli/domain/init-template/install-template.js',
+    '../../dist/cli/domain/init-template/install-template.js',
     {
       '../../../utils/npm-utils': npmUtils,
       '../../../utils/is-template-valid': isTemplateValid,

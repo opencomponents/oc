@@ -22,7 +22,7 @@ describe('cli : facade : clean', () => {
       }
     };
 
-    const CleanFacade = injectr('../../src/cli/facade/clean.js', {
+    const CleanFacade = injectr('../../dist/cli/facade/clean.js', {
       read: readMock
     });
 

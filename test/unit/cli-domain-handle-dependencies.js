@@ -46,7 +46,7 @@ describe('cli : domain : handle-dependencies', () => {
       };
 
       const handleDependencies = injectr(
-        '../../src/cli/domain/handle-dependencies/index.js',
+        '../../dist/cli/domain/handle-dependencies/index.js',
         {
           'fs-extra': {
             readJson: (path, cb) =>

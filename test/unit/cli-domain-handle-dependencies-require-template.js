@@ -10,7 +10,7 @@ describe('cli : domain : handle-dependencies : require-template', () => {
     error = null;
     result = null;
     const requireTemplate = injectr(
-      '../../src/cli/domain/handle-dependencies/require-template.js',
+      '../../dist/cli/domain/handle-dependencies/require-template.js',
       {
         '../../../utils/clean-require': options.requireMock,
         '../../../utils/is-template-valid':

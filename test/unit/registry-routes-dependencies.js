@@ -21,7 +21,7 @@ describe('registry : routes : plugins', () => {
   let resJsonStub, statusStub, dependenciesRoute;
 
   const DependenciesRoute = injectr(
-    '../../src/registry/routes/dependencies.js',
+    '../../dist/registry/routes/dependencies.js',
     {
       './helpers/get-available-dependencies': list =>
         list.map(dep => dependencyMap[dep])

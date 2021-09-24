@@ -28,7 +28,7 @@ const initialise = function() {
   };
 
   const Local = injectr(
-    '../../src/cli/domain/mock.js',
+    '../../dist/cli/domain/mock.js',
     {
       'fs-extra': fsMock,
       path: pathMock

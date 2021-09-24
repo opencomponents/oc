@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 describe('registry : routes : components', () => {
-  const ComponentsRoute = require('../../src/registry/routes/components'),
+  const ComponentsRoute = require('../../dist/registry/routes/components'),
     mockedComponents = require('../fixtures/mocked-components');
 
   let mockedRepository, componentsRoute, code, response;

@@ -1,7 +1,7 @@
 'use strict';
 
 const expect = require('chai').expect;
-const oc = require('../../src/index');
+const oc = require('../../dist/index');
 const path = require('path');
 const request = require('minimal-request');
 

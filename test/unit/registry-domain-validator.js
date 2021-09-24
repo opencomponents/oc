@@ -5,7 +5,7 @@ const injectr = require('injectr');
 const _ = require('lodash');
 
 describe('registry : domain : validator', () => {
-  const validator = require('../../src/registry/domain/validators'),
+  const validator = require('../../dist/registry/domain/validators'),
     baseS3Conf = {
       bucket: 'oc-components',
       key: 's3-key',
@@ -976,14 +976,17 @@ describe('registry : domain : validator', () => {
   });
 
   describe('when validating CLI OC version in request headers', () => {
-    const validator = injectr('../../src/registry/domain/validators/index.js', {
-      './oc-cli-version': injectr(
-        '../../src/registry/domain/validators/oc-cli-version.js',
-        {
-          '../../../../package.json': { version: '0.16.34' }
-        }
-      )
-    });
+    const validator = injectr(
+      '../../dist/registry/domain/validators/index.js',
+      {
+        './oc-cli-version': injectr(
+          '../../dist/registry/domain/validators/oc-cli-version.js',
+          {
+            '../../../../package.json': { version: '0.16.34' }
+          }
+        )
+      }
+    );
 
     const validate = function(userAgent) {
       return validator.validateOcCliVersion(userAgent);
@@ -1051,14 +1054,17 @@ describe('registry : domain : validator', () => {
   });
 
   describe('when validating node engine version in request headers', () => {
-    const validator = injectr('../../src/registry/domain/validators/index.js', {
-      './node-version': injectr(
-        '../../src/registry/domain/validators/node-version.js',
-        {
-          '../../../../package.json': { engines: { node: '>=0.10.35' } }
-        }
-      )
-    });
+    const validator = injectr(
+      '../../dist/registry/domain/validators/index.js',
+      {
+        './node-version': injectr(
+          '../../dist/registry/domain/validators/node-version.js',
+          {
+            '../../../../package.json': { engines: { node: '>=0.10.35' } }
+          }
+        )
+      }
+    );
 
     const validate = function(userAgent) {
       return validator.validateNodeVersion(userAgent, 'v0.10.36');

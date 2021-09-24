@@ -3,8 +3,8 @@
 const expect = require('chai').expect;
 
 describe('registry : routes : helpers : get-components-history', () => {
-  const getComponentsHistory = require('../../src/registry/routes/helpers/get-components-history');
-  const ds = require('../../src/utils/date-stringify');
+  const getComponentsHistory = require('../../dist/registry/routes/helpers/get-components-history');
+  const ds = require('../../dist/utils/date-stringify');
 
   describe('when components details are provided', () => {
     const details = {

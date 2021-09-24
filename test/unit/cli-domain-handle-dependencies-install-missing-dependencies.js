@@ -14,7 +14,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
       warn: sinon.spy()
     };
     const installMissingDependencies = injectr(
-      '../../src/cli/domain/handle-dependencies/install-missing-dependencies.js',
+      '../../dist/cli/domain/handle-dependencies/install-missing-dependencies.js',
       {
         './get-missing-dependencies': stubs.getMissingDependencies,
         '../../../utils/npm-utils': {

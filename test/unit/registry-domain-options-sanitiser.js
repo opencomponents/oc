@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const _ = require('lodash');
 
 describe('registry : domain : options-sanitiser', () => {
-  const sanitise = require('../../src/registry/domain/options-sanitiser');
+  const sanitise = require('../../dist/registry/domain/options-sanitiser');
 
   describe('when options is empty', () => {
     const options = { baseUrl: 'http://my-registry.com' };

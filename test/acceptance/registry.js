@@ -9,7 +9,7 @@ const _ = require('lodash');
 describe('registry', () => {
   let registry, result, error, headers, status;
 
-  const oc = require('../../src/index');
+  const oc = require('../../dist/index');
 
   const next = function(done) {
     return function(e, r, d) {

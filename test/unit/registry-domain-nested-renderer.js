@@ -5,7 +5,7 @@ const sinon = require('sinon');
 const _ = require('lodash');
 
 describe('registry : routes : helpers : nested-renderer', () => {
-  const NestedRenderer = require('../../src/registry/domain/nested-renderer');
+  const NestedRenderer = require('../../dist/registry/domain/nested-renderer');
 
   let nestedRenderer, renderer;
 
