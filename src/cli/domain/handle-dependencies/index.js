@@ -10,7 +10,7 @@ const ensureCompilerIsDeclaredAsDevDependency = require('./ensure-compiler-is-de
 const getCompiler = require('./get-compiler');
 const installMissingDependencies = require('./install-missing-dependencies');
 const linkMissingDependencies = require('./link-missing-dependencies');
-const isTemplateLegacy = require('../../../utils/is-template-legacy');
+const isTemplateLegacy = require('../../../utils/is-template-legacy').default;
 const strings = require('../../../resources');
 
 const getComponentPackageJson = (componentPath, cb) =>

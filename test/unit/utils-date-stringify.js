@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 describe('utils : dateStringify', () => {
-  const dateStringified = require('../../dist/utils/date-stringify');
+  const dateStringified = require('../../dist/utils/date-stringify').default;
 
   describe('when the date is provided', () => {
     let dateString;
