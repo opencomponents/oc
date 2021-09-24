@@ -3,7 +3,7 @@
 const _ = require('lodash');
 
 const auth = require('../authentication');
-const strings = require('../../../resources');
+const strings = require('../../../resources').default;
 
 module.exports = function(conf) {
   const response = { isValid: true };

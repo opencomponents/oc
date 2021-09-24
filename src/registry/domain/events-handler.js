@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 
-const strings = require('../../resources');
+const strings = require('../../resources').default;
 
 let subscriptions = {};
 

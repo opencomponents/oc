@@ -3,7 +3,7 @@
 const basicAuth = require('basic-auth-connect');
 const path = require('path');
 
-const strings = require('../../resources/');
+const strings = require('../../resources/').default;
 
 const builtin = {
   basic: {

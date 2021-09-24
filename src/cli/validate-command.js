@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 const commands = require('./commands');
-const strings = require('../resources');
+const strings = require('../resources').default;
 
 const validateCommand = (argv, level) => {
   let keys = Object.keys(commands.commands);

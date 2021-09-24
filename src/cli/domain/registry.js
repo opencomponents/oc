@@ -6,7 +6,7 @@ const request = require('minimal-request');
 const _ = require('lodash');
 
 const put = require('../../utils/put');
-const settings = require('../../resources/settings');
+const settings = require('../../resources/settings').default;
 const urlBuilder = require('../../registry/domain/url-builder');
 const urlParser = require('../domain/url-parser');
 

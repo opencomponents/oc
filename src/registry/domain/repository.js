@@ -10,8 +10,8 @@ const ComponentsDetails = require('./components-details');
 // @ts-ignore
 const packageInfo = require('../../../package.json');
 const registerTemplates = require('./register-templates');
-const settings = require('../../resources/settings');
-const strings = require('../../resources');
+const settings = require('../../resources/settings').default;
+const strings = require('../../resources').default;
 const validator = require('./validators');
 const versionHandler = require('./version-handler');
 const errorToString = require('../../utils/error-to-string');

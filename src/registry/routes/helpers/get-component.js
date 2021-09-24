@@ -16,8 +16,8 @@ const isTemplateLegacy = require('../../../utils/is-template-legacy');
 const NestedRenderer = require('../../domain/nested-renderer');
 const RequireWrapper = require('../../domain/require-wrapper');
 const sanitiser = require('../../domain/sanitiser');
-const settings = require('../../../resources/settings');
-const strings = require('../../../resources');
+const settings = require('../../../resources/settings').default;
+const strings = require('../../../resources').default;
 const urlBuilder = require('../../domain/url-builder');
 const validator = require('../../domain/validators');
 

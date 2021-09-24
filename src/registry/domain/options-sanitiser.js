@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 
-const settings = require('../../resources/settings');
+const settings = require('../../resources/settings').default;
 const auth = require('./authentication');
 
 const DEFAULT_NODE_KEEPALIVE_MS = 5000;

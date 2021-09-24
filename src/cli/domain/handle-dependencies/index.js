@@ -11,7 +11,7 @@ const getCompiler = require('./get-compiler');
 const installMissingDependencies = require('./install-missing-dependencies');
 const linkMissingDependencies = require('./link-missing-dependencies');
 const isTemplateLegacy = require('../../../utils/is-template-legacy');
-const strings = require('../../../resources');
+const strings = require('../../../resources').default;
 
 const getComponentPackageJson = (componentPath, cb) =>
   fs.readJson(path.join(componentPath, 'package.json'), cb);
