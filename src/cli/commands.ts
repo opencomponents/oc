@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports = {
+export default {
   usage: 'Usage: $0 <command> [options]',
   commands: {
     clean: {
