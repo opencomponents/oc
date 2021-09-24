@@ -1,6 +1,6 @@
-const path = require('path');
+import path from 'path';
 
-module.exports = dependency => {
+export default function stripVersion(dependency: string): string {
   const parts = path.parse(dependency);
   return path.join(parts.dir, parts.base.split('@')[0]);
-};
+}
