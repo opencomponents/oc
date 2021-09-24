@@ -2,7 +2,7 @@
 
 const path = require('path');
 const spawn = require('cross-spawn');
-const stripVersion = require('./strip-version');
+const stripVersion = require('./strip-version').default;
 
 const buildInstallCommand = options => {
   const args = ['install', '--prefix', options.installPath];

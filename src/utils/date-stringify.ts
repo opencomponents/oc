@@ -1,8 +1,6 @@
-'use strict';
+import padZero from './pad-zero';
 
-const padZero = require('./pad-zero').default;
-
-module.exports = date => {
+export default function dateStringify(date: unknown): string {
   if (date instanceof Date) {
     return (
       date.getFullYear() +
@@ -20,4 +18,4 @@ module.exports = date => {
   }
 
   return '';
-};
+}

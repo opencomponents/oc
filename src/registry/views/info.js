@@ -6,7 +6,7 @@ module.exports = vm => {
   const infoJS = require('./static/info').default;
   const layout = require('./partials/layout')(vm);
   const property = require('./partials/property')();
-  const isTemplateLegacy = require('../../utils/is-template-legacy');
+  const isTemplateLegacy = require('../../utils/is-template-legacy').default;
 
   const showArray = (title, arr) =>
     property(title, !!arr && arr.length > 0 ? arr.join(', ') : 'none');
