@@ -4,7 +4,7 @@ const async = require('async');
 const parseAuthor = require('parse-author');
 const _ = require('lodash');
 
-const dateStringified = require('../../utils/date-stringify');
+const dateStringified = require('../../utils/date-stringify').default;
 const getComponentsHistory = require('./helpers/get-components-history');
 const getAvailableDependencies = require('./helpers/get-available-dependencies');
 const indexView = require('../views');
