@@ -226,13 +226,6 @@
     "space-before-function-paren": "off",
     "space-in-parens": "off",
     "space-infix-ops": "off",
-    "space-unary-ops": [
-      "error",
-      {
-        "nonwords": false,
-        "words": false
-      }
-    ],
     "spaced-comment": "off",
     "strict": "off",
     "symbol-description": "error",
