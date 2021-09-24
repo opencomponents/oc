@@ -48,7 +48,7 @@ describe('cli : domain : package-components', () => {
     };
 
     const PackageComponents = injectr(
-      '../../src/cli/domain/package-components.js',
+      '../../dist/cli/domain/package-components.js',
       {
         'fs-extra': fsMock,
         path: pathMock,

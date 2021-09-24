@@ -8,7 +8,7 @@ const getRegistry = function(dependencies, opts) {
   dependencies.fs = dependencies.fs || {};
   dependencies.fs.readJsonSync = sinon.stub().returns({ version: '1.2.3' });
   const Registry = injectr(
-    '../../src/cli/domain/registry.js',
+    '../../dist/cli/domain/registry.js',
     {
       'minimal-request': dependencies.request,
       'fs-extra': dependencies.fs,

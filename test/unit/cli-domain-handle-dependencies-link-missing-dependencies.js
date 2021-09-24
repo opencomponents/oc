@@ -14,7 +14,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
       warn: sinon.spy()
     };
     const linkMissingDependencies = injectr(
-      '../../src/cli/domain/handle-dependencies/link-missing-dependencies.js',
+      '../../dist/cli/domain/handle-dependencies/link-missing-dependencies.js',
       {
         './get-missing-dependencies': stubs.getMissingDependencies,
         'fs-extra': { ensureSymlinkSync: stubs.ensureSymlinkSync },

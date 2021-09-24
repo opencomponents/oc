@@ -3,7 +3,7 @@
 const expect = require('chai').expect;
 
 describe('cli : domain : handle-dependencies : ensure-compiler-is-declared-as-devDependency', () => {
-  const ensure = require('../../src/cli/domain/handle-dependencies/ensure-compiler-is-declared-as-devDependency');
+  const ensure = require('../../dist/cli/domain/handle-dependencies/ensure-compiler-is-declared-as-devDependency');
   describe('when compiler is declared as devDependency', () => {
     let error, result;
     beforeEach(done => {

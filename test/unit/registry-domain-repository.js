@@ -42,7 +42,7 @@ describe('registry : domain : repository', () => {
       adapterType: 's3'
     };
 
-    const Repository = injectr('../../src/registry/domain/repository.js', {
+    const Repository = injectr('../../dist/registry/domain/repository.js', {
       'fs-extra': fsMock,
       './components-cache': () => componentsCacheMock,
       './components-details': () => componentsDetailsMock
@@ -389,7 +389,7 @@ describe('registry : domain : repository', () => {
   });
 
   describe('when on local configuration', () => {
-    const Repository = require('../../src/registry/domain/repository');
+    const Repository = require('../../dist/registry/domain/repository');
 
     const localConfiguration = {
       local: true,

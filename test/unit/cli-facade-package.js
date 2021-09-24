@@ -6,9 +6,9 @@ const sinon = require('sinon');
 
 describe('cli : facade : package', () => {
   const logSpy = {},
-    Local = require('../../src/cli/domain/local'),
+    Local = require('../../dist/cli/domain/local'),
     local = Local(),
-    PackageFacade = require('../../src/cli/facade/package.js'),
+    PackageFacade = require('../../dist/cli/facade/package.js'),
     packageFacade = PackageFacade({ local: local, logger: logSpy });
 
   const execute = function(compress, cb) {

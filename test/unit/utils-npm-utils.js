@@ -7,7 +7,7 @@ const sinon = require('sinon');
 describe('utils : npm-utils', () => {
   const crossSpawnStub = sinon.stub();
 
-  const npmUtils = injectr('../../src/utils/npm-utils.js', {
+  const npmUtils = injectr('../../dist/utils/npm-utils.js', {
     'cross-spawn': crossSpawnStub,
     path: { join: (...items) => items.join('/') }
   });

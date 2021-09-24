@@ -6,7 +6,7 @@ const glob = require('glob');
 const log = require('./logger');
 const Mocha = require('mocha');
 const minimist = require('minimist');
-const oc = require('../src');
+const oc = require('../dist');
 const path = require('path');
 
 const mocha = new Mocha({ timeout: 20000 });

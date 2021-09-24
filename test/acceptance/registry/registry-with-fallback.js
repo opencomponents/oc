@@ -6,7 +6,7 @@ const request = require('minimal-request');
 
 describe('registry', () => {
   describe('when fallbackRegistryUrl is specified', () => {
-    const oc = require('../../../src/index');
+    const oc = require('../../../dist/index');
     let fallbackRegistry;
     let registry;
     let result;

@@ -26,7 +26,7 @@ describe('registry', () => {
     }
   };
 
-  const Registry = injectr('../../src/registry/index.js', deps);
+  const Registry = injectr('../../dist/registry/index.js', deps);
 
   describe('when instanciated', () => {
     describe('when options are not valid', () => {

@@ -35,12 +35,12 @@ describe('registry : domain : components-cache', () => {
     setTimeoutStub = sinon.stub();
     eventsHandlerStub = { fire: sinon.stub() };
     const ComponentsCache = injectr(
-      '../../src/registry/domain/components-cache/index.js',
+      '../../dist/registry/domain/components-cache/index.js',
       {
         'oc-get-unix-utc-timestamp': getTimestamp,
         '../events-handler': eventsHandlerStub,
         './components-list': injectr(
-          '../../src/registry/domain/components-cache/components-list.js',
+          '../../dist/registry/domain/components-cache/components-list.js',
           {
             'oc-get-unix-utc-timestamp': getTimestamp
           }

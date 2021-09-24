@@ -29,7 +29,7 @@ describe('cli : domain : handle-dependencies : install-compiler', () => {
     };
 
     const installCompiler = injectr(
-      '../../src/cli/domain/handle-dependencies/install-compiler.js',
+      '../../dist/cli/domain/handle-dependencies/install-compiler.js',
       {
         '../../../utils/clean-require': cleanRequireStub,
         '../../../utils/is-template-valid': isTemplateValidStub,

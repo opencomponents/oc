@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 
 describe('registry : routes : helpers : apply-default-values', () => {
   let parameters;
-  const applyDefaultValues = require('../../src/registry/routes/helpers/apply-default-values');
+  const applyDefaultValues = require('../../dist/registry/routes/helpers/apply-default-values');
   const apply = function(a, b) {
     return applyDefaultValues(a, b);
   };

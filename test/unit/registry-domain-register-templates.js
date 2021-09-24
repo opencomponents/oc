@@ -3,7 +3,7 @@
 const expect = require('chai').expect;
 
 describe('registry : domain : register-templates', () => {
-  const registerTemplates = require('../../src/registry/domain/register-templates.js');
+  const registerTemplates = require('../../dist/registry/domain/register-templates.js');
 
   describe('when templates get registered without additional templates', () => {
     const registerd = registerTemplates();

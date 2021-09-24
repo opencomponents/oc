@@ -8,9 +8,9 @@ const sinon = require('sinon');
 
 describe('cli : facade : publish', () => {
   const logSpy = {},
-    Registry = require('../../src/cli/domain/registry'),
+    Registry = require('../../dist/cli/domain/registry'),
     registry = Registry(),
-    Local = require('../../src/cli/domain/local'),
+    Local = require('../../dist/cli/domain/local'),
     local = Local(),
     readStub = sinon.stub().yields(null, 'test'),
     mockComponent = {
@@ -33,7 +33,7 @@ describe('cli : facade : publish', () => {
         },
         fs
       ),
-      PublishFacade = injectr('../../src/cli/facade/publish.js', {
+      PublishFacade = injectr('../../dist/cli/facade/publish.js', {
         'fs-extra': fsMock,
         read: readStub
       }),

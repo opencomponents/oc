@@ -5,7 +5,7 @@ const sinon = require('sinon');
 const _ = require('lodash');
 
 describe('registry : routes : component', () => {
-  const ComponentRoute = require('../../src/registry/routes/component');
+  const ComponentRoute = require('../../dist/registry/routes/component');
   const mockedComponents = require('../fixtures/mocked-components');
   let mockedRepository, resJsonStub, resSetStub, statusStub, componentRoute;
 

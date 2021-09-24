@@ -7,7 +7,7 @@ const sinon = require('sinon');
 describe('registry : domain : components-details', () => {
   const fireStub = sinon.stub();
   const ComponentsDetails = injectr(
-    '../../src/registry/domain/components-details.js',
+    '../../dist/registry/domain/components-details.js',
     {
       './events-handler': { fire: fireStub },
       'oc-get-unix-utc-timestamp': () => 1234567890

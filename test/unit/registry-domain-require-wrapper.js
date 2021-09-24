@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const vm = require('vm');
 
 describe('registry : domain : require-wrapper', () => {
-  const RequireWrapper = require('../../src/registry/domain/require-wrapper');
+  const RequireWrapper = require('../../dist/registry/domain/require-wrapper');
 
   describe('when using the require wrapper in a clear context', () => {
     let result, error;
