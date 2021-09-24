@@ -1,4 +1,4 @@
-const styleCSS = require('../static/style');
+const styleCSS = require('../static/style').default;
 
 module.exports = vm => ({ content, scripts }) => {
   const href = vm.href.replace('http://', '//').replace('https://', '//');

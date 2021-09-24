@@ -1,4 +1,4 @@
-module.exports = `
+export default `
 var oc = oc || {};
 oc.cmd = oc.cmd || [];
 
