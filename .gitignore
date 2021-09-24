@@ -44,4 +44,4 @@ test/fixtures/components/welcome/_package
 test/fixtures/components/welcome-with-optional-parameters/_package
 
 logintervals.md
-
+dist/

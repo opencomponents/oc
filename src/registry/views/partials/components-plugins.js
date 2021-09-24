@@ -1,4 +1,7 @@
 module.exports = vm => {
+  /**
+   * @param {any} param0
+   */
   const pluginRow = ([
     name,
     description

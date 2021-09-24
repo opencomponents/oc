@@ -3,7 +3,7 @@
 const expect = require('chai').expect;
 
 describe('utils : padZero', () => {
-  const padZero = require('../../src/utils/pad-zero');
+  const padZero = require('../../src/utils/pad-zero').default;
 
   describe('when the correct parameters are provided', () => {
     const anyData = 3;

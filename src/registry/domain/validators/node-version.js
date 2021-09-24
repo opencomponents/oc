@@ -2,6 +2,7 @@
 
 const semver = require('semver');
 
+// @ts-ignore
 const packageInfo = require('../../../../package.json');
 
 module.exports = function(userAgent, nodeVersion) {

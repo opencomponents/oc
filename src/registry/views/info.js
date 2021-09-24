@@ -5,7 +5,7 @@ module.exports = vm => {
   const componentVersions = require('./partials/component-versions')(vm);
   const infoJS = require('./static/info');
   const layout = require('./partials/layout')(vm);
-  const property = require('./partials/property')(vm);
+  const property = require('./partials/property')();
   const isTemplateLegacy = require('../../utils/is-template-legacy');
 
   const showArray = (title, arr) =>
@@ -13,9 +13,7 @@ module.exports = vm => {
 
   const { component, dependencies, href, repositoryUrl, sandBoxDefaultQs } = vm;
 
-  const componentHref = `${href}${component.name}/${
-    component.version
-  }/${sandBoxDefaultQs}`;
+  const componentHref = `${href}${component.name}/${component.version}/${sandBoxDefaultQs}`;
 
   const publishDate = component.oc.date
     ? new Date(component.oc.date)
@@ -52,7 +50,7 @@ module.exports = vm => {
       to apply the change into the preview window.
     </p>
     <div class="field"><p>Component's href:</p></div>
-    <textarea class="w-100" id="href" placeholder="Insert component href here">${componentHref}</textarea>    
+    <textarea class="w-100" id="href" placeholder="Insert component href here">${componentHref}</textarea>
     <div class="field"><p>Accept-Language header:</p></div>
     <input class="w-100" id="lang" type="text" value="*" />
     <h3>

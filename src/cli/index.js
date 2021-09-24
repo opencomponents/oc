@@ -91,6 +91,7 @@ const argv = cli
   .version()
   .wrap(cli.terminalWidth()).argv;
 
+// @ts-ignore
 if (argv._.length === 0) {
   cli.showHelp();
 }

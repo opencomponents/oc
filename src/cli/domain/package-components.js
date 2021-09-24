@@ -47,6 +47,7 @@ module.exports = function() {
         compiler: true,
         componentPath
       });
+      // @ts-ignore
       ocTemplate.compile(compileOptions, callback);
     } catch (err) {
       return callback(err);
