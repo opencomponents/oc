@@ -1,8 +1,18 @@
-module.exports = vm => {
+import { VM } from '../../../types';
+
+export default function componentsTemplates(vm: VM): string {
   const externalLink = ({ global, url }) =>
     `<a href="${url}" target="_blank">${global}</a>`;
 
-  const templateRow = ({ externals, type, version }) => {
+  const templateRow = ({
+    externals,
+    type,
+    version
+  }: {
+    type: string;
+    version: string;
+    externals: Array<{ global: string; url: string }>;
+  }) => {
     const externalLinks = externals.map(externalLink).join(', ');
     const externalsLabel = externalLinks ? `(Externals: ${externalLinks})` : '';
 
@@ -18,4 +28,4 @@ module.exports = vm => {
   return `<div id="components-templates" class="box">${vm.templates
     .map(templateRow)
     .join('')}</div>`;
-};
+}

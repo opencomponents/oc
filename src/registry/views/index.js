@@ -1,15 +1,15 @@
 module.exports = vm => {
   const tabs = {
-    dependencies: require('./partials/components-dependencies')(vm),
-    history: require('./partials/components-history')(vm),
-    list: require('./partials/components-list')(vm),
-    templates: require('./partials/components-templates')(vm),
-    plugins: require('./partials/components-plugins')(vm)
+    dependencies: require('./partials/components-dependencies').default(vm),
+    history: require('./partials/components-history').default(vm),
+    list: require('./partials/components-list').default(vm),
+    templates: require('./partials/components-templates').default(vm),
+    plugins: require('./partials/components-plugins').default(vm)
   };
 
   const indexJS = require('./static/index');
-  const layout = require('./partials/layout')(vm);
-  const property = require('./partials/property')();
+  const layout = require('./partials/layout').default(vm);
+  const property = require('./partials/property').default();
 
   const getCount = state => vm.stateCounts[state] || 0;
   const isLocal = vm.type !== 'oc-registry';
