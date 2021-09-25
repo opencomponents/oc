@@ -9,7 +9,7 @@ const Local = require('./domain/local');
 const logger = require('./logger');
 const Registry = require('./domain/registry');
 const strings = require('../resources');
-const validateCommand = require('./validate-command');
+const validateCommand = require('./validate-command').default;
 
 const currentNodeVersion = process.version;
 const minSupportedVersion = '6.0.0';
