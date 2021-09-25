@@ -1,6 +1,6 @@
-'use strict';
+import { NextFunction, Request, Response } from 'express';
 
-module.exports = function(req, res, next) {
+export default function cors(req: Request, res: Response, next: NextFunction) {
   res.removeHeader('X-Powered-By');
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Origin', '*');
@@ -9,5 +9,6 @@ module.exports = function(req, res, next) {
     'Origin, X-Requested-With, Content-Type, Accept'
   );
   res.header('Access-Control-Allow-Methods', 'GET, OPTIONS, PUT, POST');
+
   next();
-};
+}
