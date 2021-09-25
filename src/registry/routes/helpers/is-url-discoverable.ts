@@ -1,8 +1,9 @@
-'use strict';
+import request from 'minimal-request';
 
-const request = require('minimal-request');
-
-module.exports = function(url, callback) {
+export default function isUrlDiscoverable(
+  url: string,
+  callback: Callback<{ isDiscoverable: boolean }, null>
+) {
   request(
     {
       url,
@@ -15,4 +16,4 @@ module.exports = function(url, callback) {
       callback(null, { isDiscoverable: !err && isHtml() });
     }
   );
-};
+}

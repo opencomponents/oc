@@ -41,7 +41,7 @@ module.exports.bind = function(app, options) {
   }
 
   if (options.local) {
-    app.use(errorhandler({ dumpExceptions: true, showStack: true }));
+    app.use(errorhandler());
   }
 
   return app;
