@@ -18,7 +18,7 @@ describe('cli : domain : init-template', () => {
         '../../../utils/npm-utils': {
           init: stubs.npmStub
         },
-        './scaffold': stubs.scaffoldStub
+        './scaffold': { default: stubs.scaffoldStub }
       }
     );
 

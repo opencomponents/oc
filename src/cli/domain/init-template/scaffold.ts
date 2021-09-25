@@ -1,11 +1,20 @@
-'use strict';
+import fs from 'fs-extra';
+import path from 'path';
 
-const fs = require('fs-extra');
-const path = require('path');
+import strings from '../../../resources';
 
-const strings = require('../../../resources');
+interface ScaffoldOptions {
+  compiler: string;
+  compilerPath: string;
+  componentName: string;
+  componentPath: string;
+  templateType: string;
+}
 
-module.exports = function scaffold(options, callback) {
+export default function scaffold(
+  options: ScaffoldOptions,
+  callback: Callback<{ ok: true }, string>
+) {
   const {
     compiler,
     compilerPath,
@@ -37,6 +46,6 @@ module.exports = function scaffold(options, callback) {
     const url =
       (compilerPackage.bugs && compilerPackage.bugs.url) ||
       `the ${templateType} repo`;
-    return callback(strings.errors.cli.scaffoldError(url, error));
+    return (callback as any)(strings.errors.cli.scaffoldError(url, error));
   }
-};
+}
