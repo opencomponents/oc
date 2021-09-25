@@ -3,7 +3,7 @@
 const _ = require('lodash');
 const path = require('path');
 const fs = require('fs-extra');
-const getMissingDependencies = require('./get-missing-dependencies');
+const getMissingDependencies = require('./get-missing-dependencies').default;
 const strings = require('../../../resources/index');
 const stripVersion = require('../../../utils/strip-version').default;
 
