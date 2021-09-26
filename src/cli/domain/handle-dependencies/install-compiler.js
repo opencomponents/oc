@@ -1,6 +1,6 @@
 'use strict';
 
-const cleanRequire = require('../../../utils/clean-require');
+const cleanRequire = require('../../../utils/clean-require').default;
 const isTemplateValid = require('../../../utils/is-template-valid');
 const npm = require('../../../utils/npm-utils');
 const strings = require('../../../resources/index');
