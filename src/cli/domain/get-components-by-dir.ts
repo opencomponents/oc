@@ -1,12 +1,9 @@
-'use strict';
+import fs from 'fs-extra';
+import path from 'path';
 
-const fs = require('fs-extra');
-const path = require('path');
-const _ = require('lodash');
-
-module.exports = function() {
-  return function(componentsDir, callback) {
-    const isOcComponent = function(file) {
+export default function getComponentsByDir() {
+  return function(componentsDir: string, callback: Callback<string[]>) {
+    const isOcComponent = function(file: string) {
       const filePath = path.resolve(componentsDir, file),
         packagePath = path.join(filePath, 'package.json');
       let content;
@@ -23,10 +20,10 @@ module.exports = function() {
 
       const packagedProperty = content.oc && content.oc.packaged;
 
-      return _.isUndefined(packagedProperty);
+      return typeof packagedProperty === 'undefined';
     };
 
-    let dirContent;
+    let dirContent: string[];
 
     try {
       dirContent = fs.readdirSync(componentsDir);
@@ -40,4 +37,4 @@ module.exports = function() {
 
     callback(null, components);
   };
-};
+}

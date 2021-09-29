@@ -1,4 +1,4 @@
-const validate = require('../../dist/cli/validate-command');
+const validate = require('../../dist/cli/validate-command').default;
 const expect = require('chai').expect;
 
 describe('cli : validate-command : valid', () => {
