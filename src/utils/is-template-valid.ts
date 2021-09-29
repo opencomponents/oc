@@ -1,9 +1,4 @@
-interface Template {
-  getInfo: Function;
-  getCompiledTemplate: Function;
-  render: Function;
-  compile?: Function;
-}
+import { Template } from '../types';
 
 export default function isTemplateValid(
   template: unknown,

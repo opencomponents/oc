@@ -1,7 +1,8 @@
-'use strict';
+import { Request, Response } from 'express';
+import { Config } from '../../types';
 
-module.exports = function(conf) {
-  return function(req, res) {
+export default function plugins(conf: Config) {
+  return function(req: Request, res: Response) {
     if (conf.discovery) {
       const plugins = Object.entries(conf.plugins).map(
         ([pluginName, pluginFn]) => ({
@@ -15,4 +16,4 @@ module.exports = function(conf) {
       res.status(401);
     }
   };
-};
+}

@@ -6,7 +6,7 @@ import settings from '../../resources/settings';
 export default function mock() {
   return function(
     params: { targetType: string; targetValue: string; targetName: string },
-    callback: Callback
+    callback: (err: Error) => void
   ) {
     fs.readJson(settings.configFile.src, (err, localConfig) => {
       localConfig = localConfig || {};

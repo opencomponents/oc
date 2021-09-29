@@ -1,6 +1,6 @@
 const property = () => (
   display: string,
-  value?: Date | string,
+  value?: Date | string | number,
   linked?: boolean
 ): string => {
   if (!value) return '';
