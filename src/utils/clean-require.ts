@@ -1,9 +1,11 @@
-'use strict';
+import tryRequire from 'try-require';
 
-const tryRequire = require('try-require');
-
-module.exports = (path, { justTry = false, resolve = false }) => {
+export default function cleanRequire(
+  path: string,
+  { justTry = false, resolve = false }
+) {
   const shouldThrow = !justTry;
+
   if (require.cache && !!require.cache[path]) {
     delete require.cache[path];
   }
@@ -14,4 +16,4 @@ module.exports = (path, { justTry = false, resolve = false }) => {
   }
 
   return action(path);
-};
+}

@@ -2,7 +2,7 @@
 
 const path = require('path');
 
-const cleanRequire = require('../../../utils/clean-require');
+const cleanRequire = require('../../../utils/clean-require').default;
 const installCompiler = require('./install-compiler');
 
 module.exports = (options, cb) => {

@@ -34,7 +34,7 @@ const initialise = function() {
       path: pathMock
     },
     { __dirname: '' }
-  );
+  ).default;
 
   const local = Local();
 

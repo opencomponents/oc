@@ -1,12 +1,13 @@
-'use strict';
+import fs from 'fs-extra';
+import path from 'path';
 
-const fs = require('fs-extra');
-const path = require('path');
+import settings from '../../resources/settings';
 
-const settings = require('../../resources/settings').default;
-
-module.exports = function() {
-  return function(params, callback) {
+export default function mock() {
+  return function(
+    params: { targetType: string; targetValue: string; targetName: string },
+    callback: Callback
+  ) {
     fs.readJson(settings.configFile.src, (err, localConfig) => {
       localConfig = localConfig || {};
 
@@ -40,4 +41,4 @@ module.exports = function() {
       );
     });
   };
-};
+}

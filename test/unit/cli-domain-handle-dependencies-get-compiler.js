@@ -26,7 +26,7 @@ describe('cli : domain : handle-dependencies : get-compiler', () => {
       '../../dist/cli/domain/handle-dependencies/get-compiler.js',
       {
         path: { join: (...args) => args.join('/') },
-        '../../../utils/clean-require': cleanRequireStub,
+        '../../../utils/clean-require': { default: cleanRequireStub },
         './install-compiler': installCompilerStub
       }
     );
