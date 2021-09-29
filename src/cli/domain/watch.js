@@ -3,7 +3,7 @@
 const path = require('path');
 const chokidar = require('chokidar');
 
-const settings = require('../../resources/settings');
+const settings = require('../../resources/settings').default;
 
 module.exports = function(dirs, baseDir, changed) {
   const watcher = chokidar.watch(path.resolve(baseDir), {

@@ -7,7 +7,7 @@ module.exports = vm => {
     plugins: require('./partials/components-plugins').default(vm)
   };
 
-  const indexJS = require('./static/index');
+  const indexJS = require('./static/index').default;
   const layout = require('./partials/layout').default(vm);
   const property = require('./partials/property').default();
 
@@ -47,8 +47,8 @@ module.exports = vm => {
 
   const scripts = `<script>
     var q = "${encodeURIComponent(vm.q)}", componentsList = ${JSON.stringify(
-  vm.componentsList
-)};
+    vm.componentsList
+  )};
 ${indexJS}</script>`;
 
   return layout({ content, scripts });

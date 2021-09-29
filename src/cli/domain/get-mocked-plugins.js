@@ -4,8 +4,8 @@ const fs = require('fs-extra');
 const path = require('path');
 const _ = require('lodash');
 
-const settings = require('../../resources/settings');
-const strings = require('../../resources/');
+const settings = require('../../resources/settings').default;
+const strings = require('../../resources/').default;
 
 const isMockValid = plugin => {
   const isFunction = _.isFunction(plugin);

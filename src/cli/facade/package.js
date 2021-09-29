@@ -1,6 +1,6 @@
 'use strict';
 
-const strings = require('../../resources/index');
+const strings = require('../../resources/index').default;
 const path = require('path');
 const handleDependencies = require('../domain/handle-dependencies');
 
