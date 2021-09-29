@@ -3,7 +3,8 @@
 const path = require('path');
 const targz = require('targz');
 
-const getPackageJsonFromTempDir = require('./get-package-json-from-temp-dir');
+const getPackageJsonFromTempDir = require('./get-package-json-from-temp-dir')
+  .default;
 
 module.exports = function(files, callback) {
   const packageFile = files[0],

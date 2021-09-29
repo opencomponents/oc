@@ -2,7 +2,7 @@
 
 const read = require('read');
 
-const strings = require('../../resources/index');
+const strings = require('../../resources/index').default;
 
 module.exports = function(dependencies) {
   const { local, logger } = dependencies;

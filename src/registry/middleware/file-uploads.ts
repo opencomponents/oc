@@ -1,13 +1,16 @@
-'use strict';
+import { NextFunction, Request, Response } from 'express';
+import multer from 'multer';
 
-const multer = require('multer');
-
-module.exports = function(req, res, next) {
+export default function fileUpload(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   if (res.conf.local) {
     return next();
   }
 
-  const normaliseFileName = x =>
+  const normaliseFileName = (x: string) =>
     x
       .replace('.tar.gz', '')
       .replace(/\W+/g, '-')
@@ -25,4 +28,4 @@ module.exports = function(req, res, next) {
   });
 
   return upload.any()(req, res, next);
-};
+}

@@ -8,7 +8,7 @@ const read = require('read');
 const _ = require('lodash');
 
 const handleDependencies = require('../domain/handle-dependencies');
-const strings = require('../../resources/index');
+const strings = require('../../resources/index').default;
 
 module.exports = function(dependencies) {
   const registry = dependencies.registry,

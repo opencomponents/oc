@@ -3,9 +3,9 @@
 const path = require('path');
 const _ = require('lodash');
 
-const getMissingDependencies = require('./get-missing-dependencies');
+const getMissingDependencies = require('./get-missing-dependencies').default;
 const npm = require('../../../utils/npm-utils');
-const strings = require('../../../resources/index');
+const strings = require('../../../resources/index').default;
 
 module.exports = (options, callback) => {
   const { dependencies, logger } = options;

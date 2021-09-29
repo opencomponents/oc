@@ -10,7 +10,7 @@ const initTemplate = require('./init-template');
 const isTemplateLegacy = require('../../utils/is-template-legacy').default;
 const mock = require('./mock');
 const packageComponents = require('./package-components');
-const strings = require('../../resources');
+const strings = require('../../resources').default;
 const validator = require('../../registry/domain/validators');
 
 module.exports = function() {

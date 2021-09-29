@@ -3,7 +3,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 
-const settings = require('../../resources/settings');
+const settings = require('../../resources/settings').default;
 
 module.exports = function() {
   return function(params, callback) {

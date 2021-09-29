@@ -10,7 +10,7 @@ const _ = require('lodash');
 const getMockedPlugins = require('../domain/get-mocked-plugins');
 const handleDependencies = require('../domain/handle-dependencies');
 const oc = require('../../index');
-const strings = require('../../resources/index');
+const strings = require('../../resources/index').default;
 const watch = require('../domain/watch');
 
 module.exports = function(dependencies) {
