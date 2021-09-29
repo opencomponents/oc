@@ -4,7 +4,7 @@ const async = require('async');
 const _ = require('lodash');
 const DepGraph = require('dependency-graph').DepGraph;
 
-const strings = require('../../resources');
+const strings = require('../../resources').default;
 
 const validatePlugins = function(plugins) {
   let c = 0;

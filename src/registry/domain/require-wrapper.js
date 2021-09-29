@@ -6,7 +6,7 @@ const requirePackageName = require('require-package-name');
 const tryRequire = require('try-require');
 const _ = require('lodash');
 
-const strings = require('../../resources');
+const strings = require('../../resources').default;
 
 const isCoreDependency = x => _.includes(coreModules, x);
 const requireCoreDependency = x =>

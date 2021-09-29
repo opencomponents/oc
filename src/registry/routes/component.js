@@ -4,7 +4,7 @@ const { serializeError } = require('serialize-error');
 const _ = require('lodash');
 
 const GetComponentHelper = require('./helpers/get-component');
-const strings = require('../../resources');
+const strings = require('../../resources').default;
 
 module.exports = function(conf, repository) {
   const getComponent = GetComponentHelper(conf, repository);

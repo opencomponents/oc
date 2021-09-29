@@ -8,7 +8,7 @@ const _ = require('lodash');
 const Local = require('./domain/local');
 const logger = require('./logger');
 const Registry = require('./domain/registry');
-const strings = require('../resources');
+const strings = require('../resources').default;
 const validateCommand = require('./validate-command');
 
 const currentNodeVersion = process.version;
