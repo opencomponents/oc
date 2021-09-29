@@ -11,7 +11,7 @@ export default function applyDefaultValues(
   optionalParametersWithDefaults.forEach(
     ([expectedParameterName, expectedParameter]) => {
       const param = requestParameters[expectedParameterName];
-      if (param == null) {
+      if (param === null || param === undefined) {
         requestParameters[expectedParameterName] = expectedParameter.default!;
       }
     }
