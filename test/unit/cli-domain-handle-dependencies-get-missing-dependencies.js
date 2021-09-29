@@ -44,7 +44,7 @@ describe('cli : domain : handle-dependencies - get-missing-dependencies', () => 
             }
           }
         }
-      );
+      ).default;
 
       it(`should output ${JSON.stringify(output)}`, () => {
         expect(getMissingDependencies(dependencies)).to.deep.equal(output);

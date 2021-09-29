@@ -12,7 +12,7 @@ const getRegistry = function(dependencies, opts) {
     {
       'minimal-request': dependencies.request,
       'fs-extra': dependencies.fs,
-      '../../utils/put': dependencies.put,
+      '../../utils/put': { default: dependencies.put },
       '../domain/url-parser': dependencies.urlParser,
       path: {
         join: sinon.stub().returns('/hello/world')
