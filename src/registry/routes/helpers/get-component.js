@@ -459,9 +459,9 @@ module.exports = function(conf, repository) {
 
                 const options = conf.local
                   ? {
-                    displayErrors: true,
-                    filename: dataProvider.filePath
-                  }
+                      displayErrors: true,
+                      filename: dataProvider.filePath
+                    }
                   : {};
 
                 try {
