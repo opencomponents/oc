@@ -1,20 +1,18 @@
-'use strict';
+import * as auth from '../authentication';
+import strings from '../../../resources';
+import { Config } from '../../../types';
 
-const _ = require('lodash');
+type ValidationResult = { isValid: true } | { isValid: false; message: string };
 
-const auth = require('../authentication');
-const strings = require('../../../resources').default;
-
-module.exports = function(conf) {
-  const response = { isValid: true };
-
-  const returnError = function(message) {
-    response.isValid = false;
-    response.message = message || 'registry configuration is not valid';
-    return response;
+export default function registryConfiguration(conf: Config): ValidationResult {
+  const returnError = (message: string): ValidationResult => {
+    return {
+      isValid: false,
+      message: message || 'registry configuration is not valid'
+    };
   };
 
-  if (!conf || !_.isObject(conf) || Object.keys(conf).length === 0) {
+  if (!conf || Object.keys(conf).length === 0) {
     return returnError(strings.errors.registry.CONFIGURATION_EMPTY);
   }
 
@@ -45,7 +43,7 @@ module.exports = function(conf) {
 
   const dependencies = conf.dependencies;
 
-  if (!!dependencies && !_.isArray(dependencies)) {
+  if (!!dependencies && !Array.isArray(dependencies)) {
     return returnError(
       strings.errors.registry.CONFIGURATION_DEPENDENCIES_MUST_BE_ARRAY
     );
@@ -53,19 +51,19 @@ module.exports = function(conf) {
 
   const routes = conf.routes;
 
-  if (!!routes && !_.isArray(routes)) {
+  if (!!routes && !Array.isArray(routes)) {
     return returnError(
       strings.errors.registry.CONFIGURATION_ROUTES_MUST_BE_ARRAY
     );
   } else {
-    _.forEach(routes, route => {
+    for (const route of routes || []) {
       if (!route.route || !route.handler || !route.method) {
         return returnError(
           strings.errors.registry.CONFIGURATION_ROUTES_NOT_VALID
         );
       }
 
-      if (!_.isFunction(route.handler)) {
+      if (typeof route.handler !== 'function') {
         return returnError(
           strings.errors.registry.CONFIGURATION_ROUTES_HANDLER_MUST_BE_FUNCTION
         );
@@ -78,7 +76,7 @@ module.exports = function(conf) {
           )
         );
       }
-    });
+    }
   }
 
   if (!conf.local && !conf.storage) {
@@ -112,7 +110,7 @@ module.exports = function(conf) {
       ) {
         return returnError(
           strings.errors.registry.CONFIGURATION_STORAGE_NOT_VALID(
-            conf.storage.adapterType.toUpperCase()
+            cdn.adapterType.toUpperCase()
           )
         );
       }
@@ -120,7 +118,7 @@ module.exports = function(conf) {
   }
 
   if (conf.customHeadersToSkipOnWeakVersion) {
-    if (!_.isArray(conf.customHeadersToSkipOnWeakVersion)) {
+    if (!Array.isArray(conf.customHeadersToSkipOnWeakVersion)) {
       return returnError(
         strings.errors.registry
           .CONFIGURATION_HEADERS_TO_SKIP_MUST_BE_STRING_ARRAY
@@ -139,5 +137,5 @@ module.exports = function(conf) {
     }
   }
 
-  return response;
-};
+  return { isValid: true };
+}
