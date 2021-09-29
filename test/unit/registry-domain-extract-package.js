@@ -17,7 +17,7 @@ describe('registry : domain : extract-package', () => {
         .stub()
         .yields(null, { package: 'hello' })
     }
-  );
+  ).default;
 
   describe('when successfully extracting package', () => {
     let response;

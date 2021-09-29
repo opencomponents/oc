@@ -16,7 +16,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     const linkMissingDependencies = injectr(
       '../../dist/cli/domain/handle-dependencies/link-missing-dependencies.js',
       {
-        './get-missing-dependencies': stubs.getMissingDependencies,
+        './get-missing-dependencies': { default: stubs.getMissingDependencies },
         'fs-extra': { ensureSymlinkSync: stubs.ensureSymlinkSync },
         path: { resolve: () => '/path/to/oc-running' }
       }

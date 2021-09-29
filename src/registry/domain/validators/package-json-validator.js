@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 
-const strings = require('../../../resources');
+const strings = require('../../../resources').default;
 
 module.exports = function(pkgDetails) {
   if (pkgDetails.packageJson.name !== pkgDetails.componentName) {

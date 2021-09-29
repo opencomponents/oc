@@ -1,6 +1,6 @@
 'use strict';
 
-const strings = require('../../../resources');
+const strings = require('../../../resources').default;
 
 module.exports = (options, cb) => {
   const { componentPath, pkg, template } = options;

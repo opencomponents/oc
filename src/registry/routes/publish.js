@@ -1,7 +1,7 @@
 'use strict';
 
-const extractPackage = require('../domain/extract-package');
-const strings = require('../../resources/index');
+const extractPackage = require('../domain/extract-package').default;
+const strings = require('../../resources/index').default;
 const validator = require('../domain/validators');
 
 module.exports = function(repository) {
@@ -31,13 +31,16 @@ module.exports = function(repository) {
       });
     }
 
+    // @ts-ignore
     validationResult = validator.validateNodeVersion(
       req.headers['user-agent'],
       process.version
     );
     if (!validationResult.isValid) {
       res.errorDetails = strings.errors.registry.NODE_CLI_VERSION_IS_NOT_VALID(
+        // @ts-ignore
         validationResult.error.registryNodeVersion,
+        // @ts-ignore
         validationResult.error.cliNodeVersion
       );
       return res.status(409).json({
