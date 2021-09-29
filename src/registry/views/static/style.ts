@@ -1,4 +1,4 @@
-module.exports = `body {
+export default `body {
   width: 1024px;
   margin: 0 auto;
   font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial;

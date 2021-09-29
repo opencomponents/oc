@@ -3,7 +3,7 @@ module.exports = vm => {
   const componentParameters = require('./partials/component-parameters')(vm);
   const componentState = require('./partials/component-state')(vm);
   const componentVersions = require('./partials/component-versions')(vm);
-  const infoJS = require('./static/info');
+  const infoJS = require('./static/info').default;
   const layout = require('./partials/layout')(vm);
   const property = require('./partials/property')();
   const isTemplateLegacy = require('../../utils/is-template-legacy').default;
