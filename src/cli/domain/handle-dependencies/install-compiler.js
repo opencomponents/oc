@@ -3,7 +3,7 @@
 const cleanRequire = require('../../../utils/clean-require');
 const isTemplateValid = require('../../../utils/is-template-valid').default;
 const npm = require('../../../utils/npm-utils');
-const strings = require('../../../resources/index');
+const strings = require('../../../resources/index').default;
 
 module.exports = (options, cb) => {
   const { compilerPath, componentPath, dependency, logger } = options;

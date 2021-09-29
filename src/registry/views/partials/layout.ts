@@ -1,6 +1,12 @@
-const styleCSS = require('../static/style');
+import styleCSS from '../static/style';
 
-module.exports = vm => ({ content, scripts }) => {
+const layout = (vm: { title: string; href: string }) => ({
+  content,
+  scripts
+}: {
+  content: string;
+  scripts: string;
+}) => {
   const href = vm.href.replace('http://', '//').replace('https://', '//');
 
   return `<!DOCTYPE html><html>
@@ -26,3 +32,5 @@ module.exports = vm => ({ content, scripts }) => {
   </body>
 </html>`;
 };
+
+export default layout;

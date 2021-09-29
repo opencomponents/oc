@@ -5,10 +5,10 @@ const errorhandler = require('errorhandler');
 const morgan = require('morgan');
 
 const baseUrlHandler = require('./base-url-handler');
-const cors = require('./cors');
+const cors = require('./cors').default;
 const discoveryHandler = require('./discovery-handler');
 const fileUploads = require('./file-uploads');
-const requestHandler = require('./request-handler');
+const requestHandler = require('./request-handler').default;
 const bodyParserJsonArgument = { inflate: true };
 const bodyParserUrlEncodedArgument = { extended: true };
 

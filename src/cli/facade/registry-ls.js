@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 
-const strings = require('../../resources/index');
+const strings = require('../../resources/index').default;
 
 module.exports = function(dependencies) {
   const registry = dependencies.registry,

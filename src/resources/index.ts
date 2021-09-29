@@ -1,5 +1,4 @@
-'use strict';
-const { green, yellow } = require('colors/safe');
+import { green, yellow } from 'colors/safe';
 
 // Kind of long multi-string messages and functions
 
@@ -53,7 +52,7 @@ Happy coding
 
 // Kind of concise string messages and functions
 
-module.exports = {
+export default {
   commands: {
     cli: {
       MOCK_PLUGIN: 'oc mock plugin <pluginName> "some value"',

@@ -1,4 +1,8 @@
-module.exports = () => (display, value, linked) => {
+const property = () => (
+  display: string,
+  value?: Date | string,
+  linked?: boolean
+): string => {
   if (!value) return '';
 
   const label = linked
@@ -7,3 +11,5 @@ module.exports = () => (display, value, linked) => {
 
   return `<div class="field"><p>${display}:</p> ${label}</div>`;
 };
+
+export default property;

@@ -44,7 +44,10 @@
     "oc"
   ],
   "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/colors": "^1.2.1",
     "@types/node": "^16.9.6",
+    "@types/semver": "^7.3.8",
     "@types/yargs": "^17.0.3",
     "@typescript-eslint/eslint-plugin": "^4.31.2",
     "@typescript-eslint/parser": "^4.31.2",
