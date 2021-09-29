@@ -4,7 +4,7 @@ const path = require('path');
 
 const cleanRequire = require('../../../utils/clean-require');
 const isTemplateLegacy = require('../../../utils/is-template-legacy').default;
-const isTemplateValid = require('../../../utils/is-template-valid');
+const isTemplateValid = require('../../../utils/is-template-valid').default;
 const strings = require('../../../resources').default;
 
 module.exports = function(template, options) {

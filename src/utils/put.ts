@@ -1,0 +1,55 @@
+import FormData from 'form-data';
+import fs from 'fs-extra';
+import path from 'path';
+import url from 'url';
+
+export default function put(
+  urlPath: string,
+  files: string | string[],
+  headers: Record<string, string> | Callback<any, Error | string>,
+  callback: Callback<any, Error | string>
+) {
+  if (typeof headers === 'function') {
+    callback = headers;
+    headers = {};
+  }
+
+  const form = new FormData();
+  const options = { ...url.parse(urlPath), method: 'PUT', headers: {} };
+  let body = '';
+  let callbackDone = false;
+
+  if (!Array.isArray(files)) {
+    files = [files];
+  }
+
+  files.forEach(file => {
+    const fileName = path.basename(file);
+    form.append(fileName, fs.createReadStream(file));
+  });
+
+  options.headers = { ...headers, ...form.getHeaders() };
+
+  form.submit(options as any, (err, res) => {
+    if (err) {
+      callbackDone = true;
+      return (callback as any)(err);
+    }
+
+    res.on('data', chunk => {
+      body += chunk;
+    });
+
+    res.on('end', () => {
+      if (!callbackDone) {
+        callbackDone = true;
+
+        if (res.statusCode !== 200) {
+          (callback as any)(body);
+        } else {
+          callback(null, body);
+        }
+      }
+    });
+  });
+}

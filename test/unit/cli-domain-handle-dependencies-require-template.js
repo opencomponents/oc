@@ -13,8 +13,9 @@ describe('cli : domain : handle-dependencies : require-template', () => {
       '../../dist/cli/domain/handle-dependencies/require-template.js',
       {
         '../../../utils/clean-require': options.requireMock,
-        '../../../utils/is-template-valid':
-          options.isTemplateValidMock || sinon.stub().returns(true),
+        '../../../utils/is-template-valid': {
+          default: options.isTemplateValidMock || sinon.stub().returns(true)
+        },
         path: {
           join: (...args) => args.join('/').replace(/\/\//gi, '/'),
           resolve: (...args) =>

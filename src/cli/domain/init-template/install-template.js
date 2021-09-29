@@ -2,7 +2,7 @@
 
 const tryRequire = require('try-require');
 
-const isTemplateValid = require('../../../utils/is-template-valid');
+const isTemplateValid = require('../../../utils/is-template-valid').default;
 const npm = require('../../../utils/npm-utils');
 const strings = require('../../../resources').default;
 

@@ -1,9 +1,7 @@
-'use strict';
+import path from 'path';
+import tryRequire from 'try-require';
 
-const tryRequire = require('try-require');
-const path = require('path');
-
-module.exports = (moduleName) => {
+export default function moduleExists(moduleName: string): boolean {
   const packageModulePath = path.join(moduleName, 'package.json');
 
   if (require.cache && !!require.cache[packageModulePath]) {
@@ -13,4 +11,4 @@ module.exports = (moduleName) => {
   return (
     !!tryRequire.resolve(moduleName) || !!tryRequire.resolve(packageModulePath)
   );
-};
+}
