@@ -4,7 +4,11 @@ import targz from 'targz';
 import getPackageJsonFromTempDir from './get-package-json-from-temp-dir';
 
 export default function extractPackage(
-  files: Express.Multer.File[],
+  files:
+    | Express.Multer.File[]
+    | {
+        [fieldname: string]: Express.Multer.File[];
+      },
   callback: Callback<{
     outputFolder: string;
     packageJson: any;

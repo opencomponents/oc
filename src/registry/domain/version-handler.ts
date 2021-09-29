@@ -2,7 +2,7 @@ import semver from 'semver';
 import semverExtra from 'semver-extra';
 
 export function getAvailableVersion(
-  requestedVersion: string,
+  requestedVersion: string | undefined,
   availableVersions: string[]
 ) {
   if (typeof requestedVersion === 'undefined') {

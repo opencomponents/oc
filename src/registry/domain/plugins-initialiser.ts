@@ -1,30 +1,29 @@
-'use strict';
+import async from 'async';
+import _ from 'lodash';
+import { DepGraph } from 'dependency-graph';
 
-const async = require('async');
-const _ = require('lodash');
-const DepGraph = require('dependency-graph').DepGraph;
+import strings from '../../resources';
+import { Plugin } from '../../types';
 
-const strings = require('../../resources').default;
-
-const validatePlugins = function(plugins) {
+function validatePlugins(plugins: unknown[]): asserts plugins is Plugin[] {
   let c = 0;
 
   plugins.forEach(plugin => {
     c++;
     if (
-      !_.isObject(plugin.register) ||
-      !_.isFunction(plugin.register.register) ||
-      !_.isFunction(plugin.register.execute) ||
-      !_.isString(plugin.name)
+      !_.isObject((plugin as Plugin).register) ||
+      !_.isFunction((plugin as Plugin).register.register) ||
+      !_.isFunction((plugin as Plugin).register.execute) ||
+      !_.isString((plugin as Plugin).name)
     ) {
       throw new Error(
-        strings.errors.registry.PLUGIN_NOT_VALID(plugin.name || c)
+        strings.errors.registry.PLUGIN_NOT_VALID((plugin as Plugin).name || c)
       );
     }
   });
-};
+}
 
-const checkDependencies = function(plugins) {
+function checkDependencies(plugins: Plugin[]) {
   const graph = new DepGraph();
 
   plugins.forEach(p => graph.addNode(p.name));
@@ -44,15 +43,15 @@ const checkDependencies = function(plugins) {
   });
 
   return graph.overallOrder();
-};
+}
 
-let deferredLoads = [];
-const defer = function(plugin, cb) {
+let deferredLoads: Plugin[] = [];
+const defer = function(plugin: Plugin, cb: (err?: Error) => void) {
   deferredLoads.push(plugin);
   return cb();
 };
 
-module.exports.init = function(pluginsToRegister, callback) {
+export function init(pluginsToRegister: unknown[], callback) {
   const registered = {};
 
   try {
@@ -62,7 +61,7 @@ module.exports.init = function(pluginsToRegister, callback) {
     return callback(err);
   }
 
-  const dependenciesRegistered = function(dependencies) {
+  const dependenciesRegistered = (dependencies: string[]) => {
     if (dependencies.length === 0) {
       return true;
     }
@@ -77,7 +76,7 @@ module.exports.init = function(pluginsToRegister, callback) {
     return present;
   };
 
-  const loadPlugin = function(plugin, cb) {
+  const loadPlugin = (plugin: Plugin, cb: (err?: Error) => void) => {
     const done = _.once(cb);
 
     if (registered[plugin.name]) {
@@ -105,7 +104,7 @@ module.exports.init = function(pluginsToRegister, callback) {
     });
   };
 
-  const terminator = function(err) {
+  const terminator = function(err: Error) {
     if (deferredLoads.length > 0) {
       const deferredPlugins = _.clone(deferredLoads);
       deferredLoads = [];
@@ -117,4 +116,4 @@ module.exports.init = function(pluginsToRegister, callback) {
   };
 
   async.mapSeries(pluginsToRegister, loadPlugin, terminator);
-};
+}
