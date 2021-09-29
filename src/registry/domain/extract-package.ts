@@ -1,12 +1,15 @@
-'use strict';
+import path from 'path';
+import targz from 'targz';
 
-const path = require('path');
-const targz = require('targz');
+import getPackageJsonFromTempDir from './get-package-json-from-temp-dir';
 
-const getPackageJsonFromTempDir = require('./get-package-json-from-temp-dir')
-  .default;
-
-module.exports = function(files, callback) {
+export default function extractPackage(
+  files: Express.Multer.File[],
+  callback: Callback<{
+    outputFolder: string;
+    packageJson: any;
+  }>
+) {
   const packageFile = files[0],
     packagePath = path.resolve(packageFile.path),
     packageUntarOutput = path.resolve(
@@ -23,7 +26,7 @@ module.exports = function(files, callback) {
     },
     err => {
       if (err) {
-        return callback(err);
+        return (callback as any)(err);
       }
 
       getPackageJsonFromTempDir(packageOutput, (err, packageJson) => {
@@ -34,4 +37,4 @@ module.exports = function(files, callback) {
       });
     }
   );
-};
+}

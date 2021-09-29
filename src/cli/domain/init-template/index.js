@@ -7,7 +7,7 @@ const _ = require('lodash');
 
 const installTemplate = require('./install-template');
 const npm = require('../../../utils/npm-utils');
-const scaffold = require('./scaffold');
+const scaffold = require('./scaffold').default;
 
 module.exports = function(options, callback) {
   const { compiler, componentPath } = options;
@@ -17,8 +17,10 @@ module.exports = function(options, callback) {
   async.series(
     [
       cb => fs.ensureDir(componentPath, cb),
+      // @ts-ignore
       cb => npm.init(npmOptions, cb),
       cb => installTemplate(options, cb),
+      // @ts-ignore
       cb => scaffold(_.extend(options, { compilerPath }), cb)
     ],
     callback

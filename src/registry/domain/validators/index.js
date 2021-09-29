@@ -2,13 +2,13 @@
 
 const semver = require('semver');
 
-const ocCliVersionValidator = require('./oc-cli-version');
+const ocCliVersionValidator = require('./oc-cli-version').default;
 const componentParametersValidator = require('./component-parameters');
 const packageJsonValidator = require('./package-json-validator');
 const pluginsRequirementsValidator = require('./plugins-requirements');
 const registryConfigurationValidator = require('./registry-configuration');
 const uploadedPackageValidator = require('./uploaded-package');
-const nodeVersionValidator = require('./node-version');
+const nodeVersionValidator = require('./node-version').default;
 
 module.exports = {
   validateComponentName: function(componentName) {
