@@ -1,4 +1,10 @@
-module.exports = ({ component }) => () => {
+import { Component } from '../../../types';
+
+const componentParameters = ({
+  component
+}: {
+  component: Component;
+}) => (): string => {
   let parameters = `<h3>Parameters</h3>`;
 
   if (!component.oc.parameters) {
@@ -12,9 +18,7 @@ module.exports = ({ component }) => () => {
       : '';
     const defaultParam =
       !param.mandatory && param.default
-        ? `<br /><br /><span class="bold">Default:</span><span>${
-          param.default
-        }</span>`
+        ? `<br /><br /><span class="bold">Default:</span><span>${param.default}</span>`
         : '';
 
     return `<div class="row">
@@ -41,9 +45,11 @@ module.exports = ({ component }) => () => {
     <div class="row header">
       <div class="parameter">Parameters</div>
       <div class="parameter-description"></div>
-    </div>  
+    </div>
     ${rows}
   </div>`;
 
   return parameters;
 };
+
+export default componentParameters;

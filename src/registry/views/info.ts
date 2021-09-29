@@ -1,12 +1,31 @@
-module.exports = vm => {
-  const componentAuthor = require('./partials/component-author')(vm);
-  const componentParameters = require('./partials/component-parameters')(vm);
-  const componentState = require('./partials/component-state')(vm);
-  const componentVersions = require('./partials/component-versions')(vm);
-  const infoJS = require('./static/info').default;
-  const layout = require('./partials/layout').default(vm);
-  const property = require('./partials/property').default();
-  const isTemplateLegacy = require('../../utils/is-template-legacy').default;
+import { Component } from '../../types';
+
+import getComponentAuthor from './partials/component-author';
+import getComponentParameters from './partials/component-parameters';
+import getComponentState from './partials/component-state';
+import getComponentVersions from './partials/component-versions';
+import infoJS from './static/info';
+import getLayout from './partials/layout';
+import getProperty from './partials/property';
+import isTemplateLegacy from '../../utils/is-template-legacy';
+
+interface Vm {
+  parsedAuthor: { name?: string; email?: string; url?: string };
+  component: Component;
+  dependencies: string[];
+  href: string;
+  sandBoxDefaultQs: string;
+  title: string;
+  repositoryUrl: string;
+}
+
+export default function info(vm: Vm): string {
+  const componentAuthor = getComponentAuthor(vm);
+  const componentParameters = getComponentParameters(vm);
+  const componentState = getComponentState(vm);
+  const componentVersions = getComponentVersions(vm);
+  const layout = getLayout(vm);
+  const property = getProperty();
 
   const showArray = (title, arr) =>
     property(title, !!arr && arr.length > 0 ? arr.join(', ') : 'none');
@@ -64,4 +83,4 @@ module.exports = vm => {
   </script>`;
 
   return layout({ content, scripts });
-};
+}
