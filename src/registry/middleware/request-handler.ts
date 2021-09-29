@@ -1,5 +1,3 @@
-'use strict';
-
 import { Request, Response } from 'express';
 import { IncomingHttpHeaders } from 'http';
 import responseTime from 'response-time';

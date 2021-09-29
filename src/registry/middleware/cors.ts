@@ -9,5 +9,6 @@ export default function cors(req: Request, res: Response, next: NextFunction) {
     'Origin, X-Requested-With, Content-Type, Accept'
   );
   res.header('Access-Control-Allow-Methods', 'GET, OPTIONS, PUT, POST');
+
   next();
 }

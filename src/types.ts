@@ -92,3 +92,24 @@ export interface VM {
   title: string;
   type: 'oc-registry' | 'oc-registry-local';
 }
+
+export interface Config {
+  baseUrl: string;
+  baseUrlFunc: (opts: { host?: string; secure: boolean }) => string;
+  discovery: boolean;
+  discoveryFunc: (opts: { host?: string; secure: boolean }) => boolean;
+  plugins: Record<string, Function>;
+  local: boolean;
+  tempDir: string;
+  port: number;
+  postRequestPayloadSize?: number;
+  verbosity: boolean;
+}
+
+declare global {
+  namespace Express {
+    interface Response {
+      conf: Config;
+    }
+  }
+}
