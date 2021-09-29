@@ -13,9 +13,9 @@ describe('registry : domain : extract-package', () => {
     {
       targz: { decompress: decompressStub },
       path: { resolve: pathResolveStub },
-      './get-package-json-from-temp-dir': sinon
-        .stub()
-        .yields(null, { package: 'hello' })
+      './get-package-json-from-temp-dir': {
+        default: sinon.stub().yields(null, { package: 'hello' })
+      }
     }
   );
 

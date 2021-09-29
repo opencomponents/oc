@@ -1,7 +1,7 @@
 'use strict';
 
 const _ = require('lodash');
-const commands = require('./commands');
+const commands = require('./commands').default;
 const strings = require('../resources').default;
 
 const validateCommand = (argv, level) => {
