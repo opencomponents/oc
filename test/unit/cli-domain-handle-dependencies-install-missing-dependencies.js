@@ -16,7 +16,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     const installMissingDependencies = injectr(
       '../../dist/cli/domain/handle-dependencies/install-missing-dependencies.js',
       {
-        './get-missing-dependencies': stubs.getMissingDependencies,
+        './get-missing-dependencies': { default: stubs.getMissingDependencies },
         '../../../utils/npm-utils': {
           installDependencies: stubs.installDependencies
         },

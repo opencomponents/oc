@@ -1,6 +1,9 @@
-module.exports = vm => {
-  const selectedCheckbox = require('./selected-checkbox')(vm);
+import { VM } from '../../../types';
+import getSelectedCheckbox from './selected-checkbox';
+
+export default function componentsList(vm: VM): string {
   const isLocal = vm.type !== 'oc-registry';
+  const selectedCheckbox = getSelectedCheckbox(vm);
 
   const extraColumn = !isLocal
     ? '<div class="date">Updated</div><div class="activity">Activity</div>'
@@ -9,8 +12,8 @@ module.exports = vm => {
   const componentRow = component => {
     const componentState = component.oc.state
       ? `<div class="state component-state-${component.oc.state.toLowerCase()}">${
-        component.oc.state
-      }</div>`
+          component.oc.state
+        }</div>`
       : '';
 
     const isHidden =
@@ -24,8 +27,8 @@ module.exports = vm => {
 
     return `<a href="${component.name}/${component.version}/~info">
   <div id="component-${component.name}" class="componentRow row table${
-  isHidden ? ' hide' : ''
-}">
+      isHidden ? ' hide' : ''
+    }">
     <div class="title">
       <p class="name">${component.name}</p>
       <span class="description">${component.description}</span>
@@ -58,4 +61,4 @@ module.exports = vm => {
   </div>
   ${vm.components.map(componentRow).join('')}
 </div>`;
-};
+}

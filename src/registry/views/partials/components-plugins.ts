@@ -1,11 +1,10 @@
-module.exports = vm => {
-  /**
-   * @param {any} param0
-   */
+import { VM } from '../../../types';
+
+export default function componentsPlugins(vm: VM) {
   const pluginRow = ([
     name,
     description
-  ]) => `<div class="componentRow row table">
+  ]: string[]) => `<div class="componentRow row table">
     <p class="release">
       <span style="font-weight: bold">${name +
         (description ? ':' : '')}</span>${description}
@@ -20,4 +19,4 @@ module.exports = vm => {
   return `<div id="components-plugins" class="box">${
     plugins.length ? plugins.map(pluginRow).join('') : 'No plugins registered'
   }</div>`;
-};
+}

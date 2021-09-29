@@ -1,7 +1,7 @@
 'use strict';
 
 const extractPackage = require('../domain/extract-package');
-const strings = require('../../resources/index');
+const strings = require('../../resources/index').default;
 const validator = require('../domain/validators');
 
 module.exports = function(repository) {

@@ -1,14 +1,14 @@
 'use strict';
 
 const cli = require('yargs');
-const commands = require('./commands');
+const commands = require('./commands').default;
 const semver = require('semver');
 const _ = require('lodash');
 
 const Local = require('./domain/local');
-const logger = require('./logger');
+const logger = require('./logger').default;
 const Registry = require('./domain/registry');
-const strings = require('../resources');
+const strings = require('../resources').default;
 const validateCommand = require('./validate-command');
 
 const currentNodeVersion = process.version;

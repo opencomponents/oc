@@ -32,7 +32,7 @@ describe('cli : domain : handle-dependencies : install-compiler', () => {
       '../../dist/cli/domain/handle-dependencies/install-compiler.js',
       {
         '../../../utils/clean-require': cleanRequireStub,
-        '../../../utils/is-template-valid': isTemplateValidStub,
+        '../../../utils/is-template-valid': { default: isTemplateValidStub },
         '../../../utils/npm-utils': { installDependency: installDependencyMock }
       }
     );
