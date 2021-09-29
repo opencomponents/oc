@@ -10,8 +10,8 @@ const ComponentsDetails = require('./components-details');
 // @ts-ignore
 const packageInfo = require('../../../package.json');
 const registerTemplates = require('./register-templates');
-const settings = require('../../resources/settings');
-const strings = require('../../resources');
+const settings = require('../../resources/settings').default;
+const strings = require('../../resources').default;
 const validator = require('./validators');
 const versionHandler = require('./version-handler');
 const errorToString = require('../../utils/error-to-string').default;
@@ -54,8 +54,8 @@ module.exports = function(conf) {
         const isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory();
         const isValidComponent = isDir
           ? fs
-            .readdirSync(path.join(conf.path, file))
-            .filter(file => file === '_package').length === 1
+              .readdirSync(path.join(conf.path, file))
+              .filter(file => file === '_package').length === 1
           : false;
 
         return isValidComponent;

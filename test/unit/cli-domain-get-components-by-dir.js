@@ -29,7 +29,7 @@ const initialise = function() {
     { __dirname: '' }
   );
 
-  const local = GetComponentsByDir();
+  const local = GetComponentsByDir.default();
 
   return { local: local, fs: fsMock };
 };

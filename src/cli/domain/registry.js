@@ -5,8 +5,8 @@ const path = require('path');
 const request = require('minimal-request');
 const _ = require('lodash');
 
-const put = require('../../utils/put');
-const settings = require('../../resources/settings');
+const put = require('../../utils/put').default;
+const settings = require('../../resources/settings').default;
 const urlBuilder = require('../../registry/domain/url-builder');
 const urlParser = require('../domain/url-parser');
 
@@ -122,17 +122,23 @@ module.exports = function(opts) {
         if (err) {
           if (!_.isObject(err)) {
             try {
+              // @ts-ignore
               err = JSON.parse(err);
             } catch (er) {}
           }
 
+          // @ts-ignore
           if (!!err.code && err.code === 'ECONNREFUSED') {
             err = 'Connection to registry has not been established';
           } else if (
+            // @ts-ignore
             err.code !== 'cli_version_not_valid' &&
+            // @ts-ignore
             err.code !== 'node_version_not_valid' &&
+            // @ts-ignore
             !!err.error
           ) {
+            // @ts-ignore
             err = err.error;
           }
 
