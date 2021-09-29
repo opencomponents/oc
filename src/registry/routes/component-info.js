@@ -5,7 +5,7 @@ const _ = require('lodash');
 
 const getComponentFallback = require('./helpers/get-component-fallback');
 const infoView = require('../views/info');
-const isUrlDiscoverable = require('./helpers/is-url-discoverable');
+const isUrlDiscoverable = require('./helpers/is-url-discoverable').default;
 const urlBuilder = require('../domain/url-builder');
 
 function getParams(component) {
@@ -65,6 +65,7 @@ function componentInfo(err, req, res, component) {
           href,
           parsedAuthor,
           repositoryUrl,
+          // @ts-ignore
           sandBoxDefaultQs: urlBuilder.queryString(params),
           title: 'Component Info'
         })
