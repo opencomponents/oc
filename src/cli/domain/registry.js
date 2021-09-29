@@ -101,6 +101,7 @@ module.exports = function(opts) {
           const parsed = urlParser.parse(res);
           callback(
             null,
+            // @ts-ignore
             urlBuilder.componentPreview(parsed, parsed.registryUrl)
           );
         }

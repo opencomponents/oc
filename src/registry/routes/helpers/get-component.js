@@ -8,9 +8,10 @@ const emptyResponseHandler = require('oc-empty-response-handler');
 const vm = require('vm');
 const _ = require('lodash');
 
-const applyDefaultValues = require('./apply-default-values');
+const applyDefaultValues = require('./apply-default-values').default;
 const eventsHandler = require('../../domain/events-handler');
-const GetComponentRetrievingInfo = require('./get-component-retrieving-info');
+const GetComponentRetrievingInfo = require('./get-component-retrieving-info')
+  .default;
 const getComponentFallback = require('./get-component-fallback');
 const isTemplateLegacy = require('../../../utils/is-template-legacy').default;
 const NestedRenderer = require('../../domain/nested-renderer');
@@ -188,6 +189,7 @@ module.exports = function(conf, repository) {
             {
               name: component.name,
               version: requestedComponent.version,
+              // @ts-ignore
               parameters: params
             },
             conf.baseUrl

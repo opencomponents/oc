@@ -19,7 +19,7 @@ describe('registry : routes : helpers : is-url-discoverable', () => {
               }
             })
         }
-      );
+      ).default;
 
       isDiscoverable('https://baseurl.company.com/', (err, res) => {
         result = res;
@@ -47,7 +47,7 @@ describe('registry : routes : helpers : is-url-discoverable', () => {
               }
             })
         }
-      );
+      ).default;
 
       isDiscoverable('https://baseurl.company.com/', (err, res) => {
         result = res;

@@ -28,11 +28,21 @@ interface ComponentHistory {
   version: string;
 }
 
-interface OcParameter {
-  description: string;
-  example: string;
-  mandatory: boolean;
-  type: string;
+export interface ComponentsDetails {
+  lastEdit: number;
+  components: {
+    [componentName: string]: {
+      [componentVersion: string]: { publishDate: number };
+    };
+  };
+}
+
+export interface OcParameter {
+  description?: string;
+  example?: string;
+  mandatory?: boolean;
+  type: 'string' | 'boolean' | 'number';
+  default?: string | boolean | number;
 }
 
 interface OcConfiguration {
