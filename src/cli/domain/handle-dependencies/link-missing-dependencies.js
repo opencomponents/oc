@@ -4,7 +4,7 @@ const _ = require('lodash');
 const path = require('path');
 const fs = require('fs-extra');
 const getMissingDependencies = require('./get-missing-dependencies');
-const strings = require('../../../resources/index');
+const strings = require('../../../resources/index').default;
 const stripVersion = require('../../../utils/strip-version').default;
 
 module.exports = (options, callback) => {

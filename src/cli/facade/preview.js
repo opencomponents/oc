@@ -2,7 +2,7 @@
 
 const open = require('open');
 
-const strings = require('../../resources/index');
+const strings = require('../../resources/index').default;
 
 module.exports = function(dependencies) {
   const logger = dependencies.logger,

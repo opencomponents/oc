@@ -3,7 +3,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 
-const strings = require('../../../resources');
+const strings = require('../../../resources').default;
 
 module.exports = function scaffold(options, callback) {
   const {
