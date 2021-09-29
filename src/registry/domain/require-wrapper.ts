@@ -1,31 +1,29 @@
-'use strict';
+import coreModules from 'builtin-modules';
+import path from 'path';
+import requirePackageName from 'require-package-name';
+import tryRequire from 'try-require';
+import _ from 'lodash';
 
-const coreModules = require('builtin-modules');
-const path = require('path');
-const requirePackageName = require('require-package-name');
-const tryRequire = require('try-require');
-const _ = require('lodash');
+import strings from '../../resources';
 
-const strings = require('../../resources').default;
-
-const isCoreDependency = x => _.includes(coreModules, x);
-const requireCoreDependency = x =>
+const isCoreDependency = (x: string) => _.includes(coreModules, x);
+const requireCoreDependency = (x: string) =>
   (isCoreDependency(x) && tryRequire(x)) || undefined;
 
-const requireDependency = requirePath => {
+const requireDependency = (requirePath: string) => {
   const nodeModulesPath = path.resolve('.', 'node_modules');
   const modulePath = path.resolve(nodeModulesPath, requirePath);
   return tryRequire(modulePath);
 };
 
-const throwError = requirePath => {
+const throwError = (requirePath: string) => {
   throw {
     code: strings.errors.registry.DEPENDENCY_NOT_FOUND_CODE,
     missing: [requirePath]
   };
 };
 
-module.exports = injectedDependencies => requirePath => {
+export default (injectedDependencies: string[]) => (requirePath: string) => {
   const moduleName = requirePackageName(requirePath);
   const isAllowed = _.includes(injectedDependencies, moduleName);
 

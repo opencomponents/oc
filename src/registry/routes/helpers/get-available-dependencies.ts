@@ -1,12 +1,19 @@
-'use strict';
+import coreModules from 'builtin-modules';
+import _ from 'lodash';
 
-const coreModules = require('builtin-modules');
-const _ = require('lodash');
+import RequireWrapper from '../../domain/require-wrapper';
 
-const RequireWrapper = require('../../domain/require-wrapper');
+interface AvailableDependency {
+  core: boolean;
+  name: string;
+  version: string;
+  link: string;
+}
 
-module.exports = dependencies =>
-  _.map(dependencies, dependency => {
+export default function getAvailableDependencies(
+  dependencies: string[]
+): AvailableDependency[] {
+  return _.map(dependencies, dependency => {
     const requirer = RequireWrapper(dependencies);
     const core = _.includes(coreModules, dependency);
     const packageJson = !core && requirer(`${dependency}/package.json`);
@@ -17,3 +24,4 @@ module.exports = dependencies =>
 
     return { core, name: dependency, version, link };
   });
+}

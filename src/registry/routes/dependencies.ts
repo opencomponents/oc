@@ -1,13 +1,16 @@
-'use strict';
+import { Request, Response } from 'express';
+import { Config } from '../../types';
+import getAvailableDependencies from './helpers/get-available-dependencies';
 
-const getAvailableDependencies = require('./helpers/get-available-dependencies');
-
-module.exports = function(conf) {
-  return function(req, res) {
+export default function dependencies(conf: Config) {
+  return function(req: Request, res: Response): void {
     if (conf.discovery) {
       const dependencies = getAvailableDependencies(conf.dependencies).map(
         ({ core, name, version }) => {
-          const dep = { name, core };
+          const dep: { name: string; core: boolean; versions?: string[] } = {
+            name,
+            core
+          };
           if (!core && version) {
             // In the future this could be multiple versions
             dep.versions = [version];
@@ -21,4 +24,4 @@ module.exports = function(conf) {
       res.status(401);
     }
   };
-};
+}

@@ -13,7 +13,7 @@ describe('registry : routes : helpers : get-available-dependencies', () => {
         homepage: `https://${pathToPackageJson.split('/')[0]}.com/`
       })
     }
-  );
+  ).default;
 
   describe('happy path', () => {
     let result;
