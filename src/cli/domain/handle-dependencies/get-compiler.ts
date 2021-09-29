@@ -1,11 +1,18 @@
-'use strict';
+import path from 'path';
 
-const path = require('path');
+import cleanRequire from '../../../utils/clean-require';
+import { Logger } from '../../logger';
+import installCompiler from './install-compiler';
 
-const cleanRequire = require('../../../utils/clean-require').default;
-const installCompiler = require('./install-compiler');
-
-module.exports = (options, cb) => {
+export default function getCompiler(
+  options: {
+    compilerDep: string;
+    componentPath: string;
+    logger: Logger;
+    pkg: { name: string; devDependencies: Dictionary<string> };
+  },
+  cb: Callback<string, string | number>
+) {
   const { compilerDep, componentPath, logger, pkg } = options;
   const compilerPath = path.join(componentPath, 'node_modules', compilerDep);
   const compiler = cleanRequire(compilerPath, { justTry: true });
@@ -28,4 +35,4 @@ module.exports = (options, cb) => {
   };
 
   installCompiler(installOptions, cb);
-};
+}

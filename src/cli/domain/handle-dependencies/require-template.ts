@@ -1,13 +1,16 @@
 'use strict';
 
-const path = require('path');
+import path from 'path';
 
-const cleanRequire = require('../../../utils/clean-require').default;
-const isTemplateLegacy = require('../../../utils/is-template-legacy').default;
-const isTemplateValid = require('../../../utils/is-template-valid').default;
-const strings = require('../../../resources').default;
+import cleanRequire from '../../../utils/clean-require';
+import isTemplateLegacy from '../../../utils/is-template-legacy';
+import isTemplateValid from '../../../utils/is-template-valid';
+import strings from '../../../resources';
 
-module.exports = function(template, options) {
+export default function requireTemplate(
+  template: string,
+  options: { compiler: boolean; componentPath: string }
+) {
   const requireOptions = options || {};
   let ocTemplate;
 
@@ -42,4 +45,4 @@ module.exports = function(template, options) {
   }
 
   return ocTemplate;
-};
+}

@@ -1,18 +1,24 @@
-'use strict';
+import _ from 'lodash';
+import path from 'path';
+import fs from 'fs-extra';
+import getMissingDependencies from './get-missing-dependencies';
+import strings from '../../../resources/index';
+import stripVersion from '../../../utils/strip-version';
+import { Logger } from '../../logger';
 
-const _ = require('lodash');
-const path = require('path');
-const fs = require('fs-extra');
-const getMissingDependencies = require('./get-missing-dependencies').default;
-const strings = require('../../../resources/index').default;
-const stripVersion = require('../../../utils/strip-version').default;
-
-module.exports = (options, callback) => {
+export default function linkMissingDependencies(
+  options: {
+    componentPath: string;
+    dependencies: Dictionary<string>;
+    logger: Logger;
+  },
+  callback: (err: string | null) => void
+) {
   const { componentPath, dependencies, logger } = options;
 
   const missingDependencies = getMissingDependencies(dependencies);
 
-  if (_.isEmpty(missingDependencies)) {
+  if (!missingDependencies.length) {
     return callback(null);
   }
 
@@ -23,7 +29,8 @@ module.exports = (options, callback) => {
 
   const symLinkType = 'dir';
   let symLinkError = false;
-  _.each(missingDependencies, dependency => {
+
+  for (const dependency of missingDependencies) {
     const moduleName = stripVersion(dependency);
     const pathToComponentModule = path.resolve(
       componentPath,
@@ -37,8 +44,9 @@ module.exports = (options, callback) => {
       symLinkError = true;
       logger.err(strings.errors.cli.DEPENDENCY_LINK_FAIL(moduleName, err));
     }
-  });
+  }
+
   return !symLinkError
     ? callback(null)
     : callback(strings.errors.cli.DEPENDENCIES_LINK_FAIL);
-};
+}

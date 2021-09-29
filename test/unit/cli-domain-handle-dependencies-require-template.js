@@ -12,10 +12,9 @@ describe('cli : domain : handle-dependencies : require-template', () => {
     const requireTemplate = injectr(
       '../../dist/cli/domain/handle-dependencies/require-template.js',
       {
-        '../../../utils/clean-require': { default: options.requireMock },
-        '../../../utils/is-template-valid': {
-          default: options.isTemplateValidMock || sinon.stub().returns(true)
-        },
+        '../../../utils/clean-require': options.requireMock,
+        '../../../utils/is-template-valid':
+          options.isTemplateValidMock || sinon.stub().returns(true),
         path: {
           join: (...args) => args.join('/').replace(/\/\//gi, '/'),
           resolve: (...args) =>
@@ -25,7 +24,7 @@ describe('cli : domain : handle-dependencies : require-template', () => {
       {
         __dirname: '__dirname'
       }
-    );
+    ).default;
     try {
       result = requireTemplate(options.template, options.options);
     } catch (e) {

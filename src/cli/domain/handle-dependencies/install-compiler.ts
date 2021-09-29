@@ -1,11 +1,18 @@
-'use strict';
+import cleanRequire from '../../../utils/clean-require';
+import isTemplateValid from '../../../utils/is-template-valid';
+import * as npm from '../../../utils/npm-utils';
+import strings from '../../../resources/index';
+import { Logger } from '../../logger';
 
-const cleanRequire = require('../../../utils/clean-require').default;
-const isTemplateValid = require('../../../utils/is-template-valid').default;
-const npm = require('../../../utils/npm-utils');
-const strings = require('../../../resources/index').default;
-
-module.exports = (options, cb) => {
+export default function installCompiler(
+  options: {
+    compilerPath: string;
+    componentPath: string;
+    dependency: string;
+    logger: Logger;
+  },
+  cb: Callback<string, string | number>
+) {
   const { compilerPath, componentPath, dependency, logger } = options;
 
   logger.warn(strings.messages.cli.INSTALLING_DEPS(dependency), true);
@@ -24,4 +31,4 @@ module.exports = (options, cb) => {
     const errorMsg = 'There was a problem while installing the compiler';
     cb(!err && isOk ? null : errorMsg, compiler);
   });
-};
+}

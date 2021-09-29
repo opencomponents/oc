@@ -1,36 +1,48 @@
-'use strict';
+import async from 'async';
+import coreModules from 'builtin-modules';
+import fs from 'fs-extra';
+import path from 'path';
+import _ from 'lodash';
 
-const async = require('async');
-const coreModules = require('builtin-modules');
-const fs = require('fs-extra');
-const path = require('path');
-const _ = require('lodash');
+import ensureCompilerIsDeclaredAsDevDependency from './ensure-compiler-is-declared-as-devDependency';
+import getCompiler from './get-compiler';
+import installMissingDependencies from './install-missing-dependencies';
+import linkMissingDependencies from './link-missing-dependencies';
+import isTemplateLegacy from '../../../utils/is-template-legacy';
+import strings from '../../../resources';
+import { Logger } from '../../logger';
 
-const ensureCompilerIsDeclaredAsDevDependency = require('./ensure-compiler-is-declared-as-devDependency');
-const getCompiler = require('./get-compiler');
-const installMissingDependencies = require('./install-missing-dependencies');
-const linkMissingDependencies = require('./link-missing-dependencies');
-const isTemplateLegacy = require('../../../utils/is-template-legacy').default;
-const strings = require('../../../resources').default;
-
-const getComponentPackageJson = (componentPath, cb) =>
+const getComponentPackageJson = (componentPath: string, cb: Callback<any>) =>
   fs.readJson(path.join(componentPath, 'package.json'), cb);
 
-module.exports = (options, callback) => {
+export default function handleDependencies(
+  options: {
+    components: string[];
+    logger: Logger;
+    useComponentDependencies?: boolean;
+  },
+  callback: Callback<
+    {
+      modules: string[];
+      templates: Function[];
+    },
+    string
+  >
+) {
   const { components, logger, useComponentDependencies } = options;
 
   const dependencies = {};
-  const addDependencies = componentDependencies =>
+  const addDependencies = (componentDependencies: Dictionary<string>) =>
     _.each(componentDependencies || {}, (version, dependency) => {
       dependencies[dependency] = version;
     });
 
-  const templates = {};
-  const addTemplate = (templateName, template) => {
+  const templates: Dictionary<Function> = {};
+  const addTemplate = (templateName: string, template: Function) => {
     templates[templateName] = template;
   };
 
-  const setupComponentDependencies = (componentPath, done) =>
+  const setupComponentDependencies = (componentPath: string, done) =>
     async.waterfall(
       [
         cb => getComponentPackageJson(componentPath, cb),
@@ -67,7 +79,7 @@ module.exports = (options, callback) => {
   logger.warn(strings.messages.cli.CHECKING_DEPENDENCIES);
   async.eachSeries(components, setupComponentDependencies, err => {
     if (err) {
-      return callback(err);
+      return callback(err, undefined as any);
     }
 
     const result = {
@@ -76,9 +88,12 @@ module.exports = (options, callback) => {
     };
     const options = { dependencies, logger };
     if (useComponentDependencies) {
+      // @ts-ignore
       options.componentPath = components[0];
-      return linkMissingDependencies(options, err => callback(err, result));
+      return linkMissingDependencies(options as any, err =>
+        callback(err, result)
+      );
     }
     installMissingDependencies(options, err => callback(err, result));
   });
-};
+}
