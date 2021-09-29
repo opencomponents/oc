@@ -167,11 +167,6 @@ export interface Config {
   liveReloadPort: number;
 }
 
-export interface Repository {
-  getStaticClientPath: () => string;
-  getStaticClientMapPath: () => string;
-}
-
 export interface Cdn {
   getJson: <T>(filePath: string, force: boolean, cb: Callback<T>) => void;
   listSubDirectories: (
