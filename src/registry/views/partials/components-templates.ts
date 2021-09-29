@@ -11,7 +11,7 @@ export default function componentsTemplates(vm: VM): string {
   }: {
     type: string;
     version: string;
-    externals: Array<{ global: string; url: string }>;
+    externals: Array<{ global: string | string[]; url: string }>;
   }) => {
     const externalLinks = externals.map(externalLink).join(', ');
     const externalsLabel = externalLinks ? `(Externals: ${externalLinks})` : '';
