@@ -7,7 +7,7 @@ module.exports = vm => {
     plugins: require('./partials/components-plugins')(vm)
   };
 
-  const indexJS = require('./static/index');
+  const indexJS = require('./static/index').default;
   const layout = require('./partials/layout')(vm);
   const property = require('./partials/property')();
 
