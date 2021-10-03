@@ -1,12 +1,12 @@
-'use strict';
+import fs from 'fs-extra';
+import path from 'path';
 
-const fs = require('fs-extra');
-const path = require('path');
+import { getFileInfo } from 'oc-storage-adapters-utils';
+import { Request, Response } from 'express';
+import { Repository } from '../../types';
 
-const getFileInfo = require('oc-storage-adapters-utils').getFileInfo;
-
-module.exports = function(repository) {
-  return function(req, res) {
+export default function staticRedirector(repository: Repository) {
+  return function(req: Request, res: Response): void {
     let filePath;
     const clientPath = `${res.conf.prefix || '/'}oc-client/client.js`;
     const clientMapPath = `${res.conf.prefix ||
@@ -44,13 +44,15 @@ module.exports = function(repository) {
 
     if (!fs.existsSync(filePath)) {
       res.errorDetails = `File ${filePath} not found`;
-      return res.status(404).json({ err: res.errorDetails });
+      res.status(404).json({ err: res.errorDetails });
+      return;
     }
 
     const stats = fs.statSync(filePath);
     if (stats.isDirectory()) {
       res.errorDetails = 'Forbidden: Directory Listing Denied';
-      return res.status(403).json({ err: res.errorDetails });
+      res.status(403).json({ err: res.errorDetails });
+      return;
     }
 
     const fileStream = fs.createReadStream(filePath),
@@ -68,4 +70,4 @@ module.exports = function(repository) {
       fileStream.pipe(res);
     });
   };
-};
+}

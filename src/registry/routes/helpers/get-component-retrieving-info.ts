@@ -1,12 +1,27 @@
+import { IncomingHttpHeaders } from 'http';
+
 interface Options {
-  headers: Dictionary<string>;
+  headers: IncomingHttpHeaders;
   name: string;
-  parameters: Dictionary<string>;
+  parameters: IncomingHttpHeaders;
   version: string;
 }
 
-export default function getComponentRetrievingInfo(options: Options) {
-  let eventData = {
+interface EventData {
+  headers: IncomingHttpHeaders;
+  name: string;
+  parameters: IncomingHttpHeaders;
+  requestVersion: string;
+  duration: number;
+}
+
+export default function getComponentRetrievingInfo(
+  options: Options
+): {
+  extend(obj: unknown): void;
+  getData(): EventData;
+} {
+  const eventData: EventData = {
     headers: options.headers,
     name: options.name,
     parameters: options.parameters,
@@ -17,7 +32,7 @@ export default function getComponentRetrievingInfo(options: Options) {
   const start = process.hrtime();
 
   return {
-    extend(obj: Dictionary<string>) {
+    extend(obj: unknown) {
       Object.assign(eventData, obj);
     },
     getData() {

@@ -209,6 +209,59 @@ export interface Plugin {
   callback?: (...args: unknown[]) => void;
 }
 
+export interface Repository {
+  getCompiledView(
+    componentName: string,
+    componentVersion: string,
+    callback: Callback<string>
+  ): void;
+  getComponent(
+    componentName: string,
+    componentVersion: string,
+    calllback: Callback<Component, string>
+  ): void;
+  getComponent(
+    componentName: string,
+    calllback: Callback<Component, string>
+  ): void;
+  getComponentInfo(
+    componentName: string,
+    componentVersion: string,
+    callback: Callback<Component, string>
+  ): void;
+  getComponentPath(componentName: string, componentVersion: string): void;
+  getComponents(callback: Callback<string[]>): void;
+  getComponentsDetails(callback: Callback<ComponentsDetails, string>): void;
+  getComponentVersions(
+    componentName: string,
+    callback: Callback<string[], string>
+  ): void;
+  getDataProvider(
+    componentName: string,
+    componentVersion: string,
+    callback: Callback<{
+      content: string;
+      filePath: string;
+    }>
+  ): void;
+  getStaticClientPath: () => string;
+  getStaticClientMapPath: () => string;
+  getStaticFilePath: (
+    componentName: string,
+    componentVersion: string,
+    filePath: string
+  ) => string;
+  getTemplatesInfo: () => TemplateInfo[];
+  getTemplate: (type: string) => Template;
+  init(callback: Callback<ComponentsList | string>): void;
+  publishComponent(
+    pkgDetails: any,
+    componentName: string,
+    componentVersion: string,
+    callback: Callback<ComponentsDetails, { code: string; msg: string }>
+  ): void;
+}
+
 declare global {
   namespace Express {
     interface Response {

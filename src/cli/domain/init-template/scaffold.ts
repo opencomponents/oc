@@ -14,7 +14,7 @@ interface ScaffoldOptions {
 export default function scaffold(
   options: ScaffoldOptions,
   callback: Callback<{ ok: true }, string>
-) {
+): void {
   const {
     compiler,
     compilerPath,
@@ -46,6 +46,8 @@ export default function scaffold(
     const url =
       (compilerPackage.bugs && compilerPackage.bugs.url) ||
       `the ${templateType} repo`;
-    return (callback as any)(strings.errors.cli.scaffoldError(url, error));
+    return (callback as any)(
+      strings.errors.cli.scaffoldError(url, String(error))
+    );
   }
 }
