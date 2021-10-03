@@ -13,7 +13,7 @@ import {
 export default function componentsDetails(conf: Config, cdn: Cdn) {
   const returnError = (
     code: string,
-    message: string,
+    message: string | Error,
     callback: (code: string) => void
   ) => {
     eventsHandler.fire('error', { code, message });
@@ -23,12 +23,12 @@ export default function componentsDetails(conf: Config, cdn: Cdn) {
   const filePath = (): string =>
     `${conf.storage.options.componentsDir}/components-details.json`;
 
-  const getFromJson = (callback: Callback<ComponentsDetails>) =>
+  const getFromJson = (callback: Callback<ComponentsDetails, string>) =>
     cdn.getJson<ComponentsDetails>(filePath(), true, callback);
 
   const getFromDirectories = (
     options: { componentsList: ComponentsList; details: ComponentsDetails },
-    callback
+    callback: Callback<ComponentsDetails, Error | undefined>
   ) => {
     const details = _.extend({}, _.cloneDeep(options.details));
     details.components = details.components || {};
@@ -52,7 +52,7 @@ export default function componentsDetails(conf: Config, cdn: Cdn) {
           true,
           (err, content) => {
             if (err) {
-              return next(err);
+              return next(err as any);
             }
             details.components[name][version] = {
               publishDate: content.oc.date || 0

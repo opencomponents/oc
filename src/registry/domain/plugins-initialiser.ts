@@ -17,7 +17,9 @@ function validatePlugins(plugins: unknown[]): asserts plugins is Plugin[] {
       !_.isString((plugin as Plugin).name)
     ) {
       throw new Error(
-        strings.errors.registry.PLUGIN_NOT_VALID((plugin as Plugin).name || c)
+        strings.errors.registry.PLUGIN_NOT_VALID(
+          (plugin as Plugin).name || String(c)
+        )
       );
     }
   });
@@ -51,14 +53,17 @@ const defer = function(plugin: Plugin, cb: (err?: Error) => void) {
   return cb();
 };
 
-export function init(pluginsToRegister: unknown[], callback) {
-  const registered = {};
+export function init(
+  pluginsToRegister: unknown[],
+  callback: Callback<Dictionary<(...args: unknown[]) => void>, unknown>
+): void {
+  const registered: Dictionary<(...args: unknown[]) => void> = {};
 
   try {
     validatePlugins(pluginsToRegister);
     checkDependencies(pluginsToRegister);
   } catch (err) {
-    return callback(err);
+    return callback(err, undefined as any);
   }
 
   const dependenciesRegistered = (dependencies: string[]) => {
@@ -93,15 +98,19 @@ export function init(pluginsToRegister: unknown[], callback) {
 
     const dependencies = _.pick(registered, plugin.register.dependencies);
 
-    plugin.register.register(plugin.options || {}, dependencies, err => {
-      const pluginCallback = plugin.callback || _.noop;
-      pluginCallback(err);
-      // Overriding toString so implementation details of plugins do not
-      // leak to OC consumers
-      plugin.register.execute.toString = () => plugin.description || '';
-      registered[plugin.name] = plugin.register.execute;
-      done(err);
-    });
+    plugin.register.register(
+      plugin.options || {},
+      dependencies,
+      (err?: Error) => {
+        const pluginCallback = plugin.callback || _.noop;
+        pluginCallback(err);
+        // Overriding toString so implementation details of plugins do not
+        // leak to OC consumers
+        plugin.register.execute.toString = () => plugin.description || '';
+        registered[plugin.name] = plugin.register.execute;
+        done(err);
+      }
+    );
   };
 
   const terminator = function(err: Error) {
@@ -109,11 +118,11 @@ export function init(pluginsToRegister: unknown[], callback) {
       const deferredPlugins = _.clone(deferredLoads);
       deferredLoads = [];
 
-      return async.mapSeries(deferredPlugins, loadPlugin, terminator);
+      return async.mapSeries(deferredPlugins, loadPlugin, terminator as any);
     }
 
     callback(err, registered);
   };
 
-  async.mapSeries(pluginsToRegister, loadPlugin, terminator);
+  async.mapSeries(pluginsToRegister, loadPlugin, terminator as any);
 }

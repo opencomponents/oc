@@ -13,15 +13,15 @@ export default function extractPackage(
     outputFolder: string;
     packageJson: any;
   }>
-) {
-  const packageFile = files[0],
-    packagePath = path.resolve(packageFile.path),
-    packageUntarOutput = path.resolve(
-      packageFile.path,
-      '..',
-      packageFile.filename.replace('.tar.gz', '')
-    ),
-    packageOutput = path.resolve(packageUntarOutput, '_package');
+): void {
+  const packageFile: Express.Multer.File = (files as any)[0];
+  const packagePath = path.resolve(packageFile.path);
+  const packageUntarOutput = path.resolve(
+    packageFile.path,
+    '..',
+    packageFile.filename.replace('.tar.gz', '')
+  );
+  const packageOutput = path.resolve(packageUntarOutput, '_package');
 
   targz.decompress(
     {

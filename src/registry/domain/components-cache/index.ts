@@ -5,7 +5,8 @@ import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import { Cdn, ComponentsList, Config } from '../../../types';
 
 export default function componentsCache(conf: Config, cdn: Cdn) {
-  let cachedComponentsList: ComponentsList, refreshLoop;
+  let cachedComponentsList: ComponentsList;
+  let refreshLoop: NodeJS.Timeout;
 
   const componentsList = getComponentsList(conf, cdn);
 
@@ -37,9 +38,13 @@ export default function componentsCache(conf: Config, cdn: Cdn) {
     callback(null, data);
   };
 
-  const returnError = (code, message, callback) => {
+  const returnError = (
+    code: string,
+    message: string,
+    callback: Callback<any, any>
+  ) => {
     eventsHandler.fire('error', { code, message });
-    return callback(code);
+    return callback(code, undefined as any);
   };
 
   return {
@@ -55,7 +60,7 @@ export default function componentsCache(conf: Config, cdn: Cdn) {
       callback(null, cachedComponentsList);
     },
 
-    load(callback) {
+    load(callback: Callback<ComponentsList>) {
       componentsList.getFromJson((jsonErr, jsonComponents) => {
         componentsList.getFromDirectories((dirErr, dirComponents) => {
           if (dirErr) {
@@ -76,7 +81,7 @@ export default function componentsCache(conf: Config, cdn: Cdn) {
         });
       });
     },
-    refresh(callback) {
+    refresh(callback: Callback<ComponentsList>) {
       clearTimeout(refreshLoop);
       componentsList.refresh((err, components) => {
         if (err) {

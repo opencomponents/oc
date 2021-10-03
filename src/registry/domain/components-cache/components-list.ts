@@ -8,11 +8,11 @@ export default function componentsList(conf: Config, cdn: Cdn) {
     `${conf.storage.options.componentsDir}/components.json`;
 
   const componentsList = {
-    getFromJson: (callback: Callback<any>) =>
+    getFromJson: (callback: Callback<any, string>) =>
       cdn.getJson(filePath(), true, callback),
 
     getFromDirectories: (callback: Callback<ComponentsList, string>) => {
-      const componentsInfo = {};
+      const componentsInfo: Dictionary<string[]> = {};
 
       const getVersionsForComponent = (
         componentName: string,
@@ -49,11 +49,11 @@ export default function componentsList(conf: Config, cdn: Cdn) {
             getVersionsForComponent,
             (errors, versions) => {
               if (errors) {
-                return callback(errors, undefined as any);
+                return callback(errors as any, undefined as any);
               }
 
               components.forEach((component, i) => {
-                componentsInfo[component] = versions[i];
+                componentsInfo[component] = (versions as any)[i];
               });
 
               callback(null, {

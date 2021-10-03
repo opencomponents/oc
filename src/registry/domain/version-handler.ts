@@ -4,7 +4,7 @@ import semverExtra from 'semver-extra';
 export function getAvailableVersion(
   requestedVersion: string | undefined,
   availableVersions: string[]
-) {
+): string | undefined {
   if (typeof requestedVersion === 'undefined') {
     requestedVersion = '';
   }
@@ -20,6 +20,6 @@ export function getAvailableVersion(
 export function validateNewVersion(
   requestedVersion: string,
   availableVersions: string[]
-) {
+): boolean {
   return !availableVersions.includes(requestedVersion);
 }

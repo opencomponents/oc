@@ -9,7 +9,7 @@ interface Input extends Partial<Omit<Config, 'beforePublish'>> {
   baseUrl: string;
 }
 
-export default function optionsSanitiser(input: Input) {
+export default function optionsSanitiser(input: Input): Config {
   const options = _.clone(input);
 
   if (!options.publishAuth) {
@@ -107,5 +107,5 @@ export default function optionsSanitiser(input: Input) {
     options.env = {};
   }
 
-  return options;
+  return options as Config;
 }

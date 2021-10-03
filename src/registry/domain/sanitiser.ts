@@ -37,13 +37,14 @@ export function sanitiseComponentParameters(
   requestParameters: Dictionary<string | number | boolean>,
   expectedParameters: Dictionary<OcParameter>
 ): Dictionary<string | number | boolean> {
-  const result = {};
+  const result: Dictionary<string | number | boolean> = {};
 
   for (const [requestParameterName, requestParameter] of Object.entries(
     requestParameters
   )) {
     if (
       typeof expectedParameters === 'object' &&
+      // eslint-disable-next-line no-prototype-builtins
       expectedParameters.hasOwnProperty(requestParameterName)
     ) {
       const expectedType = expectedParameters[requestParameterName].type;

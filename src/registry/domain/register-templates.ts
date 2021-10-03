@@ -6,7 +6,10 @@ import _ from 'lodash';
 
 export default function registerTemplates(
   extraTemplates: Template[]
-): { templatesHash: Dictionary<Template>; templatesInfo: TemplateInfo[] } {
+): {
+  templatesHash: Dictionary<Template>;
+  templatesInfo: TemplateInfo[];
+} {
   const coreTemplates: Template[] = [
     es6Template,
     jadeTemplate,
@@ -14,21 +17,13 @@ export default function registerTemplates(
   ];
   const templates = _.union(coreTemplates, extraTemplates);
   const templatesHash = templates.reduce((hash, template) => {
-    try {
-      const type = template.getInfo().type;
-      hash[type] = template;
-      return hash;
-    } catch (err) {
-      throw err;
-    }
+    const type = template.getInfo().type;
+    hash[type] = template;
+    return hash;
   }, {} as Dictionary<Template>);
 
   const templatesInfo = templates.map(template => {
-    try {
-      return template.getInfo();
-    } catch (err) {
-      throw err;
-    }
+    return template.getInfo();
   });
 
   return {
