@@ -16,7 +16,7 @@ describe('cli : domain : watch', () => {
           on: sinon.stub().yields(fileChanged)
         })
       }
-    });
+    }).default;
 
     watch(
       [

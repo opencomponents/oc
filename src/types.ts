@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { Logger } from './cli/logger';
 
 export interface Author {
   name?: string;
@@ -199,6 +200,71 @@ export interface Plugin {
   description?: string;
   options?: any;
   callback: Function;
+}
+
+export interface RegistryCli {
+  add(registry: string, callback: Callback<null, string>): void;
+  get(callback: Callback<string[], string>): void;
+  getApiComponentByHref(
+    href: string,
+    callback: Callback<unknown, Error | number>
+  ): void;
+  getComponentPreviewUrlByUrl(
+    componentHref: string,
+    callback: Callback<string, Error | number>
+  ): void;
+  putComponent(
+    options: {
+      username?: string;
+      password?: string;
+      route: string;
+      path: string;
+    },
+    callback: Callback<unknown, string>
+  ): void;
+  remove(registry: string, callback: Callback): void;
+}
+
+export interface Local {
+  clean: {
+    fetchList: (dirPath: string, callback: Callback<string[]>) => void;
+    remove: (list: string[], callback: Callback<string>) => void;
+  };
+  cleanup: (
+    compressedPackagePath: string,
+    cb: (err: NodeJS.ErrnoException) => void
+  ) => void;
+  compress: (
+    input: string,
+    output: string,
+    cb: (error: Error | string | null) => void
+  ) => void;
+  getComponentsByDir: (
+    componentsDir: string,
+    callback: Callback<string[]>
+  ) => void;
+  init: (
+    options: {
+      componentName: string;
+      logger: Logger;
+      componentPath: string;
+      templateType: string;
+    },
+    callback: Callback<string, string>
+  ) => void;
+  mock: (
+    params: { targetType: string; targetValue: string; targetName: string },
+    callback: (err: Error) => void
+  ) => void;
+  package: (
+    options: {
+      componentPath: string;
+      minify?: boolean;
+      verbose?: boolean;
+      production?: boolean;
+    },
+    callback: Callback<Component>
+  ) => void;
 }
 
 declare global {

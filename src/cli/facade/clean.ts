@@ -1,12 +1,17 @@
-'use strict';
+import read from 'read';
+import strings from '../../resources/index';
+import { Local } from '../../types';
+import { Logger } from '../logger';
 
-const read = require('read');
-
-const strings = require('../../resources/index').default;
-
-module.exports = function(dependencies) {
-  const { local, logger } = dependencies;
-  const { fetchList, remove } = local.clean;
+const clean = ({
+  local: {
+    clean: { fetchList, remove }
+  },
+  logger
+}: {
+  local: Local;
+  logger: Logger;
+}) => {
   const {
     cleanAlreadyClean,
     cleanList,
@@ -15,7 +20,7 @@ module.exports = function(dependencies) {
     cleanSuccess
   } = strings.messages.cli;
 
-  const prompt = cb =>
+  const prompt = (cb: (proceed: boolean) => void) =>
     read(
       { prompt: cleanPrompt, default: cleanPromptDefault },
       (err, result) => {
@@ -26,10 +31,10 @@ module.exports = function(dependencies) {
       }
     );
 
-  const removeFolders = (list, cb) =>
+  const removeFolders = (list: string[], cb: (err?: unknown) => void) =>
     remove(list, err => {
       if (err) {
-        logger.err(strings.errors.cli.cleanRemoveError(err));
+        logger.err(strings.errors.cli.cleanRemoveError(String(err)));
         return cb(err);
       }
 
@@ -37,10 +42,13 @@ module.exports = function(dependencies) {
       cb();
     });
 
-  return function(opts, callback) {
+  return (
+    opts: { dirPath: string; yes: boolean },
+    callback: (err?: unknown) => void
+  ) => {
     fetchList(opts.dirPath, (err, list) => {
       if (err) {
-        logger.err(strings.errors.generic(err));
+        logger.err(strings.errors.generic(String(err)));
         return callback(err);
       }
 
@@ -63,3 +71,7 @@ module.exports = function(dependencies) {
     });
   };
 };
+
+export default clean;
+
+module.exports = clean;
