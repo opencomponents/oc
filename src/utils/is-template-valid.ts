@@ -8,11 +8,10 @@ export default function isTemplateValid(
     return false;
   }
 
-  const api = ['getInfo', 'getCompiledTemplate', 'render'];
+  const templateApi = ['getInfo', 'getCompiledTemplate', 'render'] as const;
+  const compilerApi = [...templateApi, 'compile'] as const;
 
-  if (options && options.compiler === true) {
-    api.push('compile');
-  }
+  const api = options && options.compiler === true ? compilerApi : templateApi;
 
   return api.every(
     method => typeof (template as Template)[method] === 'function'

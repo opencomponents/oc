@@ -15,7 +15,7 @@ interface Options {
 export default function installTemplate(
   options: Options,
   callback: Callback<{ ok: true }, string>
-) {
+): void {
   const { compiler, componentPath, logger, templateType } = options;
 
   const npmOptions = {

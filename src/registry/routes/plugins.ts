@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { Config } from '../../types';
 
 export default function plugins(conf: Config) {
-  return function(req: Request, res: Response) {
+  return (req: Request, res: Response): void => {
     if (conf.discovery) {
       const plugins = Object.entries(conf.plugins).map(
         ([pluginName, pluginFn]) => ({

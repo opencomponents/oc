@@ -23,7 +23,7 @@ const buildInstallCommand = (options: {
 
 const executeCommand = (
   options: { command: string[]; path: string; silent?: boolean },
-  callback: NoParameterCallback<string | number>
+  callback: NoParameterCallback<string | number | null>
 ) => {
   const cmd = spawn('npm', [...options.command, '--no-package-lock'], {
     cwd: options.path,
@@ -44,8 +44,8 @@ const getFullPath = ({
 
 export const init = (
   options: { initPath: string; silent: boolean },
-  callback: NoParameterCallback<string | number>
-) => {
+  callback: NoParameterCallback<string | number | null>
+): void => {
   const { initPath, silent } = options;
   const npminit = ['init', '--yes'];
   const cmdOptions = { path: initPath, command: npminit, silent };
@@ -56,7 +56,7 @@ export const init = (
 export const installDependencies = (
   options: { dependencies: string[]; installPath: string; silent: boolean },
   callback: Callback<{ dest: string }, string | number>
-) => {
+): void => {
   const { dependencies, installPath, silent } = options;
   const npmi = buildInstallCommand(options);
   const cmdOptions = {
@@ -77,7 +77,7 @@ export const installDependencies = (
 export const installDependency = (
   options: { dependency: string; installPath: string; silent?: boolean },
   callback: Callback<{ dest: string }, string | number>
-) => {
+): void => {
   const { dependency, installPath, silent } = options;
   const npmi = buildInstallCommand(options);
   const cmdOptions = {

@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { IncomingHttpHeaders } from 'http';
 import request from 'minimal-request';
 import url from 'url';
 import { Component, Config } from '../../../types';
@@ -42,7 +43,7 @@ function getComponentFallbackForViewType(
         accept: 'application/json'
       }
     },
-    (fallbackErr, fallbackResponse) => {
+    (fallbackErr, fallbackResponse: string) => {
       if (fallbackErr === 304) {
         return res.status(304).send('');
       }
@@ -74,8 +75,8 @@ function getComponentFallbackForViewType(
 
 export function getComponent(
   fallbackRegistryUrl: string,
-  headers: Dictionary<string>,
-  component: { name: string; version: string; parameters: Dictionary<string> },
+  headers: IncomingHttpHeaders,
+  component: { name: string; version: string; parameters: IncomingHttpHeaders },
   callback: (
     result:
       | {
@@ -84,7 +85,7 @@ export function getComponent(
         }
       | Component
   ) => void
-) {
+): void {
   return request(
     {
       method: 'post',
@@ -93,13 +94,13 @@ export function getComponent(
       json: true,
       body: { components: [component] }
     },
-    (err, res) => {
+    (err, res: Component[]) => {
       if (err || !res || res.length === 0) {
         return callback({
           status: 404,
           response: {
             code: 'NOT_FOUND',
-            error: err
+            error: err as any
           }
         });
       }
@@ -115,7 +116,7 @@ export function getComponentPreview(
   res: Response,
   registryError: string | null,
   callback: ComponentCallback
-) {
+): void {
   getComponentFallbackForViewType(
     urlBuilder.componentPreview,
     conf,
@@ -132,7 +133,7 @@ export function getComponentInfo(
   res: Response,
   registryError: string | null,
   callback: ComponentCallback
-) {
+): void {
   getComponentFallbackForViewType(
     urlBuilder.componentInfo,
     conf,

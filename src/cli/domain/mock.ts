@@ -7,7 +7,7 @@ export default function mock() {
   return function(
     params: { targetType: string; targetValue: string; targetName: string },
     callback: (err: Error) => void
-  ) {
+  ): void {
     fs.readJson(settings.configFile.src, (err, localConfig) => {
       localConfig = localConfig || {};
 

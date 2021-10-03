@@ -16,7 +16,7 @@ export default function initTemplate(
     logger: Logger;
   },
   callback: Callback<{ ok: true }, string>
-) {
+): void {
   const { compiler, componentPath } = options;
   const compilerPath = path.join(componentPath, 'node_modules', compiler);
   const npmOptions = { initPath: componentPath, silent: true };
@@ -24,10 +24,10 @@ export default function initTemplate(
   async.series(
     [
       cb => fs.ensureDir(componentPath, cb),
-      cb => npm.init(npmOptions, cb),
-      cb => installTemplate(options, cb),
-      cb => scaffold(Object.assign(options, { compilerPath }), cb)
+      cb => npm.init(npmOptions, cb as any),
+      cb => installTemplate(options, cb as any),
+      cb => scaffold(Object.assign(options, { compilerPath }), cb as any)
     ],
-    callback
+    callback as any
   );
 }

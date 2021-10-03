@@ -7,19 +7,25 @@ import strings from '../../resources/';
 import { Logger } from '../logger';
 
 interface MockedPlugin {
-  register: Function;
-  execute: Function;
+  register: (options: unknown, dependencies: unknown, next: () => void) => void;
+  execute: (...args: unknown[]) => unknown;
 }
 
 interface PluginMock {
   name: string;
   register: {
-    register: Function;
-    execute: Function;
+    register: (
+      options: unknown,
+      dependencies: unknown,
+      next: () => void
+    ) => void;
+    execute: (...args: unknown[]) => unknown;
   };
 }
 
-const isMockValid = (plugin: unknown): plugin is MockedPlugin | Function => {
+const isMockValid = (
+  plugin: unknown
+): plugin is MockedPlugin | ((...args: unknown[]) => unknown) => {
   const isFunction = typeof plugin === 'function';
   const isValidObject =
     !!plugin &&
@@ -34,9 +40,14 @@ const defaultRegister = (
   options: unknown,
   dependencies: unknown,
   next: () => void
-) => next();
+) => {
+  next();
+};
 
-const registerStaticMocks = (mocks, logger): PluginMock[] =>
+const registerStaticMocks = (
+  mocks: Dictionary<string>,
+  logger: Logger
+): PluginMock[] =>
   _.map(mocks, (mockedValue, pluginName) => {
     logger.ok(`├── ${pluginName} () => ${mockedValue}`);
 
@@ -49,7 +60,11 @@ const registerStaticMocks = (mocks, logger): PluginMock[] =>
     };
   });
 
-const registerDynamicMocks = (ocJsonLocation: string, mocks, logger) =>
+const registerDynamicMocks = (
+  ocJsonLocation: string,
+  mocks: Dictionary<string>,
+  logger: Logger
+) =>
   _.map(mocks, (source, pluginName) => {
     let pluginMock;
     try {
@@ -87,7 +102,7 @@ const findPath = (
     if (pathToResolve === rootDir) {
       return undefined;
     } else {
-      const getParent = pathToResolve =>
+      const getParent = (pathToResolve: string) =>
         pathToResolve
           .split('/')
           .slice(0, -1)
