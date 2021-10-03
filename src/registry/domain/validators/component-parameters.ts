@@ -30,7 +30,7 @@ interface ValidationResult {
 export default function componentParameters(
   requestParameters: Dictionary<string | number | boolean>,
   expectedParameters: Dictionary<OcParameter> = {}
-) {
+): ValidationResult {
   const result: ValidationResult = { isValid: true, errors: {} };
   const mandatoryParameters: string[] = [];
 
@@ -45,6 +45,7 @@ export default function componentParameters(
   for (const mandatoryParameterName of mandatoryParameters) {
     if (
       typeof requestParameters === 'object' &&
+      // eslint-disable-next-line no-prototype-builtins
       !requestParameters.hasOwnProperty(mandatoryParameterName)
     ) {
       if (!result.errors.mandatory) {
@@ -62,6 +63,7 @@ export default function componentParameters(
   )) {
     if (
       typeof expectedParameters === 'object' &&
+      // eslint-disable-next-line no-prototype-builtins
       expectedParameters.hasOwnProperty(requestParameterName)
     ) {
       const expectedType = expectedParameters[requestParameterName].type;

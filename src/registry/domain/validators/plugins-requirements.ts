@@ -7,13 +7,19 @@ type ValidationResult =
   | { isValid: false; missing: string[] };
 
 export default function pluginsRequirements(
-  componentRequirements: string[],
+  componentRequirements:
+    | Record<string, (...args: unknown[]) => unknown>
+    | string[]
+    | null
+    | undefined,
   registryPlugins: Config['plugins']
 ): ValidationResult {
-  const result = { isValid: true };
   const missing: string[] = [];
+  const requiredPlugins = Array.isArray(componentRequirements)
+    ? componentRequirements
+    : Object.keys(componentRequirements || {});
 
-  for (const requiredPlugin of componentRequirements || []) {
+  for (const requiredPlugin of requiredPlugins) {
     if (
       !registryPlugins ||
       !Object.keys(registryPlugins).includes(requiredPlugin)

@@ -4,7 +4,9 @@ import { Config } from '../../../types';
 
 type ValidationResult = { isValid: true } | { isValid: false; message: string };
 
-export default function registryConfiguration(conf: Config): ValidationResult {
+export default function registryConfiguration(
+  conf: Partial<Config>
+): ValidationResult {
   const returnError = (message: string): ValidationResult => {
     return {
       isValid: false,
@@ -69,10 +71,10 @@ export default function registryConfiguration(conf: Config): ValidationResult {
         );
       }
 
-      if (route.route.indexOf(prefix) === 0) {
+      if (route.route.indexOf(prefix || '') === 0) {
         return returnError(
           strings.errors.registry.CONFIGURATION_ROUTES_ROUTE_CONTAINS_PREFIX(
-            prefix
+            prefix || ''
           )
         );
       }
