@@ -44,13 +44,13 @@ describe('registry : domain : components-cache', () => {
           {
             'oc-get-unix-utc-timestamp': getTimestamp
           }
-        )
+        ).default
       },
       {
         setTimeout: setTimeoutStub,
         clearTimeout: clearTimeoutStub
       }
-    );
+    ).default;
 
     componentsCache = ComponentsCache(baseOptions, mockedCdn);
   };

@@ -1,15 +1,14 @@
-'use strict';
+import _ from 'lodash';
+import getComponentsList from './components-list';
+import * as eventsHandler from '../events-handler';
+import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
+import { Cdn, ComponentsList, Config } from '../../../types';
 
-const _ = require('lodash');
+export default function componentsCache(conf: Config, cdn: Cdn) {
+  let cachedComponentsList: ComponentsList;
+  let refreshLoop: NodeJS.Timeout;
 
-const ComponentsList = require('./components-list');
-const eventsHandler = require('../events-handler');
-const getUnixUTCTimestamp = require('oc-get-unix-utc-timestamp');
-
-module.exports = (conf, cdn) => {
-  let cachedComponentsList, refreshLoop;
-
-  const componentsList = ComponentsList(conf, cdn);
+  const componentsList = getComponentsList(conf, cdn);
 
   const poll = () =>
     setTimeout(() => {
@@ -30,19 +29,26 @@ module.exports = (conf, cdn) => {
       });
     }, conf.pollingInterval * 1000);
 
-  const cacheDataAndStartPolling = (data, callback) => {
+  const cacheDataAndStartPolling = (
+    data: ComponentsList,
+    callback: (err: null, data: ComponentsList) => void
+  ) => {
     cachedComponentsList = data;
     refreshLoop = poll();
     callback(null, data);
   };
 
-  const returnError = (code, message, callback) => {
+  const returnError = (
+    code: string,
+    message: string,
+    callback: Callback<any, any>
+  ) => {
     eventsHandler.fire('error', { code, message });
-    return callback(code);
+    return callback(code, undefined as any);
   };
 
   return {
-    get: callback => {
+    get(callback: Callback<ComponentsList>) {
       if (!cachedComponentsList) {
         return returnError(
           'components_cache_empty',
@@ -54,7 +60,7 @@ module.exports = (conf, cdn) => {
       callback(null, cachedComponentsList);
     },
 
-    load: callback => {
+    load(callback: Callback<ComponentsList>) {
       componentsList.getFromJson((jsonErr, jsonComponents) => {
         componentsList.getFromDirectories((dirErr, dirComponents) => {
           if (dirErr) {
@@ -75,7 +81,7 @@ module.exports = (conf, cdn) => {
         });
       });
     },
-    refresh: callback => {
+    refresh(callback: Callback<ComponentsList>) {
       clearTimeout(refreshLoop);
       componentsList.refresh((err, components) => {
         if (err) {
@@ -86,4 +92,4 @@ module.exports = (conf, cdn) => {
       });
     }
   };
-};
+}
