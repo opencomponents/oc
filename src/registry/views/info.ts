@@ -27,7 +27,7 @@ export default function info(vm: Vm): string {
   const layout = getLayout(vm);
   const property = getProperty();
 
-  const showArray = (title, arr) =>
+  const showArray = (title: string, arr?: string[]) =>
     property(title, !!arr && arr.length > 0 ? arr.join(', ') : 'none');
 
   const { component, dependencies, href, repositoryUrl, sandBoxDefaultQs } = vm;

@@ -5,7 +5,7 @@ const componentVersions = ({
 }: {
   component: Component;
 }) => (): string => {
-  const componentOption = version =>
+  const componentOption = (version: string) =>
     `<option value="${version}"${
       version === component.version ? ' selected="selected"' : ''
     }>${version}</option>`;

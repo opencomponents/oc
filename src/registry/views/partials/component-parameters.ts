@@ -1,4 +1,4 @@
-import { Component } from '../../../types';
+import { Component, OcParameter } from '../../../types';
 
 const componentParameters = ({
   component
@@ -11,7 +11,7 @@ const componentParameters = ({
     return `${parameters}<p class="w-100">none</p>`;
   }
 
-  const parameterRow = (param, paramName) => {
+  const parameterRow = (param: OcParameter, paramName: string) => {
     const mandatory = param.mandatory ? 'mandatory' : 'optional';
     const description = param.description
       ? `<span>${param.description}</span><br /><br />`
