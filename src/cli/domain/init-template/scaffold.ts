@@ -14,7 +14,7 @@ interface ScaffoldOptions {
 export default function scaffold(
   options: ScaffoldOptions,
   callback: Callback<{ ok: true }, string>
-) {
+): void {
   const {
     compiler,
     compilerPath,
@@ -25,14 +25,14 @@ export default function scaffold(
 
   const baseComponentPath = path.join(compilerPath, 'scaffold');
   const baseComponentFiles = path.join(baseComponentPath, 'src');
-  const compilerPackage = fs.readJSONSync(
+  const compilerPackage = fs.readJsonSync(
     path.join(compilerPath, 'package.json')
   );
 
   try {
     fs.copySync(baseComponentFiles, componentPath);
 
-    const componentPackage = fs.readJSONSync(
+    const componentPackage = fs.readJsonSync(
       path.join(componentPath, 'package.json')
     );
     componentPackage.name = componentName;
@@ -46,6 +46,8 @@ export default function scaffold(
     const url =
       (compilerPackage.bugs && compilerPackage.bugs.url) ||
       `the ${templateType} repo`;
-    return (callback as any)(strings.errors.cli.scaffoldError(url, error));
+    return (callback as any)(
+      strings.errors.cli.scaffoldError(url, String(error))
+    );
   }
 }

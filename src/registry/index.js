@@ -6,7 +6,7 @@ const express = require('express');
 const http = require('http');
 const _ = require('lodash');
 
-const appStart = require('./app-start');
+const appStart = require('./app-start').default;
 const eventsHandler = require('./domain/events-handler');
 const middleware = require('./middleware');
 const pluginsInitialiser = require('./domain/plugins-initialiser');

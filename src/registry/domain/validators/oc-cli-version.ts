@@ -18,7 +18,7 @@ type ErrorResult = {
 };
 type Result = OkResult | ErrorResult;
 
-export default function ocCliVersion(userAgent: string): Result {
+export default function ocCliVersion(userAgent?: string): Result {
   const baseError = (
     opts: Partial<ErrorResult['error']> = {}
   ): ErrorResult => ({

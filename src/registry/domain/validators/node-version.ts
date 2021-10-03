@@ -19,7 +19,7 @@ type ErrorResult = {
 type Result = OkResult | ErrorResult;
 
 export default function nodeVersion(
-  userAgent: string,
+  userAgent: string | undefined,
   nodeVersion: string
 ): Result {
   const baseError = (

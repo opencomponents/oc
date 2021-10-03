@@ -8,7 +8,7 @@ describe('registry', () => {
   const repositoryInitStub = sinon.stub();
 
   const deps = {
-    './app-start': sinon.stub(),
+    './app-start': { default: sinon.stub() },
     './domain/events-handler': {},
     express: sinon.stub(),
     http: {
@@ -112,7 +112,7 @@ describe('registry', () => {
               beforeEach(done => {
                 deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
                 repositoryInitStub.yields(null, 'ok');
-                deps['./app-start'].yields({ msg: 'I got a problem' });
+                deps['./app-start'].default.yields({ msg: 'I got a problem' });
 
                 registry.start(err => {
                   error = err;
@@ -131,7 +131,7 @@ describe('registry', () => {
                 beforeEach(done => {
                   deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
                   repositoryInitStub.yields(null, 'ok');
-                  deps['./app-start'].yields(null, 'ok');
+                  deps['./app-start'].default.yields(null, 'ok');
 
                   deps['http'].createServer.returns({
                     listen: sinon.stub().yields('Port is already used'),
@@ -154,7 +154,7 @@ describe('registry', () => {
                 beforeEach(done => {
                   deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
                   repositoryInitStub.yields(null, 'ok');
-                  deps['./app-start'].yields(null, 'ok');
+                  deps['./app-start'].default.yields(null, 'ok');
                   deps['./domain/events-handler'].fire = sinon.stub();
 
                   deps['http'].createServer.returns({
@@ -191,7 +191,7 @@ describe('registry', () => {
                 beforeEach(done => {
                   deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
                   repositoryInitStub.yields(null, 'ok');
-                  deps['./app-start'].yields(null, 'ok');
+                  deps['./app-start'].default.yields(null, 'ok');
                   deps['./domain/events-handler'].fire = sinon.stub();
 
                   deps['http'].createServer.returns({

@@ -35,7 +35,9 @@ module.exports = (options, callback) => {
       fs.ensureSymlinkSync(pathToComponentModule, pathToModule, symLinkType);
     } catch (err) {
       symLinkError = true;
-      logger.err(strings.errors.cli.DEPENDENCY_LINK_FAIL(moduleName, err));
+      logger.err(
+        strings.errors.cli.DEPENDENCY_LINK_FAIL(moduleName, String(err))
+      );
     }
   });
   return !symLinkError

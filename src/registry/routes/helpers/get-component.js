@@ -14,7 +14,7 @@ const GetComponentRetrievingInfo = require('./get-component-retrieving-info')
   .default;
 const getComponentFallback = require('./get-component-fallback');
 const isTemplateLegacy = require('../../../utils/is-template-legacy').default;
-const NestedRenderer = require('../../domain/nested-renderer');
+const NestedRenderer = require('../../domain/nested-renderer').default;
 const RequireWrapper = require('../../domain/require-wrapper');
 const sanitiser = require('../../domain/sanitiser');
 const settings = require('../../../resources/settings').default;
