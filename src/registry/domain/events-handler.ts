@@ -3,7 +3,7 @@ import strings from '../../resources';
 type Subscription<T = any> = (data: T) => void;
 let subscriptions: Record<string, Array<Subscription>> = {};
 
-export function fire(eventName: string, eventData: any): void {
+export function fire(eventName: string, eventData: unknown): void {
   if (subscriptions[eventName]) {
     subscriptions[eventName].forEach(callback => {
       callback(eventData);

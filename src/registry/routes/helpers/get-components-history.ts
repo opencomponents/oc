@@ -1,14 +1,22 @@
 import { ComponentsDetails } from '../../../types';
 import dateStringified from '../../../utils/date-stringify';
 
-interface ComponentHistory {
+interface UnformmatedComponentHistory {
   name: string;
-  publishDate: number;
   version: string;
+  publishDate: number;
 }
 
-export default function getComponentsHistory(history: ComponentsDetails) {
-  const result: ComponentHistory[] = [];
+interface ComponentHistory {
+  name: string;
+  version: string;
+  publishDate: string;
+}
+
+export default function getComponentsHistory(
+  history: ComponentsDetails
+): ComponentHistory[] {
+  const result: UnformmatedComponentHistory[] = [];
 
   for (const [name, versions] of Object.entries(history.components)) {
     for (const [version, details] of Object.entries(versions)) {
