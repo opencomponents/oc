@@ -4,7 +4,7 @@ export default function discoveryHandler(
   req: Request,
   res: Response,
   next: NextFunction
-) {
+): void {
   res.conf.discoveryFunc =
     res.conf.discoveryFunc ||
     (typeof res.conf.discovery === 'function' ? res.conf.discovery : undefined);

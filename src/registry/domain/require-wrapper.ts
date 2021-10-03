@@ -23,7 +23,9 @@ const throwError = (requirePath: string) => {
   };
 };
 
-export default (injectedDependencies: string[]) => (requirePath: string) => {
+export default (injectedDependencies: string[]) => <T = unknown>(
+  requirePath: string
+): T => {
   const moduleName = requirePackageName(requirePath);
   const isAllowed = _.includes(injectedDependencies, moduleName);
 

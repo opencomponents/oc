@@ -30,7 +30,7 @@ describe('registry : routes : helpers : get-available-dependencies', () => {
         {
           core: true,
           name: 'url',
-          version: false,
+          version: undefined,
           link: 'https://nodejs.org/api/url.html'
         }
       ]);
