@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import path from 'path';
 import fs from 'fs-extra';
 import getMissingDependencies from './get-missing-dependencies';
@@ -13,7 +12,7 @@ export default function linkMissingDependencies(
     logger: Logger;
   },
   callback: (err: string | null) => void
-) {
+): void {
   const { componentPath, dependencies, logger } = options;
 
   const missingDependencies = getMissingDependencies(dependencies);
@@ -42,7 +41,9 @@ export default function linkMissingDependencies(
       fs.ensureSymlinkSync(pathToComponentModule, pathToModule, symLinkType);
     } catch (err) {
       symLinkError = true;
-      logger.err(strings.errors.cli.DEPENDENCY_LINK_FAIL(moduleName, err));
+      logger.err(
+        strings.errors.cli.DEPENDENCY_LINK_FAIL(moduleName, String(err))
+      );
     }
   }
 

@@ -12,7 +12,7 @@ export default function getCompiler(
     pkg: { name: string; devDependencies: Dictionary<string> };
   },
   cb: Callback<string, string | number>
-) {
+): void {
   const { compilerDep, componentPath, logger, pkg } = options;
   const compilerPath = path.join(componentPath, 'node_modules', compilerDep);
   const compiler = cleanRequire(compilerPath, { justTry: true });

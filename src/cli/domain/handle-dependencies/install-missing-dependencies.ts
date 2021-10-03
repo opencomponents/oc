@@ -1,5 +1,3 @@
-'use strict';
-
 import path from 'path';
 
 import getMissingDependencies from './get-missing-dependencies';
@@ -10,7 +8,7 @@ import { Logger } from '../../logger';
 export default function installMissingDependencies(
   options: { dependencies: Dictionary<string>; logger: Logger },
   callback: (err: string | null) => void
-) {
+): void {
   const { dependencies, logger } = options;
 
   const missing = getMissingDependencies(dependencies);

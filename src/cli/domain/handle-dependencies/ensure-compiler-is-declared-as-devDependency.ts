@@ -7,7 +7,7 @@ export default function ensureCompilerIsDeclaredAsDevDependency(
     template: string;
   },
   cb: Callback<string, string>
-) {
+): void {
   const { componentPath, pkg, template } = options;
   const compilerDep = `${template}-compiler`;
   const isOk = pkg.devDependencies[compilerDep];

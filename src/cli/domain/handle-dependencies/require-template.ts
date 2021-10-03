@@ -1,18 +1,32 @@
-'use strict';
-
 import path from 'path';
 
 import cleanRequire from '../../../utils/clean-require';
 import isTemplateLegacy from '../../../utils/is-template-legacy';
 import isTemplateValid from '../../../utils/is-template-valid';
 import strings from '../../../resources';
+import { Component } from '../../../types';
+
+interface Template {
+  compile: (
+    opts: {
+      publishPath: string;
+      componentPath: string;
+      componentPackage: any;
+      ocPackage: any;
+      minify: boolean;
+      verbose: boolean;
+      production: boolean | undefined;
+    },
+    cb: Callback<Component>
+  ) => void;
+}
 
 export default function requireTemplate(
   template: string,
   options: { compiler: boolean; componentPath: string }
-) {
+): Template {
   const requireOptions = options || {};
-  let ocTemplate;
+  let ocTemplate: Template | undefined;
 
   if (isTemplateLegacy(template)) {
     template = `oc-template-${template}`;

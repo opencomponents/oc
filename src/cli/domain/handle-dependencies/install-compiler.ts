@@ -12,7 +12,7 @@ export default function installCompiler(
     logger: Logger;
   },
   cb: Callback<string, string | number>
-) {
+): void {
   const { compilerPath, componentPath, dependency, logger } = options;
 
   logger.warn(strings.messages.cli.INSTALLING_DEPS(dependency), true);
