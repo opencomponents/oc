@@ -1,18 +1,20 @@
-'use strict';
+import path from 'path';
+import chokidar from 'chokidar';
 
-const path = require('path');
-const chokidar = require('chokidar');
+import settings from '../../resources/settings';
 
-const settings = require('../../resources/settings').default;
-
-module.exports = function(dirs, baseDir, changed) {
+export default function watch(
+  dirs: string[],
+  baseDir: string,
+  changed: (err: Error | null, fileName: string, componentDir?: string) => void
+): void {
   const watcher = chokidar.watch(path.resolve(baseDir), {
     ignored: settings.filesToIgnoreOnDevWatch,
     persistent: true,
     ignoreInitial: true,
     usePolling: false
   });
-  const onChange = fileName => {
+  const onChange = (fileName: string) => {
     const componentDir = dirs.find(dir =>
       Boolean(fileName.match(escapeRegularExpression(dir + path.sep)))
     );
@@ -24,8 +26,8 @@ module.exports = function(dirs, baseDir, changed) {
     .on('change', onChange)
     .on('unlink', onChange)
     .on('error', changed);
-};
+}
 
-function escapeRegularExpression(text) {
+function escapeRegularExpression(text: string) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
