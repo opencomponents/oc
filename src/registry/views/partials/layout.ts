@@ -6,7 +6,7 @@ const layout = (vm: { title: string; href: string }) => ({
 }: {
   content: string;
   scripts: string;
-}) => {
+}): string => {
   const href = vm.href.replace('http://', '//').replace('https://', '//');
 
   return `<!DOCTYPE html><html>

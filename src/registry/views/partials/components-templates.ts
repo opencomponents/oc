@@ -1,8 +1,13 @@
 import { VM } from '../../../types';
 
 export default function componentsTemplates(vm: VM): string {
-  const externalLink = ({ global, url }) =>
-    `<a href="${url}" target="_blank">${global}</a>`;
+  const externalLink = ({
+    global,
+    url
+  }: {
+    global: string | string[];
+    url: string;
+  }) => `<a href="${url}" target="_blank">${global}</a>`;
 
   const templateRow = ({
     externals,

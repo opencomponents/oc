@@ -3,7 +3,7 @@
 const _ = require('lodash');
 
 const getComponentFallback = require('./helpers/get-component-fallback');
-const previewView = require('../views/preview');
+const previewView = require('../views/preview').default;
 const urlBuilder = require('../domain/url-builder');
 
 function componentPreview(err, req, res, component, templates) {
@@ -25,6 +25,7 @@ function componentPreview(err, req, res, component, templates) {
     return res.send(
       previewView({
         component,
+        // @ts-ignore
         dependencies: Object.keys(component.dependencies || {}),
         href: res.conf.baseUrl,
         liveReload,

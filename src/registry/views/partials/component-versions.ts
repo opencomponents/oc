@@ -1,5 +1,11 @@
-module.exports = ({ component }) => () => {
-  const componentOption = version =>
+import { Component } from '../../../types';
+
+const componentVersions = ({
+  component
+}: {
+  component: Component;
+}) => (): string => {
+  const componentOption = (version: string) =>
     `<option value="${version}"${
       version === component.version ? ' selected="selected"' : ''
     }>${version}</option>`;
@@ -8,3 +14,5 @@ module.exports = ({ component }) => () => {
     .map(componentOption)
     .join('')}</select>`;
 };
+
+export default componentVersions;
