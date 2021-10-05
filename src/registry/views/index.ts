@@ -1,17 +1,28 @@
-module.exports = vm => {
+import dependencies from './partials/components-dependencies';
+import history from './partials/components-history';
+import list from './partials/components-list';
+import templates from './partials/components-templates';
+import plugins from './partials/components-plugins';
+import indexJS from './static/index';
+
+import getLayout from './partials/layout';
+import getProperty from './partials/property';
+import { VM } from '../../types';
+
+export default function indexView(vm: VM): string {
   const tabs = {
-    dependencies: require('./partials/components-dependencies').default(vm),
-    history: require('./partials/components-history').default(vm),
-    list: require('./partials/components-list').default(vm),
-    templates: require('./partials/components-templates').default(vm),
-    plugins: require('./partials/components-plugins').default(vm)
+    dependencies: dependencies(vm),
+    history: history(vm),
+    list: list(vm),
+    templates: templates(vm),
+    plugins: plugins(vm)
   };
 
-  const indexJS = require('./static/index').default;
-  const layout = require('./partials/layout').default(vm);
-  const property = require('./partials/property').default();
+  const layout = getLayout(vm);
+  const property = getProperty();
 
-  const getCount = state => vm.stateCounts[state] || 0;
+  const getCount = (state: 'deprecated' | 'experimental') =>
+    vm.stateCounts[state] || 0;
   const isLocal = vm.type !== 'oc-registry';
 
   const componentsValue = `${vm.components.length} (${getCount(
@@ -52,4 +63,4 @@ module.exports = vm => {
 ${indexJS}</script>`;
 
   return layout({ content, scripts });
-};
+}

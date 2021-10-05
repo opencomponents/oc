@@ -1,6 +1,6 @@
 import { VM } from '../../../types';
 
-export default function componentsHistory(vm: VM) {
+export default function componentsHistory(vm: VM): string {
   const componentRow = ({
     name,
     publishDate,
