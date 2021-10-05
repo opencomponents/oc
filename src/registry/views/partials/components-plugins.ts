@@ -1,6 +1,6 @@
 import { VM } from '../../../types';
 
-export default function componentsPlugins(vm: VM) {
+export default function componentsPlugins(vm: VM): string {
   const pluginRow = ([
     name,
     description

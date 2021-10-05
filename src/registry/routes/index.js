@@ -8,7 +8,7 @@ const dateStringified = require('../../utils/date-stringify').default;
 const getComponentsHistory = require('./helpers/get-components-history')
   .default;
 const getAvailableDependencies = require('./helpers/get-available-dependencies');
-const indexView = require('../views');
+const indexView = require('../views').default;
 // @ts-ignore
 const packageInfo = require('../../../package.json');
 const urlBuilder = require('../domain/url-builder');
