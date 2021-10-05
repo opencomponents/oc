@@ -4,7 +4,7 @@ const parseAuthor = require('parse-author');
 const _ = require('lodash');
 
 const getComponentFallback = require('./helpers/get-component-fallback');
-const infoView = require('../views/info');
+const infoView = require('../views/info').default;
 const isUrlDiscoverable = require('./helpers/is-url-discoverable').default;
 const urlBuilder = require('../domain/url-builder');
 

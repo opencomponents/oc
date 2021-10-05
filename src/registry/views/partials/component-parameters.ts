@@ -1,20 +1,24 @@
-module.exports = ({ component }) => () => {
+import { Component, OcParameter } from '../../../types';
+
+const componentParameters = ({
+  component
+}: {
+  component: Component;
+}) => (): string => {
   let parameters = `<h3>Parameters</h3>`;
 
   if (!component.oc.parameters) {
     return `${parameters}<p class="w-100">none</p>`;
   }
 
-  const parameterRow = (param, paramName) => {
+  const parameterRow = (param: OcParameter, paramName: string) => {
     const mandatory = param.mandatory ? 'mandatory' : 'optional';
     const description = param.description
       ? `<span>${param.description}</span><br /><br />`
       : '';
     const defaultParam =
       !param.mandatory && param.default
-        ? `<br /><br /><span class="bold">Default:</span><span>${
-          param.default
-        }</span>`
+        ? `<br /><br /><span class="bold">Default:</span><span>${param.default}</span>`
         : '';
 
     return `<div class="row">
@@ -41,9 +45,11 @@ module.exports = ({ component }) => () => {
     <div class="row header">
       <div class="parameter">Parameters</div>
       <div class="parameter-description"></div>
-    </div>  
+    </div>
     ${rows}
   </div>`;
 
   return parameters;
 };
+
+export default componentParameters;
