@@ -1,4 +1,10 @@
-module.exports = ({ component }) => () =>
+import { Component } from '../../../types';
+
+const componentState = ({
+  component
+}: {
+  component: Component;
+}) => (): string =>
   !component.oc.state
     ? ''
     : `<span class="details-state">
@@ -6,3 +12,5 @@ module.exports = ({ component }) => () =>
        ${component.oc.state}
      </span>
    </span>`;
+
+export default componentState;

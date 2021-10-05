@@ -21,7 +21,8 @@ export default function indexView(vm: VM): string {
   const layout = getLayout(vm);
   const property = getProperty();
 
-  const getCount = state => vm.stateCounts[state] || 0;
+  const getCount = (state: 'deprecated' | 'experimental') =>
+    vm.stateCounts[state] || 0;
   const isLocal = vm.type !== 'oc-registry';
 
   const componentsValue = `${vm.components.length} (${getCount(
