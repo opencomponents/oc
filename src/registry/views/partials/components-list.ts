@@ -1,4 +1,4 @@
-import { VM } from '../../../types';
+import { Component, VM } from '../../../types';
 import getSelectedCheckbox from './selected-checkbox';
 
 export default function componentsList(vm: VM): string {
@@ -9,7 +9,7 @@ export default function componentsList(vm: VM): string {
     ? '<div class="date">Updated</div><div class="activity">Activity</div>'
     : '';
 
-  const componentRow = component => {
+  const componentRow = (component: Component) => {
     const componentState = component.oc.state
       ? `<div class="state component-state-${component.oc.state.toLowerCase()}">${
           component.oc.state
