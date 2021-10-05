@@ -1,4 +1,12 @@
-module.exports = vm => {
+import { Component, TemplateInfo } from '../../types';
+
+export default function preview(vm: {
+  href: string;
+  component: Component;
+  qs: string;
+  liveReload: string;
+  templates: TemplateInfo[];
+}): string {
   const baseUrl = vm.href.replace('http://', '//').replace('https://', '//');
   const { name, version } = vm.component;
   const componentHref = `${baseUrl}${name}/${version}/${vm.qs}`;
@@ -6,7 +14,7 @@ module.exports = vm => {
   return `<!DOCTYPE html>
   <html>
     <head>
-      <style>        
+      <style>
         html, body {
           width: 100%;
           height: 100%;
@@ -20,10 +28,10 @@ module.exports = vm => {
     <body>
       <oc-component href="${componentHref}"></oc-component>
       <script>window.oc=window.oc||{};oc.conf=oc.conf||{};oc.conf.templates=(oc.conf.templates||[]).concat(${JSON.stringify(
-    vm.templates
-  )});</script>
+        vm.templates
+      )});</script>
       <script src="${baseUrl}oc-client/client.js"></script>
       ${vm.liveReload}
     </body>
   </html>`;
-};
+}
