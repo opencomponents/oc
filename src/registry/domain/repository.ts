@@ -373,7 +373,7 @@ export default function repository(conf: Config): Repository {
           {
             code: strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL_CODE,
             msg: strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL(
-              validationResult.error!
+              String(validationResult.error)
             )
           },
           undefined as any
