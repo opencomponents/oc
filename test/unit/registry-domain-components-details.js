@@ -12,7 +12,7 @@ describe('registry : domain : components-details', () => {
       './events-handler': { fire: fireStub },
       'oc-get-unix-utc-timestamp': () => 1234567890
     }
-  );
+  ).default;
 
   const conf = {
     storage: {
