@@ -18,9 +18,9 @@ describe('cli : domain : init-template', () => {
         '../../../utils/npm-utils': {
           init: stubs.npmStub
         },
-        './scaffold': { default: stubs.scaffoldStub }
+        './scaffold': stubs.scaffoldStub
       }
-    );
+    ).default;
 
     const options = {
       compiler: 'oc-template-react-compiler',

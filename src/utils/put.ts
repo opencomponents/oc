@@ -8,7 +8,7 @@ export default function put(
   files: string | string[],
   headers: Record<string, string> | Callback<any, Error | string>,
   callback: Callback<any, Error | string>
-) {
+): void {
   if (typeof headers === 'function') {
     callback = headers;
     headers = {};
@@ -33,7 +33,7 @@ export default function put(
   form.submit(options as any, (err, res) => {
     if (err) {
       callbackDone = true;
-      return (callback as any)(err);
+      return callback(err, undefined as any);
     }
 
     res.on('data', chunk => {
@@ -45,7 +45,7 @@ export default function put(
         callbackDone = true;
 
         if (res.statusCode !== 200) {
-          (callback as any)(body);
+          callback(body, undefined as any);
         } else {
           callback(null, body);
         }
