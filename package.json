@@ -8,7 +8,8 @@
     "oc": "./dist/oc-cli.js"
   },
   "scripts": {
-    "build": "tsc && node tasks/build.js",
+    "lint": "eslint src",
+    "build": "npm run lint && tsc && node tasks/build.js",
     "git-stage-and-push": "node tasks/git-stage-and-push.js",
     "npm-publish": "node tasks/npm-publish.js",
     "publish-major": "npm run version-major && npm run test-silent && npm run git-stage-and-push && npm run npm-publish",
