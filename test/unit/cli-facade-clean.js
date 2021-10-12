@@ -36,9 +36,9 @@ describe('cli : facade : clean', () => {
     describe('when folder is already clean', () => {
       let removeMock;
       beforeEach(done => {
-        removeMock = sinon.mock();
+        removeMock = sinon.stub().resolves('ok');
         const options = {
-          mocks: { fetchList: (dir, cb) => cb(null, []), remove: removeMock },
+          mocks: { fetchList: () => Promise.resolve([]), remove: removeMock },
           params: { dirPath: 'path/to/components' }
         };
         execute(options, done);
@@ -55,10 +55,10 @@ describe('cli : facade : clean', () => {
     describe('when folder needs cleaning and --yes flag passed down', () => {
       let removeMock;
       beforeEach(done => {
-        removeMock = sinon.mock().yields(null, 'ok');
+        removeMock = sinon.stub().resolves('ok');
         const options = {
           mocks: {
-            fetchList: (dir, cb) => cb(null, ['/folder/to/remove']),
+            fetchList: () => Promise.resolve(['/folder/to/remove']),
             remove: removeMock
           },
           params: { dirPath: 'path/to/components', yes: true }
@@ -81,10 +81,10 @@ describe('cli : facade : clean', () => {
     describe('when folder needs cleaning and no --yes flag passed down and users says yes', () => {
       let removeMock;
       beforeEach(done => {
-        removeMock = sinon.mock().yields(null, 'ok');
+        removeMock = sinon.stub().resolves('ok');
         const options = {
           mocks: {
-            fetchList: (dir, cb) => cb(null, ['/folder/to/remove']),
+            fetchList: () => Promise.resolve(['/folder/to/remove']),
             remove: removeMock
           },
           params: { dirPath: 'path/to/components' }
@@ -113,10 +113,10 @@ describe('cli : facade : clean', () => {
     describe('when folder needs cleaning and no --yes flag passed down and users says no', () => {
       let removeMock;
       beforeEach(done => {
-        removeMock = sinon.mock().yields(null, 'ok');
+        removeMock = sinon.stub().resolves('ok');
         const options = {
           mocks: {
-            fetchList: (dir, cb) => cb(null, ['/folder/to/remove']),
+            fetchList: () => Promise.resolve(['/folder/to/remove']),
             remove: removeMock
           },
           params: { dirPath: 'path/to/components' },
@@ -143,10 +143,10 @@ describe('cli : facade : clean', () => {
     describe('when removing causes an error', () => {
       let removeMock;
       beforeEach(done => {
-        removeMock = sinon.mock().yields(new Error('permission error'));
+        removeMock = sinon.mock().rejects(new Error('permission error'));
         const options = {
           mocks: {
-            fetchList: (dir, cb) => cb(null, ['/folder/to/remove']),
+            fetchList: () => Promise.resolve(['/folder/to/remove']),
             remove: removeMock
           },
           params: { dirPath: 'path/to/components', yes: true }

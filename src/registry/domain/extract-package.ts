@@ -1,19 +1,19 @@
 import path from 'path';
 import targz from 'targz';
+import { promisify } from 'util';
 
 import getPackageJsonFromTempDir from './get-package-json-from-temp-dir';
 
-export default function extractPackage(
+export default async function extractPackage(
   files:
     | Express.Multer.File[]
     | {
         [fieldname: string]: Express.Multer.File[];
-      },
-  callback: Callback<{
-    outputFolder: string;
-    packageJson: any;
-  }>
-): void {
+      }
+): Promise<{
+  outputFolder: string;
+  packageJson: any;
+}> {
   const packageFile: Express.Multer.File = (files as any)[0];
   const packagePath = path.resolve(packageFile.path);
   const packageUntarOutput = path.resolve(
@@ -23,22 +23,17 @@ export default function extractPackage(
   );
   const packageOutput = path.resolve(packageUntarOutput, '_package');
 
-  targz.decompress(
-    {
-      src: packagePath,
-      dest: packageUntarOutput
-    },
-    err => {
-      if (err) {
-        return (callback as any)(err);
-      }
+  const decompress = promisify(targz.decompress);
 
-      getPackageJsonFromTempDir(packageOutput, (err, packageJson) => {
-        callback(err, {
-          outputFolder: packageOutput,
-          packageJson: packageJson
-        });
-      });
-    }
-  );
+  await decompress({
+    src: packagePath,
+    dest: packageUntarOutput
+  });
+
+  const packageJson = await getPackageJsonFromTempDir(packageOutput);
+
+  return {
+    outputFolder: packageOutput,
+    packageJson: packageJson
+  };
 }

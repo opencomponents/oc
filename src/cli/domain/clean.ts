@@ -1,23 +1,21 @@
-import async from 'async';
 import fs from 'fs-extra';
 import makeGetComponentsByDir from './get-components-by-dir';
 import path from 'path';
 
 const getComponentsByDir = makeGetComponentsByDir();
 
-export function fetchList(dirPath: string, callback: Callback<string[]>): void {
-  return getComponentsByDir(dirPath, (err, list) => {
-    if (err) return (callback as any)(err);
-    if (list.length === 0) return callback(null, []);
+export async function fetchList(dirPath: string): Promise<string[]> {
+  const list = await getComponentsByDir(dirPath);
 
-    const toRemove = list.map(folder => path.join(folder, 'node_modules'));
-    const folderExists = (folder: string, cb: Callback<boolean>) =>
-      fs.exists(folder, exists => cb(null, exists));
+  if (list.length === 0) return [];
 
-    async.filterSeries(toRemove, folderExists, callback as any);
-  });
+  const toRemove = list.map(folder => path.join(folder, 'node_modules'));
+
+  return toRemove.filter(fs.existsSync);
 }
 
-export function remove(list: string[], callback: Callback<string>): void {
-  return async.eachSeries(list, fs.remove, callback as any);
+export async function remove(list: string[]): Promise<void> {
+  for (const item of list) {
+    await fs.remove(item);
+  }
 }

@@ -2,8 +2,8 @@ import fs from 'fs-extra';
 import path from 'path';
 
 export default function getComponentsByDir() {
-  return (componentsDir: string, callback: Callback<string[]>): void => {
-    const isOcComponent = function (file: string) {
+  return async (componentsDir: string): Promise<string[]> => {
+    const isOcComponent = (file: string) => {
       const filePath = path.resolve(componentsDir, file),
         packagePath = path.join(filePath, 'package.json');
       let content;
@@ -23,18 +23,16 @@ export default function getComponentsByDir() {
       return typeof packagedProperty === 'undefined';
     };
 
-    let dirContent: string[];
-
     try {
-      dirContent = fs.readdirSync(componentsDir);
+      const dirContent = await fs.readdir(componentsDir);
+
+      const components = dirContent
+        .filter(isOcComponent)
+        .map(component => path.resolve(componentsDir, component));
+
+      return components;
     } catch (err) {
-      return callback(null, []);
+      return [];
     }
-
-    const components = dirContent
-      .filter(isOcComponent)
-      .map(component => path.resolve(componentsDir, component));
-
-    callback(null, components);
   };
 }

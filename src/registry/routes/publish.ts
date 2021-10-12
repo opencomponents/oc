@@ -1,3 +1,4 @@
+import { fromPromise } from 'universalify';
 import extractPackage from '../domain/extract-package';
 import strings from '../../resources/index';
 import * as validator from '../domain/validators';
@@ -54,7 +55,7 @@ export default function publish(repository: Repository) {
       return;
     }
 
-    extractPackage(req.files!, (err, pkgDetails) => {
+    fromPromise(extractPackage)(req.files!, (err, pkgDetails) => {
       if (err) {
         res.errorDetails = `Package is not valid: ${err}`;
         return res
