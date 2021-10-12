@@ -321,7 +321,7 @@ module.exports = function(conf) {
         return callback({
           code: strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL_CODE,
           msg: strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL(
-            validationResult.error
+            String(validationResult.error)
           )
         });
       }
