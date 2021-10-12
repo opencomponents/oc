@@ -31,11 +31,11 @@ describe('cli : domain : handle-dependencies : install-compiler', () => {
     const installCompiler = injectr(
       '../../dist/cli/domain/handle-dependencies/install-compiler.js',
       {
-        '../../../utils/clean-require': { default: cleanRequireStub },
-        '../../../utils/is-template-valid': { default: isTemplateValidStub },
+        '../../../utils/clean-require': cleanRequireStub,
+        '../../../utils/is-template-valid': isTemplateValidStub,
         '../../../utils/npm-utils': { installDependency: installDependencyMock }
       }
-    );
+    ).default;
 
     installCompiler(installOptions, (err, compiler) => {
       error = err;

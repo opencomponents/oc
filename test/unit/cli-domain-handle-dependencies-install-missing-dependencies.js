@@ -16,13 +16,13 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     const installMissingDependencies = injectr(
       '../../dist/cli/domain/handle-dependencies/install-missing-dependencies.js',
       {
-        './get-missing-dependencies': { default: stubs.getMissingDependencies },
+        './get-missing-dependencies': stubs.getMissingDependencies,
         '../../../utils/npm-utils': {
           installDependencies: stubs.installDependencies
         },
         path: { resolve: () => '/path/to/oc-running' }
       }
-    );
+    ).default;
 
     const installOptions = { dependencies, logger };
     installMissingDependencies(installOptions, err => {

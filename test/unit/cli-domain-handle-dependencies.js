@@ -66,7 +66,7 @@ describe('cli : domain : handle-dependencies', () => {
             cb(null);
           }
         }
-      );
+      ).default;
 
       logger = {
         fail: sinon.spy(),

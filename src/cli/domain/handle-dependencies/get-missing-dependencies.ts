@@ -3,7 +3,7 @@ import moduleExists from '../../../utils/module-exists';
 
 export default function getMissingDependencies(
   dependencies: Record<string, string> = {}
-) {
+): string[] {
   const missing: string[] = [];
 
   Object.entries(dependencies).forEach(([dependency, version]) => {
