@@ -9,7 +9,7 @@ const ComponentPreviewRoute = require('./routes/component-preview');
 const IndexRoute = require('./routes');
 const PublishRoute = require('./routes/publish').default;
 const StaticRedirectorRoute = require('./routes/static-redirector').default;
-const PluginsRoute = require('./routes/plugins');
+const PluginsRoute = require('./routes/plugins').default;
 const DependenciesRoute = require('./routes/dependencies');
 const settings = require('../resources/settings').default;
 

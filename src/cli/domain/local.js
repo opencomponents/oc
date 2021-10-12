@@ -6,7 +6,7 @@ const _ = require('lodash');
 
 const clean = require('./clean');
 const getComponentsByDir = require('./get-components-by-dir').default;
-const initTemplate = require('./init-template');
+const initTemplate = require('./init-template').default;
 const isTemplateLegacy = require('../../utils/is-template-legacy').default;
 const mock = require('./mock').default;
 const packageComponents = require('./package-components');

@@ -11,12 +11,12 @@ describe('cli : domain : init-template : install-template', () => {
     '../../dist/cli/domain/init-template/install-template.js',
     {
       '../../../utils/npm-utils': npmUtils,
-      '../../../utils/is-template-valid': { default: isTemplateValid },
+      '../../../utils/is-template-valid': isTemplateValid,
       'try-require': sinon.stub().returns({
         getInfo: () => ({ version: '1.2.3' })
       })
     }
-  );
+  ).default;
 
   describe('when succeeds', () => {
     const config = {

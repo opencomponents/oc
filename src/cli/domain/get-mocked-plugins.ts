@@ -1,26 +1,56 @@
-'use strict';
+import fs from 'fs-extra';
+import path from 'path';
+import _ from 'lodash';
 
-const fs = require('fs-extra');
-const path = require('path');
-const _ = require('lodash');
+import settings from '../../resources/settings';
+import strings from '../../resources/';
+import { Logger } from '../logger';
 
-const settings = require('../../resources/settings').default;
-const strings = require('../../resources/').default;
+interface MockedPlugin {
+  register: (options: unknown, dependencies: unknown, next: () => void) => void;
+  execute: (...args: unknown[]) => unknown;
+}
 
-const isMockValid = plugin => {
-  const isFunction = _.isFunction(plugin);
+interface PluginMock {
+  name: string;
+  register: {
+    register: (
+      options: unknown,
+      dependencies: unknown,
+      next: () => void
+    ) => void;
+    execute: (...args: unknown[]) => unknown;
+  };
+}
+
+const isMockValid = (
+  plugin: unknown
+): plugin is MockedPlugin | ((...args: unknown[]) => unknown) => {
+  const isFunction = typeof plugin === 'function';
   const isValidObject =
-    _.isObject(plugin) &&
-    _.isFunction(plugin.register) &&
-    _.isFunction(plugin.execute);
+    !!plugin &&
+    typeof plugin === 'object' &&
+    typeof (plugin as MockedPlugin).register === 'function' &&
+    typeof (plugin as MockedPlugin).execute === 'function';
+
   return isFunction || isValidObject;
 };
 
-const defaultRegister = (options, dependencies, next) => next();
+const defaultRegister = (
+  options: unknown,
+  dependencies: unknown,
+  next: () => void
+) => {
+  next();
+};
 
-const registerStaticMocks = (mocks, logger) =>
+const registerStaticMocks = (
+  mocks: Dictionary<string>,
+  logger: Logger
+): PluginMock[] =>
   _.map(mocks, (mockedValue, pluginName) => {
     logger.ok(`├── ${pluginName} () => ${mockedValue}`);
+
     return {
       name: pluginName,
       register: {
@@ -30,7 +60,11 @@ const registerStaticMocks = (mocks, logger) =>
     };
   });
 
-const registerDynamicMocks = (ocJsonLocation, mocks, logger) =>
+const registerDynamicMocks = (
+  ocJsonLocation: string,
+  mocks: Dictionary<string>,
+  logger: Logger
+) =>
   _.map(mocks, (source, pluginName) => {
     let pluginMock;
     try {
@@ -46,8 +80,8 @@ const registerDynamicMocks = (ocJsonLocation, mocks, logger) =>
       return;
     }
 
-    const register = pluginMock.register || defaultRegister;
-    const execute = pluginMock.execute || pluginMock;
+    const register = (pluginMock as MockedPlugin).register || defaultRegister;
+    const execute = (pluginMock as MockedPlugin).execute || pluginMock;
 
     logger.ok(`├── ${pluginName} () => [Function]`);
 
@@ -55,9 +89,12 @@ const registerDynamicMocks = (ocJsonLocation, mocks, logger) =>
       name: pluginName,
       register: { execute, register }
     };
-  }).filter(pluginMock => pluginMock);
+  }).filter((pluginMock): pluginMock is PluginMock => !!pluginMock);
 
-const findPath = function(pathToResolve, fileName) {
+const findPath = (
+  pathToResolve: string,
+  fileName: string
+): string | undefined => {
   const rootDir = fs.realpathSync('.');
   const fileToResolve = path.join(pathToResolve, fileName);
 
@@ -65,7 +102,7 @@ const findPath = function(pathToResolve, fileName) {
     if (pathToResolve === rootDir) {
       return undefined;
     } else {
-      const getParent = pathToResolve =>
+      const getParent = (pathToResolve: string) =>
         pathToResolve
           .split('/')
           .slice(0, -1)
@@ -80,10 +117,13 @@ const findPath = function(pathToResolve, fileName) {
   return fileToResolve;
 };
 
-module.exports = function(logger, componentsDir) {
+export default function getMockedPlugins(
+  logger: Logger,
+  componentsDir: string
+): PluginMock[] {
   componentsDir = path.resolve(componentsDir || '.');
 
-  let plugins = [];
+  let plugins: PluginMock[] = [];
   const ocJsonFileName = settings.configFile.src.replace('./', '');
   const ocJsonPath = findPath(componentsDir, ocJsonFileName);
 
@@ -108,4 +148,4 @@ module.exports = function(logger, componentsDir) {
   );
 
   return plugins;
-};
+}
