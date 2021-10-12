@@ -1,19 +1,21 @@
-'use strict';
+import extractPackage from '../domain/extract-package';
+import strings from '../../resources/index';
+import * as validator from '../domain/validators';
+import { Request, Response } from 'express';
+import { Repository } from '../../types';
 
-const extractPackage = require('../domain/extract-package').default;
-const strings = require('../../resources/index').default;
-const validator = require('../domain/validators');
-
-module.exports = function(repository) {
-  return function(req, res) {
+export default function publish(repository: Repository) {
+  return function(req: Request, res: Response): void {
     if (!req.params.componentName || !req.params.componentVersion) {
       res.errorDetails = 'malformed request';
-      return res.status(409).json({ error: res.errorDetails });
+      res.status(409).json({ error: res.errorDetails });
+      return;
     }
 
     if (!validator.validatePackage(req.files).isValid) {
       res.errorDetails = 'package is not valid';
-      return res.status(409).json({ error: res.errorDetails });
+      res.status(409).json({ error: res.errorDetails });
+      return;
     }
 
     let validationResult = validator.validateOcCliVersion(
@@ -24,11 +26,12 @@ module.exports = function(repository) {
         validationResult.error.registryVersion,
         validationResult.error.cliVersion
       );
-      return res.status(409).json({
+      res.status(409).json({
         code: 'cli_version_not_valid',
         error: res.errorDetails,
         details: validationResult.error
       });
+      return;
     }
 
     // @ts-ignore
@@ -43,14 +46,15 @@ module.exports = function(repository) {
         // @ts-ignore
         validationResult.error.cliNodeVersion
       );
-      return res.status(409).json({
+      res.status(409).json({
         code: 'node_version_not_valid',
         error: res.errorDetails,
         details: validationResult.error
       });
+      return;
     }
 
-    extractPackage(req.files, (err, pkgDetails) => {
+    extractPackage(req.files!, (err, pkgDetails) => {
       if (err) {
         res.errorDetails = `Package is not valid: ${err}`;
         return res
@@ -87,4 +91,4 @@ module.exports = function(repository) {
       );
     });
   };
-};
+}

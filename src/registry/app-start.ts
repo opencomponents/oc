@@ -1,13 +1,25 @@
-'use strict';
+import colors from 'colors/safe';
+import path from 'path';
+import _ from 'lodash';
+import fs from 'fs-extra';
+import { ComponentsDetails, Config, Repository } from '../types';
 
-const colors = require('colors/safe');
-const path = require('path');
-const _ = require('lodash');
+const packageInfo = fs.readJsonSync(
+  path.join(
+    __dirname,
+    '..',
+    'components',
+    'oc-client',
+    '_package',
+    'package.json'
+  )
+);
 
-// @ts-ignore
-const packageInfo = require('../components/oc-client/_package/package');
-
-module.exports = function(repository, options, callback) {
+export default function appStart(
+  repository: Repository,
+  options: Config,
+  callback: Callback<ComponentsDetails | string, any>
+): void {
   if (options.local) {
     return callback(null, 'ok');
   }
@@ -50,7 +62,9 @@ module.exports = function(repository, options, callback) {
           if (!err) {
             logger.log(colors.green('Component published.'));
           } else {
-            logger.log(colors.red(`Component not published: ${err.message}`));
+            logger.log(
+              colors.red(`Component not published: ${(err as any).message}`)
+            );
           }
 
           callback(err, res);
@@ -61,4 +75,4 @@ module.exports = function(repository, options, callback) {
       callback(null, 'ok');
     }
   });
-};
+}
