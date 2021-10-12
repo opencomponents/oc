@@ -10,7 +10,7 @@ const IndexRoute = require('./routes');
 const PublishRoute = require('./routes/publish').default;
 const StaticRedirectorRoute = require('./routes/static-redirector').default;
 const PluginsRoute = require('./routes/plugins').default;
-const DependenciesRoute = require('./routes/dependencies');
+const DependenciesRoute = require('./routes/dependencies').default;
 const settings = require('../resources/settings').default;
 
 module.exports.create = function(app, conf, repository) {

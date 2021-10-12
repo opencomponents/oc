@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, RequestHandler, Response } from 'express';
 import { IncomingHttpHeaders } from 'http';
 import responseTime from 'response-time';
 
@@ -18,7 +18,7 @@ interface ResponseTimeData {
   errorCode?: string;
 }
 
-export default function requestHandler() {
+export default function requestHandler(): RequestHandler {
   return responseTime((req: Request, res: Response, time) => {
     const data: ResponseTimeData = {
       body: req.body,

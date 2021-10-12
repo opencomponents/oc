@@ -3,7 +3,7 @@ import request from 'minimal-request';
 export default function isUrlDiscoverable(
   url: string,
   callback: Callback<{ isDiscoverable: boolean }, null>
-) {
+): void {
   request(
     {
       url,

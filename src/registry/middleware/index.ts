@@ -17,7 +17,7 @@ const bodyParserUrlEncodedArgument: { extended: boolean; limit?: number } = {
   extended: true
 };
 
-export const bind = (app: Express, options: Config) => {
+export const bind = (app: Express, options: Config): Express => {
   app.set('port', options.port);
   app.set('json spaces', 0);
 
