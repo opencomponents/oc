@@ -1,16 +1,17 @@
 import strings from '../../../resources';
+import { Component } from '../../../types';
 
 export default function ensureCompilerIsDeclaredAsDevDependency(
   options: {
     componentPath: string;
-    pkg: { devDependencies: Dictionary<string> };
+    pkg: Component;
     template: string;
   },
   cb: Callback<string, string>
 ): void {
   const { componentPath, pkg, template } = options;
   const compilerDep = `${template}-compiler`;
-  const isOk = pkg.devDependencies[compilerDep];
+  const isOk = pkg.devDependencies?.[compilerDep];
 
   const err = isOk
     ? null

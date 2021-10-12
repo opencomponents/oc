@@ -37,7 +37,7 @@ const packageComponents =
 
     fs.emptyDirSync(publishPath);
 
-    const componentPackage = fs.readJsonSync(componentPackagePath);
+    const componentPackage: Component = fs.readJsonSync(componentPackagePath);
     const ocPackage = fs.readJsonSync(ocPackagePath);
 
     if (!validator.validateComponentName(componentPackage.name)) {
