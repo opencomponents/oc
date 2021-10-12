@@ -155,7 +155,6 @@ describe('registry', () => {
                   deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
                   repositoryInitStub.yields(null, 'ok');
                   deps['./app-start'].yields(null, 'ok');
-                  console.log('LOOL:', deps['./domain/events-handler']);
                   deps['./domain/events-handler'].fire = sinon.stub();
 
                   deps['http'].createServer.returns({
