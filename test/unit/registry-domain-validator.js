@@ -983,7 +983,7 @@ describe('registry : domain : validator', () => {
           '../../dist/registry/domain/validators/oc-cli-version.js',
           {
             'fs-extra': {
-              readJSONSync: () => ({ version: '0.16.34' })
+              readJsonSync: () => ({ version: '0.16.34' })
             }
           },
           {
@@ -1066,7 +1066,7 @@ describe('registry : domain : validator', () => {
           '../../dist/registry/domain/validators/node-version.js',
           {
             'fs-extra': {
-              readJSONSync: () => ({ engines: { node: '>=0.10.35' } })
+              readJsonSync: () => ({ engines: { node: '>=0.10.35' } })
             }
           },
           {
