@@ -168,7 +168,11 @@ export interface Config {
 }
 
 export interface Cdn {
-  getJson: <T>(filePath: string, force: boolean, cb: Callback<T>) => void;
+  getJson: <T>(
+    filePath: string,
+    force: boolean,
+    cb: Callback<T, string>
+  ) => void;
   listSubDirectories: (
     dir: string,
     cb: Callback<string[], Error & { code?: string }>
@@ -192,13 +196,17 @@ export interface Template {
 export interface Plugin {
   name: string;
   register: {
-    register: Function;
-    execute: Function;
+    register: (
+      options: unknown,
+      dependencies: unknown,
+      next: () => void
+    ) => void;
+    execute: (...args: unknown[]) => unknown;
     dependencies: string[];
   };
   description?: string;
   options?: any;
-  callback: Function;
+  callback?: (...args: unknown[]) => void;
 }
 
 export interface Repository {

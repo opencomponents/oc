@@ -5,11 +5,11 @@ const getUnixUtcTimestamp = require('oc-get-unix-utc-timestamp');
 const path = require('path');
 const _ = require('lodash');
 
-const ComponentsCache = require('./components-cache');
-const ComponentsDetails = require('./components-details');
+const ComponentsCache = require('./components-cache').default;
+const ComponentsDetails = require('./components-details').default;
 // @ts-ignore
 const packageInfo = require('../../../package.json');
-const registerTemplates = require('./register-templates');
+const registerTemplates = require('./register-templates').default;
 const settings = require('../../resources/settings').default;
 const strings = require('../../resources').default;
 const validator = require('./validators');

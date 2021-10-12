@@ -20,7 +20,7 @@ describe('registry', () => {
       init: repositoryInitStub
     }),
     './router': { create: sinon.stub() },
-    './domain/options-sanitiser': sinon.stub(),
+    './domain/options-sanitiser': { default: sinon.stub() },
     './domain/validators': {
       validateRegistryConfiguration: sinon.stub()
     }
@@ -53,7 +53,7 @@ describe('registry', () => {
           isValid: true
         });
         deps.express.returns('express instance');
-        deps['./domain/options-sanitiser'].returns({ port: 3000 });
+        deps['./domain/options-sanitiser'].default.returns({ port: 3000 });
         registry = Registry({});
       });
 
