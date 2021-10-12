@@ -4,9 +4,7 @@ import jadeTemplate from 'oc-template-jade';
 import { Template, TemplateInfo } from '../../types';
 import _ from 'lodash';
 
-export default function registerTemplates(
-  extraTemplates: Template[]
-): {
+export default function registerTemplates(extraTemplates: Template[]): {
   templatesHash: Dictionary<Template>;
   templatesInfo: TemplateInfo[];
 } {

@@ -3,7 +3,7 @@ import { Config } from '../../types';
 import getAvailableDependencies from './helpers/get-available-dependencies';
 
 export default function dependencies(conf: Config) {
-  return function(req: Request, res: Response): void {
+  return function (req: Request, res: Response): void {
     if (conf.discovery) {
       const dependencies = getAvailableDependencies(conf.dependencies).map(
         ({ core, name, version }) => {

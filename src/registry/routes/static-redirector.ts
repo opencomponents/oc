@@ -6,11 +6,12 @@ import { Request, Response } from 'express';
 import { Repository } from '../../types';
 
 export default function staticRedirector(repository: Repository) {
-  return function(req: Request, res: Response): void {
+  return function (req: Request, res: Response): void {
     let filePath;
     const clientPath = `${res.conf.prefix || '/'}oc-client/client.js`;
-    const clientMapPath = `${res.conf.prefix ||
-      '/'}oc-client/oc-client.min.map`;
+    const clientMapPath = `${
+      res.conf.prefix || '/'
+    }oc-client/oc-client.min.map`;
 
     if (req.route.path === clientPath) {
       if (res.conf.local) {

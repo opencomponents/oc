@@ -18,7 +18,7 @@ describe('cli : facade : init', () => {
     local = Local({ logger: { log: () => {} } }),
     initFacade = InitFacade({ local: local, logger: logSpy });
 
-  const execute = function(componentPath, templateType) {
+  const execute = function (componentPath, templateType) {
     logSpy.err = sinon.spy();
     logSpy.ok = sinon.spy();
     logSpy.log = sinon.spy();

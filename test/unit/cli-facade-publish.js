@@ -18,7 +18,7 @@ describe('cli : facade : publish', () => {
       version: '1.0.0'
     };
 
-  const execute = function(
+  const execute = function (
     cb,
     { creds = {}, skipPackage = false, fs = {} } = {}
   ) {

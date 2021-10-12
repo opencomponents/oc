@@ -6,7 +6,7 @@ describe('registry : domain : version-handler', () => {
   const versionHandler = require('../../dist/registry/domain/version-handler');
 
   describe('when getting component', () => {
-    const get = function(a, b) {
+    const get = function (a, b) {
       return versionHandler.getAvailableVersion(a, b);
     };
 
@@ -112,7 +112,7 @@ describe('registry : domain : version-handler', () => {
 
   describe('when publishing component', () => {
     const existingVersions = ['1.0.0', '1.0.1', '1.0.3', '1.1.0', '2.0.0'],
-      validate = function(a, b) {
+      validate = function (a, b) {
         return versionHandler.validateNewVersion(a, b);
       };
 

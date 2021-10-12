@@ -10,7 +10,7 @@ describe('cli : facade : registry : ls', () => {
     RegistryFacade = require('../../dist/cli/facade/registry-ls'),
     registryFacade = RegistryFacade({ registry: registry, logger: logSpy });
 
-  const execute = function() {
+  const execute = function () {
     logSpy.err = sinon.spy();
     logSpy.ok = sinon.spy();
     logSpy.warn = sinon.spy();

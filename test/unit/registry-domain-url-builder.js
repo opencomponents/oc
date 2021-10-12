@@ -8,7 +8,7 @@ describe('registry : domain : url-builder', () => {
   let builtUrl;
 
   describe('when building component url', () => {
-    const execute = function(component, baseUrl) {
+    const execute = function (component, baseUrl) {
       builtUrl = urlBuilder.component(component, baseUrl);
     };
 
@@ -77,7 +77,7 @@ describe('registry : domain : url-builder', () => {
   });
 
   describe('when building component preview url', () => {
-    const execute = function(component, baseUrl) {
+    const execute = function (component, baseUrl) {
       builtUrl = urlBuilder.componentPreview(component, baseUrl);
     };
 

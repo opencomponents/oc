@@ -13,7 +13,7 @@ describe('registry : routes : helpers : get-component', () => {
     'oc-template-jade': require('oc-template-jade'),
     'oc-template-handlebars': require('oc-template-handlebars')
   };
-  const initialise = function(params) {
+  const initialise = function (params) {
     fireStub = sinon.stub();
     GetComponent = injectr(
       '../../dist/registry/routes/helpers/get-component.js',
@@ -22,7 +22,7 @@ describe('registry : routes : helpers : get-component', () => {
           on: _.noop,
           fire: fireStub
         },
-        'oc-client': function() {
+        'oc-client': function () {
           const client = Client();
           return {
             renderTemplate: (template, data, renderOptions, cb) => {

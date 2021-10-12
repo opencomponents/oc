@@ -6,7 +6,7 @@ describe('registry : domain : sanitiser', () => {
   const sanitiser = require('../../dist/registry/domain/sanitiser');
 
   describe("when sanitising component's request parameters", () => {
-    const sanitise = function(a, b) {
+    const sanitise = function (a, b) {
       return sanitiser.sanitiseComponentParameters(a, b);
     };
 

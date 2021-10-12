@@ -16,7 +16,7 @@ describe('cli : domain : get-mocked-plugins', () => {
   const logMock = { err: _.noop, log: _.noop, ok: _.noop, warn: _.noop };
   let fsMock, getMockedPlugins;
 
-  const initialise = function(fs, pathJoinStub) {
+  const initialise = function (fs, pathJoinStub) {
     fsMock = _.extend(
       {
         existsSync: sinon.stub().returns(true),
@@ -28,7 +28,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       fs || {}
     );
 
-    const fakePathFunc = function() {
+    const fakePathFunc = function () {
       return _.toArray(arguments)
         .map(x => x.replace(/\.\//g, ''))
         .join('');

@@ -7,7 +7,7 @@ describe('registry : routes : plugins', () => {
   const PluginsRoute = require('../../dist/registry/routes/plugins').default;
   let resJsonStub, statusStub, pluginsRoute, plugins;
 
-  const initialise = function() {
+  const initialise = function () {
     resJsonStub = sinon.stub();
     statusStub = sinon.stub().returns({ json: resJsonStub });
     const plugin1 = () => {};

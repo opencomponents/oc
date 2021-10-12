@@ -6,7 +6,7 @@ const path = require('path');
 const sinon = require('sinon');
 const _ = require('lodash');
 
-const initialise = function() {
+const initialise = function () {
   const fsMock = {
     readdirSync: sinon.stub(),
     readJsonSync: sinon.stub()
@@ -15,7 +15,7 @@ const initialise = function() {
   const pathMock = {
     extname: path.extname,
     join: path.join,
-    resolve: function() {
+    resolve: function () {
       return _.toArray(arguments).join('/');
     }
   };
@@ -34,7 +34,7 @@ const initialise = function() {
   return { local: local, fs: fsMock };
 };
 
-const executeComponentsListingByDir = function(local, callback) {
+const executeComponentsListingByDir = function (local, callback) {
   return local('.', callback);
 };
 

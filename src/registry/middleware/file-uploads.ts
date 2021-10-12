@@ -11,10 +11,7 @@ export default function fileUpload(
   }
 
   const normaliseFileName = (x: string) =>
-    x
-      .replace('.tar.gz', '')
-      .replace(/\W+/g, '-')
-      .toLowerCase();
+    x.replace('.tar.gz', '').replace(/\W+/g, '-').toLowerCase();
 
   const upload = multer({
     limits: {

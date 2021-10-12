@@ -23,19 +23,18 @@ const throwError = (requirePath: string) => {
   };
 };
 
-export default (injectedDependencies: string[]) => <T = unknown>(
-  requirePath: string
-): T => {
-  const moduleName = requirePackageName(requirePath);
-  const isAllowed = _.includes(injectedDependencies, moduleName);
+export default (injectedDependencies: string[]) =>
+  <T = unknown>(requirePath: string): T => {
+    const moduleName = requirePackageName(requirePath);
+    const isAllowed = _.includes(injectedDependencies, moduleName);
 
-  if (!isAllowed) {
-    return throwError(requirePath);
-  }
+    if (!isAllowed) {
+      return throwError(requirePath);
+    }
 
-  return (
-    requireDependency(requirePath) ||
-    requireCoreDependency(requirePath) ||
-    throwError(requirePath)
-  );
-};
+    return (
+      requireDependency(requirePath) ||
+      requireCoreDependency(requirePath) ||
+      throwError(requirePath)
+    );
+  };

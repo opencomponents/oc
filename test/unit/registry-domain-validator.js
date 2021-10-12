@@ -14,7 +14,7 @@ describe('registry : domain : validator', () => {
     };
 
   describe('when validating registry configuration', () => {
-    const validate = function(a) {
+    const validate = function (a) {
       return validator.validateRegistryConfiguration(a);
     };
 
@@ -276,7 +276,7 @@ describe('registry : domain : validator', () => {
 
         describe('when route does not contain route', () => {
           const conf = {
-            routes: [{ method: 'get', handler: function() {} }],
+            routes: [{ method: 'get', handler: function () {} }],
             s3: baseS3Conf
           };
 
@@ -304,7 +304,7 @@ describe('registry : domain : validator', () => {
 
         describe('when route does not contain method', () => {
           const conf = {
-            routes: [{ route: '/hello', handler: function() {} }],
+            routes: [{ route: '/hello', handler: function () {} }],
             s3: baseS3Conf
           };
 
@@ -338,7 +338,7 @@ describe('registry : domain : validator', () => {
               {
                 route: '/components/hello',
                 method: 'get',
-                handler: function() {}
+                handler: function () {}
               }
             ]
           };
@@ -399,7 +399,7 @@ describe('registry : domain : validator', () => {
   });
 
   describe('when validating component request by parameter', () => {
-    const validate = function(a, b) {
+    const validate = function (a, b) {
       return validator.validateComponentParameters(a, b);
     };
 
@@ -732,7 +732,7 @@ describe('registry : domain : validator', () => {
   });
 
   describe('when validating component name for new candidate', () => {
-    const validate = function(a) {
+    const validate = function (a) {
       return validator.validateComponentName(a);
     };
 
@@ -767,7 +767,7 @@ describe('registry : domain : validator', () => {
 
   describe('when validating component version for new candidate', () => {
     const existingVersions = ['1.0.0', '1.0.1', '2.0.0', '2.1.0'],
-      isValid = function(a, b) {
+      isValid = function (a, b) {
         return validator.validateVersion(a, b);
       };
 
@@ -847,11 +847,11 @@ describe('registry : domain : validator', () => {
     });
 
     describe('when custom validation provided', () => {
-      const validate = function(obj) {
+      const validate = function (obj) {
         return validator.validatePackageJson(obj);
       };
 
-      const customValidator = function(pkg) {
+      const customValidator = function (pkg) {
         const isValid = !!pkg.author && !!pkg.repository;
         return isValid
           ? isValid
@@ -935,7 +935,7 @@ describe('registry : domain : validator', () => {
     describe('when component does not require any plugin', () => {
       const requirements = null,
         supportedPlugins = {
-          log: function() {}
+          log: function () {}
         };
 
       it('should be valid', () => {
@@ -947,7 +947,7 @@ describe('registry : domain : validator', () => {
       const requirements = ['getToggle'];
       describe('when registry does not support plugin', () => {
         const supportedPlugins = {
-          log: function() {}
+          log: function () {}
         };
 
         const validationResult = validate(requirements, supportedPlugins);
@@ -963,7 +963,7 @@ describe('registry : domain : validator', () => {
 
       describe('when registry supports plugin', () => {
         const supportedPlugins = {
-          getToggle: function() {
+          getToggle: function () {
             return true;
           }
         };
@@ -993,7 +993,7 @@ describe('registry : domain : validator', () => {
       }
     );
 
-    const validate = function(userAgent) {
+    const validate = function (userAgent) {
       return validator.validateOcCliVersion(userAgent);
     };
 
@@ -1076,7 +1076,7 @@ describe('registry : domain : validator', () => {
       }
     );
 
-    const validate = function(userAgent) {
+    const validate = function (userAgent) {
       return validator.validateNodeVersion(userAgent, 'v0.10.36');
     };
 

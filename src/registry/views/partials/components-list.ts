@@ -21,8 +21,9 @@ export default function componentsList(vm: VM): string {
       component.oc.state === 'experimental';
 
     const extraColumn = !isLocal
-      ? `<div class="date">${component.oc.stringifiedDate ||
-          ''}</div><div class="activity">${component.allVersions.length}</div>`
+      ? `<div class="date">${
+          component.oc.stringifiedDate || ''
+        }</div><div class="activity">${component.allVersions.length}</div>`
       : '';
 
     return `<a href="${component.name}/${component.version}/~info">

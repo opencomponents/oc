@@ -55,7 +55,7 @@ describe('registry : domain : events-handler', () => {
   });
 
   describe('when subscribing a request event using a not valid handler', () => {
-    const execute = function() {
+    const execute = function () {
       eventsHandler.on('request', 'this is not a function');
     };
 
@@ -67,10 +67,10 @@ describe('registry : domain : events-handler', () => {
   });
 
   describe('when unsubscribing a request event', () => {
-    const executeNonFunction = function() {
+    const executeNonFunction = function () {
       eventsHandler.off('request', 'this is not a function');
     };
-    const execute = function() {
+    const execute = function () {
       eventsHandler.off('request', () => {});
     };
 

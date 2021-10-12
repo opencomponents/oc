@@ -1,15 +1,11 @@
 import styleCSS from '../static/style';
 
-const layout = (vm: { title: string; href: string }) => ({
-  content,
-  scripts
-}: {
-  content: string;
-  scripts: string;
-}): string => {
-  const href = vm.href.replace('http://', '//').replace('https://', '//');
+const layout =
+  (vm: { title: string; href: string }) =>
+  ({ content, scripts }: { content: string; scripts: string }): string => {
+    const href = vm.href.replace('http://', '//').replace('https://', '//');
 
-  return `<!DOCTYPE html><html>
+    return `<!DOCTYPE html><html>
   <head>
     <title>${vm.title}</title>
     <meta name="robots" content="index, follow" />
@@ -31,6 +27,6 @@ const layout = (vm: { title: string; href: string }) => ({
     ${scripts}
   </body>
 </html>`;
-};
+  };
 
 export default layout;

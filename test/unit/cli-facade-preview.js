@@ -7,7 +7,7 @@ const sinon = require('sinon');
 describe('cli : facade : preview', () => {
   let openSpy, logSpy, registryStub;
 
-  const execute = function(error, url) {
+  const execute = function (error, url) {
     openSpy = sinon.spy();
     registryStub = {
       getComponentPreviewUrlByUrl: sinon.stub().yields(error, url)

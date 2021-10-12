@@ -22,6 +22,7 @@ module.exports = {
     }
   },
   data: '"use strict";module.exports.data=function(t,u){u(null);};',
-  view: 'var oc=oc||{};oc.components=oc.components||{},oc.components["undefined12345"]' +
-        '=function(){var o=[];return o.push("<div>hello</div>"),o.join("")};'
+  view:
+    'var oc=oc||{};oc.components=oc.components||{},oc.components["undefined12345"]' +
+    '=function(){var o=[];return o.push("<div>hello</div>"),o.join("")};'
 };

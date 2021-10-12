@@ -18,8 +18,7 @@ export default {
     dev: {
       cmd: 'dev <dirPath> [port] [baseUrl]',
       example: {
-        cmd:
-          '$0 dev ../all-components 3001 127.0.0.1:3001 --fallbackRegistryUrl=http://anotherhost:anotherport/'
+        cmd: '$0 dev ../all-components 3001 127.0.0.1:3001 --fallbackRegistryUrl=http://anotherhost:anotherport/'
       },
       description:
         'Run a local oc test registry in order to develop and test components',
@@ -83,8 +82,7 @@ export default {
     preview: {
       cmd: 'preview <componentHref>',
       example: {
-        cmd:
-          '$0 preview "http://localhost:3000/my-new-component/1.0.0/?param1=hello&name=Arthur"'
+        cmd: '$0 preview "http://localhost:3000/my-new-component/1.0.0/?param1=hello&name=Arthur"'
       },
       description: 'Run a test page consuming a component',
       usage: 'Usage: $0 preview <componentHref>'

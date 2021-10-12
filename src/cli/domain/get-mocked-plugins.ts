@@ -103,10 +103,7 @@ const findPath = (
       return undefined;
     } else {
       const getParent = (pathToResolve: string) =>
-        pathToResolve
-          .split('/')
-          .slice(0, -1)
-          .join('/');
+        pathToResolve.split('/').slice(0, -1).join('/');
 
       const parentDir = pathToResolve ? getParent(pathToResolve) : rootDir;
 

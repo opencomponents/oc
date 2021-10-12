@@ -5,7 +5,7 @@ const injectr = require('injectr');
 const sinon = require('sinon');
 const path = require('path');
 
-const getAppStart = function(mockedRepository, options, callback) {
+const getAppStart = function (mockedRepository, options, callback) {
   const appStart = injectr(
     '../../dist/registry/app-start.js',
     {

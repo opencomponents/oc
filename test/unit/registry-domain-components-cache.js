@@ -30,7 +30,7 @@ describe('registry : domain : components-cache', () => {
 
   const getTimestamp = () => 12345678;
 
-  const initialise = function() {
+  const initialise = function () {
     clearTimeoutStub = sinon.stub();
     setTimeoutStub = sinon.stub();
     eventsHandlerStub = { fire: sinon.stub() };

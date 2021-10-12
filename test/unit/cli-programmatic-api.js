@@ -17,8 +17,10 @@ describe('cli : programmatic-api', () => {
     './facade/registry-ls': sinon.stub().returns(() => {}),
     './facade/registry-remove': sinon.stub().returns(() => {})
   };
-  const programmaticApi = injectr('../../dist/cli/programmatic-api.js', deps)
-    .default;
+  const programmaticApi = injectr(
+    '../../dist/cli/programmatic-api.js',
+    deps
+  ).default;
 
   const scenarios = [
     { cmd: 'dev', facade: 'dev', dependencies: ['local', 'logger'] },

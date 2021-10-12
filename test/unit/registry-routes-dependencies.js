@@ -28,7 +28,7 @@ describe('registry : routes : plugins', () => {
     }
   ).default;
 
-  const initialise = function() {
+  const initialise = function () {
     resJsonStub = sinon.stub();
     statusStub = sinon.stub().returns({ json: resJsonStub });
   };

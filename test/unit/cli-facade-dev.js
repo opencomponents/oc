@@ -10,7 +10,7 @@ describe('cli : facade : dev', () => {
     local = Local(),
     devFacade = DevFacade({ local, logger: logSpy });
 
-  const execute = function(dirName, port) {
+  const execute = function (dirName, port) {
     logSpy.err = sinon.spy();
     logSpy.warn = () => {};
     devFacade({ dirName, port }, () => {});

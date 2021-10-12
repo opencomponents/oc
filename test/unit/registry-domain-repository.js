@@ -55,14 +55,14 @@ describe('registry : domain : repository', () => {
     const cdnConfiguration = {
       port: 3000,
       prefix: '/v2/',
-      publishValidation: function(pkg) {
+      publishValidation: function (pkg) {
         const ok = !!pkg.author && !!pkg.repository;
         return ok ? ok : { isValid: false, error: 'forbidden!!!' };
       },
       baseUrl: 'http://saymyname.com:3000/v2/',
       env: { name: 'prod' },
       storage: {
-        adapter: function() {
+        adapter: function () {
           return s3Mock;
         },
         options: {

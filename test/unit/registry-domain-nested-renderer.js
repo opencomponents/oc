@@ -5,12 +5,12 @@ const sinon = require('sinon');
 const _ = require('lodash');
 
 describe('registry : routes : helpers : nested-renderer', () => {
-  const NestedRenderer = require('../../dist/registry/domain/nested-renderer')
-    .default;
+  const NestedRenderer =
+    require('../../dist/registry/domain/nested-renderer').default;
 
   let nestedRenderer, renderer;
 
-  const initialise = function(rendererMocks, conf) {
+  const initialise = function (rendererMocks, conf) {
     if (_.isArray(rendererMocks)) {
       renderer = sinon.stub();
 
@@ -32,7 +32,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
         });
 
         it('should throw an error', () => {
-          const f = function() {
+          const f = function () {
             nestedRenderer.renderComponent();
           };
           expect(f).to.throw("component's name is not valid");
@@ -45,7 +45,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
         });
 
         it('should throw an error', () => {
-          const f = function() {
+          const f = function () {
             nestedRenderer.renderComponent('');
           };
           expect(f).to.throw("component's name is not valid");
@@ -58,7 +58,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
         });
 
         it('should throw an error', () => {
-          const f = function() {
+          const f = function () {
             nestedRenderer.renderComponent('my-component');
           };
           expect(f).to.throw('callback is not valid');
@@ -71,7 +71,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
         });
 
         it('should throw an error', () => {
-          const f = function() {
+          const f = function () {
             nestedRenderer.renderComponent('my-component', {}, 'blarg');
           };
           expect(f).to.throw('callback is not valid');
@@ -205,7 +205,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
         });
 
         it('should throw an error', () => {
-          const f = function() {
+          const f = function () {
             nestedRenderer.renderComponents();
           };
           expect(f).to.throw('components is not valid');
@@ -218,7 +218,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
         });
 
         it('should throw an error', () => {
-          const f = function() {
+          const f = function () {
             nestedRenderer.renderComponents([]);
           };
           expect(f).to.throw('components is not valid');
@@ -231,7 +231,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
         });
 
         it('should throw an error', () => {
-          const f = function() {
+          const f = function () {
             nestedRenderer.renderComponents([{ name: 'my-component' }]);
           };
           expect(f).to.throw('callback is not valid');
@@ -244,7 +244,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
         });
 
         it('should throw an error', () => {
-          const f = function() {
+          const f = function () {
             nestedRenderer.renderComponents(['my-component'], {}, 'blarg');
           };
           expect(f).to.throw('callback is not valid');

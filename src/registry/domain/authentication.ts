@@ -4,9 +4,7 @@ import path from 'path';
 
 import strings from '../../resources/';
 
-type Validate<T = unknown> = (
-  config: T
-) => {
+type Validate<T = unknown> = (config: T) => {
   isValid: boolean;
   message: string;
 };
@@ -57,9 +55,10 @@ export function validate(authConfig: { type: string }) {
     } catch (err) {
       return {
         isValid: false,
-        message: strings.errors.registry.CONFIGURATION_PUBLISH_AUTH_MODULE_NOT_FOUND(
-          moduleName
-        )
+        message:
+          strings.errors.registry.CONFIGURATION_PUBLISH_AUTH_MODULE_NOT_FOUND(
+            moduleName
+          )
       };
     }
   }

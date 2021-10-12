@@ -5,7 +5,7 @@ const injectr = require('injectr');
 const sinon = require('sinon');
 
 describe('cli : domain : package-components', () => {
-  const initialise = function(componentName) {
+  const initialise = function (componentName) {
     const component = {
       name: componentName || 'helloworld',
       oc: {
@@ -34,9 +34,9 @@ describe('cli : domain : package-components', () => {
       join: () => ''
     };
 
-    const requireTemplateMock = function() {
+    const requireTemplateMock = function () {
       return {
-        compile: function(options, callback) {
+        compile: function (options, callback) {
           if (options.componentPath === '.') {
             callback(null, 'ok');
           }

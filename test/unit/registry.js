@@ -36,7 +36,7 @@ describe('registry', () => {
           isValid: false,
           message: 'blargh'
         });
-        init = function() {
+        init = function () {
           Registry({});
         };
       });

@@ -2,7 +2,8 @@ export default {
   configFile: {
     src: './oc.json'
   },
-  filesToIgnoreOnDevWatch: /node_modules|package\.tar\.gz|_package|\.sw[op]|\.git\/|\.idea\/|\.DS_Store|oc\.json/,
+  filesToIgnoreOnDevWatch:
+    /node_modules|package\.tar\.gz|_package|\.sw[op]|\.git\/|\.idea\/|\.DS_Store|oc\.json/,
   maxLoopIterations: 1e9,
   registry: {
     acceptRenderedHeader: 'application/vnd.oc.rendered+json',

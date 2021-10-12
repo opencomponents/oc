@@ -22,6 +22,7 @@ module.exports = {
     }
   },
   data: '"use strict";module.exports.data=function(r,t){r.params.error?setTimeout(function(){thisDoesnotExist()},1e3):t(null,{error:!!r.params.error})};',
-  view: 'var oc=oc||{};oc.components=oc.components||{},oc.components["8c1fbd954f2b0d8cd5cf11c885fed4805225749f"]' +
-        '=function(){var o=[];return o.push("<div>hello</div>"),o.join("")};'
+  view:
+    'var oc=oc||{};oc.components=oc.components||{},oc.components["8c1fbd954f2b0d8cd5cf11c885fed4805225749f"]' +
+    '=function(){var o=[];return o.push("<div>hello</div>"),o.join("")};'
 };

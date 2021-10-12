@@ -34,8 +34,8 @@ describe('registry : domain : plugins-initialiser', () => {
         const plugins = [
           {
             register: {
-              register: function() {},
-              execute: function() {}
+              register: function () {},
+              execute: function () {}
             }
           }
         ];
@@ -57,7 +57,7 @@ describe('registry : domain : plugins-initialiser', () => {
         const plugins = [
           {
             name: 'doSomething',
-            register: { execute: function() {} }
+            register: { execute: function () {} }
           }
         ];
 
@@ -80,7 +80,7 @@ describe('registry : domain : plugins-initialiser', () => {
         const plugins = [
           {
             name: 'doSomething',
-            register: { register: function() {} }
+            register: { register: function () {} }
           }
         ];
 
@@ -164,11 +164,11 @@ describe('registry : domain : plugins-initialiser', () => {
         {
           name: 'isFlagged',
           register: {
-            register: function(options, deps, cb) {
+            register: function (options, deps, cb) {
               flag = true;
               cb();
             },
-            execute: function() {
+            execute: function () {
               return flag;
             }
           }
@@ -176,11 +176,11 @@ describe('registry : domain : plugins-initialiser', () => {
         {
           name: 'getValue',
           register: {
-            register: function(options, deps, cb) {
+            register: function (options, deps, cb) {
               passedDeps = deps;
               cb();
             },
-            execute: function() {},
+            execute: function () {},
             dependencies: ['isFlagged']
           },
           options: {}
@@ -204,10 +204,10 @@ describe('registry : domain : plugins-initialiser', () => {
         {
           name: 'getValue',
           register: {
-            register: function(options, deps, cb) {
+            register: function (options, deps, cb) {
               cb();
             },
-            execute: function() {},
+            execute: function () {},
             dependencies: ['isFlagged']
           },
           options: {}
@@ -215,11 +215,11 @@ describe('registry : domain : plugins-initialiser', () => {
         {
           name: 'isFlagged',
           register: {
-            register: function(options, deps, cb) {
+            register: function (options, deps, cb) {
               flag = true;
               cb();
             },
-            execute: function() {
+            execute: function () {
               return flag;
             },
             dependencies: ['getValue']
@@ -247,10 +247,10 @@ describe('registry : domain : plugins-initialiser', () => {
         {
           name: 'getValue',
           register: {
-            register: function(options, deps, cb) {
+            register: function (options, deps, cb) {
               cb();
             },
-            execute: function() {},
+            execute: function () {},
             dependencies: ['isFlagged']
           },
           options: {}
@@ -277,10 +277,10 @@ describe('registry : domain : plugins-initialiser', () => {
         {
           name: 'doSomething',
           register: {
-            register: function(options, deps, cb) {
+            register: function (options, deps, cb) {
               cb();
             },
-            execute: function() {
+            execute: function () {
               return true;
             },
             dependencies: ['getValue']
@@ -290,10 +290,10 @@ describe('registry : domain : plugins-initialiser', () => {
         {
           name: 'getValue',
           register: {
-            register: function(options, deps, cb) {
+            register: function (options, deps, cb) {
               cb();
             },
-            execute: function() {},
+            execute: function () {},
             dependencies: ['isFlagged']
           },
           options: {}
@@ -301,11 +301,11 @@ describe('registry : domain : plugins-initialiser', () => {
         {
           name: 'isFlagged',
           register: {
-            register: function(options, deps, cb) {
+            register: function (options, deps, cb) {
               flag = true;
               cb();
             },
-            execute: function() {
+            execute: function () {
               return flag;
             }
           }

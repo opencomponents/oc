@@ -38,10 +38,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     beforeEach(done => {
       stubs = {
         getMissingDependencies: sinon.stub().returns([]),
-        ensureSymlinkSync: sinon
-          .stub()
-          .onCall()
-          .yields(null)
+        ensureSymlinkSync: sinon.stub().onCall().yields(null)
       };
 
       dependencies = { lodash: '1.2.3' };
@@ -63,10 +60,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     beforeEach(done => {
       stubs = {
         getMissingDependencies: sinon.stub(),
-        ensureSymlinkSync: sinon
-          .stub()
-          .onCall()
-          .yields(null)
+        ensureSymlinkSync: sinon.stub().onCall().yields(null)
       };
 
       stubs.getMissingDependencies

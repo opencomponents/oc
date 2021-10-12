@@ -15,13 +15,8 @@ export default function scaffold(
   options: ScaffoldOptions,
   callback: Callback<{ ok: true }, string>
 ): void {
-  const {
-    compiler,
-    compilerPath,
-    componentName,
-    componentPath,
-    templateType
-  } = options;
+  const { compiler, compilerPath, componentName, componentPath, templateType } =
+    options;
 
   const baseComponentPath = path.join(compilerPath, 'scaffold');
   const baseComponentFiles = path.join(baseComponentPath, 'src');

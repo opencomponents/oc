@@ -1,5 +1,4 @@
-![oc](https://raw.githubusercontent.com/opencomponents/oc/master/logo-type.png)
-=============
+# ![oc](https://raw.githubusercontent.com/opencomponents/oc/master/logo-type.png)
 
 OpenComponents, **serverless in the front-end world**.
 
@@ -7,7 +6,7 @@ OpenComponents is an open-source framework that allows fast-moving teams to easi
 
 #### How does it work?
 
-First, **you create your component**. It can contain logic to get some data (using node.js) and then the view, including css and js. It can be what you want, including *React* or *Angular* components or whatever you like.
+First, **you create your component**. It can contain logic to get some data (using node.js) and then the view, including css and js. It can be what you want, including _React_ or _Angular_ components or whatever you like.
 
 Then, **you publish it** to the OpenComponents registry and you wait a couple of seconds while the registry prepares your stuff to be production-ready.
 
@@ -39,15 +38,14 @@ Disclaimer: This project is still under heavy development and the API is likely 
 
 [![linux build](https://img.shields.io/travis/opencomponents/oc/master.svg?label=linux+build)](http://travis-ci.org/opencomponents/oc)
 
-| Node 8| Node 9| Node 10| 
-|-------|-------|--------|
+| Node 8           | Node 9           | Node 10           |
+| ---------------- | ---------------- | ----------------- |
 | [![Node8][1]][5] | [![Node9][2]][5] | [![Node10][3]][5] |
 
 [1]: https://travis-matrix-badges.herokuapp.com/repos/opencomponents/oc/branches/master/1
 [2]: https://travis-matrix-badges.herokuapp.com/repos/opencomponents/oc/branches/master/2
 [3]: https://travis-matrix-badges.herokuapp.com/repos/opencomponents/oc/branches/master/3
 [5]: https://travis-ci.org/opencomponents/oc
-
 
 [![windows build](https://img.shields.io/appveyor/ci/matteofigus/oc/master.svg?label=windows+build)](https://ci.appveyor.com/project/matteofigus/oc)
 

@@ -5,8 +5,8 @@ const sinon = require('sinon');
 const _ = require('lodash');
 
 describe('registry : routes : component', () => {
-  const ComponentRoute = require('../../dist/registry/routes/component')
-    .default;
+  const ComponentRoute =
+    require('../../dist/registry/routes/component').default;
   const mockedComponents = require('../fixtures/mocked-components');
   let mockedRepository, resJsonStub, resSetStub, statusStub, componentRoute;
 
@@ -14,7 +14,7 @@ describe('registry : routes : component', () => {
     'oc-template-jade': require('oc-template-jade'),
     'oc-template-handlebars': require('oc-template-handlebars')
   };
-  const initialise = function(params) {
+  const initialise = function (params) {
     resJsonStub = sinon.stub();
     resSetStub = sinon.stub();
     statusStub = sinon.stub().returns({ json: resJsonStub });
@@ -47,10 +47,10 @@ describe('registry : routes : component', () => {
       initialise(mockedComponents['timeout-component']);
       componentRoute = ComponentRoute({}, mockedRepository);
 
-      const resStatus = function(calledCode) {
+      const resStatus = function (calledCode) {
         code = calledCode;
         return {
-          json: function(calledResponse) {
+          json: function (calledResponse) {
             response = calledResponse;
             done();
           }
@@ -140,7 +140,7 @@ describe('registry : routes : component', () => {
           conf: {
             baseUrl: 'http://components.com/',
             plugins: {
-              a: function() {
+              a: function () {
                 return '';
               }
             }
@@ -172,7 +172,7 @@ describe('registry : routes : component', () => {
         initialise(mockedComponents['async-error-component']);
         componentRoute = ComponentRoute({}, mockedRepository);
         statusStub.returns({
-          json: function(response) {
+          json: function (response) {
             resJsonStub(response);
             done();
           }
@@ -214,7 +214,7 @@ describe('registry : routes : component', () => {
         initialise(mockedComponents['async-error2-component']);
         componentRoute = ComponentRoute({}, mockedRepository);
         statusStub.returns({
-          json: function(response) {
+          json: function (response) {
             resJsonStub(response);
             if (statusStub.args.length >= 2) {
               done();
@@ -339,7 +339,7 @@ describe('registry : routes : component', () => {
               conf: {
                 baseUrl: 'http://components.com/',
                 plugins: {
-                  doSomething: function() {
+                  doSomething: function () {
                     return 'hello hello hello my friend';
                   }
                 }
@@ -534,7 +534,7 @@ describe('registry : routes : component', () => {
       componentRoute = ComponentRoute({}, mockedRepository);
 
       statusStub.returns({
-        json: function(response) {
+        json: function (response) {
           resJsonStub(response);
           done();
         }
@@ -639,7 +639,7 @@ describe('registry : routes : component', () => {
       resSetStub = sinon.stub();
 
       statusStub = sinon.stub().returns({
-        json: function(response) {
+        json: function (response) {
           resJsonStub(response);
           if (statusStub.args.length >= 2) {
             done();

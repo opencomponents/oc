@@ -1,27 +1,25 @@
 import { Component, OcParameter } from '../../../types';
 
-const componentParameters = ({
-  component
-}: {
-  component: Component;
-}) => (): string => {
-  let parameters = `<h3>Parameters</h3>`;
+const componentParameters =
+  ({ component }: { component: Component }) =>
+  (): string => {
+    let parameters = `<h3>Parameters</h3>`;
 
-  if (!component.oc.parameters) {
-    return `${parameters}<p class="w-100">none</p>`;
-  }
+    if (!component.oc.parameters) {
+      return `${parameters}<p class="w-100">none</p>`;
+    }
 
-  const parameterRow = (param: OcParameter, paramName: string) => {
-    const mandatory = param.mandatory ? 'mandatory' : 'optional';
-    const description = param.description
-      ? `<span>${param.description}</span><br /><br />`
-      : '';
-    const defaultParam =
-      !param.mandatory && param.default
-        ? `<br /><br /><span class="bold">Default:</span><span>${param.default}</span>`
+    const parameterRow = (param: OcParameter, paramName: string) => {
+      const mandatory = param.mandatory ? 'mandatory' : 'optional';
+      const description = param.description
+        ? `<span>${param.description}</span><br /><br />`
         : '';
+      const defaultParam =
+        !param.mandatory && param.default
+          ? `<br /><br /><span class="bold">Default:</span><span>${param.default}</span>`
+          : '';
 
-    return `<div class="row">
+      return `<div class="row">
       <div class="parameter">
         <span class="bold">${paramName}</span>
         <span>(${param.type}, ${mandatory})</span>
@@ -33,15 +31,15 @@ const componentParameters = ({
         ${defaultParam}
       </div>
     </div>`;
-  };
+    };
 
-  const rows = Object.keys(component.oc.parameters)
-    .map(parameterName =>
-      parameterRow(component.oc.parameters[parameterName], parameterName)
-    )
-    .join('');
+    const rows = Object.keys(component.oc.parameters)
+      .map(parameterName =>
+        parameterRow(component.oc.parameters[parameterName], parameterName)
+      )
+      .join('');
 
-  parameters += `<div id="plugins" class="table">
+    parameters += `<div id="plugins" class="table">
     <div class="row header">
       <div class="parameter">Parameters</div>
       <div class="parameter-description"></div>
@@ -49,7 +47,7 @@ const componentParameters = ({
     ${rows}
   </div>`;
 
-  return parameters;
-};
+    return parameters;
+  };
 
 export default componentParameters;

@@ -48,7 +48,7 @@ function checkDependencies(plugins: Plugin[]) {
 }
 
 let deferredLoads: Plugin[] = [];
-const defer = function(plugin: Plugin, cb: (err?: Error) => void) {
+const defer = function (plugin: Plugin, cb: (err?: Error) => void) {
   deferredLoads.push(plugin);
   return cb();
 };
@@ -113,7 +113,7 @@ export function init(
     );
   };
 
-  const terminator = function(err: Error) {
+  const terminator = function (err: Error) {
     if (deferredLoads.length > 0) {
       const deferredPlugins = _.clone(deferredLoads);
       deferredLoads = [];

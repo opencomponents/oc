@@ -4,7 +4,7 @@ import path from 'path';
 import settings from '../../resources/settings';
 
 export default function mock() {
-  return function(
+  return function (
     params: { targetType: string; targetValue: string; targetName: string },
     callback: (err: Error) => void
   ): void {

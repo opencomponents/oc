@@ -4,8 +4,8 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 describe('registry : routes : components', () => {
-  const ComponentsRoute = require('../../dist/registry/routes/components')
-    .default;
+  const ComponentsRoute =
+    require('../../dist/registry/routes/components').default;
   const mockedComponents = require('../fixtures/mocked-components');
 
   let mockedRepository, componentsRoute, code, response;
@@ -14,7 +14,7 @@ describe('registry : routes : components', () => {
     'oc-template-handlebars': require('oc-template-handlebars')
   };
 
-  const initialise = function(params) {
+  const initialise = function (params) {
     mockedRepository = {
       getCompiledView: sinon.stub().yields(null, params.view),
       getComponent: sinon.stub().yields(null, params.package),
@@ -38,15 +38,15 @@ describe('registry : routes : components', () => {
     };
   };
 
-  const makeRequest = function(body, cb) {
+  const makeRequest = function (body, cb) {
     componentsRoute(
       { headers: {}, body: body },
       {
         conf: { baseUrl: 'http://components.com/' },
-        status: function(jsonCode) {
+        status: function (jsonCode) {
           code = jsonCode;
           return {
-            json: function(jsonResponse) {
+            json: function (jsonResponse) {
               response = jsonResponse;
               cb();
             }
@@ -56,15 +56,15 @@ describe('registry : routes : components', () => {
     );
   };
 
-  const makeInfoRequest = function(body, cb) {
+  const makeInfoRequest = function (body, cb) {
     componentsRoute(
       { headers: { accept: 'application/vnd.oc.info+json' }, body: body },
       {
         conf: { baseUrl: 'http://components.com/' },
-        status: function(jsonCode) {
+        status: function (jsonCode) {
           code = jsonCode;
           return {
-            json: function(jsonResponse) {
+            json: function (jsonResponse) {
               response = jsonResponse;
               cb();
             }

@@ -15,9 +15,7 @@ interface EventData {
   duration: number;
 }
 
-export default function getComponentRetrievingInfo(
-  options: Options
-): {
+export default function getComponentRetrievingInfo(options: Options): {
   extend(obj: unknown): void;
   getData(): EventData;
 } {

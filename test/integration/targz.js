@@ -20,7 +20,7 @@ describe('The targz dependency', () => {
           src: from,
           dest: file,
           tar: {
-            map: function(fileName) {
+            map: function (fileName) {
               return _.extend(fileName, {
                 name: 'hello-world/' + fileName.name
               });

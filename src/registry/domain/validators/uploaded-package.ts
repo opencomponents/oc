@@ -14,7 +14,7 @@ export default function uploadedPackage(
         [fieldname: string]: Express.Multer.File[];
       }
 ): ValidationResponse {
-  const returnError = function(message?: string): ValidationResponse {
+  const returnError = function (message?: string): ValidationResponse {
     return {
       isValid: false,
       message: message || 'uploaded package is not valid'

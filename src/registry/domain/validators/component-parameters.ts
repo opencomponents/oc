@@ -1,7 +1,7 @@
 import strings from '../../../resources';
 import { OcParameter } from '../../../types';
 
-const validateParameter = function(
+const validateParameter = function (
   parameter: string | number | boolean,
   expectedType: string
 ): boolean {
@@ -80,7 +80,7 @@ export default function componentParameters(
     }
   }
 
-  result.errors.message = (function() {
+  result.errors.message = (function () {
     let errorString = '';
 
     if (Object.keys(result.errors.mandatory || {}).length > 0) {
@@ -89,9 +89,8 @@ export default function componentParameters(
         .join('')
         .slice(0, -2);
 
-      errorString += strings.errors.registry.MANDATORY_PARAMETER_MISSING(
-        missingParams
-      );
+      errorString +=
+        strings.errors.registry.MANDATORY_PARAMETER_MISSING(missingParams);
     }
 
     if (Object.keys(result.errors.types || {}).length > 0) {

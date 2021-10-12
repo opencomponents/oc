@@ -11,7 +11,7 @@ describe('cli : facade : package', () => {
     PackageFacade = require('../../dist/cli/facade/package.js'),
     packageFacade = PackageFacade({ local: local, logger: logSpy });
 
-  const execute = function(compress, cb) {
+  const execute = function (compress, cb) {
     logSpy.err = sinon.stub();
     logSpy.ok = sinon.stub();
     logSpy.warn = sinon.stub();
@@ -106,10 +106,8 @@ describe('cli : facade : package', () => {
               const okMessage = logSpy.ok.args[0][0];
               const re = new RegExp('\\' + path.sep, 'g');
               const warnMessageWithSlashesOnPath = warnMessage.replace(re, '/');
-              const warnDependenciesMessageWithSlashesOnPath = warnDependenciesMessage.replace(
-                re,
-                '/'
-              );
+              const warnDependenciesMessageWithSlashesOnPath =
+                warnDependenciesMessage.replace(re, '/');
               const okMessageWithSlashesOnPath = okMessage.replace(re, '/');
               expect(warnDependenciesMessageWithSlashesOnPath).to.include(
                 'Ensuring dependencies are loaded...'
@@ -140,10 +138,8 @@ describe('cli : facade : package', () => {
                   re,
                   '/'
                 );
-                const warnDependenciesMessageWithSlashesOnPath = warnDependenciesMessage.replace(
-                  re,
-                  '/'
-                );
+                const warnDependenciesMessageWithSlashesOnPath =
+                  warnDependenciesMessage.replace(re, '/');
                 const okMessageWithSlashesOnPath = okMessage.replace(re, '/');
 
                 expect(warnDependenciesMessageWithSlashesOnPath).to.include(
@@ -183,10 +179,8 @@ describe('cli : facade : package', () => {
                   re,
                   '/'
                 );
-                const warnDependenciesMessageWithSlashesOnPath = warnDependenciesMessage.replace(
-                  re,
-                  '/'
-                );
+                const warnDependenciesMessageWithSlashesOnPath =
+                  warnDependenciesMessage.replace(re, '/');
 
                 expect(warnDependenciesMessageWithSlashesOnPath).to.include(
                   'Ensuring dependencies are loaded...'

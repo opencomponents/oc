@@ -29,7 +29,7 @@ describe('registry', () => {
     }
 
     function next(done) {
-      return function(e, r) {
+      return function (e, r) {
         result = r;
         done();
       };
@@ -106,8 +106,7 @@ describe('registry', () => {
       before(done => {
         request(
           {
-            url:
-              'http://localhost:3030/fallback-welcome-with-optional-parameters/~info',
+            url: 'http://localhost:3030/fallback-welcome-with-optional-parameters/~info',
             json: true
           },
           next(done)
@@ -127,8 +126,7 @@ describe('registry', () => {
       before(done => {
         request(
           {
-            url:
-              'http://localhost:3030/fallback-welcome-with-optional-parameters/~preview',
+            url: 'http://localhost:3030/fallback-welcome-with-optional-parameters/~preview',
             json: true
           },
           next(done)

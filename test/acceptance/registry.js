@@ -11,8 +11,8 @@ describe('registry', () => {
 
   const oc = require('../../dist/index');
 
-  const next = function(done) {
-    return function(e, r, d) {
+  const next = function (done) {
+    return function (e, r, d) {
       error = e;
       result = r;
       headers = d.response.headers;
@@ -21,7 +21,7 @@ describe('registry', () => {
     };
   };
 
-  const getDefaultTestConfiguration = function() {
+  const getDefaultTestConfiguration = function () {
     return {
       local: true,
       path: path.resolve('test/fixtures/components'),
@@ -33,7 +33,7 @@ describe('registry', () => {
     };
   };
 
-  const initializeRegistry = function(configuration, cb) {
+  const initializeRegistry = function (configuration, cb) {
     registry = oc.Registry(configuration);
     registry.start(cb);
   };

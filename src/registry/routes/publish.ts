@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 import { Repository } from '../../types';
 
 export default function publish(repository: Repository) {
-  return function(req: Request, res: Response): void {
+  return function (req: Request, res: Response): void {
     if (!req.params.componentName || !req.params.componentVersion) {
       res.errorDetails = 'malformed request';
       res.status(409).json({ error: res.errorDetails });

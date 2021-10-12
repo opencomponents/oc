@@ -1,7 +1,7 @@
 import querystring from 'querystring';
 import url from 'url';
 
-const removeFinalSlashes = function(s: string) {
+const removeFinalSlashes = function (s: string) {
   while (s.slice(-1) === '/') {
     s = s.slice(0, -1);
   }

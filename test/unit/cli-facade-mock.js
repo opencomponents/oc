@@ -10,7 +10,7 @@ describe('cli : facade : mock', () => {
     local = Local(),
     mockFacade = MockFacade({ local: local, logger: logSpy });
 
-  const execute = function() {
+  const execute = function () {
     logSpy.ok = sinon.spy();
     mockFacade(
       { targetType: 'plugin', targetName: 'getValue', targetValue: 'value' },
