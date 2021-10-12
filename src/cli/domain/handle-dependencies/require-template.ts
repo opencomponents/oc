@@ -1,15 +1,32 @@
-'use strict';
+import path from 'path';
 
-const path = require('path');
+import cleanRequire from '../../../utils/clean-require';
+import isTemplateLegacy from '../../../utils/is-template-legacy';
+import isTemplateValid from '../../../utils/is-template-valid';
+import strings from '../../../resources';
+import { Component } from '../../../types';
 
-const cleanRequire = require('../../../utils/clean-require').default;
-const isTemplateLegacy = require('../../../utils/is-template-legacy').default;
-const isTemplateValid = require('../../../utils/is-template-valid').default;
-const strings = require('../../../resources').default;
+interface Template {
+  compile: (
+    opts: {
+      publishPath: string;
+      componentPath: string;
+      componentPackage: any;
+      ocPackage: any;
+      minify: boolean;
+      verbose: boolean;
+      production: boolean | undefined;
+    },
+    cb: Callback<Component>
+  ) => void;
+}
 
-module.exports = function(template, options) {
+export default function requireTemplate(
+  template: string,
+  options: { compiler: boolean; componentPath: string }
+): Template {
   const requireOptions = options || {};
-  let ocTemplate;
+  let ocTemplate: Template | undefined;
 
   if (isTemplateLegacy(template)) {
     template = `oc-template-${template}`;
@@ -42,4 +59,4 @@ module.exports = function(template, options) {
   }
 
   return ocTemplate;
-};
+}

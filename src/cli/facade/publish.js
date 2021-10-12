@@ -7,7 +7,7 @@ const fs = require('fs-extra');
 const read = require('read');
 const _ = require('lodash');
 
-const handleDependencies = require('../domain/handle-dependencies');
+const handleDependencies = require('../domain/handle-dependencies').default;
 const strings = require('../../resources/index').default;
 
 module.exports = function(dependencies) {
