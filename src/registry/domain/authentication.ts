@@ -1,11 +1,15 @@
 import basicAuth from 'basic-auth-connect';
+import { RequestHandler } from 'express';
 import path from 'path';
 
 import strings from '../../resources/';
 
 type Validate<T = unknown> = (
   config: T
-) => { isValid: boolean; message: string };
+) => {
+  isValid: boolean;
+  message: string;
+};
 type Middleware<T> = (config: T) => any;
 
 type Authentication<T = any> = {
@@ -63,6 +67,6 @@ export function validate(authConfig: { type: string }) {
   return scheme.validate(authConfig);
 }
 
-export function middleware(authConfig: any) {
+export function middleware(authConfig: unknown): RequestHandler {
   return scheme.middleware(authConfig);
 }

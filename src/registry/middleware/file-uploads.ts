@@ -5,7 +5,7 @@ export default function fileUpload(
   req: Request,
   res: Response,
   next: NextFunction
-) {
+): void {
   if (res.conf.local) {
     return next();
   }
