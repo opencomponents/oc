@@ -12,7 +12,7 @@ const middleware = require('./middleware');
 const pluginsInitialiser = require('./domain/plugins-initialiser');
 const Repository = require('./domain/repository');
 const router = require('./router');
-const sanitiseOptions = require('./domain/options-sanitiser');
+const sanitiseOptions = require('./domain/options-sanitiser').default;
 const validator = require('./domain/validators');
 
 module.exports = function(options) {
