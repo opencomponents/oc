@@ -176,7 +176,6 @@ export interface Config {
 
 export interface Cdn {
   getJson<T>(filePath: string, force: boolean, cb: Callback<T, string>): void;
-  getJson<T>(filePath: string, cb: Callback<T, string>): void;
   getFile: (filePath: string, cb: Callback<string>) => void;
   putDir: (folderPath: string, filePath: string, cb: Callback) => void;
   listSubDirectories: (
