@@ -44,8 +44,8 @@ describe('registry : domain : repository', () => {
 
     const Repository = injectr('../../dist/registry/domain/repository.js', {
       'fs-extra': fsMock,
-      './components-cache': () => componentsCacheMock,
-      './components-details': () => componentsDetailsMock
+      './components-cache': { default: () => componentsCacheMock },
+      './components-details': { default: () => componentsDetailsMock }
     });
 
     const cdnConfiguration = {

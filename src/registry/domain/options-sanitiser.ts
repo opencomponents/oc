@@ -1,19 +1,21 @@
-'use strict';
-
-const _ = require('lodash');
-
-const settings = require('../../resources/settings').default;
-const auth = require('./authentication');
+import _ from 'lodash';
+import settings from '../../resources/settings';
+import { Config } from '../../types';
+import * as auth from './authentication';
 
 const DEFAULT_NODE_KEEPALIVE_MS = 5000;
 
-module.exports = function(input) {
+interface Input extends Partial<Omit<Config, 'beforePublish'>> {
+  baseUrl: string;
+}
+
+export default function optionsSanitiser(input: Input): Config {
   const options = _.clone(input);
 
   if (!options.publishAuth) {
-    options.beforePublish = (req, res, next) => next();
+    (options as Config).beforePublish = (req, res, next) => next();
   } else {
-    options.beforePublish = auth.middleware(options.publishAuth);
+    (options as Config).beforePublish = auth.middleware(options.publishAuth);
   }
 
   if (!options.publishValidation) {
@@ -66,15 +68,16 @@ module.exports = function(input) {
     options.customHeadersToSkipOnWeakVersion || []
   ).map(s => s.toLowerCase());
 
-  options.port = process.env.PORT || options.port;
+  options.port = Number(process.env.PORT || options.port);
   options.timeout = options.timeout || 1000 * 60 * 2;
   options.keepAliveTimeout =
     options.keepAliveTimeout || DEFAULT_NODE_KEEPALIVE_MS;
 
   if (options.s3) {
-    options.storage = {};
-    options.storage.adapter = require('oc-s3-storage-adapter');
-    options.storage.options = options.s3;
+    options.storage = {
+      adapter: require('oc-s3-storage-adapter'),
+      options: options.s3
+    };
   }
 
   if (options.storage && !options.storage.adapter) {
@@ -104,5 +107,5 @@ module.exports = function(input) {
     options.env = {};
   }
 
-  return options;
-};
+  return options as Config;
+}
