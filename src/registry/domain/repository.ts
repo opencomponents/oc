@@ -219,6 +219,7 @@ export default function repository(conf: Config): Repository {
 
       cdn.getJson<Component>(
         getFilePath(componentName, componentVersion, 'package.json'),
+        false,
         callback
       );
     },
