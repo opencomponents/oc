@@ -131,6 +131,7 @@ module.exports = function(conf, repository) {
             component.oc.parameters
           ),
           validationResult = validator.validateComponentParameters(
+            // @ts-ignore
             params,
             component.oc.parameters
           );

@@ -3,7 +3,8 @@
 const fs = require('fs-extra');
 const path = require('path');
 
-const requireTemplate = require('./handle-dependencies/require-template');
+const requireTemplate = require('./handle-dependencies/require-template')
+  .default;
 const validator = require('../../registry/domain/validators');
 
 module.exports = function() {
