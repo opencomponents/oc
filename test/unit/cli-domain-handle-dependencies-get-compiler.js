@@ -26,10 +26,10 @@ describe('cli : domain : handle-dependencies : get-compiler', () => {
       '../../dist/cli/domain/handle-dependencies/get-compiler.js',
       {
         path: { join: (...args) => args.join('/') },
-        '../../../utils/clean-require': { default: cleanRequireStub },
+        '../../../utils/clean-require': cleanRequireStub,
         './install-compiler': installCompilerStub
       }
-    );
+    ).default;
 
     getCompiler(_.cloneDeep(options), err => {
       error = err;
