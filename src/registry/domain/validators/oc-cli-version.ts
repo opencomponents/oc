@@ -2,7 +2,7 @@ import semver from 'semver';
 import fs from 'fs-extra';
 import path from 'path';
 
-const packageInfo = fs.readJSONSync(
+const packageInfo = fs.readJsonSync(
   path.join(__dirname, '..', '..', '..', '..', 'package.json')
 );
 
@@ -18,7 +18,7 @@ type ErrorResult = {
 };
 type Result = OkResult | ErrorResult;
 
-export default function ocCliVersion(userAgent: string): Result {
+export default function ocCliVersion(userAgent?: string): Result {
   const baseError = (
     opts: Partial<ErrorResult['error']> = {}
   ): ErrorResult => ({
