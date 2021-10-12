@@ -27,7 +27,10 @@ function componentForType(
   return href;
 }
 
-export function component(component: Component | string, baseUrl: string) {
+export function component(
+  component: Component | string,
+  baseUrl: string
+): string {
   if (typeof component === 'string') {
     component = { name: component };
   }

@@ -26,7 +26,7 @@ describe('registry : routes : plugins', () => {
       './helpers/get-available-dependencies': list =>
         list.map(dep => dependencyMap[dep])
     }
-  );
+  ).default;
 
   const initialise = function() {
     resJsonStub = sinon.stub();
