@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 
 export default function getComponentsByDir() {
-  return function(componentsDir: string, callback: Callback<string[]>) {
+  return (componentsDir: string, callback: Callback<string[]>): void => {
     const isOcComponent = function(file: string) {
       const filePath = path.resolve(componentsDir, file),
         packagePath = path.join(filePath, 'package.json');

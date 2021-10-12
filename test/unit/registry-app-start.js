@@ -3,15 +3,19 @@
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
+const path = require('path');
 
 const getAppStart = function(mockedRepository, options, callback) {
   const appStart = injectr(
     '../../dist/registry/app-start.js',
     {
-      '../components/oc-client/_package/package': { version: '1.2.3' }
+      'fs-extra': { readJsonSync: sinon.stub().returns({ version: '1.2.3' }) }
     },
-    { console: { log: sinon.stub() }, __dirname: '.' }
-  );
+    {
+      console: { log: sinon.stub() },
+      __dirname: path.resolve(__dirname, '../../dist/registry')
+    }
+  ).default;
 
   return appStart(mockedRepository, options, callback);
 };
