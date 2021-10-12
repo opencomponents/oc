@@ -1,32 +1,35 @@
-'use strict';
+import async from 'async';
+import parseAuthor from 'parse-author';
+import _ from 'lodash';
+import path from 'path';
+import fs from 'fs-extra';
 
-const async = require('async');
-const parseAuthor = require('parse-author');
-const _ = require('lodash');
+import dateStringified from '../../utils/date-stringify';
+import getComponentsHistory from './helpers/get-components-history';
+import getAvailableDependencies from './helpers/get-available-dependencies';
+import indexView from '../views';
+import urlBuilder = require('../domain/url-builder');
+import { Author, Component, Repository } from '../../types';
+import { NextFunction, Request, Response } from 'express';
+import { IncomingHttpHeaders } from 'http';
 
-const dateStringified = require('../../utils/date-stringify').default;
-const getComponentsHistory = require('./helpers/get-components-history')
-  .default;
-const getAvailableDependencies = require('./helpers/get-available-dependencies')
-  .default;
-const indexView = require('../views').default;
-// @ts-ignore
-const packageInfo = require('../../../package.json');
-const urlBuilder = require('../domain/url-builder');
+const packageInfo = fs.readJsonSync(
+  path.join(__dirname, '..', '..', '..', 'package.json')
+);
 
-const getParsedAuthor = author => {
+const getParsedAuthor = (author: Author | string): Author => {
   author = author || {};
-  return _.isString(author) ? parseAuthor(author) : author;
+  return typeof author === 'string' ? parseAuthor(author) : author;
 };
 
-const mapComponentDetails = component =>
+const mapComponentDetails = (component: Component): Component =>
   _.extend(component, { author: getParsedAuthor(component.author) });
 
-const isHtmlRequest = headers =>
+const isHtmlRequest = (headers: IncomingHttpHeaders) =>
   !!headers.accept && headers.accept.indexOf('text/html') >= 0;
 
-module.exports = function(repository) {
-  return function(req, res, next) {
+export default function (repository: Repository) {
+  return (req: Request, res: Response, next: NextFunction): void => {
     repository.getComponents((err, components) => {
       if (err) {
         res.errorDetails = 'cdn not available';
@@ -40,15 +43,15 @@ module.exports = function(repository) {
       };
 
       if (isHtmlRequest(req.headers) && !!res.conf.discovery) {
-        let componentsInfo = [],
-          componentsReleases = 0;
-        const stateCounts = {};
+        let componentsInfo: Component[] = [];
+        let componentsReleases = 0;
+        const stateCounts: { deprecated?: number; experimental?: number } = {};
 
         async.each(
           components,
           (component, callback) =>
             repository.getComponent(component, (err, result) => {
-              if (err) return callback(err);
+              if (err) return callback(err as any);
 
               if (result.oc && result.oc.date) {
                 result.oc.stringifiedDate = dateStringified(
@@ -65,9 +68,11 @@ module.exports = function(repository) {
 
             componentsInfo = _.sortBy(componentsInfo, 'name');
             repository.getComponentsDetails((err, details) => {
+              // eslint-disable-next-line no-console
               if (err) console.log(err);
               res.send(
                 indexView(
+                  // @ts-ignore
                   _.extend(baseResponse, {
                     availableDependencies: getAvailableDependencies(
                       res.conf.dependencies
@@ -76,10 +81,10 @@ module.exports = function(repository) {
                     components: componentsInfo,
                     componentsReleases,
                     componentsList: _.map(componentsInfo, component => {
-                      const state = _.get(component, 'oc.state', '');
+                      const state: 'deprecated' | 'experimental' | undefined =
+                        _.get(component, 'oc.state', '');
                       if (state) {
-                        stateCounts[state] = stateCounts[state] || 0;
-                        stateCounts[state] += 1;
+                        stateCounts[state] = (stateCounts[state] || 0) + 1;
                       }
 
                       return {
@@ -111,4 +116,4 @@ module.exports = function(repository) {
       }
     });
   };
-};
+}

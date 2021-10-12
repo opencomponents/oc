@@ -42,11 +42,15 @@ describe('registry : domain : repository', () => {
       adapterType: 's3'
     };
 
-    const Repository = injectr('../../dist/registry/domain/repository.js', {
-      'fs-extra': fsMock,
-      './components-cache': { default: () => componentsCacheMock },
-      './components-details': { default: () => componentsDetailsMock }
-    });
+    const Repository = injectr(
+      '../../dist/registry/domain/repository.js',
+      {
+        'fs-extra': fsMock,
+        './components-cache': () => componentsCacheMock,
+        './components-details': () => componentsDetailsMock
+      },
+      { __dirname: path.resolve(__dirname, '../../dist/registry/domain') }
+    ).default;
 
     const cdnConfiguration = {
       port: 3000,
@@ -389,7 +393,7 @@ describe('registry : domain : repository', () => {
   });
 
   describe('when on local configuration', () => {
-    const Repository = require('../../dist/registry/domain/repository');
+    const Repository = require('../../dist/registry/domain/repository').default;
 
     const localConfiguration = {
       local: true,

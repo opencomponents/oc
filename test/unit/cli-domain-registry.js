@@ -12,7 +12,7 @@ const getRegistry = function(dependencies, opts) {
     {
       'minimal-request': dependencies.request,
       'fs-extra': dependencies.fs,
-      '../../utils/put': { default: dependencies.put },
+      '../../utils/put': dependencies.put,
       '../domain/url-parser': dependencies.urlParser,
       path: {
         join: sinon.stub().returns('/hello/world')
@@ -27,7 +27,7 @@ const getRegistry = function(dependencies, opts) {
         version: 'v0.10.35'
       }
     }
-  );
+  ).default;
 
   return Registry(opts);
 };

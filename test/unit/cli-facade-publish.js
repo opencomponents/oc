@@ -8,9 +8,9 @@ const sinon = require('sinon');
 
 describe('cli : facade : publish', () => {
   const logSpy = {},
-    Registry = require('../../dist/cli/domain/registry'),
+    Registry = require('../../dist/cli/domain/registry').default,
     registry = Registry(),
-    Local = require('../../dist/cli/domain/local'),
+    Local = require('../../dist/cli/domain/local').default,
     local = Local(),
     readStub = sinon.stub().yields(null, 'test'),
     mockComponent = {

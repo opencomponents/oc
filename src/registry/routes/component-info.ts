@@ -1,14 +1,14 @@
-'use strict';
+import parseAuthor from 'parse-author';
+import _ from 'lodash';
 
-const parseAuthor = require('parse-author');
-const _ = require('lodash');
+import * as getComponentFallback from './helpers/get-component-fallback';
+import infoView from '../views/info';
+import isUrlDiscoverable from './helpers/is-url-discoverable';
+import * as urlBuilder from '../domain/url-builder';
+import { Component, Config, Repository } from '../../types';
+import { Request, Response } from 'express';
 
-const getComponentFallback = require('./helpers/get-component-fallback');
-const infoView = require('../views/info').default;
-const isUrlDiscoverable = require('./helpers/is-url-discoverable').default;
-const urlBuilder = require('../domain/url-builder');
-
-function getParams(component) {
+function getParams(component: Component) {
   let params = {};
   if (component.oc.parameters) {
     const mandatoryParams = _.filter(
@@ -28,14 +28,24 @@ function getParams(component) {
   return params;
 }
 
-function getParsedAuthor(component) {
+function getParsedAuthor(component: Component) {
   const author = component.author || {};
-  return _.isString(author) ? parseAuthor(author) : author;
+  return typeof author === 'string' ? parseAuthor(author) : author;
 }
 
-function componentInfo(err, req, res, component) {
+interface InfoError {
+  registryError?: string;
+  fallbackError?: string;
+}
+
+function componentInfo(
+  err: InfoError | string | null,
+  req: Request,
+  res: Response,
+  component: Component
+) {
   if (err) {
-    res.errorDetails = err.registryError || err;
+    res.errorDetails = (err as any).registryError || err;
     return res.status(404).json(err);
   }
 
@@ -50,7 +60,7 @@ function componentInfo(err, req, res, component) {
     const repositoryUrl = _.get(
       component,
       'repository.url',
-      _.isString(component.repository) ? component.repository : null
+      typeof component.repository === 'string' ? component.repository : null
     );
 
     isUrlDiscoverable(href, (err, result) => {
@@ -65,7 +75,6 @@ function componentInfo(err, req, res, component) {
           href,
           parsedAuthor,
           repositoryUrl,
-          // @ts-ignore
           sandBoxDefaultQs: urlBuilder.queryString(params),
           title: 'Component Info'
         })
@@ -80,8 +89,11 @@ function componentInfo(err, req, res, component) {
   }
 }
 
-module.exports = function(conf, repository) {
-  return function(req, res) {
+export default function componentInfoRoute(
+  conf: Config,
+  repository: Repository
+) {
+  return function (req: Request, res: Response): void {
     repository.getComponent(
       req.params.componentName,
       req.params.componentVersion,
@@ -101,4 +113,4 @@ module.exports = function(conf, repository) {
       }
     );
   };
-};
+}

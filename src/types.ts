@@ -1,6 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 import { Logger } from './cli/logger';
 
+interface PackageJson {
+  name: string;
+  version: string;
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
+}
+
 export interface Author {
   name?: string;
   email?: string;
@@ -73,23 +80,23 @@ interface OcConfiguration {
   stringifiedDate: string;
   version: string;
   plugins?: string[];
+  container?: boolean;
+  renderInfo?: boolean;
 }
 
-export interface Component {
+export interface Component extends PackageJson {
   allVersions: string[];
   author: Author;
   repository?: string;
   dependencies: Record<string, string>;
   description: string;
   devDependencies: Record<string, string>;
-  name: string;
   oc: OcConfiguration;
   scripts: Record<string, string>;
-  version: string;
 }
 
 export interface VM {
-  availablePlugins: Record<string, Function>;
+  availablePlugins: Record<string, (...args: unknown[]) => void>;
   availableDependencies: Array<{
     core: boolean;
     name: string;
@@ -118,7 +125,7 @@ export interface Config {
   baseUrlFunc: (opts: { host?: string; secure: boolean }) => string;
   discovery: boolean;
   discoveryFunc: (opts: { host?: string; secure: boolean }) => boolean;
-  plugins: Record<string, Function>;
+  plugins: Record<string, (...args: unknown[]) => void>;
   local: boolean;
   tempDir: string;
   port: number;
@@ -151,9 +158,7 @@ export interface Config {
   customHeadersToSkipOnWeakVersion: string[];
   fallbackRegistryUrl: string;
   pollingInterval: number;
-  publishValidation: (
-    data: unknown
-  ) =>
+  publishValidation: (data: unknown) =>
     | {
         isValid: boolean;
         error?: string;
@@ -166,14 +171,14 @@ export interface Config {
   hotReloading: boolean;
   timeout: number;
   liveReloadPort: number;
+  executionTimeout?: number;
 }
 
 export interface Cdn {
-  getJson: <T>(
-    filePath: string,
-    force: boolean,
-    cb: Callback<T, string>
-  ) => void;
+  getJson<T>(filePath: string, force: boolean, cb: Callback<T, string>): void;
+  getJson<T>(filePath: string, cb: Callback<T, string>): void;
+  getFile: (filePath: string, cb: Callback<string>) => void;
+  putDir: (folderPath: string, filePath: string, cb: Callback) => void;
   listSubDirectories: (
     dir: string,
     cb: Callback<string[], Error & { code?: string }>
@@ -185,13 +190,36 @@ export interface Cdn {
     callback: Callback<unknown, string>
   ) => void;
   maxConcurrentRequests: number;
+  adapterType: string;
+}
+
+type CompiledTemplate = (model: unknown) => string;
+
+interface CompilerOptions {
+  componentPackage: PackageJson & {
+    oc: OcConfiguration;
+  };
+  componentPath: string;
+  minify: boolean;
+  ocPackage: PackageJson;
+  production: boolean;
+  publishPath: string;
+  verbose: boolean;
+  watch: boolean;
 }
 
 export interface Template {
   getInfo: () => TemplateInfo;
-  getCompiledTemplate: Function;
-  render: Function;
-  compile?: Function;
+  getCompiledTemplate: (
+    templateString: string,
+    key: string,
+    context: Record<string, unknown>
+  ) => CompiledTemplate;
+  render: (
+    options: { model: unknown; template: CompiledTemplate },
+    cb: Callback<string>
+  ) => void;
+  compile?: (options: CompilerOptions, cb: Callback) => void;
 }
 
 export interface Plugin {
@@ -203,7 +231,7 @@ export interface Plugin {
       next: () => void
     ) => void;
     execute: (...args: unknown[]) => unknown;
-    dependencies: string[];
+    dependencies?: string[];
   };
   description?: string;
   options?: any;
@@ -329,6 +357,7 @@ export interface Repository {
 }
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Response {
       conf: Config;

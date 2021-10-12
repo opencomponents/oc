@@ -35,7 +35,7 @@ describe('registry : routes : helpers : get-component', () => {
         }
       },
       { console, Buffer, setTimeout }
-    );
+    ).default;
 
     mockedRepository = {
       getCompiledView: sinon.stub().yields(null, params.view),

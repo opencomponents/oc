@@ -1,22 +1,25 @@
-'use strict';
+import { serializeError } from 'serialize-error';
+import _ from 'lodash';
 
-const { serializeError } = require('serialize-error');
-const _ = require('lodash');
+import GetComponentHelper from './helpers/get-component';
+import strings from '../../resources';
+import { Config, Repository } from '../../types';
+import { Request, RequestHandler, Response } from 'express';
 
-const GetComponentHelper = require('./helpers/get-component');
-const strings = require('../../resources').default;
-
-module.exports = function(conf, repository) {
+export default function component(
+  conf: Config,
+  repository: Repository
+): RequestHandler {
   const getComponent = GetComponentHelper(conf, repository);
 
-  return function(req, res) {
+  return (req: Request, res: Response): void => {
     getComponent(
       {
         conf: res.conf,
         headers: req.headers,
         ip: req.ip,
         name: req.params.componentName,
-        parameters: req.query,
+        parameters: req.query as any,
         version: req.params.componentVersion
       },
       result => {
@@ -25,7 +28,7 @@ module.exports = function(conf, repository) {
             result.response.error = serializeError(result.response.error);
           }
           res.errorCode = result.response.code;
-          res.errorDetails = result.response.error;
+          res.errorDetails = result.response.error as any;
         }
 
         try {
@@ -46,4 +49,4 @@ module.exports = function(conf, repository) {
       }
     );
   };
-};
+}

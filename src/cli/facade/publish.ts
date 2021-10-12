@@ -1,21 +1,34 @@
-'use strict';
+import async from 'async';
+import colors from 'colors/safe';
+import path from 'path';
+import fs from 'fs-extra';
+import read from 'read';
+import _ from 'lodash';
+import { Logger } from '../logger';
+import { Component, RegistryCli, Local } from '../../types';
 
-const async = require('async');
-const colors = require('colors/safe');
-const path = require('path');
-const fs = require('fs-extra');
-const read = require('read');
-const _ = require('lodash');
+import handleDependencies from '../domain/handle-dependencies';
+import strings from '../../resources/index';
 
-const handleDependencies = require('../domain/handle-dependencies').default;
-const strings = require('../../resources/index').default;
-
-module.exports = function(dependencies) {
-  const registry = dependencies.registry,
-    local = dependencies.local,
-    logger = dependencies.logger;
-
-  return function(opts, callback) {
+const publish =
+  ({
+    logger,
+    registry,
+    local
+  }: {
+    logger: Logger;
+    registry: RegistryCli;
+    local: Local;
+  }) =>
+  (
+    opts: {
+      componentPath: string;
+      skipPackage?: boolean;
+      username?: string;
+      password?: string;
+    },
+    callback: (err?: Error | string) => void
+  ): void => {
     const componentPath = opts.componentPath,
       skipPackage = opts.skipPackage,
       packageDir = path.resolve(componentPath, '_package'),
@@ -23,13 +36,15 @@ module.exports = function(dependencies) {
 
     let errorMessage;
 
-    const readPackageJson = cb =>
+    const readPackageJson = (cb: Callback<Component>) =>
       fs.readJson(path.join(packageDir, 'package.json'), cb);
 
-    const getCredentials = function(cb) {
+    const getCredentials = (
+      cb: Callback<{ username: string; password: string }>
+    ) => {
       if (opts.username && opts.password) {
         logger.ok(strings.messages.cli.USING_CREDS);
-        return cb(null, _.pick(opts, 'username', 'password'));
+        return cb(null, _.pick(opts, 'username', 'password') as any);
       }
 
       logger.warn(strings.messages.cli.ENTER_USERNAME);
@@ -38,16 +53,16 @@ module.exports = function(dependencies) {
         logger.warn(strings.messages.cli.ENTER_PASSWORD);
 
         read({ silent: true }, (err, password) => {
-          cb(null, { username: username, password: password });
+          cb(null, { username, password });
         });
       });
     };
 
-    const compress = cb => {
+    const compress = (cb: (error: string | Error | null) => void) => {
       local.compress(packageDir, compressedPackagePath, cb);
     };
 
-    const packageAndCompress = function(cb) {
+    const packageAndCompress = (cb: Callback<Component, Error | string>) => {
       logger.warn(strings.messages.cli.PACKAGING(packageDir));
       const packageOptions = {
         production: true,
@@ -56,21 +71,29 @@ module.exports = function(dependencies) {
 
       local.package(packageOptions, (err, component) => {
         if (err) {
-          return cb(err);
+          return cb(err, undefined as any);
         }
 
         logger.warn(strings.messages.cli.COMPRESSING(compressedPackagePath));
 
         compress(err => {
           if (err) {
-            return cb(err);
+            return cb(err, undefined as any);
           }
           cb(null, component);
         });
       });
     };
 
-    const putComponentToRegistry = function(options, cb) {
+    const putComponentToRegistry = (
+      options: {
+        route: string;
+        path: string;
+        username?: string;
+        password?: string;
+      },
+      cb: Callback<'ok', string>
+    ) => {
       logger.warn(strings.messages.cli.PUBLISHING(options.route));
 
       registry.putComponent(options, err => {
@@ -82,7 +105,7 @@ module.exports = function(dependencies) {
                   strings.errors.cli.INVALID_CREDENTIALS
                 )
               );
-              return cb(err);
+              return cb(err, undefined as any);
             }
 
             logger.warn(strings.messages.cli.REGISTRY_CREDENTIALS_REQUIRED);
@@ -90,9 +113,9 @@ module.exports = function(dependencies) {
             return getCredentials((err, credentials) => {
               putComponentToRegistry(_.extend(options, credentials), cb);
             });
-          } else if (err.code === 'cli_version_not_valid') {
+          } else if ((err as any).code === 'cli_version_not_valid') {
             const upgradeCommand = strings.commands.cli.UPGRADE(
-                err.details.suggestedVersion
+                (err as any).details.suggestedVersion
               ),
               errorDetails = strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE(
                 colors.blue(upgradeCommand)
@@ -100,15 +123,15 @@ module.exports = function(dependencies) {
 
             errorMessage = strings.errors.cli.PUBLISHING_FAIL(errorDetails);
             logger.err(errorMessage);
-            return cb(errorMessage);
-          } else if (err.code === 'node_version_not_valid') {
+            return cb(errorMessage, undefined as any);
+          } else if ((err as any).code === 'node_version_not_valid') {
             const details = strings.errors.cli.NODE_CLI_VERSION_NEEDS_UPGRADE(
-              err.details.suggestedVersion
+              (err as any).details.suggestedVersion
             );
 
             errorMessage = strings.errors.cli.PUBLISHING_FAIL(details);
             logger.err(errorMessage);
-            return cb(errorMessage);
+            return cb(errorMessage, undefined as any);
           } else {
             if (_.isObject(err)) {
               try {
@@ -117,7 +140,7 @@ module.exports = function(dependencies) {
             }
             errorMessage = strings.errors.cli.PUBLISHING_FAIL(err);
             logger.err(errorMessage);
-            return cb(errorMessage);
+            return cb(errorMessage, undefined as any);
           }
         } else {
           logger.ok(strings.messages.cli.PUBLISHED(options.route));
@@ -126,7 +149,10 @@ module.exports = function(dependencies) {
       });
     };
 
-    const publishToRegistries = (registryLocations, component) => {
+    const publishToRegistries = (
+      registryLocations: string[],
+      component: Component
+    ) => {
       async.eachSeries(
         registryLocations,
         (registryUrl, next) => {
@@ -134,21 +160,21 @@ module.exports = function(dependencies) {
             componentRoute = `${registryNormalised}/${component.name}/${component.version}`;
           putComponentToRegistry(
             { route: componentRoute, path: compressedPackagePath },
-            next
+            next as any
           );
         },
         err => {
-          local.cleanup(compressedPackagePath, (err2, res) => {
+          local.cleanup(compressedPackagePath, err2 => {
             if (err) {
               return callback(err);
             }
-            callback(err2, res);
+            callback(err2);
           });
         }
       );
     };
 
-    registry.get((err, registryLocations) => {
+    registry.get((err: string | null, registryLocations: string[]) => {
       if (err) {
         logger.err(err);
         return callback(err);
@@ -164,7 +190,9 @@ module.exports = function(dependencies) {
             }
             packageAndCompress((err, component) => {
               if (err) {
-                errorMessage = strings.errors.cli.PACKAGE_CREATION_FAIL(err);
+                errorMessage = strings.errors.cli.PACKAGE_CREATION_FAIL(
+                  String(err)
+                );
                 logger.err(errorMessage);
                 return callback(errorMessage);
               }
@@ -177,12 +205,12 @@ module.exports = function(dependencies) {
         if (fs.existsSync(packageDir)) {
           readPackageJson((err, component) => {
             if (err) {
-              logger.err(err);
+              logger.err(String(err));
               return callback(err);
             }
             compress(err => {
               if (err) {
-                logger.err(err);
+                logger.err(String(err));
                 return callback(err);
               }
 
@@ -197,4 +225,7 @@ module.exports = function(dependencies) {
       }
     });
   };
-};
+
+export default publish;
+
+module.exports = publish;

@@ -1,5 +1,6 @@
 {
   "include": ["src"],
+  "exclude": ["node_modules", "src/components/oc-client"],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
 
