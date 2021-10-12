@@ -43,7 +43,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       '/root/components/dynamic-object-plugin.js': dynamicObjectPluginModule,
       '/root/components/dynamic-plugin.js': dynamicPluginModule,
       '/root/components/not-a-function.js': notAFunctionModule
-    });
+    }).default;
   };
 
   describe('when setting up mocked plugins', () => {
