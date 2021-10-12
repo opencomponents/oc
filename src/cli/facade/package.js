@@ -2,7 +2,7 @@
 
 const strings = require('../../resources/index').default;
 const path = require('path');
-const handleDependencies = require('../domain/handle-dependencies');
+const handleDependencies = require('../domain/handle-dependencies').default;
 
 module.exports = function(dependencies) {
   const local = dependencies.local,
