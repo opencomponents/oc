@@ -1,15 +1,13 @@
-'use strict';
+import cli from 'yargs';
+import commands from './commands';
+import semver from 'semver';
+import _ from 'lodash';
 
-const cli = require('yargs');
-const commands = require('./commands').default;
-const semver = require('semver');
-const _ = require('lodash');
-
-const Local = require('./domain/local');
-const logger = require('./logger').default;
-const Registry = require('./domain/registry');
-const strings = require('../resources').default;
-const validateCommand = require('./validate-command').default;
+import Local from './domain/local';
+import logger from './logger';
+import Registry from './domain/registry';
+import strings from '../resources';
+import validateCommand from './validate-command';
 
 const currentNodeVersion = process.version;
 const minSupportedVersion = '6.0.0';
@@ -28,10 +26,30 @@ const dependencies = {
   registry: Registry()
 };
 
-function processCommand(command, commandName, cli, level, prefix) {
-  prefix = prefix || '';
-  level = (level || 0) + 1;
-  const facade = require(`./facade/${prefix}${commandName}`)(dependencies);
+type Command = {
+  cmd?: string;
+  description: string;
+  usage: string;
+  example?: {
+    description?: string;
+    cmd: string;
+  };
+  options?: any;
+  commands?: Dictionary<Command>;
+};
+
+function processCommand(
+  command: Command,
+  commandName: string,
+  cli: cli.Argv,
+  lvl?: number,
+  prefix = ''
+) {
+  const level = (lvl || 0) + 1;
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const facade = require(`./facade/${prefix}${commandName}`).default(
+    dependencies
+  );
 
   cli.command(
     command.cmd || commandName,
@@ -62,13 +80,13 @@ function processCommand(command, commandName, cli, level, prefix) {
       }
 
       if (command.example) {
-        yargs.example(command.example.cmd, command.example.description);
+        yargs.example(command.example.cmd, command.example.description!);
       }
 
       return yargs;
     },
     options => {
-      facade(options, error => {
+      facade(options, (error: unknown) => {
         if (error) {
           return process.exit(1);
         }
@@ -91,7 +109,6 @@ const argv = cli
   .version()
   .wrap(cli.terminalWidth()).argv;
 
-// @ts-ignore
-if (argv._.length === 0) {
+if ((argv as any)._.length === 0) {
   cli.showHelp();
 }

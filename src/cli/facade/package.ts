@@ -1,14 +1,19 @@
-'use strict';
+import strings from '../../resources/index';
+import path from 'path';
+import handleDependencies from '../domain/handle-dependencies';
+import { Logger } from '../logger';
+import { Component, Local } from '../../types';
 
-const strings = require('../../resources/index').default;
-const path = require('path');
-const handleDependencies = require('../domain/handle-dependencies').default;
-
-module.exports = function(dependencies) {
-  const local = dependencies.local,
-    logger = dependencies.logger;
-
-  return function(opts, callback) {
+const cliPackage =
+  ({ local, logger }: { local: Local; logger: Logger }) =>
+  (
+    opts: {
+      componentPath: string;
+      useComponentDependencies?: boolean;
+      compress?: boolean;
+    },
+    callback: Callback<Component, string>
+  ): void => {
     const componentPath = opts.componentPath,
       useComponentDependencies = opts.useComponentDependencies,
       packageDir = path.resolve(componentPath, '_package'),
@@ -24,7 +29,7 @@ module.exports = function(dependencies) {
       err => {
         if (err) {
           logger.err(err);
-          return callback(err);
+          return callback(err, undefined as any);
         }
         const packageOptions = {
           production: true,
@@ -32,8 +37,8 @@ module.exports = function(dependencies) {
         };
         local.package(packageOptions, (err, component) => {
           if (err) {
-            logger.err(strings.errors.cli.PACKAGE_CREATION_FAIL(err));
-            return callback(err);
+            logger.err(strings.errors.cli.PACKAGE_CREATION_FAIL(String(err)));
+            return callback(err as any, undefined as any);
           }
 
           logger.ok(strings.messages.cli.PACKAGED(packageDir));
@@ -45,8 +50,10 @@ module.exports = function(dependencies) {
 
             local.compress(packageDir, compressedPackagePath, err => {
               if (err) {
-                logger.err(strings.errors.cli.PACKAGE_CREATION_FAIL(err));
-                return callback(err);
+                logger.err(
+                  strings.errors.cli.PACKAGE_CREATION_FAIL(String(err))
+                );
+                return callback(err as any, undefined as any);
               }
               logger.ok(strings.messages.cli.COMPRESSED(compressedPackagePath));
               callback(null, component);
@@ -58,4 +65,7 @@ module.exports = function(dependencies) {
       }
     );
   };
-};
+
+export default cliPackage;
+
+module.exports = cliPackage;

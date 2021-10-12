@@ -1,12 +1,18 @@
-'use strict';
+import _ from 'lodash';
 
-const _ = require('lodash');
+import * as getComponentFallback from './helpers/get-component-fallback';
+import previewView from '../views/preview';
+import * as urlBuilder from '../domain/url-builder';
+import { Request, Response } from 'express';
+import { Component, Config, TemplateInfo, Repository } from '../../types';
 
-const getComponentFallback = require('./helpers/get-component-fallback');
-const previewView = require('../views/preview').default;
-const urlBuilder = require('../domain/url-builder');
-
-function componentPreview(err, req, res, component, templates) {
+function componentPreview(
+  err: any,
+  req: Request,
+  res: Response,
+  component: Component,
+  templates: TemplateInfo[]
+) {
   if (err) {
     res.errorDetails = err.registryError || err;
     res.errorCode = 'NOT_FOUND';
@@ -25,11 +31,9 @@ function componentPreview(err, req, res, component, templates) {
     return res.send(
       previewView({
         component,
-        // @ts-ignore
-        dependencies: Object.keys(component.dependencies || {}),
         href: res.conf.baseUrl,
         liveReload,
-        qs: urlBuilder.queryString(req.query),
+        qs: urlBuilder.queryString(req.query as any),
         templates
       })
     );
@@ -42,8 +46,11 @@ function componentPreview(err, req, res, component, templates) {
   }
 }
 
-module.exports = function(conf, repository) {
-  return function(req, res) {
+export default function componentPreviewRoute(
+  conf: Config,
+  repository: Repository
+) {
+  return (req: Request, res: Response): void => {
     repository.getComponent(
       req.params.componentName,
       req.params.componentVersion,
@@ -76,4 +83,4 @@ module.exports = function(conf, repository) {
       }
     );
   };
-};
+}

@@ -1,32 +1,30 @@
-'use strict';
+import fs from 'fs-extra';
+import targz from 'targz';
 
-const fs = require('fs-extra');
-const targz = require('targz');
-const _ = require('lodash');
+import * as clean from './clean';
+import getComponentsByDir from './get-components-by-dir';
+import initTemplate from './init-template';
+import isTemplateLegacy from '../../utils/is-template-legacy';
+import mock from './mock';
+import packageComponents from './package-components';
+import strings from '../../resources';
+import * as validator from '../../registry/domain/validators';
+import { Local } from '../../types';
 
-const clean = require('./clean');
-const getComponentsByDir = require('./get-components-by-dir').default;
-const initTemplate = require('./init-template').default;
-const isTemplateLegacy = require('../../utils/is-template-legacy').default;
-const mock = require('./mock').default;
-const packageComponents = require('./package-components');
-const strings = require('../../resources').default;
-const validator = require('../../registry/domain/validators');
-
-module.exports = function() {
+export default function local(): Local {
   return {
     clean,
-    cleanup: function(compressedPackagePath, callback) {
+    cleanup(compressedPackagePath: string, callback) {
       return fs.unlink(compressedPackagePath, callback);
     },
-    compress: function(input, output, callback) {
+    compress(input, output, callback) {
       return targz.compress(
         {
           src: input,
           dest: output,
           tar: {
-            map: function(file) {
-              return _.extend(file, {
+            map: function (file) {
+              return Object.assign(file, {
                 name: `_package/${file.name}`
               });
             }
@@ -36,11 +34,11 @@ module.exports = function() {
       );
     },
     getComponentsByDir: getComponentsByDir(),
-    init: function(options, callback) {
+    init(options, callback) {
       const { componentName, logger } = options;
       let { templateType } = options;
       if (!validator.validateComponentName(componentName)) {
-        return callback('name not valid');
+        return callback('name not valid', undefined as any);
       }
 
       // LEGACY TEMPLATES WARNING
@@ -59,17 +57,17 @@ module.exports = function() {
       }
       try {
         initTemplate(
-          _.extend(options, {
+          Object.assign(options, {
             templateType,
             compiler: `${templateType}-compiler`
           }),
-          callback
+          callback as any
         );
       } catch (e) {
-        return callback('template type not valid');
+        return callback('template type not valid', undefined as any);
       }
     },
     mock: mock(),
     package: packageComponents()
   };
-};
+}

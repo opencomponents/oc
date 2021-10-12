@@ -1,37 +1,45 @@
-'use strict';
+import fs from 'fs-extra';
+import getUnixUtcTimestamp from 'oc-get-unix-utc-timestamp';
+import path from 'path';
+import _ from 'lodash';
 
-const fs = require('fs-extra');
-const getUnixUtcTimestamp = require('oc-get-unix-utc-timestamp');
-const path = require('path');
-const _ = require('lodash');
+import ComponentsCache from './components-cache';
+import getComponentsDetails from './components-details';
+import registerTemplates from './register-templates';
+import settings from '../../resources/settings';
+import strings from '../../resources';
+import * as validator from './validators';
+import * as versionHandler from './version-handler';
+import errorToString from '../../utils/error-to-string';
+import {
+  Cdn,
+  Component,
+  ComponentsDetails,
+  ComponentsList,
+  Config,
+  Repository
+} from '../../types';
 
-const ComponentsCache = require('./components-cache').default;
-const ComponentsDetails = require('./components-details').default;
-// @ts-ignore
-const packageInfo = require('../../../package.json');
-const registerTemplates = require('./register-templates').default;
-const settings = require('../../resources/settings').default;
-const strings = require('../../resources').default;
-const validator = require('./validators');
-const versionHandler = require('./version-handler');
-const errorToString = require('../../utils/error-to-string').default;
+const packageInfo = fs.readJsonSync(
+  path.join(__dirname, '..', '..', '..', 'package.json')
+);
 
-module.exports = function(conf) {
-  const cdn = !conf.local && conf.storage.adapter(conf.storage.options);
-  const options = !conf.local && conf.storage.options;
+export default function repository(conf: Config): Repository {
+  const cdn: Cdn = !conf.local && conf.storage.adapter(conf.storage.options);
+  const options = !conf.local ? conf.storage.options : null;
   const repositorySource = conf.local
     ? 'local repository'
     : cdn.adapterType + ' cdn';
   const componentsCache = ComponentsCache(conf, cdn);
-  const componentsDetails = ComponentsDetails(conf, cdn);
+  const componentsDetails = getComponentsDetails(conf, cdn);
 
-  const getFilePath = (component, version, filePath) =>
-    `${options.componentsDir}/${component}/${version}/${filePath}`;
+  const getFilePath = (component: string, version: string, filePath: string) =>
+    `${options!.componentsDir}/${component}/${version}/${filePath}`;
 
   const { templatesHash, templatesInfo } = registerTemplates(conf.templates);
 
   const local = {
-    getCompiledView: componentName => {
+    getCompiledView(componentName: string): string {
       if (componentName === 'oc-client') {
         return fs
           .readFileSync(
@@ -49,7 +57,7 @@ module.exports = function(conf) {
         )
         .toString();
     },
-    getComponents: () => {
+    getComponents(): string[] {
       const validComponents = fs.readdirSync(conf.path).filter(file => {
         const isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory();
         const isValidComponent = isDir
@@ -64,7 +72,10 @@ module.exports = function(conf) {
       validComponents.push('oc-client');
       return validComponents;
     },
-    getComponentVersions: (componentName, callback) => {
+    getComponentVersions(
+      componentName: string,
+      callback: Callback<string[], string>
+    ) {
       if (componentName === 'oc-client') {
         return callback(null, [
           fs.readJsonSync(path.join(__dirname, '../../../package.json')).version
@@ -76,7 +87,8 @@ module.exports = function(conf) {
           strings.errors.registry.COMPONENT_NOT_FOUND(
             componentName,
             repositorySource
-          )
+          ),
+          undefined as any
         );
       }
 
@@ -85,7 +97,7 @@ module.exports = function(conf) {
           .version
       ]);
     },
-    getDataProvider: componentName => {
+    getDataProvider(componentName: string) {
       const ocClientServerPath =
         '../../components/oc-client/_package/server.js';
       const filePath =
@@ -101,13 +113,13 @@ module.exports = function(conf) {
   };
 
   const repository = {
-    getCompiledView: (componentName, componentVersion, callback) => {
+    getCompiledView(
+      componentName: string,
+      componentVersion: string,
+      callback: Callback<string>
+    ) {
       if (conf.local) {
-        return callback(
-          null,
-          // @ts-ignore
-          local.getCompiledView(componentName, componentVersion)
-        );
+        return callback(null, local.getCompiledView(componentName));
       }
 
       cdn.getFile(
@@ -115,15 +127,25 @@ module.exports = function(conf) {
         callback
       );
     },
-    getComponent: (componentName, componentVersion, callback) => {
-      if (_.isFunction(componentVersion)) {
-        callback = componentVersion;
-        componentVersion = undefined;
-      }
+    getComponent(
+      componentName: string,
+      componentVersionOrCallback: string | Callback<Component, string>,
+      callbackMaybe?: Callback<Component, string>
+    ) {
+      const componentVersion: string | undefined = _.isFunction(
+        componentVersionOrCallback
+      )
+        ? undefined
+        : (componentVersionOrCallback as any);
+      const callback: Callback<Component, string> = _.isFunction(
+        componentVersionOrCallback
+      )
+        ? (componentVersionOrCallback as any)
+        : callbackMaybe!;
 
       repository.getComponentVersions(componentName, (err, allVersions) => {
         if (err) {
-          return callback(err);
+          return callback(err, undefined as any);
         }
 
         if (allVersions.length === 0) {
@@ -131,7 +153,8 @@ module.exports = function(conf) {
             strings.errors.registry.COMPONENT_NOT_FOUND(
               componentName,
               repositorySource
-            )
+            ),
+            undefined as any
           );
         }
 
@@ -144,9 +167,10 @@ module.exports = function(conf) {
           return callback(
             strings.errors.registry.COMPONENT_VERSION_NOT_FOUND(
               componentName,
-              componentVersion,
+              componentVersion || '',
               repositorySource
-            )
+            ),
+            undefined as any
           );
         }
 
@@ -157,7 +181,7 @@ module.exports = function(conf) {
             if (err) {
               return callback(
                 `component not available: ${errorToString(err)}`,
-                null
+                null as any
               );
             }
             callback(null, _.extend(component, { allVersions }));
@@ -165,7 +189,11 @@ module.exports = function(conf) {
         );
       });
     },
-    getComponentInfo: (componentName, componentVersion, callback) => {
+    getComponentInfo(
+      componentName: string,
+      componentVersion: string,
+      callback: Callback<Component, string>
+    ) {
       if (conf.local) {
         let componentInfo;
 
@@ -185,52 +213,62 @@ module.exports = function(conf) {
         if (componentInfo.version === componentVersion) {
           return callback(null, componentInfo);
         } else {
-          return callback('version not available');
+          return callback('version not available', undefined as any);
         }
       }
 
-      cdn.getJson(
+      cdn.getJson<Component>(
         getFilePath(componentName, componentVersion, 'package.json'),
         callback
       );
     },
-    getComponentPath: (componentName, componentVersion) => {
+    getComponentPath(componentName: string, componentVersion: string) {
       const prefix = conf.local
         ? conf.baseUrl
-        : `${options.path}${options.componentsDir}/`;
+        : `${options!.path}${options!.componentsDir}/`;
       return `${prefix}${componentName}/${componentVersion}/`;
     },
-    getComponents: callback => {
+    getComponents(callback: Callback<string[]>) {
       if (conf.local) {
         return callback(null, local.getComponents());
       }
 
       componentsCache.get((err, res) =>
-        callback(err, res ? Object.keys(res.components) : null)
+        callback(err, res ? Object.keys(res.components) : (null as any))
       );
     },
-    getComponentsDetails: callback => {
+    getComponentsDetails(callback: Callback<ComponentsDetails, string>) {
       if (conf.local) {
-        return callback();
+        return (callback as any)();
       }
 
       componentsDetails.get(callback);
     },
-    getComponentVersions: (componentName, callback) => {
+    getComponentVersions(
+      componentName: string,
+      callback: Callback<string[], string>
+    ) {
       if (conf.local) {
         return local.getComponentVersions(componentName, callback);
       }
 
       componentsCache.get((err, res) => {
         callback(
-          err,
+          err as any,
           !!res && !!_.has(res.components, componentName)
             ? res.components[componentName]
             : []
         );
       });
     },
-    getDataProvider: (componentName, componentVersion, callback) => {
+    getDataProvider(
+      componentName: string,
+      componentVersion: string,
+      callback: Callback<{
+        content: string;
+        filePath: string;
+      }>
+    ) {
       if (conf.local) {
         return callback(null, local.getDataProvider(componentName));
       }
@@ -241,73 +279,86 @@ module.exports = function(conf) {
         'server.js'
       );
 
-      cdn.getFile(filePath, (err, content) =>
-        callback(err, content ? { content, filePath } : null)
+      cdn.getFile(filePath, (err, content: string) =>
+        callback(err, content ? { content, filePath } : (null as any))
       );
     },
     getStaticClientPath: () =>
-      `${options.path}${getFilePath(
+      `${options!.path}${getFilePath(
         'oc-client',
         packageInfo.version,
         'src/oc-client.min.js'
       )}`,
 
     getStaticClientMapPath: () =>
-      `${options.path}${getFilePath(
+      `${options!.path}${getFilePath(
         'oc-client',
         packageInfo.version,
         'src/oc-client.min.map'
       )}`,
 
-    getStaticFilePath: (componentName, componentVersion, filePath) =>
+    getStaticFilePath: (
+      componentName: string,
+      componentVersion: string,
+      filePath: string
+    ) =>
       `${repository.getComponentPath(componentName, componentVersion)}${
         conf.local ? settings.registry.localStaticRedirectorPath : ''
       }${filePath}`,
 
     getTemplatesInfo: () => templatesInfo,
-    getTemplate: type => templatesHash[type],
+    getTemplate: (type: string) => templatesHash[type],
 
-    init: callback => {
+    init(callback: Callback<ComponentsList | string>) {
       if (conf.local) {
         return callback(null, 'ok');
       }
 
       componentsCache.load((err, componentsList) => {
         if (err) {
-          return callback(err);
+          return callback(err, undefined as any);
         }
         componentsDetails.refresh(componentsList, err =>
           callback(err, componentsList)
         );
       });
     },
-    publishComponent: (
-      pkgDetails,
-      componentName,
-      componentVersion,
-      callback
-    ) => {
+    publishComponent(
+      pkgDetails: any,
+      componentName: string,
+      componentVersion: string,
+      callback: Callback<ComponentsDetails, { code: string; msg: string }>
+    ) {
       if (conf.local) {
-        return callback({
-          code: strings.errors.registry.LOCAL_PUBLISH_NOT_ALLOWED_CODE,
-          msg: strings.errors.registry.LOCAL_PUBLISH_NOT_ALLOWED
-        });
+        return callback(
+          {
+            code: strings.errors.registry.LOCAL_PUBLISH_NOT_ALLOWED_CODE,
+            msg: strings.errors.registry.LOCAL_PUBLISH_NOT_ALLOWED
+          },
+          undefined as any
+        );
       }
 
       if (!validator.validateComponentName(componentName)) {
-        return callback({
-          code: strings.errors.registry.COMPONENT_NAME_NOT_VALID_CODE,
-          msg: strings.errors.registry.COMPONENT_NAME_NOT_VALID
-        });
+        return callback(
+          {
+            code: strings.errors.registry.COMPONENT_NAME_NOT_VALID_CODE,
+            msg: strings.errors.registry.COMPONENT_NAME_NOT_VALID
+          },
+          undefined as any
+        );
       }
 
       if (!validator.validateVersion(componentVersion)) {
-        return callback({
-          code: strings.errors.registry.COMPONENT_VERSION_NOT_VALID_CODE,
-          msg: strings.errors.registry.COMPONENT_VERSION_NOT_VALID(
-            componentVersion
-          )
-        });
+        return callback(
+          {
+            code: strings.errors.registry.COMPONENT_VERSION_NOT_VALID_CODE,
+            msg: strings.errors.registry.COMPONENT_VERSION_NOT_VALID(
+              componentVersion
+            )
+          },
+          undefined as any
+        );
       }
 
       const validationResult = validator.validatePackageJson(
@@ -318,12 +369,15 @@ module.exports = function(conf) {
       );
 
       if (!validationResult.isValid) {
-        return callback({
-          code: strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL_CODE,
-          msg: strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL(
-            String(validationResult.error)
-          )
-        });
+        return callback(
+          {
+            code: strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL_CODE,
+            msg: strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL(
+              validationResult.error!
+            )
+          },
+          undefined as any
+        );
       }
 
       repository.getComponentVersions(
@@ -335,15 +389,18 @@ module.exports = function(conf) {
               componentVersions
             )
           ) {
-            return callback({
-              code:
-                strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND_CODE,
-              msg: strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND(
-                componentName,
-                componentVersion,
-                repositorySource
-              )
-            });
+            return callback(
+              {
+                code: strings.errors.registry
+                  .COMPONENT_VERSION_ALREADY_FOUND_CODE,
+                msg: strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND(
+                  componentName,
+                  componentVersion,
+                  repositorySource
+                )
+              },
+              undefined as any
+            );
           }
 
           pkgDetails.packageJson.oc.date = getUnixUtcTimestamp();
@@ -352,20 +409,22 @@ module.exports = function(conf) {
             pkgDetails.packageJson,
             err => {
               if (err) {
-                return callback(err);
+                return callback(err as any, undefined as any);
               }
               cdn.putDir(
                 pkgDetails.outputFolder,
-                `${options.componentsDir}/${componentName}/${componentVersion}`,
+                `${
+                  options!.componentsDir
+                }/${componentName}/${componentVersion}`,
                 err => {
                   if (err) {
-                    return callback(err);
+                    return callback(err as any, undefined as any);
                   }
                   componentsCache.refresh((err, componentsList) => {
                     if (err) {
-                      return callback(err);
+                      return callback(err as any, undefined as any);
                     }
-                    componentsDetails.refresh(componentsList, callback);
+                    componentsDetails.refresh(componentsList, callback as any);
                   });
                 }
               );
@@ -377,4 +436,4 @@ module.exports = function(conf) {
   };
 
   return repository;
-};
+}

@@ -1,38 +1,70 @@
-'use strict';
+import acceptLanguageParser from 'accept-language-parser';
+import Cache from 'nice-cache';
+import Client from 'oc-client';
+import Domain from 'domain';
+import emptyResponseHandler from 'oc-empty-response-handler';
+import vm from 'vm';
+import _ from 'lodash';
 
-const acceptLanguageParser = require('accept-language-parser');
-const Cache = require('nice-cache');
-const Client = require('oc-client');
-const Domain = require('domain');
-const emptyResponseHandler = require('oc-empty-response-handler');
-const vm = require('vm');
-const _ = require('lodash');
+import applyDefaultValues from './apply-default-values';
+import * as eventsHandler from '../../domain/events-handler';
+import GetComponentRetrievingInfo from './get-component-retrieving-info';
+import * as getComponentFallback from './get-component-fallback';
+import isTemplateLegacy from '../../../utils/is-template-legacy';
+import NestedRenderer from '../../domain/nested-renderer';
+import RequireWrapper from '../../domain/require-wrapper';
+import * as sanitiser from '../../domain/sanitiser';
+import settings from '../../../resources/settings';
+import strings from '../../../resources';
+import * as urlBuilder from '../../domain/url-builder';
+import * as validator from '../../domain/validators';
+import { Config, Repository } from '../../../types';
+import { IncomingHttpHeaders } from 'http';
 
-const applyDefaultValues = require('./apply-default-values').default;
-const eventsHandler = require('../../domain/events-handler');
-const GetComponentRetrievingInfo = require('./get-component-retrieving-info')
-  .default;
-const getComponentFallback = require('./get-component-fallback');
-const isTemplateLegacy = require('../../../utils/is-template-legacy').default;
-const NestedRenderer = require('../../domain/nested-renderer').default;
-const RequireWrapper = require('../../domain/require-wrapper').default;
-const sanitiser = require('../../domain/sanitiser');
-const settings = require('../../../resources/settings').default;
-const strings = require('../../../resources').default;
-const urlBuilder = require('../../domain/url-builder');
-const validator = require('../../domain/validators');
+interface Options {
+  conf: Config;
+  headers: IncomingHttpHeaders;
+  ip: string;
+  name: string;
+  parameters: Dictionary<string>;
+  version: string;
+  omitHref?: boolean;
+}
 
-module.exports = function(conf, repository) {
+export type GetComponentResult = {
+  status: number;
+  headers?: Dictionary<string>;
+  response: {
+    type?: string;
+    code?: string;
+    error?: unknown;
+    version?: string;
+    requestVersion?: string;
+    name?: string;
+    details?: {
+      message: string;
+      stack: string;
+      originalError: unknown;
+    };
+    missingPlugins?: string[];
+    missingDependencies?: string[];
+  };
+};
+
+export default function getComponent(conf: Config, repository: Repository) {
   const client = Client({ templates: conf.templates }),
     cache = new Cache({
       verbose: !!conf.verbosity,
       refreshInterval: conf.refreshInterval
     });
 
-  const renderer = function(options, cb) {
+  const renderer = function (
+    options: Options,
+    cb: (result: GetComponentResult) => void
+  ) {
     const nestedRenderer = NestedRenderer(renderer, options.conf),
       retrievingInfo = GetComponentRetrievingInfo(options);
-    let responseHeaders = {};
+    let responseHeaders: Dictionary<string> = {};
 
     const getLanguage = () => {
       const paramOverride =
@@ -40,7 +72,7 @@ module.exports = function(conf, repository) {
       return paramOverride || options.headers['accept-language'];
     };
 
-    const callback = result => {
+    const callback = (result: GetComponentResult) => {
       if (result.response.error) {
         retrievingInfo.extend(result.response);
       }
@@ -76,7 +108,7 @@ module.exports = function(conf, repository) {
               conf.fallbackRegistryUrl,
               options.headers,
               requestedComponent,
-              callback
+              callback as any
             );
           }
 
@@ -158,17 +190,16 @@ module.exports = function(conf, repository) {
             status: 400,
             response: {
               code: 'TEMPLATE_NOT_SUPPORTED',
-              error: strings.errors.registry.TEMPLATE_NOT_SUPPORTED(
-                templateType
-              )
+              error:
+                strings.errors.registry.TEMPLATE_NOT_SUPPORTED(templateType)
             }
           });
         }
 
         const filterCustomHeaders = (
-          headers,
-          requestedVersion,
-          actualVersion
+          headers: Dictionary<string>,
+          requestedVersion: string,
+          actualVersion: string
         ) => {
           const needFiltering =
             !_.isEmpty(headers) &&
@@ -180,7 +211,7 @@ module.exports = function(conf, repository) {
             : headers;
         };
 
-        const returnComponent = (err, data) => {
+        const returnComponent = (err: any, data: any) => {
           if (componentCallbackDone) {
             return;
           }
@@ -203,10 +234,10 @@ module.exports = function(conf, repository) {
             options.headers['user-agent'] &&
             !!options.headers['user-agent'].match('oc-client-');
 
-          const parseTemplatesHeader = t =>
+          const parseTemplatesHeader = (t: string) =>
             t.split(';').map(t => t.split(',')[0]);
           const supportedTemplates = options.headers.templates
-            ? parseTemplatesHeader(options.headers.templates)
+            ? parseTemplatesHeader(options.headers.templates as string)
             : [];
 
           const isTemplateSupportedByClient = Boolean(
@@ -257,7 +288,14 @@ module.exports = function(conf, repository) {
             });
           }
 
-          const response = {
+          const response: {
+            type: string;
+            version: string;
+            requestVersion: string;
+            name: string;
+            renderMode: string;
+            href?: string;
+          } = {
             type: conf.local ? 'oc-component-local' : 'oc-component',
             version: component.version,
             requestVersion: requestedComponent.version,
@@ -306,12 +344,12 @@ module.exports = function(conf, repository) {
               renderInfo: component.oc.renderInfo
             };
 
-            const returnResult = template => {
+            const returnResult = (template: any) => {
               client.renderTemplate(
                 template,
                 data,
                 renderOptions,
-                (err, html) => {
+                (err: Error, html: string) => {
                   if (err) {
                     return callback({
                       status: 500,
@@ -343,7 +381,16 @@ module.exports = function(conf, repository) {
                   try {
                     ocTemplate = repository.getTemplate(templateType);
                   } catch (err) {
-                    throw err;
+                    return callback({
+                      status: 400,
+                      response: {
+                        code: 'TEMPLATE_NOT_SUPPORTED',
+                        error:
+                          strings.errors.registry.TEMPLATE_NOT_SUPPORTED(
+                            templateType
+                          )
+                      }
+                    });
                   }
 
                   const template = ocTemplate.getCompiledTemplate(
@@ -364,11 +411,10 @@ module.exports = function(conf, repository) {
           const cacheKey = `${component.name}/${component.version}/server.js`;
           const cached = cache.get('file-contents', cacheKey);
           const domain = Domain.create();
-          const setEmptyResponse = emptyResponseHandler.contextDecorator(
-            returnComponent
-          );
+          const setEmptyResponse =
+            emptyResponseHandler.contextDecorator(returnComponent);
           const contextObj = {
-            acceptLanguage: acceptLanguageParser.parse(acceptLanguage),
+            acceptLanguage: acceptLanguageParser.parse(acceptLanguage!),
             baseUrl: conf.baseUrl,
             env: conf.env,
             params,
@@ -381,7 +427,7 @@ module.exports = function(conf, repository) {
             staticPath: repository
               .getStaticFilePath(component.name, component.version, '')
               .replace('https:', ''),
-            setHeader: (header, value) => {
+            setHeader: (header?: string, value?: string) => {
               if (!(typeof header === 'string' && typeof value === 'string')) {
                 throw strings.errors.registry
                   .COMPONENT_SET_HEADER_PARAMETERS_NOT_VALID;
@@ -396,12 +442,13 @@ module.exports = function(conf, repository) {
           };
 
           const setCallbackTimeout = () => {
-            if (conf.executionTimeout) {
+            const executionTimeout = conf.executionTimeout;
+            if (executionTimeout) {
               setTimeout(() => {
-                const message = `timeout (${conf.executionTimeout * 1000}ms)`;
-                returnComponent({ message });
+                const message = `timeout (${executionTimeout * 1000}ms)`;
+                returnComponent({ message }, undefined);
                 domain.exit();
-              }, conf.executionTimeout * 1000);
+              }, executionTimeout * 1000);
             }
           };
 
@@ -414,7 +461,7 @@ module.exports = function(conf, repository) {
                 setCallbackTimeout();
               });
             } catch (e) {
-              return returnComponent(e);
+              return returnComponent(e, undefined);
             }
           } else {
             repository.getDataProvider(
@@ -435,13 +482,18 @@ module.exports = function(conf, repository) {
 
                 const context = {
                   require: RequireWrapper(conf.dependencies),
-                  module: { exports: {} },
+                  module: {
+                    exports: {} as Dictionary<(...args: unknown[]) => unknown>
+                  },
                   console: conf.local ? console : { log: _.noop },
                   setTimeout,
                   Buffer
                 };
 
-                const handleError = err => {
+                const handleError = (err: {
+                  code: string;
+                  missing: string[];
+                }) => {
                   if (err.code === 'DEPENDENCY_MISSING_FROM_REGISTRY') {
                     componentCallbackDone = true;
 
@@ -457,7 +509,7 @@ module.exports = function(conf, repository) {
                     });
                   }
 
-                  returnComponent(err);
+                  returnComponent(err, undefined);
                 };
 
                 const options = conf.local
@@ -478,7 +530,7 @@ module.exports = function(conf, repository) {
                     setCallbackTimeout();
                   });
                 } catch (err) {
-                  handleError(err);
+                  handleError(err as any);
                 }
               }
             );
@@ -489,4 +541,4 @@ module.exports = function(conf, repository) {
   };
 
   return renderer;
-};
+}

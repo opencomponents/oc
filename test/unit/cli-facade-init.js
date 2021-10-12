@@ -14,7 +14,7 @@ describe('cli : facade : init', () => {
 
   const logSpy = {},
     InitFacade = require('../../dist/cli/facade/init'),
-    Local = injectr('../../dist/cli/domain/local.js', deps, {}),
+    Local = injectr('../../dist/cli/domain/local.js', deps, {}).default,
     local = Local({ logger: { log: () => {} } }),
     initFacade = InitFacade({ local: local, logger: logSpy });
 

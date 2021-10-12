@@ -1,14 +1,20 @@
-'use strict';
+import fs from 'fs-extra';
+import path from 'path';
 
-const fs = require('fs-extra');
-const path = require('path');
+import requireTemplate from './handle-dependencies/require-template';
+import * as validator from '../../registry/domain/validators';
+import { Component } from '../../types';
 
-const requireTemplate = require('./handle-dependencies/require-template')
-  .default;
-const validator = require('../../registry/domain/validators');
+interface PackageOptions {
+  componentPath: string;
+  minify?: boolean;
+  verbose?: boolean;
+  production?: boolean;
+}
 
-module.exports = function() {
-  return function(options, callback) {
+const packageComponents =
+  () =>
+  (options: PackageOptions, callback: Callback<Component>): void => {
     const production = options.production;
     const componentPath = options.componentPath;
     const minify = options.minify === true;
@@ -18,9 +24,15 @@ module.exports = function() {
     const ocPackagePath = path.join(__dirname, '../../../package.json');
 
     if (!fs.existsSync(componentPackagePath)) {
-      return callback(new Error('component does not contain package.json'));
+      return callback(
+        new Error('component does not contain package.json'),
+        undefined as any
+      );
     } else if (!fs.existsSync(ocPackagePath)) {
-      return callback(new Error('error resolving oc internal dependencies'));
+      return callback(
+        new Error('error resolving oc internal dependencies'),
+        undefined as any
+      );
     }
 
     fs.emptyDirSync(publishPath);
@@ -29,7 +41,7 @@ module.exports = function() {
     const ocPackage = fs.readJsonSync(ocPackagePath);
 
     if (!validator.validateComponentName(componentPackage.name)) {
-      return callback(new Error('name not valid'));
+      return callback(new Error('name not valid'), undefined as any);
     }
 
     const type = componentPackage.oc.files.template.type;
@@ -48,10 +60,10 @@ module.exports = function() {
         compiler: true,
         componentPath
       });
-      // @ts-ignore
-      ocTemplate.compile(compileOptions, callback);
+      ocTemplate.compile!(compileOptions, callback);
     } catch (err) {
-      return callback(err);
+      return callback(err as any, undefined as any);
     }
   };
-};
+
+export default packageComponents;

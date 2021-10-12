@@ -52,12 +52,10 @@ describe('cli : domain : package-components', () => {
       {
         'fs-extra': fsMock,
         path: pathMock,
-        './handle-dependencies/require-template': {
-          default: requireTemplateMock
-        }
+        './handle-dependencies/require-template': requireTemplateMock
       },
       { __dirname: '' }
-    );
+    ).default;
 
     return { PackageComponents: PackageComponents };
   };

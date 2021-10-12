@@ -1,19 +1,23 @@
-'use strict';
+import _ from 'lodash';
 
-const _ = require('lodash');
+import ComponentRoute from './routes/component';
+import ComponentsRoute from './routes/components';
+import ComponentInfoRoute from './routes/component-info';
+import ComponentPreviewRoute from './routes/component-preview';
+import IndexRoute from './routes';
+import PublishRoute from './routes/publish';
+import StaticRedirectorRoute from './routes/static-redirector';
+import PluginsRoute from './routes/plugins';
+import DependenciesRoute from './routes/dependencies';
+import settings from '../resources/settings';
+import { Express } from 'express';
+import { Config, Repository } from '../types';
 
-const ComponentRoute = require('./routes/component');
-const ComponentsRoute = require('./routes/components');
-const ComponentInfoRoute = require('./routes/component-info');
-const ComponentPreviewRoute = require('./routes/component-preview');
-const IndexRoute = require('./routes');
-const PublishRoute = require('./routes/publish').default;
-const StaticRedirectorRoute = require('./routes/static-redirector').default;
-const PluginsRoute = require('./routes/plugins').default;
-const DependenciesRoute = require('./routes/dependencies').default;
-const settings = require('../resources/settings').default;
-
-module.exports.create = function(app, conf, repository) {
+export function create(
+  app: Express,
+  conf: Config,
+  repository: Repository
+): Express {
   const routes = {
     component: ComponentRoute(conf, repository),
     components: ComponentsRoute(conf, repository),
@@ -78,11 +82,13 @@ module.exports.create = function(app, conf, repository) {
 
   if (conf.routes) {
     _.forEach(conf.routes, route =>
-      app[route.method.toLowerCase()](route.route, route.handler)
+      app[
+        route.method.toLowerCase() as 'get' | 'post' | 'put' | 'patch' | 'head'
+      ](route.route, route.handler)
     );
   }
 
   app.set('etag', 'strong');
 
   return app;
-};
+}

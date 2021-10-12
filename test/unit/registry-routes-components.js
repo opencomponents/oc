@@ -4,8 +4,9 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 describe('registry : routes : components', () => {
-  const ComponentsRoute = require('../../dist/registry/routes/components'),
-    mockedComponents = require('../fixtures/mocked-components');
+  const ComponentsRoute = require('../../dist/registry/routes/components')
+    .default;
+  const mockedComponents = require('../fixtures/mocked-components');
 
   let mockedRepository, componentsRoute, code, response;
   const templates = {
@@ -17,7 +18,9 @@ describe('registry : routes : components', () => {
     mockedRepository = {
       getCompiledView: sinon.stub().yields(null, params.view),
       getComponent: sinon.stub().yields(null, params.package),
-      getDataProvider: sinon.stub().yields(null, params.data),
+      getDataProvider: sinon
+        .stub()
+        .yields(null, { content: params.data, filePath: '' }),
       getTemplatesInfo: sinon.stub().returns([
         {
           type: 'oc-template-jade',
