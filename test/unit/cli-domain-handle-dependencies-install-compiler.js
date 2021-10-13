@@ -10,9 +10,9 @@ describe('cli : domain : handle-dependencies : install-compiler', () => {
 
   const initialise = (options, done) => {
     cleanRequireStub = sinon.stub().returns({ theCompiler: true });
-    installDependencyMock = sinon
-      .stub()
-      .yields(options.shouldInstallFail ? 'install error' : null);
+    installDependencyMock = options.shouldInstallFail
+      ? sinon.stub().rejects('install error')
+      : sinon.stub().resolves();
     isTemplateValidStub = sinon.stub().returns(!options.shouldValidationFail);
     loggerMock = {
       err: sinon.stub(),
@@ -37,11 +37,10 @@ describe('cli : domain : handle-dependencies : install-compiler', () => {
       }
     ).default;
 
-    installCompiler(installOptions, (err, compiler) => {
-      error = err;
-      result = compiler;
-      done();
-    });
+    installCompiler(installOptions)
+      .then(compiler => (result = compiler))
+      .catch(err => (error = err))
+      .finally(done);
   };
 
   describe('when succeeds', () => {
@@ -57,7 +56,7 @@ describe('cli : domain : handle-dependencies : install-compiler', () => {
     });
 
     it('should return no error', () => {
-      expect(error).to.be.null;
+      expect(error).to.be.undefined;
     });
 
     it('should return the compiler', () => {

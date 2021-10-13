@@ -2,8 +2,6 @@ import path from 'path';
 import spawn from 'cross-spawn';
 import stripVersion from './strip-version';
 
-type NoParameterCallback<T = unknown> = (err: T) => void;
-
 const buildInstallCommand = (options: {
   installPath: string;
   save?: boolean;
@@ -21,17 +19,26 @@ const buildInstallCommand = (options: {
   return args;
 };
 
-const executeCommand = (
-  options: { command: string[]; path: string; silent?: boolean },
-  callback: NoParameterCallback<string | number | null>
-) => {
+const executeCommand = (options: {
+  command: string[];
+  path: string;
+  silent?: boolean;
+}) => {
   const cmd = spawn('npm', [...options.command, '--no-package-lock'], {
     cwd: options.path,
     stdio: options.silent ? 'ignore' : 'inherit'
   });
 
-  cmd.on('error', () => callback('error'));
-  cmd.on('close', code => callback(code !== 0 ? code : null));
+  return new Promise<void>((res, rej) => {
+    cmd.on('error', () => rej(new Error('error')));
+    cmd.on('close', code => {
+      if (code !== 0) {
+        rej(code);
+      } else {
+        res();
+      }
+    });
+  });
 };
 
 const getFullPath = ({
@@ -42,21 +49,22 @@ const getFullPath = ({
   dependency: string;
 }) => path.join(installPath, 'node_modules', stripVersion(dependency));
 
-export const init = (
-  options: { initPath: string; silent: boolean },
-  callback: NoParameterCallback<string | number | null>
-): void => {
+export const init = (options: {
+  initPath: string;
+  silent: boolean;
+}): Promise<void> => {
   const { initPath, silent } = options;
   const npminit = ['init', '--yes'];
   const cmdOptions = { path: initPath, command: npminit, silent };
 
-  executeCommand(cmdOptions, callback);
+  return executeCommand(cmdOptions);
 };
 
-export const installDependencies = (
-  options: { dependencies: string[]; installPath: string; silent: boolean },
-  callback: Callback<{ dest: string }, string | number>
-): void => {
+export const installDependencies = async (options: {
+  dependencies: string[];
+  installPath: string;
+  silent: boolean;
+}): Promise<{ dest: string[] }> => {
   const { dependencies, installPath, silent } = options;
   const npmi = buildInstallCommand(options);
   const cmdOptions = {
@@ -69,15 +77,16 @@ export const installDependencies = (
     getFullPath({ installPath, dependency })
   );
 
-  executeCommand(cmdOptions, err =>
-    callback(err, err ? (null as any) : { dest })
-  );
+  await executeCommand(cmdOptions);
+
+  return { dest };
 };
 
-export const installDependency = (
-  options: { dependency: string; installPath: string; silent?: boolean },
-  callback: Callback<{ dest: string }, string | number>
-): void => {
+export const installDependency = async (options: {
+  dependency: string;
+  installPath: string;
+  silent?: boolean;
+}): Promise<{ dest: string }> => {
   const { dependency, installPath, silent } = options;
   const npmi = buildInstallCommand(options);
   const cmdOptions = {
@@ -87,7 +96,7 @@ export const installDependency = (
   };
   const dest = getFullPath({ installPath, dependency });
 
-  executeCommand(cmdOptions, err =>
-    callback(err, err ? (null as any) : { dest })
-  );
+  await executeCommand(cmdOptions);
+
+  return { dest };
 };

@@ -49,8 +49,7 @@ describe('cli : domain : registry', () => {
   describe('when adding registry', () => {
     describe('when registry does not end with "/"', () => {
       it('should append the slash when doing the request', done => {
-        const requestStub = sinon.stub();
-        requestStub.yields('err');
+        const requestStub = sinon.stub().yields('err');
         const registry = getRegistry({ request: requestStub });
 
         registry.add('http://some-api.com/asd', () => {
@@ -87,7 +86,7 @@ describe('cli : domain : registry', () => {
     describe('when no credentials used', () => {
       let args, putSpy;
       beforeEach(() => {
-        putSpy = sinon.spy();
+        putSpy = sinon.stub().resolves();
         const registry = getRegistry({ put: putSpy });
         registry.putComponent(
           {
@@ -116,7 +115,7 @@ describe('cli : domain : registry', () => {
     describe('when credentials used', () => {
       let args, putSpy;
       beforeEach(() => {
-        putSpy = sinon.spy();
+        putSpy = sinon.stub().resolves();
         const registry = getRegistry({ put: putSpy });
         registry.putComponent(
           {

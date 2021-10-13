@@ -57,13 +57,13 @@ describe('cli : domain : handle-dependencies', () => {
             spies.ensureCompilerIsDeclaredAsDevDependency(options);
             cb(null, `${options.template}-compiler`);
           },
-          './get-compiler': (options, cb) => {
+          './get-compiler': options => {
             spies.getCompiler(options);
-            cb(null, { thisIsACompiler: true });
+            return Promise.resolve({ thisIsACompiler: true });
           },
-          './install-missing-dependencies': (options, cb) => {
+          './install-missing-dependencies': options => {
             spies.installMissingDependencies(options);
-            cb(null);
+            return Promise.resolve();
           }
         }
       ).default;
