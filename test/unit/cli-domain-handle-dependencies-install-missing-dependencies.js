@@ -25,10 +25,10 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     ).default;
 
     const installOptions = { dependencies, logger };
-    installMissingDependencies(installOptions, err => {
-      error = err;
-      done();
-    });
+
+    installMissingDependencies(installOptions)
+      .catch(err => (error = err))
+      .finally(done);
   };
 
   describe('when there is no missing dependency', () => {
@@ -36,7 +36,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     beforeEach(done => {
       stubs = {
         getMissingDependencies: sinon.stub().returns([]),
-        installDependencies: sinon.stub().yields(null)
+        installDependencies: sinon.stub().resolves()
       };
 
       dependencies = { lodash: '1.2.3' };
@@ -44,7 +44,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     });
 
     it('should return no error', () => {
-      expect(error).to.be.null;
+      expect(error).to.be.undefined;
     });
 
     it('should not install anything', () => {
@@ -58,7 +58,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     beforeEach(done => {
       stubs = {
         getMissingDependencies: sinon.stub(),
-        installDependencies: sinon.stub().yields(null)
+        installDependencies: sinon.stub().resolves()
       };
 
       stubs.getMissingDependencies
@@ -71,7 +71,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     });
 
     it('should return no error', () => {
-      expect(error).to.be.null;
+      expect(error).to.be.undefined;
     });
 
     it('should install the missing dependencies', () => {
@@ -100,7 +100,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     beforeEach(done => {
       stubs = {
         getMissingDependencies: sinon.stub(),
-        installDependencies: sinon.stub().yields('got an error')
+        installDependencies: sinon.stub().rejects('got an error')
       };
 
       stubs.getMissingDependencies
@@ -135,7 +135,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     beforeEach(done => {
       stubs = {
         getMissingDependencies: sinon.stub(),
-        installDependencies: sinon.stub().yields(null)
+        installDependencies: sinon.stub().resolves()
       };
 
       stubs.getMissingDependencies.returns([

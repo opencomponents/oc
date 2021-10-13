@@ -1,5 +1,6 @@
 import parseAuthor from 'parse-author';
 import _ from 'lodash';
+import { fromPromise } from 'universalify';
 
 import * as getComponentFallback from './helpers/get-component-fallback';
 import infoView from '../views/info';
@@ -63,7 +64,7 @@ function componentInfo(
       typeof component.repository === 'string' ? component.repository : null
     );
 
-    isUrlDiscoverable(href, (err, result) => {
+    fromPromise(isUrlDiscoverable)(href, (err, result) => {
       if (!result.isDiscoverable) {
         href = `//${req.headers.host}${res.conf.prefix}`;
       }

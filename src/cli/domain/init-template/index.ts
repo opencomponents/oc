@@ -1,4 +1,3 @@
-import async from 'async';
 import fs from 'fs-extra';
 import path from 'path';
 
@@ -7,27 +6,21 @@ import * as npm from '../../../utils/npm-utils';
 import scaffold from './scaffold';
 import { Logger } from '../../logger';
 
-export default function initTemplate(
-  options: {
-    componentPath: string;
-    templateType: string;
-    componentName: string;
-    compiler: string;
-    logger: Logger;
-  },
-  callback: Callback<{ ok: true }, string>
-): void {
+export default async function initTemplate(options: {
+  componentPath: string;
+  templateType: string;
+  componentName: string;
+  compiler: string;
+  logger: Logger;
+}): Promise<{ ok: true }> {
   const { compiler, componentPath } = options;
   const compilerPath = path.join(componentPath, 'node_modules', compiler);
   const npmOptions = { initPath: componentPath, silent: true };
 
-  async.series(
-    [
-      cb => fs.ensureDir(componentPath, cb),
-      cb => npm.init(npmOptions, cb as any),
-      cb => installTemplate(options, cb as any),
-      cb => scaffold(Object.assign(options, { compilerPath }), cb as any)
-    ],
-    callback as any
-  );
+  await fs.ensureDir(componentPath);
+  await npm.init(npmOptions);
+  await installTemplate(options);
+  await scaffold(Object.assign(options, { compilerPath }));
+
+  return { ok: true };
 }

@@ -30,17 +30,16 @@ describe('cli : domain : init-template', () => {
       templateType: 'oc-template-react'
     };
 
-    initTemplate(options, err => {
-      error = err;
-      cb();
-    });
+    initTemplate(options)
+      .catch(err => (error = err))
+      .finally(cb);
   };
 
   describe('happy path', () => {
-    const fsExtraStub = sinon.stub().yields(null, 'ok');
-    const npmStub = sinon.stub().yields(null, 'ok');
-    const installTemplateStub = sinon.stub().yields(null, 'ok');
-    const scaffoldStub = sinon.stub().yields(null, 'ok');
+    const fsExtraStub = sinon.stub().resolves('ok');
+    const npmStub = sinon.stub().resolves('ok');
+    const installTemplateStub = sinon.stub().resolves('ok');
+    const scaffoldStub = sinon.stub().resolves('ok');
 
     beforeEach(
       initialise({
@@ -52,7 +51,7 @@ describe('cli : domain : init-template', () => {
     );
 
     it('should return no error', () => {
-      expect(error).to.be.null;
+      expect(error).to.be.undefined;
     });
 
     it('should call ensureDir with correct params', () => {
@@ -89,54 +88,56 @@ describe('cli : domain : init-template', () => {
   describe('when component folder creation fails', () => {
     beforeEach(
       initialise({
-        fsExtraStub: sinon.stub().yields('folder creation error')
+        fsExtraStub: sinon.stub().rejects(new Error('folder creation error'))
       })
     );
 
     it('should return an error', () => {
-      expect(error).to.equal('folder creation error');
+      expect(error.message).to.equal('folder creation error');
     });
   });
 
   describe('when npm init fails', () => {
     beforeEach(
       initialise({
-        fsExtraStub: sinon.stub().yields(null, 'ok'),
-        npmStub: sinon.stub().yields('npm init failed')
+        fsExtraStub: sinon.stub().resolves('ok'),
+        npmStub: sinon.stub().rejects(new Error('npm init failed'))
       })
     );
 
     it('should return an error', () => {
-      expect(error).to.equal('npm init failed');
+      expect(error.message).to.equal('npm init failed');
     });
   });
 
   describe('when template compiler installation fails', () => {
     beforeEach(
       initialise({
-        fsExtraStub: sinon.stub().yields(null, 'ok'),
-        npmStub: sinon.stub().yields(null, 'ok'),
-        installTemplateStub: sinon.stub().yields('npm install failed')
+        fsExtraStub: sinon.stub().resolves('ok'),
+        npmStub: sinon.stub().resolves('ok'),
+        installTemplateStub: sinon
+          .stub()
+          .rejects(new Error('npm install failed'))
       })
     );
 
     it('should return an error', () => {
-      expect(error).to.equal('npm install failed');
+      expect(error.message).to.equal('npm install failed');
     });
   });
 
   describe('when template compiler installation fails', () => {
     beforeEach(
       initialise({
-        fsExtraStub: sinon.stub().yields(null, 'ok'),
-        npmStub: sinon.stub().yields(null, 'ok'),
-        installTemplateStub: sinon.stub().yields(null, 'ok'),
-        scaffoldStub: sinon.stub().yields('scaffolding failed')
+        fsExtraStub: sinon.stub().resolves('ok'),
+        npmStub: sinon.stub().resolves('ok'),
+        installTemplateStub: sinon.stub().resolves('ok'),
+        scaffoldStub: sinon.stub().rejects(new Error('scaffolding failed'))
       })
     );
 
     it('should return an error', () => {
-      expect(error).to.equal('scaffolding failed');
+      expect(error.message).to.equal('scaffolding failed');
     });
   });
 });

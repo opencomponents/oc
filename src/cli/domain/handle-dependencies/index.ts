@@ -3,6 +3,7 @@ import coreModules from 'builtin-modules';
 import fs from 'fs-extra';
 import path from 'path';
 import _ from 'lodash';
+import { fromPromise } from 'universalify';
 
 import ensureCompilerIsDeclaredAsDevDependency from './ensure-compiler-is-declared-as-devDependency';
 import getCompiler from './get-compiler';
@@ -96,7 +97,7 @@ export default function handleDependencies(
           },
           cb: any
         ) =>
-          getCompiler(options, (err, compiler) =>
+          fromPromise(getCompiler)(options, (err, compiler) =>
             cb(err, _.extend(options, { compiler }))
           ),
 
@@ -133,6 +134,8 @@ export default function handleDependencies(
         callback(err, result)
       );
     }
-    installMissingDependencies(options, err => callback(err, result));
+    fromPromise(installMissingDependencies)(options, err =>
+      callback(err as any, result)
+    );
   });
 }

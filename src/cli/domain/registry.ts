@@ -2,6 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import request from 'minimal-request';
 import _ from 'lodash';
+import { fromPromise } from 'universalify';
 
 import put from '../../utils/put';
 import settings from '../../resources/settings';
@@ -132,30 +133,35 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
         });
       }
 
-      put(options.route, options.path, requestsHeaders, (err, res) => {
-        if (err) {
-          if (!_.isObject(err)) {
-            try {
-              err = JSON.parse(String(err));
-            } catch (er) {}
-          }
-          const parsedError = err as any as { code?: string; error?: string };
+      fromPromise(put)(
+        options.route,
+        options.path,
+        requestsHeaders,
+        (err, res) => {
+          if (err) {
+            if (!_.isObject(err)) {
+              try {
+                err = JSON.parse(String(err));
+              } catch (er) {}
+            }
+            const parsedError = err as any as { code?: string; error?: string };
 
-          if (!!parsedError.code && parsedError.code === 'ECONNREFUSED') {
-            err = 'Connection to registry has not been established';
-          } else if (
-            parsedError.code !== 'cli_version_not_valid' &&
-            parsedError.code !== 'node_version_not_valid' &&
-            !!parsedError.error
-          ) {
-            err = parsedError.error;
+            if (!!parsedError.code && parsedError.code === 'ECONNREFUSED') {
+              err = 'Connection to registry has not been established';
+            } else if (
+              parsedError.code !== 'cli_version_not_valid' &&
+              parsedError.code !== 'node_version_not_valid' &&
+              !!parsedError.error
+            ) {
+              err = parsedError.error;
+            }
+
+            return callback(err as any, undefined as any);
           }
 
-          return callback(err as any, undefined as any);
+          callback(err as any, res);
         }
-
-        callback(err, res);
-      });
+      );
     },
     remove(registry: string, callback: Callback) {
       if (registry.slice(registry.length - 1) !== '/') {

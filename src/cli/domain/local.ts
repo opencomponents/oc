@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import targz from 'targz';
+import { fromPromise } from 'universalify';
 
 import * as clean from './clean';
 import getComponentsByDir from './get-components-by-dir';
@@ -56,7 +57,7 @@ export default function local(): Local {
         );
       }
       try {
-        initTemplate(
+        fromPromise(initTemplate)(
           Object.assign(options, {
             templateType,
             compiler: `${templateType}-compiler`

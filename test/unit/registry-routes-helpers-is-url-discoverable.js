@@ -10,21 +10,18 @@ describe('registry : routes : helpers : is-url-discoverable', () => {
       const isDiscoverable = injectr(
         '../../dist/registry/routes/helpers/is-url-discoverable.js',
         {
-          'minimal-request': (req, cb) =>
-            cb(null, '{}', {
-              response: {
-                headers: {
-                  'content-type': 'application/json; charset=utf-8'
-                }
+          got: () =>
+            Promise.resolve({
+              headers: {
+                'content-type': 'application/json; charset=utf-8'
               }
             })
         }
       ).default;
 
-      isDiscoverable('https://baseurl.company.com/', (err, res) => {
-        result = res;
-        done();
-      });
+      isDiscoverable('https://baseurl.company.com/')
+        .then(res => (result = res))
+        .finally(done);
     });
 
     it('should not be discoverable', () => {
@@ -38,21 +35,18 @@ describe('registry : routes : helpers : is-url-discoverable', () => {
       const isDiscoverable = injectr(
         '../../dist/registry/routes/helpers/is-url-discoverable.js',
         {
-          'minimal-request': (req, cb) =>
-            cb(null, '{}', {
-              response: {
-                headers: {
-                  'content-type': 'text/html; charset=utf-8'
-                }
+          got: () =>
+            Promise.resolve({
+              headers: {
+                'content-type': 'text/html; charset=utf-8'
               }
             })
         }
       ).default;
 
-      isDiscoverable('https://baseurl.company.com/', (err, res) => {
-        result = res;
-        done();
-      });
+      isDiscoverable('https://baseurl.company.com/')
+        .then(res => (result = res))
+        .finally(done);
     });
 
     it('should be discoverable', () => {

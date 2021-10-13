@@ -1,23 +1,14 @@
 import FormData from 'form-data';
 import fs from 'fs-extra';
 import path from 'path';
-import url from 'url';
+import got from 'got';
 
-export default function put(
+async function put(
   urlPath: string,
   files: string | string[],
-  headers: Record<string, string> | Callback<any, Error | string>,
-  callback: Callback<any, Error | string>
-): void {
-  if (typeof headers === 'function') {
-    callback = headers;
-    headers = {};
-  }
-
+  headers: Record<string, string | string[] | undefined>
+): Promise<string> {
   const form = new FormData();
-  const options = { ...url.parse(urlPath), method: 'PUT', headers: {} };
-  let body = '';
-  let callbackDone = false;
 
   if (!Array.isArray(files)) {
     files = [files];
@@ -28,28 +19,17 @@ export default function put(
     form.append(fileName, fs.createReadStream(file));
   });
 
-  options.headers = { ...headers, ...form.getHeaders() };
-
-  form.submit(options as any, (err, res) => {
-    if (err) {
-      callbackDone = true;
-      return callback(err, undefined as any);
-    }
-
-    res.on('data', chunk => {
-      body += chunk;
-    });
-
-    res.on('end', () => {
-      if (!callbackDone) {
-        callbackDone = true;
-
-        if (res.statusCode !== 200) {
-          callback(body, undefined as any);
-        } else {
-          callback(null, body);
-        }
-      }
-    });
+  const res = await got(urlPath, {
+    headers: { ...headers, ...form.getHeaders() },
+    method: 'PUT',
+    body: form
   });
+
+  if (res.statusCode !== 200) {
+    throw res.body;
+  }
+
+  return res.body;
 }
+
+export default put;
