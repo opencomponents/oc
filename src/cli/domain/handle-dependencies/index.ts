@@ -13,7 +13,6 @@ import isTemplateLegacy from '../../../utils/is-template-legacy';
 import strings from '../../../resources';
 import { Logger } from '../../logger';
 import { Component } from '../../../types';
-import { fromPromise } from 'universalify';
 
 const getComponentPackageJson = (componentPath: string, cb: Callback<any>) =>
   fs.readJson(path.join(componentPath, 'package.json'), cb);
