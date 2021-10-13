@@ -306,9 +306,8 @@ export interface Local {
 export interface Repository {
   getCompiledView(
     componentName: string,
-    componentVersion: string,
-    callback: Callback<string>
-  ): void;
+    componentVersion: string
+  ): Promise<string>;
   getComponent(
     componentName: string,
     componentVersion: string,
@@ -320,9 +319,8 @@ export interface Repository {
   ): void;
   getComponentInfo(
     componentName: string,
-    componentVersion: string,
-    callback: Callback<Component, string>
-  ): void;
+    componentVersion: string
+  ): Promise<Component>;
   getComponentPath(componentName: string, componentVersion: string): void;
   getComponents(callback: Callback<string[]>): void;
   getComponentsDetails(callback: Callback<ComponentsDetails, string>): void;
@@ -332,12 +330,11 @@ export interface Repository {
   ): void;
   getDataProvider(
     componentName: string,
-    componentVersion: string,
-    callback: Callback<{
-      content: string;
-      filePath: string;
-    }>
-  ): void;
+    componentVersion: string
+  ): Promise<{
+    content: string;
+    filePath: string;
+  }>;
   getStaticClientPath: () => string;
   getStaticClientMapPath: () => string;
   getStaticFilePath: (

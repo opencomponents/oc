@@ -17,13 +17,15 @@ describe('registry : routes : component', () => {
   const initialise = function (params) {
     resJsonStub = sinon.stub();
     resSetStub = sinon.stub();
-    statusStub = sinon.stub().returns({ json: resJsonStub });
+    statusStub = sinon.stub().returns({
+      json: resJsonStub
+    });
     mockedRepository = {
-      getCompiledView: sinon.stub().yields(null, params.view),
+      getCompiledView: sinon.stub().resolves(params.view),
       getComponent: sinon.stub().yields(null, params.package),
       getDataProvider: sinon
         .stub()
-        .yields(null, { content: params.data, filePath: '/path/to/server.js' }),
+        .resolves({ content: params.data, filePath: '/path/to/server.js' }),
       getTemplatesInfo: sinon.stub().returns([
         {
           type: 'oc-template-jade',
@@ -329,7 +331,7 @@ describe('registry : routes : component', () => {
       });
 
       describe('when registry implements plugin', () => {
-        beforeEach(() => {
+        beforeEach(done => {
           componentRoute(
             {
               headers: {},
@@ -347,6 +349,7 @@ describe('registry : routes : component', () => {
               status: statusStub
             }
           );
+          setTimeout(done);
         });
 
         it('should return 200 status code', () => {
@@ -405,7 +408,7 @@ describe('registry : routes : component', () => {
 
   describe('when getting a component that requires a npm module', () => {
     describe('when registry implements dependency', () => {
-      beforeEach(() => {
+      beforeEach(done => {
         initialise(mockedComponents['npm-component']);
         componentRoute = ComponentRoute({}, mockedRepository);
 
@@ -424,6 +427,7 @@ describe('registry : routes : component', () => {
             status: statusStub
           }
         );
+        setTimeout(done);
       });
 
       it('should return 200 status code', () => {
@@ -441,7 +445,7 @@ describe('registry : routes : component', () => {
     });
 
     describe('when registry does not implement dependency', () => {
-      beforeEach(() => {
+      beforeEach(done => {
         initialise(mockedComponents['npm-component']);
         componentRoute = ComponentRoute({}, mockedRepository);
 
@@ -461,6 +465,7 @@ describe('registry : routes : component', () => {
             status: statusStub
           }
         );
+        setTimeout(done);
       });
 
       it('should return 501 status code', () => {
@@ -612,10 +617,8 @@ describe('registry : routes : component', () => {
 
       mockedRepository.getCompiledView
         .onCall(0)
-        .yields(null, headersComponent.view);
-      mockedRepository.getCompiledView
-        .onCall(1)
-        .yields(null, simpleComponent.view);
+        .resolves(headersComponent.view);
+      mockedRepository.getCompiledView.onCall(1).resolves(simpleComponent.view);
 
       mockedRepository.getComponent
         .onCall(0)
@@ -624,11 +627,11 @@ describe('registry : routes : component', () => {
         .onCall(1)
         .yields(null, simpleComponent.package);
 
-      mockedRepository.getDataProvider.onCall(0).yields(null, {
+      mockedRepository.getDataProvider.onCall(0).resolves({
         content: headersComponent.data,
         filePath: '/path/to/server.js'
       });
-      mockedRepository.getDataProvider.onCall(1).yields(null, {
+      mockedRepository.getDataProvider.onCall(1).resolves({
         content: simpleComponent.data,
         filePath: '/path/to/another-server.js'
       });

@@ -38,11 +38,11 @@ describe('registry : routes : helpers : get-component', () => {
     ).default;
 
     mockedRepository = {
-      getCompiledView: sinon.stub().yields(null, params.view),
+      getCompiledView: sinon.stub().resolves(params.view),
       getComponent: sinon.stub().yields(null, params.package),
       getDataProvider: sinon
         .stub()
-        .yields(null, { content: params.data, filePath: '/path/to/server.js' }),
+        .resolves({ content: params.data, filePath: '/path/to/server.js' }),
       getTemplatesInfo: sinon.stub().returns([
         {
           type: 'oc-template-jade',
