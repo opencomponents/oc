@@ -4,7 +4,7 @@ import getAvailableDependencies from './helpers/get-available-dependencies';
 
 export default function dependencies(conf: Config) {
   return function (req: Request, res: Response): void {
-    if (conf.discovery) {
+    if (res.conf.discovery) {
       const dependencies = getAvailableDependencies(conf.dependencies).map(
         ({ core, name, version }) => {
           const dep: { name: string; core: boolean; versions?: string[] } = {

@@ -116,9 +116,9 @@ export interface VM {
 export interface Config {
   beforePublish: (req: Request, res: Response, next: NextFunction) => void;
   baseUrl: string;
-  baseUrlFunc: (opts: { host?: string; secure: boolean }) => string;
+  baseUrlFunc?: (opts: { host?: string; secure: boolean }) => string;
   discovery: boolean;
-  discoveryFunc: (opts: { host?: string; secure: boolean }) => boolean;
+  discoveryFunc?: (opts: { host?: string; secure: boolean }) => boolean;
   plugins: Record<string, (...args: unknown[]) => void>;
   local: boolean;
   tempDir: string;
