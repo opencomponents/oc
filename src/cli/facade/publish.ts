@@ -9,6 +9,7 @@ import { Component, RegistryCli, Local } from '../../types';
 
 import handleDependencies from '../domain/handle-dependencies';
 import strings from '../../resources/index';
+import { fromPromise } from 'universalify';
 
 const publish =
   ({
@@ -59,7 +60,7 @@ const publish =
     };
 
     const compress = (cb: (error: string | Error | null) => void) => {
-      local.compress(packageDir, compressedPackagePath, cb);
+      fromPromise(local.compress)(packageDir, compressedPackagePath, cb as any);
     };
 
     const packageAndCompress = (cb: Callback<Component, Error | string>) => {
@@ -69,7 +70,7 @@ const publish =
         componentPath: path.resolve(componentPath)
       };
 
-      local.package(packageOptions, (err, component) => {
+      fromPromise(local.package)(packageOptions, (err: any, component) => {
         if (err) {
           return cb(err, undefined as any);
         }
@@ -164,7 +165,7 @@ const publish =
           );
         },
         err => {
-          local.cleanup(compressedPackagePath, err2 => {
+          fromPromise(local.cleanup)(compressedPackagePath, (err2: any) => {
             if (err) {
               return callback(err);
             }

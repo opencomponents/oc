@@ -1,4 +1,5 @@
 import path from 'path';
+import { fromPromise } from 'universalify';
 
 import strings from '../../resources/index';
 import { Local } from '../../types';
@@ -23,14 +24,14 @@ const init =
     const componentPath = path.join(process.cwd(), opts.componentPath);
     const componentName = path.basename(componentPath);
 
-    local.init(
+    fromPromise(local.init)(
       {
         componentName,
         componentPath,
         templateType,
         logger
       },
-      err => {
+      (err: any) => {
         if (err) {
           if (err === 'name not valid') {
             err = errors.NAME_NOT_VALID;

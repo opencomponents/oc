@@ -1,4 +1,5 @@
 import fs from 'fs-extra';
+import { promisify } from 'util';
 import path from 'path';
 
 import requireTemplate from './handle-dependencies/require-template';
@@ -14,7 +15,7 @@ interface PackageOptions {
 
 const packageComponents =
   () =>
-  (options: PackageOptions, callback: Callback<Component>): void => {
+  async (options: PackageOptions): Promise<Component> => {
     const production = options.production;
     const componentPath = options.componentPath;
     const minify = options.minify === true;
@@ -24,24 +25,18 @@ const packageComponents =
     const ocPackagePath = path.join(__dirname, '../../../package.json');
 
     if (!fs.existsSync(componentPackagePath)) {
-      return callback(
-        new Error('component does not contain package.json'),
-        undefined as any
-      );
+      throw new Error('component does not contain package.json');
     } else if (!fs.existsSync(ocPackagePath)) {
-      return callback(
-        new Error('error resolving oc internal dependencies'),
-        undefined as any
-      );
+      throw new Error('error resolving oc internal dependencies');
     }
 
-    fs.emptyDirSync(publishPath);
+    await fs.emptyDir(publishPath);
 
-    const componentPackage = fs.readJsonSync(componentPackagePath);
-    const ocPackage = fs.readJsonSync(ocPackagePath);
+    const componentPackage = await fs.readJson(componentPackagePath);
+    const ocPackage: Component = await fs.readJson(ocPackagePath);
 
     if (!validator.validateComponentName(componentPackage.name)) {
-      return callback(new Error('name not valid'), undefined as any);
+      throw new Error('name not valid');
     }
 
     const type = componentPackage.oc.files.template.type;
@@ -55,15 +50,12 @@ const packageComponents =
       production
     };
 
-    try {
-      const ocTemplate = requireTemplate(type, {
-        compiler: true,
-        componentPath
-      });
-      ocTemplate.compile!(compileOptions, callback);
-    } catch (err) {
-      return callback(err as any, undefined as any);
-    }
+    const ocTemplate = requireTemplate(type, {
+      compiler: true,
+      componentPath
+    });
+    const compile = promisify(ocTemplate.compile!);
+    return compile(compileOptions);
   };
 
 export default packageComponents;
