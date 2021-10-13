@@ -15,7 +15,7 @@ describe('registry : domain : extract-package', () => {
       path: { resolve: pathResolveStub },
       './get-package-json-from-temp-dir': sinon
         .stub()
-        .yields(null, { package: 'hello' })
+        .resolves({ package: 'hello' })
     }
   ).default;
 
@@ -36,18 +36,14 @@ describe('registry : domain : extract-package', () => {
 
       decompressStub.yields();
 
-      extractPackage(
-        [
-          {
-            filename: '1478279453422.tar.gz',
-            path: '/some-path/registry/temp/1478279453422.tar.gz'
-          }
-        ],
-        (err, res) => {
-          response = res;
-          done();
+      extractPackage([
+        {
+          filename: '1478279453422.tar.gz',
+          path: '/some-path/registry/temp/1478279453422.tar.gz'
         }
-      );
+      ])
+        .then(res => (response = res))
+        .finally(done);
     });
 
     it('should decompress tar.gz file', () => {
@@ -82,18 +78,14 @@ describe('registry : domain : extract-package', () => {
 
       decompressStub.yields('error!');
 
-      extractPackage(
-        [
-          {
-            filename: '1478279453422.tar.gz',
-            path: '/some-path/registry/temp/1478279453422.tar.gz'
-          }
-        ],
-        err => {
-          error = err;
-          done();
+      extractPackage([
+        {
+          filename: '1478279453422.tar.gz',
+          path: '/some-path/registry/temp/1478279453422.tar.gz'
         }
-      );
+      ])
+        .catch(err => (error = err))
+        .finally(done);
     });
 
     it('should respond with error', () => {

@@ -129,7 +129,7 @@ export default function handleDependencies(
     if (useComponentDependencies) {
       // @ts-ignore
       options.componentPath = components[0];
-      return linkMissingDependencies(options as any, err =>
+      return fromPromise(linkMissingDependencies)(options as any, (err: any) =>
         callback(err, result)
       );
     }

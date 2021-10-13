@@ -262,8 +262,8 @@ export interface RegistryCli {
 
 export interface Local {
   clean: {
-    fetchList: (dirPath: string, callback: Callback<string[]>) => void;
-    remove: (list: string[], callback: Callback<string>) => void;
+    fetchList: (dirPath: string) => Promise<string[]>;
+    remove: (list: string[]) => Promise<void>;
   };
   cleanup: (
     compressedPackagePath: string,
@@ -287,10 +287,11 @@ export interface Local {
     },
     callback: Callback<string, string>
   ) => void;
-  mock: (
-    params: { targetType: string; targetValue: string; targetName: string },
-    callback: (err: Error) => void
-  ) => void;
+  mock: (params: {
+    targetType: string;
+    targetValue: string;
+    targetName: string;
+  }) => Promise<void>;
   package: (
     options: {
       componentPath: string;

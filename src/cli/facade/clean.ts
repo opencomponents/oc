@@ -1,4 +1,5 @@
 import read from 'read';
+import { fromPromise } from 'universalify';
 import strings from '../../resources/index';
 import { Local } from '../../types';
 import { Logger } from '../logger';
@@ -32,7 +33,7 @@ const clean = ({
     );
 
   const removeFolders = (list: string[], cb: (err?: unknown) => void) =>
-    remove(list, err => {
+    fromPromise(remove)(list, err => {
       if (err) {
         logger.err(strings.errors.cli.cleanRemoveError(String(err)));
         return cb(err);
@@ -46,7 +47,7 @@ const clean = ({
     opts: { dirPath: string; yes: boolean },
     callback: (err?: unknown) => void
   ) => {
-    fetchList(opts.dirPath, (err, list) => {
+    fromPromise(fetchList)(opts.dirPath, (err, list) => {
       if (err) {
         logger.err(strings.errors.generic(String(err)));
         return callback(err);
