@@ -145,7 +145,6 @@ const dev =
     fromPromise(local.getComponentsByDir)(
       componentsDir,
       (err: any, components) => {
-        console.log('COMNAMNA', components);
         if (_.isEmpty(components)) {
           err = cliErrors.DEV_FAIL(cliErrors.COMPONENTS_NOT_FOUND) as any;
           logger.err(String(err));

@@ -32,7 +32,7 @@ const packageComponents =
 
     await fs.emptyDir(publishPath);
 
-    const componentPackage = await fs.readJson(componentPackagePath);
+    const componentPackage: Component = await fs.readJson(componentPackagePath);
     const ocPackage: Component = await fs.readJson(ocPackagePath);
 
     if (!validator.validateComponentName(componentPackage.name)) {
