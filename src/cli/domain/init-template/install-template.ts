@@ -30,15 +30,13 @@ export default function installTemplate(
   npm.installDependency(npmOptions, (err, result) => {
     const errorMessage = 'template type not valid';
     if (err) {
-      // @ts-ignore
-      return callback(errorMessage);
+      return callback(errorMessage, undefined as any);
     }
 
     const installedCompiler = tryRequire(result.dest);
 
     if (!isTemplateValid(installedCompiler, { compiler: true })) {
-      // @ts-ignore
-      return callback(errorMessage);
+      return callback(errorMessage, undefined as any);
     }
     const version = installedCompiler.getInfo().version;
     logger.log(

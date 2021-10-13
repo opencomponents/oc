@@ -133,10 +133,9 @@ export default function handleDependencies(
     };
     const options = { dependencies, logger };
     if (useComponentDependencies) {
-      // @ts-ignore
-      options.componentPath = components[0];
-      return linkMissingDependencies(options as any, err =>
-        callback(err, result)
+      return linkMissingDependencies(
+        { ...options, componentPath: components[0] },
+        err => callback(err, result)
       );
     }
     installMissingDependencies(options, err => callback(err, result));
