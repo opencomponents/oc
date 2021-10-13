@@ -1,5 +1,6 @@
 import path from 'path';
 import targz from 'targz';
+import { PackageJson } from 'type-fest';
 
 import getPackageJsonFromTempDir from './get-package-json-from-temp-dir';
 
@@ -11,7 +12,7 @@ export default function extractPackage(
       },
   callback: Callback<{
     outputFolder: string;
-    packageJson: any;
+    packageJson: PackageJson;
   }>
 ): void {
   const packageFile: Express.Multer.File = (files as any)[0];

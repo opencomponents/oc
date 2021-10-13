@@ -9,7 +9,7 @@ export default function getCompiler(
     compilerDep: string;
     componentPath: string;
     logger: Logger;
-    pkg: { name: string; devDependencies: Dictionary<string> };
+    pkg: { devDependencies: Dictionary<string> };
   },
   cb: Callback<string, string | number>
 ): void {
@@ -28,7 +28,6 @@ export default function getCompiler(
 
   const installOptions = {
     compilerPath,
-    componentName: pkg.name,
     componentPath,
     dependency,
     logger
