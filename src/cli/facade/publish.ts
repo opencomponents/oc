@@ -9,6 +9,7 @@ import { Component, RegistryCli, Local } from '../../types';
 
 import handleDependencies from '../domain/handle-dependencies';
 import strings from '../../resources/index';
+import { fromPromise } from 'universalify';
 
 const publish =
   ({
@@ -96,9 +97,9 @@ const publish =
     ) => {
       logger.warn(strings.messages.cli.PUBLISHING(options.route));
 
-      registry.putComponent(options, err => {
+      fromPromise(registry.putComponent)(options, (err: any) => {
         if (err) {
-          if (err === 'Unauthorized') {
+          if (err === 'Unauthorized' || err.message === 'Unauthorized') {
             if (!!options.username || !!options.password) {
               logger.err(
                 strings.errors.cli.PUBLISHING_FAIL(
@@ -133,7 +134,9 @@ const publish =
             logger.err(errorMessage);
             return cb(errorMessage, undefined as any);
           } else {
-            if (_.isObject(err)) {
+            if (err.message) {
+              err = err.message;
+            } else if (_.isObject(err)) {
               try {
                 err = JSON.stringify(err);
               } catch (er) {}
@@ -174,9 +177,9 @@ const publish =
       );
     };
 
-    registry.get((err: string | null, registryLocations: string[]) => {
+    fromPromise(registry.get)((err: any, registryLocations: string[]) => {
       if (err) {
-        logger.err(err);
+        logger.err(String(err));
         return callback(err);
       }
 

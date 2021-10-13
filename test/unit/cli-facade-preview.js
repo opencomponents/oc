@@ -7,10 +7,12 @@ const sinon = require('sinon');
 describe('cli : facade : preview', () => {
   let openSpy, logSpy, registryStub;
 
-  const execute = function (error, url) {
+  const execute = function (error, url, done) {
     openSpy = sinon.spy();
     registryStub = {
-      getComponentPreviewUrlByUrl: sinon.stub().yields(error, url)
+      getComponentPreviewUrlByUrl: error
+        ? sinon.stub().rejects(error)
+        : sinon.stub().resolves(url)
     };
     logSpy = { err: sinon.spy() };
 
@@ -22,15 +24,14 @@ describe('cli : facade : preview', () => {
         registry: registryStub
       });
 
-    previewFacade(
-      { componentHref: 'http://components.com/component' },
-      () => {}
+    previewFacade({ componentHref: 'http://components.com/component' }, () =>
+      done()
     );
   };
 
   describe('when previewing not valid component', () => {
-    beforeEach(() => {
-      execute('404!!!', {});
+    beforeEach(done => {
+      execute('404!!!', {}, done);
     });
 
     it('should not open any preview', () => {
@@ -45,8 +46,8 @@ describe('cli : facade : preview', () => {
   });
 
   describe('when previewing valid component', () => {
-    beforeEach(() => {
-      execute(null, 'http://registry.com/component/~preview/');
+    beforeEach(done => {
+      execute(null, 'http://registry.com/component/~preview/', done);
     });
 
     it('should open /component/~preview/', () => {

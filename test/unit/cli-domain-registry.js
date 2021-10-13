@@ -10,7 +10,7 @@ const getRegistry = function (dependencies, opts) {
   const Registry = injectr(
     '../../dist/cli/domain/registry.js',
     {
-      'minimal-request': dependencies.request,
+      got: dependencies.got,
       'fs-extra': dependencies.fs,
       '../../utils/put': dependencies.put,
       '../domain/url-parser': dependencies.urlParser,
@@ -49,34 +49,36 @@ describe('cli : domain : registry', () => {
   describe('when adding registry', () => {
     describe('when registry does not end with "/"', () => {
       it('should append the slash when doing the request', done => {
-        const requestStub = sinon.stub().yields('err');
-        const registry = getRegistry({ request: requestStub });
+        const gotStub = sinon.stub().rejects(new Error('err'));
+        const registry = getRegistry({ got: gotStub });
 
-        registry.add('http://some-api.com/asd', () => {
-          expect(requestStub.getCall(0).args[0].url).to.eql(
-            'http://some-api.com/asd/'
-          );
+        registry.add('http://some-api.com/asd').finally(() => {
+          expect(gotStub.getCall(0).args[0]).to.eql('http://some-api.com/asd/');
           done();
         });
       });
 
-      it('should save the file with slashed url', () => {
-        const requestStub = sinon.stub(),
-          fsStub = {
-            readJson: sinon.stub(),
-            writeJson: sinon.spy()
-          };
+      it('should save the file with slashed url', done => {
+        const gotStub = sinon.stub().returns({
+          json: sinon.stub().resolves({ type: 'oc-registry' })
+        });
+        const fsStub = {
+          readJson: sinon.stub(),
+          writeJson: sinon.spy()
+        };
 
-        requestStub.yields(null, { type: 'oc-registry' });
+        fsStub.readJson.resolves({});
 
-        fsStub.readJson.yields(null, {});
+        const registry = getRegistry({
+          got: gotStub,
+          fs: fsStub
+        });
 
-        const registry = getRegistry({ request: requestStub, fs: fsStub });
-
-        registry.add('http://some-api.com/asd');
-
-        expect(fsStub.writeJson.getCall(0).args[1]).to.eql({
-          registries: ['http://some-api.com/asd/']
+        registry.add('http://some-api.com/asd').finally(() => {
+          expect(fsStub.writeJson.getCall(0).args[1]).to.eql({
+            registries: ['http://some-api.com/asd/']
+          });
+          done();
         });
       });
     });
@@ -151,29 +153,34 @@ describe('cli : domain : registry', () => {
     const execute = function (href, error, parsed, done) {
       const registry = getRegistry({
         request: sinon.stub().yields(error, parsed),
+        got: sinon.stub().returns({
+          json: error
+            ? sinon.stub().rejects(error)
+            : sinon.stub().resolves(parsed)
+        }),
         urlParser: {
           parse: sinon.stub().returns(parsed)
         }
       });
-      registry.getComponentPreviewUrlByUrl(href, (e, r) => {
-        err = e;
-        res = r;
-        done();
-      });
+      registry
+        .getComponentPreviewUrlByUrl(href)
+        .then(r => (res = r))
+        .catch(e => (err = e))
+        .finally(done);
     };
 
     describe('when href not valid', () => {
       beforeEach(done => {
         execute(
           'http://registry.com/not-existing-component',
-          '404!!!',
+          new Error('404!!!'),
           {},
           done
         );
       });
 
       it('should show error message', () => {
-        expect(err).to.equal('404!!!');
+        expect(err.message).to.equal('404!!!');
       });
     });
 
