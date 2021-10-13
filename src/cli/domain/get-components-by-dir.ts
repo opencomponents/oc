@@ -1,12 +1,13 @@
 import fs from 'fs-extra';
 import path from 'path';
+import { Component } from '../../types';
 
 export default function getComponentsByDir() {
   return async (componentsDir: string): Promise<string[]> => {
     const isOcComponent = (file: string) => {
       const filePath = path.resolve(componentsDir, file),
         packagePath = path.join(filePath, 'package.json');
-      let content;
+      let content: Component;
 
       try {
         content = fs.readJsonSync(packagePath);

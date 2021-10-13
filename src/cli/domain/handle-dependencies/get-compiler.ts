@@ -9,7 +9,7 @@ export default function getCompiler(options: {
   compilerDep: string;
   componentPath: string;
   logger: Logger;
-  pkg: { name: string; devDependencies: Dictionary<string> };
+  pkg: { devDependencies: Dictionary<string> };
 }): Promise<Template> {
   const { compilerDep, componentPath, logger, pkg } = options;
   const compilerPath = path.join(componentPath, 'node_modules', compilerDep);
@@ -26,7 +26,6 @@ export default function getCompiler(options: {
 
   const installOptions = {
     compilerPath,
-    componentName: pkg.name,
     componentPath,
     dependency,
     logger

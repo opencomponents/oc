@@ -1,12 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { Logger } from './cli/logger';
-
-interface PackageJson {
-  name: string;
-  version: string;
-  dependencies?: Record<string, string>;
-  devDependencies?: Record<string, string>;
-}
+import { PackageJson } from 'type-fest';
 
 export interface Author {
   name?: string;
@@ -85,14 +79,14 @@ interface OcConfiguration {
 }
 
 export interface Component extends PackageJson {
+  name: string;
+  version: string;
   allVersions: string[];
-  author: Author;
-  repository?: string;
-  dependencies: Record<string, string>;
-  description: string;
-  devDependencies: Record<string, string>;
   oc: OcConfiguration;
-  scripts: Record<string, string>;
+}
+
+export interface ParsedComponent extends Omit<Component, 'author'> {
+  author: Author;
 }
 
 export interface VM {
@@ -103,7 +97,7 @@ export interface VM {
     version: string;
     link: string;
   }>;
-  components: Component[];
+  components: ParsedComponent[];
   componentsHistory?: ComponentHistory[];
   componentsList: ComponentList[];
   componentsReleases: number;

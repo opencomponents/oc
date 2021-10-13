@@ -9,20 +9,21 @@ import getComponentsHistory from './helpers/get-components-history';
 import getAvailableDependencies from './helpers/get-available-dependencies';
 import indexView from '../views';
 import urlBuilder = require('../domain/url-builder');
-import { Author, Component, Repository } from '../../types';
+import { Author, Component, ParsedComponent, Repository } from '../../types';
 import { NextFunction, Request, Response } from 'express';
 import { IncomingHttpHeaders } from 'http';
+import { PackageJson } from 'type-fest';
 
-const packageInfo = fs.readJsonSync(
+const packageInfo: PackageJson = fs.readJsonSync(
   path.join(__dirname, '..', '..', '..', 'package.json')
 );
 
-const getParsedAuthor = (author: Author | string): Author => {
+const getParsedAuthor = (author?: Author | string): Author => {
   author = author || {};
   return typeof author === 'string' ? parseAuthor(author) : author;
 };
 
-const mapComponentDetails = (component: Component): Component =>
+const mapComponentDetails = (component: Component): ParsedComponent =>
   _.extend(component, { author: getParsedAuthor(component.author) });
 
 const isHtmlRequest = (headers: IncomingHttpHeaders) =>
@@ -43,7 +44,7 @@ export default function (repository: Repository) {
       };
 
       if (isHtmlRequest(req.headers) && !!res.conf.discovery) {
-        let componentsInfo: Component[] = [];
+        let componentsInfo: ParsedComponent[] = [];
         let componentsReleases = 0;
         const stateCounts: { deprecated?: number; experimental?: number } = {};
 

@@ -75,7 +75,6 @@ describe('cli : domain : handle-dependencies : get-compiler', () => {
         expect(installCompilerStub.args[0][0]).to.deep.equal({
           compilerPath:
             '/path/to/component/node_modules/oc-template-handlebars-compiler',
-          componentName: 'my-component',
           componentPath: '/path/to/component',
           dependency: 'oc-template-handlebars-compiler@1.2.3',
           logger: {}
@@ -98,7 +97,6 @@ describe('cli : domain : handle-dependencies : get-compiler', () => {
         expect(installCompilerStub.args[0][0]).to.deep.equal({
           compilerPath:
             '/path/to/component/node_modules/oc-template-handlebars-compiler',
-          componentName: 'my-component',
           componentPath: '/path/to/component',
           dependency: 'oc-template-handlebars-compiler',
           logger: {}
