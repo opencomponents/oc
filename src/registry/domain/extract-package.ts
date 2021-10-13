@@ -1,6 +1,7 @@
 import path from 'path';
 import targz from 'targz';
 import { promisify } from 'util';
+import { PackageJson } from 'type-fest';
 
 import getPackageJsonFromTempDir from './get-package-json-from-temp-dir';
 
@@ -12,7 +13,7 @@ export default async function extractPackage(
       }
 ): Promise<{
   outputFolder: string;
-  packageJson: any;
+  packageJson: PackageJson;
 }> {
   const packageFile: Express.Multer.File = (files as any)[0];
   const packagePath = path.resolve(packageFile.path);
