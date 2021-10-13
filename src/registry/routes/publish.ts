@@ -19,38 +19,35 @@ export default function publish(repository: Repository) {
       return;
     }
 
-    let validationResult = validator.validateOcCliVersion(
+    const ocCliValidationResult = validator.validateOcCliVersion(
       req.headers['user-agent']
     );
-    if (!validationResult.isValid) {
+    if (!ocCliValidationResult.isValid) {
       res.errorDetails = strings.errors.registry.OC_CLI_VERSION_IS_NOT_VALID(
-        validationResult.error.registryVersion,
-        validationResult.error.cliVersion
+        ocCliValidationResult.error.registryVersion,
+        ocCliValidationResult.error.cliVersion
       );
       res.status(409).json({
         code: 'cli_version_not_valid',
         error: res.errorDetails,
-        details: validationResult.error
+        details: ocCliValidationResult.error
       });
       return;
     }
 
-    // @ts-ignore
-    validationResult = validator.validateNodeVersion(
+    const nodeValidationResult = validator.validateNodeVersion(
       req.headers['user-agent'],
       process.version
     );
-    if (!validationResult.isValid) {
+    if (!nodeValidationResult.isValid) {
       res.errorDetails = strings.errors.registry.NODE_CLI_VERSION_IS_NOT_VALID(
-        // @ts-ignore
-        validationResult.error.registryNodeVersion,
-        // @ts-ignore
-        validationResult.error.cliNodeVersion
+        nodeValidationResult.error.registryNodeVersion,
+        nodeValidationResult.error.cliNodeVersion
       );
       res.status(409).json({
         code: 'node_version_not_valid',
         error: res.errorDetails,
-        details: validationResult.error
+        details: nodeValidationResult.error
       });
       return;
     }

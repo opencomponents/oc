@@ -2,7 +2,6 @@ import async from 'async';
 import coreModules from 'builtin-modules';
 import fs from 'fs-extra';
 import path from 'path';
-import _ from 'lodash';
 import { fromPromise } from 'universalify';
 
 import ensureCompilerIsDeclaredAsDevDependency from './ensure-compiler-is-declared-as-devDependency';
@@ -14,8 +13,14 @@ import strings from '../../../resources';
 import { Logger } from '../../logger';
 import { Component } from '../../../types';
 
-const getComponentPackageJson = (componentPath: string, cb: Callback<any>) =>
-  fs.readJson(path.join(componentPath, 'package.json'), cb);
+const getComponentPackageJson = (
+  componentPath: string,
+  cb: Callback<Component>
+) => fs.readJson(path.join(componentPath, 'package.json'), cb);
+
+const union = (a: ReadonlyArray<string>, b: ReadonlyArray<string>) => [
+  ...new Set([...a, ...b])
+];
 
 export default function handleDependencies(
   options: {
@@ -34,10 +39,12 @@ export default function handleDependencies(
   const { components, logger, useComponentDependencies } = options;
 
   const dependencies: Dictionary<string> = {};
-  const addDependencies = (componentDependencies: Dictionary<string>) =>
-    _.each(componentDependencies || {}, (version, dependency) => {
-      dependencies[dependency] = version;
-    });
+  const addDependencies = (componentDependencies?: Dictionary<string>) =>
+    Object.entries(componentDependencies || {}).forEach(
+      ([dependency, version]) => {
+        dependencies[dependency] = version;
+      }
+    );
 
   const templates: Dictionary<(...args: unknown[]) => unknown> = {};
   const addTemplate = (
@@ -83,21 +90,21 @@ export default function handleDependencies(
           cb: any
         ) =>
           ensureCompilerIsDeclaredAsDevDependency(options, (err, compilerDep) =>
-            cb(err, _.extend(options, { compilerDep }))
+            cb(err, Object.assign(options, { compilerDep }))
           ),
 
         (
           options: {
             componentPath: string;
             logger: Logger;
-            pkg: Component;
+            pkg: Component & { devDependencies: Dictionary<string> };
             template: string;
             compilerDep: string;
           },
           cb: any
         ) =>
           fromPromise(getCompiler)(options, (err, compiler) =>
-            cb(err, _.extend(options, { compiler }))
+            cb(err, Object.assign(options, { compiler }))
           ),
 
         (
@@ -122,15 +129,14 @@ export default function handleDependencies(
     }
 
     const result = {
-      modules: _.union(coreModules, Object.keys(dependencies)).sort(),
+      modules: union(coreModules, Object.keys(dependencies)).sort(),
       templates: Object.values(templates)
     };
     const options = { dependencies, logger };
     if (useComponentDependencies) {
-      // @ts-ignore
-      options.componentPath = components[0];
-      return fromPromise(linkMissingDependencies)(options as any, (err: any) =>
-        callback(err, result)
+      return fromPromise(linkMissingDependencies)(
+        { ...options, componentPath: components[0] },
+        (err: any) => callback(err, result)
       );
     }
     fromPromise(installMissingDependencies)(options, err =>
