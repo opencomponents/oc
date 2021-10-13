@@ -95,7 +95,7 @@ function processCommand(
   );
 }
 
-_.forEach(commands.commands, (command, commandName) => {
+Object.entries(commands.commands).forEach(([commandName, command]) => {
   processCommand(command, commandName, cli);
 });
 

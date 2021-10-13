@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import local from './domain/local';
 import { Logger } from './logger';
 import Registry from './domain/registry';
@@ -44,95 +43,101 @@ function getDeps(options: {
 
 export default {
   dev: (
-    options: Options<typeof dev> & { logger: Logger },
+    { logger, ...options }: Options<typeof dev> & { logger: Logger },
     cb: Cb<typeof dev>
   ): void => {
-    const deps = getDeps({ logger: options.logger });
-    const opts = _.omit(options, 'logger');
+    const deps = getDeps({ logger });
 
-    dev(deps)(opts, cb);
+    dev(deps)(options, cb);
   },
   init: (
-    options: Options<typeof init> & { logger: Logger },
+    { logger, ...options }: Options<typeof init> & { logger: Logger },
     cb: Cb<typeof init>
   ): void => {
-    const deps = getDeps({ logger: options.logger });
-    const opts = _.omit(options, 'logger');
+    const deps = getDeps({ logger });
 
-    init(deps)(opts, cb);
+    init(deps)(options, cb);
   },
   mock: (
-    options: Options<typeof mock> & { logger: Logger },
+    { logger, ...options }: Options<typeof mock> & { logger: Logger },
     cb: Cb<typeof mock>
   ): void => {
-    const deps = getDeps({ logger: options.logger });
-    const opts = _.omit(options, 'logger');
+    const deps = getDeps({ logger });
 
-    mock(deps)(opts, cb);
+    mock(deps)(options, cb);
   },
   package: (
-    options: Options<typeof packageScript> & { logger: Logger },
+    { logger, ...options }: Options<typeof packageScript> & { logger: Logger },
     cb: Cb<typeof packageScript>
   ): void => {
-    const deps = getDeps({ logger: options.logger });
-    const opts = _.omit(options, 'logger');
+    const deps = getDeps({ logger });
 
-    packageScript(deps)(opts, cb);
+    packageScript(deps)(options, cb);
   },
   publish: (
-    options: Options<typeof publish> & { logger: Logger; registry?: string },
+    {
+      logger,
+      ...options
+    }: Options<typeof publish> & { logger: Logger; registry?: string },
     cb: Cb<typeof publish>
   ): void => {
-    const deps = getDeps({ logger: options.logger, withRegistry: true });
-    const opts = _.omit(options, 'logger');
+    const deps = getDeps({ logger, withRegistry: true });
 
-    publish(deps)(opts, cb);
+    publish(deps)(options, cb);
   },
   preview: (
-    options: Options<typeof preview> & { logger: Logger; registry?: string },
+    {
+      logger,
+      ...options
+    }: Options<typeof preview> & { logger: Logger; registry?: string },
     cb: Cb<typeof preview>
   ): void => {
-    const deps = getDeps({ logger: options.logger, withRegistry: true });
-    const opts = _.omit(options, 'logger');
+    const deps = getDeps({ logger, withRegistry: true });
 
-    preview(deps)(opts, cb);
+    preview(deps)(options, cb);
   },
   registry: {
     add: (
-      options: Options<typeof registryAdd> & {
+      {
+        logger,
+        ...options
+      }: Options<typeof registryAdd> & {
         logger: Logger;
         registry?: string;
       },
       cb: Cb<typeof registryAdd>
     ): void => {
-      const deps = getDeps({ logger: options.logger, withRegistry: true });
-      const opts = _.omit(options, 'logger');
+      const deps = getDeps({ logger, withRegistry: true });
 
-      registryAdd(deps)(opts, cb);
+      registryAdd(deps)(options, cb);
     },
     ls: (
-      options: Options<typeof registryLs> & {
+      {
+        logger,
+        ...options
+      }: Options<typeof registryLs> & {
         logger: Logger;
         registry?: string;
       },
       cb: Cb<typeof registryLs>
     ): void => {
-      const deps = getDeps({ logger: options.logger, withRegistry: true });
-      const opts = _.omit(options, 'logger');
+      const deps = getDeps({ logger, withRegistry: true });
 
-      registryLs(deps)(opts, cb);
+      registryLs(deps)(options, cb);
     },
     remove: (
-      options: Options<typeof registryRemove> & {
+      {
+        logger,
+        ...options
+      }: Options<typeof registryRemove> & {
         logger: Logger;
         registry?: string;
       },
       cb: Cb<typeof registryRemove>
     ): void => {
-      const deps = getDeps({ logger: options.logger, withRegistry: true });
-      const opts = _.omit(options, 'logger');
+      const deps = getDeps({ logger, withRegistry: true });
 
-      registryRemove(deps)(opts, cb);
+      registryRemove(deps)(options, cb);
     }
   }
 };

@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import * as getComponentFallback from './helpers/get-component-fallback';
 import previewView from '../views/preview';
 import * as urlBuilder from '../domain/url-builder';
@@ -39,7 +37,7 @@ function componentPreview(
     );
   } else {
     res.status(200).json(
-      _.extend(component, {
+      Object.assign(component, {
         requestVersion: req.params.componentVersion || ''
       })
     );

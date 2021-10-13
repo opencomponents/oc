@@ -42,7 +42,7 @@ export default function registry(inputOptions: Input) {
     plugin: Omit<Plugin, 'callback'>,
     callback?: (...args: any[]) => void
   ) => {
-    plugins.push(_.extend(plugin, { callback }));
+    plugins.push(Object.assign(plugin, { callback }));
   };
 
   const start = (
@@ -50,7 +50,7 @@ export default function registry(inputOptions: Input) {
   ) => {
     // eslint-disable-next-line no-console
     const ok = (msg: string) => console.log(colors.green(msg));
-    if (!_.isFunction(callback)) {
+    if (typeof callback !== 'function') {
       callback = _.noop;
     }
     router.create(app, options, repository);
