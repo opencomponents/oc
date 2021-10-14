@@ -83,7 +83,7 @@ describe('cli : facade : publish', () => {
       });
 
       it('should show a message', done => {
-        sinon.stub(local, 'package').yields('the component is not valid');
+        sinon.stub(local, 'package').rejects('the component is not valid');
         execute(() => {
           local.package.restore();
           const message = logSpy.warn.args[1][0],
@@ -104,7 +104,7 @@ describe('cli : facade : publish', () => {
       describe('when packaging', () => {
         describe('when a component is not valid', () => {
           beforeEach(done => {
-            sinon.stub(local, 'package').yields('the component is not valid');
+            sinon.stub(local, 'package').rejects('the component is not valid');
             execute(done);
           });
 
@@ -121,7 +121,7 @@ describe('cli : facade : publish', () => {
 
         describe('when a component is valid', () => {
           beforeEach(() => {
-            sinon.stub(local, 'package').yields(null, mockComponent);
+            sinon.stub(local, 'package').resolves(mockComponent);
           });
 
           afterEach(() => {
@@ -130,7 +130,7 @@ describe('cli : facade : publish', () => {
 
           describe('when creating tar.gz archive', () => {
             beforeEach(() => {
-              sinon.stub(local, 'compress').yields(null);
+              sinon.stub(local, 'compress').resolves(null);
             });
 
             afterEach(() => {
@@ -319,7 +319,7 @@ describe('cli : facade : publish', () => {
                 let stub;
                 beforeEach(done => {
                   sinon.stub(registry, 'putComponent').resolves('yay');
-                  stub = sinon.stub(local, 'cleanup').yields(null, 'done');
+                  stub = sinon.stub(local, 'cleanup').resolves('done');
                   execute(done);
                 });
 
@@ -345,7 +345,7 @@ describe('cli : facade : publish', () => {
       });
       describe('when skipping packaging', () => {
         beforeEach(() => {
-          sinon.stub(local, 'compress').yields(null);
+          sinon.stub(local, 'compress').resolves(null);
         });
 
         afterEach(() => {

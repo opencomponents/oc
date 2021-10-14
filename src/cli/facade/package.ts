@@ -3,6 +3,7 @@ import path from 'path';
 import handleDependencies from '../domain/handle-dependencies';
 import { Logger } from '../logger';
 import { Component, Local } from '../../types';
+import { fromPromise } from 'universalify';
 
 const cliPackage =
   ({ local, logger }: { local: Local; logger: Logger }) =>
@@ -35,7 +36,7 @@ const cliPackage =
           production: true,
           componentPath: path.resolve(componentPath)
         };
-        local.package(packageOptions, (err, component) => {
+        fromPromise(local.package)(packageOptions, (err, component) => {
           if (err) {
             logger.err(strings.errors.cli.PACKAGE_CREATION_FAIL(String(err)));
             return callback(err as any, undefined as any);
@@ -48,16 +49,22 @@ const cliPackage =
               strings.messages.cli.COMPRESSING(compressedPackagePath)
             );
 
-            local.compress(packageDir, compressedPackagePath, err => {
-              if (err) {
-                logger.err(
-                  strings.errors.cli.PACKAGE_CREATION_FAIL(String(err))
+            fromPromise(local.compress)(
+              packageDir,
+              compressedPackagePath,
+              err => {
+                if (err) {
+                  logger.err(
+                    strings.errors.cli.PACKAGE_CREATION_FAIL(String(err))
+                  );
+                  return callback(err as any, undefined as any);
+                }
+                logger.ok(
+                  strings.messages.cli.COMPRESSED(compressedPackagePath)
                 );
-                return callback(err as any, undefined as any);
+                callback(null, component);
               }
-              logger.ok(strings.messages.cli.COMPRESSED(compressedPackagePath));
-              callback(null, component);
-            });
+            );
           } else {
             callback(null, component);
           }

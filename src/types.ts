@@ -250,42 +250,26 @@ export interface Local {
     fetchList: (dirPath: string) => Promise<string[]>;
     remove: (list: string[]) => Promise<void>;
   };
-  cleanup: (
-    compressedPackagePath: string,
-    cb: (err: NodeJS.ErrnoException) => void
-  ) => void;
-  compress: (
-    input: string,
-    output: string,
-    cb: (error: Error | string | null) => void
-  ) => void;
-  getComponentsByDir: (
-    componentsDir: string,
-    callback: Callback<string[]>
-  ) => void;
-  init: (
-    options: {
-      componentName: string;
-      logger: Logger;
-      componentPath: string;
-      templateType: string;
-    },
-    callback: Callback<string, string>
-  ) => void;
+  cleanup: (compressedPackagePath: string) => Promise<void>;
+  compress: (input: string, output: string) => Promise<void>;
+  getComponentsByDir: (componentsDir: string) => Promise<string[]>;
+  init: (options: {
+    componentName: string;
+    logger: Logger;
+    componentPath: string;
+    templateType: string;
+  }) => Promise<void>;
   mock: (params: {
     targetType: string;
     targetValue: string;
     targetName: string;
   }) => Promise<void>;
-  package: (
-    options: {
-      componentPath: string;
-      minify?: boolean;
-      verbose?: boolean;
-      production?: boolean;
-    },
-    callback: Callback<Component>
-  ) => void;
+  package: (options: {
+    componentPath: string;
+    minify?: boolean;
+    verbose?: boolean;
+    production?: boolean;
+  }) => Promise<Component>;
 }
 
 export interface Repository {

@@ -4,23 +4,23 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 describe('cli : facade : dev', () => {
-  const logSpy = {},
-    DevFacade = require('../../dist/cli/facade/dev'),
-    Local = require('../../dist/cli/domain/local').default,
-    local = Local(),
-    devFacade = DevFacade({ local, logger: logSpy });
+  const logSpy = {};
+  const DevFacade = require('../../dist/cli/facade/dev');
+  const Local = require('../../dist/cli/domain/local').default;
+  const local = Local();
+  const devFacade = DevFacade({ local, logger: logSpy });
 
-  const execute = function (dirName, port) {
+  const execute = function (done) {
     logSpy.err = sinon.spy();
     logSpy.warn = () => {};
-    devFacade({ dirName, port }, () => {});
+    devFacade({}, () => done());
   };
 
   describe('when running a dev version of the registry', () => {
     describe('when the directory is not found', () => {
-      beforeEach(() => {
-        sinon.stub(local, 'getComponentsByDir').yields(null, []);
-        execute();
+      beforeEach(done => {
+        sinon.stub(local, 'getComponentsByDir').resolves([]);
+        execute(done);
       });
 
       afterEach(() => local.getComponentsByDir.restore());
@@ -33,9 +33,9 @@ describe('cli : facade : dev', () => {
     });
 
     describe('when the directory does not contain any valid component', () => {
-      beforeEach(() => {
-        sinon.stub(local, 'getComponentsByDir').yields(null, []);
-        execute();
+      beforeEach(done => {
+        sinon.stub(local, 'getComponentsByDir').resolves([]);
+        execute(done);
       });
 
       afterEach(() => local.getComponentsByDir.restore());
