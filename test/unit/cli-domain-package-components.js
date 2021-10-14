@@ -22,13 +22,13 @@ describe('cli : domain : package-components', () => {
 
     const fsMock = {
       existsSync: sinon.stub(),
-      emptyDirSync: sinon.stub(),
-      readJsonSync: sinon.stub()
+      emptyDir: sinon.stub().resolves(),
+      readJson: sinon.stub()
     };
 
     fsMock.existsSync.returns(true);
-    fsMock.readJsonSync.onCall(0).returns(component);
-    fsMock.readJsonSync.onCall(1).returns({ version: '1.2.3' });
+    fsMock.readJson.onCall(0).resolves(component);
+    fsMock.readJson.onCall(1).resolves({ version: '1.2.3' });
 
     const pathMock = {
       join: () => ''
@@ -57,58 +57,57 @@ describe('cli : domain : package-components', () => {
       { __dirname: '' }
     ).default;
 
-    return { PackageComponents: PackageComponents };
+    return PackageComponents;
   };
 
   describe('when packaging', () => {
     describe('when component is valid', () => {
-      const PackageComponents = initialise().PackageComponents;
+      const PackageComponents = initialise();
       it('should correctly invoke the callback when template succeed packaging', done => {
-        PackageComponents()(
-          {
-            componentPath: '.',
-            minify: true
-          },
-          (err, info) => {
-            expect(err).to.be.null;
+        let info;
+        PackageComponents()({
+          componentPath: '.',
+          minify: true
+        })
+          .then(res => (info = res))
+          .finally(() => {
             expect(info).to.equal('ok');
             done();
-          }
-        );
+          });
       });
     });
 
     describe('when component parameters are not valid', () => {
-      const PackageComponents = initialise().PackageComponents;
+      const PackageComponents = initialise();
       it('should add version to package.json file', done => {
-        PackageComponents()(
-          {
-            componentPath: '',
-            minify: true
-          },
-          (err, info) => {
-            expect(err.message).to.equal('Ouch');
-            expect(info).to.be.undefined;
+        let error;
+        PackageComponents()({
+          componentPath: '',
+          minify: true
+        })
+          .catch(err => {
+            error = err;
+          })
+          .finally(() => {
+            expect(error && error.message).to.equal('Ouch');
             done();
-          }
-        );
+          });
       });
     });
 
     describe('when component name is not valid', () => {
-      const PackageComponents = initialise('h@lloworld').PackageComponents;
+      const PackageComponents = initialise('h@lloworld');
       it('should add version to package.json file', done => {
-        PackageComponents()(
-          {
-            componentPath: '',
-            minify: true
-          },
-          (err, info) => {
-            expect(err.message).to.equal('name not valid');
-            expect(info).to.be.undefined;
+        let error;
+        PackageComponents()({
+          componentPath: '.',
+          minify: true
+        })
+          .catch(err => (error = err))
+          .finally(() => {
+            expect(error.message).to.equal('name not valid');
             done();
-          }
-        );
+          });
       });
     });
   });
