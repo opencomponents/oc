@@ -28,5 +28,3 @@ const registryLs =
   };
 
 export default registryLs;
-
-module.exports = registryLs;
