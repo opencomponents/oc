@@ -15,7 +15,6 @@
     "sourceType": "module"
   },
   "rules": {
-    "one-var": ["error", "never"],
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
@@ -60,6 +59,7 @@
     "no-useless-constructor": "error",
     "no-useless-return": "error",
     "no-warning-comments": "error",
+    "one-var": ["error", "never"],
     "prefer-promise-reject-errors": "error",
     "require-await": "error",
     "symbol-description": "error"
