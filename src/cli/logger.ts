@@ -22,17 +22,17 @@ const log = (msg: string, color: Color | null, newLine: boolean) =>
   logFns[newLine ? 'writeLn' : 'write'](color ? colors[color](msg) : msg);
 
 export interface Logger {
-  err: (msg: string, noNewLine?: boolean) => void;
-  log: (msg: string, noNewLine?: boolean) => void;
-  ok: (msg: string, noNewLine?: boolean) => void;
-  warn: (msg: string, noNewLine?: boolean) => void;
+  err: (msg: string, newLine?: boolean) => void;
+  log: (msg: string, newLine?: boolean) => void;
+  ok: (msg: string, newLine?: boolean) => void;
+  warn: (msg: string, newLine?: boolean) => void;
 }
 
 const logger: Logger = {
-  err: (msg: string, noNewLine?: boolean) => log(msg, 'red', !noNewLine),
-  log: (msg: string, noNewLine?: boolean) => log(msg, null, !noNewLine),
-  ok: (msg: string, noNewLine?: boolean) => log(msg, 'green', !noNewLine),
-  warn: (msg: string, noNewLine?: boolean) => log(msg, 'yellow', !noNewLine)
+  err: (msg: string, newLine = true) => log(msg, 'red', newLine),
+  log: (msg: string, newLine = true) => log(msg, null, newLine),
+  ok: (msg: string, newLine = true) => log(msg, 'green', newLine),
+  warn: (msg: string, newLine = true) => log(msg, 'yellow', newLine)
 };
 
 export default logger;
