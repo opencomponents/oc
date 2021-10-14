@@ -37,8 +37,8 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
           headers: requestsHeaders
         }).json();
 
-        if (!apiResponse || apiResponse.type !== 'oc-registry')
-          throw 'oc registry not available';
+        if (!apiResponse) throw 'oc registry not available';
+        if (apiResponse.type !== 'oc-registry') throw 'not a valid oc registry';
 
         const res = await fs
           .readJson(settings.configFile.src)
