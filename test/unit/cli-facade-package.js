@@ -28,7 +28,7 @@ describe('cli : facade : package', () => {
 
   describe('before packaging a component', () => {
     it('should always show a message', done => {
-      sinon.stub(local, 'package').yields('the component is not valid');
+      sinon.stub(local, 'package').rejects('the component is not valid');
       execute(false, () => {
         local.package.restore();
 
@@ -47,7 +47,7 @@ describe('cli : facade : package', () => {
     describe('when packaging', () => {
       describe('when a component is not valid', () => {
         beforeEach(done => {
-          sinon.stub(local, 'package').yields('the component is not valid');
+          sinon.stub(local, 'package').rejects('the component is not valid');
           execute(false, done);
         });
 
@@ -64,7 +64,7 @@ describe('cli : facade : package', () => {
 
       describe('when a component is valid', () => {
         beforeEach(() => {
-          sinon.stub(local, 'package').yields(null, {
+          sinon.stub(local, 'package').resolves({
             name: 'hello-world',
             version: '1.0.0'
           });
@@ -97,7 +97,7 @@ describe('cli : facade : package', () => {
 
         describe('when creating tar.gz archive', () => {
           it('should not compress when option set to false', done => {
-            sinon.stub(local, 'compress').yields(null);
+            sinon.stub(local, 'compress').resolves();
 
             execute(false, () => {
               local.compress.restore();
@@ -121,7 +121,7 @@ describe('cli : facade : package', () => {
 
           describe('when compression is successful', () => {
             beforeEach(() => {
-              sinon.stub(local, 'compress').yields(null);
+              sinon.stub(local, 'compress').resolves();
             });
 
             afterEach(() => {
@@ -162,7 +162,7 @@ describe('cli : facade : package', () => {
 
           describe('when compression fails', () => {
             beforeEach(() => {
-              sinon.stub(local, 'compress').yields('error while compressing');
+              sinon.stub(local, 'compress').rejects('error while compressing');
             });
 
             afterEach(() => {
