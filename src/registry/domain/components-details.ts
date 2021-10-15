@@ -30,7 +30,7 @@ export default function componentsDetails(conf: Config, cdn: Cdn) {
     options: { componentsList: ComponentsList; details: ComponentsDetails },
     callback: Callback<ComponentsDetails, Error | undefined>
   ) => {
-    const details = _.extend({}, _.cloneDeep(options.details));
+    const details = Object.assign({}, _.cloneDeep(options.details));
     details.components = details.components || {};
 
     const missing: Array<{ name: string; version: string }> = [];

@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 import strings from '../../resources';
 
-const isCoreDependency = (x: string) => _.includes(coreModules, x);
+const isCoreDependency = (x: string) => coreModules.includes(x);
 const requireCoreDependency = (x: string) =>
   (isCoreDependency(x) && tryRequire(x)) || undefined;
 

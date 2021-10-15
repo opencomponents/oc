@@ -11,8 +11,8 @@ import * as urlParser from '../domain/url-parser';
 import { RegistryCli } from '../../types';
 
 const getOcVersion = (): string => {
-  const ocPackagePath = path.join(__dirname, '../../../package.json'),
-    ocInfo = fs.readJsonSync(ocPackagePath);
+  const ocPackagePath = path.join(__dirname, '../../../package.json');
+  const ocInfo = fs.readJsonSync(ocPackagePath);
 
   return ocInfo.version;
 };

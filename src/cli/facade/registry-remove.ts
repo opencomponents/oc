@@ -17,5 +17,3 @@ const registryRemove =
   };
 
 export default registryRemove;
-
-module.exports = registryRemove;

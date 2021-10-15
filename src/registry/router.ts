@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import ComponentRoute from './routes/component';
 import ComponentsRoute from './routes/components';
 import ComponentInfoRoute from './routes/component-info';
@@ -81,7 +79,7 @@ export function create(
   app.get(`${prefix}:componentName`, routes.component);
 
   if (conf.routes) {
-    _.forEach(conf.routes, route =>
+    conf.routes.forEach(route =>
       app[
         route.method.toLowerCase() as 'get' | 'post' | 'put' | 'patch' | 'head'
       ](route.route, route.handler)

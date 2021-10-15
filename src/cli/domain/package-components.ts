@@ -54,7 +54,7 @@ const packageComponents =
       compiler: true,
       componentPath
     });
-    const compile = promisify(ocTemplate.compile!);
+    const compile = promisify(ocTemplate.compile);
     return compile(compileOptions);
   };
 

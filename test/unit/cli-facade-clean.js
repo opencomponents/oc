@@ -24,7 +24,7 @@ describe('cli : facade : clean', () => {
 
     const CleanFacade = injectr('../../dist/cli/facade/clean.js', {
       read: readMock
-    });
+    }).default;
 
     const cleanFacade = CleanFacade({ local, logger: logSpy });
     cleanFacade(options.params, () => {

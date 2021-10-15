@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import strings from '../../resources/index';
 import { RegistryCli } from '../../types';
 import { Logger } from '../logger';
@@ -20,7 +18,7 @@ const registryLs =
           return callback(err, undefined as any);
         }
 
-        _.forEach(registries, registryLocation => logger.ok(registryLocation));
+        registries.forEach(registryLocation => logger.ok(registryLocation));
 
         callback(null, registries);
       }
@@ -28,5 +26,3 @@ const registryLs =
   };
 
 export default registryLs;
-
-module.exports = registryLs;

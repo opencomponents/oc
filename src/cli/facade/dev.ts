@@ -7,7 +7,7 @@ import _ from 'lodash';
 
 import getMockedPlugins from '../domain/get-mocked-plugins';
 import handleDependencies from '../domain/handle-dependencies';
-import oc from '../../index';
+import * as oc from '../../index';
 import strings from '../../resources/index';
 import watch from '../domain/watch';
 import { Logger } from '../logger';
@@ -238,5 +238,3 @@ const dev =
   };
 
 export default dev;
-
-module.exports = dev;
