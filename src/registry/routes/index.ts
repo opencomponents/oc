@@ -24,7 +24,7 @@ const getParsedAuthor = (author?: Author | string): Author => {
 };
 
 const mapComponentDetails = (component: Component): ParsedComponent =>
-  _.extend(component, { author: getParsedAuthor(component.author) });
+  Object.assign(component, { author: getParsedAuthor(component.author) });
 
 const isHtmlRequest = (headers: IncomingHttpHeaders) =>
   !!headers.accept && headers.accept.indexOf('text/html') >= 0;
@@ -74,14 +74,14 @@ export default function (repository: Repository) {
               res.send(
                 indexView(
                   // @ts-ignore
-                  _.extend(baseResponse, {
+                  Object.assign(baseResponse, {
                     availableDependencies: getAvailableDependencies(
                       res.conf.dependencies
                     ),
                     availablePlugins: res.conf.plugins,
                     components: componentsInfo,
                     componentsReleases,
-                    componentsList: _.map(componentsInfo, component => {
+                    componentsList: componentsInfo.map(component => {
                       const state: 'deprecated' | 'experimental' | undefined =
                         _.get(component, 'oc.state', '');
                       if (state) {
@@ -108,7 +108,7 @@ export default function (repository: Repository) {
         );
       } else {
         res.status(200).json(
-          _.extend(baseResponse, {
+          Object.assign(baseResponse, {
             components: _.map(components, component =>
               urlBuilder.component(component, res.conf.baseUrl)
             )

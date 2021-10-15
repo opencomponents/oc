@@ -73,5 +73,3 @@ const clean = ({
 };
 
 export default clean;
-
-module.exports = clean;

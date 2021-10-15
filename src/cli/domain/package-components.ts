@@ -60,7 +60,7 @@ const packageComponents =
         compiler: true,
         componentPath
       });
-      ocTemplate.compile!(compileOptions, callback);
+      ocTemplate.compile(compileOptions, callback);
     } catch (err) {
       return callback(err as any, undefined as any);
     }

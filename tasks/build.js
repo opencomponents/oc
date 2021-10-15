@@ -13,14 +13,6 @@ const ocClientPackageInfo = require(`${clientComponentDir}package.json`);
 log['start']('Building client');
 
 fs.emptyDirSync(path.join(__dirname, clientComponentDir, 'src'));
-fs.copyFileSync(
-  path.join(__dirname, clientComponentDir, 'package.json'),
-  path.join(
-    __dirname,
-    clientComponentDir.replace('src', 'dist'),
-    'package.json'
-  )
-);
 
 ocClientBrowser.getLib((err, libContent) => {
   if (err) {

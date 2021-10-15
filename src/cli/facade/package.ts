@@ -14,10 +14,10 @@ const cliPackage =
     },
     callback: Callback<Component, string>
   ): void => {
-    const componentPath = opts.componentPath,
-      useComponentDependencies = opts.useComponentDependencies,
-      packageDir = path.resolve(componentPath, '_package'),
-      compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
+    const componentPath = opts.componentPath;
+    const useComponentDependencies = opts.useComponentDependencies;
+    const packageDir = path.resolve(componentPath, '_package');
+    const compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
 
     logger.warn(strings.messages.cli.PACKAGING(packageDir));
     handleDependencies(
@@ -67,5 +67,3 @@ const cliPackage =
   };
 
 export default cliPackage;
-
-module.exports = cliPackage;
