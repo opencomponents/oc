@@ -5,8 +5,8 @@ import { Component } from '../../types';
 export default function getComponentsByDir() {
   return (componentsDir: string, callback: Callback<string[]>): void => {
     const isOcComponent = function (file: string) {
-      const filePath = path.resolve(componentsDir, file),
-        packagePath = path.join(filePath, 'package.json');
+      const filePath = path.resolve(componentsDir, file);
+      const packagePath = path.join(filePath, 'package.json');
       let content: Component;
 
       try {
