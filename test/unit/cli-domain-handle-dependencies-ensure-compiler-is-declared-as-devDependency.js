@@ -6,7 +6,8 @@ describe('cli : domain : handle-dependencies : ensure-compiler-is-declared-as-de
   const ensure =
     require('../../dist/cli/domain/handle-dependencies/ensure-compiler-is-declared-as-devDependency').default;
   describe('when compiler is declared as devDependency', () => {
-    let error, result;
+    let error;
+    let result;
     beforeEach(done => {
       ensure(
         {

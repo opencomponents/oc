@@ -23,7 +23,8 @@ describe('cli : domain : clean', () => {
 
   describe('when fetching the list of folders to clean', () => {
     describe('happy path', () => {
-      let error, result;
+      let error;
+      let result;
       beforeEach(done => {
         const clean = initialize();
         clean.fetchList('my-components-folder', (err, res) => {
@@ -59,7 +60,8 @@ describe('cli : domain : clean', () => {
 
   describe('when removing the folders to clean', () => {
     describe('happy path', () => {
-      let error, removeMock;
+      let error;
+      let removeMock;
       beforeEach(done => {
         removeMock = sinon.stub().yields(null, 'ok');
         const clean = initialize({ removeMock });
@@ -80,7 +82,8 @@ describe('cli : domain : clean', () => {
     });
 
     describe('fs.remove error', () => {
-      let error, removeMock;
+      let error;
+      let removeMock;
       beforeEach(done => {
         removeMock = sinon.stub().yields(new Error('nope'));
         const clean = initialize({ removeMock });

@@ -150,7 +150,8 @@ describe('registry', () => {
               });
 
               describe('when http listener succeeds', () => {
-                let error, result;
+                let error;
+                let result;
                 beforeEach(done => {
                   deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
                   repositoryInitStub.yields(null, 'ok');

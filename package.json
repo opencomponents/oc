@@ -9,6 +9,7 @@
   },
   "scripts": {
     "lint": "eslint src",
+    "prebuild": "rimraf dist",
     "build": "npm run lint && tsc && node tasks/build.js",
     "git-stage-and-push": "node tasks/git-stage-and-push.js",
     "npm-publish": "node tasks/npm-publish.js",
@@ -79,6 +80,7 @@
     "mocha": "9.1.2",
     "node-emoji": "1.11.0",
     "prettier": "2.4.1",
+    "rimraf": "^3.0.2",
     "semver-sort": "0.0.4",
     "simple-git": "2.46.0",
     "sinon": "11.1.2",
@@ -90,7 +92,6 @@
     "accept-language-parser": "1.5.0",
     "async": "3.2.1",
     "basic-auth-connect": "1.0.0",
-    "body-parser": "1.19.0",
     "builtin-modules": "3.2.0",
     "chokidar": "3.5.2",
     "colors": "1.4.0",

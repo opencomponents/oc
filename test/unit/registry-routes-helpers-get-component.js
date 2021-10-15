@@ -8,7 +8,9 @@ const _ = require('lodash');
 
 describe('registry : routes : helpers : get-component', () => {
   const mockedComponents = require('../fixtures/mocked-components');
-  let fireStub, mockedRepository, GetComponent;
+  let fireStub;
+  let mockedRepository;
+  let GetComponent;
   const templates = {
     'oc-template-jade': require('oc-template-jade'),
     'oc-template-handlebars': require('oc-template-handlebars')

@@ -18,7 +18,9 @@ describe('registry : routes : plugins', () => {
       link: 'http://link2.com'
     }
   };
-  let resJsonStub, statusStub, dependenciesRoute;
+  let resJsonStub;
+  let statusStub;
+  let dependenciesRoute;
 
   const DependenciesRoute = injectr(
     '../../dist/registry/routes/dependencies.js',

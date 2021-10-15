@@ -99,7 +99,9 @@ describe('registry : domain : plugins-initialiser', () => {
   });
 
   describe('when initialising valid plugins', () => {
-    let passedOptions, flag, result;
+    let passedOptions;
+    let flag;
+    let result;
     beforeEach(done => {
       const plugins = [
         {
@@ -158,7 +160,8 @@ describe('registry : domain : plugins-initialiser', () => {
   });
 
   describe('when plugin specifies dependencies', () => {
-    let passedDeps, flag;
+    let passedDeps;
+    let flag;
     beforeEach(done => {
       const plugins = [
         {
@@ -198,7 +201,8 @@ describe('registry : domain : plugins-initialiser', () => {
   });
 
   describe('when plugins have a circular dependency', () => {
-    let flag, error;
+    let flag;
+    let error;
     beforeEach(done => {
       const plugins = [
         {
@@ -271,7 +275,8 @@ describe('registry : domain : plugins-initialiser', () => {
   });
 
   describe('when plugin chain requires multiple passes', () => {
-    let flag, result;
+    let flag;
+    let result;
     beforeEach(done => {
       const plugins = [
         {

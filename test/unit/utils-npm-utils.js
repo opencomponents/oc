@@ -32,7 +32,8 @@ describe('utils : npm-utils', () => {
     scenarios.forEach(scenario => {
       const { initPath, silent } = scenario.input;
       describe(`when invoked for ${initPath} with silent=${silent}`, () => {
-        let error, onStub;
+        let error;
+        let onStub;
         beforeEach(done => {
           onStub = sinon.stub();
           crossSpawnStub.reset();
@@ -130,7 +131,9 @@ describe('utils : npm-utils', () => {
     scenarios.forEach(scenario => {
       const dependency = scenario.input.dependency;
       describe(`when invoked for installing ${dependency}`, () => {
-        let error, result, onStub;
+        let error;
+        let result;
+        let onStub;
         beforeEach(done => {
           onStub = sinon.stub();
           crossSpawnStub.reset();
@@ -248,7 +251,9 @@ describe('utils : npm-utils', () => {
       describe(`when invoked for installing [${dependencies.join(
         ', '
       )}]`, () => {
-        let error, result, onStub;
+        let error;
+        let result;
+        let onStub;
         beforeEach(done => {
           onStub = sinon.stub();
           crossSpawnStub.reset();

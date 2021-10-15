@@ -3,7 +3,8 @@
   "env": {
     "browser": true,
     "es6": true,
-    "node": true
+    "node": true,
+    "mocha": true
   },
   "extends": [
     "eslint:recommended",
@@ -59,6 +60,7 @@
     "no-useless-constructor": "error",
     "no-useless-return": "error",
     "no-warning-comments": "error",
+    "one-var": ["error", "never"],
     "prefer-promise-reject-errors": "error",
     "require-await": "error",
     "symbol-description": "error"

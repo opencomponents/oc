@@ -27,7 +27,8 @@ describe('cli : domain : init-template : install-template', () => {
       logger: { log: sinon.spy() }
     };
 
-    let error, result;
+    let error;
+    let result;
     before(done => {
       const dest = 'path/to/component/node_modules/oc-template-jade-compiler';
       npmUtils.installDependency.reset();

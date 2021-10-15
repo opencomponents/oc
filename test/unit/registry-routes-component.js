@@ -8,7 +8,11 @@ describe('registry : routes : component', () => {
   const ComponentRoute =
     require('../../dist/registry/routes/component').default;
   const mockedComponents = require('../fixtures/mocked-components');
-  let mockedRepository, resJsonStub, resSetStub, statusStub, componentRoute;
+  let mockedRepository;
+  let resJsonStub;
+  let resSetStub;
+  let statusStub;
+  let componentRoute;
 
   const templates = {
     'oc-template-jade': require('oc-template-jade'),
@@ -42,7 +46,8 @@ describe('registry : routes : component', () => {
   };
 
   describe('when getting a component with server.js execution timeout', () => {
-    let code, response;
+    let code;
+    let response;
     before(done => {
       initialise(mockedComponents['timeout-component']);
       componentRoute = ComponentRoute({}, mockedRepository);
