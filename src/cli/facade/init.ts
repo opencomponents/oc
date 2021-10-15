@@ -50,5 +50,3 @@ const init =
   };
 
 export default init;
-
-module.exports = init;
