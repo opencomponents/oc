@@ -191,14 +191,13 @@ describe('registry : domain : repository', () => {
       describe('when the get component info fails', () => {
         before(done => {
           componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
-          sinon
-            .stub(repository, 'getComponentInfo')
-            .callsFake((name, version, callback) => {
-              callback({
-                msg: 'File not valid',
-                code: 'file_not_valid'
-              });
-            });
+          sinon.stub(repository, 'getComponentInfo').callsFake(() =>
+            // eslint-disable-next-line prefer-promise-reject-errors
+            Promise.reject({
+              msg: 'File not valid',
+              code: 'file_not_valid'
+            })
+          );
           repository.getComponent('hello-world', '1.0.0', saveResult(done));
         });
         after(() => {

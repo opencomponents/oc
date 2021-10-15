@@ -20,6 +20,7 @@ import * as urlBuilder from '../../domain/url-builder';
 import * as validator from '../../domain/validators';
 import { Config, Repository } from '../../../types';
 import { IncomingHttpHeaders } from 'http';
+import { fromPromise } from 'universalify';
 
 interface Options {
   conf: Config;
@@ -372,7 +373,7 @@ export default function getComponent(conf: Config, repository: Repository) {
             if (!!cached && !conf.hotReloading) {
               returnResult(cached);
             } else {
-              repository.getCompiledView(
+              fromPromise(repository.getCompiledView)(
                 component.name,
                 component.version,
                 (err, templateText) => {
@@ -464,7 +465,7 @@ export default function getComponent(conf: Config, repository: Repository) {
               return returnComponent(e, undefined);
             }
           } else {
-            repository.getDataProvider(
+            fromPromise(repository.getDataProvider)(
               component.name,
               component.version,
               (err, dataProvider) => {

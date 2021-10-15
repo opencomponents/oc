@@ -1,4 +1,5 @@
 import fs from 'fs-extra';
+import { promisify } from 'util';
 import getUnixUtcTimestamp from 'oc-get-unix-utc-timestamp';
 import path from 'path';
 import _ from 'lodash';
@@ -19,6 +20,7 @@ import {
   Config,
   Repository
 } from '../../types';
+import { fromPromise } from 'universalify';
 
 const packageInfo = fs.readJsonSync(
   path.join(__dirname, '..', '..', '..', 'package.json')
@@ -113,18 +115,13 @@ export default function repository(conf: Config): Repository {
   };
 
   const repository = {
-    getCompiledView(
-      componentName: string,
-      componentVersion: string,
-      callback: Callback<string>
-    ) {
+    getCompiledView(componentName: string, componentVersion: string) {
       if (conf.local) {
-        return callback(null, local.getCompiledView(componentName));
+        return Promise.resolve(local.getCompiledView(componentName));
       }
 
-      cdn.getFile(
-        getFilePath(componentName, componentVersion, 'template.js'),
-        callback
+      return promisify(cdn.getFile)(
+        getFilePath(componentName, componentVersion, 'template.js')
       );
     },
     getComponent(
@@ -174,7 +171,7 @@ export default function repository(conf: Config): Repository {
           );
         }
 
-        repository.getComponentInfo(
+        fromPromise(repository.getComponentInfo)(
           componentName,
           version,
           (err, component) => {
@@ -189,13 +186,9 @@ export default function repository(conf: Config): Repository {
         );
       });
     },
-    getComponentInfo(
-      componentName: string,
-      componentVersion: string,
-      callback: Callback<Component, string>
-    ) {
+    getComponentInfo(componentName: string, componentVersion: string) {
       if (conf.local) {
-        let componentInfo;
+        let componentInfo: Component;
 
         if (componentName === 'oc-client') {
           componentInfo = fs.readJsonSync(
@@ -211,16 +204,16 @@ export default function repository(conf: Config): Repository {
         }
 
         if (componentInfo.version === componentVersion) {
-          return callback(null, componentInfo);
+          return Promise.resolve(componentInfo);
         } else {
-          return callback('version not available', undefined as any);
+          // eslint-disable-next-line prefer-promise-reject-errors
+          return Promise.reject('version not available');
         }
       }
 
-      cdn.getJson<Component>(
+      return promisify(cdn.getJson)<Component>(
         getFilePath(componentName, componentVersion, 'package.json'),
-        false,
-        callback
+        false
       );
     },
     getComponentPath(componentName: string, componentVersion: string) {
@@ -262,16 +255,9 @@ export default function repository(conf: Config): Repository {
         );
       });
     },
-    getDataProvider(
-      componentName: string,
-      componentVersion: string,
-      callback: Callback<{
-        content: string;
-        filePath: string;
-      }>
-    ) {
+    async getDataProvider(componentName: string, componentVersion: string) {
       if (conf.local) {
-        return callback(null, local.getDataProvider(componentName));
+        return local.getDataProvider(componentName);
       }
 
       const filePath = getFilePath(
@@ -280,9 +266,9 @@ export default function repository(conf: Config): Repository {
         'server.js'
       );
 
-      cdn.getFile(filePath, (err, content: string) =>
-        callback(err, content ? { content, filePath } : (null as any))
-      );
+      const content = await promisify(cdn.getFile)(filePath);
+
+      return { content, filePath };
     },
     getStaticClientPath: () =>
       `${options!.path}${getFilePath(
