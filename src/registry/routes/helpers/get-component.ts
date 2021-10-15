@@ -79,7 +79,7 @@ export default function getComponent(conf: Config, repository: Repository) {
 
       retrievingInfo.extend({ status: result.status });
 
-      _.extend(result.response, {
+      Object.assign(result.response, {
         name: options.name,
         requestVersion: options.version || ''
       });
