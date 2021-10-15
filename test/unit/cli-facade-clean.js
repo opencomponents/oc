@@ -27,9 +27,10 @@ describe('cli : facade : clean', () => {
     }).default;
 
     const cleanFacade = CleanFacade({ local, logger: logSpy });
-    cleanFacade(options.params, () => {
-      done();
-    });
+    cleanFacade(options.params)
+      .then(() => {})
+      .catch(() => {})
+      .finally(done);
   };
 
   describe('when cleaning folder', () => {

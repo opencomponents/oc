@@ -5,11 +5,11 @@ const path = require('path');
 const sinon = require('sinon');
 
 describe('cli : facade : package', () => {
-  const logSpy = {},
-    Local = require('../../dist/cli/domain/local').default,
-    local = Local(),
-    PackageFacade = require('../../dist/cli/facade/package.js').default,
-    packageFacade = PackageFacade({ local: local, logger: logSpy });
+  const logSpy = {};
+  const Local = require('../../dist/cli/domain/local').default;
+  const local = Local();
+  const PackageFacade = require('../../dist/cli/facade/package.js');
+  const packageFacade = PackageFacade({ local: local, logger: logSpy });
 
   const execute = function (compress, cb) {
     logSpy.err = sinon.stub();
@@ -18,7 +18,7 @@ describe('cli : facade : package', () => {
     packageFacade(
       {
         componentPath: 'test/fixtures/components/hello-world/',
-        compress: compress
+        compress
       },
       () => {
         cb();
@@ -32,9 +32,9 @@ describe('cli : facade : package', () => {
       execute(false, () => {
         local.package.restore();
 
-        const message = logSpy.warn.args[0][0],
-          re = new RegExp('\\' + path.sep, 'g'),
-          messageWithSlashesOnPath = message.replace(re, '/');
+        const message = logSpy.warn.args[0][0];
+        const re = new RegExp('\\' + path.sep, 'g');
+        const messageWithSlashesOnPath = message.replace(re, '/');
 
         expect(messageWithSlashesOnPath).to.include('Packaging -> ');
         expect(messageWithSlashesOnPath).to.include(
@@ -76,11 +76,11 @@ describe('cli : facade : package', () => {
 
         it('should package and show success message', done => {
           execute(false, () => {
-            const warnMessage = logSpy.warn.args[0][0],
-              okMessage = logSpy.ok.args[0][0],
-              re = new RegExp('\\' + path.sep, 'g'),
-              warnMessageWithSlashesOnPath = warnMessage.replace(re, '/'),
-              okMessageWithSlashesOnPath = okMessage.replace(re, '/');
+            const warnMessage = logSpy.warn.args[0][0];
+            const okMessage = logSpy.ok.args[0][0];
+            const re = new RegExp('\\' + path.sep, 'g');
+            const warnMessageWithSlashesOnPath = warnMessage.replace(re, '/');
+            const okMessageWithSlashesOnPath = okMessage.replace(re, '/');
 
             expect(warnMessageWithSlashesOnPath).to.include('Packaging -> ');
             expect(warnMessageWithSlashesOnPath).to.include(
@@ -97,7 +97,7 @@ describe('cli : facade : package', () => {
 
         describe('when creating tar.gz archive', () => {
           it('should not compress when option set to false', done => {
-            sinon.stub(local, 'compress').resolves();
+            sinon.stub(local, 'compress').resolves(null);
 
             execute(false, () => {
               local.compress.restore();
@@ -121,7 +121,7 @@ describe('cli : facade : package', () => {
 
           describe('when compression is successful', () => {
             beforeEach(() => {
-              sinon.stub(local, 'compress').resolves();
+              sinon.stub(local, 'compress').resolves(null);
             });
 
             afterEach(() => {

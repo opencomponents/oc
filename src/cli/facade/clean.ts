@@ -1,8 +1,11 @@
-import read from 'read';
+import readCb from 'read';
 import { fromPromise } from 'universalify';
+import { promisify } from 'util';
 import strings from '../../resources/index';
 import { Local } from '../../types';
 import { Logger } from '../logger';
+
+const read = promisify(readCb);
 
 const clean = ({
   local: {
@@ -21,56 +24,52 @@ const clean = ({
     cleanSuccess
   } = strings.messages.cli;
 
-  const prompt = (cb: (proceed: boolean) => void) =>
-    read(
-      { prompt: cleanPrompt, default: cleanPromptDefault },
-      (err, result) => {
-        if (err) return cb(false);
-        const lowered = result.toLowerCase().trim();
-        const proceed = lowered === 'y' || lowered === 'yes';
-        cb(proceed);
-      }
-    );
+  const prompt = async (): Promise<boolean> => {
+    try {
+      const result = await read({
+        prompt: cleanPrompt,
+        default: cleanPromptDefault
+      });
+      const lowered = result.toLowerCase().trim();
+      return lowered === 'y' || lowered === 'yes';
+    } catch (err) {
+      return false;
+    }
+  };
 
-  const removeFolders = (list: string[], cb: (err?: unknown) => void) =>
-    fromPromise(remove)(list, err => {
-      if (err) {
-        logger.err(strings.errors.cli.cleanRemoveError(String(err)));
-        return cb(err);
-      }
-
+  const removeFolders = async (list: string[]) => {
+    try {
+      await remove(list);
       logger.ok(cleanSuccess);
-      cb();
-    });
+    } catch (err) {
+      logger.err(strings.errors.cli.cleanRemoveError(String(err)));
+      throw err;
+    }
+  };
 
-  return (
-    opts: { dirPath: string; yes: boolean },
-    callback: (err?: unknown) => void
-  ) => {
-    fromPromise(fetchList)(opts.dirPath, (err, list) => {
-      if (err) {
-        logger.err(strings.errors.generic(String(err)));
-        return callback(err);
-      }
+  return fromPromise(async (opts: { dirPath: string; yes: boolean }) => {
+    try {
+      const list = await fetchList(opts.dirPath);
 
       if (list.length === 0) {
         logger.ok(cleanAlreadyClean);
-        return callback();
+        return;
       }
 
       logger.warn(cleanList(list));
       const shouldConfirm = !opts.yes;
 
       if (shouldConfirm) {
-        return prompt(confirmed => {
-          if (!confirmed) return callback();
-          return removeFolders(list, callback);
-        });
+        const confirmed = await prompt();
+        if (!confirmed) return;
       }
 
-      removeFolders(list, callback);
-    });
-  };
+      removeFolders(list);
+    } catch (err) {
+      logger.err(strings.errors.generic(String(err)));
+      throw err;
+    }
+  });
 };
 
 export default clean;

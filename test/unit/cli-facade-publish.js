@@ -7,16 +7,16 @@ const path = require('path');
 const sinon = require('sinon');
 
 describe('cli : facade : publish', () => {
-  const logSpy = {},
-    Registry = require('../../dist/cli/domain/registry').default,
-    registry = Registry(),
-    Local = require('../../dist/cli/domain/local').default,
-    local = Local(),
-    readStub = sinon.stub().yields(null, 'test'),
-    mockComponent = {
-      name: 'hello-world',
-      version: '1.0.0'
-    };
+  const logSpy = {};
+  const Registry = require('../../dist/cli/domain/registry').default;
+  const registry = Registry();
+  const Local = require('../../dist/cli/domain/local').default;
+  const local = Local();
+  const readStub = sinon.stub().yields(null, 'test');
+  const mockComponent = {
+    name: 'hello-world',
+    version: '1.0.0'
+  };
 
   const execute = function (
     cb,
@@ -27,21 +27,21 @@ describe('cli : facade : publish', () => {
     logSpy.ok = sinon.stub();
     logSpy.warn = sinon.stub();
     const fsMock = Object.assign(
-        {
-          existsSync: sinon.stub().returns(true),
-          readJson: sinon.stub().yields(null, mockComponent)
-        },
-        fs
-      ),
-      PublishFacade = injectr('../../dist/cli/facade/publish.js', {
-        'fs-extra': fsMock,
-        read: readStub
-      }).default,
-      publishFacade = PublishFacade({
-        registry,
-        local,
-        logger: logSpy
-      });
+      {
+        existsSync: sinon.stub().returns(true),
+        readJson: sinon.stub().resolves(mockComponent)
+      },
+      fs
+    );
+    const PublishFacade = injectr('../../dist/cli/facade/publish.js', {
+      'fs-extra': fsMock,
+      read: readStub
+    });
+    const publishFacade = PublishFacade({
+      registry,
+      local,
+      logger: logSpy
+    });
     publishFacade(
       {
         componentPath: 'test/fixtures/components/hello-world/',
@@ -86,9 +86,9 @@ describe('cli : facade : publish', () => {
         sinon.stub(local, 'package').rejects('the component is not valid');
         execute(() => {
           local.package.restore();
-          const message = logSpy.warn.args[1][0],
-            re = new RegExp('\\' + path.sep, 'g'),
-            messageWithSlashesOnPath = message.replace(re, '/');
+          const message = logSpy.warn.args[1][0];
+          const re = new RegExp('\\' + path.sep, 'g');
+          const messageWithSlashesOnPath = message.replace(re, '/');
 
           expect(logSpy.warn.args[0][0]).to.equal(
             'Ensuring dependencies are loaded...'
@@ -130,7 +130,7 @@ describe('cli : facade : publish', () => {
 
           describe('when creating tar.gz archive', () => {
             beforeEach(() => {
-              sinon.stub(local, 'compress').resolves(null);
+              sinon.stub(local, 'compress').resolves();
             });
 
             afterEach(() => {
@@ -141,9 +141,9 @@ describe('cli : facade : publish', () => {
               sinon.stub(registry, 'putComponent').rejects('blabla');
               execute(() => {
                 registry.putComponent.restore();
-                const message = logSpy.warn.args[2][0],
-                  re = new RegExp('\\' + path.sep, 'g'),
-                  messageWithSlashesOnPath = message.replace(re, '/');
+                const message = logSpy.warn.args[2][0];
+                const re = new RegExp('\\' + path.sep, 'g');
+                const messageWithSlashesOnPath = message.replace(re, '/');
 
                 expect(messageWithSlashesOnPath).to.include('Compressing -> ');
                 expect(messageWithSlashesOnPath).to.include(

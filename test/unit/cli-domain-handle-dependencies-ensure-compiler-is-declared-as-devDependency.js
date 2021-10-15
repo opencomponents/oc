@@ -6,10 +6,11 @@ describe('cli : domain : handle-dependencies : ensure-compiler-is-declared-as-de
   const ensure =
     require('../../dist/cli/domain/handle-dependencies/ensure-compiler-is-declared-as-devDependency').default;
   describe('when compiler is declared as devDependency', () => {
-    let error, result;
-    beforeEach(done => {
-      ensure(
-        {
+    let error;
+    let result;
+    beforeEach(() => {
+      try {
+        result = ensure({
           componentPath: '/path/to/component/',
           pkg: {
             devDependencies: {
@@ -17,17 +18,14 @@ describe('cli : domain : handle-dependencies : ensure-compiler-is-declared-as-de
             }
           },
           template: 'oc-template-react'
-        },
-        (err, compilerDep) => {
-          error = err;
-          result = compilerDep;
-          done();
-        }
-      );
+        });
+      } catch (err) {
+        error = err;
+      }
     });
 
     it('should return no error', () => {
-      expect(error).to.be.null;
+      expect(error).to.be.undefined;
     });
 
     it('should return the compiler dependency', () => {
@@ -37,20 +35,18 @@ describe('cli : domain : handle-dependencies : ensure-compiler-is-declared-as-de
 
   describe('when compiler is not declared as devDependency', () => {
     let error;
-    beforeEach(done => {
-      ensure(
-        {
+    beforeEach(() => {
+      try {
+        ensure({
           componentPath: '/path/to/component/',
           pkg: {
             devDependencies: {}
           },
           template: 'oc-template-react'
-        },
-        err => {
-          error = err;
-          done();
-        }
-      );
+        });
+      } catch (err) {
+        error = err;
+      }
     });
 
     it('should return the error', () => {
