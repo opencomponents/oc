@@ -80,7 +80,10 @@ function processCommand(
       }
 
       if (command.example) {
-        yargs.example(command.example.cmd, command.example.description!);
+        yargs.example(
+          command.example.cmd,
+          command.example.description || command.description
+        );
       }
 
       return yargs;

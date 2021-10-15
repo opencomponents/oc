@@ -12,11 +12,13 @@ export default function publish(repository: Repository) {
       return;
     }
 
-    if (!validator.validatePackage(req.files).isValid) {
+    const packageValidation = validator.validatePackage(req.files);
+    if (!packageValidation.isValid) {
       res.errorDetails = 'package is not valid';
       res.status(409).json({ error: res.errorDetails });
       return;
     }
+    const files = packageValidation.files;
 
     const ocCliValidationResult = validator.validateOcCliVersion(
       req.headers['user-agent']
@@ -51,7 +53,7 @@ export default function publish(repository: Repository) {
       return;
     }
 
-    extractPackage(req.files!, (err, pkgDetails) => {
+    extractPackage(files, (err, pkgDetails) => {
       if (err) {
         res.errorDetails = `Package is not valid: ${err}`;
         return res
