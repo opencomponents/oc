@@ -1,5 +1,4 @@
-import bodyParser from 'body-parser';
-import { Express } from 'express';
+import express, { Express } from 'express';
 import errorhandler from 'errorhandler';
 import morgan from 'morgan';
 
@@ -33,8 +32,8 @@ export const bind = (app: Express, options: Config): Express => {
     bodyParserUrlEncodedArgument.limit = options.postRequestPayloadSize;
   }
 
-  app.use(bodyParser.json(bodyParserJsonArgument));
-  app.use(bodyParser.urlencoded(bodyParserUrlEncodedArgument));
+  app.use(express.json(bodyParserJsonArgument));
+  app.use(express.urlencoded(bodyParserUrlEncodedArgument));
 
   app.use(cors);
   app.use(fileUploads);

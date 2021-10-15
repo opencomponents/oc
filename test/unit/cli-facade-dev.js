@@ -5,7 +5,7 @@ const sinon = require('sinon');
 
 describe('cli : facade : dev', () => {
   const logSpy = {};
-  const DevFacade = require('../../dist/cli/facade/dev');
+  const DevFacade = require('../../dist/cli/facade/dev').default;
   const Local = require('../../dist/cli/domain/local').default;
   const local = Local();
   const devFacade = DevFacade({ local, logger: logSpy });

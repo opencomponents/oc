@@ -7,19 +7,19 @@ describe('cli : facade : registry : add', () => {
   const logSpy = {},
     Registry = require('../../dist/cli/domain/registry').default,
     registry = Registry(),
-    RegistryFacade = require('../../dist/cli/facade/registry-add'),
+    RegistryFacade = require('../../dist/cli/facade/registry-add').default,
     registryFacade = RegistryFacade({ registry: registry, logger: logSpy });
 
-  const execute = function () {
+  const execute = function (done) {
     logSpy.err = sinon.spy();
     logSpy.ok = sinon.spy();
-    registryFacade({}, () => {});
+    registryFacade({}, () => done());
   };
 
   describe('when adding a not valid registry', () => {
-    beforeEach(() => {
-      sinon.stub(registry, 'add').yields('An error!!!', null);
-      execute();
+    beforeEach(done => {
+      sinon.stub(registry, 'add').rejects('An error!!!');
+      execute(done);
     });
 
     afterEach(() => {
@@ -32,9 +32,9 @@ describe('cli : facade : registry : add', () => {
   });
 
   describe('when adding a valid registry', () => {
-    beforeEach(() => {
-      sinon.stub(registry, 'add').yields(null, 'ok!');
-      execute();
+    beforeEach(done => {
+      sinon.stub(registry, 'add').resolves('ok!');
+      execute(done);
     });
 
     beforeEach(() => {

@@ -7,20 +7,20 @@ describe('cli : facade : registry : ls', () => {
   const logSpy = {},
     Registry = require('../../dist/cli/domain/registry').default,
     registry = Registry(),
-    RegistryFacade = require('../../dist/cli/facade/registry-ls'),
+    RegistryFacade = require('../../dist/cli/facade/registry-ls').default,
     registryFacade = RegistryFacade({ registry: registry, logger: logSpy });
 
-  const execute = function () {
+  const execute = function (done) {
     logSpy.err = sinon.spy();
     logSpy.ok = sinon.spy();
     logSpy.warn = sinon.spy();
-    registryFacade({}, () => {});
+    registryFacade({}, () => done());
   };
 
   describe('when no registries linked to the app', () => {
-    beforeEach(() => {
-      sinon.stub(registry, 'get').yields(null, []);
-      execute();
+    beforeEach(done => {
+      sinon.stub(registry, 'get').resolves([]);
+      execute(done);
     });
 
     afterEach(() => {
@@ -39,14 +39,14 @@ describe('cli : facade : registry : ls', () => {
   });
 
   describe('when registries linked to the app', () => {
-    beforeEach(() => {
+    beforeEach(done => {
       sinon
         .stub(registry, 'get')
-        .yields(null, [
+        .resolves([
           'http://www.registry.com',
           'https://www.anotherregistry.com'
         ]);
-      execute();
+      execute(done);
     });
 
     afterEach(() => {

@@ -1,21 +1,23 @@
+import { fromPromise } from 'universalify';
 import strings from '../../resources/index';
 import { RegistryCli } from '../../types';
 import { Logger } from '../logger';
 
-const registryRemove =
-  ({ registry, logger }: { logger: Logger; registry: RegistryCli }) =>
-  (opts: { registryUrl: string }, callback: Callback<string>): void => {
-    registry.remove(opts.registryUrl, err => {
-      if (err) {
-        logger.err(String(err));
-        return callback(err, undefined as any);
-      }
-
+const registryRemove = ({
+  registry,
+  logger
+}: {
+  logger: Logger;
+  registry: RegistryCli;
+}) =>
+  fromPromise(async (opts: { registryUrl: string }): Promise<void> => {
+    try {
+      await registry.remove(opts.registryUrl);
       logger.ok(strings.messages.cli.REGISTRY_REMOVED);
-      callback(null, 'ok');
-    });
-  };
+    } catch (err) {
+      logger.err(String(err));
+      throw err;
+    }
+  });
 
 export default registryRemove;
-
-module.exports = registryRemove;

@@ -83,7 +83,7 @@ function componentInfo(
     });
   } else {
     res.status(200).json(
-      _.extend(component, {
+      Object.assign(component, {
         requestVersion: req.params.componentVersion || ''
       })
     );
