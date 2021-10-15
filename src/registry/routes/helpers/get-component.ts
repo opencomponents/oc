@@ -375,7 +375,7 @@ export default function getComponent(conf: Config, repository: Repository) {
               repository.getCompiledView(
                 component.name,
                 component.version,
-                (err, templateText) => {
+                (_err, templateText) => {
                   let ocTemplate;
 
                   try {

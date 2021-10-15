@@ -31,7 +31,7 @@ export function create(
   const prefix = conf.prefix;
 
   if (prefix !== '/') {
-    app.get('/', (req, res) => res.redirect(prefix));
+    app.get('/', (_req, res) => res.redirect(prefix));
     app.get(prefix.substr(0, prefix.length - 1), routes.index);
   }
 

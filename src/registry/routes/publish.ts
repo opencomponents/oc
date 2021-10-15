@@ -56,9 +56,8 @@ export default function publish(repository: Repository) {
     extractPackage(files, (err, pkgDetails) => {
       if (err) {
         res.errorDetails = `Package is not valid: ${err}`;
-        return res
-          .status(500)
-          .json({ error: 'package is not valid', details: err });
+        res.status(500).json({ error: 'package is not valid', details: err });
+        return;
       }
 
       repository.publishComponent(
@@ -85,7 +84,7 @@ export default function publish(repository: Repository) {
             }
           }
 
-          res.status(200).json({ ok: true });
+          return res.status(200).json({ ok: true });
         }
       );
     });

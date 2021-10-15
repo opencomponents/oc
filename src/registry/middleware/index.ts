@@ -20,7 +20,7 @@ export const bind = (app: Express, options: Config): Express => {
   app.set('port', options.port);
   app.set('json spaces', 0);
 
-  app.use((req, res, next) => {
+  app.use((_req, res, next) => {
     res.conf = options;
     next();
   });

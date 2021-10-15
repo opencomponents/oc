@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
 export default function cors(
-  req: Request,
+  _req: Request,
   res: Response,
   next: NextFunction
 ): void {

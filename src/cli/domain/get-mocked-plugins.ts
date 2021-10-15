@@ -37,8 +37,8 @@ const isMockValid = (
 };
 
 const defaultRegister = (
-  options: unknown,
-  dependencies: unknown,
+  _options: unknown,
+  _dependencies: unknown,
   next: () => void
 ) => {
   next();

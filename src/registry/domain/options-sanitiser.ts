@@ -13,7 +13,7 @@ export default function optionsSanitiser(input: Input): Config {
   const options = _.clone(input);
 
   if (!options.publishAuth) {
-    (options as Config).beforePublish = (req, res, next) => next();
+    (options as Config).beforePublish = (_req, _res, next) => next();
   } else {
     (options as Config).beforePublish = auth.middleware(options.publishAuth);
   }

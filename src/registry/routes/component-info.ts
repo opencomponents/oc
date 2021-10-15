@@ -43,10 +43,11 @@ function componentInfo(
   req: Request,
   res: Response,
   component: Component
-) {
+): void {
   if (err) {
     res.errorDetails = (err as any).registryError || err;
-    return res.status(404).json(err);
+    res.status(404).json(err);
+    return;
   }
 
   const isHtmlRequest =
@@ -63,7 +64,7 @@ function componentInfo(
       typeof component.repository === 'string' ? component.repository : null
     );
 
-    isUrlDiscoverable(href, (err, result) => {
+    isUrlDiscoverable(href, (_err, result) => {
       if (!result.isDiscoverable) {
         href = `//${req.headers.host}${res.conf.prefix}`;
       }

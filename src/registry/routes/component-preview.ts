@@ -14,7 +14,8 @@ function componentPreview(
   if (err) {
     res.errorDetails = err.registryError || err;
     res.errorCode = 'NOT_FOUND';
-    return res.status(404).json(err);
+    res.status(404).json(err);
+    return;
   }
 
   let liveReload = '';
@@ -26,7 +27,7 @@ function componentPreview(
     !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
 
   if (isHtmlRequest && !!res.conf.discovery) {
-    return res.send(
+    res.send(
       previewView({
         component,
         href: res.conf.baseUrl,

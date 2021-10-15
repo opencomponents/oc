@@ -9,7 +9,7 @@ export default function isUrlDiscoverable(
       url,
       headers: { accept: 'text/html' }
     },
-    (err, body, details) => {
+    (err, _body, details) => {
       const isHtml = () =>
         details.response.headers['content-type'].indexOf('text/html') >= 0;
 
