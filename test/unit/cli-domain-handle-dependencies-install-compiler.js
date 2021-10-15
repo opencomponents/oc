@@ -5,8 +5,12 @@ const injectr = require('injectr');
 const sinon = require('sinon');
 
 describe('cli : domain : handle-dependencies : install-compiler', () => {
-  let cleanRequireStub, installDependencyMock, isTemplateValidStub, loggerMock;
-  let error, result;
+  let cleanRequireStub;
+  let installDependencyMock;
+  let isTemplateValidStub;
+  let loggerMock;
+  let error;
+  let result;
 
   const initialise = (options, done) => {
     cleanRequireStub = sinon.stub().returns({ theCompiler: true });

@@ -5,7 +5,8 @@ const injectr = require('injectr');
 const sinon = require('sinon');
 
 describe('cli : domain : handle-dependencies : require-template', () => {
-  let result, error;
+  let result;
+  let error;
   const execute = options => {
     error = null;
     result = null;

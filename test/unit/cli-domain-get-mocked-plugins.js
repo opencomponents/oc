@@ -14,7 +14,8 @@ describe('cli : domain : get-mocked-plugins', () => {
   };
 
   const logMock = { err: _.noop, log: _.noop, ok: _.noop, warn: _.noop };
-  let fsMock, getMockedPlugins;
+  let fsMock;
+  let getMockedPlugins;
 
   const initialise = function (fs, pathJoinStub) {
     fsMock = _.extend(
@@ -120,8 +121,8 @@ describe('cli : domain : get-mocked-plugins', () => {
         }
       };
 
-      const readMock = sinon.stub(),
-        existsMock = sinon.stub();
+      const readMock = sinon.stub();
+      const existsMock = sinon.stub();
 
       readMock.withArgs('/root/components/oc.json').returns(ocJsonComponent);
       readMock.withArgs('/root/oc.json').returns(ocJsonRoot);

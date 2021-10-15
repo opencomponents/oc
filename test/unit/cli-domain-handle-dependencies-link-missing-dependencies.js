@@ -5,7 +5,8 @@ const injectr = require('injectr');
 const sinon = require('sinon');
 
 describe('cli : domain : handle-dependencies : install-missing-dependencies', () => {
-  let error, logger;
+  let error;
+  let logger;
   const initialise = (options, done) => {
     const { dependencies, stubs } = options;
     logger = {
@@ -33,7 +34,8 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
   };
 
   describe('when there is no missing dependency', () => {
-    let dependencies, stubs;
+    let dependencies;
+    let stubs;
     beforeEach(done => {
       stubs = {
         getMissingDependencies: sinon.stub().returns([]),
@@ -54,7 +56,8 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
   });
 
   describe('when there are missing dependencies and link succeeds', () => {
-    let dependencies, stubs;
+    let dependencies;
+    let stubs;
 
     beforeEach(done => {
       stubs = {
@@ -90,7 +93,8 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
   });
 
   describe('when there are missing dependencies and link fails', () => {
-    let dependencies, stubs;
+    let dependencies;
+    let stubs;
 
     beforeEach(done => {
       stubs = {

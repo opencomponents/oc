@@ -8,7 +8,8 @@ describe('registry : domain : require-wrapper', () => {
     require('../../dist/registry/domain/require-wrapper').default;
 
   describe('when using the require wrapper in a clear context', () => {
-    let result, error;
+    let result;
+    let error;
     const execute = (dependencies, script) => {
       const context = {
         require: RequireWrapper(dependencies),

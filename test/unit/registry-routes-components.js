@@ -8,7 +8,10 @@ describe('registry : routes : components', () => {
     require('../../dist/registry/routes/components').default;
   const mockedComponents = require('../fixtures/mocked-components');
 
-  let mockedRepository, componentsRoute, code, response;
+  let mockedRepository;
+  let componentsRoute;
+  let code;
+  let response;
   const templates = {
     'oc-template-jade': require('oc-template-jade'),
     'oc-template-handlebars': require('oc-template-handlebars')

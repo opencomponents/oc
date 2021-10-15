@@ -14,8 +14,8 @@ import dev from './facade/dev';
 import init from './facade/init';
 import mock from './facade/mock';
 import packageScript from './facade/package';
-import publish from './facade/publish';
 import preview from './facade/preview';
+import publish from './facade/publish';
 import registry from './facade/registry';
 import registryAdd from './facade/registry-add';
 import registryLs from './facade/registry-ls';
@@ -27,8 +27,8 @@ const cliFunctions = {
   init,
   mock,
   package: packageScript,
-  publish,
   preview,
+  publish,
   registry,
   'registry-add': registryAdd,
   'registry-ls': registryLs,
