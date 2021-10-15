@@ -9,24 +9,26 @@ import Registry from './domain/registry';
 import strings from '../resources';
 import validateCommand from './validate-command';
 
+import clean from './facade/clean';
 import dev from './facade/dev';
 import init from './facade/init';
 import mock from './facade/mock';
 import packageScript from './facade/package';
-import publish from './facade/publish';
 import preview from './facade/preview';
+import publish from './facade/publish';
 import registry from './facade/registry';
 import registryAdd from './facade/registry-add';
 import registryLs from './facade/registry-ls';
 import registryRemove from './facade/registry-remove';
 
 const cliFunctions = {
+  clean,
   dev,
   init,
   mock,
   package: packageScript,
-  publish,
   preview,
+  publish,
   registry,
   'registry-add': registryAdd,
   'registry-ls': registryLs,
@@ -113,7 +115,8 @@ function processCommand(
       return yargs;
     },
     options => {
-      facade(options as any, (error: unknown) => {
+      // @ts-ignore Not callable
+      facade(options, (error: unknown) => {
         if (error) {
           return process.exit(1);
         }
