@@ -29,10 +29,10 @@ const publish =
     },
     callback: (err?: Error | string) => void
   ): void => {
-    const componentPath = opts.componentPath,
-      skipPackage = opts.skipPackage,
-      packageDir = path.resolve(componentPath, '_package'),
-      compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
+    const componentPath = opts.componentPath;
+    const skipPackage = opts.skipPackage;
+    const packageDir = path.resolve(componentPath, '_package');
+    const compressedPackagePath = path.resolve(componentPath, 'package.tar.gz');
 
     let errorMessage;
 
@@ -115,9 +115,10 @@ const publish =
             });
           } else if ((err as any).code === 'cli_version_not_valid') {
             const upgradeCommand = strings.commands.cli.UPGRADE(
-                (err as any).details.suggestedVersion
-              ),
-              errorDetails = strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE(
+              (err as any).details.suggestedVersion
+            );
+            const errorDetails =
+              strings.errors.cli.OC_CLI_VERSION_NEEDS_UPGRADE(
                 colors.blue(upgradeCommand)
               );
 
@@ -156,8 +157,8 @@ const publish =
       async.eachSeries(
         registryLocations,
         (registryUrl, next) => {
-          const registryNormalised = registryUrl.replace(/\/$/, ''),
-            componentRoute = `${registryNormalised}/${component.name}/${component.version}`;
+          const registryNormalised = registryUrl.replace(/\/$/, '');
+          const componentRoute = `${registryNormalised}/${component.name}/${component.version}`;
           putComponentToRegistry(
             { route: componentRoute, path: compressedPackagePath },
             next as any

@@ -56,8 +56,8 @@ export default function staticRedirector(repository: Repository) {
       return;
     }
 
-    const fileStream = fs.createReadStream(filePath),
-      fileInfo = getFileInfo(filePath);
+    const fileStream = fs.createReadStream(filePath);
+    const fileInfo = getFileInfo(filePath);
 
     if (fileInfo.mimeType) {
       res.set('Content-Type', fileInfo.mimeType);

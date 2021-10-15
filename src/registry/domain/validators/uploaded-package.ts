@@ -1,6 +1,11 @@
 type ValidationResponse =
   | {
       isValid: true;
+      files:
+        | Express.Multer.File[]
+        | {
+            [fieldname: string]: Express.Multer.File[];
+          };
     }
   | {
       isValid: false;
@@ -40,5 +45,5 @@ export default function uploadedPackage(
     return returnError('not_valid');
   }
 
-  return { isValid: true };
+  return { isValid: true, files: input };
 }

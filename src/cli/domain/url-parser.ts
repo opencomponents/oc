@@ -20,17 +20,19 @@ export function parse(parsed: {
   requestVersion: string;
   href: string;
 }): UrlParsed {
-  const requestedVersion = parsed.requestVersion,
-    href = url.parse(parsed.href),
-    relativePath = removeFinalSlashes(href.pathname || ''),
-    withoutVersion = removeFinalSlashes(
-      relativePath.replace(requestedVersion, '')
-    ),
-    componentName = withoutVersion.substr(withoutVersion.lastIndexOf('/') + 1),
-    withoutComponent = removeFinalSlashes(
-      withoutVersion.replace(componentName, '')
-    ),
-    registryUrl = href.protocol + '//' + href.host + withoutComponent + '/';
+  const requestedVersion = parsed.requestVersion;
+  const href = url.parse(parsed.href);
+  const relativePath = removeFinalSlashes(href.pathname || '');
+  const withoutVersion = removeFinalSlashes(
+    relativePath.replace(requestedVersion, '')
+  );
+  const componentName = withoutVersion.substr(
+    withoutVersion.lastIndexOf('/') + 1
+  );
+  const withoutComponent = removeFinalSlashes(
+    withoutVersion.replace(componentName, '')
+  );
+  const registryUrl = href.protocol + '//' + href.host + withoutComponent + '/';
 
   return {
     clientHref: registryUrl + 'oc-client/client.js',
