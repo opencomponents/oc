@@ -4,11 +4,11 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 describe('cli : facade : registry : ls', () => {
-  const logSpy = {},
-    Registry = require('../../dist/cli/domain/registry').default,
-    registry = Registry(),
-    RegistryFacade = require('../../dist/cli/facade/registry-ls').default,
-    registryFacade = RegistryFacade({ registry: registry, logger: logSpy });
+  const logSpy = {};
+  const Registry = require('../../dist/cli/domain/registry').default;
+  const registry = Registry();
+  const RegistryFacade = require('../../dist/cli/facade/registry-ls').default;
+  const registryFacade = RegistryFacade({ registry: registry, logger: logSpy });
 
   const execute = function () {
     logSpy.err = sinon.spy();

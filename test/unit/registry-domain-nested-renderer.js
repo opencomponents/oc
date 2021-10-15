@@ -8,7 +8,8 @@ describe('registry : routes : helpers : nested-renderer', () => {
   const NestedRenderer =
     require('../../dist/registry/domain/nested-renderer').default;
 
-  let nestedRenderer, renderer;
+  let nestedRenderer;
+  let renderer;
 
   const initialise = function (rendererMocks, conf) {
     if (_.isArray(rendererMocks)) {
@@ -102,7 +103,8 @@ describe('registry : routes : helpers : nested-renderer', () => {
 
     describe('when req is valid', () => {
       describe('when all params specified', () => {
-        let result, error;
+        let result;
+        let error;
         beforeEach(done => {
           initialise(
             {
@@ -155,7 +157,8 @@ describe('registry : routes : helpers : nested-renderer', () => {
       });
 
       describe('when minimal params specified', () => {
-        let result, error;
+        let result;
+        let error;
         beforeEach(done => {
           initialise(
             {
@@ -252,7 +255,8 @@ describe('registry : routes : helpers : nested-renderer', () => {
       });
 
       describe('when requesting not existent components', () => {
-        let result, error;
+        let result;
+        let error;
         beforeEach(done => {
           initialise({
             status: 404,
@@ -288,7 +292,8 @@ describe('registry : routes : helpers : nested-renderer', () => {
 
     describe('when req is valid', () => {
       describe('when all params specified', () => {
-        let result, error;
+        let result;
+        let error;
         beforeEach(done => {
           initialise(
             [
@@ -378,7 +383,8 @@ describe('registry : routes : helpers : nested-renderer', () => {
       });
 
       describe('when minimal params specified', () => {
-        let result, error;
+        let result;
+        let error;
         beforeEach(done => {
           initialise(
             [

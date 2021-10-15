@@ -7,7 +7,11 @@ const request = require('minimal-request');
 const _ = require('lodash');
 
 describe('registry', () => {
-  let registry, result, error, headers, status;
+  let registry;
+  let result;
+  let error;
+  let headers;
+  let status;
 
   const oc = require('../../dist/index');
 

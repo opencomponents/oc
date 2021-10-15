@@ -111,10 +111,10 @@ describe('registry : domain : version-handler', () => {
   });
 
   describe('when publishing component', () => {
-    const existingVersions = ['1.0.0', '1.0.1', '1.0.3', '1.1.0', '2.0.0'],
-      validate = function (a, b) {
-        return versionHandler.validateNewVersion(a, b);
-      };
+    const existingVersions = ['1.0.0', '1.0.1', '1.0.3', '1.1.0', '2.0.0'];
+    const validate = function (a, b) {
+      return versionHandler.validateNewVersion(a, b);
+    };
 
     describe('when version already exists', () => {
       it("shouldn't be valid", () => {

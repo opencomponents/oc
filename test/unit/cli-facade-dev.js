@@ -4,11 +4,11 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 describe('cli : facade : dev', () => {
-  const logSpy = {},
-    DevFacade = require('../../dist/cli/facade/dev').default,
-    Local = require('../../dist/cli/domain/local').default,
-    local = Local(),
-    devFacade = DevFacade({ local, logger: logSpy });
+  const logSpy = {};
+  const DevFacade = require('../../dist/cli/facade/dev').default;
+  const Local = require('../../dist/cli/domain/local').default;
+  const local = Local();
+  const devFacade = DevFacade({ local, logger: logSpy });
 
   const execute = function (dirName, port) {
     logSpy.err = sinon.spy();

@@ -5,7 +5,9 @@ const injectr = require('injectr');
 const sinon = require('sinon');
 
 describe('cli : facade : preview', () => {
-  let openSpy, logSpy, registryStub;
+  let openSpy;
+  let logSpy;
+  let registryStub;
 
   const execute = function (error, url) {
     openSpy = sinon.spy();
@@ -15,12 +17,12 @@ describe('cli : facade : preview', () => {
     logSpy = { err: sinon.spy() };
 
     const PreviewFacade = injectr('../../dist/cli/facade/preview.js', {
-        open: openSpy
-      }).default,
-      previewFacade = PreviewFacade({
-        logger: logSpy,
-        registry: registryStub
-      });
+      open: openSpy
+    }).default;
+    const previewFacade = PreviewFacade({
+      logger: logSpy,
+      registry: registryStub
+    });
 
     previewFacade(
       { componentHref: 'http://components.com/component' },

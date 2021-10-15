@@ -5,13 +5,13 @@ const injectr = require('injectr');
 const _ = require('lodash');
 
 describe('registry : domain : validator', () => {
-  const validator = require('../../dist/registry/domain/validators'),
-    baseS3Conf = {
-      bucket: 'oc-components',
-      key: 's3-key',
-      region: 'us-west2',
-      secret: 's3-secret'
-    };
+  const validator = require('../../dist/registry/domain/validators');
+  const baseS3Conf = {
+    bucket: 'oc-components',
+    key: 's3-key',
+    region: 'us-west2',
+    secret: 's3-secret'
+  };
 
   describe('when validating registry configuration', () => {
     const validate = function (a) {
@@ -404,8 +404,8 @@ describe('registry : domain : validator', () => {
     };
 
     describe('when component have not parameters', () => {
-      const componentParameters = {},
-        requestParameters = { hello: 'world' };
+      const componentParameters = {};
+      const requestParameters = { hello: 'world' };
 
       it('should be valid', () => {
         expect(validate(requestParameters, componentParameters).isValid).to.be
@@ -766,10 +766,10 @@ describe('registry : domain : validator', () => {
   });
 
   describe('when validating component version for new candidate', () => {
-    const existingVersions = ['1.0.0', '1.0.1', '2.0.0', '2.1.0'],
-      isValid = function (a, b) {
-        return validator.validateVersion(a, b);
-      };
+    const existingVersions = ['1.0.0', '1.0.1', '2.0.0', '2.1.0'];
+    const isValid = function (a, b) {
+      return validator.validateVersion(a, b);
+    };
 
     describe('when version already exists', () => {
       it('should not be valid', () => {
@@ -933,10 +933,10 @@ describe('registry : domain : validator', () => {
     const validate = validator.validatePluginsRequirements;
 
     describe('when component does not require any plugin', () => {
-      const requirements = null,
-        supportedPlugins = {
-          log: function () {}
-        };
+      const requirements = null;
+      const supportedPlugins = {
+        log: function () {}
+      };
 
       it('should be valid', () => {
         expect(validate(requirements, supportedPlugins).isValid).to.be.true;

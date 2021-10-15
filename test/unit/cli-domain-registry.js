@@ -62,11 +62,11 @@ describe('cli : domain : registry', () => {
       });
 
       it('should save the file with slashed url', () => {
-        const requestStub = sinon.stub(),
-          fsStub = {
-            readJson: sinon.stub(),
-            writeJson: sinon.spy()
-          };
+        const requestStub = sinon.stub();
+        const fsStub = {
+          readJson: sinon.stub(),
+          writeJson: sinon.spy()
+        };
 
         requestStub.yields(null, { type: 'oc-registry' });
 
@@ -85,7 +85,8 @@ describe('cli : domain : registry', () => {
 
   describe('when publishing to registry', () => {
     describe('when no credentials used', () => {
-      let args, putSpy;
+      let args;
+      let putSpy;
       beforeEach(() => {
         putSpy = sinon.spy();
         const registry = getRegistry({ put: putSpy });
@@ -114,7 +115,8 @@ describe('cli : domain : registry', () => {
     });
 
     describe('when credentials used', () => {
-      let args, putSpy;
+      let args;
+      let putSpy;
       beforeEach(() => {
         putSpy = sinon.spy();
         const registry = getRegistry({ put: putSpy });
@@ -148,7 +150,8 @@ describe('cli : domain : registry', () => {
   });
 
   describe('when getting preview url', () => {
-    let err, res;
+    let err;
+    let res;
     const execute = function (href, error, parsed, done) {
       const registry = getRegistry({
         request: sinon.stub().yields(error, parsed),

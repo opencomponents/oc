@@ -40,7 +40,8 @@ const executeComponentsListingByDir = function (local, callback) {
 
 describe('cli : domain : get-components-by-dir', () => {
   describe('when getting components from dir', () => {
-    let error, result;
+    let error;
+    let result;
     beforeEach(done => {
       const data = initialise();
 
@@ -81,7 +82,8 @@ describe('cli : domain : get-components-by-dir', () => {
   });
 
   describe('when reading a broken package.json', () => {
-    let error, result;
+    let error;
+    let result;
     beforeEach(done => {
       const data = initialise();
 
@@ -109,7 +111,8 @@ describe('cli : domain : get-components-by-dir', () => {
   });
 
   describe('when finds no components', () => {
-    let error, result;
+    let error;
+    let result;
     beforeEach(done => {
       const data = initialise();
 
