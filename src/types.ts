@@ -232,26 +232,17 @@ export interface Plugin {
 }
 
 export interface RegistryCli {
-  add(registry: string, callback: Callback<null, string>): void;
-  get(callback: Callback<string[], string>): void;
-  getApiComponentByHref(
-    href: string,
-    callback: Callback<unknown, Error | number>
-  ): void;
-  getComponentPreviewUrlByUrl(
-    componentHref: string,
-    callback: Callback<string, Error | number>
-  ): void;
-  putComponent(
-    options: {
-      username?: string;
-      password?: string;
-      route: string;
-      path: string;
-    },
-    callback: Callback<unknown, string>
-  ): void;
-  remove(registry: string, callback: Callback): void;
+  add(registry: string): Promise<void>;
+  get(): Promise<string[]>;
+  getApiComponentByHref(href: string): Promise<Component>;
+  getComponentPreviewUrlByUrl(componentHref: string): Promise<string>;
+  putComponent(options: {
+    username?: string;
+    password?: string;
+    route: string;
+    path: string;
+  }): Promise<void>;
+  remove(registry: string): Promise<void>;
 }
 
 export interface Local {

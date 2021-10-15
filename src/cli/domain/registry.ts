@@ -1,8 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
-import request from 'minimal-request';
+import got from 'got';
 import _ from 'lodash';
-import { fromPromise } from 'universalify';
 
 import put from '../../utils/put';
 import settings from '../../resources/settings';
@@ -29,100 +28,72 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
   };
 
   return {
-    add(registry: string, callback: Callback<null, string>) {
+    async add(registry: string) {
       if (registry.slice(registry.length - 1) !== '/') {
         registry += '/';
       }
+      try {
+        const apiResponse: { type: string } = await got(registry, {
+          headers: requestsHeaders
+        }).json();
 
-      request(
-        {
-          url: registry,
-          headers: requestsHeaders,
-          json: true
-        },
-        (err, apiResponse: { type: string }) => {
-          if (err || !apiResponse) {
-            return callback('oc registry not available', null);
-          } else if (apiResponse.type !== 'oc-registry') {
-            return callback('not a valid oc registry', null);
-          }
+        if (!apiResponse) throw 'oc registry not available';
+        if (apiResponse.type !== 'oc-registry') throw 'not a valid oc registry';
 
-          fs.readJson(settings.configFile.src, (err, res) => {
-            if (err) {
-              res = {};
-            }
+        const res = await fs
+          .readJson(settings.configFile.src)
+          .catch(() => ({}));
 
-            if (!res.registries) {
-              res.registries = [];
-            }
-
-            if (!_.includes(res.registries, registry)) {
-              res.registries.push(registry);
-            }
-
-            fs.writeJson(settings.configFile.src, res, callback as any);
-          });
+        if (!res.registries) {
+          res.registries = [];
         }
-      );
+
+        if (!_.includes(res.registries, registry)) {
+          res.registries.push(registry);
+        }
+
+        return fs.writeJson(settings.configFile.src, res);
+      } catch (err) {
+        throw 'oc registry not available';
+      }
     },
-    get(callback: Callback<string[], string>) {
+    async get() {
       if (opts.registry) {
-        return callback(null, [opts.registry]);
+        return [opts.registry];
       }
 
-      fs.readJson(settings.configFile.src, (err, res) => {
-        if (err || !res.registries || res.registries.length === 0) {
-          return callback('No oc registries', undefined as any);
-        }
+      try {
+        const res = await fs.readJson(settings.configFile.src);
 
-        return callback(null, res.registries);
-      });
-    },
-    getApiComponentByHref(
-      href: string,
-      callback: Callback<unknown, Error | number>
-    ) {
-      request(
-        {
-          url: href + settings.registry.componentInfoPath,
-          headers: requestsHeaders,
-          json: true
-        },
-        callback
-      );
-    },
-    getComponentPreviewUrlByUrl(
-      componentHref: string,
-      callback: Callback<string, Error | number>
-    ) {
-      request(
-        {
-          url: componentHref,
-          headers: requestsHeaders,
-          json: true
-        },
-        (err, res: { requestVersion: string; href: string }) => {
-          if (err) {
-            return callback(err, undefined as any);
-          }
+        if (!res.registries || res.registries.length === 0)
+          throw 'No oc registries';
 
-          const parsed = urlParser.parse(res);
-          callback(
-            null,
-            urlBuilder.componentPreview(parsed as any, parsed.registryUrl)
-          );
-        }
-      );
+        return res.registries;
+      } catch (err) {
+        throw 'No oc registries';
+      }
     },
-    putComponent(
-      options: {
-        username?: string;
-        password?: string;
-        route: string;
-        path: string;
-      },
-      callback: Callback<unknown, string>
-    ) {
+    getApiComponentByHref(href: string) {
+      return got(href + settings.registry.componentInfoPath, {
+        headers: requestsHeaders
+      }).json();
+    },
+    async getComponentPreviewUrlByUrl(componentHref: string) {
+      const res: { requestVersion: string; href: string } = await got(
+        componentHref,
+        { headers: requestsHeaders }
+      ).json();
+
+      const parsed = urlParser.parse(res);
+
+      return urlBuilder.componentPreview(parsed as any, parsed.registryUrl);
+    },
+    async putComponent(options: {
+      username?: string;
+      password?: string;
+      route: string;
+      path: string;
+    }) {
       if (!!options.username && !!options.password) {
         requestsHeaders = _.extend(requestsHeaders, {
           Authorization:
@@ -132,54 +103,41 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
             )
         });
       }
-
-      fromPromise(put)(
-        options.route,
-        options.path,
-        requestsHeaders,
-        (err, res) => {
-          if (err) {
-            if (!_.isObject(err)) {
-              try {
-                err = JSON.parse(String(err));
-              } catch (er) {}
-            }
-            const parsedError = err as any as { code?: string; error?: string };
-
-            if (!!parsedError.code && parsedError.code === 'ECONNREFUSED') {
-              err = 'Connection to registry has not been established';
-            } else if (
-              parsedError.code !== 'cli_version_not_valid' &&
-              parsedError.code !== 'node_version_not_valid' &&
-              !!parsedError.error
-            ) {
-              err = parsedError.error;
-            }
-
-            return callback(err as any, undefined as any);
-          }
-
-          callback(err as any, res);
+      try {
+        await put(options.route, options.path, requestsHeaders);
+      } catch (err) {
+        let parsedError = err as any as { code?: string; error?: string };
+        let errMsg = '';
+        if (!_.isObject(err)) {
+          try {
+            parsedError = JSON.parse(String(err));
+          } catch (er) {}
         }
-      );
+
+        if (!!parsedError.code && parsedError.code === 'ECONNREFUSED') {
+          errMsg = 'Connection to registry has not been established';
+        } else if (
+          parsedError.code !== 'cli_version_not_valid' &&
+          parsedError.code !== 'node_version_not_valid' &&
+          !!parsedError.error
+        ) {
+          errMsg = parsedError.error;
+        }
+
+        throw errMsg;
+      }
     },
-    remove(registry: string, callback: Callback) {
+    async remove(registry: string) {
       if (registry.slice(registry.length - 1) !== '/') {
         registry += '/';
       }
 
-      fs.readJson(settings.configFile.src, (err, res) => {
-        if (err) {
-          res = {};
-        }
+      const res = await fs
+        .readJson(settings.configFile.src)
+        .catch(() => ({ registries: [] }));
+      res.registries = _.without(res.registries, registry);
 
-        if (!res.registries) {
-          res.registries = [];
-        }
-
-        res.registries = _.without(res.registries, registry);
-        fs.writeJson(settings.configFile.src, res, callback as any);
-      });
+      await fs.writeJson(settings.configFile.src, res);
     }
   };
 }

@@ -1,28 +1,36 @@
+import { fromPromise } from 'universalify';
+
 import strings from '../../resources/index';
 import { RegistryCli } from '../../types';
 import { Logger } from '../logger';
 
-const registryLs =
-  ({ registry, logger }: { logger: Logger; registry: RegistryCli }) =>
-  (opts: unknown, callback: Callback<string[], string>): void => {
-    registry.get((err, registries) => {
-      if (err) {
-        logger.err(strings.errors.generic(err));
-        return callback(err, undefined as any);
-      } else {
-        logger.warn(strings.messages.cli.REGISTRY_LIST);
+const registryLs = ({
+  registry,
+  logger
+}: {
+  logger: Logger;
+  registry: RegistryCli;
+}) =>
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  fromPromise(async (_opts: unknown): Promise<string[]> => {
+    try {
+      const registries = await registry.get();
 
-        if (registries.length === 0) {
-          err = strings.errors.cli.REGISTRY_NOT_FOUND;
-          logger.err(err);
-          return callback(err, undefined as any);
-        }
+      logger.warn(strings.messages.cli.REGISTRY_LIST);
 
-        registries.forEach(registryLocation => logger.ok(registryLocation));
-
-        callback(null, registries);
+      if (registries.length === 0) {
+        const err = strings.errors.cli.REGISTRY_NOT_FOUND;
+        logger.err(err);
+        throw err;
       }
-    });
-  };
+
+      registries.forEach(registryLocation => logger.ok(registryLocation));
+
+      return registries;
+    } catch (err) {
+      logger.err(strings.errors.generic(String(err)));
+      throw err;
+    }
+  });
 
 export default registryLs;

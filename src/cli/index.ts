@@ -9,6 +9,7 @@ import Registry from './domain/registry';
 import strings from '../resources';
 import validateCommand from './validate-command';
 
+import clean from './facade/clean';
 import dev from './facade/dev';
 import init from './facade/init';
 import mock from './facade/mock';
@@ -21,6 +22,7 @@ import registryLs from './facade/registry-ls';
 import registryRemove from './facade/registry-remove';
 
 const cliFunctions = {
+  clean,
   dev,
   init,
   mock,
@@ -113,10 +115,9 @@ function processCommand(
       return yargs;
     },
     options => {
-      facade(options as any, (error: unknown) => {
-        if (error) {
-          return process.exit(1);
-        }
+      // @ts-ignore not callable
+      facade(options).catch(() => {
+        process.exit(1);
       });
     }
   );
