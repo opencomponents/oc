@@ -67,5 +67,3 @@ const cliPackage =
   };
 
 export default cliPackage;
-
-module.exports = cliPackage;

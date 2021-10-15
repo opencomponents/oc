@@ -228,5 +228,3 @@ const publish =
   };
 
 export default publish;
-
-module.exports = publish;

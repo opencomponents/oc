@@ -17,5 +17,3 @@ const registryAdd =
   };
 
 export default registryAdd;
-
-module.exports = registryAdd;

@@ -7,7 +7,7 @@ describe('cli : facade : registry : add', () => {
   const logSpy = {},
     Registry = require('../../dist/cli/domain/registry').default,
     registry = Registry(),
-    RegistryFacade = require('../../dist/cli/facade/registry-add'),
+    RegistryFacade = require('../../dist/cli/facade/registry-add').default,
     registryFacade = RegistryFacade({ registry: registry, logger: logSpy });
 
   const execute = function () {
