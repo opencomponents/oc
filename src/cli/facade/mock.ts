@@ -18,5 +18,3 @@ const mock = ({ local, logger }: { local: Local; logger: Logger }) =>
   );
 
 export default mock;
-
-module.exports = mock;

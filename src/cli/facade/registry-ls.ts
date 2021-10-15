@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { fromPromise } from 'universalify';
 
 import strings from '../../resources/index';
@@ -25,7 +24,7 @@ const registryLs = ({
         throw err;
       }
 
-      _.forEach(registries, registryLocation => logger.ok(registryLocation));
+      registries.forEach(registryLocation => logger.ok(registryLocation));
 
       return registries;
     } catch (err) {
@@ -35,5 +34,3 @@ const registryLs = ({
   });
 
 export default registryLs;
-
-module.exports = registryLs;

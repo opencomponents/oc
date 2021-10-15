@@ -60,6 +60,7 @@
     "no-useless-constructor": "error",
     "no-useless-return": "error",
     "no-warning-comments": "error",
+    "one-var": ["error", "never"],
     "prefer-promise-reject-errors": "error",
     "require-await": "error",
     "symbol-description": "error"

@@ -26,5 +26,3 @@ const preview = ({
   });
 
 export default preview;
-
-module.exports = preview;
