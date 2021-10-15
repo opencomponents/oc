@@ -5,8 +5,8 @@ const injectr = require('injectr');
 const sinon = require('sinon');
 
 describe('registry : domain : extract-package', () => {
-  const decompressStub = sinon.stub(),
-    pathResolveStub = sinon.stub();
+  const decompressStub = sinon.stub();
+  const pathResolveStub = sinon.stub();
 
   const extractPackage = injectr(
     '../../dist/registry/domain/extract-package.js',

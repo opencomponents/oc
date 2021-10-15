@@ -6,7 +6,10 @@ const path = require('path');
 const request = require('minimal-request');
 
 describe('registry (ui interface)', () => {
-  let registry, result, error, headers;
+  let registry;
+  let result;
+  let error;
+  let headers;
 
   const next = done => (e, r, d) => {
     error = e;

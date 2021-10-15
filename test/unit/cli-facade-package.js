@@ -8,7 +8,7 @@ describe('cli : facade : package', () => {
   const logSpy = {};
   const Local = require('../../dist/cli/domain/local').default;
   const local = Local();
-  const PackageFacade = require('../../dist/cli/facade/package.js');
+  const PackageFacade = require('../../dist/cli/facade/package.js').default;
   const packageFacade = PackageFacade({ local: local, logger: logSpy });
 
   const execute = function (compress, cb) {

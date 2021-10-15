@@ -5,7 +5,10 @@ const sinon = require('sinon');
 
 describe('registry : routes : plugins', () => {
   const PluginsRoute = require('../../dist/registry/routes/plugins').default;
-  let resJsonStub, statusStub, pluginsRoute, plugins;
+  let resJsonStub;
+  let statusStub;
+  let pluginsRoute;
+  let plugins;
 
   const initialise = function () {
     resJsonStub = sinon.stub();

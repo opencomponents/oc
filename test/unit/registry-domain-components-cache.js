@@ -26,7 +26,10 @@ describe('registry : domain : components-cache', () => {
     components: { 'hello-world': ['1.0.0', '1.0.2'] }
   });
 
-  let setTimeoutStub, clearTimeoutStub, componentsCache, eventsHandlerStub;
+  let setTimeoutStub;
+  let clearTimeoutStub;
+  let componentsCache;
+  let eventsHandlerStub;
 
   const getTimestamp = () => 12345678;
 

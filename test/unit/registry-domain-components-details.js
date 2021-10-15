@@ -22,7 +22,8 @@ describe('registry : domain : components-details', () => {
     }
   };
 
-  let error, result;
+  let error;
+  let result;
   const next = done => (err, res) => {
     error = err;
     result = res;
@@ -31,7 +32,8 @@ describe('registry : domain : components-details', () => {
 
   describe('get()', () => {
     describe('when details file exists on cdn', () => {
-      let details, stubs;
+      let details;
+      let stubs;
 
       before(done => {
         details = {

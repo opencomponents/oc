@@ -36,8 +36,10 @@ describe('cli : domain : handle-dependencies', () => {
       }
     };
 
-    let logger, spies;
-    let error, result;
+    let logger;
+    let spies;
+    let error;
+    let result;
     beforeEach(done => {
       spies = {
         ensureCompilerIsDeclaredAsDevDependency: sinon.spy(),

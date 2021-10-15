@@ -4,11 +4,11 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 describe('cli : facade : mock', () => {
-  const logSpy = {},
-    MockFacade = require('../../dist/cli/facade/mock').default,
-    Local = require('../../dist/cli/domain/local').default,
-    local = Local(),
-    mockFacade = MockFacade({ local: local, logger: logSpy });
+  const logSpy = {};
+  const MockFacade = require('../../dist/cli/facade/mock').default;
+  const Local = require('../../dist/cli/domain/local').default;
+  const local = Local();
+  const mockFacade = MockFacade({ local: local, logger: logSpy });
 
   const execute = function (done) {
     logSpy.ok = sinon.spy();
