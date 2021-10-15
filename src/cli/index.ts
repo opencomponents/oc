@@ -9,6 +9,30 @@ import Registry from './domain/registry';
 import strings from '../resources';
 import validateCommand from './validate-command';
 
+import dev from './facade/dev';
+import init from './facade/init';
+import mock from './facade/mock';
+import packageScript from './facade/package';
+import publish from './facade/publish';
+import preview from './facade/preview';
+import registry from './facade/registry';
+import registryAdd from './facade/registry-add';
+import registryLs from './facade/registry-ls';
+import registryRemove from './facade/registry-remove';
+
+const cliFunctions = {
+  dev,
+  init,
+  mock,
+  package: packageScript,
+  publish,
+  preview,
+  registry,
+  'registry-add': registryAdd,
+  'registry-ls': registryLs,
+  'registry-remove': registryRemove
+};
+
 const currentNodeVersion = process.version;
 const minSupportedVersion = '6.0.0';
 if (semver.lt(currentNodeVersion, minSupportedVersion)) {
@@ -46,10 +70,10 @@ function processCommand(
   prefix = ''
 ) {
   const level = (lvl || 0) + 1;
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const facade = require(`./facade/${prefix}${commandName}`).default(
-    dependencies
-  );
+  const facade =
+    cliFunctions[`${prefix}${commandName}` as keyof typeof cliFunctions](
+      dependencies
+    );
 
   cli.command(
     command.cmd || commandName,
@@ -80,13 +104,16 @@ function processCommand(
       }
 
       if (command.example) {
-        yargs.example(command.example.cmd, command.example.description!);
+        yargs.example(
+          command.example.cmd,
+          command.example.description || command.description
+        );
       }
 
       return yargs;
     },
     options => {
-      facade(options, (error: unknown) => {
+      facade(options as any, (error: unknown) => {
         if (error) {
           return process.exit(1);
         }

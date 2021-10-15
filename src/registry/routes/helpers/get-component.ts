@@ -52,18 +52,18 @@ export type GetComponentResult = {
 };
 
 export default function getComponent(conf: Config, repository: Repository) {
-  const client = Client({ templates: conf.templates }),
-    cache = new Cache({
-      verbose: !!conf.verbosity,
-      refreshInterval: conf.refreshInterval
-    });
+  const client = Client({ templates: conf.templates });
+  const cache = new Cache({
+    verbose: !!conf.verbosity,
+    refreshInterval: conf.refreshInterval
+  });
 
   const renderer = function (
     options: Options,
     cb: (result: GetComponentResult) => void
   ) {
-    const nestedRenderer = NestedRenderer(renderer, options.conf),
-      retrievingInfo = GetComponentRetrievingInfo(options);
+    const nestedRenderer = NestedRenderer(renderer, options.conf);
+    const retrievingInfo = GetComponentRetrievingInfo(options);
     let responseHeaders: Dictionary<string> = {};
 
     const getLanguage = () => {
@@ -155,18 +155,18 @@ export default function getComponent(conf: Config, repository: Repository) {
 
         // sanitise and check params
         const appliedParams = applyDefaultValues(
-            requestedComponent.parameters,
-            component.oc.parameters
-          ),
-          params = sanitiser.sanitiseComponentParameters(
-            appliedParams,
-            component.oc.parameters
-          ),
-          validationResult = validator.validateComponentParameters(
-            // @ts-ignore
-            params,
-            component.oc.parameters
-          );
+          requestedComponent.parameters,
+          component.oc.parameters
+        );
+        const params = sanitiser.sanitiseComponentParameters(
+          appliedParams,
+          component.oc.parameters
+        );
+        const validationResult = validator.validateComponentParameters(
+          // @ts-ignore
+          params,
+          component.oc.parameters
+        );
 
         if (!validationResult.isValid) {
           return callback({

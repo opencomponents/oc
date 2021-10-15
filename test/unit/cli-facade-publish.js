@@ -36,7 +36,7 @@ describe('cli : facade : publish', () => {
       PublishFacade = injectr('../../dist/cli/facade/publish.js', {
         'fs-extra': fsMock,
         read: readStub
-      }),
+      }).default,
       publishFacade = PublishFacade({
         registry,
         local,

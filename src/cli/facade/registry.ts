@@ -5,5 +5,3 @@ const registry =
   };
 
 export default registry;
-
-module.exports = registry;
