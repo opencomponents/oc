@@ -291,12 +291,9 @@ export interface Repository {
     componentVersion: string
   ): Promise<Component>;
   getComponentPath(componentName: string, componentVersion: string): void;
-  getComponents(callback: Callback<string[]>): void;
+  getComponents(): Promise<string[]>;
   getComponentsDetails(callback: Callback<ComponentsDetails, string>): void;
-  getComponentVersions(
-    componentName: string,
-    callback: Callback<string[], string>
-  ): void;
+  getComponentVersions(componentName: string): Promise<string[]>;
   getDataProvider(
     componentName: string,
     componentVersion: string

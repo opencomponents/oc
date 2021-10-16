@@ -20,7 +20,7 @@ import {
   Config,
   Repository
 } from '../../types';
-import { fromPromise } from 'universalify';
+import { fromCallback, fromPromise } from 'universalify';
 
 const packageInfo = fs.readJsonSync(
   path.join(__dirname, '..', '..', '..', 'package.json')
@@ -140,51 +140,54 @@ export default function repository(conf: Config): Repository {
         ? (componentVersionOrCallback as any)
         : callbackMaybe!;
 
-      repository.getComponentVersions(componentName, (err, allVersions) => {
-        if (err) {
-          return callback(err, undefined as any);
-        }
-
-        if (allVersions.length === 0) {
-          return callback(
-            strings.errors.registry.COMPONENT_NOT_FOUND(
-              componentName,
-              repositorySource
-            ),
-            undefined as any
-          );
-        }
-
-        const version = versionHandler.getAvailableVersion(
-          componentVersion,
-          allVersions
-        );
-
-        if (!version) {
-          return callback(
-            strings.errors.registry.COMPONENT_VERSION_NOT_FOUND(
-              componentName,
-              componentVersion || '',
-              repositorySource
-            ),
-            undefined as any
-          );
-        }
-
-        fromPromise(repository.getComponentInfo)(
-          componentName,
-          version,
-          (err, component) => {
-            if (err) {
-              return callback(
-                `component not available: ${errorToString(err)}`,
-                null as any
-              );
-            }
-            callback(null, _.extend(component, { allVersions }));
+      fromPromise(repository.getComponentVersions)(
+        componentName,
+        (err: any, allVersions) => {
+          if (err) {
+            return callback(err, undefined as any);
           }
-        );
-      });
+
+          if (allVersions.length === 0) {
+            return callback(
+              strings.errors.registry.COMPONENT_NOT_FOUND(
+                componentName,
+                repositorySource
+              ),
+              undefined as any
+            );
+          }
+
+          const version = versionHandler.getAvailableVersion(
+            componentVersion,
+            allVersions
+          );
+
+          if (!version) {
+            return callback(
+              strings.errors.registry.COMPONENT_VERSION_NOT_FOUND(
+                componentName,
+                componentVersion || '',
+                repositorySource
+              ),
+              undefined as any
+            );
+          }
+
+          fromPromise(repository.getComponentInfo)(
+            componentName,
+            version,
+            (err, component) => {
+              if (err) {
+                return callback(
+                  `component not available: ${errorToString(err)}`,
+                  null as any
+                );
+              }
+              callback(null, _.extend(component, { allVersions }));
+            }
+          );
+        }
+      );
     },
     getComponentInfo(componentName: string, componentVersion: string) {
       if (conf.local) {
@@ -222,14 +225,13 @@ export default function repository(conf: Config): Repository {
         : `${options!.path}${options!.componentsDir}/`;
       return `${prefix}${componentName}/${componentVersion}/`;
     },
-    getComponents(callback: Callback<string[]>) {
+    async getComponents() {
       if (conf.local) {
-        return callback(null, local.getComponents());
+        return local.getComponents();
       }
 
-      componentsCache.get((err, res) =>
-        callback(err, res ? Object.keys(res.components) : (null as any))
-      );
+      const { components } = await componentsCache.get();
+      return Object.keys(components);
     },
     getComponentsDetails(callback: Callback<ComponentsDetails, string>) {
       if (conf.local) {
@@ -238,22 +240,16 @@ export default function repository(conf: Config): Repository {
 
       componentsDetails.get(callback);
     },
-    getComponentVersions(
-      componentName: string,
-      callback: Callback<string[], string>
-    ) {
+    async getComponentVersions(componentName: string) {
       if (conf.local) {
-        return local.getComponentVersions(componentName, callback);
+        return fromCallback(local.getComponentVersions)(componentName);
       }
 
-      componentsCache.get((err, res) => {
-        callback(
-          err as any,
-          !!res && !!_.has(res.components, componentName)
-            ? res.components[componentName]
-            : []
-        );
-      });
+      const res = await componentsCache.get();
+
+      return _.has(res.components, componentName)
+        ? res.components[componentName]
+        : [];
     },
     async getDataProvider(componentName: string, componentVersion: string) {
       if (conf.local) {
@@ -295,13 +291,12 @@ export default function repository(conf: Config): Repository {
 
     getTemplatesInfo: () => templatesInfo,
     getTemplate: (type: string) => templatesHash[type],
-
     init(callback: Callback<ComponentsList | string>) {
       if (conf.local) {
         return callback(null, 'ok');
       }
 
-      componentsCache.load((err, componentsList) => {
+      fromPromise(componentsCache.load)((err: any, componentsList) => {
         if (err) {
           return callback(err, undefined as any);
         }
@@ -367,7 +362,7 @@ export default function repository(conf: Config): Repository {
         );
       }
 
-      repository.getComponentVersions(
+      fromPromise(repository.getComponentVersions)(
         componentName,
         (err, componentVersions) => {
           if (
@@ -407,12 +402,17 @@ export default function repository(conf: Config): Repository {
                   if (err) {
                     return callback(err as any, undefined as any);
                   }
-                  componentsCache.refresh((err, componentsList) => {
-                    if (err) {
-                      return callback(err as any, undefined as any);
+                  fromPromise(componentsCache.refresh)(
+                    (err, componentsList) => {
+                      if (err) {
+                        return callback(err as any, undefined as any);
+                      }
+                      componentsDetails.refresh(
+                        componentsList,
+                        callback as any
+                      );
                     }
-                    componentsDetails.refresh(componentsList, callback as any);
-                  });
+                  );
                 }
               );
             }
