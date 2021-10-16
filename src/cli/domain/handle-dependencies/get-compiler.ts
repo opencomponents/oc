@@ -1,4 +1,5 @@
 import path from 'path';
+import { Template } from '../../../types';
 
 import cleanRequire from '../../../utils/clean-require';
 import { Logger } from '../../logger';
@@ -11,11 +12,11 @@ export default function getCompiler(
     logger: Logger;
     pkg: { devDependencies: Dictionary<string> };
   },
-  cb: Callback<string, string | number>
+  cb: Callback<Template, string | number>
 ): void {
   const { compilerDep, componentPath, logger, pkg } = options;
   const compilerPath = path.join(componentPath, 'node_modules', compilerDep);
-  const compiler = cleanRequire(compilerPath, { justTry: true });
+  const compiler = cleanRequire<Template>(compilerPath, { justTry: true });
 
   if (compiler) {
     return cb(null, compiler);
