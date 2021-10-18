@@ -9,7 +9,7 @@ const buildInstallCommand = (options: {
   save?: boolean;
   isDev?: boolean;
 }) => {
-  const args = ['install', '--prefix', options.installPath];
+  const args = ['install'];
 
   if (options.save) {
     args.push('--save-exact');
