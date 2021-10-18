@@ -206,7 +206,7 @@ export interface Template {
   getCompiledTemplate: (
     templateString: string,
     key: string,
-    context: Record<string, unknown>
+    context?: Record<string, unknown>
   ) => CompiledTemplate;
   getInfo: () => TemplateInfo;
   render: (
