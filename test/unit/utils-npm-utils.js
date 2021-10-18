@@ -74,8 +74,6 @@ describe('utils : npm-utils', () => {
         },
         output: [
           'install',
-          '--prefix',
-          'path/to/component',
           '--save-exact',
           '--save-dev',
           'oc-template-jade-compiler',
@@ -89,14 +87,7 @@ describe('utils : npm-utils', () => {
           isDev: true,
           save: false
         },
-        output: [
-          'install',
-          '--prefix',
-          'path/to/component',
-          '--no-save',
-          'lodash',
-          '--no-package-lock'
-        ]
+        output: ['install', '--no-save', 'lodash', '--no-package-lock']
       },
       {
         input: {
@@ -107,8 +98,6 @@ describe('utils : npm-utils', () => {
         },
         output: [
           'install',
-          '--prefix',
-          'path/to/component',
           '--save-exact',
           '--save',
           'underscore',
@@ -119,8 +108,6 @@ describe('utils : npm-utils', () => {
         input: { dependency: 'oc-client@~1.2.3', installPath, save: false },
         output: [
           'install',
-          '--prefix',
-          'path/to/component',
           '--no-save',
           'oc-client@~1.2.3',
           '--no-package-lock'
@@ -184,8 +171,6 @@ describe('utils : npm-utils', () => {
         },
         output: [
           'install',
-          '--prefix',
-          'path/to/component',
           '--save-exact',
           '--save-dev',
           'oc-template-jade-compiler',
@@ -202,8 +187,6 @@ describe('utils : npm-utils', () => {
         },
         output: [
           'install',
-          '--prefix',
-          'path/to/component',
           '--no-save',
           'moment',
           'lodash',
@@ -219,8 +202,6 @@ describe('utils : npm-utils', () => {
         },
         output: [
           'install',
-          '--prefix',
-          'path/to/component',
           '--save-exact',
           '--save',
           'underscore',
@@ -236,8 +217,6 @@ describe('utils : npm-utils', () => {
         },
         output: [
           'install',
-          '--prefix',
-          'path/to/component',
           '--no-save',
           'oc-client@~1.2.3',
           'oc-template-react-compiler',
