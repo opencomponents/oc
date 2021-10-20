@@ -46,7 +46,8 @@ describe('cli : domain : init-template : install-template', () => {
         dependency: 'oc-template-jade-compiler',
         installPath: 'path/to/component',
         isDev: true,
-        save: true
+        save: true,
+        usePrefix: false
       });
     });
 

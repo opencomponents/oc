@@ -8,8 +8,13 @@ const buildInstallCommand = (options: {
   installPath: string;
   save?: boolean;
   isDev?: boolean;
+  usePrefix: boolean;
 }) => {
   const args = ['install'];
+
+  if (options.usePrefix) {
+    args.push('--prefix', options.installPath);
+  }
 
   if (options.save) {
     args.push('--save-exact');
@@ -54,7 +59,12 @@ export const init = (
 };
 
 export const installDependencies = (
-  options: { dependencies: string[]; installPath: string; silent: boolean },
+  options: {
+    dependencies: string[];
+    installPath: string;
+    silent: boolean;
+    usePrefix: boolean;
+  },
   callback: Callback<{ dest: string }, string | number>
 ): void => {
   const { dependencies, installPath, silent } = options;
@@ -75,7 +85,12 @@ export const installDependencies = (
 };
 
 export const installDependency = (
-  options: { dependency: string; installPath: string; silent?: boolean },
+  options: {
+    dependency: string;
+    installPath: string;
+    silent?: boolean;
+    usePrefix: boolean;
+  },
   callback: Callback<{ dest: string }, string | number>
 ): void => {
   const { dependency, installPath, silent } = options;
