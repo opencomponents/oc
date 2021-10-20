@@ -1,5 +1,15 @@
 ## Change Log
 
+### v0.49.2
+
+- [#1259](https://github.com/opencomponents/oc/pull/1259) [BUGFIX] remove prefix command on npm
+- [#1249](https://github.com/opencomponents/oc/pull/1249) [INTERNAL] use internal body-parser from express >=4.16
+- [#1250](https://github.com/opencomponents/oc/pull/1250) [INTERNAL] reduce lodash functions where they are easy replaceable
+- [#1216](https://github.com/opencomponents/oc/pull/1216) [#1218](https://github.com/opencomponents/oc/pull/1218) [#1219](https://github.com/opencomponents/oc/pull/1219) [#1220](https://github.com/opencomponents/oc/pull/1220) [#1221](https://github.com/opencomponents/oc/pull/1221) [#1222](https://github.com/opencomponents/oc/pull/1222) [#1223](https://github.com/opencomponents/oc/pull/1223) [#1224](https://github.com/opencomponents/oc/pull/1224) [#1225](https://github.com/opencomponents/oc/pull/1225) [#1226](https://github.com/opencomponents/oc/pull/1226) [#1227](https://github.com/opencomponents/oc/pull/1227) [#1228](https://github.com/opencomponents/oc/pull/1228) [#1229](https://github.com/opencomponents/oc/pull/1229) [#1231](https://github.com/opencomponents/oc/pull/1231) [#1232](https://github.com/opencomponents/oc/pull/1232) [#1233](https://github.com/opencomponents/oc/pull/1233) [#1234](https://github.com/opencomponents/oc/pull/1234) [#1235](https://github.com/opencomponents/oc/pull/1235) [#1236](https://github.com/opencomponents/oc/pull/1236) [#1237](https://github.com/opencomponents/oc/pull/1237) [#1238](https://github.com/opencomponents/oc/pull/1238) [#1239](https://github.com/opencomponents/oc/pull/1239) [#1240](https://github.com/opencomponents/oc/pull/1240) [#1243](https://github.com/opencomponents/oc/pull/1243) [#1244](https://github.com/opencomponents/oc/pull/1244) [#1248](https://github.com/opencomponents/oc/pull/1248) [#1251](https://github.com/opencomponents/oc/pull/1251) [#1252](https://github.com/opencomponents/oc/pull/1252) [#1254](https://github.com/opencomponents/oc/pull/1254) [INTERNAL] Move to Typescript
+- [#1217](https://github.com/opencomponents/oc/pull/1217) [INTERNAL] update packages
+- [#1209](https://github.com/opencomponents/oc/pull/1209) [INTERNAL] remove wrap-cli-callback
+- [#1210](https://github.com/opencomponents/oc/pull/1210) [INTERNAL] remove new references on non-classes
+
 ### v0.49.1
 
 - [#1215](https://github.com/opencomponents/oc/pull/1215) add default empty object for object keys
