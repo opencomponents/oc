@@ -19,7 +19,8 @@ export default async function installCompiler(options: {
     dependency,
     installPath: componentPath,
     save: false,
-    silent: true
+    silent: true,
+    usePrefix: false
   };
   const errorMsg = 'There was a problem while installing the compiler';
 

@@ -22,7 +22,8 @@ export default async function installTemplate(
     dependency: compiler,
     installPath: componentPath,
     isDev: true,
-    save: true
+    save: true,
+    usePrefix: false
   };
 
   logger.log(strings.messages.cli.installCompiler(compiler));
