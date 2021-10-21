@@ -6,8 +6,13 @@ const buildInstallCommand = (options: {
   installPath: string;
   save?: boolean;
   isDev?: boolean;
+  usePrefix: boolean;
 }) => {
   const args = ['install'];
+
+  if (options.usePrefix) {
+    args.push('--prefix', options.installPath);
+  }
 
   if (options.save) {
     args.push('--save-exact');
@@ -64,6 +69,7 @@ export const installDependencies = async (options: {
   dependencies: string[];
   installPath: string;
   silent: boolean;
+  usePrefix: boolean;
 }): Promise<{ dest: string[] }> => {
   const { dependencies, installPath, silent } = options;
   const npmi = buildInstallCommand(options);
@@ -86,6 +92,7 @@ export const installDependency = async (options: {
   dependency: string;
   installPath: string;
   silent?: boolean;
+  usePrefix: boolean;
 }): Promise<{ dest: string }> => {
   const { dependency, installPath, silent } = options;
   const npmi = buildInstallCommand(options);
