@@ -23,7 +23,8 @@ export default async function installMissingDependencies(options: {
     dependencies: missing,
     installPath: path.resolve('.'),
     save: false,
-    silent: true
+    silent: true,
+    usePrefix: true
   };
 
   try {
