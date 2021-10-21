@@ -56,7 +56,8 @@ describe('cli : domain : handle-dependencies : install-compiler', () => {
         dependency: 'oc-template-react-compiler@1.2.3',
         installPath: '/path/to/components/component/',
         save: false,
-        silent: true
+        silent: true,
+        usePrefix: false
       });
     });
 
