@@ -22,7 +22,8 @@ export default function installCompiler(
     dependency,
     installPath: componentPath,
     save: false,
-    silent: true
+    silent: true,
+    usePrefix: false
   };
 
   npm.installDependency(npmOptions, err => {
