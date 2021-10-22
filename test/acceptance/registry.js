@@ -4,7 +4,6 @@ const expect = require('chai').expect;
 const emptyResponseHandler = require('oc-empty-response-handler');
 const path = require('path');
 const request = require('minimal-request');
-const _ = require('lodash');
 
 describe('registry', () => {
   let registry;
@@ -111,9 +110,10 @@ describe('registry', () => {
       before(done => {
         registry.close();
         initializeRegistry(
-          _.extend(getDefaultTestConfiguration(), {
+          {
+            ...getDefaultTestConfiguration(),
             customHeadersToSkipOnWeakVersion: ['Cache-Control']
-          }),
+          },
           done
         );
       });
@@ -273,9 +273,10 @@ describe('registry', () => {
       before(done => {
         registry.close();
         initializeRegistry(
-          _.extend(getDefaultTestConfiguration(), {
+          {
+            ...getDefaultTestConfiguration(),
             customHeadersToSkipOnWeakVersion: ['Cache-Control']
-          }),
+          },
           done
         );
       });

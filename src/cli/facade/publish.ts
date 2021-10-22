@@ -111,7 +111,7 @@ const publish =
             logger.warn(strings.messages.cli.REGISTRY_CREDENTIALS_REQUIRED);
 
             return getCredentials((err, credentials) => {
-              putComponentToRegistry(_.extend(options, credentials), cb);
+              putComponentToRegistry(Object.assign(options, credentials), cb);
             });
           } else if ((err as any).code === 'cli_version_not_valid') {
             const upgradeCommand = strings.commands.cli.UPGRADE(
