@@ -184,7 +184,7 @@ export default function repository(conf: Config): Repository {
                 null as any
               );
             }
-            callback(null, _.extend(component, { allVersions }));
+            callback(null, Object.assign(component, { allVersions }));
           }
         );
       });
@@ -362,7 +362,7 @@ export default function repository(conf: Config): Repository {
       }
 
       const validationResult = validator.validatePackageJson(
-        _.extend(pkgDetails, {
+        Object.assign(pkgDetails, {
           componentName,
           customValidator: conf.publishValidation
         })
