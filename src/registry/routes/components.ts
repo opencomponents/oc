@@ -44,7 +44,7 @@ export default function components(
       return returnError(
         registryErrors.BATCH_ROUTE_COMPONENTS_PROPERTY_MISSING
       );
-    } else if (!_.isArray(components)) {
+    } else if (!Array.isArray(components)) {
       return returnError(registryErrors.BATCH_ROUTE_COMPONENTS_NOT_ARRAY);
     }
 

@@ -37,28 +37,28 @@ export default function optionsSanitiser(input: Input): Config {
     options.tempDir = settings.registry.defaultTempPath;
   }
 
-  if (!_.isBoolean(options.hotReloading)) {
+  if (typeof options.hotReloading !== 'boolean') {
     options.hotReloading = !!options.local;
   }
 
-  if (_.isUndefined(options.verbosity)) {
+  if (!options.verbosity) {
     options.verbosity = 0;
   }
 
-  if (_.isUndefined(options.discovery)) {
+  if (typeof options.discovery === 'undefined') {
     options.discovery = true;
   }
 
-  if (_.isUndefined(options.pollingInterval)) {
+  if (typeof options.pollingInterval === 'undefined') {
     options.pollingInterval = 5;
   }
 
-  if (_.isUndefined(options.templates)) {
+  if (!options.templates) {
     options.templates = [];
   }
 
   if (
-    !_.isUndefined(options.fallbackRegistryUrl) &&
+    typeof options.fallbackRegistryUrl !== 'undefined' &&
     _.last(options.fallbackRegistryUrl) !== '/'
   ) {
     options.fallbackRegistryUrl += '/';

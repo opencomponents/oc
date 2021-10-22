@@ -12,7 +12,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
   let renderer;
 
   const initialise = function (rendererMocks, conf) {
-    if (_.isArray(rendererMocks)) {
+    if (Array.isArray(rendererMocks)) {
       renderer = sinon.stub();
 
       _.each(rendererMocks, (rendererMock, i) => {
