@@ -31,14 +31,14 @@ export default function staticRedirector(repository: Repository) {
       } else {
         return res.redirect(repository.getStaticClientMapPath());
       }
-    } else if (req.params.componentName === 'oc-client') {
+    } else if (req.params['componentName'] === 'oc-client') {
       filePath = path.join(
         __dirname,
         '../../components/oc-client/_package/' + req.params[0]
       );
     } else {
       filePath =
-        path.join(res.conf.path, req.params.componentName) +
+        path.join(res.conf.path, req.params['componentName']) +
         '/_package/' +
         req.params[0];
     }

@@ -18,9 +18,9 @@ export default function component(
         conf: res.conf,
         headers: req.headers,
         ip: req.ip,
-        name: req.params.componentName,
+        name: req.params['componentName'],
         parameters: req.query as any,
-        version: req.params.componentVersion
+        version: req.params['componentVersion']
       },
       result => {
         if (result.response.error) {

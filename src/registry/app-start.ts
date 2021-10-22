@@ -28,7 +28,7 @@ export default function appStart(
 
   logger.log(
     colors.yellow(
-      `Connecting to library: ${options.storage.options.bucket}/${options.storage.options.componentsDir}`
+      `Connecting to library: ${options.storage.options['bucket']}/${options.storage.options.componentsDir}`
     )
   );
 
