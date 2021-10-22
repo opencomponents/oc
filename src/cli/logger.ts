@@ -18,21 +18,21 @@ const logFns = {
   write: (msg: string) => process.stdout.write(msg.toString())
 };
 
-const log = (msg: string, color: Color | null, newLine: boolean) =>
-  logFns[newLine ? 'writeLn' : 'write'](color ? colors[color](msg) : msg);
+const log = (msg: string, color: Color | null, keepLine: boolean) =>
+  logFns[keepLine ? 'write' : 'writeLn'](color ? colors[color](msg) : msg);
 
 export interface Logger {
-  err: (msg: string, noNewLine?: boolean) => void;
-  log: (msg: string, noNewLine?: boolean) => void;
-  ok: (msg: string, noNewLine?: boolean) => void;
-  warn: (msg: string, noNewLine?: boolean) => void;
+  err: (msg: string, keepLine?: boolean) => void;
+  log: (msg: string, keepLine?: boolean) => void;
+  ok: (msg: string, keepLine?: boolean) => void;
+  warn: (msg: string, keepLine?: boolean) => void;
 }
 
 const logger: Logger = {
-  err: (msg: string, noNewLine?: boolean) => log(msg, 'red', !noNewLine),
-  log: (msg: string, noNewLine?: boolean) => log(msg, null, !noNewLine),
-  ok: (msg: string, noNewLine?: boolean) => log(msg, 'green', !noNewLine),
-  warn: (msg: string, noNewLine?: boolean) => log(msg, 'yellow', !noNewLine)
+  err: (msg: string, keepLine?: boolean) => log(msg, 'red', !!keepLine),
+  log: (msg: string, keepLine?: boolean) => log(msg, null, !!keepLine),
+  ok: (msg: string, keepLine?: boolean) => log(msg, 'green', !!keepLine),
+  warn: (msg: string, keepLine?: boolean) => log(msg, 'yellow', !!keepLine)
 };
 
 export default logger;
