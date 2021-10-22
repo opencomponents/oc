@@ -96,7 +96,7 @@ export default function (repository: Repository) {
                     }),
                     componentsHistory:
                       !res.conf.local && getComponentsHistory(details),
-                    q: req.query.q || '',
+                    q: req.query['q'] || '',
                     stateCounts,
                     templates: repository.getTemplatesInfo(),
                     title: 'OpenComponents Registry'
