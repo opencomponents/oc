@@ -318,7 +318,7 @@ export default function getComponent(conf: Config, repository: Repository) {
             callback({
               status: 200,
               headers: responseHeaders,
-              response: _.extend(response, {
+              response: Object.assign(response, {
                 data: data,
                 template: {
                   src: repository.getStaticFilePath(
@@ -364,7 +364,7 @@ export default function getComponent(conf: Config, repository: Repository) {
                   callback({
                     status: 200,
                     headers: responseHeaders,
-                    response: _.extend(response, { html })
+                    response: Object.assign(response, { html })
                   });
                 }
               );

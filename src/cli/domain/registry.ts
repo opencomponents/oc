@@ -95,7 +95,7 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
       path: string;
     }) {
       if (!!options.username && !!options.password) {
-        requestsHeaders = _.extend(requestsHeaders, {
+        requestsHeaders = Object.assign(requestsHeaders, {
           Authorization:
             'Basic ' +
             new Buffer(options.username + ':' + options.password).toString(

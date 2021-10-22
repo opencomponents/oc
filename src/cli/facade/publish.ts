@@ -102,7 +102,7 @@ const publish = ({
 
             const credentials = await getCredentials();
 
-            await putComponentToRegistry(_.extend(options, credentials));
+            await putComponentToRegistry(Object.assign(options, credentials));
           } else if (err.code === 'cli_version_not_valid') {
             const upgradeCommand = strings.commands.cli.UPGRADE(
               err.details.suggestedVersion

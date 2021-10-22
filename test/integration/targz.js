@@ -4,7 +4,6 @@ const expect = require('chai').expect;
 const fs = require('fs-extra');
 const path = require('path');
 const targz = require('targz');
-const _ = require('lodash');
 
 describe('The targz dependency', () => {
   describe('when compressing a folder with targz', () => {
@@ -21,9 +20,7 @@ describe('The targz dependency', () => {
           dest: file,
           tar: {
             map: function (fileName) {
-              return _.extend(fileName, {
-                name: 'hello-world/' + fileName.name
-              });
+              return { ...fileName, name: 'hello-world/' + fileName.name };
             }
           }
         },

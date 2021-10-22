@@ -18,16 +18,14 @@ describe('cli : domain : get-mocked-plugins', () => {
   let getMockedPlugins;
 
   const initialise = function (fs, pathJoinStub) {
-    fsMock = _.extend(
-      {
-        existsSync: sinon.stub().returns(true),
-        readFileSync: sinon.stub().returns('file content'),
-        readJsonSync: sinon.stub().returns({ content: true }),
-        realpathSync: sinon.stub().returns('/root/'),
-        writeFile: sinon.stub().yields(null, 'ok')
-      },
-      fs || {}
-    );
+    fsMock = {
+      existsSync: sinon.stub().returns(true),
+      readFileSync: sinon.stub().returns('file content'),
+      readJsonSync: sinon.stub().returns({ content: true }),
+      realpathSync: sinon.stub().returns('/root/'),
+      writeFile: sinon.stub().yields(null, 'ok'),
+      ...fs
+    };
 
     const fakePathFunc = function () {
       return _.toArray(arguments)
