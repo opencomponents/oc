@@ -1,8 +1,6 @@
-import async from 'async';
 import coreModules from 'builtin-modules';
 import fs from 'fs-extra';
 import path from 'path';
-import { fromPromise } from 'universalify';
 
 import ensureCompilerIsDeclaredAsDevDependency from './ensure-compiler-is-declared-as-devDependency';
 import getCompiler from './get-compiler';
@@ -11,31 +9,23 @@ import linkMissingDependencies from './link-missing-dependencies';
 import isTemplateLegacy from '../../../utils/is-template-legacy';
 import strings from '../../../resources';
 import { Logger } from '../../logger';
-import { Component } from '../../../types';
+import { Component, Template } from '../../../types';
 
-const getComponentPackageJson = (
-  componentPath: string,
-  cb: Callback<Component>
-) => fs.readJson(path.join(componentPath, 'package.json'), cb);
+const getComponentPackageJson = (componentPath: string): Promise<Component> =>
+  fs.readJson(path.join(componentPath, 'package.json'));
 
 const union = (a: ReadonlyArray<string>, b: ReadonlyArray<string>) => [
   ...new Set([...a, ...b])
 ];
 
-export default function handleDependencies(
-  options: {
-    components: string[];
-    logger: Logger;
-    useComponentDependencies?: boolean;
-  },
-  callback: Callback<
-    {
-      modules: string[];
-      templates: Array<(...args: unknown[]) => unknown>;
-    },
-    string
-  >
-): void {
+export default async function handleDependencies(options: {
+  components: string[];
+  logger: Logger;
+  useComponentDependencies?: boolean;
+}): Promise<{
+  modules: string[];
+  templates: Array<Template>;
+}> {
   const { components, logger, useComponentDependencies } = options;
 
   const dependencies: Dictionary<string> = {};
@@ -46,101 +36,58 @@ export default function handleDependencies(
       }
     );
 
-  const templates: Dictionary<(...args: unknown[]) => unknown> = {};
-  const addTemplate = (
-    templateName: string,
-    template: (...args: unknown[]) => unknown
-  ) => {
+  const templates: Dictionary<Template> = {};
+  const addTemplate = (templateName: string, template: Template) => {
     templates[templateName] = template;
   };
 
-  const setupComponentDependencies = (
-    componentPath: string,
-    done: (err?: unknown) => void
-  ) =>
-    async.waterfall(
-      [
-        (cb: Callback<Component>) => getComponentPackageJson(componentPath, cb),
-        (
-          pkg: Component,
-          cb: Callback<{
-            componentPath: string;
-            logger: Logger;
-            pkg: Component;
-            template: string;
-          }>
-        ) => {
-          addDependencies(pkg.dependencies);
+  const setupComponentDependencies = async (
+    componentPath: string
+  ): Promise<void> => {
+    const pkg = await getComponentPackageJson(componentPath);
+    addDependencies(pkg.dependencies);
 
-          const template = pkg.oc.files.template.type;
-          if (isTemplateLegacy(template)) {
-            return done();
-          }
+    const template = pkg.oc.files.template.type;
+    if (isTemplateLegacy(template)) {
+      return;
+    }
 
-          cb(null, { componentPath, logger, pkg, template });
-        },
+    const compilerDep = ensureCompilerIsDeclaredAsDevDependency({
+      componentPath,
+      pkg,
+      template
+    });
+    Object.assign(options, { compilerDep });
 
-        (
-          options: {
-            componentPath: string;
-            logger: Logger;
-            pkg: Component;
-            template: string;
-          },
-          cb: any
-        ) =>
-          ensureCompilerIsDeclaredAsDevDependency(options, (err, compilerDep) =>
-            cb(err, Object.assign(options, { compilerDep }))
-          ),
-
-        (
-          options: {
-            componentPath: string;
-            logger: Logger;
-            pkg: Component & { devDependencies: Dictionary<string> };
-            template: string;
-            compilerDep: string;
-          },
-          cb: any
-        ) =>
-          fromPromise(getCompiler)(options, (err, compiler) =>
-            cb(err, Object.assign(options, { compiler }))
-          ),
-
-        (
-          options: {
-            compiler: (...args: unknown[]) => unknown;
-            template: string;
-          },
-          cb: any
-        ) => {
-          const { compiler, template } = options;
-          addTemplate(template, compiler);
-          cb();
-        }
-      ],
-      done
-    );
+    const compiler = await getCompiler({
+      compilerDep,
+      componentPath,
+      logger,
+      pkg: pkg as { devDependencies: Dictionary<string> }
+    });
+    Object.assign(options, { compiler });
+    addTemplate(template, compiler);
+  };
 
   logger.warn(strings.messages.cli.CHECKING_DEPENDENCIES);
-  async.eachSeries(components, setupComponentDependencies, err => {
-    if (err) {
-      return callback(err as any, undefined as any);
-    }
 
-    const result = {
-      modules: union(coreModules, Object.keys(dependencies)).sort(),
-      templates: Object.values(templates)
-    };
-    const options = { dependencies, logger };
-    if (useComponentDependencies) {
-      return fromPromise(linkMissingDependencies)(
-        { ...options, componentPath: components[0] },
-        (err: any) => callback(err, result)
-      );
-    }
-    fromPromise(installMissingDependencies)(options, err =>
-      callback(err as any, result)
-    );
-  });
+  for (const component of components) {
+    await setupComponentDependencies(component);
+  }
+
+  const result = {
+    modules: union(coreModules, Object.keys(dependencies)).sort(),
+    templates: Object.values(templates)
+  };
+  if (useComponentDependencies) {
+    linkMissingDependencies({
+      componentPath: components[0],
+      dependencies,
+      logger
+    });
+    return result;
+  }
+
+  await installMissingDependencies({ dependencies, logger });
+  return result;
 }

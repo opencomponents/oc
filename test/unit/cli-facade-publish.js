@@ -29,7 +29,7 @@ describe('cli : facade : publish', () => {
     const fsMock = Object.assign(
       {
         existsSync: sinon.stub().returns(true),
-        readJson: sinon.stub().yields(null, mockComponent)
+        readJson: sinon.stub().resolves(mockComponent)
       },
       fs
     );
@@ -130,7 +130,7 @@ describe('cli : facade : publish', () => {
 
           describe('when creating tar.gz archive', () => {
             beforeEach(() => {
-              sinon.stub(local, 'compress').resolves(null);
+              sinon.stub(local, 'compress').resolves();
             });
 
             afterEach(() => {

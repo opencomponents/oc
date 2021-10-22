@@ -18,7 +18,7 @@ describe('cli : facade : package', () => {
     packageFacade(
       {
         componentPath: 'test/fixtures/components/hello-world/',
-        compress: compress
+        compress
       },
       () => {
         cb();
@@ -97,7 +97,7 @@ describe('cli : facade : package', () => {
 
         describe('when creating tar.gz archive', () => {
           it('should not compress when option set to false', done => {
-            sinon.stub(local, 'compress').resolves();
+            sinon.stub(local, 'compress').resolves(null);
 
             execute(false, () => {
               local.compress.restore();
@@ -121,7 +121,7 @@ describe('cli : facade : package', () => {
 
           describe('when compression is successful', () => {
             beforeEach(() => {
-              sinon.stub(local, 'compress').resolves();
+              sinon.stub(local, 'compress').resolves(null);
             });
 
             afterEach(() => {
