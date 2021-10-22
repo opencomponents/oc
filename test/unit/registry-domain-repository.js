@@ -5,7 +5,6 @@ const fs = require('fs-extra');
 const injectr = require('injectr');
 const path = require('path');
 const sinon = require('sinon');
-const _ = require('lodash');
 
 describe('registry : domain : repository', () => {
   let response;
@@ -150,7 +149,7 @@ describe('registry : domain : repository', () => {
 
       describe('when the templates specificed on the configuaration are core-templates', () => {
         it('should only return uniques templates', () => {
-          const conf = _.extend(cdnConfiguration, {
+          const conf = Object.assign(cdnConfiguration, {
             templates: [require('oc-template-jade')]
           });
           const repository = Repository(conf);
@@ -161,7 +160,7 @@ describe('registry : domain : repository', () => {
       describe('when templates specificed on the configuaration are not installed', () => {
         it('should throw an error', () => {
           try {
-            const conf = _.extend(cdnConfiguration, {
+            const conf = Object.assign(cdnConfiguration, {
               templates: [require('oc-template-react')]
             });
             Repository(conf);
@@ -360,7 +359,7 @@ describe('registry : domain : repository', () => {
             s3Mock.putDir = sinon.stub();
             s3Mock.putDir.yields(null, 'done');
             repository.publishComponent(
-              _.extend(pkg, {
+              Object.assign(pkg, {
                 outputFolder: '/path/to/component',
                 componentName: 'hello-world'
               }),

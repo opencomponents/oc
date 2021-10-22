@@ -72,7 +72,7 @@ export default function components(
             headers: req.headers,
             ip: req.ip,
             omitHref: !!req.body.omitHref,
-            parameters: _.extend({}, req.body.parameters, component.parameters),
+            parameters: { ...req.body.parameters, ...component.parameters },
             version: component.version
           },
           result => callback(null, result)
