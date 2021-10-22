@@ -382,7 +382,7 @@ export default function repository(conf: Config): Repository {
 
       repository.getComponentVersions(
         componentName,
-        (err, componentVersions) => {
+        (_err, componentVersions) => {
           if (
             !versionHandler.validateNewVersion(
               componentVersion,
