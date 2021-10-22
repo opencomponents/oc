@@ -13,6 +13,13 @@ describe('registry : domain : repository', () => {
     response = { error, result };
     callback();
   };
+  const savePromiseResult = (promise, done) => {
+    response = {};
+    promise
+      .then(res => (response.result = res))
+      .catch(err => (response.error = err))
+      .finally(done);
+  };
 
   describe('when on cdn configuration', () => {
     const componentsCacheMock = {
@@ -94,8 +101,8 @@ describe('registry : domain : repository', () => {
 
     describe('when getting the list of available components', () => {
       before(done => {
-        componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
-        repository.getComponents(saveResult(done));
+        componentsCacheMock.get.returns(componentsCacheBaseResponse);
+        savePromiseResult(repository.getComponents(), done);
       });
 
       it('should fetch the list from the cache', () => {
@@ -103,7 +110,7 @@ describe('registry : domain : repository', () => {
       });
 
       it('should respond without an error', () => {
-        expect(response.error).to.be.null;
+        expect(response.error).to.be.undefined;
       });
 
       it('should list the components', () => {
@@ -177,7 +184,7 @@ describe('registry : domain : repository', () => {
     describe('when trying to get a not valid component', () => {
       describe('when the component does not exist', () => {
         before(done => {
-          componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
+          componentsCacheMock.get.returns(componentsCacheBaseResponse);
           repository.getComponent('form-component', '1.0.0', saveResult(done));
         });
 
@@ -190,7 +197,7 @@ describe('registry : domain : repository', () => {
       });
       describe('when the get component info fails', () => {
         before(done => {
-          componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
+          componentsCacheMock.get.returns(componentsCacheBaseResponse);
           sinon.stub(repository, 'getComponentInfo').callsFake(() =>
             // eslint-disable-next-line prefer-promise-reject-errors
             Promise.reject({
@@ -212,7 +219,7 @@ describe('registry : domain : repository', () => {
       });
       describe('when the component exists but version does not', () => {
         before(done => {
-          componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
+          componentsCacheMock.get.returns(componentsCacheBaseResponse);
           repository.getComponent('hello-world', '2.0.0', saveResult(done));
         });
 
@@ -227,7 +234,7 @@ describe('registry : domain : repository', () => {
 
     describe('when getting an existing component', () => {
       before(done => {
-        componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
+        componentsCacheMock.get.returns(componentsCacheBaseResponse);
         s3Mock.getJson.yields(null, { name: 'hello-world', version: '1.0.0' });
         repository.getComponent('hello-world', '1.0.0', saveResult(done));
       });
@@ -319,7 +326,7 @@ describe('registry : domain : repository', () => {
 
         describe('when component with same name and version is already in library', () => {
           before(done => {
-            componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
+            componentsCacheMock.get.returns(componentsCacheBaseResponse);
             repository.publishComponent(
               pkg,
               'hello-world',
@@ -342,12 +349,9 @@ describe('registry : domain : repository', () => {
         describe('when component with same name and version is not in library', () => {
           before(done => {
             componentsCacheMock.get = sinon.stub();
-            componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
+            componentsCacheMock.get.returns(componentsCacheBaseResponse);
             componentsCacheMock.refresh = sinon.stub();
-            componentsCacheMock.refresh.yields(
-              null,
-              componentsCacheBaseResponse
-            );
+            componentsCacheMock.refresh.resolves(componentsCacheBaseResponse);
             componentsDetailsMock.get.yields(
               null,
               componentsDetailsBaseResponse
@@ -407,11 +411,11 @@ describe('registry : domain : repository', () => {
 
     describe('when getting the list of available components', () => {
       before(done => {
-        repository.getComponents(saveResult(done));
+        savePromiseResult(repository.getComponents(), done);
       });
 
       it('should respond without an error', () => {
-        expect(response.error).to.be.null;
+        expect(response.error).to.be.undefined;
       });
 
       it('should list the components', () => {

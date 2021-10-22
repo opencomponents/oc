@@ -13,6 +13,7 @@ import * as router from './router';
 import sanitiseOptions from './domain/options-sanitiser';
 import * as validator from './domain/validators';
 import { ComponentsList, Config, Plugin } from '../types';
+import { fromPromise } from 'universalify';
 
 interface Input extends Partial<Omit<Config, 'beforePublish'>> {
   baseUrl: string;
@@ -71,7 +72,7 @@ export default function registry(inputOptions: Input) {
           componentsInfo: ComponentsList,
           cb: Callback<ComponentsList, string>
         ) => {
-          appStart(repository, options, (err: any) =>
+          fromPromise(appStart)(repository, options, (err: any) =>
             cb(err ? err.msg : null, componentsInfo)
           );
         }

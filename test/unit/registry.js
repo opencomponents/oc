@@ -112,7 +112,7 @@ describe('registry', () => {
               beforeEach(done => {
                 deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
                 repositoryInitStub.yields(null, 'ok');
-                deps['./app-start'].yields({ msg: 'I got a problem' });
+                deps['./app-start'].rejects({ msg: 'I got a problem' });
 
                 registry.start(err => {
                   error = err;
@@ -131,7 +131,7 @@ describe('registry', () => {
                 beforeEach(done => {
                   deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
                   repositoryInitStub.yields(null, 'ok');
-                  deps['./app-start'].yields(null, 'ok');
+                  deps['./app-start'].resolves('ok');
 
                   deps['http'].createServer.returns({
                     listen: sinon.stub().yields('Port is already used'),
@@ -155,7 +155,7 @@ describe('registry', () => {
                 beforeEach(done => {
                   deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
                   repositoryInitStub.yields(null, 'ok');
-                  deps['./app-start'].yields(null, 'ok');
+                  deps['./app-start'].resolves('ok');
                   deps['./domain/events-handler'].fire = sinon.stub();
 
                   deps['http'].createServer.returns({
@@ -192,7 +192,7 @@ describe('registry', () => {
                 beforeEach(done => {
                   deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
                   repositoryInitStub.yields(null, 'ok');
-                  deps['./app-start'].yields(null, 'ok');
+                  deps['./app-start'].resolves('ok');
                   deps['./domain/events-handler'].fire = sinon.stub();
 
                   deps['http'].createServer.returns({

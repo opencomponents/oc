@@ -13,6 +13,7 @@ import { Author, Component, ParsedComponent, Repository } from '../../types';
 import { NextFunction, Request, Response } from 'express';
 import { IncomingHttpHeaders } from 'http';
 import { PackageJson } from 'type-fest';
+import { fromPromise } from 'universalify';
 
 const packageInfo: PackageJson = fs.readJsonSync(
   path.join(__dirname, '..', '..', '..', 'package.json')
@@ -31,7 +32,7 @@ const isHtmlRequest = (headers: IncomingHttpHeaders) =>
 
 export default function (repository: Repository) {
   return (req: Request, res: Response, next: NextFunction): void => {
-    repository.getComponents((err, components) => {
+    fromPromise(repository.getComponents)((err, components) => {
       if (err) {
         res.errorDetails = 'cdn not available';
         return res.status(404).json({ error: res.errorDetails });

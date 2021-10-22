@@ -69,7 +69,7 @@ describe('registry : domain : components-cache', () => {
         mockedCdn.putFileContent = sinon.stub();
         mockedCdn.putFileContent.yields(null, 'ok');
         initialise();
-        componentsCache.load(done);
+        componentsCache.load().finally(done);
       });
 
       it('should try fetching the components.json', () => {
@@ -114,7 +114,7 @@ describe('registry : domain : components-cache', () => {
         mockedCdn.putFileContent = sinon.stub();
         mockedCdn.putFileContent.yields(null, 'ok');
         initialise();
-        componentsCache.load(done);
+        componentsCache.load().finally(done);
       });
 
       it('should fetch the components.json', () => {
@@ -156,7 +156,7 @@ describe('registry : domain : components-cache', () => {
         mockedCdn.listSubDirectories.onCall(1).yields(null, ['1.0.0', '1.0.2']);
         mockedCdn.putFileContent = sinon.stub();
         initialise();
-        componentsCache.load(done);
+        componentsCache.load().finally(done);
       });
 
       it('should fetch the components.json', () => {
@@ -174,15 +174,13 @@ describe('registry : domain : components-cache', () => {
         expect(mockedCdn.putFileContent.called).to.be.false;
       });
 
-      it('should use it as a source of truth', done => {
-        componentsCache.get((err, res) => {
-          expect(res).to.eql({
-            lastEdit: 12345678,
-            components: {
-              'hello-world': ['1.0.0', '1.0.2']
-            }
-          });
-          done();
+      it('should use it as a source of truth', () => {
+        const res = componentsCache.get();
+        expect(res).to.eql({
+          lastEdit: 12345678,
+          components: {
+            'hello-world': ['1.0.0', '1.0.2']
+          }
         });
       });
 
@@ -216,9 +214,9 @@ describe('registry : domain : components-cache', () => {
           mockedCdn.listSubDirectories.onCall(4).yields(null, ['1.0.0']);
 
           initialise();
-          componentsCache.load(() => {
-            componentsCache.refresh(() => done());
-          });
+          componentsCache
+            .load()
+            .then(() => componentsCache.refresh().finally(done));
         });
 
         it('should generate an error event', () => {
@@ -253,9 +251,9 @@ describe('registry : domain : components-cache', () => {
           mockedCdn.listSubDirectories.onCall(4).yields(null, ['1.0.0']);
 
           initialise();
-          componentsCache.load(() => {
-            componentsCache.refresh(done);
-          });
+          componentsCache
+            .load()
+            .then(() => componentsCache.refresh().finally(done));
         });
 
         it('should have started, stopped and restarted the refresh loop', () => {
@@ -271,13 +269,11 @@ describe('registry : domain : components-cache', () => {
           expect(mockedCdn.putFileContent.calledOnce).to.be.true;
         });
 
-        it('should refresh the values', done => {
-          componentsCache.get((err, data) => {
-            expect(data.lastEdit).to.equal(12345678);
-            expect(data.components['new-component']).to.eql(['1.0.0']);
-            expect(data.components['hello-world'].length).to.equal(3);
-            done();
-          });
+        it('should refresh the values', () => {
+          const data = componentsCache.get();
+          expect(data.lastEdit).to.equal(12345678);
+          expect(data.components['new-component']).to.eql(['1.0.0']);
+          expect(data.components['hello-world'].length).to.equal(3);
         });
       });
     });
