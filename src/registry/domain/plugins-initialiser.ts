@@ -12,9 +12,9 @@ function validatePlugins(plugins: unknown[]): asserts plugins is Plugin[] {
     c++;
     if (
       !_.isObject((plugin as Plugin).register) ||
-      !_.isFunction((plugin as Plugin).register.register) ||
-      !_.isFunction((plugin as Plugin).register.execute) ||
-      !_.isString((plugin as Plugin).name)
+      typeof (plugin as Plugin).register.register !== 'function' ||
+      typeof (plugin as Plugin).register.execute !== 'function' ||
+      typeof (plugin as Plugin).name !== 'string'
     ) {
       throw new Error(
         strings.errors.registry.PLUGIN_NOT_VALID(
