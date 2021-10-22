@@ -34,7 +34,8 @@ export default function (repository: Repository) {
     repository.getComponents((err, components) => {
       if (err) {
         res.errorDetails = 'cdn not available';
-        return res.status(404).json({ error: res.errorDetails });
+        res.status(404).json({ error: res.errorDetails });
+        return;
       }
 
       const baseResponse = {

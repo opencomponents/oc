@@ -49,10 +49,10 @@ const publish =
 
       logger.warn(strings.messages.cli.ENTER_USERNAME);
 
-      read({}, (err, username) => {
+      read({}, (_err, username) => {
         logger.warn(strings.messages.cli.ENTER_PASSWORD);
 
-        read({ silent: true }, (err, password) => {
+        read({ silent: true }, (_err, password) => {
           cb(null, { username, password });
         });
       });
@@ -110,7 +110,7 @@ const publish =
 
             logger.warn(strings.messages.cli.REGISTRY_CREDENTIALS_REQUIRED);
 
-            return getCredentials((err, credentials) => {
+            return getCredentials((_err, credentials) => {
               putComponentToRegistry(Object.assign(options, credentials), cb);
             });
           } else if ((err as any).code === 'cli_version_not_valid') {

@@ -34,7 +34,7 @@ export default function components(
     const registryErrors = strings.errors.registry;
 
     const returnError = function (message: string) {
-      return res.status(400).json({
+      res.status(400).json({
         code: registryErrors.BATCH_ROUTE_BODY_NOT_VALID_CODE,
         error: registryErrors.BATCH_ROUTE_BODY_NOT_VALID(message)
       });
@@ -51,9 +51,9 @@ export default function components(
     if (!_.isEmpty(components)) {
       const errors = _.compact(
         _.map(components, (component, index) => {
-          if (!component.name) {
-            return registryErrors.BATCH_ROUTE_COMPONENT_NAME_MISSING(index);
-          }
+          return !component.name
+            ? registryErrors.BATCH_ROUTE_COMPONENT_NAME_MISSING(index)
+            : '';
         })
       );
 
