@@ -7,7 +7,7 @@ import { Repository } from '../../types';
 
 export default function publish(repository: Repository) {
   return function (req: Request, res: Response): void {
-    if (!req.params.componentName || !req.params.componentVersion) {
+    if (!req.params['componentName'] || !req.params['componentVersion']) {
       res.errorDetails = 'malformed request';
       res.status(409).json({ error: res.errorDetails });
       return;
@@ -64,8 +64,8 @@ export default function publish(repository: Repository) {
 
       repository.publishComponent(
         pkgDetails,
-        req.params.componentName,
-        req.params.componentVersion,
+        req.params['componentName'],
+        req.params['componentVersion'],
         err => {
           if (err) {
             if (err.code === 'not_allowed') {

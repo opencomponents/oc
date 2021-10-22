@@ -237,13 +237,13 @@ export default function getComponent(conf: Config, repository: Repository) {
 
           const parseTemplatesHeader = (t: string) =>
             t.split(';').map(t => t.split(',')[0]);
-          const supportedTemplates = options.headers.templates
-            ? parseTemplatesHeader(options.headers.templates as string)
+          const supportedTemplates = options.headers['templates']
+            ? parseTemplatesHeader(options.headers['templates'] as string)
             : [];
 
           const isTemplateSupportedByClient = Boolean(
             isValidClientRequest &&
-              options.headers.templates &&
+              options.headers['templates'] &&
               (_.includes(
                 supportedTemplates,
                 component.oc.files.template.type
@@ -522,7 +522,7 @@ export default function getComponent(conf: Config, repository: Repository) {
 
                 try {
                   vm.runInNewContext(dataProvider.content, context, options);
-                  const processData = context.module.exports.data;
+                  const processData = context.module.exports['data'];
                   cache.set('file-contents', cacheKey, processData);
 
                   domain.on('error', handleError);

@@ -222,7 +222,7 @@ export default function repository(conf: Config): Repository {
     getComponentPath(componentName: string, componentVersion: string) {
       const prefix = conf.local
         ? conf.baseUrl
-        : `${options!.path}${options!.componentsDir}/`;
+        : `${options!['path']}${options!.componentsDir}/`;
       return `${prefix}${componentName}/${componentVersion}/`;
     },
     async getComponents() {
@@ -267,14 +267,14 @@ export default function repository(conf: Config): Repository {
       return { content, filePath };
     },
     getStaticClientPath: () =>
-      `${options!.path}${getFilePath(
+      `${options!['path']}${getFilePath(
         'oc-client',
         packageInfo.version,
         'src/oc-client.min.js'
       )}`,
 
     getStaticClientMapPath: () =>
-      `${options!.path}${getFilePath(
+      `${options!['path']}${getFilePath(
         'oc-client',
         packageInfo.version,
         'src/oc-client.min.map'
