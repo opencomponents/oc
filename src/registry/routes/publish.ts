@@ -6,7 +6,7 @@ import { Repository } from '../../types';
 
 export default function publish(repository: Repository) {
   return function (req: Request, res: Response): void {
-    if (!req.params.componentName || !req.params.componentVersion) {
+    if (!req.params['componentName'] || !req.params['componentVersion']) {
       res.errorDetails = 'malformed request';
       res.status(409).json({ error: res.errorDetails });
       return;
@@ -56,15 +56,14 @@ export default function publish(repository: Repository) {
     extractPackage(files, (err, pkgDetails) => {
       if (err) {
         res.errorDetails = `Package is not valid: ${err}`;
-        return res
-          .status(500)
-          .json({ error: 'package is not valid', details: err });
+        res.status(500).json({ error: 'package is not valid', details: err });
+        return;
       }
 
       repository.publishComponent(
         pkgDetails,
-        req.params.componentName,
-        req.params.componentVersion,
+        req.params['componentName'],
+        req.params['componentVersion'],
         err => {
           if (err) {
             if (err.code === 'not_allowed') {
@@ -85,7 +84,7 @@ export default function publish(repository: Repository) {
             }
           }
 
-          res.status(200).json({ ok: true });
+          return res.status(200).json({ ok: true });
         }
       );
     });

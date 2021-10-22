@@ -105,10 +105,10 @@ export default function registryConfiguration(
     const cdn = conf.storage.adapter(conf.storage.options);
     if (cdn.adapterType === 's3') {
       if (
-        !conf.storage.options.bucket ||
-        !conf.storage.options.region ||
-        (conf.storage.options.key && !conf.storage.options.secret) ||
-        (!conf.storage.options.key && conf.storage.options.secret)
+        !conf.storage.options['bucket'] ||
+        !conf.storage.options['region'] ||
+        (conf.storage.options['key'] && !conf.storage.options['secret']) ||
+        (!conf.storage.options['key'] && conf.storage.options['secret'])
       ) {
         return returnError(
           strings.errors.registry.CONFIGURATION_STORAGE_NOT_VALID(

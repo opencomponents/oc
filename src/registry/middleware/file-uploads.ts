@@ -19,7 +19,7 @@ export default function fileUpload(
     },
     storage: multer.diskStorage({
       destination: res.conf.tempDir,
-      filename: (req, file, cb) =>
+      filename: (_req, file, cb) =>
         cb(null, `${normaliseFileName(file.originalname)}-${Date.now()}.tar.gz`)
     })
   });

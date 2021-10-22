@@ -13,7 +13,7 @@ export default function optionsSanitiser(input: Input): Config {
   const options = _.clone(input);
 
   if (!options.publishAuth) {
-    (options as Config).beforePublish = (req, res, next) => next();
+    (options as Config).beforePublish = (_req, _res, next) => next();
   } else {
     (options as Config).beforePublish = auth.middleware(options.publishAuth);
   }
@@ -68,7 +68,7 @@ export default function optionsSanitiser(input: Input): Config {
     options.customHeadersToSkipOnWeakVersion || []
   ).map(s => s.toLowerCase());
 
-  options.port = Number(process.env.PORT || options.port);
+  options.port = Number(process.env['PORT'] || options.port);
   options.timeout = options.timeout || 1000 * 60 * 2;
   options.keepAliveTimeout =
     options.keepAliveTimeout || DEFAULT_NODE_KEEPALIVE_MS;
@@ -85,22 +85,22 @@ export default function optionsSanitiser(input: Input): Config {
   }
 
   if (options.refreshInterval && options.storage) {
-    options.storage.options.refreshInterval = options.refreshInterval;
+    options.storage.options['refreshInterval'] = options.refreshInterval;
   }
 
   if (options.verbosity && options.storage) {
-    options.storage.options.verbosity = options.verbosity;
+    options.storage.options['verbosity'] = options.verbosity;
   }
 
   if (
     options.storage &&
     options.storage.options &&
-    options.storage.options.path
+    options.storage.options['path']
   ) {
-    options.storage.options.path =
-      options.storage.options.path.indexOf('http') === 0
-        ? options.storage.options.path
-        : `https:${options.storage.options.path}`;
+    options.storage.options['path'] =
+      options.storage.options['path'].indexOf('http') === 0
+        ? options.storage.options['path']
+        : `https:${options.storage.options['path']}`;
   }
 
   if (!options.env) {
