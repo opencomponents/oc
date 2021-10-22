@@ -28,7 +28,7 @@ export default async function installCompiler(options: {
     await npm.installDependency(npmOptions);
     logger.ok('OK');
 
-    const compiler = cleanRequire(compilerPath, { justTry: true });
+    const compiler = cleanRequire<Template>(compilerPath, { justTry: true });
 
     if (!isTemplateValid(compiler)) {
       throw errorMsg;

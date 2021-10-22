@@ -13,7 +13,7 @@ export default function getCompiler(options: {
 }): Promise<Template> {
   const { compilerDep, componentPath, logger, pkg } = options;
   const compilerPath = path.join(componentPath, 'node_modules', compilerDep);
-  const compiler = cleanRequire(compilerPath, { justTry: true });
+  const compiler = cleanRequire<Template>(compilerPath, { justTry: true });
 
   if (compiler) {
     return Promise.resolve(compiler);
