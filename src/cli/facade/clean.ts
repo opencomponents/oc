@@ -64,7 +64,7 @@ const clean = ({
         if (!confirmed) return;
       }
 
-      removeFolders(list);
+      await removeFolders(list);
     } catch (err) {
       logger.err(strings.errors.generic(String(err)));
       throw err;
