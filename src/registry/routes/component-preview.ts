@@ -39,7 +39,7 @@ function componentPreview(
   } else {
     res.status(200).json(
       Object.assign(component, {
-        requestVersion: req.params.componentVersion || ''
+        requestVersion: req.params['componentVersion'] || ''
       })
     );
   }
@@ -51,8 +51,8 @@ export default function componentPreviewRoute(
 ) {
   return (req: Request, res: Response): void => {
     repository.getComponent(
-      req.params.componentName,
-      req.params.componentVersion,
+      req.params['componentName'],
+      req.params['componentVersion'],
       (registryError, component) => {
         if (registryError && conf.fallbackRegistryUrl) {
           return getComponentFallback.getComponentPreview(

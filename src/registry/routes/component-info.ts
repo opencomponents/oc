@@ -84,7 +84,7 @@ function componentInfo(
   } else {
     res.status(200).json(
       Object.assign(component, {
-        requestVersion: req.params.componentVersion || ''
+        requestVersion: req.params['componentVersion'] || ''
       })
     );
   }
@@ -96,8 +96,8 @@ export default function componentInfoRoute(
 ) {
   return function (req: Request, res: Response): void {
     repository.getComponent(
-      req.params.componentName,
-      req.params.componentVersion,
+      req.params['componentName'],
+      req.params['componentVersion'],
       (registryError, component) => {
         if (registryError && conf.fallbackRegistryUrl) {
           return getComponentFallback.getComponentInfo(

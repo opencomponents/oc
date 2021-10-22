@@ -27,8 +27,8 @@ function getComponentFallbackForViewType(
 ) {
   const path = buildUrl(
     {
-      name: req.params.componentName,
-      version: req.params.componentVersion
+      name: req.params['componentName'],
+      version: req.params['componentVersion']
     },
     conf.fallbackRegistryUrl
   );
