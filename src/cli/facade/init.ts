@@ -33,12 +33,13 @@ const init = ({ local, logger }: { local: Local; logger: Logger }) =>
 
         return componentName;
       } catch (err) {
-        const errMsg =
-          err === 'name not valid'
-            ? errors.NAME_NOT_VALID
-            : err === 'template type not valid'
-            ? errors.TEMPLATE_TYPE_NOT_VALID(templateType)
-            : String(err);
+        let errMsg = String(err);
+
+        if (err === 'name not valid') {
+          errMsg = errors.NAME_NOT_VALID;
+        } else if (err === 'template type not valid') {
+          errMsg = errors.TEMPLATE_TYPE_NOT_VALID(templateType);
+        }
 
         logger.err(errors.INIT_FAIL(errMsg));
         throw err;
