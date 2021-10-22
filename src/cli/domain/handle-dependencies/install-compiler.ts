@@ -3,6 +3,7 @@ import isTemplateValid from '../../../utils/is-template-valid';
 import * as npm from '../../../utils/npm-utils';
 import strings from '../../../resources/index';
 import { Logger } from '../../logger';
+import { Template } from '../../../types';
 
 export default function installCompiler(
   options: {
@@ -11,7 +12,7 @@ export default function installCompiler(
     dependency: string;
     logger: Logger;
   },
-  cb: Callback<string, string | number>
+  cb: Callback<Template, string | number>
 ): void {
   const { compilerPath, componentPath, dependency, logger } = options;
 
@@ -27,9 +28,9 @@ export default function installCompiler(
 
   npm.installDependency(npmOptions, err => {
     err ? logger.err('FAIL') : logger.ok('OK');
-    const compiler = cleanRequire(compilerPath, { justTry: true });
+    const compiler = cleanRequire<Template>(compilerPath, { justTry: true });
     const isOk = isTemplateValid(compiler);
     const errorMsg = 'There was a problem while installing the compiler';
-    cb(!err && isOk ? null : errorMsg, compiler);
+    cb(!err && isOk ? null : errorMsg, compiler as Template);
   });
 }
