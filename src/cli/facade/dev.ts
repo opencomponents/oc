@@ -38,10 +38,9 @@ const dev =
     const port = opts.port || 3000;
     const baseUrl = opts.baseUrl || `http://localhost:${port}/`;
     const fallbackRegistryUrl = opts.fallbackRegistryUrl;
-    const hotReloading = _.isUndefined(opts.hotReloading)
-      ? true
-      : opts.hotReloading;
-    const optWatch = _.isUndefined(opts.watch) ? true : opts.watch;
+    const hotReloading =
+      typeof opts.hotReloading === 'undefined' ? true : opts.hotReloading;
+    const optWatch = typeof opts.watch === 'undefined' ? true : opts.watch;
     let packaging = false;
 
     const watchForChanges = function (
@@ -71,7 +70,7 @@ const dev =
       componentsDirs: string[],
       optCb?: () => void
     ) => {
-      const cb = _.isFunction(optCb) ? optCb : _.noop;
+      const cb = typeof optCb === 'function' ? optCb : _.noop;
 
       let i = 0;
 

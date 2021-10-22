@@ -132,16 +132,14 @@ export default function repository(conf: Config): Repository {
       componentVersionOrCallback: string | Callback<Component, string>,
       callbackMaybe?: Callback<Component, string>
     ) {
-      const componentVersion: string | undefined = _.isFunction(
-        componentVersionOrCallback
-      )
-        ? undefined
-        : (componentVersionOrCallback as any);
-      const callback: Callback<Component, string> = _.isFunction(
-        componentVersionOrCallback
-      )
-        ? (componentVersionOrCallback as any)
-        : callbackMaybe!;
+      const componentVersion: string | undefined =
+        typeof componentVersionOrCallback === 'function'
+          ? undefined
+          : (componentVersionOrCallback as any);
+      const callback: Callback<Component, string> =
+        typeof componentVersionOrCallback === 'function'
+          ? (componentVersionOrCallback as any)
+          : callbackMaybe!;
 
       repository.getComponentVersions(componentName, (err, allVersions) => {
         if (err) {
