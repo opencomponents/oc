@@ -8,14 +8,10 @@ import StaticRedirectorRoute from './routes/static-redirector';
 import PluginsRoute from './routes/plugins';
 import DependenciesRoute from './routes/dependencies';
 import settings from '../resources/settings';
-import { Express } from 'express';
+import { Router } from 'express';
 import { Config, Repository } from '../types';
 
-export function create(
-  app: Express,
-  conf: Config,
-  repository: Repository
-): Express {
+export function create(app: Router, conf: Config, repository: Repository) {
   const routes = {
     component: ComponentRoute(conf, repository),
     components: ComponentsRoute(conf, repository),
@@ -85,8 +81,4 @@ export function create(
       ](route.route, route.handler)
     );
   }
-
-  app.set('etag', 'strong');
-
-  return app;
 }

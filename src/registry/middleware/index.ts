@@ -1,6 +1,7 @@
 import express, { Express } from 'express';
 import errorhandler from 'errorhandler';
 import morgan from 'morgan';
+import Router from 'express-promise-router';
 
 import baseUrlHandler from './base-url-handler';
 import cors from './cors';
@@ -16,9 +17,13 @@ const bodyParserUrlEncodedArgument: { extended: boolean; limit?: number } = {
   extended: true
 };
 
-export const bind = (app: Express, options: Config): Express => {
+export const bind = (
+  app: Express,
+  options: Config
+): { app: Express; router: express.Router } => {
   app.set('port', options.port);
   app.set('json spaces', 0);
+  app.set('etag', 'strong');
 
   app.use((_req, res, next) => {
     res.conf = options;
@@ -48,5 +53,8 @@ export const bind = (app: Express, options: Config): Express => {
     app.use(errorhandler());
   }
 
-  return app;
+  const router = Router();
+  app.use(router);
+
+  return { app, router };
 };
