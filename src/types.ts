@@ -279,20 +279,15 @@ export interface Repository {
   ): Promise<string>;
   getComponent(
     componentName: string,
-    componentVersion: string,
-    calllback: Callback<Component, string>
-  ): void;
-  getComponent(
-    componentName: string,
-    calllback: Callback<Component, string>
-  ): void;
+    componentVersion?: string
+  ): Promise<Component>;
   getComponentInfo(
     componentName: string,
     componentVersion: string
   ): Promise<Component>;
   getComponentPath(componentName: string, componentVersion: string): void;
   getComponents(): Promise<string[]>;
-  getComponentsDetails(callback: Callback<ComponentsDetails, string>): void;
+  getComponentsDetails(): Promise<ComponentsDetails>;
   getComponentVersions(componentName: string): Promise<string[]>;
   getDataProvider(
     componentName: string,
@@ -310,13 +305,12 @@ export interface Repository {
   ) => string;
   getTemplate: (type: string) => Template;
   getTemplatesInfo: () => TemplateInfo[];
-  init(callback: Callback<ComponentsList | string>): void;
+  init(): Promise<ComponentsList>;
   publishComponent(
     pkgDetails: any,
     componentName: string,
-    componentVersion: string,
-    callback: Callback<ComponentsDetails, { code: string; msg: string }>
-  ): void;
+    componentVersion: string
+  ): Promise<ComponentsDetails>;
 }
 
 declare global {
