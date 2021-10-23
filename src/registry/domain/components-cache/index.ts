@@ -2,9 +2,10 @@ import _ from 'lodash';
 import getComponentsList from './components-list';
 import * as eventsHandler from '../events-handler';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
-import { Cdn, ComponentsList, Config } from '../../../types';
+import { ComponentsList, Config } from '../../../types';
+import { StorageAdapter } from 'oc-storage-adapters-utils';
 
-export default function componentsCache(conf: Config, cdn: Cdn) {
+export default function componentsCache(conf: Config, cdn: StorageAdapter) {
   let cachedComponentsList: ComponentsList;
   let refreshLoop: NodeJS.Timeout;
 
@@ -36,8 +37,8 @@ export default function componentsCache(conf: Config, cdn: Cdn) {
     return data;
   };
 
-  const throwError = (code: string, message: unknown) => {
-    eventsHandler.fire('error', { code, message });
+  const throwError = (code: string, message: any) => {
+    eventsHandler.fire('error', { code, message: message?.message ?? message });
     throw code;
   };
 
