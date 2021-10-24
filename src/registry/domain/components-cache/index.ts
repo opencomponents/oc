@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import getComponentsList from './components-list';
-import * as eventsHandler from '../events-handler';
+import eventsHandler from '../events-handler';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import { Cdn, ComponentsList, Config } from '../../../types';
 

@@ -1,6 +1,6 @@
 import async from 'async';
 import _ from 'lodash';
-import * as eventsHandler from './events-handler';
+import eventsHandler from './events-handler';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import {
   Cdn,
@@ -16,7 +16,10 @@ export default function componentsDetails(conf: Config, cdn: Cdn) {
     message: string | Error,
     callback: (code: string) => void
   ) => {
-    eventsHandler.fire('error', { code, message });
+    eventsHandler.fire('error', {
+      code,
+      message: (message as Error)?.message ?? message
+    });
     return callback(code);
   };
 

@@ -7,7 +7,7 @@ import vm from 'vm';
 import _ from 'lodash';
 
 import applyDefaultValues from './apply-default-values';
-import * as eventsHandler from '../../domain/events-handler';
+import eventsHandler from '../../domain/events-handler';
 import GetComponentRetrievingInfo from './get-component-retrieving-info';
 import * as getComponentFallback from './get-component-fallback';
 import isTemplateLegacy from '../../../utils/is-template-legacy';
