@@ -76,7 +76,9 @@ describe('registry', () => {
         describe('when plugins initialiser fails', () => {
           let error;
           beforeEach(done => {
-            deps['./domain/plugins-initialiser'].init.yields('error!');
+            deps['./domain/plugins-initialiser'].init.rejects(
+              new Error('error!')
+            );
             registry.start(err => {
               error = err;
               done();
@@ -84,7 +86,7 @@ describe('registry', () => {
           });
 
           it('should fail with error', () => {
-            expect(error).to.equal('error!');
+            expect(error.message).to.equal('error!');
           });
         });
 
@@ -92,7 +94,7 @@ describe('registry', () => {
           describe('when repository initialisation fails', () => {
             let error;
             beforeEach(done => {
-              deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
+              deps['./domain/plugins-initialiser'].init.resolves('ok');
               repositoryInitStub.yields('nope');
 
               registry.start(err => {
@@ -110,7 +112,7 @@ describe('registry', () => {
             describe('when app fails to start', () => {
               let error;
               beforeEach(done => {
-                deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
+                deps['./domain/plugins-initialiser'].init.resolves('ok');
                 repositoryInitStub.yields(null, 'ok');
                 deps['./app-start'].rejects({ msg: 'I got a problem' });
 
@@ -129,7 +131,7 @@ describe('registry', () => {
               describe('when http listener errors', () => {
                 let error;
                 beforeEach(done => {
-                  deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
+                  deps['./domain/plugins-initialiser'].init.resolves('ok');
                   repositoryInitStub.yields(null, 'ok');
                   deps['./app-start'].resolves('ok');
 
@@ -153,7 +155,7 @@ describe('registry', () => {
                 let error;
                 let result;
                 beforeEach(done => {
-                  deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
+                  deps['./domain/plugins-initialiser'].init.resolves('ok');
                   repositoryInitStub.yields(null, 'ok');
                   deps['./app-start'].resolves('ok');
                   deps['./domain/events-handler'].fire = sinon.stub();
@@ -190,7 +192,7 @@ describe('registry', () => {
               describe('when http listener emits an error before the listener to start', () => {
                 let error;
                 beforeEach(done => {
-                  deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
+                  deps['./domain/plugins-initialiser'].init.resolves('ok');
                   repositoryInitStub.yields(null, 'ok');
                   deps['./app-start'].resolves('ok');
                   deps['./domain/events-handler'].fire = sinon.stub();
