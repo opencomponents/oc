@@ -1,6 +1,5 @@
 import basicAuth from 'basic-auth-connect';
 import { RequestHandler } from 'express';
-import path from 'path';
 
 import strings from '../../resources/';
 
@@ -45,9 +44,6 @@ export function validate(authConfig: { type: string }) {
   if (builtin[authConfig.type]) {
     scheme = builtin[authConfig.type];
   } else {
-    const cwd = process.cwd();
-    module.paths.push(cwd, path.join(cwd, 'node_modules'));
-
     const moduleName = `oc-auth-${authConfig.type}`;
 
     try {
