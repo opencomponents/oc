@@ -3,7 +3,7 @@
 const expect = require('chai').expect;
 const oc = require('../../dist/index');
 const path = require('path');
-const request = require('minimal-request');
+const got = require('got');
 
 describe('registry (ui interface)', () => {
   let registry;
@@ -11,11 +11,14 @@ describe('registry (ui interface)', () => {
   let error;
   let headers;
 
-  const next = done => (e, r, d) => {
-    error = e;
-    result = r;
-    headers = d.response.headers;
-    done();
+  const next = (promise, done) => {
+    promise
+      .then(r => {
+        headers = r.headers;
+        result = r.body;
+      })
+      .catch(e => (error = e))
+      .finally(done);
   };
 
   const conf = {
@@ -40,17 +43,16 @@ describe('registry (ui interface)', () => {
 
   describe('GET / with Accept: text/html', () => {
     before(done => {
-      request(
-        {
-          url: 'http://localhost:3030',
+      next(
+        got('http://localhost:3030', {
           headers: { accept: 'text/html' }
-        },
-        next(done)
+        }),
+        done
       );
     });
 
     it('should not error', () => {
-      expect(error).to.be.null;
+      expect(error).to.be.undefined;
     });
 
     it('should respond with html result', () => {
@@ -61,17 +63,16 @@ describe('registry (ui interface)', () => {
 
   describe('GET /oc-client/~info with Accept: text/html', () => {
     before(done => {
-      request(
-        {
-          url: 'http://localhost:3030/oc-client/~info',
+      next(
+        got('http://localhost:3030/oc-client/~info', {
           headers: { accept: 'text/html' }
-        },
-        next(done)
+        }),
+        done
       );
     });
 
     it('should not error', () => {
-      expect(error).to.be.null;
+      expect(error).to.be.undefined;
     });
 
     it('should respond with html result', () => {
