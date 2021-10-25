@@ -41,14 +41,14 @@ export default function componentsCache(conf: Config, cdn: Cdn) {
   const returnError = (
     code: string,
     message: string,
-    callback: Callback<any, any>
+    callback: (err: any | null, data: any) => void
   ) => {
     eventsHandler.fire('error', { code, message });
     return callback(code, undefined as any);
   };
 
   return {
-    get(callback: Callback<ComponentsList>) {
+    get(callback: (err: Error | null, data: ComponentsList) => void) {
       if (!cachedComponentsList) {
         return returnError(
           'components_cache_empty',
@@ -60,7 +60,7 @@ export default function componentsCache(conf: Config, cdn: Cdn) {
       callback(null, cachedComponentsList);
     },
 
-    load(callback: Callback<ComponentsList>) {
+    load(callback: (err: Error | null, data: ComponentsList) => void) {
       componentsList.getFromJson((jsonErr, jsonComponents) => {
         componentsList.getFromDirectories((dirErr, dirComponents) => {
           if (dirErr) {
@@ -81,7 +81,7 @@ export default function componentsCache(conf: Config, cdn: Cdn) {
         });
       });
     },
-    refresh(callback: Callback<ComponentsList>) {
+    refresh(callback: (err: Error | null, data: ComponentsList) => void) {
       clearTimeout(refreshLoop);
       componentsList.refresh((err, components) => {
         if (err) {

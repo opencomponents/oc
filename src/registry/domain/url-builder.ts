@@ -4,7 +4,7 @@ import url from 'url';
 type Component = {
   name: string;
   version?: string;
-  parameters?: Dictionary<string>;
+  parameters?: Record<string, string>;
 };
 
 function componentForType(
@@ -61,7 +61,7 @@ export function componentPreview(
 
   return href;
 }
-export function queryString(parameters: Dictionary<string> = {}): string {
+export function queryString(parameters: Record<string, string> = {}): string {
   let qs = '';
 
   if (Object.keys(parameters).length > 0) {

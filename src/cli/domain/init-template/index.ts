@@ -15,7 +15,7 @@ export default function initTemplate(
     compiler: string;
     logger: Logger;
   },
-  callback: Callback<{ ok: true }, string>
+  callback: (err: string | null, data: { ok: true }) => void
 ): void {
   const { compiler, componentPath } = options;
   const compilerPath = path.join(componentPath, 'node_modules', compiler);

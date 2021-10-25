@@ -13,7 +13,7 @@ interface ScaffoldOptions {
 
 export default function scaffold(
   options: ScaffoldOptions,
-  callback: Callback<{ ok: true }, string>
+  callback: (err: string | null, data: { ok: true }) => void
 ): void {
   const { compiler, compilerPath, componentName, componentPath, templateType } =
     options;

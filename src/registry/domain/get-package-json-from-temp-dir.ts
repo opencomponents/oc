@@ -4,7 +4,7 @@ import { PackageJson } from 'type-fest';
 
 export default function getPackageJsonFromTempDir(
   tempDirPath: string,
-  callback: Callback<PackageJson>
+  callback: (err: Error | null, data: PackageJson) => void
 ): void {
   return fs.readJson(path.join(tempDirPath, 'package.json'), callback);
 }

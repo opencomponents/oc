@@ -46,7 +46,10 @@ export default function registry(inputOptions: Input) {
   };
 
   const start = (
-    callback: Callback<{ app: express.Express; server: http.Server }>
+    callback: (
+      err: Error | null,
+      data: { app: express.Express; server: http.Server }
+    ) => void
   ) => {
     // eslint-disable-next-line no-console
     const ok = (msg: string) => console.log(colors.green(msg));
@@ -56,12 +59,16 @@ export default function registry(inputOptions: Input) {
     router.create(app, options, repository);
     async.waterfall(
       [
-        (cb: Callback<Dictionary<(...args: unknown[]) => unknown>, unknown>) =>
-          pluginsInitialiser.init(plugins, cb),
+        (
+          cb: (
+            err: unknown,
+            data: Record<string, (...args: unknown[]) => unknown>
+          ) => void
+        ) => pluginsInitialiser.init(plugins, cb),
 
         (
-          plugins: Dictionary<(...args: unknown[]) => void>,
-          cb: Callback<ComponentsList | string>
+          plugins: Record<string, (...args: unknown[]) => void>,
+          cb: (err: Error | null, data: ComponentsList | string) => void
         ) => {
           options.plugins = plugins;
           repository.init(cb);
@@ -69,7 +76,7 @@ export default function registry(inputOptions: Input) {
 
         (
           componentsInfo: ComponentsList,
-          cb: Callback<ComponentsList, string>
+          cb: (err: string | null, data: ComponentsList) => void
         ) => {
           appStart(repository, options, (err: any) =>
             cb(err ? err.msg : null, componentsInfo)

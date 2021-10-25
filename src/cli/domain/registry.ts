@@ -28,7 +28,7 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
   };
 
   return {
-    add(registry: string, callback: Callback<null, string>) {
+    add(registry: string, callback: (err: string | null, data: null) => void) {
       if (registry.slice(registry.length - 1) !== '/') {
         registry += '/';
       }
@@ -64,7 +64,7 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
         }
       );
     },
-    get(callback: Callback<string[], string>) {
+    get(callback: (err: string | null, data: string[]) => void) {
       if (opts.registry) {
         return callback(null, [opts.registry]);
       }
@@ -79,7 +79,7 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
     },
     getApiComponentByHref(
       href: string,
-      callback: Callback<unknown, Error | number>
+      callback: (err: Error | number | null, data: unknown) => void
     ) {
       request(
         {
@@ -92,7 +92,7 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
     },
     getComponentPreviewUrlByUrl(
       componentHref: string,
-      callback: Callback<string, Error | number>
+      callback: (err: Error | number | null, data: string) => void
     ) {
       request(
         {
@@ -120,7 +120,7 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
         route: string;
         path: string;
       },
-      callback: Callback<unknown, string>
+      callback: (err: string | null, data: unknown) => void
     ) {
       if (!!options.username && !!options.password) {
         requestsHeaders = Object.assign(requestsHeaders, {
@@ -157,7 +157,7 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
         callback(err, res);
       });
     },
-    remove(registry: string, callback: Callback) {
+    remove(registry: string, callback: (err: Error | null) => void) {
       if (registry.slice(registry.length - 1) !== '/') {
         registry += '/';
       }
