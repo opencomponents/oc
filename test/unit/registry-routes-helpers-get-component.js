@@ -42,6 +42,7 @@ describe('registry : routes : helpers : get-component', () => {
     mockedRepository = {
       getCompiledView: sinon.stub().yields(null, params.view),
       getComponent: sinon.stub().yields(null, params.package),
+      getEnv: sinon.stub().yields(null, { FOO: 'one', BAR: 'two' }),
       getDataProvider: sinon
         .stub()
         .yields(null, { content: params.data, filePath: '/path/to/server.js' }),

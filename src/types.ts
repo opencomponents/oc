@@ -68,6 +68,7 @@ interface OcConfiguration {
       type: string;
       version: string;
     };
+    env?: string;
   };
   packaged: boolean;
   parameters: Record<string, OcParameter>;
@@ -331,6 +332,11 @@ export interface Repository {
       content: string;
       filePath: string;
     }>
+  ): void;
+  getEnv(
+    componentName: string,
+    componentVersion: string,
+    callback: Callback<Record<string, string>>
   ): void;
   getStaticClientMapPath: () => string;
   getStaticClientPath: () => string;

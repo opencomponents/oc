@@ -2,6 +2,7 @@ import fs from 'fs-extra';
 import getUnixUtcTimestamp from 'oc-get-unix-utc-timestamp';
 import path from 'path';
 import _ from 'lodash';
+import dotenv from 'dotenv';
 
 import ComponentsCache from './components-cache';
 import getComponentsDetails from './components-details';
@@ -109,6 +110,11 @@ export default function repository(conf: Config): Repository {
         content: fs.readFileSync(filePath).toString(),
         filePath
       };
+    },
+    getEnv(componentName: string) {
+      const filePath = path.join(conf.path, `${componentName}/_package/.env`);
+
+      return dotenv.parse(fs.readFileSync(filePath).toString());
     }
   };
 
@@ -279,6 +285,21 @@ export default function repository(conf: Config): Repository {
 
       cdn.getFile(filePath, (err, content: string) =>
         callback(err, content ? { content, filePath } : (null as any))
+      );
+    },
+    getEnv(
+      componentName: string,
+      componentVersion: string,
+      callback: Callback<Record<string, string>>
+    ) {
+      if (conf.local) {
+        return callback(null, local.getEnv(componentName));
+      }
+
+      const filePath = getFilePath(componentName, componentVersion, '.env');
+
+      cdn.getFile(filePath, (err, content: string) =>
+        callback(err, content ? dotenv.parse(content) : (null as any))
       );
     },
     getStaticClientPath: () =>

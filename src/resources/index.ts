@@ -149,6 +149,8 @@ export default {
       PARAMETER_WRONG_FORMAT: (parameters: string): string =>
         `Parameters are not correctly formatted: ${parameters}`,
       PARAMETER_WRONG_FORMAT_CODE: 'wrong type',
+      ENV_NOT_AVAILABLE:
+        'Could not retreive the environment file for the component',
       PLUGIN_NOT_IMPLEMENTED: (plugins: string): string =>
         `registry does not implement plugins: ${plugins}`,
       PLUGIN_NOT_VALID: (plugin: string): string =>

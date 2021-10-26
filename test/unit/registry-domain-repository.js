@@ -36,6 +36,7 @@ describe('registry : domain : repository', () => {
 
     const s3Mock = {
       getJson: sinon.stub(),
+      getFile: sinon.stub(),
       putDir: sinon.stub(),
       putFileContent: sinon.stub(),
       adapterType: 's3'
@@ -387,6 +388,18 @@ describe('registry : domain : repository', () => {
             );
           });
         });
+      });
+    });
+
+    describe('when getting the env file', () => {
+      before(done => {
+        s3Mock.getFile = sinon.stub();
+        s3Mock.getFile.yields(null, 'FOO=one\nBAR=two');
+        repository.getEnv('hello-world', '1.0', saveResult(done));
+      });
+
+      it('should return the parsed env file', () => {
+        expect(response.result).to.deep.equal({ FOO: 'one', BAR: 'two' });
       });
     });
   });

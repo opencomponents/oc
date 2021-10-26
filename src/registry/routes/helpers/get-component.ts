@@ -1,4 +1,5 @@
 import acceptLanguageParser from 'accept-language-parser';
+import async from 'async';
 import Cache from 'nice-cache';
 import Client from 'oc-client';
 import Domain from 'domain';
@@ -408,133 +409,182 @@ export default function getComponent(conf: Config, repository: Repository) {
         if (!component.oc.files.dataProvider) {
           returnComponent(null, {});
         } else {
-          const cacheKey = `${component.name}/${component.version}/server.js`;
-          const cached = cache.get('file-contents', cacheKey);
-          const domain = Domain.create();
-          const setEmptyResponse =
-            emptyResponseHandler.contextDecorator(returnComponent);
-          const contextObj = {
-            acceptLanguage: acceptLanguageParser.parse(acceptLanguage!),
-            baseUrl: conf.baseUrl,
-            env: conf.env,
-            params,
-            plugins: conf.plugins,
-            renderComponent: nestedRenderer.renderComponent,
-            renderComponents: nestedRenderer.renderComponents,
-            requestHeaders: options.headers,
-            requestIp: options.ip,
-            setEmptyResponse,
-            staticPath: repository
-              .getStaticFilePath(component.name, component.version, '')
-              .replace('https:', ''),
-            setHeader: (header?: string, value?: string) => {
-              if (!(typeof header === 'string' && typeof value === 'string')) {
-                throw strings.errors.registry
-                  .COMPONENT_SET_HEADER_PARAMETERS_NOT_VALID;
-              }
+          async.waterfall(
+            [
+              (
+                callback: (
+                  err: Error | null,
+                  data: Record<string, string>
+                ) => void
+              ) => {
+                if (component.oc.files.env) {
+                  const cacheKey = `${component.name}/${component.version}/.env`;
+                  const cached = cache.get('file-contents', cacheKey);
 
-              if (header && value) {
-                responseHeaders = responseHeaders || {};
-                responseHeaders[header.toLowerCase()] = value;
-              }
-            },
-            templates: repository.getTemplatesInfo()
-          };
+                  if (cached) return callback(null, cached);
 
-          const setCallbackTimeout = () => {
-            const executionTimeout = conf.executionTimeout;
-            if (executionTimeout) {
-              setTimeout(() => {
-                const message = `timeout (${executionTimeout * 1000}ms)`;
-                returnComponent({ message }, undefined);
-                domain.exit();
-              }, executionTimeout * 1000);
-            }
-          };
-
-          if (!!cached && !conf.hotReloading) {
-            domain.on('error', returnComponent);
-
-            try {
-              domain.run(() => {
-                cached(contextObj, returnComponent);
-                setCallbackTimeout();
-              });
-            } catch (e) {
-              return returnComponent(e, undefined);
-            }
-          } else {
-            repository.getDataProvider(
-              component.name,
-              component.version,
-              (err, dataProvider) => {
-                if (err) {
-                  componentCallbackDone = true;
-
-                  return callback({
-                    status: 502,
-                    response: {
-                      code: 'DATA_RESOLVING_ERROR',
-                      error: strings.errors.registry.RESOLVING_ERROR
+                  repository.getEnv(
+                    component.name,
+                    component.version,
+                    (err, data) => {
+                      if (err) return callback(err, null as any);
+                      cache.set('file-contents', cacheKey, data);
+                      callback(null, data);
                     }
-                  });
+                  );
+                } else {
+                  callback(null, {});
                 }
+              }
+            ],
+            (err, componentEnv?: Record<string, string>) => {
+              if (err) {
+                return callback({
+                  status: 500,
+                  response: {
+                    code: 'ENV_NOT_AVAILABLE',
+                    error: strings.errors.registry.ENV_NOT_AVAILABLE
+                  }
+                });
+              }
 
-                const context = {
-                  require: RequireWrapper(conf.dependencies),
-                  module: {
-                    exports: {} as Dictionary<(...args: unknown[]) => unknown>
-                  },
-                  console: conf.local ? console : { log: _.noop },
-                  setTimeout,
-                  Buffer
-                };
-
-                const handleError = (err: {
-                  code: string;
-                  missing: string[];
-                }) => {
-                  if (err.code === 'DEPENDENCY_MISSING_FROM_REGISTRY') {
-                    componentCallbackDone = true;
-
-                    return callback({
-                      status: 501,
-                      response: {
-                        code: err.code,
-                        error: strings.errors.registry.DEPENDENCY_NOT_FOUND(
-                          err.missing.join(', ')
-                        ),
-                        missingDependencies: err.missing
-                      }
-                    });
+              const cacheKey = `${component.name}/${component.version}/server.js`;
+              const cached = cache.get('file-contents', cacheKey);
+              const domain = Domain.create();
+              const setEmptyResponse =
+                emptyResponseHandler.contextDecorator(returnComponent);
+              const contextObj = {
+                acceptLanguage: acceptLanguageParser.parse(acceptLanguage!),
+                baseUrl: conf.baseUrl,
+                env: { ...conf.env, ...componentEnv },
+                params,
+                plugins: conf.plugins,
+                renderComponent: nestedRenderer.renderComponent,
+                renderComponents: nestedRenderer.renderComponents,
+                requestHeaders: options.headers,
+                requestIp: options.ip,
+                setEmptyResponse,
+                staticPath: repository
+                  .getStaticFilePath(component.name, component.version, '')
+                  .replace('https:', ''),
+                setHeader: (header?: string, value?: string) => {
+                  if (
+                    !(typeof header === 'string' && typeof value === 'string')
+                  ) {
+                    throw strings.errors.registry
+                      .COMPONENT_SET_HEADER_PARAMETERS_NOT_VALID;
                   }
 
-                  returnComponent(err, undefined);
-                };
+                  if (header && value) {
+                    responseHeaders = responseHeaders || {};
+                    responseHeaders[header.toLowerCase()] = value;
+                  }
+                },
+                templates: repository.getTemplatesInfo()
+              };
 
-                const options = conf.local
-                  ? {
-                      displayErrors: true,
-                      filename: dataProvider.filePath
-                    }
-                  : {};
+              const setCallbackTimeout = () => {
+                const executionTimeout = conf.executionTimeout;
+                if (executionTimeout) {
+                  setTimeout(() => {
+                    const message = `timeout (${executionTimeout * 1000}ms)`;
+                    returnComponent({ message }, undefined);
+                    domain.exit();
+                  }, executionTimeout * 1000);
+                }
+              };
+
+              if (!!cached && !conf.hotReloading) {
+                domain.on('error', returnComponent);
 
                 try {
-                  vm.runInNewContext(dataProvider.content, context, options);
-                  const processData = context.module.exports['data'];
-                  cache.set('file-contents', cacheKey, processData);
-
-                  domain.on('error', handleError);
                   domain.run(() => {
-                    processData(contextObj, returnComponent);
+                    cached(contextObj, returnComponent);
                     setCallbackTimeout();
                   });
-                } catch (err) {
-                  handleError(err as any);
+                } catch (e) {
+                  return returnComponent(e, undefined);
                 }
+              } else {
+                repository.getDataProvider(
+                  component.name,
+                  component.version,
+                  (err, dataProvider) => {
+                    if (err) {
+                      componentCallbackDone = true;
+
+                      return callback({
+                        status: 502,
+                        response: {
+                          code: 'DATA_RESOLVING_ERROR',
+                          error: strings.errors.registry.RESOLVING_ERROR
+                        }
+                      });
+                    }
+
+                    const context = {
+                      require: RequireWrapper(conf.dependencies),
+                      module: {
+                        exports: {} as Dictionary<
+                          (...args: unknown[]) => unknown
+                        >
+                      },
+                      console: conf.local ? console : { log: _.noop },
+                      setTimeout,
+                      Buffer
+                    };
+
+                    const handleError = (err: {
+                      code: string;
+                      missing: string[];
+                    }) => {
+                      if (err.code === 'DEPENDENCY_MISSING_FROM_REGISTRY') {
+                        componentCallbackDone = true;
+
+                        return callback({
+                          status: 501,
+                          response: {
+                            code: err.code,
+                            error: strings.errors.registry.DEPENDENCY_NOT_FOUND(
+                              err.missing.join(', ')
+                            ),
+                            missingDependencies: err.missing
+                          }
+                        });
+                      }
+
+                      returnComponent(err, undefined);
+                    };
+
+                    const options = conf.local
+                      ? {
+                          displayErrors: true,
+                          filename: dataProvider.filePath
+                        }
+                      : {};
+
+                    try {
+                      vm.runInNewContext(
+                        dataProvider.content,
+                        context,
+                        options
+                      );
+                      const processData = context.module.exports['data'];
+                      cache.set('file-contents', cacheKey, processData);
+
+                      domain.on('error', handleError);
+                      domain.run(() => {
+                        processData(contextObj, returnComponent);
+                        setCallbackTimeout();
+                      });
+                    } catch (err) {
+                      handleError(err as any);
+                    }
+                  }
+                );
               }
-            );
-          }
+            }
+          );
         }
       }
     );
