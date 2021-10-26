@@ -3,25 +3,24 @@
 const expect = require('chai').expect;
 const emptyResponseHandler = require('oc-empty-response-handler');
 const path = require('path');
-const request = require('minimal-request');
+const got = require('got');
 
 describe('registry', () => {
   let registry;
   let result;
-  let error;
   let headers;
   let status;
 
   const oc = require('../../dist/index');
 
-  const next = function (done) {
-    return function (e, r, d) {
-      error = e;
-      result = r;
-      headers = d.response.headers;
-      status = d.response.statusCode;
-      done();
-    };
+  const next = (promise, done) => {
+    promise
+      .then(r => {
+        headers = r.headers;
+        status = r.statusCode;
+        result = JSON.parse(r.body);
+      })
+      .finally(done);
   };
 
   const getDefaultTestConfiguration = function () {
@@ -62,12 +61,9 @@ describe('registry', () => {
   describe('GET /hello-world-custom-headers', () => {
     describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and strong version 1.0.0', () => {
       before(done => {
-        request(
-          {
-            url: 'http://localhost:3030/hello-world-custom-headers/1.0.0',
-            json: true
-          },
-          next(done)
+        next(
+          got('http://localhost:3030/hello-world-custom-headers/1.0.0'),
+          done
         );
       });
 
@@ -85,12 +81,9 @@ describe('registry', () => {
 
     describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and weak version 1.x.x', () => {
       before(done => {
-        request(
-          {
-            url: 'http://localhost:3030/hello-world-custom-headers/1.x.x',
-            json: true
-          },
-          next(done)
+        next(
+          got('http://localhost:3030/hello-world-custom-headers/1.x.x'),
+          done
         );
       });
 
@@ -126,12 +119,9 @@ describe('registry', () => {
 
       describe('when strong version is requested 1.0.0', () => {
         before(done => {
-          request(
-            {
-              url: 'http://localhost:3030/hello-world-custom-headers/1.0.0',
-              json: true
-            },
-            next(done)
+          next(
+            got('http://localhost:3030/hello-world-custom-headers/1.0.0'),
+            done
           );
         });
 
@@ -149,12 +139,9 @@ describe('registry', () => {
 
       describe('when weak version is requested 1.x.x', () => {
         before(done => {
-          request(
-            {
-              url: 'http://localhost:3030/hello-world-custom-headers/1.x.x',
-              json: true
-            },
-            next(done)
+          next(
+            got('http://localhost:3030/hello-world-custom-headers/1.x.x'),
+            done
           );
         });
 
@@ -172,12 +159,10 @@ describe('registry', () => {
   describe('POST /hello-world-custom-headers', () => {
     describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and strong version 1.0.0', () => {
       before(done => {
-        request(
-          {
-            url: 'http://localhost:3030',
-            json: true,
+        next(
+          got('http://localhost:3030', {
             method: 'post',
-            body: {
+            json: {
               components: [
                 {
                   name: 'hello-world-custom-headers',
@@ -185,8 +170,8 @@ describe('registry', () => {
                 }
               ]
             }
-          },
-          next(done)
+          }),
+          done
         );
       });
 
@@ -207,12 +192,10 @@ describe('registry', () => {
 
     describe('request with two components', () => {
       before(done => {
-        request(
-          {
-            url: 'http://localhost:3030',
-            json: true,
+        next(
+          got('http://localhost:3030', {
             method: 'post',
-            body: {
+            json: {
               components: [
                 {
                   name: 'hello-world-custom-headers',
@@ -224,8 +207,8 @@ describe('registry', () => {
                 }
               ]
             }
-          },
-          next(done)
+          }),
+          done
         );
       });
 
@@ -236,12 +219,10 @@ describe('registry', () => {
 
     describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and weak version 1.x.x', () => {
       before(done => {
-        request(
-          {
-            url: 'http://localhost:3030',
-            json: true,
+        next(
+          got('http://localhost:3030', {
             method: 'post',
-            body: {
+            json: {
               components: [
                 {
                   name: 'hello-world-custom-headers',
@@ -249,8 +230,8 @@ describe('registry', () => {
                 }
               ]
             }
-          },
-          next(done)
+          }),
+          done
         );
       });
 
@@ -289,12 +270,10 @@ describe('registry', () => {
 
       describe('when strong version is requested 1.0.0', () => {
         before(done => {
-          request(
-            {
-              url: 'http://localhost:3030',
-              json: true,
+          next(
+            got('http://localhost:3030', {
               method: 'post',
-              body: {
+              json: {
                 components: [
                   {
                     name: 'hello-world-custom-headers',
@@ -302,8 +281,8 @@ describe('registry', () => {
                   }
                 ]
               }
-            },
-            next(done)
+            }),
+            done
           );
         });
 
@@ -326,12 +305,10 @@ describe('registry', () => {
 
       describe('when weak version is requested 1.x.x', () => {
         before(done => {
-          request(
-            {
-              url: 'http://localhost:3030',
-              json: true,
+          next(
+            got('http://localhost:3030', {
               method: 'post',
-              body: {
+              json: {
                 components: [
                   {
                     name: 'hello-world-custom-headers',
@@ -339,8 +316,8 @@ describe('registry', () => {
                   }
                 ]
               }
-            },
-            next(done)
+            }),
+            done
           );
         });
 
@@ -363,13 +340,7 @@ describe('registry', () => {
 
   describe('GET /', () => {
     before(done => {
-      request(
-        {
-          url: 'http://localhost:3030',
-          json: true
-        },
-        next(done)
-      );
+      next(got('http://localhost:3030'), done);
     });
 
     it('should respond with the correct href', () => {
@@ -398,15 +369,14 @@ describe('registry', () => {
 
   describe('POST / (with circular-json)', () => {
     before(done => {
-      request(
-        {
-          headers: { accept: 'application/vnd.oc.unrendered+json' },
-          url: 'http://localhost:3030/',
+      next(
+        got('http://localhost:3030/', {
           method: 'post',
-          json: true,
-          body: { components: [{ name: 'circular-json-error' }] }
-        },
-        next(done)
+          headers: { accept: 'application/vnd.oc.unrendered+json' },
+          json: { components: [{ name: 'circular-json-error' }] },
+          throwHttpErrors: false
+        }),
+        done
       );
     });
 
@@ -423,18 +393,17 @@ describe('registry', () => {
 
   describe('GET /circular-json-error', () => {
     before(done => {
-      request(
-        {
+      next(
+        got('http://localhost:3030/circular-json-error', {
           headers: { accept: 'application/vnd.oc.unrendered+json' },
-          url: 'http://localhost:3030/circular-json-error',
-          json: true
-        },
-        next(done)
+          throwHttpErrors: false
+        }),
+        done
       );
     });
 
     it('should respond with 500 status code', () => {
-      expect(error).to.equal(500);
+      expect(status).to.equal(500);
     });
 
     it('should respond with rendering error', () => {
@@ -446,17 +415,16 @@ describe('registry', () => {
 
   describe('GET /handlebars3-component', () => {
     before(done => {
-      request(
-        {
-          url: 'http://localhost:3030/handlebars3-component',
-          json: true
-        },
-        next(done)
+      next(
+        got('http://localhost:3030/handlebars3-component', {
+          throwHttpErrors: false
+        }),
+        done
       );
     });
 
     it('should respond with 500 status code', () => {
-      expect(error).to.equal(500);
+      expect(status).to.equal(500);
     });
 
     it('should respond with error for unsupported handlebars version', () => {
@@ -468,13 +436,7 @@ describe('registry', () => {
 
   describe('GET /jade-filters', () => {
     before(done => {
-      request(
-        {
-          url: 'http://localhost:3030/jade-filters',
-          json: true
-        },
-        next(done)
-      );
+      next(got('http://localhost:3030/jade-filters'), done);
     });
 
     it('should respond with 200 status code', () => {
@@ -485,13 +447,7 @@ describe('registry', () => {
   describe('GET /hello-world', () => {
     describe('when Accept header not specified', () => {
       before(done => {
-        request(
-          {
-            url: 'http://localhost:3030/hello-world',
-            json: true
-          },
-          next(done)
-        );
+        next(got('http://localhost:3030/hello-world'), done);
       });
 
       it('should respond with the correct href', () => {
@@ -524,13 +480,11 @@ describe('registry', () => {
 
     describe('when Accept header set to application/vnd.oc.unrendered+json', () => {
       before(done => {
-        request(
-          {
-            url: 'http://localhost:3030/hello-world',
-            headers: { Accept: 'application/vnd.oc.unrendered+json' },
-            json: true
-          },
-          next(done)
+        next(
+          got('http://localhost:3030/hello-world', {
+            headers: { Accept: 'application/vnd.oc.unrendered+json' }
+          }),
+          done
         );
       });
 
@@ -562,13 +516,7 @@ describe('registry', () => {
 
   describe('GET /container-with-nested', () => {
     before(done => {
-      request(
-        {
-          url: 'http://localhost:3030/container-with-nested',
-          json: true
-        },
-        next(done)
-      );
+      next(got('http://localhost:3030/container-with-nested'), done);
     });
 
     it('should respond with the correct href', () => {
@@ -588,13 +536,7 @@ describe('registry', () => {
 
   describe('GET /container-with-multiple-nested', () => {
     before(done => {
-      request(
-        {
-          url: 'http://localhost:3030/container-with-multiple-nested',
-          json: true
-        },
-        next(done)
-      );
+      next(got('http://localhost:3030/container-with-multiple-nested'), done);
     });
 
     it('should respond with the correct href', () => {
@@ -617,13 +559,7 @@ describe('registry', () => {
   describe('GET /no-containers', () => {
     describe('when Accept header not specified', () => {
       before(done => {
-        request(
-          {
-            url: 'http://localhost:3030/no-containers',
-            json: true
-          },
-          next(done)
-        );
+        next(got('http://localhost:3030/no-containers'), done);
       });
 
       it('should respond with the correct href', () => {
@@ -644,13 +580,11 @@ describe('registry', () => {
   describe('GET /language', () => {
     describe('when Accept-Language: en-US', () => {
       before(done => {
-        request(
-          {
-            url: 'http://localhost:3030/language',
-            json: true,
+        next(
+          got('http://localhost:3030/language', {
             headers: { 'accept-language': 'en-US' }
-          },
-          next(done)
+          }),
+          done
         );
       });
 
@@ -665,13 +599,11 @@ describe('registry', () => {
 
     describe('when Accept-Language: ja-JP', () => {
       before(done => {
-        request(
-          {
-            url: 'http://localhost:3030/language',
-            json: true,
+        next(
+          got('http://localhost:3030/language', {
             headers: { 'accept-language': 'ja-JP' }
-          },
-          next(done)
+          }),
+          done
         );
       });
 
@@ -686,13 +618,11 @@ describe('registry', () => {
 
     describe('when Accept-Language: ja-JP but __ocAcceptLanguage overrides with en-US (client-side failover)', () => {
       before(done => {
-        request(
-          {
-            url: 'http://localhost:3030/language/?__ocAcceptLanguage=en-US',
-            json: true,
+        next(
+          got('http://localhost:3030/language/?__ocAcceptLanguage=en-US', {
             headers: { 'accept-language': 'ja-JP' }
-          },
-          next(done)
+          }),
+          done
         );
       });
 
@@ -708,13 +638,7 @@ describe('registry', () => {
 
   describe('GET /lodash-component', () => {
     before(done => {
-      request(
-        {
-          url: 'http://localhost:3030/lodash-component',
-          json: true
-        },
-        next(done)
-      );
+      next(got('http://localhost:3030/lodash-component'), done);
     });
 
     it('should respond with the correct href', () => {
@@ -729,13 +653,7 @@ describe('registry', () => {
   describe('GET /empty', () => {
     describe('rendered', () => {
       before(done => {
-        request(
-          {
-            url: 'http://localhost:3030/empty',
-            json: true
-          },
-          next(done)
-        );
+        next(got('http://localhost:3030/empty'), done);
       });
 
       it('should respond with the correct href', () => {
@@ -749,13 +667,11 @@ describe('registry', () => {
 
     describe('unrendered', () => {
       before(done => {
-        request(
-          {
-            url: 'http://localhost:3030/empty',
-            headers: { Accept: 'application/vnd.oc.unrendered+json' },
-            json: true
-          },
-          next(done)
+        next(
+          got('http://localhost:3030/empty', {
+            headers: { Accept: 'application/vnd.oc.unrendered+json' }
+          }),
+          done
         );
       });
 
@@ -774,19 +690,18 @@ describe('registry', () => {
   describe('POST /', () => {
     describe('when body is malformed', () => {
       before(done => {
-        request(
-          {
-            url: 'http://localhost:3030/',
+        next(
+          got('http://localhost:3030/', {
             method: 'post',
-            json: true,
-            body: {}
-          },
-          next(done)
+            json: {},
+            throwHttpErrors: false
+          }),
+          done
         );
       });
 
       it('should respond with 400 status code', () => {
-        expect(error).to.equal(400);
+        expect(status).to.equal(400);
       });
 
       it('should respond with error', () => {
@@ -799,16 +714,14 @@ describe('registry', () => {
     describe('when body contains multiple components', () => {
       describe('when Accept header not specified', () => {
         before(done => {
-          request(
-            {
-              url: 'http://localhost:3030/',
+          next(
+            got('http://localhost:3030/', {
               method: 'post',
-              json: true,
-              body: {
+              json: {
                 components: [{ name: 'hello-world' }, { name: 'no-containers' }]
               }
-            },
-            next(done)
+            }),
+            done
           );
         });
 
@@ -830,20 +743,18 @@ describe('registry', () => {
       describe('when omitHref=true', () => {
         describe('when getting rendered components', () => {
           before(done => {
-            request(
-              {
-                url: 'http://localhost:3030/',
+            next(
+              got('http://localhost:3030/', {
                 method: 'post',
-                json: true,
-                body: {
+                json: {
                   omitHref: true,
                   components: [
                     { name: 'hello-world' },
                     { name: 'no-containers' }
                   ]
                 }
-              },
-              next(done)
+              }),
+              done
             );
           });
 
@@ -855,21 +766,19 @@ describe('registry', () => {
 
         describe('when getting unrendered components', () => {
           before(done => {
-            request(
-              {
-                url: 'http://localhost:3030/',
+            next(
+              got('http://localhost:3030/', {
                 method: 'post',
                 headers: { Accept: 'application/vnd.oc.unrendered+json' },
-                json: true,
-                body: {
+                json: {
                   omitHref: true,
                   components: [
                     { name: 'hello-world' },
                     { name: 'no-containers' }
                   ]
                 }
-              },
-              next(done)
+              }),
+              done
             );
           });
 
@@ -882,17 +791,15 @@ describe('registry', () => {
 
       describe('when Accept header set to application/vnd.oc.unrendered+json', () => {
         before(done => {
-          request(
-            {
-              url: 'http://localhost:3030/',
+          next(
+            got('http://localhost:3030/', {
               method: 'post',
               headers: { Accept: 'application/vnd.oc.unrendered+json' },
-              json: true,
-              body: {
+              json: {
                 components: [{ name: 'hello-world' }, { name: 'no-containers' }]
               }
-            },
-            next(done)
+            }),
+            done
           );
         });
 
@@ -907,12 +814,10 @@ describe('registry', () => {
       describe('when components require params', () => {
         describe('when each component requires different params', () => {
           before(done => {
-            request(
-              {
-                url: 'http://localhost:3030/',
+            next(
+              got('http://localhost:3030/', {
                 method: 'post',
-                json: true,
-                body: {
+                json: {
                   components: [
                     {
                       name: 'welcome',
@@ -924,8 +829,8 @@ describe('registry', () => {
                     }
                   ]
                 }
-              },
-              next(done)
+              }),
+              done
             );
           });
 
@@ -941,17 +846,15 @@ describe('registry', () => {
 
         describe('when components require same parameters', () => {
           before(done => {
-            request(
-              {
-                url: 'http://localhost:3030/',
+            next(
+              got('http://localhost:3030/', {
                 method: 'post',
-                json: true,
-                body: {
+                json: {
                   parameters: { firstName: 'Donald', lastName: 'Duck' },
                   components: [{ name: 'welcome' }, { name: 'welcome' }]
                 }
-              },
-              next(done)
+              }),
+              done
             );
           });
 
@@ -967,20 +870,18 @@ describe('registry', () => {
 
         describe('when components have some common parameters and some different', () => {
           before(done => {
-            request(
-              {
-                url: 'http://localhost:3030/',
+            next(
+              got('http://localhost:3030/', {
                 method: 'post',
-                json: true,
-                body: {
+                json: {
                   parameters: { firstName: 'Donald' },
                   components: [
                     { name: 'welcome', parameters: { lastName: 'Mouse' } },
                     { name: 'welcome', parameters: { lastName: 'Duck' } }
                   ]
                 }
-              },
-              next(done)
+              }),
+              done
             );
           });
 
@@ -996,20 +897,18 @@ describe('registry', () => {
 
         describe('when components have global parameters with local overrides', () => {
           before(done => {
-            request(
-              {
-                url: 'http://localhost:3030/',
+            next(
+              got('http://localhost:3030/', {
                 method: 'post',
-                json: true,
-                body: {
+                json: {
                   parameters: { firstName: 'Donald', lastName: 'Duck' },
                   components: [
                     { name: 'welcome', parameters: { lastName: 'Mouse' } },
                     { name: 'welcome' }
                   ]
                 }
-              },
-              next(done)
+              }),
+              done
             );
           });
 
@@ -1025,12 +924,10 @@ describe('registry', () => {
 
         describe('when components accept optional parameters', () => {
           before(done => {
-            request(
-              {
-                url: 'http://localhost:3030/',
+            next(
+              got('http://localhost:3030/', {
                 method: 'post',
-                json: true,
-                body: {
+                json: {
                   parameters: { firstName: 'John' },
                   components: [
                     {
@@ -1051,8 +948,8 @@ describe('registry', () => {
                     }
                   ]
                 }
-              },
-              next(done)
+              }),
+              done
             );
           });
 

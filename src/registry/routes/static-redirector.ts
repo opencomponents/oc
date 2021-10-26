@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 
-import adaptersUtils from 'oc-storage-adapters-utils';
+import storageUtils from 'oc-storage-adapters-utils';
 import { Request, Response } from 'express';
 import { Repository } from '../../types';
 
@@ -57,7 +57,7 @@ export default function staticRedirector(repository: Repository) {
     }
 
     const fileStream = fs.createReadStream(filePath);
-    const fileInfo = adaptersUtils.getFileInfo(filePath);
+    const fileInfo = storageUtils.getFileInfo(filePath);
 
     if (fileInfo.mimeType) {
       res.set('Content-Type', fileInfo.mimeType);
