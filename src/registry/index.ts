@@ -5,7 +5,7 @@ import http from 'http';
 import _ from 'lodash';
 
 import appStart from './app-start';
-import * as eventsHandler from './domain/events-handler';
+import eventsHandler from './domain/events-handler';
 import * as middleware from './middleware';
 import * as pluginsInitialiser from './domain/plugins-initialiser';
 import Repository from './domain/repository';
@@ -119,9 +119,12 @@ export default function registry(inputOptions: Input) {
           callback(null, { app, server });
         });
 
-        server.on('error', message => {
-          eventsHandler.fire('error', { code: 'EXPRESS_ERROR', message });
-          callback(message, undefined as any);
+        server.on('error', error => {
+          eventsHandler.fire('error', {
+            code: 'EXPRESS_ERROR',
+            message: error?.message ?? String(error)
+          });
+          callback(error, undefined as any);
         });
       }
     );
