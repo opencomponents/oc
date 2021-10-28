@@ -36,9 +36,12 @@ describe('registry : domain : repository', () => {
     };
 
     const s3Mock = {
-      getJson: sinon.stub(),
-      putDir: sinon.stub(),
-      putFileContent: sinon.stub(),
+      getFile: sinon.stub().resolves(),
+      listSubDirectories: sinon.stub().resolves(),
+      putFile: sinon.stub().resolves(),
+      getJson: sinon.stub().resolves(),
+      putDir: sinon.stub().resolves(),
+      putFileContent: sinon.stub().resolves(),
       adapterType: 's3'
     };
 
@@ -237,7 +240,7 @@ describe('registry : domain : repository', () => {
     describe('when getting an existing component', () => {
       before(done => {
         componentsCacheMock.get.returns(componentsCacheBaseResponse);
-        s3Mock.getJson.yields(null, { name: 'hello-world', version: '1.0.0' });
+        s3Mock.getJson.resolves({ name: 'hello-world', version: '1.0.0' });
         savePromiseResult(
           repository.getComponent('hello-world', '1.0.0'),
           done
@@ -356,7 +359,7 @@ describe('registry : domain : repository', () => {
               componentsDetailsBaseResponse
             );
             s3Mock.putDir = sinon.stub();
-            s3Mock.putDir.yields(null, 'done');
+            s3Mock.putDir.resolves('done');
             savePromiseResult(
               repository.publishComponent(
                 {

@@ -1,5 +1,4 @@
 import fs from 'fs-extra';
-import { promisify } from 'util';
 import getUnixUtcTimestamp from 'oc-get-unix-utc-timestamp';
 import path from 'path';
 import _ from 'lodash';
@@ -10,16 +9,20 @@ import registerTemplates from './register-templates';
 import settings from '../../resources/settings';
 import strings from '../../resources';
 import * as validator from './validators';
+import getPromiseBasedAdapter from './storage-adapter';
 import * as versionHandler from './version-handler';
 import errorToString from '../../utils/error-to-string';
-import { Cdn, Component, Config, Repository } from '../../types';
+import { Component, Config, Repository } from '../../types';
+import { StorageAdapter } from 'oc-storage-adapters-utils';
 
 const packageInfo = fs.readJsonSync(
   path.join(__dirname, '..', '..', '..', 'package.json')
 );
 
 export default function repository(conf: Config): Repository {
-  const cdn: Cdn = !conf.local && conf.storage.adapter(conf.storage.options);
+  const cdn: StorageAdapter =
+    !conf.local &&
+    (getPromiseBasedAdapter(conf.storage.adapter(conf.storage.options)) as any);
   const options = !conf.local ? conf.storage.options : null;
   const repositorySource = conf.local
     ? 'local repository'
@@ -111,7 +114,7 @@ export default function repository(conf: Config): Repository {
         return Promise.resolve(local.getCompiledView(componentName));
       }
 
-      return promisify(cdn.getFile)(
+      return cdn.getFile(
         getFilePath(componentName, componentVersion, 'template.js')
       );
     },
@@ -171,7 +174,7 @@ export default function repository(conf: Config): Repository {
         }
       }
 
-      return promisify(cdn.getJson)<Component>(
+      return cdn.getJson<Component>(
         getFilePath(componentName, componentVersion, 'package.json'),
         false
       );
@@ -220,7 +223,7 @@ export default function repository(conf: Config): Repository {
         'server.js'
       );
 
-      const content = await promisify(cdn.getFile)(filePath);
+      const content = await cdn.getFile(filePath);
 
       return { content, filePath };
     },
@@ -327,7 +330,7 @@ export default function repository(conf: Config): Repository {
         pkgDetails.packageJson
       );
 
-      await promisify(cdn.putDir)(
+      await cdn.putDir(
         pkgDetails.outputFolder,
         `${options!.componentsDir}/${componentName}/${componentVersion}`
       );

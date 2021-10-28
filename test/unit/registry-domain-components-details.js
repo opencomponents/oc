@@ -46,7 +46,7 @@ describe('registry : domain : components-details', () => {
           }
         };
 
-        stubs = { getJson: sinon.stub().yields(null, details) };
+        stubs = { getJson: sinon.stub().resolves(details) };
         const componentsDetails = ComponentsDetails(conf, stubs);
         next(componentsDetails.get(), done);
       });
@@ -68,13 +68,13 @@ describe('registry : domain : components-details', () => {
 
     describe('when details file does not exist on cdn', () => {
       before(done => {
-        const stubs = { getJson: sinon.stub().yields('an error') };
+        const stubs = { getJson: sinon.stub().rejects(new Error('an error')) };
         const componentsDetails = ComponentsDetails(conf, stubs);
         next(componentsDetails.get(), done);
       });
 
       it('should return an error', () => {
-        expect(error).to.equal('an error');
+        expect(error.message).to.equal('an error');
       });
     });
   });
@@ -102,10 +102,10 @@ describe('registry : domain : components-details', () => {
 
         before(done => {
           stubs = { getJson: sinon.stub() };
-          stubs.getJson.onCall(0).yields(null, details);
-          stubs.getJson.onCall(1).yields(null, { oc: { date: 1459864868001 } });
+          stubs.getJson.onCall(0).resolves(details);
+          stubs.getJson.onCall(1).resolves({ oc: { date: 1459864868001 } });
           stubs.maxConcurrentRequests = 20;
-          stubs.putFileContent = sinon.stub().yields(null, 'ok');
+          stubs.putFileContent = sinon.stub().resolves('ok');
           const componentsDetails = ComponentsDetails(conf, stubs);
           next(componentsDetails.refresh(list), done);
         });
@@ -120,8 +120,8 @@ describe('registry : domain : components-details', () => {
           before(done => {
             fireStub.reset();
             stubs = { getJson: sinon.stub() };
-            stubs.getJson.onCall(0).yields(null, details);
-            stubs.getJson.onCall(1).yields('error timeout');
+            stubs.getJson.onCall(0).resolves(details);
+            stubs.getJson.onCall(1).rejects(new Error('error timeout'));
             stubs.maxConcurrentRequests = 20;
             const componentsDetails = ComponentsDetails(conf, stubs);
             next(componentsDetails.refresh(list), done);
@@ -143,12 +143,10 @@ describe('registry : domain : components-details', () => {
         describe('when component details fetch succeeds', () => {
           before(done => {
             stubs = { getJson: sinon.stub() };
-            stubs.getJson.onCall(0).yields(null, details);
-            stubs.getJson
-              .onCall(1)
-              .yields(null, { oc: { date: 1459864868001 } });
+            stubs.getJson.onCall(0).resolves(details);
+            stubs.getJson.onCall(1).resolves({ oc: { date: 1459864868001 } });
             stubs.maxConcurrentRequests = 20;
-            stubs.putFileContent = sinon.stub().yields(null, 'ok');
+            stubs.putFileContent = sinon.stub().resolves('ok');
             const componentsDetails = ComponentsDetails(conf, stubs);
             next(componentsDetails.refresh(list), done);
           });
@@ -174,12 +172,12 @@ describe('registry : domain : components-details', () => {
             before(done => {
               fireStub.reset();
               stubs = { getJson: sinon.stub() };
-              stubs.getJson.onCall(0).yields(null, details);
-              stubs.getJson
-                .onCall(1)
-                .yields(null, { oc: { date: 1459864868001 } });
+              stubs.getJson.onCall(0).resolves(details);
+              stubs.getJson.onCall(1).resolves({ oc: { date: 1459864868001 } });
               stubs.maxConcurrentRequests = 20;
-              stubs.putFileContent = sinon.stub().yields('could not save');
+              stubs.putFileContent = sinon
+                .stub()
+                .rejects(new Error('could not save'));
               const componentsDetails = ComponentsDetails(conf, stubs);
               next(componentsDetails.refresh(list), done);
             });
@@ -209,12 +207,10 @@ describe('registry : domain : components-details', () => {
 
             before(done => {
               stubs = { getJson: sinon.stub() };
-              stubs.getJson.onCall(0).yields(null, details);
-              stubs.getJson
-                .onCall(1)
-                .yields(null, { oc: { date: 1459864868001 } });
+              stubs.getJson.onCall(0).resolves(details);
+              stubs.getJson.onCall(1).resolves({ oc: { date: 1459864868001 } });
               stubs.maxConcurrentRequests = 20;
-              stubs.putFileContent = sinon.stub().yields(null, 'ok');
+              stubs.putFileContent = sinon.stub().resolves('ok');
               const componentsDetails = ComponentsDetails(conf, stubs);
               next(componentsDetails.refresh(list), done);
             });
@@ -268,7 +264,7 @@ describe('registry : domain : components-details', () => {
 
         before(done => {
           stubs = { getJson: sinon.stub() };
-          stubs.getJson.yields(null, details);
+          stubs.getJson.resolves(details);
           stubs.maxConcurrentRequests = 20;
           stubs.putFileContent = sinon.stub().resolves();
           const componentsDetails = ComponentsDetails(conf, stubs);
@@ -301,11 +297,11 @@ describe('registry : domain : components-details', () => {
 
       before(done => {
         stubs = { getJson: sinon.stub() };
-        stubs.getJson.onCall(0).yields(null, 'not found');
-        stubs.getJson.onCall(1).yields(null, { oc: { date: 1459864868000 } });
-        stubs.getJson.onCall(2).yields(null, { oc: { date: 1459864868001 } });
+        stubs.getJson.onCall(0).resolves('not found');
+        stubs.getJson.onCall(1).resolves({ oc: { date: 1459864868000 } });
+        stubs.getJson.onCall(2).resolves({ oc: { date: 1459864868001 } });
         stubs.maxConcurrentRequests = 20;
-        stubs.putFileContent = sinon.stub().yields(null, 'ok');
+        stubs.putFileContent = sinon.stub().resolves('ok');
         const componentsDetails = ComponentsDetails(conf, stubs);
         next(componentsDetails.refresh(list), done);
       });
@@ -323,9 +319,9 @@ describe('registry : domain : components-details', () => {
         before(done => {
           fireStub.reset();
           stubs = { getJson: sinon.stub() };
-          stubs.getJson.onCall(0).yields('not found');
-          stubs.getJson.onCall(1).yields('error timeout');
-          stubs.getJson.onCall(2).yields('error timeout');
+          stubs.getJson.onCall(0).rejects(new Error('not found'));
+          stubs.getJson.onCall(1).rejects(new Error('error timeout'));
+          stubs.getJson.onCall(2).rejects(new Error('error timeout'));
           stubs.maxConcurrentRequests = 20;
           const componentsDetails = ComponentsDetails(conf, stubs);
           next(componentsDetails.refresh(list), done);
@@ -347,11 +343,11 @@ describe('registry : domain : components-details', () => {
       describe('when component details fetch succeeds', () => {
         before(done => {
           stubs = { getJson: sinon.stub() };
-          stubs.getJson.onCall(0).yields('not found');
-          stubs.getJson.onCall(1).yields(null, { oc: { date: 1459864868000 } });
-          stubs.getJson.onCall(2).yields(null, { oc: { date: 1459864868001 } });
+          stubs.getJson.onCall(0).rejects('not found');
+          stubs.getJson.onCall(1).resolves({ oc: { date: 1459864868000 } });
+          stubs.getJson.onCall(2).resolves({ oc: { date: 1459864868001 } });
           stubs.maxConcurrentRequests = 20;
-          stubs.putFileContent = sinon.stub().yields(null, 'ok');
+          stubs.putFileContent = sinon.stub().resolves('ok');
           const componentsDetails = ComponentsDetails(conf, stubs);
           next(componentsDetails.refresh(list), done);
         });
@@ -377,15 +373,13 @@ describe('registry : domain : components-details', () => {
           before(done => {
             fireStub.reset();
             stubs = { getJson: sinon.stub() };
-            stubs.getJson.onCall(0).yields('not found');
-            stubs.getJson
-              .onCall(1)
-              .yields(null, { oc: { date: 1459864868000 } });
-            stubs.getJson
-              .onCall(2)
-              .yields(null, { oc: { date: 1459864868001 } });
+            stubs.getJson.onCall(0).rejects('not found');
+            stubs.getJson.onCall(1).resolves({ oc: { date: 1459864868000 } });
+            stubs.getJson.onCall(2).resolves({ oc: { date: 1459864868001 } });
             stubs.maxConcurrentRequests = 20;
-            stubs.putFileContent = sinon.stub().yields('could not save');
+            stubs.putFileContent = sinon
+              .stub()
+              .rejects(new Error('could not save'));
             const componentsDetails = ComponentsDetails(conf, stubs);
             next(componentsDetails.refresh(list), done);
           });
@@ -415,15 +409,11 @@ describe('registry : domain : components-details', () => {
 
           before(done => {
             stubs = { getJson: sinon.stub() };
-            stubs.getJson.onCall(0).yields('not found');
-            stubs.getJson
-              .onCall(1)
-              .yields(null, { oc: { date: 1459864868000 } });
-            stubs.getJson
-              .onCall(2)
-              .yields(null, { oc: { date: 1459864868001 } });
+            stubs.getJson.onCall(0).rejects('not found');
+            stubs.getJson.onCall(1).resolves({ oc: { date: 1459864868000 } });
+            stubs.getJson.onCall(2).resolves({ oc: { date: 1459864868001 } });
             stubs.maxConcurrentRequests = 20;
-            stubs.putFileContent = sinon.stub().yields(null, 'ok');
+            stubs.putFileContent = sinon.stub().resolves('ok');
             const componentsDetails = ComponentsDetails(conf, stubs);
             next(componentsDetails.refresh(list), done);
           });
