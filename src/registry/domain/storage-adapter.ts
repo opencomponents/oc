@@ -58,7 +58,7 @@ function convertLegacyAdapter(adapter: LegacyStorageAdapter): StorageAdapter {
   };
 }
 
-export default function getAdapter(
+export default function getPromiseBasedAdapter(
   adapter: StorageAdapter | LegacyStorageAdapter
 ): StorageAdapter {
   if (isLegacyAdapter(adapter)) {

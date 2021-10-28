@@ -9,7 +9,7 @@ import registerTemplates from './register-templates';
 import settings from '../../resources/settings';
 import strings from '../../resources';
 import * as validator from './validators';
-import parseAdapter from './storage-adapter';
+import getPromiseBasedAdapter from './storage-adapter';
 import * as versionHandler from './version-handler';
 import errorToString from '../../utils/error-to-string';
 import { Component, Config, Repository } from '../../types';
@@ -22,7 +22,7 @@ const packageInfo = fs.readJsonSync(
 export default function repository(conf: Config): Repository {
   const cdn: StorageAdapter =
     !conf.local &&
-    (parseAdapter(conf.storage.adapter(conf.storage.options)) as any);
+    (getPromiseBasedAdapter(conf.storage.adapter(conf.storage.options)) as any);
   const options = !conf.local ? conf.storage.options : null;
   const repositorySource = conf.local
     ? 'local repository'
