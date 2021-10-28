@@ -26,7 +26,7 @@ describe('registry : routes : component', () => {
     });
     mockedRepository = {
       getCompiledView: sinon.stub().resolves(params.view),
-      getComponent: sinon.stub().yields(null, params.package),
+      getComponent: sinon.stub().resolves(params.package),
       getDataProvider: sinon
         .stub()
         .resolves({ content: params.data, filePath: '/path/to/server.js' }),
@@ -374,7 +374,7 @@ describe('registry : routes : component', () => {
       });
 
       describe('when registry does not implement plugin', () => {
-        beforeEach(() => {
+        beforeEach(done => {
           componentRoute(
             {
               headers: {},
@@ -385,6 +385,7 @@ describe('registry : routes : component', () => {
               status: statusStub
             }
           );
+          setTimeout(done);
         });
 
         it('should return 501 status code', () => {
@@ -627,10 +628,8 @@ describe('registry : routes : component', () => {
 
       mockedRepository.getComponent
         .onCall(0)
-        .yields(null, headersComponent.package);
-      mockedRepository.getComponent
-        .onCall(1)
-        .yields(null, simpleComponent.package);
+        .resolves(headersComponent.package);
+      mockedRepository.getComponent.onCall(1).resolves(simpleComponent.package);
 
       mockedRepository.getDataProvider.onCall(0).resolves({
         content: headersComponent.data,

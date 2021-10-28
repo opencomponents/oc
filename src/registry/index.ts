@@ -63,10 +63,10 @@ export default function registry(inputOptions: Input) {
 
         (
           plugins: Dictionary<(...args: unknown[]) => void>,
-          cb: Callback<ComponentsList | string>
+          cb: Callback<ComponentsList | string, unknown>
         ) => {
           options.plugins = plugins;
-          repository.init(cb);
+          fromPromise(repository.init)(cb);
         },
 
         (

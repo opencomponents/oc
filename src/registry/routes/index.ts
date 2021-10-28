@@ -53,24 +53,28 @@ export default function (repository: Repository) {
         async.each(
           components,
           (component, callback) =>
-            repository.getComponent(component, (err, result) => {
-              if (err) return callback(err as any);
+            fromPromise(repository.getComponent)(
+              component,
+              undefined,
+              (err, result) => {
+                if (err) return callback(err as any);
 
-              if (result.oc && result.oc.date) {
-                result.oc.stringifiedDate = dateStringified(
-                  new Date(result.oc.date)
-                );
+                if (result.oc && result.oc.date) {
+                  result.oc.stringifiedDate = dateStringified(
+                    new Date(result.oc.date)
+                  );
+                }
+
+                componentsInfo.push(mapComponentDetails(result));
+                componentsReleases += result.allVersions.length;
+                callback();
               }
-
-              componentsInfo.push(mapComponentDetails(result));
-              componentsReleases += result.allVersions.length;
-              callback();
-            }),
+            ),
           err => {
             if (err) return next(err);
 
             componentsInfo = _.sortBy(componentsInfo, 'name');
-            repository.getComponentsDetails((err, details) => {
+            fromPromise(repository.getComponentsDetails)((err, details) => {
               // eslint-disable-next-line no-console
               if (err) console.log(err);
               res.send(
