@@ -14,7 +14,7 @@ describe('registry', () => {
     http: {
       createServer: sinon.stub()
     },
-    './middleware': { bind: sinon.stub() },
+    './middleware': { bind: sinon.stub().returns({}) },
     './domain/plugins-initialiser': { init: sinon.stub() },
     './domain/repository': sinon.stub().returns({
       init: repositoryInitStub

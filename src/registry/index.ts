@@ -9,7 +9,7 @@ import * as eventsHandler from './domain/events-handler';
 import * as middleware from './middleware';
 import * as pluginsInitialiser from './domain/plugins-initialiser';
 import Repository from './domain/repository';
-import * as router from './router';
+import { create as createRouter } from './router';
 import sanitiseOptions from './domain/options-sanitiser';
 import * as validator from './domain/validators';
 import { ComponentsList, Config, Plugin } from '../types';
@@ -20,15 +20,16 @@ interface Input extends Partial<Omit<Config, 'beforePublish'>> {
 }
 
 export default function registry(inputOptions: Input) {
-  const validationResult =
-    validator.validateRegistryConfiguration(inputOptions);
+  const validationResult = validator.validateRegistryConfiguration(
+    inputOptions
+  );
   if (!validationResult.isValid) {
     throw validationResult.message;
   }
   const options = sanitiseOptions(inputOptions);
 
   const plugins: Plugin[] = [];
-  const app = middleware.bind(express(), options);
+  const { app, router } = middleware.bind(express(), options);
   let server: http.Server;
   const repository = Repository(options);
 
@@ -54,7 +55,7 @@ export default function registry(inputOptions: Input) {
     if (typeof callback !== 'function') {
       callback = _.noop;
     }
-    router.create(app, options, repository);
+    createRouter(router, options, repository);
     async.waterfall(
       [
         (cb: Callback<Dictionary<(...args: unknown[]) => unknown>, unknown>) =>
