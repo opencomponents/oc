@@ -96,6 +96,8 @@ export async function init(
       pluginCallback(err);
       throw err;
     });
+    // Overriding toString so implementation details of plugins do not
+    // leak to OC consumers
     plugin.register.execute.toString = () => plugin.description || '';
     registered[plugin.name] = plugin.register.execute;
     pluginCallback();
