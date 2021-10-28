@@ -93,7 +93,7 @@ describe('registry', () => {
             let error;
             beforeEach(done => {
               deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
-              repositoryInitStub.yields('nope');
+              repositoryInitStub.rejects(new Error('nope'));
 
               registry.start(err => {
                 error = err;
@@ -102,7 +102,7 @@ describe('registry', () => {
             });
 
             it('should fail with error', () => {
-              expect(error).to.equal('nope');
+              expect(error.message).to.equal('nope');
             });
           });
 
@@ -111,7 +111,7 @@ describe('registry', () => {
               let error;
               beforeEach(done => {
                 deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
-                repositoryInitStub.yields(null, 'ok');
+                repositoryInitStub.resolves('ok');
                 deps['./app-start'].rejects({ msg: 'I got a problem' });
 
                 registry.start(err => {
@@ -130,7 +130,7 @@ describe('registry', () => {
                 let error;
                 beforeEach(done => {
                   deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
-                  repositoryInitStub.yields(null, 'ok');
+                  repositoryInitStub.resolves('ok');
                   deps['./app-start'].resolves('ok');
 
                   deps['http'].createServer.returns({
@@ -154,7 +154,7 @@ describe('registry', () => {
                 let result;
                 beforeEach(done => {
                   deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
-                  repositoryInitStub.yields(null, 'ok');
+                  repositoryInitStub.resolves('ok');
                   deps['./app-start'].resolves('ok');
                   deps['./domain/events-handler'].fire = sinon.stub();
 
@@ -191,7 +191,7 @@ describe('registry', () => {
                 let error;
                 beforeEach(done => {
                   deps['./domain/plugins-initialiser'].init.yields(null, 'ok');
-                  repositoryInitStub.yields(null, 'ok');
+                  repositoryInitStub.resolves('ok');
                   deps['./app-start'].resolves('ok');
                   deps['./domain/events-handler'].fire = sinon.stub();
 

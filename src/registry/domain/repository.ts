@@ -12,14 +12,7 @@ import * as validator from './validators';
 import parseAdapter from './storage-adapter';
 import * as versionHandler from './version-handler';
 import errorToString from '../../utils/error-to-string';
-import {
-  Component,
-  ComponentsDetails,
-  ComponentsList,
-  Config,
-  Repository
-} from '../../types';
-import { fromCallback, fromPromise } from 'universalify';
+import { Component, Config, Repository } from '../../types';
 import { StorageAdapter } from 'oc-storage-adapters-utils';
 
 const packageInfo = fs.readJsonSync(
@@ -76,29 +69,28 @@ export default function repository(conf: Config): Repository {
       validComponents.push('oc-client');
       return validComponents;
     },
-    getComponentVersions(
-      componentName: string,
-      callback: Callback<string[], string>
-    ) {
+    getComponentVersions(componentName: string): Promise<string[]> {
       if (componentName === 'oc-client') {
-        return callback(null, [
-          fs.readJsonSync(path.join(__dirname, '../../../package.json')).version
+        return Promise.all([
+          fs
+            .readJson(path.join(__dirname, '../../../package.json'))
+            .then(x => x.version)
         ]);
       }
 
       if (!_.includes(local.getComponents(), componentName)) {
-        return callback(
+        return Promise.reject(
           strings.errors.registry.COMPONENT_NOT_FOUND(
             componentName,
             repositorySource
-          ),
-          undefined as any
+          )
         );
       }
 
-      callback(null, [
-        fs.readJsonSync(path.join(conf.path, `${componentName}/package.json`))
-          .version
+      return Promise.all([
+        fs
+          .readJson(path.join(conf.path, `${componentName}/package.json`))
+          .then(x => x.version)
       ]);
     },
     getDataProvider(componentName: string) {
@@ -126,68 +118,36 @@ export default function repository(conf: Config): Repository {
         getFilePath(componentName, componentVersion, 'template.js')
       );
     },
-    getComponent(
-      componentName: string,
-      componentVersionOrCallback: string | Callback<Component, string>,
-      callbackMaybe?: Callback<Component, string>
-    ) {
-      const componentVersion: string | undefined =
-        typeof componentVersionOrCallback === 'function'
-          ? undefined
-          : (componentVersionOrCallback as any);
-      const callback: Callback<Component, string> =
-        typeof componentVersionOrCallback === 'function'
-          ? (componentVersionOrCallback as any)
-          : callbackMaybe!;
+    async getComponent(componentName: string, componentVersion?: string) {
+      const allVersions = await repository.getComponentVersions(componentName);
 
-      fromPromise(repository.getComponentVersions)(
-        componentName,
-        (err: any, allVersions) => {
-          if (err) {
-            return callback(err, undefined as any);
-          }
+      if (allVersions.length === 0) {
+        throw strings.errors.registry.COMPONENT_NOT_FOUND(
+          componentName,
+          repositorySource
+        );
+      }
 
-          if (allVersions.length === 0) {
-            return callback(
-              strings.errors.registry.COMPONENT_NOT_FOUND(
-                componentName,
-                repositorySource
-              ),
-              undefined as any
-            );
-          }
-
-          const version = versionHandler.getAvailableVersion(
-            componentVersion,
-            allVersions
-          );
-
-          if (!version) {
-            return callback(
-              strings.errors.registry.COMPONENT_VERSION_NOT_FOUND(
-                componentName,
-                componentVersion || '',
-                repositorySource
-              ),
-              undefined as any
-            );
-          }
-
-          fromPromise(repository.getComponentInfo)(
-            componentName,
-            version,
-            (err, component) => {
-              if (err) {
-                return callback(
-                  `component not available: ${errorToString(err)}`,
-                  null as any
-                );
-              }
-              callback(null, Object.assign(component, { allVersions }));
-            }
-          );
-        }
+      const version = versionHandler.getAvailableVersion(
+        componentVersion,
+        allVersions
       );
+
+      if (!version) {
+        throw strings.errors.registry.COMPONENT_VERSION_NOT_FOUND(
+          componentName,
+          componentVersion || '',
+          repositorySource
+        );
+      }
+
+      const component = await repository
+        .getComponentInfo(componentName, version)
+        .catch(err => {
+          throw `component not available: ${errorToString(err)}`;
+        });
+
+      return Object.assign(component, { allVersions });
     },
     getComponentInfo(componentName: string, componentVersion: string) {
       if (conf.local) {
@@ -233,16 +193,17 @@ export default function repository(conf: Config): Repository {
       const { components } = await componentsCache.get();
       return Object.keys(components);
     },
-    getComponentsDetails(callback: Callback<ComponentsDetails, string>) {
+    getComponentsDetails() {
       if (conf.local) {
-        return (callback as any)();
+        // when in local this won't get called
+        return Promise.resolve(null) as any;
       }
 
-      componentsDetails.get(callback);
+      return componentsDetails.get();
     },
     async getComponentVersions(componentName: string) {
       if (conf.local) {
-        return fromCallback(local.getComponentVersions)(componentName);
+        return local.getComponentVersions(componentName);
       }
 
       const res = await componentsCache.get();
@@ -291,56 +252,42 @@ export default function repository(conf: Config): Repository {
 
     getTemplatesInfo: () => templatesInfo,
     getTemplate: (type: string) => templatesHash[type],
-    init(callback: Callback<ComponentsList | string>) {
+    async init() {
       if (conf.local) {
-        return callback(null, 'ok');
+        // when in local this won't get called
+        return 'ok' as any;
       }
 
-      fromPromise(componentsCache.load)((err: any, componentsList) => {
-        if (err) {
-          return callback(err, undefined as any);
-        }
-        componentsDetails.refresh(componentsList, err =>
-          callback(err, componentsList)
-        );
-      });
+      const componentsList = await componentsCache.load();
+
+      return componentsDetails.refresh(componentsList);
     },
-    publishComponent(
+    async publishComponent(
       pkgDetails: any,
       componentName: string,
-      componentVersion: string,
-      callback: Callback<ComponentsDetails, { code: string; msg: string }>
+      componentVersion: string
     ) {
       if (conf.local) {
-        return callback(
-          {
-            code: strings.errors.registry.LOCAL_PUBLISH_NOT_ALLOWED_CODE,
-            msg: strings.errors.registry.LOCAL_PUBLISH_NOT_ALLOWED
-          },
-          undefined as any
-        );
+        throw {
+          code: strings.errors.registry.LOCAL_PUBLISH_NOT_ALLOWED_CODE,
+          msg: strings.errors.registry.LOCAL_PUBLISH_NOT_ALLOWED
+        };
       }
 
       if (!validator.validateComponentName(componentName)) {
-        return callback(
-          {
-            code: strings.errors.registry.COMPONENT_NAME_NOT_VALID_CODE,
-            msg: strings.errors.registry.COMPONENT_NAME_NOT_VALID
-          },
-          undefined as any
-        );
+        throw {
+          code: strings.errors.registry.COMPONENT_NAME_NOT_VALID_CODE,
+          msg: strings.errors.registry.COMPONENT_NAME_NOT_VALID
+        };
       }
 
       if (!validator.validateVersion(componentVersion)) {
-        return callback(
-          {
-            code: strings.errors.registry.COMPONENT_VERSION_NOT_VALID_CODE,
-            msg: strings.errors.registry.COMPONENT_VERSION_NOT_VALID(
-              componentVersion
-            )
-          },
-          undefined as any
-        );
+        throw {
+          code: strings.errors.registry.COMPONENT_VERSION_NOT_VALID_CODE,
+          msg: strings.errors.registry.COMPONENT_VERSION_NOT_VALID(
+            componentVersion
+          )
+        };
       }
 
       const validationResult = validator.validatePackageJson(
@@ -351,74 +298,45 @@ export default function repository(conf: Config): Repository {
       );
 
       if (!validationResult.isValid) {
-        return callback(
-          {
-            code: strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL_CODE,
-            msg: strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL(
-              String(validationResult.error)
-            )
-          },
-          undefined as any
-        );
+        throw {
+          code: strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL_CODE,
+          msg: strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL(
+            String(validationResult.error)
+          )
+        };
       }
 
-      fromPromise(repository.getComponentVersions)(
-        componentName,
-        (_err, componentVersions) => {
-          if (
-            !versionHandler.validateNewVersion(
-              componentVersion,
-              componentVersions
-            )
-          ) {
-            return callback(
-              {
-                code: strings.errors.registry
-                  .COMPONENT_VERSION_ALREADY_FOUND_CODE,
-                msg: strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND(
-                  componentName,
-                  componentVersion,
-                  repositorySource
-                )
-              },
-              undefined as any
-            );
-          }
-
-          pkgDetails.packageJson.oc.date = getUnixUtcTimestamp();
-          fs.writeJSON(
-            path.join(pkgDetails.outputFolder, 'package.json'),
-            pkgDetails.packageJson,
-            err => {
-              if (err) {
-                return callback(err as any, undefined as any);
-              }
-              fromPromise(cdn.putDir)(
-                pkgDetails.outputFolder,
-                `${
-                  options!.componentsDir
-                }/${componentName}/${componentVersion}`,
-                err => {
-                  if (err) {
-                    return callback(err as any, undefined as any);
-                  }
-                  fromPromise(componentsCache.refresh)(
-                    (err, componentsList) => {
-                      if (err) {
-                        return callback(err as any, undefined as any);
-                      }
-                      componentsDetails.refresh(
-                        componentsList,
-                        callback as any
-                      );
-                    }
-                  );
-                }
-              );
-            }
-          );
-        }
+      const componentVersions = await repository.getComponentVersions(
+        componentName
       );
+
+      if (
+        !versionHandler.validateNewVersion(componentVersion, componentVersions)
+      ) {
+        throw {
+          code: strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND_CODE,
+          msg: strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND(
+            componentName,
+            componentVersion,
+            repositorySource
+          )
+        };
+      }
+
+      pkgDetails.packageJson.oc.date = getUnixUtcTimestamp();
+
+      await fs.writeJson(
+        path.join(pkgDetails.outputFolder, 'package.json'),
+        pkgDetails.packageJson
+      );
+
+      await cdn.putDir(
+        pkgDetails.outputFolder,
+        `${options!.componentsDir}/${componentName}/${componentVersion}`
+      );
+
+      const componentsList = await componentsCache.refresh();
+      return componentsDetails.refresh(componentsList);
     }
   };
 

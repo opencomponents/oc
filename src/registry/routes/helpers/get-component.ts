@@ -98,7 +98,7 @@ export default function getComponent(conf: Config, repository: Repository) {
       parameters: options.parameters
     };
 
-    repository.getComponent(
+    fromPromise(repository.getComponent)(
       requestedComponent.name,
       requestedComponent.version,
       (err, component) => {

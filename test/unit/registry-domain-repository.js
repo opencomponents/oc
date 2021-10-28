@@ -8,10 +8,6 @@ const sinon = require('sinon');
 
 describe('registry : domain : repository', () => {
   let response;
-  const saveResult = callback => (error, result) => {
-    response = { error, result };
-    callback();
-  };
   const savePromiseResult = (promise, done) => {
     response = {};
     promise
@@ -36,9 +32,7 @@ describe('registry : domain : repository', () => {
       readdirSync: fs.readdirSync,
       lstatSync: fs.lstatSync,
       readJsonSync: fs.readJsonSync,
-      writeJSON: (path, content, cb) => {
-        cb(null);
-      }
+      writeJson: () => Promise.resolve()
     };
 
     const s3Mock = {
@@ -128,12 +122,12 @@ describe('registry : domain : repository', () => {
 
     describe('when getting the components details', () => {
       before(done => {
-        componentsDetailsMock.get.yields(null, componentsDetailsBaseResponse);
-        repository.getComponentsDetails(saveResult(done));
+        componentsDetailsMock.get.resolves(componentsDetailsBaseResponse);
+        savePromiseResult(repository.getComponentsDetails(), done);
       });
 
       it('should not error', () => {
-        expect(response.error).to.be.null;
+        expect(response.error).to.be.undefined;
       });
 
       it('should return the result', () => {
@@ -187,7 +181,10 @@ describe('registry : domain : repository', () => {
       describe('when the component does not exist', () => {
         before(done => {
           componentsCacheMock.get.returns(componentsCacheBaseResponse);
-          repository.getComponent('form-component', '1.0.0', saveResult(done));
+          savePromiseResult(
+            repository.getComponent('form-component', '1.0.0'),
+            done
+          );
         });
 
         it('should respond with a proper error', () => {
@@ -207,7 +204,10 @@ describe('registry : domain : repository', () => {
               code: 'file_not_valid'
             })
           );
-          repository.getComponent('hello-world', '1.0.0', saveResult(done));
+          savePromiseResult(
+            repository.getComponent('hello-world', '1.0.0'),
+            done
+          );
         });
         after(() => {
           repository.getComponentInfo.restore();
@@ -222,7 +222,10 @@ describe('registry : domain : repository', () => {
       describe('when the component exists but version does not', () => {
         before(done => {
           componentsCacheMock.get.returns(componentsCacheBaseResponse);
-          repository.getComponent('hello-world', '2.0.0', saveResult(done));
+          savePromiseResult(
+            repository.getComponent('hello-world', '2.0.0'),
+            done
+          );
         });
 
         it('should respond with a proper error', () => {
@@ -238,11 +241,14 @@ describe('registry : domain : repository', () => {
       before(done => {
         componentsCacheMock.get.returns(componentsCacheBaseResponse);
         s3Mock.getJson.resolves({ name: 'hello-world', version: '1.0.0' });
-        repository.getComponent('hello-world', '1.0.0', saveResult(done));
+        savePromiseResult(
+          repository.getComponent('hello-world', '1.0.0'),
+          done
+        );
       });
 
       it('should respond without an error', () => {
-        expect(response.error).to.be.null;
+        expect(response.error).to.be.undefined;
       });
 
       it("should fetch the versions' list from the cache", () => {
@@ -278,11 +284,9 @@ describe('registry : domain : repository', () => {
     describe('when publishing a component', () => {
       describe('when component has a not valid name', () => {
         before(done => {
-          repository.publishComponent(
-            {},
-            'blue velvet',
-            '1.0.0',
-            saveResult(done)
+          savePromiseResult(
+            repository.publishComponent({}, 'blue velvet', '1.0.0'),
+            done
           );
         });
 
@@ -297,11 +301,9 @@ describe('registry : domain : repository', () => {
 
       describe('when component has a not valid version', () => {
         before(done => {
-          repository.publishComponent(
-            {},
-            'hello-world',
-            '1.0',
-            saveResult(done)
+          savePromiseResult(
+            repository.publishComponent({}, 'hello-world', '1.0'),
+            done
           );
         });
 
@@ -329,11 +331,9 @@ describe('registry : domain : repository', () => {
         describe('when component with same name and version is already in library', () => {
           before(done => {
             componentsCacheMock.get.returns(componentsCacheBaseResponse);
-            repository.publishComponent(
-              pkg,
-              'hello-world',
-              '1.0.0',
-              saveResult(done)
+            savePromiseResult(
+              repository.publishComponent(pkg, 'hello-world', '1.0.0'),
+              done
             );
           });
 
@@ -354,24 +354,23 @@ describe('registry : domain : repository', () => {
             componentsCacheMock.get.returns(componentsCacheBaseResponse);
             componentsCacheMock.refresh = sinon.stub();
             componentsCacheMock.refresh.resolves(componentsCacheBaseResponse);
-            componentsDetailsMock.get.yields(
-              null,
-              componentsDetailsBaseResponse
-            );
-            componentsDetailsMock.refresh.yields(
-              null,
+            componentsDetailsMock.get.resolves(componentsDetailsBaseResponse);
+            componentsDetailsMock.refresh.resolves(
               componentsDetailsBaseResponse
             );
             s3Mock.putDir = sinon.stub();
             s3Mock.putDir.resolves('done');
-            repository.publishComponent(
-              Object.assign(pkg, {
-                outputFolder: '/path/to/component',
-                componentName: 'hello-world'
-              }),
-              'hello-world',
-              '1.0.1',
-              saveResult(done)
+            savePromiseResult(
+              repository.publishComponent(
+                {
+                  ...pkg,
+                  outputFolder: '/path/to/component',
+                  componentName: 'hello-world'
+                },
+                'hello-world',
+                '1.0.1'
+              ),
+              done
             );
           });
 
@@ -443,7 +442,10 @@ describe('registry : domain : repository', () => {
     describe('when trying to get a not valid component', () => {
       describe('when the component does not exist', () => {
         before(done => {
-          repository.getComponent('form-component', '1.0.0', saveResult(done));
+          savePromiseResult(
+            repository.getComponent('form-component', '1.0.0'),
+            done
+          );
         });
 
         it('should respond with a proper error', () => {
@@ -456,7 +458,10 @@ describe('registry : domain : repository', () => {
 
       describe('when the component exists but version does not', () => {
         before(done => {
-          repository.getComponent('hello-world', '2.0.0', saveResult(done));
+          savePromiseResult(
+            repository.getComponent('hello-world', '2.0.0'),
+            done
+          );
         });
 
         it('should respond with a proper error', () => {
@@ -470,11 +475,14 @@ describe('registry : domain : repository', () => {
 
     describe('when getting an existing component', () => {
       before(done => {
-        repository.getComponent('hello-world', '1.0.0', saveResult(done));
+        savePromiseResult(
+          repository.getComponent('hello-world', '1.0.0'),
+          done
+        );
       });
 
       it('should respond without an error', () => {
-        expect(response.error).to.be.null;
+        expect(response.error).to.be.undefined;
       });
 
       it('should return the component info', () => {
@@ -501,11 +509,9 @@ describe('registry : domain : repository', () => {
       const componentDir = path.resolve('../fixtures/components/hello-world');
 
       before(done => {
-        repository.publishComponent(
-          componentDir,
-          'hello-world',
-          '1.0.0',
-          saveResult(done)
+        savePromiseResult(
+          repository.publishComponent(componentDir, 'hello-world', '1.0.0'),
+          done
         );
       });
 
