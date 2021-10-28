@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import getComponentsList from './components-list';
-import * as eventsHandler from '../events-handler';
+import eventsHandler from '../events-handler';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import { ComponentsList, Config } from '../../../types';
 import { StorageAdapter } from 'oc-storage-adapters-utils';
@@ -21,10 +21,10 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
         if (data.lastEdit > cachedComponentsList.lastEdit) {
           cachedComponentsList = data;
         }
-      } catch (err) {
+      } catch (err: any) {
         eventsHandler.fire('error', {
           code: 'components_list_get',
-          message: err
+          message: err?.message || String(err)
         });
       }
       refreshLoop = poll();

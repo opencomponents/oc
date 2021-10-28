@@ -1,6 +1,6 @@
 import pLimit from 'p-limit';
 import _ from 'lodash';
-import * as eventsHandler from './events-handler';
+import eventsHandler from './events-handler';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import {
   Component,
@@ -11,8 +11,11 @@ import {
 import { StorageAdapter } from 'oc-storage-adapters-utils';
 
 export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
-  const returnError = (code: string, message: any) => {
-    eventsHandler.fire('error', { code, message: message?.message ?? message });
+  const returnError = (code: string, message: string | Error) => {
+    eventsHandler.fire('error', {
+      code,
+      message: (message as Error)?.message ?? message
+    });
     throw code;
   };
 

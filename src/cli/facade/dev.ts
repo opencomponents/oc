@@ -107,19 +107,16 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
         const mockedPlugins = getMockedPlugins(logger, componentsDir);
         mockedPlugins.forEach(p => registry.register(p));
 
-        registry.on(
-          'request',
-          (data: { errorCode: string; errorDetails: string }) => {
-            if (data.errorCode === 'PLUGIN_MISSING_FROM_REGISTRY') {
-              logger.err(
-                cliErrors.PLUGIN_MISSING_FROM_REGISTRY(
-                  data.errorDetails,
-                  colors.blue(strings.commands.cli.MOCK_PLUGIN)
-                )
-              );
-            }
+        registry.on('request', data => {
+          if (data.errorCode === 'PLUGIN_MISSING_FROM_REGISTRY') {
+            logger.err(
+              cliErrors.PLUGIN_MISSING_FROM_REGISTRY(
+                String(data.errorDetails),
+                colors.blue(strings.commands.cli.MOCK_PLUGIN)
+              )
+            );
           }
-        );
+        });
       };
 
       logger.warn(cliMessages.SCANNING_COMPONENTS, true);
