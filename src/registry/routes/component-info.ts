@@ -96,10 +96,10 @@ export default function componentInfoRoute(
   repository: Repository
 ) {
   return function (req: Request, res: Response): void {
-    repository.getComponent(
+    fromPromise(repository.getComponent)(
       req.params['componentName'],
       req.params['componentVersion'],
-      (registryError, component) => {
+      (registryError: any, component) => {
         if (registryError && conf.fallbackRegistryUrl) {
           return getComponentFallback.getComponentInfo(
             conf,
