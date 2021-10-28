@@ -61,11 +61,11 @@ export default function publish(repository: Repository) {
         return;
       }
 
-      repository.publishComponent(
+      fromPromise(repository.publishComponent)(
         pkgDetails,
         req.params['componentName'],
         req.params['componentVersion'],
-        err => {
+        (err: any) => {
           if (err) {
             if (err.code === 'not_allowed') {
               res.errorDetails = `Publish not allowed: ${err.msg}`;

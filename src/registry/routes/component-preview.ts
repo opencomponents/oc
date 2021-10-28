@@ -3,6 +3,7 @@ import previewView from '../views/preview';
 import * as urlBuilder from '../domain/url-builder';
 import { Request, Response } from 'express';
 import { Component, Config, TemplateInfo, Repository } from '../../types';
+import { fromPromise } from 'universalify';
 
 function componentPreview(
   err: any,
@@ -50,10 +51,10 @@ export default function componentPreviewRoute(
   repository: Repository
 ) {
   return (req: Request, res: Response): void => {
-    repository.getComponent(
+    fromPromise(repository.getComponent)(
       req.params['componentName'],
       req.params['componentVersion'],
-      (registryError, component) => {
+      (registryError: any, component) => {
         if (registryError && conf.fallbackRegistryUrl) {
           return getComponentFallback.getComponentPreview(
             conf,
