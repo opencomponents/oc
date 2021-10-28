@@ -13,9 +13,12 @@ type LegacyStorageAdapter = {
 };
 
 const officialAdapters = {
-  s3: { name: 'oc-s3-storage-adapter', version: '1.2.0' },
-  gs: { name: 'oc-gs-storage-adapter', version: '1.1.0' },
-  'azure-blob-storage': { name: 'oc-azure-storage-adapter', version: '0.1.0' }
+  s3: { name: 'oc-s3-storage-adapter', firstPromiseBasedVersion: '1.2.0' },
+  gs: { name: 'oc-gs-storage-adapter', firstPromiseBasedVersion: '1.1.0' },
+  'azure-blob-storage': {
+    name: 'oc-azure-storage-adapter',
+    firstPromiseBasedVersion: '0.1.0'
+  }
 };
 type OfficialAdapter = keyof typeof officialAdapters;
 
@@ -65,7 +68,7 @@ export default function getPromiseBasedAdapter(
     if (isOfficialAdapter(adapter)) {
       const pkg = officialAdapters[adapter.adapterType];
       process.emitWarning(
-        `Adapters now should work with promises. Consider upgrading your package ${pkg.name} to at least version ${pkg.version}`,
+        `Adapters now should work with promises. Consider upgrading your package ${pkg.name} to at least version ${pkg.firstPromiseBasedVersion}`,
         'DeprecationWarning'
       );
     } else {
