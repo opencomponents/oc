@@ -17,7 +17,7 @@ function validatePlugins(plugins: unknown[]): asserts plugins is Plugin[] {
     ) {
       throw new Error(
         strings.errors.registry.PLUGIN_NOT_VALID(
-          (plugin as Plugin).name || String(idx)
+          (plugin as Plugin).name || String(idx + 1)
         )
       );
     }
