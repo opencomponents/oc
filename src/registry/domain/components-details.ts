@@ -1,19 +1,18 @@
-import { promisify } from 'util';
 import pLimit from 'p-limit';
 import _ from 'lodash';
 import * as eventsHandler from './events-handler';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import {
-  Cdn,
   Component,
   ComponentsDetails,
   ComponentsList,
   Config
 } from '../../types';
+import { StorageAdapter } from 'oc-storage-adapters-utils';
 
-export default function componentsDetails(conf: Config, cdn: Cdn) {
-  const returnError = (code: string, message: unknown) => {
-    eventsHandler.fire('error', { code, message });
+export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
+  const returnError = (code: string, message: any) => {
+    eventsHandler.fire('error', { code, message: message?.message ?? message });
     throw code;
   };
 
@@ -21,7 +20,7 @@ export default function componentsDetails(conf: Config, cdn: Cdn) {
     `${conf.storage.options.componentsDir}/components-details.json`;
 
   const getFromJson = (): Promise<ComponentsDetails> =>
-    promisify(cdn.getJson)(filePath(), true);
+    cdn.getJson(filePath(), true);
 
   const getFromDirectories = async (options: {
     componentsList: ComponentsList;
@@ -45,7 +44,7 @@ export default function componentsDetails(conf: Config, cdn: Cdn) {
     await Promise.all(
       missing.map(({ name, version }) =>
         limit(async () => {
-          const content: Component = await promisify(cdn.getJson)(
+          const content: Component = await cdn.getJson(
             `${conf.storage.options.componentsDir}/${name}/${version}/package.json`,
             true
           );
@@ -63,7 +62,7 @@ export default function componentsDetails(conf: Config, cdn: Cdn) {
   };
 
   const save = (data: ComponentsDetails): Promise<unknown> =>
-    promisify(cdn.putFileContent)(JSON.stringify(data), filePath(), true);
+    cdn.putFileContent(JSON.stringify(data), filePath(), true);
 
   const refresh = async (
     componentsList: ComponentsList

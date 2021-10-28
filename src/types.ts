@@ -168,24 +168,6 @@ export interface Config {
   verbosity: number;
 }
 
-export interface Cdn {
-  adapterType: string;
-  getFile: (filePath: string, cb: Callback<string>) => void;
-  getJson<T>(filePath: string, force: boolean, cb: Callback<T, string>): void;
-  listSubDirectories: (
-    dir: string,
-    cb: Callback<string[], Error & { code?: string }>
-  ) => void;
-  maxConcurrentRequests: number;
-  putDir: (folderPath: string, filePath: string, cb: Callback) => void;
-  putFileContent: (
-    data: unknown,
-    path: string,
-    isPrivate: boolean,
-    callback: Callback<unknown, string>
-  ) => void;
-}
-
 type CompiledTemplate = (model: unknown) => string;
 
 interface CompilerOptions {

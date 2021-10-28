@@ -62,12 +62,12 @@ describe('registry : domain : components-cache', () => {
     describe('when initialising the cache', () => {
       before(done => {
         mockedCdn.getJson = sinon.stub();
-        mockedCdn.getJson.yields('not_found');
+        mockedCdn.getJson.rejects('not_found');
         mockedCdn.listSubDirectories = sinon.stub();
-        mockedCdn.listSubDirectories.onCall(0).yields(null, ['hello-world']);
-        mockedCdn.listSubDirectories.onCall(1).yields(null, ['1.0.0', '1.0.2']);
+        mockedCdn.listSubDirectories.onCall(0).resolves(['hello-world']);
+        mockedCdn.listSubDirectories.onCall(1).resolves(['1.0.0', '1.0.2']);
         mockedCdn.putFileContent = sinon.stub();
-        mockedCdn.putFileContent.yields(null, 'ok');
+        mockedCdn.putFileContent.resolves('ok');
         initialise();
         componentsCache.load().finally(done);
       });
@@ -105,14 +105,14 @@ describe('registry : domain : components-cache', () => {
     describe('when initialising the cache', () => {
       before(done => {
         mockedCdn.getJson = sinon.stub();
-        mockedCdn.getJson.yields(null, baseResponse());
+        mockedCdn.getJson.resolves(baseResponse());
         mockedCdn.listSubDirectories = sinon.stub();
-        mockedCdn.listSubDirectories.onCall(0).yields(null, ['hello-world']);
+        mockedCdn.listSubDirectories.onCall(0).resolves(['hello-world']);
         mockedCdn.listSubDirectories
           .onCall(1)
-          .yields(null, ['1.0.0', '1.0.2', '2.0.0']);
+          .resolves(['1.0.0', '1.0.2', '2.0.0']);
         mockedCdn.putFileContent = sinon.stub();
-        mockedCdn.putFileContent.yields(null, 'ok');
+        mockedCdn.putFileContent.resolves('ok');
         initialise();
         componentsCache.load().finally(done);
       });
@@ -150,10 +150,10 @@ describe('registry : domain : components-cache', () => {
     describe('when initialising the cache', () => {
       before(done => {
         mockedCdn.getJson = sinon.stub();
-        mockedCdn.getJson.yields(null, baseResponse());
+        mockedCdn.getJson.resolves(baseResponse());
         mockedCdn.listSubDirectories = sinon.stub();
-        mockedCdn.listSubDirectories.onCall(0).yields(null, ['hello-world']);
-        mockedCdn.listSubDirectories.onCall(1).yields(null, ['1.0.0', '1.0.2']);
+        mockedCdn.listSubDirectories.onCall(0).resolves(['hello-world']);
+        mockedCdn.listSubDirectories.onCall(1).resolves(['1.0.0', '1.0.2']);
         mockedCdn.putFileContent = sinon.stub();
         initialise();
         componentsCache.load().finally(done);
@@ -199,19 +199,19 @@ describe('registry : domain : components-cache', () => {
       describe('when refresh errors', () => {
         before(done => {
           mockedCdn.getJson = sinon.stub();
-          mockedCdn.getJson.yields(null, baseResponse());
+          mockedCdn.getJson.resolves(baseResponse());
           mockedCdn.putFileContent = sinon.stub();
-          mockedCdn.putFileContent.yields(null, 'ok');
+          mockedCdn.putFileContent.resolves('ok');
           mockedCdn.listSubDirectories = sinon.stub();
-          mockedCdn.listSubDirectories.onCall(0).yields(null, ['hello-world']);
-          mockedCdn.listSubDirectories
-            .onCall(1)
-            .yields(null, ['1.0.0', '1.0.2']);
+          mockedCdn.listSubDirectories.onCall(0).resolves(['hello-world']);
+          mockedCdn.listSubDirectories.onCall(1).resolves(['1.0.0', '1.0.2']);
           mockedCdn.listSubDirectories
             .onCall(2)
-            .yields(null, ['hello-world', 'new-component']);
-          mockedCdn.listSubDirectories.onCall(3).yields('an error!');
-          mockedCdn.listSubDirectories.onCall(4).yields(null, ['1.0.0']);
+            .resolves(['hello-world', 'new-component']);
+          mockedCdn.listSubDirectories
+            .onCall(3)
+            .rejects(new Error('an error!'));
+          mockedCdn.listSubDirectories.onCall(4).resolves(['1.0.0']);
 
           initialise();
           componentsCache
@@ -234,21 +234,19 @@ describe('registry : domain : components-cache', () => {
       describe('when refresh does not generate errors', () => {
         before(done => {
           mockedCdn.getJson = sinon.stub();
-          mockedCdn.getJson.yields(null, baseResponse());
+          mockedCdn.getJson.resolves(baseResponse());
           mockedCdn.putFileContent = sinon.stub();
-          mockedCdn.putFileContent.yields(null, 'ok');
+          mockedCdn.putFileContent.resolves('ok');
           mockedCdn.listSubDirectories = sinon.stub();
-          mockedCdn.listSubDirectories.onCall(0).yields(null, ['hello-world']);
-          mockedCdn.listSubDirectories
-            .onCall(1)
-            .yields(null, ['1.0.0', '1.0.2']);
+          mockedCdn.listSubDirectories.onCall(0).resolves(['hello-world']);
+          mockedCdn.listSubDirectories.onCall(1).resolves(['1.0.0', '1.0.2']);
           mockedCdn.listSubDirectories
             .onCall(2)
-            .yields(null, ['hello-world', 'new-component']);
+            .resolves(['hello-world', 'new-component']);
           mockedCdn.listSubDirectories
             .onCall(3)
-            .yields(null, ['1.0.0', '1.0.2', '2.0.0']);
-          mockedCdn.listSubDirectories.onCall(4).yields(null, ['1.0.0']);
+            .resolves(['1.0.0', '1.0.2', '2.0.0']);
+          mockedCdn.listSubDirectories.onCall(4).resolves(['1.0.0']);
 
           initialise();
           componentsCache
