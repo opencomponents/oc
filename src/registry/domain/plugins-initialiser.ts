@@ -1,15 +1,14 @@
-import async from 'async';
+import pLimit from 'p-limit';
 import _ from 'lodash';
 import { DepGraph } from 'dependency-graph';
+import { promisify } from 'util';
 
 import strings from '../../resources';
 import { Plugin } from '../../types';
 
 function validatePlugins(plugins: unknown[]): asserts plugins is Plugin[] {
-  let c = 0;
-
-  plugins.forEach(plugin => {
-    c++;
+  for (let idx = 0; idx < plugins.length; idx++) {
+    const plugin = plugins[idx];
     if (
       !_.isObject((plugin as Plugin).register) ||
       typeof (plugin as Plugin).register.register !== 'function' ||
@@ -18,11 +17,11 @@ function validatePlugins(plugins: unknown[]): asserts plugins is Plugin[] {
     ) {
       throw new Error(
         strings.errors.registry.PLUGIN_NOT_VALID(
-          (plugin as Plugin).name || String(c)
+          (plugin as Plugin).name || String(idx + 1)
         )
       );
     }
-  });
+  }
 }
 
 function checkDependencies(plugins: Plugin[]) {
@@ -48,23 +47,16 @@ function checkDependencies(plugins: Plugin[]) {
 }
 
 let deferredLoads: Plugin[] = [];
-const defer = function (plugin: Plugin, cb: (err?: Error) => void) {
-  deferredLoads.push(plugin);
-  return cb();
-};
 
-export function init(
-  pluginsToRegister: unknown[],
-  callback: Callback<Dictionary<(...args: unknown[]) => void>, unknown>
-): void {
-  const registered: Dictionary<(...args: unknown[]) => void> = {};
+type PluginFunctions = Dictionary<(...args: unknown[]) => void>;
 
-  try {
-    validatePlugins(pluginsToRegister);
-    checkDependencies(pluginsToRegister);
-  } catch (err) {
-    return callback(err, undefined as any);
-  }
+export async function init(
+  pluginsToRegister: unknown[]
+): Promise<PluginFunctions> {
+  const registered: PluginFunctions = {};
+
+  validatePlugins(pluginsToRegister);
+  checkDependencies(pluginsToRegister);
 
   const dependenciesRegistered = (dependencies: string[]) => {
     if (dependencies.length === 0) {
@@ -81,11 +73,9 @@ export function init(
     return present;
   };
 
-  const loadPlugin = (plugin: Plugin, cb: (err?: Error) => void) => {
-    const done = _.once(cb);
-
+  const loadPlugin = async (plugin: Plugin): Promise<void> => {
     if (registered[plugin.name]) {
-      return done();
+      return;
     }
 
     if (!plugin.register.dependencies) {
@@ -93,36 +83,45 @@ export function init(
     }
 
     if (!dependenciesRegistered(plugin.register.dependencies)) {
-      return defer(plugin, done);
+      deferredLoads.push(plugin);
+      return;
     }
 
     const dependencies = _.pick(registered, plugin.register.dependencies);
 
-    plugin.register.register(
-      plugin.options || {},
-      dependencies,
-      (err?: Error) => {
-        const pluginCallback = plugin.callback || _.noop;
-        pluginCallback(err);
-        // Overriding toString so implementation details of plugins do not
-        // leak to OC consumers
-        plugin.register.execute.toString = () => plugin.description || '';
-        registered[plugin.name] = plugin.register.execute;
-        done(err);
-      }
-    );
+    const register = promisify(plugin.register.register);
+
+    const pluginCallback = plugin.callback || _.noop;
+    await register(plugin.options || {}, dependencies).catch(err => {
+      pluginCallback(err);
+      throw err;
+    });
+    // Overriding toString so implementation details of plugins do not
+    // leak to OC consumers
+    plugin.register.execute.toString = () => plugin.description || '';
+    registered[plugin.name] = plugin.register.execute;
+    pluginCallback();
   };
 
-  const terminator = function (err: Error) {
+  const terminator = async (): Promise<PluginFunctions> => {
     if (deferredLoads.length > 0) {
       const deferredPlugins = _.clone(deferredLoads);
       deferredLoads = [];
 
-      return async.mapSeries(deferredPlugins, loadPlugin, terminator as any);
+      await Promise.all(
+        deferredPlugins.map(plugin => onSeries(() => loadPlugin(plugin)))
+      );
+      return terminator();
     }
 
-    callback(err, registered);
+    return registered;
   };
 
-  async.mapSeries(pluginsToRegister, loadPlugin, terminator as any);
+  const onSeries = pLimit(1);
+
+  await Promise.all(
+    pluginsToRegister.map(plugin => onSeries(() => loadPlugin(plugin)))
+  );
+
+  return terminator();
 }

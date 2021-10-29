@@ -198,7 +198,7 @@ export interface Template {
 }
 
 export interface Plugin {
-  callback?: (...args: unknown[]) => void;
+  callback?: (error: unknown) => void;
   description?: string;
   name: string;
   options?: any;
@@ -206,7 +206,7 @@ export interface Plugin {
     register: (
       options: unknown,
       dependencies: unknown,
-      next: () => void
+      next: (error?: unknown) => void
     ) => void;
     execute: (...args: unknown[]) => unknown;
     dependencies?: string[];

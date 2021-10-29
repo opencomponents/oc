@@ -59,7 +59,7 @@ export default function registry(inputOptions: Input) {
     async.waterfall(
       [
         (cb: Callback<Dictionary<(...args: unknown[]) => unknown>, unknown>) =>
-          pluginsInitialiser.init(plugins, cb),
+          fromPromise(pluginsInitialiser.init)(plugins, cb),
 
         (
           plugins: Dictionary<(...args: unknown[]) => void>,

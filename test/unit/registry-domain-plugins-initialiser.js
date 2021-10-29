@@ -15,10 +15,10 @@ describe('registry : domain : plugins-initialiser', () => {
           }
         ];
 
-        pluginsInitialiser.init(plugins, err => {
-          error = err;
-          done();
-        });
+        pluginsInitialiser
+          .init(plugins)
+          .catch(err => (error = err))
+          .finally(done);
       });
 
       it('should error', () => {
@@ -40,10 +40,10 @@ describe('registry : domain : plugins-initialiser', () => {
           }
         ];
 
-        pluginsInitialiser.init(plugins, err => {
-          error = err;
-          done();
-        });
+        pluginsInitialiser
+          .init(plugins)
+          .catch(err => (error = err))
+          .finally(done);
       });
 
       it('should error', () => {
@@ -61,10 +61,10 @@ describe('registry : domain : plugins-initialiser', () => {
           }
         ];
 
-        pluginsInitialiser.init(plugins, err => {
-          error = err;
-          done();
-        });
+        pluginsInitialiser
+          .init(plugins)
+          .catch(err => (error = err))
+          .finally(done);
       });
 
       it('should error', () => {
@@ -84,10 +84,10 @@ describe('registry : domain : plugins-initialiser', () => {
           }
         ];
 
-        pluginsInitialiser.init(plugins, err => {
-          error = err;
-          done();
-        });
+        pluginsInitialiser
+          .init(plugins)
+          .catch(err => (error = err))
+          .finally(done);
       });
 
       it('should error', () => {
@@ -130,10 +130,10 @@ describe('registry : domain : plugins-initialiser', () => {
         }
       ];
 
-      pluginsInitialiser.init(plugins, (err, res) => {
-        result = res;
-        done();
-      });
+      pluginsInitialiser
+        .init(plugins)
+        .then(res => (result = res))
+        .finally(done);
     });
 
     it('should register plugin with passed options', () => {
@@ -190,9 +190,10 @@ describe('registry : domain : plugins-initialiser', () => {
         }
       ];
 
-      pluginsInitialiser.init(plugins, () => {
-        done();
-      });
+      pluginsInitialiser
+        .init(plugins)
+        .catch(() => {})
+        .finally(done);
     });
 
     it('should provide the getValue register method with the required dependent plugins', () => {
@@ -231,10 +232,10 @@ describe('registry : domain : plugins-initialiser', () => {
         }
       ];
 
-      pluginsInitialiser.init(plugins, err => {
-        error = err;
-        done();
-      });
+      pluginsInitialiser
+        .init(plugins)
+        .catch(err => (error = err))
+        .finally(done);
     });
 
     it('should throw an error', () => {
@@ -261,10 +262,10 @@ describe('registry : domain : plugins-initialiser', () => {
         }
       ];
 
-      pluginsInitialiser.init(plugins, err => {
-        error = err;
-        done();
-      });
+      pluginsInitialiser
+        .init(plugins)
+        .catch(err => (error = err))
+        .finally(done);
     });
 
     it('should throw an error', () => {
@@ -317,10 +318,10 @@ describe('registry : domain : plugins-initialiser', () => {
         }
       ];
 
-      pluginsInitialiser.init(plugins, (err, res) => {
-        result = res;
-        done();
-      });
+      pluginsInitialiser
+        .init(plugins)
+        .then(res => (result = res))
+        .finally(done);
     });
 
     it('should defer the initalisation of the plugin until all dependencies have bee registered', () => {
