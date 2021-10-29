@@ -45,7 +45,10 @@ export default function registry(inputOptions: Input) {
   };
 
   const start = async (
-    callback: Callback<{ app: express.Express; server: http.Server }>
+    callback: (
+      err: unknown,
+      data: { app: express.Express; server: http.Server }
+    ) => void
   ) => {
     // eslint-disable-next-line no-console
     const ok = (msg: string) => console.log(colors.green(msg));
@@ -98,7 +101,7 @@ export default function registry(inputOptions: Input) {
         callback(error, undefined as any);
       });
     } catch (err) {
-      callback(err as Error, undefined as any);
+      callback((err as any)?.msg || err, undefined as any);
     }
   };
 
