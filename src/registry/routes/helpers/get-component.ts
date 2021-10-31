@@ -22,7 +22,7 @@ import { Config, Repository } from '../../../types';
 import { IncomingHttpHeaders } from 'http';
 import { fromPromise } from 'universalify';
 
-interface Options {
+export interface RendererOptions {
   conf: Config;
   headers: IncomingHttpHeaders;
   ip: string;
@@ -32,7 +32,7 @@ interface Options {
   omitHref?: boolean;
 }
 
-export type GetComponentResult = {
+export interface GetComponentResult {
   status: number;
   headers?: Dictionary<string>;
   response: {
@@ -40,6 +40,7 @@ export type GetComponentResult = {
     code?: string;
     error?: unknown;
     version?: string;
+    html?: string;
     requestVersion?: string;
     name?: string;
     details?: {
@@ -50,7 +51,7 @@ export type GetComponentResult = {
     missingPlugins?: string[];
     missingDependencies?: string[];
   };
-};
+}
 
 export default function getComponent(conf: Config, repository: Repository) {
   const client = Client({ templates: conf.templates });
@@ -60,7 +61,7 @@ export default function getComponent(conf: Config, repository: Repository) {
   });
 
   const renderer = function (
-    options: Options,
+    options: RendererOptions,
     cb: (result: GetComponentResult) => void
   ) {
     const nestedRenderer = NestedRenderer(renderer, options.conf);
@@ -420,8 +421,8 @@ export default function getComponent(conf: Config, repository: Repository) {
             env: conf.env,
             params,
             plugins: conf.plugins,
-            renderComponent: nestedRenderer.renderComponent,
-            renderComponents: nestedRenderer.renderComponents,
+            renderComponent: fromPromise(nestedRenderer.renderComponent),
+            renderComponents: fromPromise(nestedRenderer.renderComponents),
             requestHeaders: options.headers,
             requestIp: options.ip,
             setEmptyResponse,

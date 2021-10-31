@@ -1,145 +1,87 @@
-import async from 'async';
-import _ from 'lodash';
-
 import settings from '../../resources/settings';
 import strings from '../../resources';
 import { Config } from '../../types';
+import {
+  GetComponentResult,
+  RendererOptions
+} from '../routes/helpers/get-component';
 
-type Cb = Callback<string, string>;
-type Options = {
+interface Options {
+  ip?: string;
   version?: string;
   name?: string;
   headers?: Dictionary<string>;
   parameters?: Dictionary<string>;
-};
-type Params = {
-  components: Options[];
-  options: Options;
-  callback: Cb;
-};
+}
 
-const sanitise = {
-  componentParams(component: string, options: Options | Cb, callback?: Cb) {
-    return {
-      ...sanitise.options(options, callback),
-      componentName: component
-    };
-  },
-  componentsParams(
-    components: Options[],
-    options: Options | Cb,
-    callback: Cb
-  ): Params {
-    return {
-      ...sanitise.options(options, callback),
-      components: components
-    };
-  },
-  headers(h = {}) {
-    return {
-      ...h,
-      accept: settings.registry.acceptRenderedHeader
-    };
-  },
-  options(
-    options: Options | Cb,
-    callback?: Cb
-  ): { options: Options; callback: Cb } {
-    const cb = !callback && typeof options === 'function' ? options : callback;
-    const opts = typeof options === 'function' ? {} : options;
+export default function nestedRenderer(
+  rendererCb: (
+    options: RendererOptions,
+    cb: (result: GetComponentResult) => void
+  ) => void,
+  conf: Config
+) {
+  const renderer = (options: RendererOptions) =>
+    new Promise<string>((res, rej) => {
+      rendererCb(options, result => {
+        if (result.response.error) {
+          rej(result.response.error);
+        } else {
+          res(result.response.html!);
+        }
+      });
+    });
 
-    return { callback: cb!, options: opts };
-  }
-};
-
-const validate = {
-  callback(c: Cb) {
-    if (!c || typeof c !== 'function') {
-      throw new Error(
-        strings.errors.registry.NESTED_RENDERER_CALLBACK_IS_NOT_VALID
-      );
-    }
-  },
-  componentParams(params: { componentName: string; callback: Cb }) {
-    if (!params.componentName) {
-      throw new Error(
-        strings.errors.registry.NESTED_RENDERER_COMPONENT_NAME_IS_NOT_VALID
-      );
-    }
-
-    validate.callback(params.callback);
-  },
-  componentsParams(params: Params) {
-    if (_.isEmpty(params.components)) {
-      throw new Error(
-        strings.errors.registry.NESTED_RENDERER_COMPONENTS_IS_NOT_VALID
-      );
-    }
-
-    validate.callback(params.callback);
-  }
-};
-
-export default function nestedRenderer(renderer: any, conf: Config) {
   return {
     renderComponent(
       componentName: string,
-      renderOptions: Options | Cb,
-      callback?: Cb
-    ) {
-      const p = sanitise.componentParams(
-        componentName,
-        renderOptions,
-        callback
-      );
-      validate.componentParams(p);
+      options: Options = {}
+    ): Promise<string> {
+      if (!componentName) {
+        throw new Error(
+          strings.errors.registry.NESTED_RENDERER_COMPONENT_NAME_IS_NOT_VALID
+        );
+      }
 
-      return renderer(
-        {
-          conf: conf,
-          headers: sanitise.headers(p.options.headers),
-          name: componentName,
-          parameters: p.options.parameters || {},
-          version: p.options.version || ''
+      return renderer({
+        conf: conf,
+        ip: options.ip || '',
+        headers: {
+          ...options.headers,
+          accept: settings.registry.acceptRenderedHeader
         },
-        (result: any) => {
-          if (result.response.error) {
-            return p.callback(result.response.error, undefined as any);
-          } else {
-            return p.callback(null, result.response.html);
-          }
-        }
-      );
+        name: componentName,
+        parameters: options.parameters || {},
+        version: options.version || ''
+      });
     },
     renderComponents(
       components: Options[],
-      renderOptions: Options,
-      callback: Cb
-    ) {
-      const p = sanitise.componentsParams(components, renderOptions, callback);
-      validate.componentsParams(p);
+      options: Options = {}
+    ): Promise<Array<string | Error>> {
+      if (!components || !components.length) {
+        throw new Error(
+          strings.errors.registry.NESTED_RENDERER_COMPONENTS_IS_NOT_VALID
+        );
+      }
 
-      async.map(
-        p.components,
-        (component, cb) => {
-          renderer(
-            {
-              conf: conf,
-              headers: sanitise.headers(p.options.headers),
-              name: component.name,
-              parameters: {
-                ...p.options.parameters,
-                ...component.parameters
-              },
-              version: component.version || ''
+      return Promise.all(
+        components.map(component => {
+          return renderer({
+            conf: conf,
+            headers: {
+              ...options.headers,
+              accept: settings.registry.acceptRenderedHeader
             },
-            (result: any) => {
-              const error = result.response.error;
-              cb(null, error ? new Error(error) : result.response.html);
-            }
-          );
-        },
-        p.callback as any
+            ip: component.ip || '',
+            name: component.name!,
+            parameters: {
+              ...options.parameters,
+              ...component.parameters
+            },
+            version: component.version || ''
+          }).catch(err => new Error(err));
+        })
       );
     }
   };
