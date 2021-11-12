@@ -58,16 +58,18 @@ export default function repository(conf: Config): Repository {
         .toString();
     },
     getComponents(): string[] {
-      const validComponents = fs.readdirSync(conf.path).filter(file => {
-        const isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory();
-        const isValidComponent = isDir
-          ? fs
-              .readdirSync(path.join(conf.path, file))
-              .filter(file => file === '_package').length === 1
-          : false;
+      const validComponents =
+        conf.components ||
+        fs.readdirSync(conf.path).filter(file => {
+          const isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory();
+          const isValidComponent = isDir
+            ? fs
+                .readdirSync(path.join(conf.path, file))
+                .filter(file => file === '_package').length === 1
+            : false;
 
-        return isValidComponent;
-      });
+          return isValidComponent;
+        });
 
       validComponents.push('oc-client');
       return validComponents;

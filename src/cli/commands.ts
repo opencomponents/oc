@@ -52,6 +52,10 @@ export default {
           boolean: false,
           description: 'Url prefix for registry server',
           default: ''
+        },
+        components: {
+          array: true,
+          description: 'Filter only the components that you want to be included'
         }
       },
       usage: 'Usage: $0 dev <dirPath> [port] [baseUrl] [options]'

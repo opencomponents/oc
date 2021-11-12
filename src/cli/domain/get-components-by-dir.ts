@@ -3,7 +3,20 @@ import path from 'path';
 import { Component } from '../../types';
 
 export default function getComponentsByDir() {
-  return (componentsDir: string, callback: Callback<string[]>): void => {
+  return (
+    componentsDir: string,
+    componentsToRunOrCb: string[] | Callback<string[]>,
+    callbackMaybe?: Callback<string[]>
+  ): void => {
+    const componentsToRun =
+      typeof componentsToRunOrCb === 'function'
+        ? undefined
+        : componentsToRunOrCb;
+    const callback =
+      typeof componentsToRunOrCb === 'function'
+        ? componentsToRunOrCb
+        : callbackMaybe!;
+
     const isOcComponent = function (file: string) {
       const filePath = path.resolve(componentsDir, file);
       const packagePath = path.join(filePath, 'package.json');
@@ -28,6 +41,11 @@ export default function getComponentsByDir() {
 
     try {
       dirContent = fs.readdirSync(componentsDir);
+      if (componentsToRun) {
+        dirContent = dirContent.filter(content =>
+          componentsToRun.includes(content)
+        );
+      }
     } catch (err) {
       return callback(null, []);
     }
