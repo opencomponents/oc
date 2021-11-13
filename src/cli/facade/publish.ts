@@ -26,6 +26,7 @@ const publish =
       skipPackage?: boolean;
       username?: string;
       password?: string;
+      registries?: string[];
     },
     callback: (err?: Error | string) => void
   ): void => {
@@ -83,6 +84,14 @@ const publish =
           cb(null, component);
         });
       });
+    };
+
+    const getRegistries = (
+      cb: (err: string | null, registryLocations: string[]) => void
+    ): void => {
+      if (opts.registries) return cb(null, opts.registries);
+
+      registry.get(cb);
     };
 
     const putComponentToRegistry = (
@@ -175,7 +184,7 @@ const publish =
       );
     };
 
-    registry.get((err: string | null, registryLocations: string[]) => {
+    getRegistries((err: string | null, registryLocations: string[]) => {
       if (err) {
         logger.err(err);
         return callback(err);

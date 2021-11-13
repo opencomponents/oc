@@ -128,6 +128,11 @@ export default {
           boolean: true,
           description: 'Skip packaging step',
           default: false
+        },
+        registries: {
+          array: true,
+          description:
+            'registries to publish, overriding your configuration in oc.json'
         }
       },
       description: 'Publish a component',
