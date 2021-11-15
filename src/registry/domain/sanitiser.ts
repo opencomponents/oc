@@ -34,10 +34,10 @@ const sanitise = {
 const toRemove = ['__ocAcceptLanguage'];
 
 export function sanitiseComponentParameters(
-  requestParameters: Dictionary<string | number | boolean>,
-  expectedParameters: Dictionary<OcParameter>
-): Dictionary<string | number | boolean> {
-  const result: Dictionary<string | number | boolean> = {};
+  requestParameters: Record<string, string | number | boolean>,
+  expectedParameters: Record<string, OcParameter>
+): Record<string, string | number | boolean> {
+  const result: Record<string, string | number | boolean> = {};
 
   for (const [requestParameterName, requestParameter] of Object.entries(
     requestParameters

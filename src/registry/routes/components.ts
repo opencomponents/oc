@@ -11,7 +11,7 @@ import { Request, RequestHandler, Response } from 'express';
 type Component = {
   name: string;
   version: string;
-  parameters: Dictionary<string>;
+  parameters: Record<string, string>;
 };
 
 export default function components(

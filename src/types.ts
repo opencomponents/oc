@@ -40,7 +40,7 @@ export interface ComponentsDetails {
 }
 
 export interface ComponentsList {
-  components: Dictionary<string[]>;
+  components: Record<string, string[]>;
   lastEdit: number;
 }
 
@@ -121,7 +121,7 @@ export interface Config {
   dependencies: string[];
   discovery: boolean;
   discoveryFunc?: (opts: { host?: string; secure: boolean }) => boolean;
-  env: Dictionary<string>;
+  env: Record<string, string>;
   executionTimeout?: number;
   fallbackRegistryUrl: string;
   hotReloading: boolean;
@@ -160,7 +160,7 @@ export interface Config {
   };
   storage: {
     adapter: any;
-    options: Dictionary<any> & { componentsDir: string };
+    options: Record<string, any> & { componentsDir: string };
   };
   tempDir: string;
   templates: any[];
@@ -184,7 +184,7 @@ interface CompilerOptions {
 }
 
 export interface Template {
-  compile?: (options: CompilerOptions, cb: Callback) => void;
+  compile?: (options: CompilerOptions, cb: (err: Error | null) => void) => void;
   getCompiledTemplate: (
     templateString: string,
     key: string,
@@ -193,7 +193,7 @@ export interface Template {
   getInfo: () => TemplateInfo;
   render: (
     options: { model: unknown; template: CompiledTemplate },
-    cb: Callback<string>
+    cb: (err: Error | null, data: string) => void
   ) => void;
 }
 

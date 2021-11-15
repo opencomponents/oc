@@ -28,8 +28,8 @@ export default async function handleDependencies(options: {
 }> {
   const { components, logger, useComponentDependencies } = options;
 
-  const dependencies: Dictionary<string> = {};
-  const addDependencies = (componentDependencies?: Dictionary<string>) =>
+  const dependencies: Record<string, string> = {};
+  const addDependencies = (componentDependencies?: Record<string, string>) =>
     Object.entries(componentDependencies || {}).forEach(
       ([dependency, version]) => {
         dependencies[dependency] = version;
