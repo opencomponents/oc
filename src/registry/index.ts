@@ -55,8 +55,7 @@ export default function registry(inputOptions: Input) {
     createRouter(router, options, repository);
 
     try {
-      const pluginFunctions = await pluginsInitialiser.init(plugins);
-      options.plugins = pluginFunctions;
+      options.plugins = await pluginsInitialiser.init(plugins);
       const componentsInfo = await repository.init();
       await appStart(repository, options);
 
