@@ -1,13 +1,19 @@
-'use strict';
+import path from 'path';
+import simpleGit, { ListLogLine, TaskOptions } from 'simple-git';
+import fs from 'fs';
 
-const path = require('path');
-const simpleGit = require('simple-git');
 const git = simpleGit(path.join(__dirname, '..'));
-const fs = require('fs');
 
 const utils = {
-  formatPrs: commits => {
-    const result = [];
+  formatPrs(
+    commits: ReadonlyArray<
+      {
+        message: string;
+        body: string;
+      } & ListLogLine
+    >
+  ) {
+    const result: string[] = [];
 
     commits.forEach(commit => {
       const commitMessages = commit.message.split('Merge pull request');
@@ -46,15 +52,12 @@ const utils = {
 
     return result;
   },
-  getFirstCommitHash: cb => {
-    git.log(['--reverse'], (err, changes) => {
-      if (err) {
-        cb(err, null);
-      }
-      cb(null, changes.latest.hash);
-    });
+  async getFirstCommitHash() {
+    const changes = await git.log(['--reserve']);
+
+    return changes!.latest!.hash;
   },
-  tagIntervals: (tags, hash) => {
+  tagIntervals(tags: string[], hash: string) {
     const logIntervals = [];
     for (let i = tags.length; i > 0; i--) {
       const logInterval = {
@@ -74,31 +77,23 @@ const utils = {
   }
 };
 
-module.exports = {
-  // Fetches PRs
-  prs: (options, cb) => {
+export default {
+  async prs(options: TaskOptions) {
     const opts = Object.assign({}, options, {
       format: {
         message: '%s',
         body: '%b'
       }
     });
-    git.log(opts, (err, changes) => {
-      if (err) {
-        cb(err, null);
-      }
-      cb(null, utils.formatPrs(changes.all));
-    });
+    const changes = await git.log(opts);
+    return utils.formatPrs(changes.all);
   },
-  // Fetches all tags
-  tags: cb => {
-    utils.getFirstCommitHash((err, hash) => {
-      git.tags((err, tags) => {
-        if (err) {
-          cb(err, null);
-        }
-        cb(null, utils.tagIntervals(tags.all, hash));
-      });
-    });
+  async tags() {
+    const [hash, tags] = await Promise.all([
+      utils.getFirstCommitHash(),
+      git.tags()
+    ]);
+
+    return utils.tagIntervals(tags.all, hash);
   }
 };

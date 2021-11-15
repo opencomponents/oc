@@ -1,9 +1,9 @@
-'use strict';
+import changelog from './changelog';
+import path from 'path';
+import fs from 'fs-extra';
+import simpleGit from 'simple-git';
 
-const changelog = require('./changelog');
-const packageJson = require('../package');
-const path = require('path');
-const simpleGit = require('simple-git');
+const packageJson = fs.readJsonSync(path.join(__dirname, '..', 'package.json'));
 
 const git = simpleGit(path.join(__dirname, '..'));
 const ocVersion = packageJson.version;

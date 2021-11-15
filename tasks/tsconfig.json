@@ -1,0 +1,7 @@
+{
+  "extends": "../tsconfig.json",
+  "include": ["./*.ts", "../src/globals.d.ts"],
+  "compilerOptions": {
+    "noEmit": true
+  }
+}
