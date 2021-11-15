@@ -48,7 +48,7 @@ function checkDependencies(plugins: Plugin[]) {
 
 let deferredLoads: Plugin[] = [];
 
-type PluginFunctions = Dictionary<(...args: unknown[]) => void>;
+type PluginFunctions = Record<string, (...args: unknown[]) => void>;
 
 export async function init(
   pluginsToRegister: unknown[]

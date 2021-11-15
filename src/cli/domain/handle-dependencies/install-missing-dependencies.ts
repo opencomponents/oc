@@ -6,7 +6,7 @@ import strings from '../../../resources/index';
 import { Logger } from '../../logger';
 
 export default async function installMissingDependencies(options: {
-  dependencies: Dictionary<string>;
+  dependencies: Record<string, string>;
   logger: Logger;
 }): Promise<void> {
   const { dependencies, logger } = options;

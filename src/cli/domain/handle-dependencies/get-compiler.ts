@@ -9,7 +9,7 @@ export default function getCompiler(options: {
   compilerDep: string;
   componentPath: string;
   logger: Logger;
-  pkg: { devDependencies: Dictionary<string> };
+  pkg: { devDependencies: Record<string, string> };
 }): Promise<Template> {
   const { compilerDep, componentPath, logger, pkg } = options;
   const compilerPath = path.join(componentPath, 'node_modules', compilerDep);

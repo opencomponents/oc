@@ -58,7 +58,10 @@ declare module 'require-package-name' {
   export = requirePackageName;
 }
 declare module 'getport' {
-  function getPort(start: number, cb: Callback): void;
+  function getPort(
+    start: number,
+    cb: (err: unknown, data: number) => void
+  ): void;
 
   export = getPort;
 }
