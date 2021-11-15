@@ -21,15 +21,15 @@ const validateParameter = function (
 interface ValidationResult {
   isValid: boolean;
   errors: {
-    mandatory?: Dictionary<string>;
-    types?: Dictionary<string>;
+    mandatory?: Record<string, string>;
+    types?: Record<string, string>;
     message?: string;
   };
 }
 
 export default function componentParameters(
-  requestParameters: Dictionary<string | number | boolean>,
-  expectedParameters: Dictionary<OcParameter> = {}
+  requestParameters: Record<string, string | number | boolean>,
+  expectedParameters: Record<string, OcParameter> = {}
 ): ValidationResult {
   const result: ValidationResult = { isValid: true, errors: {} };
   const mandatoryParameters: string[] = [];

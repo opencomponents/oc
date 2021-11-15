@@ -20,9 +20,10 @@ declare module 'require-package-name' {
   export = requirePackageName;
 }
 declare module 'getport' {
-  function getPort(cb: Callback): void;
-  function getPort(start: number, cb: Callback): void;
-  function getPort(start: number, end: number, cb: Callback<number>): void;
+  function getPort(
+    start: number,
+    cb: (err: unknown, data: number) => void
+  ): void;
 
   export = getPort;
 }
@@ -44,7 +45,7 @@ declare module 'minimal-request' {
       method?: string;
       body?: unknown;
       url: string;
-      headers?: Dictionary<string | null | undefined | string[]>;
+      headers?: Record<string, string | null | undefined | string[]>;
       json?: boolean;
     },
     cb: (
@@ -52,7 +53,7 @@ declare module 'minimal-request' {
       body: T,
       details: {
         response: {
-          headers: Dictionary<string>;
+          headers: Record<string, string>;
         };
       }
     ) => void
@@ -62,10 +63,3 @@ declare module 'minimal-request' {
 
   export = request;
 }
-
-declare type Callback<T = undefined, E = Error> = (
-  err: E | null,
-  data: T
-) => void;
-
-declare type Dictionary<T> = Record<string, T>;
