@@ -4,7 +4,10 @@ import { Logger } from '../logger';
 
 const registryRemove =
   ({ registry, logger }: { logger: Logger; registry: RegistryCli }) =>
-  (opts: { registryUrl: string }, callback: Callback<string>): void => {
+  (
+    opts: { registryUrl: string },
+    callback: (err: Error | null, data: string) => void
+  ): void => {
     registry.remove(opts.registryUrl, err => {
       if (err) {
         logger.err(String(err));

@@ -8,7 +8,7 @@ const preview =
   ({ logger, registry }: { logger: Logger; registry: RegistryCli }) =>
   (
     opts: { componentHref: string },
-    callback: Callback<string, string>
+    callback: (err: string | null, data: string) => void
   ): void => {
     registry.getComponentPreviewUrlByUrl(opts.componentHref, (err, href) => {
       if (err) {

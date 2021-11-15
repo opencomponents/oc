@@ -36,11 +36,15 @@ const publish =
 
     let errorMessage;
 
-    const readPackageJson = (cb: Callback<Component>) =>
-      fs.readJson(path.join(packageDir, 'package.json'), cb);
+    const readPackageJson = (
+      cb: (err: Error | null, data: Component) => void
+    ) => fs.readJson(path.join(packageDir, 'package.json'), cb);
 
     const getCredentials = (
-      cb: Callback<{ username: string; password: string }>
+      cb: (
+        err: Error | null,
+        data: { username: string; password: string }
+      ) => void
     ) => {
       if (opts.username && opts.password) {
         logger.ok(strings.messages.cli.USING_CREDS);
@@ -62,7 +66,9 @@ const publish =
       local.compress(packageDir, compressedPackagePath, cb);
     };
 
-    const packageAndCompress = (cb: Callback<Component, Error | string>) => {
+    const packageAndCompress = (
+      cb: (err: Error | string | null, data: Component) => void
+    ) => {
       logger.warn(strings.messages.cli.PACKAGING(packageDir));
       const packageOptions = {
         production: true,
@@ -92,7 +98,7 @@ const publish =
         username?: string;
         password?: string;
       },
-      cb: Callback<'ok', string>
+      cb: (err: string | null, data: 'ok') => void
     ) => {
       logger.warn(strings.messages.cli.PUBLISHING(options.route));
 

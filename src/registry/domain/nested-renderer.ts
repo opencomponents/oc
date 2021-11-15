@@ -5,12 +5,12 @@ import settings from '../../resources/settings';
 import strings from '../../resources';
 import { Config } from '../../types';
 
-type Cb = Callback<string, string>;
+type Cb = (err: string | null, data: string) => void;
 type Options = {
   version?: string;
   name?: string;
-  headers?: Dictionary<string>;
-  parameters?: Dictionary<string>;
+  headers?: Record<string, string>;
+  parameters?: Record<string, string>;
 };
 type Params = {
   components: Options[];

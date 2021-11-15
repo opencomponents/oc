@@ -8,15 +8,17 @@ export default function componentsList(conf: Config, cdn: Cdn) {
     `${conf.storage.options.componentsDir}/components.json`;
 
   const componentsList = {
-    getFromJson: (callback: Callback<any, string>) =>
+    getFromJson: (callback: (err: string | null, data: any) => void) =>
       cdn.getJson(filePath(), true, callback),
 
-    getFromDirectories: (callback: Callback<ComponentsList, string>) => {
-      const componentsInfo: Dictionary<string[]> = {};
+    getFromDirectories: (
+      callback: (err: string | null, data: ComponentsList) => void
+    ) => {
+      const componentsInfo: Record<string, string[]> = {};
 
       const getVersionsForComponent = (
         componentName: string,
-        cb: Callback<string[]>
+        cb: (err: Error | null, data: string[]) => void
       ) => {
         cdn.listSubDirectories(
           `${conf.storage.options.componentsDir}/${componentName}`,
@@ -66,7 +68,7 @@ export default function componentsList(conf: Config, cdn: Cdn) {
       );
     },
 
-    refresh(callback: Callback<ComponentsList, string>) {
+    refresh(callback: (err: string | null, data: ComponentsList) => void) {
       componentsList.getFromDirectories((err, components) => {
         if (err) {
           return callback(err, undefined as any);
@@ -80,8 +82,10 @@ export default function componentsList(conf: Config, cdn: Cdn) {
       });
     },
 
-    save: (data: ComponentsList, callback: Callback<unknown, string>) =>
-      cdn.putFileContent(JSON.stringify(data), filePath(), true, callback)
+    save: (
+      data: ComponentsList,
+      callback: (err: string | null, data: unknown) => void
+    ) => cdn.putFileContent(JSON.stringify(data), filePath(), true, callback)
   };
 
   return componentsList;

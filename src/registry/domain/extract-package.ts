@@ -10,10 +10,13 @@ export default function extractPackage(
     | {
         [fieldname: string]: Express.Multer.File[];
       },
-  callback: Callback<{
-    outputFolder: string;
-    packageJson: PackageJson;
-  }>
+  callback: (
+    err: Error | null,
+    data: {
+      outputFolder: string;
+      packageJson: PackageJson;
+    }
+  ) => void
 ): void {
   const packageFile: Express.Multer.File = (files as any)[0];
   const packagePath = path.resolve(packageFile.path);

@@ -14,7 +14,7 @@ import { Component } from '../../../types';
 
 const getComponentPackageJson = (
   componentPath: string,
-  cb: Callback<Component>
+  cb: (err: Error | null, data: Component) => void
 ) => fs.readJson(path.join(componentPath, 'package.json'), cb);
 
 const union = (a: ReadonlyArray<string>, b: ReadonlyArray<string>) => [
@@ -27,25 +27,25 @@ export default function handleDependencies(
     logger: Logger;
     useComponentDependencies?: boolean;
   },
-  callback: Callback<
-    {
+  callback: (
+    err: string | null,
+    data: {
       modules: string[];
       templates: Array<(...args: unknown[]) => unknown>;
-    },
-    string
-  >
+    }
+  ) => void
 ): void {
   const { components, logger, useComponentDependencies } = options;
 
-  const dependencies: Dictionary<string> = {};
-  const addDependencies = (componentDependencies?: Dictionary<string>) =>
+  const dependencies: Record<string, string> = {};
+  const addDependencies = (componentDependencies?: Record<string, string>) =>
     Object.entries(componentDependencies || {}).forEach(
       ([dependency, version]) => {
         dependencies[dependency] = version;
       }
     );
 
-  const templates: Dictionary<(...args: unknown[]) => unknown> = {};
+  const templates: Record<string, (...args: unknown[]) => unknown> = {};
   const addTemplate = (
     templateName: string,
     template: (...args: unknown[]) => unknown
@@ -59,15 +59,19 @@ export default function handleDependencies(
   ) =>
     async.waterfall(
       [
-        (cb: Callback<Component>) => getComponentPackageJson(componentPath, cb),
+        (cb: (err: Error | null, data: Component) => void) =>
+          getComponentPackageJson(componentPath, cb),
         (
           pkg: Component,
-          cb: Callback<{
-            componentPath: string;
-            logger: Logger;
-            pkg: Component;
-            template: string;
-          }>
+          cb: (
+            err: Error | null,
+            data: {
+              componentPath: string;
+              logger: Logger;
+              pkg: Component;
+              template: string;
+            }
+          ) => void
         ) => {
           addDependencies(pkg.dependencies);
 
@@ -96,7 +100,7 @@ export default function handleDependencies(
           options: {
             componentPath: string;
             logger: Logger;
-            pkg: Component & { devDependencies: Dictionary<string> };
+            pkg: Component & { devDependencies: Record<string, string> };
             template: string;
             compilerDep: string;
           },
