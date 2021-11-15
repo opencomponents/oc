@@ -12,7 +12,7 @@ export default function installCompiler(
     dependency: string;
     logger: Logger;
   },
-  cb: Callback<Template, string | number>
+  cb: (err: string | number | null, data: Template) => void
 ): void {
   const { compilerPath, componentPath, dependency, logger } = options;
 

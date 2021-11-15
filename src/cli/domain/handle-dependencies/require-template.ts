@@ -17,7 +17,7 @@ interface Template {
       verbose: boolean;
       production: boolean | undefined;
     },
-    cb: Callback<Component>
+    cb: (err: Error | null, data: Component) => void
   ) => void;
 }
 

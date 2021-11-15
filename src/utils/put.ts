@@ -6,8 +6,10 @@ import url from 'url';
 export default function put(
   urlPath: string,
   files: string | string[],
-  headers: Record<string, string> | Callback<any, Error | string>,
-  callback: Callback<any, Error | string>
+  headers:
+    | Record<string, string>
+    | ((err: Error | string | null, data: any) => void),
+  callback: (err: Error | string | null, data: any) => void
 ): void {
   if (typeof headers === 'function') {
     callback = headers;

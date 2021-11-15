@@ -5,8 +5,10 @@ import { Component } from '../../types';
 export default function getComponentsByDir() {
   return (
     componentsDir: string,
-    componentsToRunOrCb: string[] | Callback<string[]>,
-    callbackMaybe?: Callback<string[]>
+    componentsToRunOrCb:
+      | string[]
+      | ((err: Error | null, data: string[]) => void),
+    callbackMaybe?: (err: Error | null, data: string[]) => void
   ): void => {
     const componentsToRun =
       typeof componentsToRunOrCb === 'function'

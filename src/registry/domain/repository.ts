@@ -76,7 +76,7 @@ export default function repository(conf: Config): Repository {
     },
     getComponentVersions(
       componentName: string,
-      callback: Callback<string[], string>
+      callback: (err: string | null, data: string[]) => void
     ) {
       if (componentName === 'oc-client') {
         return callback(null, [
@@ -118,7 +118,7 @@ export default function repository(conf: Config): Repository {
     getCompiledView(
       componentName: string,
       componentVersion: string,
-      callback: Callback<string>
+      callback: (err: Error | null, data: string) => void
     ) {
       if (conf.local) {
         return callback(null, local.getCompiledView(componentName));
@@ -131,14 +131,16 @@ export default function repository(conf: Config): Repository {
     },
     getComponent(
       componentName: string,
-      componentVersionOrCallback: string | Callback<Component, string>,
-      callbackMaybe?: Callback<Component, string>
+      componentVersionOrCallback:
+        | string
+        | ((err: string | null, data: Component) => void),
+      callbackMaybe?: (err: string | null, data: Component) => void
     ) {
       const componentVersion: string | undefined =
         typeof componentVersionOrCallback === 'function'
           ? undefined
           : (componentVersionOrCallback as any);
-      const callback: Callback<Component, string> =
+      const callback: (err: string | null, data: Component) => void =
         typeof componentVersionOrCallback === 'function'
           ? (componentVersionOrCallback as any)
           : callbackMaybe!;
@@ -192,7 +194,7 @@ export default function repository(conf: Config): Repository {
     getComponentInfo(
       componentName: string,
       componentVersion: string,
-      callback: Callback<Component, string>
+      callback: (err: string | null, data: Component) => void
     ) {
       if (conf.local) {
         let componentInfo;
@@ -228,7 +230,7 @@ export default function repository(conf: Config): Repository {
         : `${options!['path']}${options!.componentsDir}/`;
       return `${prefix}${componentName}/${componentVersion}/`;
     },
-    getComponents(callback: Callback<string[]>) {
+    getComponents(callback: (err: Error | null, data: string[]) => void) {
       if (conf.local) {
         return callback(null, local.getComponents());
       }
@@ -237,7 +239,9 @@ export default function repository(conf: Config): Repository {
         callback(err, res ? Object.keys(res.components) : (null as any))
       );
     },
-    getComponentsDetails(callback: Callback<ComponentsDetails, string>) {
+    getComponentsDetails(
+      callback: (err: string | null, data: ComponentsDetails) => void
+    ) {
       if (conf.local) {
         return (callback as any)();
       }
@@ -246,7 +250,7 @@ export default function repository(conf: Config): Repository {
     },
     getComponentVersions(
       componentName: string,
-      callback: Callback<string[], string>
+      callback: (err: string | null, data: string[]) => void
     ) {
       if (conf.local) {
         return local.getComponentVersions(componentName, callback);
@@ -264,10 +268,13 @@ export default function repository(conf: Config): Repository {
     getDataProvider(
       componentName: string,
       componentVersion: string,
-      callback: Callback<{
-        content: string;
-        filePath: string;
-      }>
+      callback: (
+        err: Error | null,
+        data: {
+          content: string;
+          filePath: string;
+        }
+      ) => void
     ) {
       if (conf.local) {
         return callback(null, local.getDataProvider(componentName));
@@ -309,7 +316,7 @@ export default function repository(conf: Config): Repository {
     getTemplatesInfo: () => templatesInfo,
     getTemplate: (type: string) => templatesHash[type],
 
-    init(callback: Callback<ComponentsList | string>) {
+    init(callback: (err: Error | null, data: ComponentsList | string) => void) {
       if (conf.local) {
         return callback(null, 'ok');
       }
@@ -327,7 +334,10 @@ export default function repository(conf: Config): Repository {
       pkgDetails: any,
       componentName: string,
       componentVersion: string,
-      callback: Callback<ComponentsDetails, { code: string; msg: string }>
+      callback: (
+        err: { code: string; msg: string } | null,
+        data: ComponentsDetails
+      ) => void
     ) {
       if (conf.local) {
         return callback(

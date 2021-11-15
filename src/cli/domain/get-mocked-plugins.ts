@@ -45,7 +45,7 @@ const defaultRegister = (
 };
 
 const registerStaticMocks = (
-  mocks: Dictionary<string>,
+  mocks: Record<string, string>,
   logger: Logger
 ): PluginMock[] =>
   _.map(mocks, (mockedValue, pluginName) => {
@@ -62,7 +62,7 @@ const registerStaticMocks = (
 
 const registerDynamicMocks = (
   ocJsonLocation: string,
-  mocks: Dictionary<string>,
+  mocks: Record<string, string>,
   logger: Logger
 ) =>
   _.map(mocks, (source, pluginName) => {

@@ -18,7 +18,7 @@ const packageInfo = fs.readJsonSync(
 export default function appStart(
   repository: Repository,
   options: Config,
-  callback: Callback<ComponentsDetails | string, any>
+  callback: (err: any | null, data: ComponentsDetails | string) => void
 ): void {
   if (options.local) {
     return callback(null, 'ok');

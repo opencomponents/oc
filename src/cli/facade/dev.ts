@@ -33,7 +33,7 @@ const dev =
       verbose?: boolean;
       production?: boolean;
     },
-    callback: Callback<Registry, Error | string>
+    callback: (err: Error | string | null, data: Registry) => void
   ): void => {
     const componentsDir = opts.dirPath;
     const port = opts.port || 3000;

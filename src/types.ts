@@ -40,7 +40,7 @@ export interface ComponentsDetails {
 }
 
 export interface ComponentsList {
-  components: Dictionary<string[]>;
+  components: Record<string, string[]>;
   lastEdit: number;
 }
 
@@ -121,7 +121,7 @@ export interface Config {
   dependencies: string[];
   discovery: boolean;
   discoveryFunc?: (opts: { host?: string; secure: boolean }) => boolean;
-  env: Dictionary<string>;
+  env: Record<string, string>;
   executionTimeout?: number;
   fallbackRegistryUrl: string;
   hotReloading: boolean;
@@ -161,7 +161,7 @@ export interface Config {
   };
   storage: {
     adapter: any;
-    options: Dictionary<any> & { componentsDir: string };
+    options: Record<string, any> & { componentsDir: string };
   };
   tempDir: string;
   templates: any[];
@@ -171,20 +171,31 @@ export interface Config {
 
 export interface Cdn {
   adapterType: string;
-  getFile: (filePath: string, cb: Callback<string>) => void;
-  getJson<T>(filePath: string, force: boolean, cb: Callback<T, string>): void;
-  getJson<T>(filePath: string, cb: Callback<T, string>): void;
+  getFile: (
+    filePath: string,
+    cb: (err: Error | null, data: string) => void
+  ) => void;
+  getJson<T>(
+    filePath: string,
+    force: boolean,
+    cb: (err: string | null, data: T) => void
+  ): void;
+  getJson<T>(filePath: string, cb: (err: string | null, data: T) => void): void;
   listSubDirectories: (
     dir: string,
-    cb: Callback<string[], Error & { code?: string }>
+    cb: (err: (Error & { code?: string }) | null, data: string[]) => void
   ) => void;
   maxConcurrentRequests: number;
-  putDir: (folderPath: string, filePath: string, cb: Callback) => void;
+  putDir: (
+    folderPath: string,
+    filePath: string,
+    cb: (err: Error | null) => void
+  ) => void;
   putFileContent: (
     data: unknown,
     path: string,
     isPrivate: boolean,
-    callback: Callback<unknown, string>
+    callback: (err: string | null, data: unknown) => void
   ) => void;
 }
 
@@ -204,7 +215,7 @@ interface CompilerOptions {
 }
 
 export interface Template {
-  compile?: (options: CompilerOptions, cb: Callback) => void;
+  compile?: (options: CompilerOptions, cb: (err: Error | null) => void) => void;
   getCompiledTemplate: (
     templateString: string,
     key: string,
@@ -213,7 +224,7 @@ export interface Template {
   getInfo: () => TemplateInfo;
   render: (
     options: { model: unknown; template: CompiledTemplate },
-    cb: Callback<string>
+    cb: (err: Error | null, data: string) => void
   ) => void;
 }
 
@@ -234,15 +245,18 @@ export interface Plugin {
 }
 
 export interface RegistryCli {
-  add(registry: string, callback: Callback<null, string>): void;
-  get(callback: Callback<string[], string>): void;
+  add(
+    registry: string,
+    callback: (err: string | null, data: null) => void
+  ): void;
+  get(callback: (err: string | null, data: string[]) => void): void;
   getApiComponentByHref(
     href: string,
-    callback: Callback<unknown, Error | number>
+    callback: (err: Error | number | null, data: unknown) => void
   ): void;
   getComponentPreviewUrlByUrl(
     componentHref: string,
-    callback: Callback<string, Error | number>
+    callback: (err: Error | number | null, data: string) => void
   ): void;
   putComponent(
     options: {
@@ -251,15 +265,21 @@ export interface RegistryCli {
       route: string;
       path: string;
     },
-    callback: Callback<unknown, string>
+    callback: (err: string | null, data: unknown) => void
   ): void;
-  remove(registry: string, callback: Callback): void;
+  remove(registry: string, callback: (err: Error | null) => void): void;
 }
 
 export interface Local {
   clean: {
-    fetchList: (dirPath: string, callback: Callback<string[]>) => void;
-    remove: (list: string[], callback: Callback<string>) => void;
+    fetchList: (
+      dirPath: string,
+      callback: (err: Error | null, data: string[]) => void
+    ) => void;
+    remove: (
+      list: string[],
+      callback: (err: Error | null, data: string) => void
+    ) => void;
   };
   cleanup: (
     compressedPackagePath: string,
@@ -272,8 +292,8 @@ export interface Local {
   ) => void;
   getComponentsByDir: (
     componentsDir: string,
-    componentsToRun: Callback<string[]> | string[],
-    callback: Callback<string[]>
+    componentsToRun: (err: Error | null, data: string[]) => void | string[],
+    callback: (err: Error | null, data: string[]) => void
   ) => void;
   init: (
     options: {
@@ -282,7 +302,7 @@ export interface Local {
       componentPath: string;
       templateType: string;
     },
-    callback: Callback<string, string>
+    callback: (err: string | null, data: string) => void
   ) => void;
   mock: (
     params: { targetType: string; targetValue: string; targetName: string },
@@ -295,7 +315,7 @@ export interface Local {
       verbose?: boolean;
       production?: boolean;
     },
-    callback: Callback<Component>
+    callback: (err: Error | null, data: Component) => void
   ) => void;
 }
 
@@ -303,36 +323,41 @@ export interface Repository {
   getCompiledView(
     componentName: string,
     componentVersion: string,
-    callback: Callback<string>
+    callback: (err: Error | null, data: string) => void
   ): void;
   getComponent(
     componentName: string,
     componentVersion: string,
-    calllback: Callback<Component, string>
+    calllback: (err: string | null, data: Component) => void
   ): void;
   getComponent(
     componentName: string,
-    calllback: Callback<Component, string>
+    calllback: (err: string | null, data: Component) => void
   ): void;
   getComponentInfo(
     componentName: string,
     componentVersion: string,
-    callback: Callback<Component, string>
+    callback: (err: string | null, data: Component) => void
   ): void;
   getComponentPath(componentName: string, componentVersion: string): void;
-  getComponents(callback: Callback<string[]>): void;
-  getComponentsDetails(callback: Callback<ComponentsDetails, string>): void;
+  getComponents(callback: (err: Error | null, data: string[]) => void): void;
+  getComponentsDetails(
+    callback: (err: string | null, data: ComponentsDetails) => void
+  ): void;
   getComponentVersions(
     componentName: string,
-    callback: Callback<string[], string>
+    callback: (err: string | null, data: string[]) => void
   ): void;
   getDataProvider(
     componentName: string,
     componentVersion: string,
-    callback: Callback<{
-      content: string;
-      filePath: string;
-    }>
+    callback: (
+      err: Error | null,
+      data: {
+        content: string;
+        filePath: string;
+      }
+    ) => void
   ): void;
   getStaticClientMapPath: () => string;
   getStaticClientPath: () => string;
@@ -343,12 +368,17 @@ export interface Repository {
   ) => string;
   getTemplate: (type: string) => Template;
   getTemplatesInfo: () => TemplateInfo[];
-  init(callback: Callback<ComponentsList | string>): void;
+  init(
+    callback: (err: Error | null, data: ComponentsList | string) => void
+  ): void;
   publishComponent(
     pkgDetails: any,
     componentName: string,
     componentVersion: string,
-    callback: Callback<ComponentsDetails, { code: string; msg: string }>
+    callback: (
+      err: { code: string; msg: string } | null,
+      data: ComponentsDetails
+    ) => void
   ): void;
 }
 

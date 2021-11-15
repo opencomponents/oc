@@ -65,7 +65,7 @@ export const installDependencies = (
     silent: boolean;
     usePrefix: boolean;
   },
-  callback: Callback<{ dest: string }, string | number>
+  callback: (err: string | number | null, data: { dest: string }) => void
 ): void => {
   const { dependencies, installPath, silent } = options;
   const npmi = buildInstallCommand(options);
@@ -91,7 +91,7 @@ export const installDependency = (
     silent?: boolean;
     usePrefix: boolean;
   },
-  callback: Callback<{ dest: string }, string | number>
+  callback: (err: string | number | null, data: { dest: string }) => void
 ): void => {
   const { dependency, installPath, silent } = options;
   const npmi = buildInstallCommand(options);
