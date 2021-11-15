@@ -28,15 +28,15 @@ export default async function handleDependencies(options: {
 }> {
   const { components, logger, useComponentDependencies } = options;
 
-  const dependencies: Dictionary<string> = {};
-  const addDependencies = (componentDependencies?: Dictionary<string>) =>
+  const dependencies: Record<string, string> = {};
+  const addDependencies = (componentDependencies?: Record<string, string>) =>
     Object.entries(componentDependencies || {}).forEach(
       ([dependency, version]) => {
         dependencies[dependency] = version;
       }
     );
 
-  const templates: Dictionary<Template> = {};
+  const templates: Record<string, Template> = {};
   const addTemplate = (templateName: string, template: Template) => {
     templates[templateName] = template;
   };
@@ -63,7 +63,7 @@ export default async function handleDependencies(options: {
       compilerDep,
       componentPath,
       logger,
-      pkg: pkg as { devDependencies: Dictionary<string> }
+      pkg: pkg as { devDependencies: Record<string, string> }
     });
     Object.assign(options, { compiler });
     addTemplate(template, compiler);

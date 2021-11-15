@@ -5,7 +5,7 @@ import { Template, TemplateInfo } from '../../types';
 import _ from 'lodash';
 
 export default function registerTemplates(extraTemplates: Template[]): {
-  templatesHash: Dictionary<Template>;
+  templatesHash: Record<string, Template>;
   templatesInfo: TemplateInfo[];
 } {
   const coreTemplates: Template[] = [
@@ -18,7 +18,7 @@ export default function registerTemplates(extraTemplates: Template[]): {
     const type = template.getInfo().type;
     hash[type] = template;
     return hash;
-  }, {} as Dictionary<Template>);
+  }, {} as Record<string, Template>);
 
   const templatesInfo = templates.map(template => {
     return template.getInfo();

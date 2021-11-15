@@ -7,7 +7,7 @@ import { Logger } from '../../logger';
 
 export default async function linkMissingDependencies(options: {
   componentPath: string;
-  dependencies: Dictionary<string>;
+  dependencies: Record<string, string>;
   logger: Logger;
 }): Promise<void> {
   const { componentPath, dependencies, logger } = options;

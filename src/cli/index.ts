@@ -61,7 +61,7 @@ type Command = {
     cmd: string;
   };
   options?: any;
-  commands?: Dictionary<Command>;
+  commands?: Record<string, Command>;
 };
 
 function processCommand(

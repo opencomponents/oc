@@ -12,7 +12,7 @@ export default function componentsList(conf: Config, cdn: StorageAdapter) {
     getFromJson: (): Promise<ComponentsList> => cdn.getJson(filePath(), true),
 
     getFromDirectories: async (): Promise<ComponentsList> => {
-      const componentsInfo: Dictionary<string[]> = {};
+      const componentsInfo: Record<string, string[]> = {};
 
       const getVersionsForComponent = async (
         componentName: string

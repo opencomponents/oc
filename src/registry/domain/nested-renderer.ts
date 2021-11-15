@@ -10,8 +10,8 @@ interface Options {
   ip?: string;
   version?: string;
   name?: string;
-  headers?: Dictionary<string>;
-  parameters?: Dictionary<string>;
+  headers?: Record<string, string>;
+  parameters?: Record<string, string>;
 }
 
 export default function nestedRenderer(
