@@ -7,7 +7,7 @@ import vm from 'vm';
 import _ from 'lodash';
 
 import applyDefaultValues from './apply-default-values';
-import * as eventsHandler from '../../domain/events-handler';
+import eventsHandler from '../../domain/events-handler';
 import GetComponentRetrievingInfo from './get-component-retrieving-info';
 import * as getComponentFallback from './get-component-fallback';
 import isTemplateLegacy from '../../../utils/is-template-legacy';
@@ -26,14 +26,14 @@ interface Options {
   headers: IncomingHttpHeaders;
   ip: string;
   name: string;
-  parameters: Dictionary<string>;
+  parameters: Record<string, string>;
   version: string;
   omitHref?: boolean;
 }
 
 export type GetComponentResult = {
   status: number;
-  headers?: Dictionary<string>;
+  headers?: Record<string, string>;
   response: {
     type?: string;
     code?: string;
@@ -64,7 +64,7 @@ export default function getComponent(conf: Config, repository: Repository) {
   ) {
     const nestedRenderer = NestedRenderer(renderer, options.conf);
     const retrievingInfo = GetComponentRetrievingInfo(options);
-    let responseHeaders: Dictionary<string> = {};
+    let responseHeaders: Record<string, string> = {};
 
     const getLanguage = () => {
       const paramOverride =
@@ -197,7 +197,7 @@ export default function getComponent(conf: Config, repository: Repository) {
         }
 
         const filterCustomHeaders = (
-          headers: Dictionary<string>,
+          headers: Record<string, string>,
           requestedVersion: string,
           actualVersion: string
         ) => {
@@ -483,7 +483,10 @@ export default function getComponent(conf: Config, repository: Repository) {
                 const context = {
                   require: RequireWrapper(conf.dependencies),
                   module: {
-                    exports: {} as Dictionary<(...args: unknown[]) => unknown>
+                    exports: {} as Record<
+                      string,
+                      (...args: unknown[]) => unknown
+                    >
                   },
                   console: conf.local ? console : { log: _.noop },
                   setTimeout,

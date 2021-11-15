@@ -6,7 +6,7 @@ import strings from '../../../resources/index';
 import { Logger } from '../../logger';
 
 export default function installMissingDependencies(
-  options: { dependencies: Dictionary<string>; logger: Logger },
+  options: { dependencies: Record<string, string>; logger: Logger },
   callback: (err: string | null) => void
 ): void {
   const { dependencies, logger } = options;

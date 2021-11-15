@@ -1,6 +1,6 @@
 import async from 'async';
 import _ from 'lodash';
-import * as eventsHandler from './events-handler';
+import eventsHandler from './events-handler';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import {
   Cdn,
@@ -16,19 +16,23 @@ export default function componentsDetails(conf: Config, cdn: Cdn) {
     message: string | Error,
     callback: (code: string) => void
   ) => {
-    eventsHandler.fire('error', { code, message });
+    eventsHandler.fire('error', {
+      code,
+      message: (message as Error)?.message ?? message
+    });
     return callback(code);
   };
 
   const filePath = (): string =>
     `${conf.storage.options.componentsDir}/components-details.json`;
 
-  const getFromJson = (callback: Callback<ComponentsDetails, string>) =>
-    cdn.getJson<ComponentsDetails>(filePath(), true, callback);
+  const getFromJson = (
+    callback: (err: string | null, data: ComponentsDetails) => void
+  ) => cdn.getJson<ComponentsDetails>(filePath(), true, callback);
 
   const getFromDirectories = (
     options: { componentsList: ComponentsList; details: ComponentsDetails },
-    callback: Callback<ComponentsDetails, Error | undefined>
+    callback: (err: Error | undefined | null, data: ComponentsDetails) => void
   ) => {
     const details = Object.assign({}, _.cloneDeep(options.details));
     details.components = details.components || {};
@@ -69,12 +73,14 @@ export default function componentsDetails(conf: Config, cdn: Cdn) {
     );
   };
 
-  const save = (data: ComponentsDetails, callback: Callback<unknown, string>) =>
-    cdn.putFileContent(JSON.stringify(data), filePath(), true, callback);
+  const save = (
+    data: ComponentsDetails,
+    callback: (err: string | null, data: unknown) => void
+  ) => cdn.putFileContent(JSON.stringify(data), filePath(), true, callback);
 
   const refresh = (
     componentsList: ComponentsList,
-    callback: Callback<ComponentsDetails>
+    callback: (err: Error | null, data: ComponentsDetails) => void
   ) => {
     getFromJson((jsonErr, details: ComponentsDetails) => {
       getFromDirectories(

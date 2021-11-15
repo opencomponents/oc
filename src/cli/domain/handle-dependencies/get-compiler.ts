@@ -10,9 +10,9 @@ export default function getCompiler(
     compilerDep: string;
     componentPath: string;
     logger: Logger;
-    pkg: { devDependencies: Dictionary<string> };
+    pkg: { devDependencies: Record<string, string> };
   },
-  cb: Callback<Template, string | number>
+  cb: (err: string | number | null, data: Template) => void
 ): void {
   const { compilerDep, componentPath, logger, pkg } = options;
   const compilerPath = path.join(componentPath, 'node_modules', compilerDep);

@@ -14,7 +14,10 @@ interface PackageOptions {
 
 const packageComponents =
   () =>
-  (options: PackageOptions, callback: Callback<Component>): void => {
+  (
+    options: PackageOptions,
+    callback: (err: Error | null, data: Component) => void
+  ): void => {
     const production = options.production;
     const componentPath = options.componentPath;
     const minify = options.minify === true;

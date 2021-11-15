@@ -6,9 +6,9 @@ interface OptionalParameterWithDefault extends OcParameter {
 }
 
 export default function applyDefaultValues(
-  requestParameters: Dictionary<string | number | boolean> = {},
-  expectedParameters: Dictionary<OcParameter> = {}
-): Dictionary<string | number | boolean> {
+  requestParameters: Record<string, string | number | boolean> = {},
+  expectedParameters: Record<string, OcParameter> = {}
+): Record<string, string | number | boolean> {
   const optionalParametersWithDefaults = Object.entries(
     expectedParameters
   ).filter(

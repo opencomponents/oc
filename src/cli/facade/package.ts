@@ -12,7 +12,7 @@ const cliPackage =
       useComponentDependencies?: boolean;
       compress?: boolean;
     },
-    callback: Callback<Component, string>
+    callback: (err: string | null, data: Component) => void
   ): void => {
     const componentPath = opts.componentPath;
     const useComponentDependencies = opts.useComponentDependencies;

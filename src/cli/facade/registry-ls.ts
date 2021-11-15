@@ -4,7 +4,10 @@ import { Logger } from '../logger';
 
 const registryLs =
   ({ registry, logger }: { logger: Logger; registry: RegistryCli }) =>
-  (_opts: unknown, callback: Callback<string[], string>): void => {
+  (
+    _opts: unknown,
+    callback: (err: string | null, data: string[]) => void
+  ): void => {
     registry.get((err, registries) => {
       if (err) {
         logger.err(strings.errors.generic(err));
