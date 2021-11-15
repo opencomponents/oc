@@ -5,17 +5,17 @@ import url from 'url';
 import { Component, Config } from '../../../types';
 import * as urlBuilder from '../../domain/url-builder';
 
-type ComponentCallback = Callback<
-  Component,
-  { registryError: any; fallbackError: any }
->;
+type ComponentCallback = (
+  err: { registryError: any; fallbackError: any } | null,
+  data: Component
+) => void;
 
 function getComponentFallbackForViewType(
   buildUrl: (
     component: {
       name: string;
       version?: string;
-      parameters?: Dictionary<string>;
+      parameters?: Record<string, string>;
     },
     baseUrl: string
   ) => string,

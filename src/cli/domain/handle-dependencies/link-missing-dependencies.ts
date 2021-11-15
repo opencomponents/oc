@@ -8,7 +8,7 @@ import { Logger } from '../../logger';
 export default function linkMissingDependencies(
   options: {
     componentPath: string;
-    dependencies: Dictionary<string>;
+    dependencies: Record<string, string>;
     logger: Logger;
   },
   callback: (err: string | null) => void

@@ -35,7 +35,7 @@ const basicAuthentication: Authentication<{
   }
 };
 
-const builtin: Dictionary<Authentication> = {
+const builtin: Record<string, Authentication> = {
   basic: basicAuthentication
 };
 

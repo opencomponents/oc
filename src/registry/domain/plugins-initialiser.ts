@@ -55,9 +55,12 @@ const defer = function (plugin: Plugin, cb: (err?: Error) => void) {
 
 export function init(
   pluginsToRegister: unknown[],
-  callback: Callback<Dictionary<(...args: unknown[]) => void>, unknown>
+  callback: (
+    err: unknown,
+    data: Record<string, (...args: unknown[]) => void>
+  ) => void
 ): void {
-  const registered: Dictionary<(...args: unknown[]) => void> = {};
+  const registered: Record<string, (...args: unknown[]) => void> = {};
 
   try {
     validatePlugins(pluginsToRegister);

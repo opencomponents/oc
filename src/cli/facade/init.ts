@@ -12,7 +12,7 @@ const init =
       componentPath: string;
       templateType: string;
     },
-    callback: Callback<string>
+    callback: (err: Error | null, data: string) => void
   ): void => {
     const templateType =
       typeof opts.templateType === 'undefined'
