@@ -15,7 +15,7 @@ interface Options {
 }
 
 export default function nestedRenderer(
-  rendererCb: (
+  rendererWithCallback: (
     options: RendererOptions,
     cb: (result: GetComponentResult) => void
   ) => void,
@@ -23,7 +23,7 @@ export default function nestedRenderer(
 ) {
   const renderer = (options: RendererOptions) =>
     new Promise<string>((res, rej) => {
-      rendererCb(options, result => {
+      rendererWithCallback(options, result => {
         if (result.response.error) {
           rej(result.response.error);
         } else {
