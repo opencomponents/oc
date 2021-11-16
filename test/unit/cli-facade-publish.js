@@ -20,7 +20,7 @@ describe('cli : facade : publish', () => {
 
   const execute = function (
     cb,
-    { creds = {}, skipPackage = false, fs = {} } = {}
+    { creds = {}, skipPackage = false, fs = {}, registries } = {}
   ) {
     logSpy.err = sinon.stub();
     logSpy.log = sinon.stub();
@@ -47,7 +47,8 @@ describe('cli : facade : publish', () => {
         componentPath: 'test/fixtures/components/hello-world/',
         username: creds.username,
         password: creds.password,
-        skipPackage
+        skipPackage,
+        registries
       },
       () => {
         cb();
@@ -99,6 +100,20 @@ describe('cli : facade : publish', () => {
           );
           done();
         });
+      });
+
+      it('should take precedence over the registries set through oc.json', done => {
+        sinon.stub(registry, 'putComponent').resolves('ok');
+        execute(
+          () => {
+            registry.putComponent.restore();
+
+            expect(logSpy.ok.args[0][0]).to.include('http://www.newapi.com');
+            expect(logSpy.ok.args[1][0]).to.include('http://www.newapi2.com');
+            done();
+          },
+          { registries: ['http://www.newapi.com', 'http://www.newapi2.com'] }
+        );
       });
 
       describe('when packaging', () => {

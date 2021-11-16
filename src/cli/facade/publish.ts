@@ -28,6 +28,7 @@ const publish = ({
       skipPackage?: boolean;
       username?: string;
       password?: string;
+      registries?: string[];
     }): Promise<void> => {
       const componentPath = opts.componentPath;
       const skipPackage = opts.skipPackage;
@@ -160,7 +161,7 @@ const publish = ({
       };
 
       try {
-        const registryLocations = await registry.get();
+        const registryLocations = opts.registries || (await registry.get());
 
         if (!skipPackage) {
           await handleDependencies({
