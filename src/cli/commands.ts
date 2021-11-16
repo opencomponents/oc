@@ -132,7 +132,7 @@ export default {
         registries: {
           array: true,
           description:
-            'registries to publish, overriding your configuration in oc.json'
+            'List of registries to publish to. This setting will take precedence over oc.json file'
         }
       },
       description: 'Publish a component',
