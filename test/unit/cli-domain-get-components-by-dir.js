@@ -34,8 +34,8 @@ const initialise = function () {
   return { local: local, fs: fsMock };
 };
 
-const executeComponentsListingByDir = function (local) {
-  return local('.');
+const executeComponentsListingByDir = function (local, componentsToRun) {
+  return local('.', componentsToRun);
 };
 
 describe('cli : domain : get-components-by-dir', () => {
@@ -138,6 +138,45 @@ describe('cli : domain : get-components-by-dir', () => {
 
     it('should get an empty list', () => {
       expect(result).to.eql([]);
+    });
+  });
+
+  describe('when components are filtered', () => {
+    let error;
+    let result;
+    beforeEach(done => {
+      const data = initialise();
+
+      data.fs.readdir
+        .onCall(0)
+        .resolves([
+          'component1',
+          'component2',
+          'component3',
+          'component4',
+          'package.json'
+        ]);
+
+      data.fs.readJsonSync.onCall(0).returns({ oc: {} });
+      data.fs.readJsonSync.onCall(1).returns({ oc: {} });
+      data.fs.readJsonSync.onCall(2).returns({ oc: {} });
+      data.fs.readJsonSync.onCall(3).returns({ oc: {} });
+      data.fs.readJsonSync
+        .onCall(4)
+        .throws(new Error('ENOENT: no such file or directory'));
+
+      executeComponentsListingByDir(data.local, ['component1', 'component3'])
+        .then(res => (result = res))
+        .catch(err => (error = err))
+        .finally(done);
+    });
+
+    it('should not error', () => {
+      expect(error).to.be.undefined;
+    });
+
+    it('should get an the filtered list', () => {
+      expect(result).to.eql(['./component1', './component3']);
     });
   });
 });

@@ -31,6 +31,7 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
       baseUrl: string;
       fallbackRegistryUrl: string;
       hotReloading?: boolean;
+      components?: string[];
       watch?: boolean;
       verbose?: boolean;
       production?: boolean;
@@ -120,7 +121,10 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
       };
 
       logger.warn(cliMessages.SCANNING_COMPONENTS, true);
-      const components = await local.getComponentsByDir(componentsDir);
+      const components = await local.getComponentsByDir(
+        componentsDir,
+        opts.components
+      );
 
       if (_.isEmpty(components)) {
         const err = cliErrors.DEV_FAIL(cliErrors.COMPONENTS_NOT_FOUND);
@@ -170,6 +174,7 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
         hotReloading,
         liveReloadPort: liveReload.port,
         local: true,
+        components: opts.components,
         path: path.resolve(componentsDir),
         port,
         templates: dependencies.templates,

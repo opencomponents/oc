@@ -127,6 +127,7 @@ export interface Config {
   hotReloading: boolean;
   keepAliveTimeout?: number;
   liveReloadPort: number;
+  components?: string[];
   local: boolean;
   path: string;
   plugins: Record<string, (...args: unknown[]) => void>;
@@ -234,7 +235,10 @@ export interface Local {
   };
   cleanup: (compressedPackagePath: string) => Promise<void>;
   compress: (input: string, output: string) => Promise<void>;
-  getComponentsByDir: (componentsDir: string) => Promise<string[]>;
+  getComponentsByDir: (
+    componentsDir: string,
+    componentsToRun?: string[]
+  ) => Promise<string[]>;
   init: (options: {
     componentName: string;
     logger: Logger;

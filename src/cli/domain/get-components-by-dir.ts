@@ -3,7 +3,10 @@ import path from 'path';
 import { Component } from '../../types';
 
 export default function getComponentsByDir() {
-  return async (componentsDir: string): Promise<string[]> => {
+  return async (
+    componentsDir: string,
+    componentsToRun?: string[]
+  ): Promise<string[]> => {
     const isOcComponent = (file: string) => {
       const filePath = path.resolve(componentsDir, file);
       const packagePath = path.join(filePath, 'package.json');
@@ -25,7 +28,12 @@ export default function getComponentsByDir() {
     };
 
     try {
-      const dirContent = await fs.readdir(componentsDir);
+      let dirContent = await fs.readdir(componentsDir);
+      if (componentsToRun) {
+        dirContent = dirContent.filter(content =>
+          componentsToRun.includes(content)
+        );
+      }
 
       const components = dirContent
         .filter(isOcComponent)
