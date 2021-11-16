@@ -102,7 +102,7 @@ describe('cli : facade : publish', () => {
         });
       });
 
-      it('should take precedence the registries set through options', done => {
+      it('should take precedence over the registries set through oc.json', done => {
         sinon.stub(registry, 'putComponent').yields(null, 'ok');
         execute(
           () => {
