@@ -52,6 +52,11 @@ export default {
           boolean: false,
           description: 'Url prefix for registry server',
           default: ''
+        },
+        components: {
+          array: true,
+          description:
+            'List of component names that you want to be packaged and exposed on dev registry'
         }
       },
       usage: 'Usage: $0 dev <dirPath> [port] [baseUrl] [options]'
@@ -128,6 +133,11 @@ export default {
           boolean: true,
           description: 'Skip packaging step',
           default: false
+        },
+        registries: {
+          array: true,
+          description:
+            'List of registries to publish to. This setting will take precedence over oc.json file'
         }
       },
       description: 'Publish a component',

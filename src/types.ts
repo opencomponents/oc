@@ -127,6 +127,7 @@ export interface Config {
   hotReloading: boolean;
   keepAliveTimeout?: number;
   liveReloadPort: number;
+  components?: string[];
   local: boolean;
   path: string;
   plugins: Record<string, (...args: unknown[]) => void>;
@@ -291,6 +292,7 @@ export interface Local {
   ) => void;
   getComponentsByDir: (
     componentsDir: string,
+    componentsToRun: (err: Error | null, data: string[]) => void | string[],
     callback: (err: Error | null, data: string[]) => void
   ) => void;
   init: (

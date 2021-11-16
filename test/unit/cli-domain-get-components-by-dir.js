@@ -34,8 +34,12 @@ const initialise = function () {
   return { local: local, fs: fsMock };
 };
 
-const executeComponentsListingByDir = function (local, callback) {
-  return local('.', callback);
+const executeComponentsListingByDir = function (
+  local,
+  componentsToRun,
+  callback
+) {
+  return local('.', componentsToRun, callback);
 };
 
 describe('cli : domain : get-components-by-dir', () => {
@@ -65,7 +69,7 @@ describe('cli : domain : get-components-by-dir', () => {
       data.fs.readJsonSync.onCall(3).returns({ oc: { packaged: true } });
       data.fs.readJsonSync.onCall(4).returns({});
 
-      executeComponentsListingByDir(data.local, (err, res) => {
+      executeComponentsListingByDir(data.local, undefined, (err, res) => {
         error = err;
         result = res;
         done();
@@ -94,7 +98,7 @@ describe('cli : domain : get-components-by-dir', () => {
       data.fs.readJsonSync.onCall(0).throws(new Error('syntax error: fubar'));
       data.fs.readJsonSync.onCall(1).returns({ oc: {} });
 
-      executeComponentsListingByDir(data.local, (err, res) => {
+      executeComponentsListingByDir(data.local, undefined, (err, res) => {
         error = err;
         result = res;
         done();
@@ -128,7 +132,7 @@ describe('cli : domain : get-components-by-dir', () => {
         .onCall(2)
         .throws(new Error('ENOENT: no such file or directory'));
 
-      executeComponentsListingByDir(data.local, (err, res) => {
+      executeComponentsListingByDir(data.local, undefined, (err, res) => {
         error = err;
         result = res;
         done();
@@ -141,6 +145,50 @@ describe('cli : domain : get-components-by-dir', () => {
 
     it('should get an empty list', () => {
       expect(result).to.eql([]);
+    });
+  });
+
+  describe('when components are filtered', () => {
+    let error;
+    let result;
+    beforeEach(done => {
+      const data = initialise();
+
+      data.fs.readdirSync
+        .onCall(0)
+        .returns([
+          'component1',
+          'component2',
+          'component3',
+          'component4',
+          'package.json'
+        ]);
+
+      data.fs.readJsonSync.onCall(0).returns({ oc: {} });
+      data.fs.readJsonSync.onCall(1).returns({ oc: {} });
+      data.fs.readJsonSync.onCall(2).returns({ oc: {} });
+      data.fs.readJsonSync.onCall(3).returns({ oc: {} });
+      data.fs.readJsonSync
+        .onCall(4)
+        .throws(new Error('ENOENT: no such file or directory'));
+
+      executeComponentsListingByDir(
+        data.local,
+        ['component1', 'component3'],
+        (err, res) => {
+          error = err;
+          result = res;
+          done();
+        }
+      );
+    });
+
+    it('should not error', () => {
+      expect(error).to.be.null;
+    });
+
+    it('should get an the filtered list', () => {
+      expect(result).to.eql(['./component1', './component3']);
     });
   });
 });
