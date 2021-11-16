@@ -1,5 +1,20 @@
 ## Change Log
 
+### v0.49.4
+- [#1277](https://github.com/opencomponents/oc/pull/1277) [CLI-FEATURE] add registries options for oc publish
+- [#1276](https://github.com/opencomponents/oc/pull/1276) [CLI-FEATURE] filter components to run when running oc dev
+- [#1270](https://github.com/opencomponents/oc/pull/1270) [INTERNAL] remove code about module.paths pushing on authentication
+- [#1275](https://github.com/opencomponents/oc/pull/1275) [INTERNAL] replace deprecated new Buffer to Buffer.from
+- [#1271](https://github.com/opencomponents/oc/pull/1271) [TYPE IMPROVEMENT] remove global callback and dictionary types
+- [#1268](https://github.com/opencomponents/oc/pull/1268) [IMPROVEMENT] Improve typings of events in events handler
+- [#1264](https://github.com/opencomponents/oc/pull/1264) [INTERNAL] Replace lodash type checkers with typeof
+- [#1263](https://github.com/opencomponents/oc/pull/1263) [INTERNAL] Replace usage of lodash _.extend with Object.assign
+- [#1261](https://github.com/opencomponents/oc/pull/1261) [INTERNAL] type cleanRequire better
+- [#1256](https://github.com/opencomponents/oc/pull/1256) [INTERNAL] enable noUnusedParameters and noImplicitReturns rules. fix problems
+- [#1260](https://github.com/opencomponents/oc/pull/1260) [INTERNAL] Remove pad-zero util
+- [#1255](https://github.com/opencomponents/oc/pull/1255) [INTERNAL] enable noPropertyAccessFromIndexSignature option and fix problems
+- [#1253](https://github.com/opencomponents/oc/pull/1253) [INTERNAL] Simplify log parameter names for newline
+
 ### v0.49.3
 - [#1262](https://github.com/opencomponents/oc/pull/1262) [BUGFIX] Add back --prefix when installing dependencies
 
