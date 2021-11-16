@@ -126,7 +126,7 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
         requestsHeaders = Object.assign(requestsHeaders, {
           Authorization:
             'Basic ' +
-            new Buffer(options.username + ':' + options.password).toString(
+            Buffer.from(options.username + ':' + options.password).toString(
               'base64'
             )
         });
