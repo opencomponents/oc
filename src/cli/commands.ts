@@ -52,6 +52,11 @@ export default {
           boolean: false,
           description: 'Url prefix for registry server',
           default: ''
+        },
+        components: {
+          array: true,
+          description:
+            'List of component names that you want to be packaged and exposed on dev registry'
         }
       },
       usage: 'Usage: $0 dev <dirPath> [port] [baseUrl] [options]'
