@@ -220,11 +220,9 @@ describe('registry : routes : helpers : nested-renderer', () => {
               {}
             )
             .then(res => {
-              console.log('RES:', res);
               result = res;
             })
             .catch(err => {
-              console.log('HI:', err);
               error = err;
             })
             .finally(done);
