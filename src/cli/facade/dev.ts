@@ -140,7 +140,7 @@ const dev =
     logger.warn(cliMessages.SCANNING_COMPONENTS, true);
     local.getComponentsByDir(
       componentsDir,
-      opts.components,
+      opts.components as any,
       (err, components) => {
         if (_.isEmpty(components)) {
           err = cliErrors.DEV_FAIL(cliErrors.COMPONENTS_NOT_FOUND) as any;
