@@ -43,7 +43,7 @@ function getDeps(options: {
 
 export default {
   dev: (
-    { logger, ...options }: Options<typeof dev> & { logger: Logger },
+    { logger, ...options }: Options<typeof dev> & { logger?: Logger },
     cb: Cb<typeof dev>
   ): void => {
     const deps = getDeps({ logger });
@@ -51,7 +51,7 @@ export default {
     dev(deps)(options, cb);
   },
   init: (
-    { logger, ...options }: Options<typeof init> & { logger: Logger },
+    { logger, ...options }: Options<typeof init> & { logger?: Logger },
     cb: Cb<typeof init>
   ): void => {
     const deps = getDeps({ logger });
@@ -59,7 +59,7 @@ export default {
     init(deps)(options, cb);
   },
   mock: (
-    { logger, ...options }: Options<typeof mock> & { logger: Logger },
+    { logger, ...options }: Options<typeof mock> & { logger?: Logger },
     cb: Cb<typeof mock>
   ): void => {
     const deps = getDeps({ logger });
@@ -67,7 +67,7 @@ export default {
     mock(deps)(options, cb);
   },
   package: (
-    { logger, ...options }: Options<typeof packageScript> & { logger: Logger },
+    { logger, ...options }: Options<typeof packageScript> & { logger?: Logger },
     cb: Cb<typeof packageScript>
   ): void => {
     const deps = getDeps({ logger });
@@ -78,7 +78,7 @@ export default {
     {
       logger,
       ...options
-    }: Options<typeof publish> & { logger: Logger; registry?: string },
+    }: Options<typeof publish> & { logger?: Logger; registry?: string },
     cb: Cb<typeof publish>
   ): void => {
     const deps = getDeps({ logger, withRegistry: true });
@@ -89,7 +89,7 @@ export default {
     {
       logger,
       ...options
-    }: Options<typeof preview> & { logger: Logger; registry?: string },
+    }: Options<typeof preview> & { logger?: Logger; registry?: string },
     cb: Cb<typeof preview>
   ): void => {
     const deps = getDeps({ logger, withRegistry: true });
@@ -102,7 +102,7 @@ export default {
         logger,
         ...options
       }: Options<typeof registryAdd> & {
-        logger: Logger;
+        logger?: Logger;
         registry?: string;
       },
       cb: Cb<typeof registryAdd>
@@ -116,7 +116,7 @@ export default {
         logger,
         ...options
       }: Options<typeof registryLs> & {
-        logger: Logger;
+        logger?: Logger;
         registry?: string;
       },
       cb: Cb<typeof registryLs>
@@ -130,7 +130,7 @@ export default {
         logger,
         ...options
       }: Options<typeof registryRemove> & {
-        logger: Logger;
+        logger?: Logger;
         registry?: string;
       },
       cb: Cb<typeof registryRemove>

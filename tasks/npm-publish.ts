@@ -1,6 +1,6 @@
-const fs = require('fs-extra');
-const log = require('./logger');
-const spawn = require('cross-spawn');
+import fs from 'fs-extra';
+import log from './logger';
+import spawn from 'cross-spawn';
 
 const builtVersion = fs.readJsonSync(
   './src/components/oc-client/_package/package.json'
@@ -28,5 +28,5 @@ cmd.on('close', code => {
     log.complete('npm publish succeeded');
   }
 
-  process.exit(code);
+  process.exit(code ?? 1);
 });

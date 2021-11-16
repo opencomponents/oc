@@ -1,14 +1,16 @@
-'use strict';
+import fs from 'fs-extra';
+import ocClientBrowser from 'oc-client-browser';
+import log from './logger';
+import path from 'path';
+import Local from '../src/cli/domain/local';
 
-const fs = require('fs-extra');
-const ocClientBrowser = require('oc-client-browser');
-const log = require('./logger');
-const path = require('path');
-const packageJson = require('../package');
+const packageJson = fs.readJsonSync(path.join(__dirname, '..', 'package.json'));
 
 const ocVersion = packageJson.version;
 const clientComponentDir = '../src/components/oc-client/';
-const ocClientPackageInfo = require(`${clientComponentDir}package.json`);
+const ocClientPackageInfo = fs.readJsonSync(
+  path.join(__dirname, clientComponentDir, 'package.json')
+);
 
 log['start']('Building client');
 
@@ -16,7 +18,7 @@ fs.emptyDirSync(path.join(__dirname, clientComponentDir, 'src'));
 
 ocClientBrowser.getLib((err, libContent) => {
   if (err) {
-    log['error'](err);
+    log['error'](String(err));
   }
 
   ocClientPackageInfo.version = ocVersion;
@@ -33,14 +35,13 @@ ocClientBrowser.getLib((err, libContent) => {
 
   ocClientBrowser.getMap((err, mapContent) => {
     if (err) {
-      log['error'](err);
+      log['error'](String(err));
     }
     fs.writeFileSync(
       path.join(__dirname, clientComponentDir, 'src/oc-client.min.map'),
       mapContent
     );
 
-    const Local = require('../dist/cli/domain/local').default;
     const local = Local();
     const packageOptions = {
       componentPath: path.join(__dirname, clientComponentDir),
@@ -54,7 +55,7 @@ ocClientBrowser.getLib((err, libContent) => {
         path.join(__dirname, clientComponentDir.replace('src', 'dist'))
       );
       log[err ? 'error' : 'complete'](
-        err ? err : 'Client has been built and packaged'
+        err ? String(err) : 'Client has been built and packaged'
       );
     });
   });

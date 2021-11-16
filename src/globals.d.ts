@@ -1,6 +1,7 @@
 declare module 'oc-client';
 declare module 'try-require';
 declare module 'basic-auth-connect';
+declare module 'injectr';
 
 declare module 'semver-extra' {
   interface SemverExtra {
