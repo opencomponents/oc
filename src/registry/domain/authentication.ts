@@ -2,17 +2,7 @@ import basicAuth from 'basic-auth-connect';
 import { RequestHandler } from 'express';
 
 import strings from '../../resources/';
-
-type Validate<T = unknown> = (config: T) => {
-  isValid: boolean;
-  message: string;
-};
-type Middleware<T> = (config: T) => any;
-
-type Authentication<T = any> = {
-  validate: Validate<T>;
-  middleware: Middleware<T>;
-};
+import { Authentication, PublishAuthConfig } from '../../types';
 
 const basicAuthentication: Authentication<{
   username: string;
@@ -40,8 +30,10 @@ const builtin: Record<string, Authentication> = {
 
 let scheme: Authentication;
 
-export function validate(authConfig: { type: string }) {
-  if (builtin[authConfig.type]) {
+export function validate(authConfig: PublishAuthConfig) {
+  if (typeof authConfig.type !== 'string') {
+    scheme = authConfig.type;
+  } else if (builtin[authConfig.type]) {
     scheme = builtin[authConfig.type];
   } else {
     const moduleName = `oc-auth-${authConfig.type}`;
