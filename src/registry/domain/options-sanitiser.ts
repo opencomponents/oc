@@ -68,7 +68,7 @@ export default function optionsSanitiser(input: Input): Config {
     options.customHeadersToSkipOnWeakVersion || []
   ).map(s => s.toLowerCase());
 
-  options.port = options.port || process.env['PORT'];
+  options.port = options.port || process.env['PORT'] || 3000;
   options.timeout = options.timeout || 1000 * 60 * 2;
   options.keepAliveTimeout =
     options.keepAliveTimeout || DEFAULT_NODE_KEEPALIVE_MS;
