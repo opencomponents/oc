@@ -22,6 +22,7 @@ results
 npm-debug.log
 node_modules
 yarn.lock
+package-lock.json
 
 src/components/oc.json
 src/components/base-component-handlebars/_package
