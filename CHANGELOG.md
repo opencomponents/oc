@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.6
+- [#1282](https://github.com/opencomponents/oc/pull/1282) Minor logging improvements
+
 ### v0.49.5
 - [#1280](https://github.com/opencomponents/oc/pull/1280) [INTERNAL] Allow for non-number port (i.e. pipe)
 
