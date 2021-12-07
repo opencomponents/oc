@@ -17,19 +17,22 @@ export default function installMissingDependencies(
     return callback(null);
   }
 
-  logger.warn(strings.messages.cli.INSTALLING_DEPS(missing.join(', ')), true);
+  const installPath = path.resolve('.');
+  
+  logger.warn(strings.messages.cli.INSTALLING_DEPS(missing.join(', '), installPath));
 
   const npmOptions = {
     dependencies: missing,
-    installPath: path.resolve('.'),
+    installPath,
     save: false,
-    silent: true,
+    silent: false,
     usePrefix: true
   };
 
   npm.installDependencies(npmOptions, err => {
     if (err || getMissingDependencies(dependencies).length) {
       logger.err('FAIL');
+      if (err) logger.err(`${err}`);
       return callback(strings.errors.cli.DEPENDENCIES_INSTALL_FAIL);
     }
 

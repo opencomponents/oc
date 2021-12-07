@@ -77,11 +77,12 @@ const dev =
 
       if (!packaging) {
         packaging = true;
-        logger.warn(cliMessages.PACKAGING_COMPONENTS, true);
+        logger.warn(cliMessages.PACKAGING_COMPONENTS, false);
 
         async.eachSeries(
           componentsDirs,
           (dir, cb) => {
+            logger.warn(cliMessages.PACKAGING(dir), false);
             const packageOptions = {
               componentPath: dir,
               minify: false,
