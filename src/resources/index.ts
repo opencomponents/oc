@@ -250,8 +250,8 @@ export default {
       HELP_HINT: 'Hint: Run -h with any command to show the help',
       HOT_RELOADING_DISABLED:
         'OC dev is running with hot reloading disabled so changes will be ignored',
-      INSTALLING_DEPS: (dependencies: string): string =>
-        `Trying to install missing modules: ${dependencies}\nIf you aren't connected to the internet, or npm isn't configured then this step will fail...`,
+      INSTALLING_DEPS: (dependencies: string, installPath: string): string =>
+        `Trying to install missing modules: ${dependencies}\n into ${installPath}/node_modules. If you aren't connected to the internet, or npm isn't configured then this step will fail...`,
       LINKING_DEPENDENCIES: (dependencies: string): string =>
         `Trying to link missing modules: ${dependencies}\nThe missing dependencies will be linked to component dependencies`,
       MOCKED_PLUGIN: (name: string, value: string): string =>

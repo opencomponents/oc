@@ -16,7 +16,7 @@ export default function installCompiler(
 ): void {
   const { compilerPath, componentPath, dependency, logger } = options;
 
-  logger.warn(strings.messages.cli.INSTALLING_DEPS(dependency), true);
+  logger.warn(strings.messages.cli.INSTALLING_DEPS(dependency, componentPath), true);
 
   const npmOptions = {
     dependency,
