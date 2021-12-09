@@ -113,6 +113,22 @@ export interface VM {
   type: 'oc-registry' | 'oc-registry-local';
 }
 
+export type Authentication<T = any> = {
+  validate: (config: T) => {
+    isValid: boolean;
+    message: string;
+  };
+  middleware: (config: T) => any;
+};
+
+export type PublishAuthConfig =
+  | {
+      type: 'basic';
+      username: string;
+      password: string;
+    }
+  | ({ type: string | Authentication } & Record<string, any>);
+
 export interface Config {
   baseUrl: string;
   baseUrlFunc?: (opts: { host?: string; secure: boolean }) => string;
@@ -135,11 +151,7 @@ export interface Config {
   port: number | string;
   postRequestPayloadSize?: number;
   prefix: string;
-  publishAuth?: {
-    type: string;
-    username: string;
-    password: string;
-  };
+  publishAuth?: PublishAuthConfig;
   publishValidation: (data: unknown) =>
     | {
         isValid: boolean;
