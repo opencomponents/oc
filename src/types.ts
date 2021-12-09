@@ -148,7 +148,7 @@ export interface Config {
   path: string;
   plugins: Record<string, (...args: unknown[]) => void>;
   pollingInterval: number;
-  port: number;
+  port: number | string;
   postRequestPayloadSize?: number;
   prefix: string;
   publishAuth?: PublishAuthConfig;

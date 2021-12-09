@@ -1,5 +1,11 @@
 ## Change Log
 
+### v0.49.6
+- [#1282](https://github.com/opencomponents/oc/pull/1282) Minor logging improvements
+
+### v0.49.5
+- [#1280](https://github.com/opencomponents/oc/pull/1280) [INTERNAL] Allow for non-number port (i.e. pipe)
+
 ### v0.49.4
 - [#1277](https://github.com/opencomponents/oc/pull/1277) [CLI-FEATURE] add registries options for oc publish
 - [#1276](https://github.com/opencomponents/oc/pull/1276) [CLI-FEATURE] filter components to run when running oc dev
