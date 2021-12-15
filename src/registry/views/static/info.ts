@@ -7,7 +7,7 @@ oc.cmd.push(function() {
     window.location = thisComponentHref + $(this).val() + '/~info';
   });
 
-  refreshPreview = function() {
+  var refreshPreview = function() {
     var splitted = $('#href')
         .val()
         .split('?'),
