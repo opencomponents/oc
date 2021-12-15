@@ -7,7 +7,7 @@ oc.cmd.push(function() {
     window.location = thisComponentHref + $(this).val() + '/~info';
   });
 
-  $('.refresh-preview').click(function() {
+  refreshPreview = function() {
     var splitted = $('#href')
         .val()
         .split('?'),
@@ -28,5 +28,16 @@ oc.cmd.push(function() {
     $('.preview').attr('src', url);
 
     return false;
+  };
+  $('.refresh-preview').click(refreshPreview);
+
+  $('.open-preview').click(function() {
+    refreshPreview();
+    var url = $('.preview').attr('src');
+
+    window.open(url, '_blank');
+    return false;
   });
+
+
 });`;
