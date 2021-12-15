@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.49.7
+- [#1283](https://github.com/opencomponents/oc/pull/1283) add "open" link to component preview page
+- [#1279](https://github.com/opencomponents/oc/pull/1279) improve auth flexibility allowing to pass any library on type field
+
 ### v0.49.6
 - [#1282](https://github.com/opencomponents/oc/pull/1282) Minor logging improvements
 
