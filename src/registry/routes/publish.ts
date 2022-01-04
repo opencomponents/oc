@@ -1,4 +1,3 @@
-import { fromPromise } from 'universalify';
 import extractPackage from '../domain/extract-package';
 import strings from '../../resources/index';
 import * as validator from '../domain/validators';
@@ -6,7 +5,7 @@ import { Request, Response } from 'express';
 import { Repository } from '../../types';
 
 export default function publish(repository: Repository) {
-  return function (req: Request, res: Response): void {
+  return async function (req: Request, res: Response): Promise<void> {
     if (!req.params['componentName'] || !req.params['componentVersion']) {
       res.errorDetails = 'malformed request';
       res.status(409).json({ error: res.errorDetails });
@@ -54,40 +53,37 @@ export default function publish(repository: Repository) {
       return;
     }
 
-    fromPromise(extractPackage)(files, (err, pkgDetails) => {
-      if (err) {
-        res.errorDetails = `Package is not valid: ${err}`;
-        res.status(500).json({ error: 'package is not valid', details: err });
-        return;
-      }
+    try {
+      const pkgDetails = await extractPackage(files);
 
-      fromPromise(repository.publishComponent)(
-        pkgDetails,
-        req.params['componentName'],
-        req.params['componentVersion'],
-        (err: any) => {
-          if (err) {
-            if (err.code === 'not_allowed') {
-              res.errorDetails = `Publish not allowed: ${err.msg}`;
-              return res.status(403).json({ error: err.msg });
-            } else if (err.code === 'already_exists') {
-              res.errorDetails = `Component already exists: ${err.msg}`;
-              return res.status(403).json({ error: err.msg });
-            } else if (err.code === 'name_not_valid') {
-              res.errorDetails = `Component name not valid: ${err.msg}`;
-              return res.status(409).json({ error: err.msg });
-            } else if (err.code === 'version_not_valid') {
-              res.errorDetails = `Component version not valid: ${err.msg}`;
-              return res.status(409).json({ error: err.msg });
-            } else {
-              res.errorDetails = `Publish failed: ${err.msg}`;
-              return res.status(500).json({ error: err.msg });
-            }
-          }
-
-          return res.status(200).json({ ok: true });
+      try {
+        await repository.publishComponent(
+          pkgDetails,
+          req.params['componentName'],
+          req.params['componentVersion']
+        );
+        res.status(200).json({ ok: true });
+      } catch (err: any) {
+        if (err.code === 'not_allowed') {
+          res.errorDetails = `Publish not allowed: ${err.msg}`;
+          res.status(403).json({ error: err.msg });
+        } else if (err.code === 'already_exists') {
+          res.errorDetails = `Component already exists: ${err.msg}`;
+          res.status(403).json({ error: err.msg });
+        } else if (err.code === 'name_not_valid') {
+          res.errorDetails = `Component name not valid: ${err.msg}`;
+          res.status(409).json({ error: err.msg });
+        } else if (err.code === 'version_not_valid') {
+          res.errorDetails = `Component version not valid: ${err.msg}`;
+          res.status(409).json({ error: err.msg });
+        } else {
+          res.errorDetails = `Publish failed: ${err.msg}`;
+          res.status(500).json({ error: err.msg });
         }
-      );
-    });
+      }
+    } catch (err) {
+      res.errorDetails = `Package is not valid: ${err}`;
+      res.status(500).json({ error: 'package is not valid', details: err });
+    }
   };
 }
