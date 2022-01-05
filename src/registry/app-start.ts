@@ -3,7 +3,6 @@ import path from 'path';
 import _ from 'lodash';
 import fs from 'fs-extra';
 import { Config, Repository } from '../types';
-import { promisify } from 'util';
 
 const packageInfo = fs.readJsonSync(
   path.join(
@@ -53,7 +52,7 @@ export default async function appStart(
       };
 
       try {
-        await promisify(repository.publishComponent)(
+        await repository.publishComponent(
           pkgInfo,
           'oc-client',
           packageInfo.version
