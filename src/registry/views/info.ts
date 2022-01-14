@@ -73,8 +73,11 @@ export default function info(vm: Vm): string {
     <div class="field"><p>Accept-Language header:</p></div>
     <input class="w-100" id="lang" type="text" value="*" />
     <h3>
-      Preview
-      <a class="refresh-preview" href="#refresh">(Refresh)</a>
+      Preview (
+      <a class="refresh-preview" href="#refresh">Refresh</a>
+      |
+      <a class="open-preview" href="#open">Open</a>
+      )
     </h3>
     <iframe class="preview" src="~preview/${sandBoxDefaultQs}"></iframe>`;
 

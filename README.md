@@ -16,7 +16,6 @@ We have been using it for more than two years in production at OpenTable, for sh
 
 [![npm version](https://img.shields.io/npm/v/oc.svg)](https://npmjs.org/package/oc)
 [![node version](https://img.shields.io/node/v/oc.svg)](https://npmjs.org/package/oc)
-[![Dependency Status](https://david-dm.org/opencomponents/oc.svg)](https://david-dm.org/opencomponents/oc)
 [![Known Vulnerabilities](https://snyk.io/test/github/opencomponents/oc/badge.svg)](https://snyk.io/test/github/opencomponents/oc)
 [![downloads](https://img.shields.io/npm/dm/oc.svg?label=downloads+from+npm)](https://npmjs.org/package/oc)
 [![Join the chat at https://gitter.im/opentable/oc](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/opentable/oc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -35,19 +34,6 @@ We have been using it for more than two years in production at OpenTable, for sh
 ## Requirements and build status
 
 Disclaimer: This project is still under heavy development and the API is likely to change at any time. In case you would find any issues, check the [troubleshooting page](CONTRIBUTING.md#troubleshooting).
-
-[![linux build](https://img.shields.io/travis/opencomponents/oc/master.svg?label=linux+build)](http://travis-ci.org/opencomponents/oc)
-
-| Node 8           | Node 9           | Node 10           |
-| ---------------- | ---------------- | ----------------- |
-| [![Node8][1]][5] | [![Node9][2]][5] | [![Node10][3]][5] |
-
-[1]: https://travis-matrix-badges.herokuapp.com/repos/opencomponents/oc/branches/master/1
-[2]: https://travis-matrix-badges.herokuapp.com/repos/opencomponents/oc/branches/master/2
-[3]: https://travis-matrix-badges.herokuapp.com/repos/opencomponents/oc/branches/master/3
-[5]: https://travis-ci.org/opencomponents/oc
-
-[![windows build](https://img.shields.io/appveyor/ci/matteofigus/oc/master.svg?label=windows+build)](https://ci.appveyor.com/project/matteofigus/oc)
 
 ## License
 

@@ -13,7 +13,7 @@ export default async function installCompiler(options: {
 }): Promise<Template> {
   const { compilerPath, componentPath, dependency, logger } = options;
 
-  logger.warn(strings.messages.cli.INSTALLING_DEPS(dependency), true);
+  logger.warn(strings.messages.cli.INSTALLING_DEPS(dependency, componentPath));
 
   const npmOptions = {
     dependency,

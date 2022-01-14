@@ -73,9 +73,10 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
       ): Promise<void> => {
         if (!packaging) {
           packaging = true;
-          logger.warn(cliMessages.PACKAGING_COMPONENTS, true);
+          logger.warn(cliMessages.PACKAGING_COMPONENTS, false);
 
           for (const dir of componentsDirs) {
+            logger.warn(cliMessages.PACKAGING(dir), false);
             const packageOptions = {
               componentPath: dir,
               minify: false,

@@ -17,13 +17,17 @@ export default async function installMissingDependencies(options: {
     return;
   }
 
-  logger.warn(strings.messages.cli.INSTALLING_DEPS(missing.join(', ')), true);
+  const installPath = path.resolve('.');
+
+  logger.warn(
+    strings.messages.cli.INSTALLING_DEPS(missing.join(', '), installPath)
+  );
 
   const npmOptions = {
     dependencies: missing,
-    installPath: path.resolve('.'),
+    installPath,
     save: false,
-    silent: true,
+    silent: false,
     usePrefix: true
   };
 
@@ -38,6 +42,7 @@ export default async function installMissingDependencies(options: {
     logger.ok('OK');
   } catch (err) {
     logger.err('FAIL');
+    if (err) logger.err(String(err));
     throw strings.errors.cli.DEPENDENCIES_INSTALL_FAIL;
   }
 }

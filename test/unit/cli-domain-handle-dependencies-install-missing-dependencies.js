@@ -82,7 +82,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
         dependencies: ['lodash@1.2.3', 'underscore@latest'],
         installPath: '/path/to/oc-running',
         save: false,
-        silent: true,
+        silent: false,
         usePrefix: true
       });
     });

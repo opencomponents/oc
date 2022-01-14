@@ -1,5 +1,15 @@
 ## Change Log
 
+### v0.49.7
+- [#1283](https://github.com/opencomponents/oc/pull/1283) add "open" link to component preview page
+- [#1279](https://github.com/opencomponents/oc/pull/1279) improve auth flexibility allowing to pass any library on type field
+
+### v0.49.6
+- [#1282](https://github.com/opencomponents/oc/pull/1282) Minor logging improvements
+
+### v0.49.5
+- [#1280](https://github.com/opencomponents/oc/pull/1280) [INTERNAL] Allow for non-number port (i.e. pipe)
+
 ### v0.49.4
 - [#1277](https://github.com/opencomponents/oc/pull/1277) [CLI-FEATURE] add registries options for oc publish
 - [#1276](https://github.com/opencomponents/oc/pull/1276) [CLI-FEATURE] filter components to run when running oc dev
