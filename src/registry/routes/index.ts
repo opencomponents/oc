@@ -13,6 +13,7 @@ import { Author, Component, ParsedComponent, Repository } from '../../types';
 import { NextFunction, Request, Response } from 'express';
 import { IncomingHttpHeaders } from 'http';
 import { PackageJson } from 'type-fest';
+import { fromPromise } from 'universalify';
 
 const packageInfo: PackageJson = fs.readJsonSync(
   path.join(__dirname, '..', '..', '..', 'package.json')
@@ -31,7 +32,7 @@ const isHtmlRequest = (headers: IncomingHttpHeaders) =>
 
 export default function (repository: Repository) {
   return (req: Request, res: Response, next: NextFunction): void => {
-    repository.getComponents((err, components) => {
+    fromPromise(repository.getComponents)((err, components) => {
       if (err) {
         res.errorDetails = 'cdn not available';
         res.status(404).json({ error: res.errorDetails });
@@ -52,24 +53,28 @@ export default function (repository: Repository) {
         async.each(
           components,
           (component, callback) =>
-            repository.getComponent(component, (err, result) => {
-              if (err) return callback(err as any);
+            fromPromise(repository.getComponent)(
+              component,
+              undefined,
+              (err, result) => {
+                if (err) return callback(err as any);
 
-              if (result.oc && result.oc.date) {
-                result.oc.stringifiedDate = dateStringified(
-                  new Date(result.oc.date)
-                );
+                if (result.oc && result.oc.date) {
+                  result.oc.stringifiedDate = dateStringified(
+                    new Date(result.oc.date)
+                  );
+                }
+
+                componentsInfo.push(mapComponentDetails(result));
+                componentsReleases += result.allVersions.length;
+                callback();
               }
-
-              componentsInfo.push(mapComponentDetails(result));
-              componentsReleases += result.allVersions.length;
-              callback();
-            }),
+            ),
           err => {
             if (err) return next(err);
 
             componentsInfo = _.sortBy(componentsInfo, 'name');
-            repository.getComponentsDetails((err, details) => {
+            fromPromise(repository.getComponentsDetails)((err, details) => {
               // eslint-disable-next-line no-console
               if (err) console.log(err);
               res.send(

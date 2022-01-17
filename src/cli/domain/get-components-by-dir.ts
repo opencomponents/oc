@@ -3,23 +3,11 @@ import path from 'path';
 import { Component } from '../../types';
 
 export default function getComponentsByDir() {
-  return (
+  return async (
     componentsDir: string,
-    componentsToRunOrCb:
-      | string[]
-      | ((err: Error | null, data: string[]) => void),
-    callbackMaybe?: (err: Error | null, data: string[]) => void
-  ): void => {
-    const componentsToRun =
-      typeof componentsToRunOrCb === 'function'
-        ? undefined
-        : componentsToRunOrCb;
-    const callback =
-      typeof componentsToRunOrCb === 'function'
-        ? componentsToRunOrCb
-        : callbackMaybe!;
-
-    const isOcComponent = function (file: string) {
+    componentsToRun?: string[]
+  ): Promise<string[]> => {
+    const isOcComponent = (file: string) => {
       const filePath = path.resolve(componentsDir, file);
       const packagePath = path.join(filePath, 'package.json');
       let content: Component;
@@ -39,23 +27,21 @@ export default function getComponentsByDir() {
       return typeof packagedProperty === 'undefined';
     };
 
-    let dirContent: string[];
-
     try {
-      dirContent = fs.readdirSync(componentsDir);
+      let dirContent = await fs.readdir(componentsDir);
       if (componentsToRun) {
         dirContent = dirContent.filter(content =>
           componentsToRun.includes(content)
         );
       }
+
+      const components = dirContent
+        .filter(isOcComponent)
+        .map(component => path.resolve(componentsDir, component));
+
+      return components;
     } catch (err) {
-      return callback(null, []);
+      return [];
     }
-
-    const components = dirContent
-      .filter(isOcComponent)
-      .map(component => path.resolve(componentsDir, component));
-
-    callback(null, components);
   };
 }

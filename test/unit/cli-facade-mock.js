@@ -10,19 +10,19 @@ describe('cli : facade : mock', () => {
   const local = Local();
   const mockFacade = MockFacade({ local: local, logger: logSpy });
 
-  const execute = function () {
+  const execute = function (done) {
     logSpy.ok = sinon.spy();
     mockFacade(
       { targetType: 'plugin', targetName: 'getValue', targetValue: 'value' },
-      () => {}
+      () => done()
     );
   };
 
   describe('when mocking plugin', () => {
     describe('when it succeeds', () => {
-      beforeEach(() => {
-        sinon.stub(local, 'mock').yields(null, 'ok');
-        execute();
+      beforeEach(done => {
+        sinon.stub(local, 'mock').resolves('ok');
+        execute(done);
       });
 
       afterEach(() => {

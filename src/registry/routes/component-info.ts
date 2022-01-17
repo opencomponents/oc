@@ -1,5 +1,6 @@
 import parseAuthor from 'parse-author';
 import _ from 'lodash';
+import { fromPromise } from 'universalify';
 
 import * as getComponentFallback from './helpers/get-component-fallback';
 import infoView from '../views/info';
@@ -64,7 +65,7 @@ function componentInfo(
       typeof component.repository === 'string' ? component.repository : null
     );
 
-    isUrlDiscoverable(href, (_err, result) => {
+    fromPromise(isUrlDiscoverable)(href, (_err, result) => {
       if (!result.isDiscoverable) {
         href = `//${req.headers.host}${res.conf.prefix}`;
       }
@@ -95,10 +96,10 @@ export default function componentInfoRoute(
   repository: Repository
 ) {
   return function (req: Request, res: Response): void {
-    repository.getComponent(
+    fromPromise(repository.getComponent)(
       req.params['componentName'],
       req.params['componentVersion'],
-      (registryError, component) => {
+      (registryError: any, component) => {
         if (registryError && conf.fallbackRegistryUrl) {
           return getComponentFallback.getComponentInfo(
             conf,

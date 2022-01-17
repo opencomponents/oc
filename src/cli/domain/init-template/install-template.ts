@@ -12,11 +12,11 @@ interface Options {
   logger: Logger;
 }
 
-export default function installTemplate(
-  options: Options,
-  callback: (err: string | null, data: { ok: true }) => void
-): void {
+export default async function installTemplate(
+  options: Options
+): Promise<{ ok: true }> {
   const { compiler, componentPath, logger, templateType } = options;
+  const errorMessage = 'template type not valid';
 
   const npmOptions = {
     dependency: compiler,
@@ -28,16 +28,13 @@ export default function installTemplate(
 
   logger.log(strings.messages.cli.installCompiler(compiler));
 
-  npm.installDependency(npmOptions, (err, result) => {
-    const errorMessage = 'template type not valid';
-    if (err) {
-      return callback(errorMessage, undefined as any);
-    }
+  try {
+    const result = await npm.installDependency(npmOptions);
 
     const installedCompiler = tryRequire(result.dest);
 
     if (!isTemplateValid(installedCompiler, { compiler: true })) {
-      return callback(errorMessage, undefined as any);
+      throw errorMessage;
     }
     const version = installedCompiler.getInfo().version;
     logger.log(
@@ -48,6 +45,8 @@ export default function installTemplate(
       )
     );
 
-    return callback(null, { ok: true });
-  });
+    return { ok: true };
+  } catch (err) {
+    throw errorMessage;
+  }
 }

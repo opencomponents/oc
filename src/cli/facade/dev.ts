@@ -1,9 +1,10 @@
-import async from 'async';
 import colors from 'colors/safe';
-import getPort from 'getport';
+import getPortCb from 'getport';
 import livereload from 'livereload';
 import path from 'path';
 import _ from 'lodash';
+import { promisify } from 'util';
+import { fromPromise } from 'universalify';
 
 import getMockedPlugins from '../domain/get-mocked-plugins';
 import handleDependencies from '../domain/handle-dependencies';
@@ -18,70 +19,63 @@ type Registry = ReturnType<typeof oc.Registry>;
 const cliMessages = strings.messages.cli;
 const cliErrors = strings.errors.cli;
 
-const dev =
-  ({ local, logger }: { logger: Logger; local: Local }) =>
-  (
-    opts: {
+const delay = (time = 0) => new Promise(res => setTimeout(res, time));
+const getPort = promisify(getPortCb);
+
+const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
+  fromPromise(
+    async (opts: {
       prefix: string;
       dirPath: string;
       port?: number;
       baseUrl: string;
       fallbackRegistryUrl: string;
       hotReloading?: boolean;
-      components: string[];
+      components?: string[];
       watch?: boolean;
       verbose?: boolean;
       production?: boolean;
-    },
-    callback: (err: Error | string | null, data: Registry) => void
-  ): void => {
-    const componentsDir = opts.dirPath;
-    const port = opts.port || 3000;
-    const baseUrl = opts.baseUrl || `http://localhost:${port}/`;
-    const fallbackRegistryUrl = opts.fallbackRegistryUrl;
-    const hotReloading =
-      typeof opts.hotReloading === 'undefined' ? true : opts.hotReloading;
-    const optWatch = typeof opts.watch === 'undefined' ? true : opts.watch;
-    let packaging = false;
+    }): Promise<Registry> => {
+      const componentsDir = opts.dirPath;
+      const port = opts.port || 3000;
+      const baseUrl = opts.baseUrl || `http://localhost:${port}/`;
+      const fallbackRegistryUrl = opts.fallbackRegistryUrl;
+      const hotReloading =
+        typeof opts.hotReloading === 'undefined' ? true : opts.hotReloading;
+      const optWatch = typeof opts.watch === 'undefined' ? true : opts.watch;
+      let packaging = false;
 
-    const watchForChanges = function (
-      {
-        components,
-        refreshLiveReload
-      }: { components: string[]; refreshLiveReload: boolean },
-      cb: any
-    ) {
-      watch(components, componentsDir, (err, changedFile, componentDir) => {
-        if (err) {
-          logger.err(strings.errors.generic(String(err)));
-        } else {
-          logger.warn(cliMessages.CHANGES_DETECTED(changedFile));
-          if (!hotReloading) {
-            logger.warn(cliMessages.HOT_RELOADING_DISABLED);
-          } else if (!componentDir) {
-            cb(components, refreshLiveReload);
+      const watchForChanges = function (
+        {
+          components,
+          refreshLiveReload
+        }: { components: string[]; refreshLiveReload: () => void },
+        cb: any
+      ) {
+        watch(components, componentsDir, (err, changedFile, componentDir) => {
+          if (err) {
+            logger.err(strings.errors.generic(String(err)));
           } else {
-            cb([componentDir], refreshLiveReload);
+            logger.warn(cliMessages.CHANGES_DETECTED(changedFile));
+            if (!hotReloading) {
+              logger.warn(cliMessages.HOT_RELOADING_DISABLED);
+            } else if (!componentDir) {
+              cb(components, refreshLiveReload);
+            } else {
+              cb([componentDir], refreshLiveReload);
+            }
           }
-        }
-      });
-    };
+        });
+      };
 
-    const packageComponents = (
-      componentsDirs: string[],
-      optCb?: () => void
-    ) => {
-      const cb = typeof optCb === 'function' ? optCb : _.noop;
+      const packageComponents = async (
+        componentsDirs: string[]
+      ): Promise<void> => {
+        if (!packaging) {
+          packaging = true;
+          logger.warn(cliMessages.PACKAGING_COMPONENTS, false);
 
-      let i = 0;
-
-      if (!packaging) {
-        packaging = true;
-        logger.warn(cliMessages.PACKAGING_COMPONENTS, false);
-
-        async.eachSeries(
-          componentsDirs,
-          (dir, cb) => {
+          for (const dir of componentsDirs) {
             logger.warn(cliMessages.PACKAGING(dir), false);
             const packageOptions = {
               componentPath: dir,
@@ -90,150 +84,133 @@ const dev =
               production: opts.production
             };
 
-            local.package(packageOptions, err => {
-              if (!err) i++;
-              cb(err);
-            });
-          },
-          error => {
-            if (error) {
+            try {
+              await local.package(packageOptions);
+              packaging = false;
+              logger.ok('OK');
+            } catch (error: any) {
               const errorDescription =
                 error instanceof SyntaxError || !!error.message
                   ? error.message
                   : error;
               logger.err(
-                cliErrors.PACKAGING_FAIL(
-                  componentsDirs[i],
-                  String(errorDescription)
-                )
+                cliErrors.PACKAGING_FAIL(dir, String(errorDescription))
               );
               logger.warn(cliMessages.RETRYING_10_SECONDS);
-              setTimeout(() => {
-                packaging = false;
-                packageComponents(componentsDirs);
-              }, 10000);
-            } else {
+              await delay(10000);
               packaging = false;
-              logger.ok('OK');
-              cb();
+              packageComponents(componentsDirs);
             }
           }
+        }
+      };
+
+      const registerPlugins = (registry: Registry) => {
+        const mockedPlugins = getMockedPlugins(logger, componentsDir);
+        mockedPlugins.forEach(p => registry.register(p));
+
+        registry.on('request', data => {
+          if (data.errorCode === 'PLUGIN_MISSING_FROM_REGISTRY') {
+            logger.err(
+              cliErrors.PLUGIN_MISSING_FROM_REGISTRY(
+                String(data.errorDetails),
+                colors.blue(strings.commands.cli.MOCK_PLUGIN)
+              )
+            );
+          }
+        });
+      };
+
+      logger.warn(cliMessages.SCANNING_COMPONENTS, true);
+      const components = await local.getComponentsByDir(
+        componentsDir,
+        opts.components
+      );
+
+      if (_.isEmpty(components)) {
+        const err = cliErrors.DEV_FAIL(cliErrors.COMPONENTS_NOT_FOUND);
+        logger.err(err);
+        throw err;
+      }
+
+      logger.ok('OK');
+      components.forEach(component =>
+        logger.log(colors.green('├── ') + component)
+      );
+
+      const dependencies = await handleDependencies({
+        components,
+        logger
+      }).catch(err => {
+        logger.err(err);
+        return Promise.reject(err);
+      });
+
+      await packageComponents(components);
+
+      let liveReload: { refresher: () => void; port: number | undefined } = {
+        refresher: _.noop,
+        port: undefined
+      };
+      if (hotReloading) {
+        const otherPort = await getPort(port + 1).catch(err => {
+          logger.err(String(err));
+          return Promise.reject(err);
+        });
+
+        const liveReloadServer = livereload.createServer({
+          port: otherPort
+        });
+        const refresher = () => liveReloadServer.refresh('/');
+        liveReload = { refresher, port: otherPort };
+      }
+
+      const registry = oc.Registry({
+        baseUrl,
+        prefix: opts.prefix || '',
+        dependencies: dependencies.modules,
+        discovery: true,
+        env: { name: 'local' },
+        fallbackRegistryUrl,
+        hotReloading,
+        liveReloadPort: liveReload.port,
+        local: true,
+        components: opts.components,
+        path: path.resolve(componentsDir),
+        port,
+        templates: dependencies.templates,
+        verbosity: 1
+      });
+
+      registerPlugins(registry);
+
+      logger.warn(cliMessages.REGISTRY_STARTING(baseUrl));
+      if (liveReload.port) {
+        logger.warn(
+          cliMessages.REGISTRY_LIVERELOAD_STARTING(String(liveReload.port))
         );
       }
-    };
+      try {
+        await promisify(registry.start);
 
-    const registerPlugins = (registry: Registry) => {
-      const mockedPlugins = getMockedPlugins(logger, componentsDir);
-      mockedPlugins.forEach(p => registry.register(p));
-
-      registry.on('request', data => {
-        if (data.errorCode === 'PLUGIN_MISSING_FROM_REGISTRY') {
-          logger.err(
-            cliErrors.PLUGIN_MISSING_FROM_REGISTRY(
-              data.errorDetails!,
-              colors.blue(strings.commands.cli.MOCK_PLUGIN)
-            )
+        if (optWatch) {
+          watchForChanges(
+            { components, refreshLiveReload: liveReload.refresher },
+            packageComponents
           );
         }
-      });
-    };
 
-    logger.warn(cliMessages.SCANNING_COMPONENTS, true);
-    local.getComponentsByDir(
-      componentsDir,
-      opts.components as any,
-      (err, components) => {
-        if (_.isEmpty(components)) {
-          err = cliErrors.DEV_FAIL(cliErrors.COMPONENTS_NOT_FOUND) as any;
-          callback(err, undefined as any);
-          return logger.err(String(err));
+        return registry;
+      } catch (err: any) {
+        if (err.code === 'EADDRINUSE') {
+          // eslint-disable-next-line no-ex-assign
+          err = cliErrors.PORT_IS_BUSY(port) as any;
         }
 
-        logger.ok('OK');
-        _.forEach(components, component =>
-          logger.log(colors.green('├── ') + component)
-        );
-
-        handleDependencies({ components, logger }, (err, dependencies) => {
-          if (err) {
-            logger.err(err);
-            return callback(err, undefined as any);
-          }
-          packageComponents(components, () => {
-            async.waterfall(
-              [
-                (next: any) => {
-                  if (hotReloading) {
-                    getPort(port + 1, (error, otherPort) => {
-                      if (error) {
-                        return next(error);
-                      }
-                      const liveReloadServer = livereload.createServer({
-                        port: otherPort
-                      });
-                      const refresher = () => liveReloadServer.refresh('/');
-                      next(null, { refresher, port: otherPort });
-                    });
-                  } else {
-                    next(null, { refresher: _.noop, port: null });
-                  }
-                }
-              ],
-              (err, liveReload: any) => {
-                if (err) {
-                  logger.err(String(err));
-                  return callback(err, undefined as any);
-                }
-
-                const registry = oc.Registry({
-                  baseUrl,
-                  prefix: opts.prefix || '',
-                  dependencies: dependencies.modules,
-                  discovery: true,
-                  env: { name: 'local' },
-                  fallbackRegistryUrl,
-                  hotReloading,
-                  liveReloadPort: liveReload.port,
-                  local: true,
-                  components: opts.components,
-                  path: path.resolve(componentsDir),
-                  port,
-                  templates: dependencies.templates,
-                  verbosity: 1
-                });
-
-                registerPlugins(registry);
-
-                logger.warn(cliMessages.REGISTRY_STARTING(baseUrl));
-                if (liveReload.port) {
-                  logger.warn(
-                    cliMessages.REGISTRY_LIVERELOAD_STARTING(liveReload.port)
-                  );
-                }
-                registry.start(err => {
-                  if (err) {
-                    if ((err as any).code === 'EADDRINUSE') {
-                      err = cliErrors.PORT_IS_BUSY(port) as any;
-                    }
-
-                    logger.err(String(err));
-                    return callback(err, undefined as any);
-                  }
-
-                  if (optWatch) {
-                    watchForChanges(
-                      { components, refreshLiveReload: liveReload.refresher },
-                      packageComponents
-                    );
-                  }
-                  callback(null, registry);
-                });
-              }
-            );
-          });
-        });
+        logger.err(String(err));
+        throw err;
       }
-    );
-  };
+    }
+  );
 
 export default dev;

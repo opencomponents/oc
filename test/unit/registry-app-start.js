@@ -17,7 +17,7 @@ const getAppStart = function (mockedRepository, options, callback) {
     }
   ).default;
 
-  return appStart(mockedRepository, options, callback);
+  return appStart(mockedRepository, options).finally(callback);
 };
 
 const basicOptions = {
@@ -36,7 +36,7 @@ describe('registry : app-start', () => {
       describe('when oc-client found on library', () => {
         it('should not publish it', done => {
           const mockedRepository = {
-            getComponentVersions: sinon.stub().yields(null, ['1.2.3']),
+            getComponentVersions: sinon.stub().resolves(['1.2.3']),
             publishComponent: sinon.spy()
           };
 
@@ -50,7 +50,7 @@ describe('registry : app-start', () => {
       describe('when oc-client not found on library', () => {
         it('should publish it', done => {
           const mockedRepository = {
-            getComponentVersions: sinon.stub().yields(null, ['1.0.0']),
+            getComponentVersions: sinon.stub().resolves(['1.0.0']),
             publishComponent: sinon.stub().yields(null, 'ok')
           };
 

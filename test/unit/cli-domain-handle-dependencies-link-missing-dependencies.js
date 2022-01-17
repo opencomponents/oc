@@ -18,7 +18,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
       '../../dist/cli/domain/handle-dependencies/link-missing-dependencies.js',
       {
         './get-missing-dependencies': stubs.getMissingDependencies,
-        'fs-extra': { ensureSymlinkSync: stubs.ensureSymlinkSync },
+        'fs-extra': { ensureSymlink: stubs.ensureSymlink },
         path: { resolve: () => '/path/to/oc-running' }
       }
     ).default;
@@ -28,10 +28,9 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
       dependencies,
       logger
     };
-    linkMissingDependencies(installOptions, err => {
-      error = err;
-      done();
-    });
+    linkMissingDependencies(installOptions)
+      .catch(err => (error = err))
+      .finally(done);
   };
 
   describe('when there is no missing dependency', () => {
@@ -40,7 +39,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     beforeEach(done => {
       stubs = {
         getMissingDependencies: sinon.stub().returns([]),
-        ensureSymlinkSync: sinon.stub().onCall().yields(null)
+        ensureSymlink: sinon.stub().onCall().resolves()
       };
 
       dependencies = { lodash: '1.2.3' };
@@ -48,11 +47,11 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     });
 
     it('should return no error', () => {
-      expect(error).to.be.null;
+      expect(error).to.be.undefined;
     });
 
     it('should not install anything', () => {
-      expect(stubs.ensureSymlinkSync.called).to.be.false;
+      expect(stubs.ensureSymlink.called).to.be.false;
     });
   });
 
@@ -63,7 +62,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     beforeEach(done => {
       stubs = {
         getMissingDependencies: sinon.stub(),
-        ensureSymlinkSync: sinon.stub().onCall().yields(null)
+        ensureSymlink: sinon.stub().onCall().resolves(null)
       };
 
       stubs.getMissingDependencies
@@ -75,11 +74,11 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     });
 
     it('should return no error', () => {
-      expect(error).to.be.null;
+      expect(error).to.be.undefined;
     });
 
     it('should symlink the missing dependencies', () => {
-      expect(stubs.ensureSymlinkSync.args[0][0]).to.deep.equal(
+      expect(stubs.ensureSymlink.args[0][0]).to.deep.equal(
         '/path/to/oc-running',
         '/path/to/oc-running',
         'dir'
@@ -100,7 +99,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     beforeEach(done => {
       stubs = {
         getMissingDependencies: sinon.stub(),
-        ensureSymlinkSync: sinon.stub().throws(new Error('symlink error'))
+        ensureSymlink: sinon.stub().rejects(new Error('symlink error'))
       };
 
       stubs.getMissingDependencies

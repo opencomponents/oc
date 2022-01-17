@@ -20,8 +20,9 @@ import * as urlBuilder from '../../domain/url-builder';
 import * as validator from '../../domain/validators';
 import { Config, Repository } from '../../../types';
 import { IncomingHttpHeaders } from 'http';
+import { fromPromise } from 'universalify';
 
-interface Options {
+export interface RendererOptions {
   conf: Config;
   headers: IncomingHttpHeaders;
   ip: string;
@@ -31,7 +32,7 @@ interface Options {
   omitHref?: boolean;
 }
 
-export type GetComponentResult = {
+export interface GetComponentResult {
   status: number;
   headers?: Record<string, string>;
   response: {
@@ -39,6 +40,7 @@ export type GetComponentResult = {
     code?: string;
     error?: unknown;
     version?: string;
+    html?: string;
     requestVersion?: string;
     name?: string;
     details?: {
@@ -49,7 +51,7 @@ export type GetComponentResult = {
     missingPlugins?: string[];
     missingDependencies?: string[];
   };
-};
+}
 
 export default function getComponent(conf: Config, repository: Repository) {
   const client = Client({ templates: conf.templates });
@@ -59,7 +61,7 @@ export default function getComponent(conf: Config, repository: Repository) {
   });
 
   const renderer = function (
-    options: Options,
+    options: RendererOptions,
     cb: (result: GetComponentResult) => void
   ) {
     const nestedRenderer = NestedRenderer(renderer, options.conf);
@@ -97,7 +99,7 @@ export default function getComponent(conf: Config, repository: Repository) {
       parameters: options.parameters
     };
 
-    repository.getComponent(
+    fromPromise(repository.getComponent)(
       requestedComponent.name,
       requestedComponent.version,
       (err, component) => {
@@ -372,7 +374,7 @@ export default function getComponent(conf: Config, repository: Repository) {
             if (!!cached && !conf.hotReloading) {
               returnResult(cached);
             } else {
-              repository.getCompiledView(
+              fromPromise(repository.getCompiledView)(
                 component.name,
                 component.version,
                 (_err, templateText) => {
@@ -419,8 +421,8 @@ export default function getComponent(conf: Config, repository: Repository) {
             env: conf.env,
             params,
             plugins: conf.plugins,
-            renderComponent: nestedRenderer.renderComponent,
-            renderComponents: nestedRenderer.renderComponents,
+            renderComponent: fromPromise(nestedRenderer.renderComponent),
+            renderComponents: fromPromise(nestedRenderer.renderComponents),
             requestHeaders: options.headers,
             requestIp: options.ip,
             setEmptyResponse,
@@ -464,7 +466,7 @@ export default function getComponent(conf: Config, repository: Repository) {
               return returnComponent(e, undefined);
             }
           } else {
-            repository.getDataProvider(
+            fromPromise(repository.getDataProvider)(
               component.name,
               component.version,
               (err, dataProvider) => {

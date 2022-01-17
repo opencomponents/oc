@@ -1,39 +1,34 @@
-import async from 'async';
+import pLimit from 'p-limit';
 import _ from 'lodash';
 import eventsHandler from './events-handler';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import {
-  Cdn,
   Component,
   ComponentsDetails,
   ComponentsList,
   Config
 } from '../../types';
+import { StorageAdapter } from 'oc-storage-adapters-utils';
 
-export default function componentsDetails(conf: Config, cdn: Cdn) {
-  const returnError = (
-    code: string,
-    message: string | Error,
-    callback: (code: string) => void
-  ) => {
+export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
+  const returnError = (code: string, message: string | Error) => {
     eventsHandler.fire('error', {
       code,
       message: (message as Error)?.message ?? message
     });
-    return callback(code);
+    throw code;
   };
 
   const filePath = (): string =>
     `${conf.storage.options.componentsDir}/components-details.json`;
 
-  const getFromJson = (
-    callback: (err: string | null, data: ComponentsDetails) => void
-  ) => cdn.getJson<ComponentsDetails>(filePath(), true, callback);
+  const getFromJson = (): Promise<ComponentsDetails> =>
+    cdn.getJson(filePath(), true);
 
-  const getFromDirectories = (
-    options: { componentsList: ComponentsList; details: ComponentsDetails },
-    callback: (err: Error | undefined | null, data: ComponentsDetails) => void
-  ) => {
+  const getFromDirectories = async (options: {
+    componentsList: ComponentsList;
+    details?: ComponentsDetails;
+  }): Promise<ComponentsDetails> => {
     const details = Object.assign({}, _.cloneDeep(options.details));
     details.components = details.components || {};
 
@@ -47,72 +42,51 @@ export default function componentsDetails(conf: Config, cdn: Cdn) {
       });
     });
 
-    async.eachLimit(
-      missing,
-      cdn.maxConcurrentRequests,
-      ({ name, version }, next) => {
-        cdn.getJson<Component>(
-          `${conf.storage.options.componentsDir}/${name}/${version}/package.json`,
-          true,
-          (err, content) => {
-            if (err) {
-              return next(err as any);
-            }
-            details.components[name][version] = {
-              publishDate: content.oc.date || 0
-            };
-            next();
-          }
-        );
-      },
-      err =>
-        callback(err, {
-          lastEdit: getUnixUTCTimestamp(),
-          components: details.components
+    const limit = pLimit(cdn.maxConcurrentRequests);
+
+    await Promise.all(
+      missing.map(({ name, version }) =>
+        limit(async () => {
+          const content: Component = await cdn.getJson(
+            `${conf.storage.options.componentsDir}/${name}/${version}/package.json`,
+            true
+          );
+          details.components[name][version] = {
+            publishDate: content.oc.date || 0
+          };
         })
+      )
     );
+
+    return {
+      lastEdit: getUnixUTCTimestamp(),
+      components: details.components
+    };
   };
 
-  const save = (
-    data: ComponentsDetails,
-    callback: (err: string | null, data: unknown) => void
-  ) => cdn.putFileContent(JSON.stringify(data), filePath(), true, callback);
+  const save = (data: ComponentsDetails): Promise<unknown> =>
+    cdn.putFileContent(JSON.stringify(data), filePath(), true);
 
-  const refresh = (
-    componentsList: ComponentsList,
-    callback: (err: Error | null, data: ComponentsDetails) => void
-  ) => {
-    getFromJson((jsonErr, details: ComponentsDetails) => {
-      getFromDirectories(
-        { componentsList, details },
-        (dirErr, dirDetails: ComponentsDetails) => {
-          if (dirErr) {
-            return returnError(
-              'components_details_get',
-              dirErr,
-              callback as any
-            );
-          } else if (
-            jsonErr ||
-            !_.isEqual(dirDetails.components, details.components)
-          ) {
-            save(dirDetails, saveErr => {
-              if (saveErr) {
-                return returnError(
-                  'components_details_save',
-                  saveErr,
-                  callback as any
-                );
-              }
+  const refresh = async (
+    componentsList: ComponentsList
+  ): Promise<ComponentsDetails> => {
+    const jsonDetails = await getFromJson().catch(() => undefined);
+    const dirDetails = await getFromDirectories({
+      componentsList,
+      details: jsonDetails
+    }).catch(err => returnError('components_details_get', err));
 
-              callback(null, dirDetails);
-            });
-          } else {
-            callback(null, details);
-          }
-        }
+    if (
+      !jsonDetails ||
+      !_.isEqual(dirDetails.components, jsonDetails.components)
+    ) {
+      await save(dirDetails).catch(err =>
+        returnError('components_details_save', err)
       );
-    });
+      return dirDetails;
+    }
+
+    return jsonDetails;
   };
 
   return {

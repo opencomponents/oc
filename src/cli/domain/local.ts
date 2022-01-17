@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import targz from 'targz';
+import { promisify } from 'util';
 
 import * as clean from './clean';
 import getComponentsByDir from './get-components-by-dir';
@@ -14,31 +15,28 @@ import { Local } from '../../types';
 export default function local(): Local {
   return {
     clean,
-    cleanup(compressedPackagePath: string, callback) {
-      return fs.unlink(compressedPackagePath, callback);
+    cleanup(compressedPackagePath: string) {
+      return fs.unlink(compressedPackagePath);
     },
-    compress(input, output, callback) {
-      return targz.compress(
-        {
-          src: input,
-          dest: output,
-          tar: {
-            map: function (file) {
-              return Object.assign(file, {
-                name: `_package/${file.name}`
-              });
-            }
+    compress(input, output) {
+      return promisify(targz.compress)({
+        src: input,
+        dest: output,
+        tar: {
+          map: function (file) {
+            return Object.assign(file, {
+              name: `_package/${file.name}`
+            });
           }
-        },
-        callback
-      );
+        }
+      });
     },
     getComponentsByDir: getComponentsByDir(),
-    init(options, callback) {
+    async init(options) {
       const { componentName, logger } = options;
       let { templateType } = options;
       if (!validator.validateComponentName(componentName)) {
-        return callback('name not valid', undefined as any);
+        throw 'name not valid';
       }
 
       // LEGACY TEMPLATES WARNING
@@ -56,15 +54,14 @@ export default function local(): Local {
         );
       }
       try {
-        initTemplate(
+        await initTemplate(
           Object.assign(options, {
             templateType,
             compiler: `${templateType}-compiler`
-          }),
-          callback as any
+          })
         );
       } catch (e) {
-        return callback('template type not valid', undefined as any);
+        throw 'template type not valid';
       }
     },
     mock: mock(),

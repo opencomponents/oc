@@ -48,14 +48,17 @@ ocClientBrowser.getLib((err, libContent) => {
       verbose: false
     };
 
-    local.package(packageOptions, err => {
-      fs.copySync(
-        path.join(__dirname, clientComponentDir),
-        path.join(__dirname, clientComponentDir.replace('src', 'dist'))
-      );
-      log[err ? 'error' : 'complete'](
-        err ? err : 'Client has been built and packaged'
-      );
-    });
+    local
+      .package(packageOptions)
+      .then(() => {
+        fs.copySync(
+          path.join(__dirname, clientComponentDir),
+          path.join(__dirname, clientComponentDir.replace('src', 'dist'))
+        );
+        log.complete('Client has been built and packaged');
+      })
+      .catch(err => {
+        log.error(err);
+      });
   });
 });

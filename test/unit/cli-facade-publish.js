@@ -29,7 +29,7 @@ describe('cli : facade : publish', () => {
     const fsMock = Object.assign(
       {
         existsSync: sinon.stub().returns(true),
-        readJson: sinon.stub().yields(null, mockComponent)
+        readJson: sinon.stub().resolves(mockComponent)
       },
       fs
     );
@@ -59,7 +59,7 @@ describe('cli : facade : publish', () => {
   describe('when publishing component', () => {
     describe('when api is not valid', () => {
       beforeEach(done => {
-        sinon.stub(registry, 'get').yields('an error!');
+        sinon.stub(registry, 'get').rejects('an error!');
         execute(done);
       });
 
@@ -76,7 +76,7 @@ describe('cli : facade : publish', () => {
       beforeEach(() => {
         sinon
           .stub(registry, 'get')
-          .yields(null, ['http://www.api.com', 'http://www.api2.com']);
+          .resolves(['http://www.api.com', 'http://www.api2.com']);
       });
 
       afterEach(() => {
@@ -84,7 +84,7 @@ describe('cli : facade : publish', () => {
       });
 
       it('should show a message', done => {
-        sinon.stub(local, 'package').yields('the component is not valid');
+        sinon.stub(local, 'package').rejects('the component is not valid');
         execute(() => {
           local.package.restore();
           const message = logSpy.warn.args[1][0];
@@ -103,7 +103,7 @@ describe('cli : facade : publish', () => {
       });
 
       it('should take precedence over the registries set through oc.json', done => {
-        sinon.stub(registry, 'putComponent').yields(null, 'ok');
+        sinon.stub(registry, 'putComponent').resolves('ok');
         execute(
           () => {
             registry.putComponent.restore();
@@ -119,7 +119,7 @@ describe('cli : facade : publish', () => {
       describe('when packaging', () => {
         describe('when a component is not valid', () => {
           beforeEach(done => {
-            sinon.stub(local, 'package').yields('the component is not valid');
+            sinon.stub(local, 'package').rejects('the component is not valid');
             execute(done);
           });
 
@@ -136,7 +136,7 @@ describe('cli : facade : publish', () => {
 
         describe('when a component is valid', () => {
           beforeEach(() => {
-            sinon.stub(local, 'package').yields(null, mockComponent);
+            sinon.stub(local, 'package').resolves(mockComponent);
           });
 
           afterEach(() => {
@@ -145,7 +145,7 @@ describe('cli : facade : publish', () => {
 
           describe('when creating tar.gz archive', () => {
             beforeEach(() => {
-              sinon.stub(local, 'compress').yields(null);
+              sinon.stub(local, 'compress').resolves();
             });
 
             afterEach(() => {
@@ -153,7 +153,7 @@ describe('cli : facade : publish', () => {
             });
 
             it('should show a message', done => {
-              sinon.stub(registry, 'putComponent').yields('blabla');
+              sinon.stub(registry, 'putComponent').rejects('blabla');
               execute(() => {
                 registry.putComponent.restore();
                 const message = logSpy.warn.args[2][0];
@@ -170,7 +170,7 @@ describe('cli : facade : publish', () => {
 
             describe('when publishing', () => {
               it('should show a message', done => {
-                sinon.stub(registry, 'putComponent').yields('blabla');
+                sinon.stub(registry, 'putComponent').rejects('blabla');
                 execute(() => {
                   registry.putComponent.restore();
 
@@ -180,7 +180,7 @@ describe('cli : facade : publish', () => {
               });
 
               it('should publish to all registries', done => {
-                sinon.stub(registry, 'putComponent').yields(null, 'ok');
+                sinon.stub(registry, 'putComponent').resolves('ok');
                 execute(() => {
                   registry.putComponent.restore();
 
@@ -194,7 +194,9 @@ describe('cli : facade : publish', () => {
 
               describe('when a generic error happens', () => {
                 beforeEach(done => {
-                  sinon.stub(registry, 'putComponent').yields('nope!');
+                  sinon
+                    .stub(registry, 'putComponent')
+                    .rejects(new Error('nope!'));
                   execute(done);
                 });
 
@@ -213,7 +215,7 @@ describe('cli : facade : publish', () => {
                 beforeEach(done => {
                   sinon
                     .stub(registry, 'putComponent')
-                    .yields({ IgotAnError: true });
+                    .rejects({ IgotAnError: true });
                   execute(done);
                 });
 
@@ -230,7 +232,7 @@ describe('cli : facade : publish', () => {
 
               describe('when using an old cli', () => {
                 beforeEach(done => {
-                  sinon.stub(registry, 'putComponent').yields({
+                  sinon.stub(registry, 'putComponent').rejects({
                     code: 'cli_version_not_valid',
                     error:
                       'OC CLI version is not valid: Registry 1.23.4, CLI 0.1.2',
@@ -259,7 +261,7 @@ describe('cli : facade : publish', () => {
 
               describe('when using an old node version', () => {
                 beforeEach(done => {
-                  sinon.stub(registry, 'putComponent').yields({
+                  sinon.stub(registry, 'putComponent').rejects({
                     code: 'node_version_not_valid',
                     error:
                       'Node CLI version is not valid: Registry 0.10.36, CLI 0.10.35',
@@ -287,7 +289,9 @@ describe('cli : facade : publish', () => {
 
               describe('when registry requires authentication', () => {
                 beforeEach(done => {
-                  sinon.stub(registry, 'putComponent').yields('Unauthorized');
+                  sinon
+                    .stub(registry, 'putComponent')
+                    .rejects(new Error('Unauthorized'));
                   execute(done);
                 });
 
@@ -304,7 +308,9 @@ describe('cli : facade : publish', () => {
 
               describe('when credentials are prepopulated', () => {
                 beforeEach(done => {
-                  sinon.stub(registry, 'putComponent').yields('Unauthorized');
+                  sinon
+                    .stub(registry, 'putComponent')
+                    .rejects(new Error('Unauthorized'));
                   execute(done, {
                     creds: {
                       username: 'myuser',
@@ -327,8 +333,8 @@ describe('cli : facade : publish', () => {
               describe('when it succeeds', () => {
                 let stub;
                 beforeEach(done => {
-                  sinon.stub(registry, 'putComponent').yields(null, 'yay');
-                  stub = sinon.stub(local, 'cleanup').yields(null, 'done');
+                  sinon.stub(registry, 'putComponent').resolves('yay');
+                  stub = sinon.stub(local, 'cleanup').resolves('done');
                   execute(done);
                 });
 
@@ -354,7 +360,7 @@ describe('cli : facade : publish', () => {
       });
       describe('when skipping packaging', () => {
         beforeEach(() => {
-          sinon.stub(local, 'compress').yields(null);
+          sinon.stub(local, 'compress').resolves(null);
         });
 
         afterEach(() => {
@@ -362,7 +368,7 @@ describe('cli : facade : publish', () => {
         });
 
         it('should publish the package to all registries', done => {
-          sinon.stub(registry, 'putComponent').yields(null, 'ok');
+          sinon.stub(registry, 'putComponent').resolves('ok');
           execute(
             () => {
               registry.putComponent.restore();
@@ -375,7 +381,7 @@ describe('cli : facade : publish', () => {
           );
         });
         it('should skip packaging', done => {
-          sinon.stub(registry, 'putComponent').yields(null, 'ok');
+          sinon.stub(registry, 'putComponent').resolves('ok');
           sinon.stub(local, 'package');
           execute(
             () => {

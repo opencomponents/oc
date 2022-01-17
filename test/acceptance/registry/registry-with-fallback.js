@@ -2,7 +2,7 @@
 
 const expect = require('chai').expect;
 const path = require('path');
-const request = require('minimal-request');
+const got = require('got');
 
 describe('registry', () => {
   describe('when fallbackRegistryUrl is specified', () => {
@@ -28,12 +28,13 @@ describe('registry', () => {
       };
     }
 
-    function next(done) {
-      return function (e, r) {
-        result = r;
-        done();
-      };
-    }
+    const next = (promise, done) => {
+      promise
+        .then(r => {
+          result = JSON.parse(r.body);
+        })
+        .finally(done);
+    };
 
     before(done => {
       registry = oc.Registry(
@@ -62,13 +63,7 @@ describe('registry', () => {
 
     describe('GET /welcome', () => {
       before(done => {
-        request(
-          {
-            url: 'http://localhost:3030/welcome',
-            json: true
-          },
-          next(done)
-        );
+        next(got('http://localhost:3030/welcome'), done);
       });
 
       it('should respond with the local registry url', () => {
@@ -82,13 +77,7 @@ describe('registry', () => {
 
     describe('GET /fallback-hello-world', () => {
       before(done => {
-        request(
-          {
-            url: 'http://localhost:3030/fallback-hello-world',
-            json: true
-          },
-          next(done)
-        );
+        next(got('http://localhost:3030/fallback-hello-world'), done);
       });
 
       it('should respond with the fallback registry url', () => {
@@ -104,12 +93,11 @@ describe('registry', () => {
 
     describe('GET /fallback-hello-world/~info', () => {
       before(done => {
-        request(
-          {
-            url: 'http://localhost:3030/fallback-welcome-with-optional-parameters/~info',
-            json: true
-          },
-          next(done)
+        next(
+          got(
+            'http://localhost:3030/fallback-welcome-with-optional-parameters/~info'
+          ),
+          done
         );
       });
 
@@ -124,12 +112,11 @@ describe('registry', () => {
 
     describe('GET /fallback-hello-world/~preview', () => {
       before(done => {
-        request(
-          {
-            url: 'http://localhost:3030/fallback-welcome-with-optional-parameters/~preview',
-            json: true
-          },
-          next(done)
+        next(
+          got(
+            'http://localhost:3030/fallback-welcome-with-optional-parameters/~preview'
+          ),
+          done
         );
       });
 

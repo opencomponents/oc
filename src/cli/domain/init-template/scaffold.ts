@@ -11,38 +11,35 @@ interface ScaffoldOptions {
   templateType: string;
 }
 
-export default function scaffold(
-  options: ScaffoldOptions,
-  callback: (err: string | null, data: { ok: true }) => void
-): void {
+export default async function scaffold(
+  options: ScaffoldOptions
+): Promise<{ ok: true }> {
   const { compiler, compilerPath, componentName, componentPath, templateType } =
     options;
 
   const baseComponentPath = path.join(compilerPath, 'scaffold');
   const baseComponentFiles = path.join(baseComponentPath, 'src');
-  const compilerPackage = fs.readJsonSync(
+  const compilerPackage = await fs.readJson(
     path.join(compilerPath, 'package.json')
   );
 
   try {
-    fs.copySync(baseComponentFiles, componentPath);
+    await fs.copy(baseComponentFiles, componentPath);
 
-    const componentPackage = fs.readJsonSync(
+    const componentPackage = await fs.readJson(
       path.join(componentPath, 'package.json')
     );
     componentPackage.name = componentName;
     componentPackage.devDependencies[compiler] = compilerPackage.version;
-    fs.writeJsonSync(componentPath + '/package.json', componentPackage, {
+    await fs.writeJson(componentPath + '/package.json', componentPackage, {
       spaces: 2
     });
 
-    return callback(null, { ok: true });
+    return { ok: true };
   } catch (error) {
     const url =
       (compilerPackage.bugs && compilerPackage.bugs.url) ||
       `the ${templateType} repo`;
-    return (callback as any)(
-      strings.errors.cli.scaffoldError(url, String(error))
-    );
+    throw strings.errors.cli.scaffoldError(url, String(error));
   }
 }

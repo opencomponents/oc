@@ -38,10 +38,12 @@ describe('utils : npm-utils', () => {
           onStub = sinon.stub();
           crossSpawnStub.reset();
           crossSpawnStub.returns({ on: onStub });
-          npmUtils.init(scenario.input, err => {
-            error = err;
-            done();
-          });
+          npmUtils
+            .init(scenario.input)
+            .catch(err => {
+              error = err;
+            })
+            .finally(done);
           onStub.args[1][1](0);
         });
 
@@ -52,7 +54,7 @@ describe('utils : npm-utils', () => {
         });
 
         it('should return no error', () => {
-          expect(error).to.be.null;
+          expect(error).to.be.undefined;
         });
 
         it('should correctly setup on error and on close listeners', () => {
@@ -125,11 +127,12 @@ describe('utils : npm-utils', () => {
           onStub = sinon.stub();
           crossSpawnStub.reset();
           crossSpawnStub.returns({ on: onStub });
-          npmUtils.installDependency(scenario.input, (err, res) => {
-            error = err;
-            result = res;
-            done();
-          });
+          npmUtils
+            .installDependency(scenario.input)
+            .then(res => (result = res))
+            .catch(err => (error = err))
+            .finally(done);
+
           onStub.args[1][1](0);
         });
 
@@ -143,7 +146,7 @@ describe('utils : npm-utils', () => {
         });
 
         it('should return no error', () => {
-          expect(error).to.be.null;
+          expect(error).to.be.undefined;
         });
 
         it('should return the installation path', () => {
@@ -237,11 +240,11 @@ describe('utils : npm-utils', () => {
           onStub = sinon.stub();
           crossSpawnStub.reset();
           crossSpawnStub.returns({ on: onStub });
-          npmUtils.installDependencies(scenario.input, (err, res) => {
-            error = err;
-            result = res;
-            done();
-          });
+          npmUtils
+            .installDependencies(scenario.input)
+            .then(res => (result = res))
+            .catch(err => (error = err))
+            .finally(done);
           onStub.args[1][1](0);
         });
 
@@ -255,7 +258,7 @@ describe('utils : npm-utils', () => {
         });
 
         it('should return no error', () => {
-          expect(error).to.be.null;
+          expect(error).to.be.undefined;
         });
 
         it('should return the installation path', () => {

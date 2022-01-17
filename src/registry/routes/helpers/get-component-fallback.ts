@@ -4,6 +4,7 @@ import request from 'minimal-request';
 import url from 'url';
 import { Component, Config } from '../../../types';
 import * as urlBuilder from '../../domain/url-builder';
+import { GetComponentResult } from './get-component';
 
 type ComponentCallback = (
   err: { registryError: any; fallbackError: any } | null,
@@ -77,14 +78,7 @@ export function getComponent(
   fallbackRegistryUrl: string,
   headers: IncomingHttpHeaders,
   component: { name: string; version: string; parameters: IncomingHttpHeaders },
-  callback: (
-    result:
-      | {
-          status: number;
-          response: { code: string; error: Error };
-        }
-      | Component
-  ) => void
+  callback: (result: GetComponentResult) => void
 ): void {
   return request(
     {
@@ -94,7 +88,7 @@ export function getComponent(
       json: true,
       body: { components: [component] }
     },
-    (err, res: Component[]) => {
+    (err, res: GetComponentResult[]) => {
       if (err || !res || res.length === 0) {
         return callback({
           status: 404,

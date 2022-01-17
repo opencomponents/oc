@@ -18,20 +18,22 @@ describe('cli : facade : init', () => {
   const local = Local({ logger: { log: () => {} } });
   const initFacade = InitFacade({ local: local, logger: logSpy });
 
-  const execute = function (componentPath, templateType) {
+  const execute = function (componentPath, templateType, done) {
     logSpy.err = sinon.spy();
     logSpy.ok = sinon.spy();
     logSpy.log = sinon.spy();
     initFacade(
       { componentPath: componentPath, templateType: templateType },
-      () => {}
+      () => {
+        done();
+      }
     );
   };
 
   describe('when initialising a new component', () => {
     describe('when the component is an empty string', () => {
-      beforeEach(() => {
-        execute(' ');
+      beforeEach(done => {
+        execute(' ', undefined, done);
       });
 
       it('should show an error', () => {
@@ -42,8 +44,8 @@ describe('cli : facade : init', () => {
     });
 
     describe('when the component has a non valid name', () => {
-      beforeEach(() => {
-        execute('hello-asd$qwe:11', 'handlebars');
+      beforeEach(done => {
+        execute('hello-asd$qwe:11', 'handlebars', done);
       });
 
       it('should show an error', () => {
@@ -54,8 +56,8 @@ describe('cli : facade : init', () => {
     });
 
     describe('when the template is of a non valid type', () => {
-      beforeEach(() => {
-        execute('valid-component', 'invalid-type');
+      beforeEach(done => {
+        execute('valid-component', 'invalid-type', done);
       });
 
       it('should show an error', () => {
@@ -66,9 +68,9 @@ describe('cli : facade : init', () => {
     });
 
     describe('when an error happens', () => {
-      beforeEach(() => {
-        sinon.stub(local, 'init').yields('nope!');
-        execute('the-best-component', 'handlebars');
+      beforeEach(done => {
+        sinon.stub(local, 'init').rejects('nope!');
+        execute('the-best-component', 'handlebars', done);
       });
 
       afterEach(() => {
@@ -83,9 +85,9 @@ describe('cli : facade : init', () => {
     });
 
     describe('when the component has relative path', () => {
-      beforeEach(() => {
-        sinon.stub(local, 'init').yields(null, 'yes man');
-        execute('this/is/relative/path/to/the-best-component', 'jade');
+      beforeEach(done => {
+        sinon.stub(local, 'init').resolves('yes man');
+        execute('this/is/relative/path/to/the-best-component', 'jade', done);
       });
 
       afterEach(() => {
@@ -106,9 +108,9 @@ describe('cli : facade : init', () => {
     });
 
     describe('when succeeds', () => {
-      beforeEach(() => {
-        sinon.stub(local, 'init').yields(null, 'yes man');
-        execute('the-best-component', 'jade');
+      beforeEach(done => {
+        sinon.stub(local, 'init').resolves('yes man');
+        execute('the-best-component', 'jade', done);
       });
 
       afterEach(() => {
