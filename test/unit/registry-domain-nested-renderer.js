@@ -2,7 +2,6 @@
 
 const expect = require('chai').expect;
 const sinon = require('sinon');
-const _ = require('lodash');
 
 describe('registry : routes : helpers : nested-renderer', () => {
   const NestedRenderer =
@@ -15,7 +14,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
     if (Array.isArray(rendererMocks)) {
       renderer = sinon.stub();
 
-      _.each(rendererMocks, (rendererMock, i) => {
+      rendererMocks.forEach((rendererMock, i) => {
         renderer.onCall(i).yields(rendererMock);
       });
     } else {

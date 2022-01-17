@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import settings from '../../resources/settings';
 import { Config } from '../../types';
 import * as auth from './authentication';
@@ -10,7 +9,7 @@ interface Input extends Partial<Omit<Config, 'beforePublish'>> {
 }
 
 export default function optionsSanitiser(input: Input): Config {
-  const options = _.clone(input);
+  const options = { ...input };
 
   if (!options.publishAuth) {
     (options as Config).beforePublish = (_req, _res, next) => next();
@@ -57,9 +56,13 @@ export default function optionsSanitiser(input: Input): Config {
     options.templates = [];
   }
 
+  if (!options.dependencies) {
+    options.dependencies = [];
+  }
+
   if (
     typeof options.fallbackRegistryUrl !== 'undefined' &&
-    _.last(options.fallbackRegistryUrl) !== '/'
+    !options.fallbackRegistryUrl.endsWith('/')
   ) {
     options.fallbackRegistryUrl += '/';
   }

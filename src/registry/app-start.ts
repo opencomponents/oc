@@ -1,6 +1,5 @@
 import colors from 'colors/safe';
 import path from 'path';
-import _ from 'lodash';
 import fs from 'fs-extra';
 import { ComponentsDetails, Config, Repository } from '../types';
 
@@ -24,7 +23,8 @@ export default function appStart(
     return callback(null, 'ok');
   }
 
-  const logger = options.verbosity ? console : { log: _.noop };
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const logger = options.verbosity ? console : { log: () => {} };
 
   logger.log(
     colors.yellow(
@@ -43,7 +43,7 @@ export default function appStart(
       )
     );
 
-    if (!_.includes(componentInfo, packageInfo.version)) {
+    if (!componentInfo.includes(packageInfo.version)) {
       logger.log(colors.yellow('Component not found. Publishing it...'));
 
       const pkgInfo = {

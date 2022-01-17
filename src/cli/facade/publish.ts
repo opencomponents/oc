@@ -3,7 +3,6 @@ import colors from 'colors/safe';
 import path from 'path';
 import fs from 'fs-extra';
 import read from 'read';
-import _ from 'lodash';
 import { Logger } from '../logger';
 import { Component, RegistryCli, Local } from '../../types';
 
@@ -49,7 +48,8 @@ const publish =
     ) => {
       if (opts.username && opts.password) {
         logger.ok(strings.messages.cli.USING_CREDS);
-        return cb(null, _.pick(opts, 'username', 'password') as any);
+        const { username, password } = opts;
+        return cb(null, { username, password });
       }
 
       logger.warn(strings.messages.cli.ENTER_USERNAME);
@@ -149,7 +149,7 @@ const publish =
             logger.err(errorMessage);
             return cb(errorMessage, undefined as any);
           } else {
-            if (_.isObject(err)) {
+            if (err && typeof err === 'object') {
               try {
                 err = JSON.stringify(err);
               } catch (er) {}

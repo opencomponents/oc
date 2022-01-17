@@ -1,7 +1,6 @@
 'use strict';
 
 const expect = require('chai').expect;
-const _ = require('lodash');
 
 describe('registry : domain : options-sanitiser', () => {
   const sanitise =
@@ -18,7 +17,7 @@ describe('registry : domain : options-sanitiser', () => {
       timeout: 120000
     };
 
-    _.each(defaults, (value, property) => {
+    Object.entries(defaults).forEach(([property, value]) => {
       it(`should set ${property} to ${JSON.stringify(value)}`, () => {
         expect(sanitise(options)[property]).to.eql(value);
       });

@@ -4,7 +4,6 @@ const Client = require('oc-client');
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
-const _ = require('lodash');
 
 describe('registry : routes : helpers : get-component', () => {
   const mockedComponents = require('../fixtures/mocked-components');
@@ -21,7 +20,7 @@ describe('registry : routes : helpers : get-component', () => {
       '../../dist/registry/routes/helpers/get-component.js',
       {
         '../../domain/events-handler': {
-          on: _.noop,
+          on: () => {},
           fire: fireStub
         },
         'oc-client': function () {

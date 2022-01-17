@@ -1,10 +1,10 @@
 import fs from 'fs-extra';
 import path from 'path';
-import _ from 'lodash';
 
 import settings from '../../resources/settings';
 import strings from '../../resources/';
 import { Logger } from '../logger';
+import { OcJsonConfig } from '../../types';
 
 interface MockedPlugin {
   register: (options: unknown, dependencies: unknown, next: () => void) => void;
@@ -48,7 +48,7 @@ const registerStaticMocks = (
   mocks: Record<string, string>,
   logger: Logger
 ): PluginMock[] =>
-  _.map(mocks, (mockedValue, pluginName) => {
+  Object.entries(mocks).map(([pluginName, mockedValue]) => {
     logger.ok(`├── ${pluginName} () => ${mockedValue}`);
 
     return {
@@ -65,31 +65,33 @@ const registerDynamicMocks = (
   mocks: Record<string, string>,
   logger: Logger
 ) =>
-  _.map(mocks, (source, pluginName) => {
-    let pluginMock;
-    try {
-      pluginMock = require(path.resolve(ocJsonLocation, source));
-    } catch (er) {
-      logger.err(String(er));
-      return;
-    }
+  Object.entries(mocks)
+    .map(([pluginName, source]) => {
+      let pluginMock;
+      try {
+        pluginMock = require(path.resolve(ocJsonLocation, source));
+      } catch (er) {
+        logger.err(String(er));
+        return;
+      }
 
-    if (!isMockValid(pluginMock)) {
-      logger.err(`├── ${pluginName} () => Error (skipping)`);
-      logger.err(strings.errors.cli.MOCK_PLUGIN_IS_NOT_VALID);
-      return;
-    }
+      if (!isMockValid(pluginMock)) {
+        logger.err(`├── ${pluginName} () => Error (skipping)`);
+        logger.err(strings.errors.cli.MOCK_PLUGIN_IS_NOT_VALID);
+        return;
+      }
 
-    const register = (pluginMock as MockedPlugin).register || defaultRegister;
-    const execute = (pluginMock as MockedPlugin).execute || pluginMock;
+      const register = (pluginMock as MockedPlugin).register || defaultRegister;
+      const execute = (pluginMock as MockedPlugin).execute || pluginMock;
 
-    logger.ok(`├── ${pluginName} () => [Function]`);
+      logger.ok(`├── ${pluginName} () => [Function]`);
 
-    return {
-      name: pluginName,
-      register: { execute, register }
-    };
-  }).filter((pluginMock): pluginMock is PluginMock => !!pluginMock);
+      return {
+        name: pluginName,
+        register: { execute, register }
+      };
+    })
+    .filter((pluginMock): pluginMock is PluginMock => !!pluginMock);
 
 const findPath = (
   pathToResolve: string,
@@ -128,7 +130,7 @@ export default function getMockedPlugins(
     return plugins;
   }
 
-  const content = fs.readJsonSync(ocJsonPath);
+  const content: OcJsonConfig = fs.readJsonSync(ocJsonPath);
   const ocJsonLocation = ocJsonPath.slice(0, -ocJsonFileName.length);
 
   if (!content.mocks || !content.mocks.plugins) {
@@ -138,10 +140,14 @@ export default function getMockedPlugins(
   logger.warn(strings.messages.cli.REGISTERING_MOCKED_PLUGINS);
 
   plugins = plugins.concat(
-    registerStaticMocks(content.mocks.plugins.static, logger)
+    registerStaticMocks(content.mocks.plugins.static ?? {}, logger)
   );
   plugins = plugins.concat(
-    registerDynamicMocks(ocJsonLocation, content.mocks.plugins.dynamic, logger)
+    registerDynamicMocks(
+      ocJsonLocation,
+      content.mocks.plugins.dynamic ?? {},
+      logger
+    )
   );
 
   return plugins;

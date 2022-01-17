@@ -54,7 +54,8 @@ export default function registry(inputOptions: Input) {
     // eslint-disable-next-line no-console
     const ok = (msg: string) => console.log(colors.green(msg));
     if (typeof callback !== 'function') {
-      callback = _.noop;
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      callback = () => {};
     }
     router.create(app, options, repository);
     async.waterfall(

@@ -150,7 +150,7 @@ const dev =
         }
 
         logger.ok('OK');
-        _.forEach(components, component =>
+        components.forEach(component =>
           logger.log(colors.green('├── ') + component)
         );
 
