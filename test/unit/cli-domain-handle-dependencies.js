@@ -50,21 +50,21 @@ describe('cli : domain : handle-dependencies', () => {
         '../../dist/cli/domain/handle-dependencies/index.js',
         {
           'fs-extra': {
-            readJson: (path, cb) =>
-              cb(null, components[path.replace('/package.json', '')])
+            readJson: path =>
+              Promise.resolve(components[path.replace('/package.json', '')])
           },
           path: { join: (...args) => args.join('/') },
-          './ensure-compiler-is-declared-as-devDependency': (options, cb) => {
+          './ensure-compiler-is-declared-as-devDependency': options => {
             spies.ensureCompilerIsDeclaredAsDevDependency(options);
-            cb(null, `${options.template}-compiler`);
+            return `${options.template}-compiler`;
           },
-          './get-compiler': (options, cb) => {
+          './get-compiler': options => {
             spies.getCompiler(options);
-            cb(null, { thisIsACompiler: true });
+            return Promise.resolve({ thisIsACompiler: true });
           },
-          './install-missing-dependencies': (options, cb) => {
+          './install-missing-dependencies': options => {
             spies.installMissingDependencies(options);
-            cb(null);
+            return Promise.resolve();
           }
         }
       ).default;
@@ -75,18 +75,14 @@ describe('cli : domain : handle-dependencies', () => {
         warn: sinon.spy()
       };
 
-      handleDependencies(
-        { components: Object.keys(components), logger },
-        (err, res) => {
-          error = err;
-          result = res;
-          done();
-        }
-      );
+      handleDependencies({ components: Object.keys(components), logger })
+        .then(res => (result = res))
+        .catch(err => (error = err))
+        .finally(done);
     });
 
     it('should return no error', () => {
-      expect(error).to.be.null;
+      expect(error).to.be.undefined;
     });
 
     it('should return modules plus the node.js core modules', () => {

@@ -5,21 +5,23 @@ import * as npm from '../../../utils/npm-utils';
 import strings from '../../../resources/index';
 import { Logger } from '../../logger';
 
-export default function installMissingDependencies(
-  options: { dependencies: Record<string, string>; logger: Logger },
-  callback: (err: string | null) => void
-): void {
+export default async function installMissingDependencies(options: {
+  dependencies: Record<string, string>;
+  logger: Logger;
+}): Promise<void> {
   const { dependencies, logger } = options;
 
   const missing = getMissingDependencies(dependencies);
 
   if (!missing.length) {
-    return callback(null);
+    return;
   }
 
   const installPath = path.resolve('.');
-  
-  logger.warn(strings.messages.cli.INSTALLING_DEPS(missing.join(', '), installPath));
+
+  logger.warn(
+    strings.messages.cli.INSTALLING_DEPS(missing.join(', '), installPath)
+  );
 
   const npmOptions = {
     dependencies: missing,
@@ -29,14 +31,18 @@ export default function installMissingDependencies(
     usePrefix: true
   };
 
-  npm.installDependencies(npmOptions, err => {
-    if (err || getMissingDependencies(dependencies).length) {
+  try {
+    await npm.installDependencies(npmOptions);
+
+    if (getMissingDependencies(dependencies).length) {
       logger.err('FAIL');
-      if (err) logger.err(`${err}`);
-      return callback(strings.errors.cli.DEPENDENCIES_INSTALL_FAIL);
+      throw strings.errors.cli.DEPENDENCIES_INSTALL_FAIL;
     }
 
     logger.ok('OK');
-    callback(null);
-  });
+  } catch (err) {
+    logger.err('FAIL');
+    if (err) logger.err(String(err));
+    throw strings.errors.cli.DEPENDENCIES_INSTALL_FAIL;
+  }
 }

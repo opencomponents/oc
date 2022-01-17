@@ -52,32 +52,6 @@ describe('registry : routes : helpers : nested-renderer', () => {
         });
       });
 
-      describe('when callback empty', () => {
-        beforeEach(() => {
-          initialise();
-        });
-
-        it('should throw an error', () => {
-          const f = function () {
-            nestedRenderer.renderComponent('my-component');
-          };
-          expect(f).to.throw('callback is not valid');
-        });
-      });
-
-      describe('when callback not valid', () => {
-        beforeEach(() => {
-          initialise();
-        });
-
-        it('should throw an error', () => {
-          const f = function () {
-            nestedRenderer.renderComponent('my-component', {}, 'blarg');
-          };
-          expect(f).to.throw('callback is not valid');
-        });
-      });
-
       describe('when requesting a not existent component', () => {
         let error;
         beforeEach(done => {
@@ -88,10 +62,10 @@ describe('registry : routes : helpers : nested-renderer', () => {
             }
           });
 
-          nestedRenderer.renderComponent('404-component', {}, err => {
-            error = err;
-            done();
-          });
+          nestedRenderer
+            .renderComponent('404-component', {})
+            .catch(err => (error = err))
+            .finally(done);
         });
 
         it('should return an error in the callback', () => {
@@ -115,22 +89,18 @@ describe('registry : routes : helpers : nested-renderer', () => {
             { bla: 'blabla' }
           );
 
-          nestedRenderer.renderComponent(
-            'my-component',
-            {
+          nestedRenderer
+            .renderComponent('my-component', {
               headers: {
                 'accept-language': 'en-GB',
                 accept: 'blargh'
               },
               parameters: { a: 1234 },
               version: '1.2.X'
-            },
-            (err, res) => {
-              result = res;
-              error = err;
-              done();
-            }
-          );
+            })
+            .then(res => (result = res))
+            .catch(err => (error = err))
+            .finally(done);
         });
 
         it('should get the html result', () => {
@@ -140,6 +110,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
         it('should make correct request to renderer', () => {
           expect(renderer.args[0][0]).to.eql({
             name: 'my-component',
+            ip: '',
             conf: { bla: 'blabla' },
             headers: {
               'accept-language': 'en-GB',
@@ -151,7 +122,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
         });
 
         it('should get no error', () => {
-          expect(error).to.be.null;
+          expect(error).to.be.undefined;
         });
       });
 
@@ -169,11 +140,11 @@ describe('registry : routes : helpers : nested-renderer', () => {
             { bla: 'blabla' }
           );
 
-          nestedRenderer.renderComponent('my-component', (err, res) => {
-            result = res;
-            error = err;
-            done();
-          });
+          nestedRenderer
+            .renderComponent('my-component')
+            .then(res => (result = res))
+            .catch(err => (error = err))
+            .finally(done);
         });
 
         it('should get the html result', () => {
@@ -183,6 +154,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
         it('should make correct request to renderer', () => {
           expect(renderer.args[0][0]).to.eql({
             name: 'my-component',
+            ip: '',
             conf: { bla: 'blabla' },
             headers: {
               accept: 'application/vnd.oc.rendered+json'
@@ -193,7 +165,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
         });
 
         it('should get no error', () => {
-          expect(error).to.be.null;
+          expect(error).to.be.undefined;
         });
       });
     });
@@ -227,32 +199,6 @@ describe('registry : routes : helpers : nested-renderer', () => {
         });
       });
 
-      describe('when callback empty', () => {
-        beforeEach(() => {
-          initialise();
-        });
-
-        it('should throw an error', () => {
-          const f = function () {
-            nestedRenderer.renderComponents([{ name: 'my-component' }]);
-          };
-          expect(f).to.throw('callback is not valid');
-        });
-      });
-
-      describe('when callback not valid', () => {
-        beforeEach(() => {
-          initialise();
-        });
-
-        it('should throw an error', () => {
-          const f = function () {
-            nestedRenderer.renderComponents(['my-component'], {}, 'blarg');
-          };
-          expect(f).to.throw('callback is not valid');
-        });
-      });
-
       describe('when requesting not existent components', () => {
         let result;
         let error;
@@ -264,22 +210,25 @@ describe('registry : routes : helpers : nested-renderer', () => {
             }
           });
 
-          nestedRenderer.renderComponents(
-            [
-              { name: '404-component' },
-              { name: 'another-not-existent-component' }
-            ],
-            {},
-            (err, res) => {
+          nestedRenderer
+            .renderComponents(
+              [
+                { name: '404-component' },
+                { name: 'another-not-existent-component' }
+              ],
+              {}
+            )
+            .then(res => {
               result = res;
+            })
+            .catch(err => {
               error = err;
-              done();
-            }
-          );
+            })
+            .finally(done);
         });
 
         it('should return no error in the callback', () => {
-          expect(error).to.be.null;
+          expect(error).to.be.undefined;
         });
 
         it('should return error in result callback', () => {
@@ -308,35 +257,34 @@ describe('registry : routes : helpers : nested-renderer', () => {
             { bla: 'blabla' }
           );
 
-          nestedRenderer.renderComponents(
-            [
+          nestedRenderer
+            .renderComponents(
+              [
+                {
+                  name: 'my-component',
+                  parameters: { x: 123 },
+                  version: '1.2.X'
+                },
+                {
+                  name: 'my-other-component',
+                  parameters: { y: 456 },
+                  version: '^1.4.6'
+                }
+              ],
               {
-                name: 'my-component',
-                parameters: { x: 123 },
-                version: '1.2.X'
-              },
-              {
-                name: 'my-other-component',
-                parameters: { y: 456 },
-                version: '^1.4.6'
+                headers: {
+                  'accept-language': 'en-GB',
+                  accept: 'blargh'
+                },
+                parameters: {
+                  x: 456,
+                  z: 789
+                }
               }
-            ],
-            {
-              headers: {
-                'accept-language': 'en-GB',
-                accept: 'blargh'
-              },
-              parameters: {
-                x: 456,
-                z: 789
-              }
-            },
-            (err, res) => {
-              result = res;
-              error = err;
-              done();
-            }
-          );
+            )
+            .then(res => (result = res))
+            .catch(err => (error = err))
+            .finally(done);
         });
 
         it('should get the html result', () => {
@@ -348,6 +296,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
 
           expect(renderer.args[0][0]).to.eql({
             name: 'my-component',
+            ip: '',
             conf: { bla: 'blabla' },
             headers: {
               'accept-language': 'en-GB',
@@ -362,6 +311,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
 
           expect(renderer.args[1][0]).to.eql({
             name: 'my-other-component',
+            ip: '',
             conf: { bla: 'blabla' },
             headers: {
               'accept-language': 'en-GB',
@@ -377,7 +327,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
         });
 
         it('should get no error', () => {
-          expect(error).to.be.null;
+          expect(error).to.be.undefined;
         });
       });
 
@@ -399,14 +349,14 @@ describe('registry : routes : helpers : nested-renderer', () => {
             { bla: 'blabla' }
           );
 
-          nestedRenderer.renderComponents(
-            [{ name: 'my-component' }, { name: 'my-other-component' }],
-            (err, res) => {
-              result = res;
-              error = err;
-              done();
-            }
-          );
+          nestedRenderer
+            .renderComponents([
+              { name: 'my-component' },
+              { name: 'my-other-component' }
+            ])
+            .then(res => (result = res))
+            .catch(err => (error = err))
+            .finally(done);
         });
 
         it('should get the html result', () => {
@@ -418,6 +368,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
 
           expect(renderer.args[0][0]).to.eql({
             name: 'my-component',
+            ip: '',
             conf: { bla: 'blabla' },
             headers: { accept: 'application/vnd.oc.rendered+json' },
             parameters: {},
@@ -426,6 +377,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
 
           expect(renderer.args[1][0]).to.eql({
             name: 'my-other-component',
+            ip: '',
             conf: { bla: 'blabla' },
             headers: { accept: 'application/vnd.oc.rendered+json' },
             parameters: {},
@@ -434,7 +386,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
         });
 
         it('should get no error', () => {
-          expect(error).to.be.null;
+          expect(error).to.be.undefined;
         });
       });
     });

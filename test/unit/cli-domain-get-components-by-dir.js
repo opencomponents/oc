@@ -7,7 +7,7 @@ const sinon = require('sinon');
 
 const initialise = function () {
   const fsMock = {
-    readdirSync: sinon.stub(),
+    readdir: sinon.stub(),
     readJsonSync: sinon.stub()
   };
 
@@ -33,12 +33,8 @@ const initialise = function () {
   return { local: local, fs: fsMock };
 };
 
-const executeComponentsListingByDir = function (
-  local,
-  componentsToRun,
-  callback
-) {
-  return local('.', componentsToRun, callback);
+const executeComponentsListingByDir = function (local, componentsToRun) {
+  return local('.', componentsToRun);
 };
 
 describe('cli : domain : get-components-by-dir', () => {
@@ -48,9 +44,9 @@ describe('cli : domain : get-components-by-dir', () => {
     beforeEach(done => {
       const data = initialise();
 
-      data.fs.readdirSync
+      data.fs.readdir
         .onCall(0)
-        .returns([
+        .resolves([
           'a-component',
           'a-not-component-dir',
           'a-file.json',
@@ -68,15 +64,14 @@ describe('cli : domain : get-components-by-dir', () => {
       data.fs.readJsonSync.onCall(3).returns({ oc: { packaged: true } });
       data.fs.readJsonSync.onCall(4).returns({});
 
-      executeComponentsListingByDir(data.local, undefined, (err, res) => {
-        error = err;
-        result = res;
-        done();
-      });
+      executeComponentsListingByDir(data.local)
+        .then(res => (result = res))
+        .catch(err => (error = err))
+        .finally(done);
     });
 
     it('should not error', () => {
-      expect(error).to.be.null;
+      expect(error).to.be.undefined;
     });
 
     it('should get the correct list', () => {
@@ -90,22 +85,21 @@ describe('cli : domain : get-components-by-dir', () => {
     beforeEach(done => {
       const data = initialise();
 
-      data.fs.readdirSync
+      data.fs.readdir
         .onCall(0)
-        .returns(['a-broken-component', 'another-component']);
+        .resolves(['a-broken-component', 'another-component']);
 
       data.fs.readJsonSync.onCall(0).throws(new Error('syntax error: fubar'));
       data.fs.readJsonSync.onCall(1).returns({ oc: {} });
 
-      executeComponentsListingByDir(data.local, undefined, (err, res) => {
-        error = err;
-        result = res;
-        done();
-      });
+      executeComponentsListingByDir(data.local)
+        .then(res => (result = res))
+        .catch(err => (error = err))
+        .finally(done);
     });
 
     it('should not error', () => {
-      expect(error).to.be.null;
+      expect(error).to.be.undefined;
     });
 
     it('should get the correct list', () => {
@@ -119,9 +113,9 @@ describe('cli : domain : get-components-by-dir', () => {
     beforeEach(done => {
       const data = initialise();
 
-      data.fs.readdirSync
+      data.fs.readdir
         .onCall(0)
-        .returns(['a-broken-component', 'not-a-component-dir', 'file.json']);
+        .resolves(['a-broken-component', 'not-a-component-dir', 'file.json']);
 
       data.fs.readJsonSync.onCall(0).throws(new Error('syntax error: fubar'));
       data.fs.readJsonSync
@@ -131,15 +125,14 @@ describe('cli : domain : get-components-by-dir', () => {
         .onCall(2)
         .throws(new Error('ENOENT: no such file or directory'));
 
-      executeComponentsListingByDir(data.local, undefined, (err, res) => {
-        error = err;
-        result = res;
-        done();
-      });
+      executeComponentsListingByDir(data.local)
+        .then(res => (result = res))
+        .catch(err => (error = err))
+        .finally(done);
     });
 
     it('should not error', () => {
-      expect(error).to.be.null;
+      expect(error).to.be.undefined;
     });
 
     it('should get an empty list', () => {
@@ -153,9 +146,9 @@ describe('cli : domain : get-components-by-dir', () => {
     beforeEach(done => {
       const data = initialise();
 
-      data.fs.readdirSync
+      data.fs.readdir
         .onCall(0)
-        .returns([
+        .resolves([
           'component1',
           'component2',
           'component3',
@@ -171,19 +164,14 @@ describe('cli : domain : get-components-by-dir', () => {
         .onCall(4)
         .throws(new Error('ENOENT: no such file or directory'));
 
-      executeComponentsListingByDir(
-        data.local,
-        ['component1', 'component3'],
-        (err, res) => {
-          error = err;
-          result = res;
-          done();
-        }
-      );
+      executeComponentsListingByDir(data.local, ['component1', 'component3'])
+        .then(res => (result = res))
+        .catch(err => (error = err))
+        .finally(done);
     });
 
     it('should not error', () => {
-      expect(error).to.be.null;
+      expect(error).to.be.undefined;
     });
 
     it('should get an the filtered list', () => {

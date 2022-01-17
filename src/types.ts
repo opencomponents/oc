@@ -191,36 +191,6 @@ export interface Config {
   verbosity: number;
 }
 
-export interface Cdn {
-  adapterType: string;
-  getFile: (
-    filePath: string,
-    cb: (err: Error | null, data: string) => void
-  ) => void;
-  getJson<T>(
-    filePath: string,
-    force: boolean,
-    cb: (err: string | null, data: T) => void
-  ): void;
-  getJson<T>(filePath: string, cb: (err: string | null, data: T) => void): void;
-  listSubDirectories: (
-    dir: string,
-    cb: (err: (Error & { code?: string }) | null, data: string[]) => void
-  ) => void;
-  maxConcurrentRequests: number;
-  putDir: (
-    folderPath: string,
-    filePath: string,
-    cb: (err: Error | null) => void
-  ) => void;
-  putFileContent: (
-    data: unknown,
-    path: string,
-    isPrivate: boolean,
-    callback: (err: string | null, data: unknown) => void
-  ) => void;
-}
-
 type CompiledTemplate = (model: unknown) => string;
 
 interface CompilerOptions {
@@ -251,7 +221,7 @@ export interface Template {
 }
 
 export interface Plugin {
-  callback?: (...args: unknown[]) => void;
+  callback?: (error: unknown) => void;
   description?: string;
   name: string;
   options?: any;
@@ -259,7 +229,7 @@ export interface Plugin {
     register: (
       options: unknown,
       dependencies: unknown,
-      next: () => void
+      next: (error?: unknown) => void
     ) => void;
     execute: (...args: unknown[]) => unknown;
     dependencies?: string[];
@@ -267,120 +237,73 @@ export interface Plugin {
 }
 
 export interface RegistryCli {
-  add(
-    registry: string,
-    callback: (err: string | null, data: null) => void
-  ): void;
-  get(callback: (err: string | null, data: string[]) => void): void;
-  getApiComponentByHref(
-    href: string,
-    callback: (err: Error | number | null, data: unknown) => void
-  ): void;
-  getComponentPreviewUrlByUrl(
-    componentHref: string,
-    callback: (err: Error | number | null, data: string) => void
-  ): void;
-  putComponent(
-    options: {
-      username?: string;
-      password?: string;
-      route: string;
-      path: string;
-    },
-    callback: (err: string | null, data: unknown) => void
-  ): void;
-  remove(registry: string, callback: (err: Error | null) => void): void;
+  add(registry: string): Promise<void>;
+  get(): Promise<string[]>;
+  getApiComponentByHref(href: string): Promise<Component>;
+  getComponentPreviewUrlByUrl(componentHref: string): Promise<string>;
+  putComponent(options: {
+    username?: string;
+    password?: string;
+    route: string;
+    path: string;
+  }): Promise<void>;
+  remove(registry: string): Promise<void>;
 }
 
 export interface Local {
   clean: {
-    fetchList: (
-      dirPath: string,
-      callback: (err: Error | null, data: string[]) => void
-    ) => void;
-    remove: (
-      list: string[],
-      callback: (err: Error | null, data: string) => void
-    ) => void;
+    fetchList: (dirPath: string) => Promise<string[]>;
+    remove: (list: string[]) => Promise<void>;
   };
-  cleanup: (
-    compressedPackagePath: string,
-    cb: (err: NodeJS.ErrnoException) => void
-  ) => void;
-  compress: (
-    input: string,
-    output: string,
-    cb: (error: Error | string | null) => void
-  ) => void;
+  cleanup: (compressedPackagePath: string) => Promise<void>;
+  compress: (input: string, output: string) => Promise<void>;
   getComponentsByDir: (
     componentsDir: string,
-    componentsToRun: (err: Error | null, data: string[]) => void | string[],
-    callback: (err: Error | null, data: string[]) => void
-  ) => void;
-  init: (
-    options: {
-      componentName: string;
-      logger: Logger;
-      componentPath: string;
-      templateType: string;
-    },
-    callback: (err: string | null, data: string) => void
-  ) => void;
-  mock: (
-    params: { targetType: string; targetValue: string; targetName: string },
-    callback: (err: Error) => void
-  ) => void;
-  package: (
-    options: {
-      componentPath: string;
-      minify?: boolean;
-      verbose?: boolean;
-      production?: boolean;
-    },
-    callback: (err: Error | null, data: Component) => void
-  ) => void;
+    componentsToRun?: string[]
+  ) => Promise<string[]>;
+  init: (options: {
+    componentName: string;
+    logger: Logger;
+    componentPath: string;
+    templateType: string;
+  }) => Promise<void>;
+  mock: (params: {
+    targetType: string;
+    targetValue: string;
+    targetName: string;
+  }) => Promise<void>;
+  package: (options: {
+    componentPath: string;
+    minify?: boolean;
+    verbose?: boolean;
+    production?: boolean;
+  }) => Promise<Component>;
 }
 
 export interface Repository {
   getCompiledView(
     componentName: string,
-    componentVersion: string,
-    callback: (err: Error | null, data: string) => void
-  ): void;
+    componentVersion: string
+  ): Promise<string>;
   getComponent(
     componentName: string,
-    componentVersion: string,
-    calllback: (err: string | null, data: Component) => void
-  ): void;
-  getComponent(
-    componentName: string,
-    calllback: (err: string | null, data: Component) => void
-  ): void;
+    componentVersion?: string
+  ): Promise<Component>;
   getComponentInfo(
     componentName: string,
-    componentVersion: string,
-    callback: (err: string | null, data: Component) => void
-  ): void;
+    componentVersion: string
+  ): Promise<Component>;
   getComponentPath(componentName: string, componentVersion: string): void;
-  getComponents(callback: (err: Error | null, data: string[]) => void): void;
-  getComponentsDetails(
-    callback: (err: string | null, data: ComponentsDetails) => void
-  ): void;
-  getComponentVersions(
-    componentName: string,
-    callback: (err: string | null, data: string[]) => void
-  ): void;
+  getComponents(): Promise<string[]>;
+  getComponentsDetails(): Promise<ComponentsDetails>;
+  getComponentVersions(componentName: string): Promise<string[]>;
   getDataProvider(
     componentName: string,
-    componentVersion: string,
-    callback: (
-      err: Error | null,
-      data: {
-        content: string;
-        filePath: string;
-      }
-    ) => void
-  ): void;
+    componentVersion: string
+  ): Promise<{
+    content: string;
+    filePath: string;
+  }>;
   getStaticClientMapPath: () => string;
   getStaticClientPath: () => string;
   getStaticFilePath: (
@@ -390,18 +313,12 @@ export interface Repository {
   ) => string;
   getTemplate: (type: string) => Template;
   getTemplatesInfo: () => TemplateInfo[];
-  init(
-    callback: (err: Error | null, data: ComponentsList | string) => void
-  ): void;
+  init(): Promise<ComponentsList>;
   publishComponent(
     pkgDetails: any,
     componentName: string,
-    componentVersion: string,
-    callback: (
-      err: { code: string; msg: string } | null,
-      data: ComponentsDetails
-    ) => void
-  ): void;
+    componentVersion: string
+  ): Promise<ComponentsDetails>;
 }
 
 declare global {

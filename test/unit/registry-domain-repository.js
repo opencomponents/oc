@@ -8,9 +8,12 @@ const sinon = require('sinon');
 
 describe('registry : domain : repository', () => {
   let response;
-  const saveResult = callback => (error, result) => {
-    response = { error, result };
-    callback();
+  const savePromiseResult = (promise, done) => {
+    response = {};
+    promise
+      .then(res => (response.result = res))
+      .catch(err => (response.error = err))
+      .finally(done);
   };
 
   describe('when on cdn configuration', () => {
@@ -29,15 +32,16 @@ describe('registry : domain : repository', () => {
       readdirSync: fs.readdirSync,
       lstatSync: fs.lstatSync,
       readJsonSync: fs.readJsonSync,
-      writeJSON: (path, content, cb) => {
-        cb(null);
-      }
+      writeJson: () => Promise.resolve()
     };
 
     const s3Mock = {
-      getJson: sinon.stub(),
-      putDir: sinon.stub(),
-      putFileContent: sinon.stub(),
+      getFile: sinon.stub().resolves(),
+      listSubDirectories: sinon.stub().resolves(),
+      putFile: sinon.stub().resolves(),
+      getJson: sinon.stub().resolves(),
+      putDir: sinon.stub().resolves(),
+      putFileContent: sinon.stub().resolves(),
       adapterType: 's3'
     };
 
@@ -93,8 +97,8 @@ describe('registry : domain : repository', () => {
 
     describe('when getting the list of available components', () => {
       before(done => {
-        componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
-        repository.getComponents(saveResult(done));
+        componentsCacheMock.get.returns(componentsCacheBaseResponse);
+        savePromiseResult(repository.getComponents(), done);
       });
 
       it('should fetch the list from the cache', () => {
@@ -102,7 +106,7 @@ describe('registry : domain : repository', () => {
       });
 
       it('should respond without an error', () => {
-        expect(response.error).to.be.null;
+        expect(response.error).to.be.undefined;
       });
 
       it('should list the components', () => {
@@ -118,12 +122,12 @@ describe('registry : domain : repository', () => {
 
     describe('when getting the components details', () => {
       before(done => {
-        componentsDetailsMock.get.yields(null, componentsDetailsBaseResponse);
-        repository.getComponentsDetails(saveResult(done));
+        componentsDetailsMock.get.resolves(componentsDetailsBaseResponse);
+        savePromiseResult(repository.getComponentsDetails(), done);
       });
 
       it('should not error', () => {
-        expect(response.error).to.be.null;
+        expect(response.error).to.be.undefined;
       });
 
       it('should return the result', () => {
@@ -176,8 +180,11 @@ describe('registry : domain : repository', () => {
     describe('when trying to get a not valid component', () => {
       describe('when the component does not exist', () => {
         before(done => {
-          componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
-          repository.getComponent('form-component', '1.0.0', saveResult(done));
+          componentsCacheMock.get.returns(componentsCacheBaseResponse);
+          savePromiseResult(
+            repository.getComponent('form-component', '1.0.0'),
+            done
+          );
         });
 
         it('should respond with a proper error', () => {
@@ -189,16 +196,18 @@ describe('registry : domain : repository', () => {
       });
       describe('when the get component info fails', () => {
         before(done => {
-          componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
-          sinon
-            .stub(repository, 'getComponentInfo')
-            .callsFake((name, version, callback) => {
-              callback({
-                msg: 'File not valid',
-                code: 'file_not_valid'
-              });
-            });
-          repository.getComponent('hello-world', '1.0.0', saveResult(done));
+          componentsCacheMock.get.returns(componentsCacheBaseResponse);
+          sinon.stub(repository, 'getComponentInfo').callsFake(() =>
+            // eslint-disable-next-line prefer-promise-reject-errors
+            Promise.reject({
+              msg: 'File not valid',
+              code: 'file_not_valid'
+            })
+          );
+          savePromiseResult(
+            repository.getComponent('hello-world', '1.0.0'),
+            done
+          );
         });
         after(() => {
           repository.getComponentInfo.restore();
@@ -212,8 +221,11 @@ describe('registry : domain : repository', () => {
       });
       describe('when the component exists but version does not', () => {
         before(done => {
-          componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
-          repository.getComponent('hello-world', '2.0.0', saveResult(done));
+          componentsCacheMock.get.returns(componentsCacheBaseResponse);
+          savePromiseResult(
+            repository.getComponent('hello-world', '2.0.0'),
+            done
+          );
         });
 
         it('should respond with a proper error', () => {
@@ -227,13 +239,16 @@ describe('registry : domain : repository', () => {
 
     describe('when getting an existing component', () => {
       before(done => {
-        componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
-        s3Mock.getJson.yields(null, { name: 'hello-world', version: '1.0.0' });
-        repository.getComponent('hello-world', '1.0.0', saveResult(done));
+        componentsCacheMock.get.returns(componentsCacheBaseResponse);
+        s3Mock.getJson.resolves({ name: 'hello-world', version: '1.0.0' });
+        savePromiseResult(
+          repository.getComponent('hello-world', '1.0.0'),
+          done
+        );
       });
 
       it('should respond without an error', () => {
-        expect(response.error).to.be.null;
+        expect(response.error).to.be.undefined;
       });
 
       it("should fetch the versions' list from the cache", () => {
@@ -269,11 +284,9 @@ describe('registry : domain : repository', () => {
     describe('when publishing a component', () => {
       describe('when component has a not valid name', () => {
         before(done => {
-          repository.publishComponent(
-            {},
-            'blue velvet',
-            '1.0.0',
-            saveResult(done)
+          savePromiseResult(
+            repository.publishComponent({}, 'blue velvet', '1.0.0'),
+            done
           );
         });
 
@@ -288,11 +301,9 @@ describe('registry : domain : repository', () => {
 
       describe('when component has a not valid version', () => {
         before(done => {
-          repository.publishComponent(
-            {},
-            'hello-world',
-            '1.0',
-            saveResult(done)
+          savePromiseResult(
+            repository.publishComponent({}, 'hello-world', '1.0'),
+            done
           );
         });
 
@@ -319,12 +330,10 @@ describe('registry : domain : repository', () => {
 
         describe('when component with same name and version is already in library', () => {
           before(done => {
-            componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
-            repository.publishComponent(
-              pkg,
-              'hello-world',
-              '1.0.0',
-              saveResult(done)
+            componentsCacheMock.get.returns(componentsCacheBaseResponse);
+            savePromiseResult(
+              repository.publishComponent(pkg, 'hello-world', '1.0.0'),
+              done
             );
           });
 
@@ -342,30 +351,26 @@ describe('registry : domain : repository', () => {
         describe('when component with same name and version is not in library', () => {
           before(done => {
             componentsCacheMock.get = sinon.stub();
-            componentsCacheMock.get.yields(null, componentsCacheBaseResponse);
+            componentsCacheMock.get.returns(componentsCacheBaseResponse);
             componentsCacheMock.refresh = sinon.stub();
-            componentsCacheMock.refresh.yields(
-              null,
-              componentsCacheBaseResponse
-            );
-            componentsDetailsMock.get.yields(
-              null,
-              componentsDetailsBaseResponse
-            );
-            componentsDetailsMock.refresh.yields(
-              null,
+            componentsCacheMock.refresh.resolves(componentsCacheBaseResponse);
+            componentsDetailsMock.get.resolves(componentsDetailsBaseResponse);
+            componentsDetailsMock.refresh.resolves(
               componentsDetailsBaseResponse
             );
             s3Mock.putDir = sinon.stub();
-            s3Mock.putDir.yields(null, 'done');
-            repository.publishComponent(
-              Object.assign(pkg, {
-                outputFolder: '/path/to/component',
-                componentName: 'hello-world'
-              }),
-              'hello-world',
-              '1.0.1',
-              saveResult(done)
+            s3Mock.putDir.resolves('done');
+            savePromiseResult(
+              repository.publishComponent(
+                {
+                  ...pkg,
+                  outputFolder: '/path/to/component',
+                  componentName: 'hello-world'
+                },
+                'hello-world',
+                '1.0.1'
+              ),
+              done
             );
           });
 
@@ -407,11 +412,11 @@ describe('registry : domain : repository', () => {
 
     describe('when getting the list of available components', () => {
       before(done => {
-        repository.getComponents(saveResult(done));
+        savePromiseResult(repository.getComponents(), done);
       });
 
       it('should respond without an error', () => {
-        expect(response.error).to.be.null;
+        expect(response.error).to.be.undefined;
       });
 
       it('should list the components', () => {
@@ -437,7 +442,10 @@ describe('registry : domain : repository', () => {
     describe('when trying to get a not valid component', () => {
       describe('when the component does not exist', () => {
         before(done => {
-          repository.getComponent('form-component', '1.0.0', saveResult(done));
+          savePromiseResult(
+            repository.getComponent('form-component', '1.0.0'),
+            done
+          );
         });
 
         it('should respond with a proper error', () => {
@@ -450,7 +458,10 @@ describe('registry : domain : repository', () => {
 
       describe('when the component exists but version does not', () => {
         before(done => {
-          repository.getComponent('hello-world', '2.0.0', saveResult(done));
+          savePromiseResult(
+            repository.getComponent('hello-world', '2.0.0'),
+            done
+          );
         });
 
         it('should respond with a proper error', () => {
@@ -464,11 +475,14 @@ describe('registry : domain : repository', () => {
 
     describe('when getting an existing component', () => {
       before(done => {
-        repository.getComponent('hello-world', '1.0.0', saveResult(done));
+        savePromiseResult(
+          repository.getComponent('hello-world', '1.0.0'),
+          done
+        );
       });
 
       it('should respond without an error', () => {
-        expect(response.error).to.be.null;
+        expect(response.error).to.be.undefined;
       });
 
       it('should return the component info', () => {
@@ -495,11 +509,9 @@ describe('registry : domain : repository', () => {
       const componentDir = path.resolve('../fixtures/components/hello-world');
 
       before(done => {
-        repository.publishComponent(
-          componentDir,
-          'hello-world',
-          '1.0.0',
-          saveResult(done)
+        savePromiseResult(
+          repository.publishComponent(componentDir, 'hello-world', '1.0.0'),
+          done
         );
       });
 

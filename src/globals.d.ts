@@ -2,6 +2,44 @@ declare module 'oc-client';
 declare module 'try-require';
 declare module 'basic-auth-connect';
 
+declare module 'universalify' {
+  export function fromCallback<
+    Arguments extends readonly unknown[],
+    ErrorValue,
+    ReturnValue
+  >(
+    fn: (
+      ...arguments_: [
+        ...Arguments,
+        (error: ErrorValue, value: ReturnValue) => void
+      ]
+    ) => void
+  ): {
+    (...arguments_: Arguments): Promise<ReturnValue>;
+    (
+      ...arguments_: [
+        ...Arguments,
+        (error: ErrorValue, value: ReturnValue) => void
+      ]
+    ): void;
+  };
+
+  export function fromPromise<
+    Arguments extends readonly unknown[],
+    ReturnValue
+  >(
+    fn: (...arguments_: [...Arguments]) => Promise<ReturnValue>
+  ): {
+    (...arguments_: Arguments): Promise<ReturnValue>;
+    (
+      ...arguments_: [
+        ...Arguments,
+        (error: unknown, value: ReturnValue) => void
+      ]
+    ): void;
+  };
+}
+
 declare module 'semver-extra' {
   interface SemverExtra {
     max(versions: string[]): string;

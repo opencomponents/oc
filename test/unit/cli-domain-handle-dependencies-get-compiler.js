@@ -32,15 +32,14 @@ describe('cli : domain : handle-dependencies : get-compiler', () => {
       }
     ).default;
 
-    getCompiler(options, err => {
-      error = err;
-      done();
-    });
+    getCompiler(options)
+      .catch(err => (error = err.name))
+      .finally(done);
   };
 
   describe("when compiler is already installed inside the component's folder", () => {
     beforeEach(done => {
-      installCompilerStub = sinon.stub().yields(null, { ok: true });
+      installCompilerStub = sinon.stub().resolves({ ok: true });
       cleanRequireStub = sinon.stub().returns({ thisIsACompiler: true });
       execute(done);
     });
@@ -52,7 +51,7 @@ describe('cli : domain : handle-dependencies : get-compiler', () => {
     });
 
     it('should return no error', () => {
-      expect(error).to.be.null;
+      expect(error).to.be.undefined;
     });
 
     it('should not try to install it', () => {
@@ -63,14 +62,14 @@ describe('cli : domain : handle-dependencies : get-compiler', () => {
   describe("when compiler is not installed inside the component's folder", () => {
     describe('when compiler version is specified', () => {
       beforeEach(done => {
-        installCompilerStub = sinon.stub().yields(null, { ok: true });
+        installCompilerStub = sinon.stub().resolves({ ok: true });
         cleanRequireStub = sinon.stub().returns(undefined);
 
         execute(done);
       });
 
       it('should return no error', () => {
-        expect(error).to.be.null;
+        expect(error).to.be.undefined;
       });
 
       it('should install it', () => {
@@ -86,13 +85,13 @@ describe('cli : domain : handle-dependencies : get-compiler', () => {
 
     describe('when compiler version is not specified', () => {
       beforeEach(done => {
-        installCompilerStub = sinon.stub().yields(null, { ok: true });
+        installCompilerStub = sinon.stub().resolves({ ok: true });
         cleanRequireStub = sinon.stub().returns(undefined);
         execute({ compilerVersionEmpty: true }, done);
       });
 
       it('should return no error', () => {
-        expect(error).to.be.null;
+        expect(error).to.be.undefined;
       });
 
       it('should install it', () => {
@@ -108,7 +107,7 @@ describe('cli : domain : handle-dependencies : get-compiler', () => {
 
     describe('when install fails', () => {
       beforeEach(done => {
-        installCompilerStub = sinon.stub().yields('Install failed!');
+        installCompilerStub = sinon.stub().rejects('Install failed!');
         cleanRequireStub = sinon.stub().returns(undefined);
         execute(done);
       });

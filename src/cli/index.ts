@@ -115,11 +115,9 @@ function processCommand(
       return yargs;
     },
     options => {
-      // @ts-ignore Not callable
-      facade(options, (error: unknown) => {
-        if (error) {
-          return process.exit(1);
-        }
+      // @ts-ignore not callable
+      facade(options).catch(() => {
+        process.exit(1);
       });
     }
   );

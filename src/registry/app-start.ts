@@ -1,7 +1,7 @@
 import colors from 'colors/safe';
 import path from 'path';
 import fs from 'fs-extra';
-import { ComponentsDetails, Config, Repository } from '../types';
+import { Config, Repository } from '../types';
 
 const packageInfo = fs.readJsonSync(
   path.join(
@@ -14,13 +14,12 @@ const packageInfo = fs.readJsonSync(
   )
 );
 
-export default function appStart(
+export default async function appStart(
   repository: Repository,
-  options: Config,
-  callback: (err: any | null, data: ComponentsDetails | string) => void
-): void {
+  options: Config
+): Promise<void> {
   if (options.local) {
-    return callback(null, 'ok');
+    return;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -32,10 +31,8 @@ export default function appStart(
     )
   );
 
-  repository.getComponentVersions('oc-client', (err, componentInfo) => {
-    if (err) {
-      return logger.log(colors.red(err));
-    }
+  try {
+    const componentInfo = await repository.getComponentVersions('oc-client');
 
     logger.log(
       colors.yellow(
@@ -54,25 +51,24 @@ export default function appStart(
         packageJson: packageInfo
       };
 
-      repository.publishComponent(
-        pkgInfo,
-        'oc-client',
-        packageInfo.version,
-        (err, res) => {
-          if (!err) {
-            logger.log(colors.green('Component published.'));
-          } else {
-            logger.log(
-              colors.red(`Component not published: ${(err as any).message}`)
-            );
-          }
-
-          callback(err, res);
-        }
-      );
+      try {
+        await repository.publishComponent(
+          pkgInfo,
+          'oc-client',
+          packageInfo.version
+        );
+        logger.log(colors.green('Component published.'));
+      } catch (err) {
+        logger.log(
+          colors.red(`Component not published: ${(err as any).message}`)
+        );
+        throw err;
+      }
     } else {
       logger.log(colors.green('Component is available on library.'));
-      callback(null, 'ok');
     }
-  });
+  } catch (err) {
+    logger.log(colors.red(String(err)));
+    throw err;
+  }
 }

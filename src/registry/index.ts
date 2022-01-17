@@ -1,4 +1,3 @@
-import async from 'async';
 import colors from 'colors/safe';
 import express from 'express';
 import http from 'http';
@@ -9,10 +8,10 @@ import eventsHandler from './domain/events-handler';
 import * as middleware from './middleware';
 import * as pluginsInitialiser from './domain/plugins-initialiser';
 import Repository from './domain/repository';
-import * as router from './router';
+import { create as createRouter } from './router';
 import sanitiseOptions from './domain/options-sanitiser';
 import * as validator from './domain/validators';
-import { ComponentsList, Config, Plugin } from '../types';
+import { Config, Plugin } from '../types';
 
 interface Input extends Partial<Omit<Config, 'beforePublish'>> {
   baseUrl: string;
@@ -27,7 +26,7 @@ export default function registry(inputOptions: Input) {
   const options = sanitiseOptions(inputOptions);
 
   const plugins: Plugin[] = [];
-  const app = middleware.bind(express(), options);
+  const { app, router } = middleware.bind(express(), options);
   let server: http.Server;
   const repository = Repository(options);
 
@@ -45,95 +44,64 @@ export default function registry(inputOptions: Input) {
     plugins.push(Object.assign(plugin, { callback }));
   };
 
-  const start = (
+  const start = async (
     callback: (
-      err: Error | null,
+      err: unknown,
       data: { app: express.Express; server: http.Server }
     ) => void
   ) => {
     // eslint-disable-next-line no-console
     const ok = (msg: string) => console.log(colors.green(msg));
-    if (typeof callback !== 'function') {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      callback = () => {};
-    }
-    router.create(app, options, repository);
-    async.waterfall(
-      [
-        (
-          cb: (
-            err: unknown,
-            data: Record<string, (...args: unknown[]) => unknown>
-          ) => void
-        ) => pluginsInitialiser.init(plugins, cb),
+    createRouter(router, options, repository);
 
-        (
-          plugins: Record<string, (...args: unknown[]) => void>,
-          cb: (err: Error | null, data: ComponentsList | string) => void
-        ) => {
-          options.plugins = plugins;
-          repository.init(cb);
-        },
+    try {
+      options.plugins = await pluginsInitialiser.init(plugins);
+      const componentsInfo = await repository.init();
+      await appStart(repository, options);
 
-        (
-          componentsInfo: ComponentsList,
-          cb: (err: string | null, data: ComponentsList) => void
-        ) => {
-          appStart(repository, options, (err: any) =>
-            cb(err ? err.msg : null, componentsInfo)
-          );
-        }
-      ],
-      (err, componentsInfo) => {
+      server = http.createServer(app);
+      server.timeout = options.timeout;
+      if (options.keepAliveTimeout) {
+        server.keepAliveTimeout = options.keepAliveTimeout;
+      }
+
+      // @ts-ignore Type not taking error on callback (this can error, though)
+      server.listen(options.port, (err: any) => {
         if (err) {
           return callback(err, undefined as any);
         }
+        eventsHandler.fire('start', {});
 
-        server = http.createServer(app);
-        server.timeout = options.timeout;
-        if (options.keepAliveTimeout) {
-          server.keepAliveTimeout = options.keepAliveTimeout;
+        if (options.verbosity) {
+          ok(`Registry started at port ${app.get('port')}`);
+
+          if (_.isObject(componentsInfo)) {
+            const componentsNumber = Object.keys(
+              componentsInfo.components
+            ).length;
+            const componentsReleases = Object.values(
+              componentsInfo.components
+            ).reduce((acc, component) => acc + component.length, 0);
+
+            ok(
+              `Registry serving ${componentsNumber} components for a total of ${componentsReleases} releases.`
+            );
+          }
         }
 
-        // @ts-ignore Type not taking error on callback (this can error, though)
-        server.listen(options.port, (err: any) => {
-          if (err) {
-            return callback(err, undefined as any);
-          }
-          eventsHandler.fire('start', {});
+        callback(null, { app, server });
+      });
 
-          if (options.verbosity) {
-            ok(`Registry started at port ${app.get('port')}`);
-
-            if (_.isObject(componentsInfo)) {
-              const componentsNumber = Object.keys(
-                // @ts-ignore
-                componentsInfo.components
-              ).length;
-              const componentsReleases = _.reduce(
-                // @ts-ignore
-                componentsInfo.components,
-                (memo, component) => parseInt(memo, 10) + component.length
-              );
-
-              ok(
-                `Registry serving ${componentsNumber} components for a total of ${componentsReleases} releases.`
-              );
-            }
-          }
-
-          callback(null, { app, server });
+      server.on('error', error => {
+        eventsHandler.fire('error', {
+          code: 'EXPRESS_ERROR',
+          message: error?.message ?? String(error)
         });
-
-        server.on('error', error => {
-          eventsHandler.fire('error', {
-            code: 'EXPRESS_ERROR',
-            message: error?.message ?? String(error)
-          });
-          callback(error, undefined as any);
-        });
-      }
-    );
+        callback(error, undefined as any);
+      });
+    } catch (err) {
+      callback((err as any)?.msg || err, undefined as any);
+    }
   };
 
   return {

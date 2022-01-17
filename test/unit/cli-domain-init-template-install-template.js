@@ -32,13 +32,12 @@ describe('cli : domain : init-template : install-template', () => {
     before(done => {
       const dest = 'path/to/component/node_modules/oc-template-jade-compiler';
       npmUtils.installDependency.reset();
-      npmUtils.installDependency.yields(null, { dest });
+      npmUtils.installDependency.resolves({ dest });
       isTemplateValid.returns(true);
-      installTemplate(config, (err, res) => {
-        error = err;
-        result = res;
-        done();
-      });
+      installTemplate(config)
+        .then(res => (result = res))
+        .catch(err => (error = err))
+        .finally(done);
     });
 
     it('should spawn the right process', () => {
@@ -57,7 +56,7 @@ describe('cli : domain : init-template : install-template', () => {
     });
 
     it('should return no error', () => {
-      expect(error).to.be.null;
+      expect(error).to.be.undefined;
       expect(result).to.deep.equal({ ok: true });
     });
 

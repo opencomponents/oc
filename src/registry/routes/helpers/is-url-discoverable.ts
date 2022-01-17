@@ -1,19 +1,18 @@
-import request from 'minimal-request';
+import got from 'got';
 
-export default function isUrlDiscoverable(
-  url: string,
-  callback: (err: null | null, data: { isDiscoverable: boolean }) => void
-): void {
-  request(
-    {
-      url,
+export default async function isUrlDiscoverable(
+  url: string
+): Promise<{ isDiscoverable: boolean }> {
+  try {
+    const res = await got(url, {
       headers: { accept: 'text/html' }
-    },
-    (err, _body, details) => {
-      const isHtml = () =>
-        details.response.headers['content-type'].indexOf('text/html') >= 0;
+    });
+    const isHtml = !!res.headers['content-type']?.includes('text/html');
 
-      callback(null, { isDiscoverable: !err && isHtml() });
-    }
-  );
+    return {
+      isDiscoverable: isHtml
+    };
+  } catch (err) {
+    return { isDiscoverable: false };
+  }
 }

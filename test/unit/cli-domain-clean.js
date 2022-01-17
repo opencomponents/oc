@@ -8,13 +8,12 @@ describe('cli : domain : clean', () => {
   const initialize = options => {
     options = options || {};
     return injectr('../../dist/cli/domain/clean.js', {
-      './get-components-by-dir': () => (dir, cb) =>
-        cb(options.getComponentsByDirError, [
-          'path/to/my-component1',
-          'path/to/my-component2'
-        ]),
+      './get-components-by-dir': () => () =>
+        options.getComponentsByDirError
+          ? Promise.reject(options.getComponentsByDirError)
+          : Promise.resolve(['path/to/my-component1', 'path/to/my-component2']),
       'fs-extra': {
-        exists: (dir, cb) => cb(dir.indexOf('my-component1') >= 0),
+        existsSync: dir => dir.indexOf('my-component1') >= 0,
         remove: options.removeMock
       },
       path: { join: (...params) => params.join('/') }
@@ -27,14 +26,14 @@ describe('cli : domain : clean', () => {
       let result;
       beforeEach(done => {
         const clean = initialize();
-        clean.fetchList('my-components-folder', (err, res) => {
-          error = err;
-          result = res;
-          done();
-        });
+        clean
+          .fetchList('my-components-folder')
+          .then(res => (result = res))
+          .catch(err => (error = err))
+          .finally(done);
       });
 
-      it('should return no error', () => expect(error).to.be.null);
+      it('should return no error', () => expect(error).to.be.undefined);
 
       it('should return the list', () =>
         expect(result).to.eql(['path/to/my-component1/node_modules']));
@@ -47,10 +46,10 @@ describe('cli : domain : clean', () => {
           getComponentsByDirError: new Error('oops')
         });
 
-        clean.fetchList('my-components-folder', err => {
-          error = err;
-          done();
-        });
+        clean
+          .fetchList('my-components-folder')
+          .catch(err => (error = err))
+          .finally(done);
       });
 
       it('should return error', () =>
@@ -63,15 +62,16 @@ describe('cli : domain : clean', () => {
       let error;
       let removeMock;
       beforeEach(done => {
-        removeMock = sinon.stub().yields(null, 'ok');
+        removeMock = sinon.stub().resolves('ok');
         const clean = initialize({ removeMock });
-        clean.remove(['path/to/my-component1/node_modules'], err => {
-          error = err;
-          done();
-        });
+
+        clean
+          .remove(['path/to/my-component1/node_modules'])
+          .catch(err => (error = err))
+          .finally(done);
       });
 
-      it('should return no error', () => expect(error).to.be.null);
+      it('should return no error', () => expect(error).to.be.undefined);
 
       it('should remove all the folders', () => {
         expect(removeMock.args.length).to.equal(1);
@@ -85,12 +85,13 @@ describe('cli : domain : clean', () => {
       let error;
       let removeMock;
       beforeEach(done => {
-        removeMock = sinon.stub().yields(new Error('nope'));
+        removeMock = sinon.stub().rejects(new Error('nope'));
         const clean = initialize({ removeMock });
-        clean.remove(['path/to/my-component1/node_modules'], err => {
-          error = err;
-          done();
-        });
+
+        clean
+          .remove(['path/to/my-component1/node_modules'])
+          .catch(err => (error = err))
+          .finally(done);
       });
 
       it('should return the error', () =>

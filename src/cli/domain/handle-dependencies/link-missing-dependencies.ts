@@ -5,20 +5,17 @@ import strings from '../../../resources/index';
 import stripVersion from '../../../utils/strip-version';
 import { Logger } from '../../logger';
 
-export default function linkMissingDependencies(
-  options: {
-    componentPath: string;
-    dependencies: Record<string, string>;
-    logger: Logger;
-  },
-  callback: (err: string | null) => void
-): void {
+export default async function linkMissingDependencies(options: {
+  componentPath: string;
+  dependencies: Record<string, string>;
+  logger: Logger;
+}): Promise<void> {
   const { componentPath, dependencies, logger } = options;
 
   const missingDependencies = getMissingDependencies(dependencies);
 
   if (!missingDependencies.length) {
-    return callback(null);
+    return;
   }
 
   logger.warn(
@@ -27,7 +24,6 @@ export default function linkMissingDependencies(
   );
 
   const symLinkType = 'dir';
-  let symLinkError = false;
 
   for (const dependency of missingDependencies) {
     const moduleName = stripVersion(dependency);
@@ -38,16 +34,12 @@ export default function linkMissingDependencies(
     );
     const pathToModule = path.resolve('.', 'node_modules', moduleName);
     try {
-      fs.ensureSymlinkSync(pathToComponentModule, pathToModule, symLinkType);
+      await fs.ensureSymlink(pathToComponentModule, pathToModule, symLinkType);
     } catch (err) {
-      symLinkError = true;
       logger.err(
         strings.errors.cli.DEPENDENCY_LINK_FAIL(moduleName, String(err))
       );
+      throw strings.errors.cli.DEPENDENCIES_LINK_FAIL;
     }
   }
-
-  return !symLinkError
-    ? callback(null)
-    : callback(strings.errors.cli.DEPENDENCIES_LINK_FAIL);
 }
