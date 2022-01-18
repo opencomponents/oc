@@ -2,7 +2,6 @@ import colors from 'colors/safe';
 import getPortCb from 'getport';
 import livereload from 'livereload';
 import path from 'path';
-import _ from 'lodash';
 import { promisify } from 'util';
 import { fromPromise } from 'universalify';
 
@@ -127,7 +126,7 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
         opts.components
       );
 
-      if (_.isEmpty(components)) {
+      if (!components.length) {
         const err = cliErrors.DEV_FAIL(cliErrors.COMPONENTS_NOT_FOUND);
         logger.err(err);
         throw err;
@@ -149,7 +148,8 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
       await packageComponents(components);
 
       let liveReload: { refresher: () => void; port: number | undefined } = {
-        refresher: _.noop,
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        refresher: () => {},
         port: undefined
       };
       if (hotReloading) {
