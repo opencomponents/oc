@@ -4,7 +4,6 @@ const expect = require('chai').expect;
 const injectr = require('injectr');
 const path = require('path');
 const sinon = require('sinon');
-const _ = require('lodash');
 
 const initialise = function () {
   const fsMock = {
@@ -16,7 +15,7 @@ const initialise = function () {
     extname: path.extname,
     join: path.join,
     resolve: function () {
-      return _.toArray(arguments).join('/');
+      return Array.from(arguments).join('/');
     }
   };
 

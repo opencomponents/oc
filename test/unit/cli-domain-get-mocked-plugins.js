@@ -3,7 +3,8 @@
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
-const _ = require('lodash');
+
+const noop = () => {};
 
 describe('cli : domain : get-mocked-plugins', () => {
   const dynamicPluginModule = a => (a ? 'blarg' : 'flarg');
@@ -13,7 +14,7 @@ describe('cli : domain : get-mocked-plugins', () => {
     execute: () => 'result'
   };
 
-  const logMock = { err: _.noop, log: _.noop, ok: _.noop, warn: _.noop };
+  const logMock = { err: noop, log: noop, ok: noop, warn: noop };
   let fsMock;
   let getMockedPlugins;
 
@@ -28,7 +29,7 @@ describe('cli : domain : get-mocked-plugins', () => {
     };
 
     const fakePathFunc = function () {
-      return _.toArray(arguments)
+      return Array.from(arguments)
         .map(x => x.replace(/\.\//g, ''))
         .join('');
     };

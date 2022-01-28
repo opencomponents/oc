@@ -3,7 +3,6 @@
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
-const _ = require('lodash');
 
 describe('cli : domain : handle-dependencies : get-compiler', () => {
   let cleanRequireStub;
@@ -33,7 +32,7 @@ describe('cli : domain : handle-dependencies : get-compiler', () => {
       }
     ).default;
 
-    getCompiler(_.cloneDeep(options))
+    getCompiler(options)
       .catch(err => (error = err.name))
       .finally(done);
   };

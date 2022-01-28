@@ -2,7 +2,6 @@
 
 const expect = require('chai').expect;
 const sinon = require('sinon');
-const _ = require('lodash');
 
 describe('registry : routes : component', () => {
   const ComponentRoute =
@@ -329,7 +328,7 @@ describe('registry : routes : component', () => {
 
     describe('when plugin declared in package.json', () => {
       beforeEach(() => {
-        const component = _.clone(mockedComponents['plugin-component']);
+        const component = { ...mockedComponents['plugin-component'] };
         component.package.oc.plugins = ['doSomething'];
         initialise(component);
         componentRoute = ComponentRoute({}, mockedRepository);
@@ -466,7 +465,7 @@ describe('registry : routes : component', () => {
               hotReloading: true, //needed to invalidate the cache
               baseUrl: 'http://components.com/',
               plugins: {},
-              dependencies: {}
+              dependencies: []
             },
             status: statusStub
           }

@@ -2,7 +2,6 @@ import colors from 'colors/safe';
 import path from 'path';
 import fs from 'fs-extra';
 import readCb from 'read';
-import _ from 'lodash';
 import { promisify } from 'util';
 import { Logger } from '../logger';
 import { Component, RegistryCli, Local } from '../../types';
@@ -49,7 +48,8 @@ const publish = ({
       }> => {
         if (opts.username && opts.password) {
           logger.ok(strings.messages.cli.USING_CREDS);
-          return _.pick(opts, 'username', 'password') as any;
+          const { username, password } = opts;
+          return { username, password };
         }
 
         logger.warn(strings.messages.cli.ENTER_USERNAME);
@@ -130,7 +130,7 @@ const publish = ({
             if (err.message) {
               // eslint-disable-next-line no-ex-assign
               err = err.message;
-            } else if (_.isObject(err)) {
+            } else if (err && typeof err === 'object') {
               try {
                 // eslint-disable-next-line no-ex-assign
                 err = JSON.stringify(err);

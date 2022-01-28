@@ -50,7 +50,7 @@ export default function components(
 
     if (!_.isEmpty(components)) {
       const errors = _.compact(
-        _.map(components, (component, index) => {
+        components.map((component, index) => {
           return !component.name
             ? registryErrors.BATCH_ROUTE_COMPONENT_NAME_MISSING(index)
             : '';

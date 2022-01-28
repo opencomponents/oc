@@ -2,7 +2,6 @@ import coreModules from 'builtin-modules';
 import path from 'path';
 import requirePackageName from 'require-package-name';
 import tryRequire from 'try-require';
-import _ from 'lodash';
 
 import strings from '../../resources';
 
@@ -26,7 +25,7 @@ const throwError = (requirePath: string) => {
 export default (injectedDependencies: string[]) =>
   <T = unknown>(requirePath: string): T => {
     const moduleName = requirePackageName(requirePath);
-    const isAllowed = _.includes(injectedDependencies, moduleName);
+    const isAllowed = injectedDependencies.includes(moduleName);
 
     if (!isAllowed) {
       return throwError(requirePath);

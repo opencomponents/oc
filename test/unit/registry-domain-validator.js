@@ -2,7 +2,6 @@
 
 const expect = require('chai').expect;
 const injectr = require('injectr');
-const _ = require('lodash');
 
 describe('registry : domain : validator', () => {
   const validator = require('../../dist/registry/domain/validators');
@@ -921,7 +920,7 @@ describe('registry : domain : validator', () => {
         }
       ];
 
-      _.each(scenarios, scenario => {
+      scenarios.forEach(scenario => {
         it(`should be valid with mimetype ${scenario.mimetype}`, () => {
           expect(validate([scenario]).isValid).to.be.true;
         });

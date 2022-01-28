@@ -4,7 +4,6 @@ const coreModules = require('builtin-modules');
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
-const _ = require('lodash');
 
 describe('cli : domain : handle-dependencies', () => {
   describe('happy path', () => {
@@ -88,7 +87,7 @@ describe('cli : domain : handle-dependencies', () => {
 
     it('should return modules plus the node.js core modules', () => {
       expect(result.modules).to.deep.equal(
-        _.union(coreModules, ['lodash', 'moment']).sort()
+        [...coreModules, ...['lodash', 'moment']].sort()
       );
     });
 

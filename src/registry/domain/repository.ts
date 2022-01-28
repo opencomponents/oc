@@ -1,7 +1,6 @@
 import fs from 'fs-extra';
 import getUnixUtcTimestamp from 'oc-get-unix-utc-timestamp';
 import path from 'path';
-import _ from 'lodash';
 
 import ComponentsCache from './components-cache';
 import getComponentsDetails from './components-details';
@@ -80,7 +79,7 @@ export default function repository(conf: Config): Repository {
         ]);
       }
 
-      if (!_.includes(local.getComponents(), componentName)) {
+      if (!local.getComponents().includes(componentName)) {
         return Promise.reject(
           strings.errors.registry.COMPONENT_NOT_FOUND(
             componentName,
@@ -210,9 +209,7 @@ export default function repository(conf: Config): Repository {
 
       const res = await componentsCache.get();
 
-      return _.has(res.components, componentName)
-        ? res.components[componentName]
-        : [];
+      return res.components[componentName] ? res.components[componentName] : [];
     },
     async getDataProvider(componentName: string, componentVersion: string) {
       if (conf.local) {
