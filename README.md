@@ -22,6 +22,7 @@ We have been using it for more than two years in production at OpenTable, for sh
 
 ## Links
 
+- [Website](https://opencomponents.github.io)
 - [Documentation](https://opencomponents.github.io/docs/intro)
 - [Requirements and build status](#requirements-and-build-status)
 - [Changelog](CHANGELOG.md)
