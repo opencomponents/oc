@@ -12,7 +12,7 @@ export default function watch(
     ignored: settings.filesToIgnoreOnDevWatch,
     persistent: true,
     ignoreInitial: true,
-    usePolling: false
+    usePolling: true
   });
   const onChange = (fileName: string) => {
     const componentDir = dirs.find(dir =>
