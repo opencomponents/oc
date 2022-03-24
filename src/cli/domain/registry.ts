@@ -122,6 +122,8 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
           !!parsedError.error
         ) {
           errMsg = parsedError.error;
+        } else {
+          errMsg = parsedError as any;
         }
 
         throw errMsg;
