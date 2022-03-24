@@ -83,7 +83,7 @@
     "prettier": "2.5.0",
     "rimraf": "3.0.2",
     "semver-sort": "0.0.4",
-    "simple-git": "2.48.0",
+    "simple-git": "3.3.0",
     "sinon": "12.0.1",
     "ts-node": "10.4.0",
     "type-fest": "2.8.0",
