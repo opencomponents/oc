@@ -191,7 +191,7 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
         );
       }
       try {
-        await promisify(registry.start);
+        await promisify(registry.start)();
 
         if (optWatch) {
           watchForChanges(
