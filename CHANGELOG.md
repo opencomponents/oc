@@ -1,5 +1,27 @@
 ## Change Log
 
+### v0.49.8
+- [#1292](https://github.com/opencomponents/oc/pull/1292) dont watch files on temp folder from templates
+- [#1289](https://github.com/opencomponents/oc/pull/1289) use polling on watch
+- [#1288](https://github.com/opencomponents/oc/pull/1288) Update README documentation link
+- [#1287](https://github.com/opencomponents/oc/pull/1287) [INTERNAL] reduce lodash usage on test/code
+- [#1286](https://github.com/opencomponents/oc/pull/1286) Callback to promises
+- [#1285](https://github.com/opencomponents/oc/pull/1285) [CB-INTERNAL] promisify publish route
+- [#1284](https://github.com/opencomponents/oc/pull/1284) Update README.md
+- [#1273](https://github.com/opencomponents/oc/pull/1273) [CB-INTERNAL] move nested renderer to promises
+- [#1272](https://github.com/opencomponents/oc/pull/1272) [CB-INTERNAL] promisify registry
+- [#1269](https://github.com/opencomponents/oc/pull/1269) [CB-INTERNAL] move plugins initialiser to promises
+- [#1267](https://github.com/opencomponents/oc/pull/1267) [CB-INTERNAL] add express-promise-router to allow promises on routes
+- [#1266](https://github.com/opencomponents/oc/pull/1266) [CB-INTERNAL] upgrade storage adapters and parse legacy ones
+- [#1265](https://github.com/opencomponents/oc/pull/1265) [CB-INTERNAL] move components-details and repository to promises
+- [#1258](https://github.com/opencomponents/oc/pull/1258) [INTERNAL-CB] move components cache to promises
+- [#1257](https://github.com/opencomponents/oc/pull/1257) [INTERNAL-CB] Facade to promises
+- [#1247](https://github.com/opencomponents/oc/pull/1247) Some repository methods to promises
+- [#1246](https://github.com/opencomponents/oc/pull/1246) Registry cli to promises
+- [#1245](https://github.com/opencomponents/oc/pull/1245) Local to promises
+- [#1242](https://github.com/opencomponents/oc/pull/1242) move more files to promises
+- [#1241](https://github.com/opencomponents/oc/pull/1241) Start moving callback based functions to promises
+
 ### v0.49.7
 - [#1283](https://github.com/opencomponents/oc/pull/1283) add "open" link to component preview page
 - [#1279](https://github.com/opencomponents/oc/pull/1279) improve auth flexibility allowing to pass any library on type field
