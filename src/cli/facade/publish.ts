@@ -89,11 +89,7 @@ const publish = ({
           await registry.putComponent(options);
           logger.ok(strings.messages.cli.PUBLISHED(options.route));
         } catch (err: any) {
-          if (
-            err === 'Unauthorized' ||
-            err.message === 'Unauthorized' ||
-            err.response?.body === 'Unauthorized'
-          ) {
+          if (err === 'Unauthorized' || err.message === 'Unauthorized') {
             if (!!options.username || !!options.password) {
               logger.err(
                 strings.errors.cli.PUBLISHING_FAIL(

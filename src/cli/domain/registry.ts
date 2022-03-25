@@ -106,11 +106,11 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
       try {
         await put(options.route, options.path, requestsHeaders);
       } catch (err) {
-        let parsedError = err as any as { code?: string; error?: string };
+        let parsedError = (err as any).response.body || (err as any);
         let errMsg = '';
-        if (!_.isObject(err)) {
+        if (!_.isObject(parsedError)) {
           try {
-            parsedError = JSON.parse(String(err));
+            parsedError = JSON.parse(String(parsedError));
           } catch (er) {}
         }
 
