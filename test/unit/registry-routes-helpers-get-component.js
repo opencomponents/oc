@@ -135,6 +135,27 @@ describe('registry : routes : helpers : get-component', () => {
     });
   });
 
+  describe('when the component sends a custom status code', () => {
+    before(done => {
+      initialise(mockedComponents['async-custom-error-component']);
+      const getComponent = GetComponent({}, mockedRepository);
+
+      getComponent(
+        {
+          name: 'async-custom-error-component',
+          headers: {},
+          version: '1.X.X',
+          conf: { baseUrl: 'http://components.com/' }
+        },
+        () => done()
+      );
+    });
+
+    it.only('should return that status code to the client', () => {
+      expect(fireStub.args[0][1].status).to.equal(404);
+    });
+  });
+
   describe('when rendering a component with a legacy template', () => {
     describe("when oc-client requests an unrendered component and it doesn't provide templates header", () => {
       const headers = {

@@ -5,6 +5,7 @@ module.exports = {
   'async-error2-component': require('./async-error2'),
   'async-error3-component': require('./async-error3'),
   'async-error4-component': require('./async-error4'),
+  'async-custom-error-component': require('./async-custom-error'),
   'error-component': require('./error'),
   'npm-component': require('./npm'),
   'plugin-component': require('./plugin'),
