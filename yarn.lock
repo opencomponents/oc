@@ -2405,7 +2405,7 @@
   dependencies:
     "prettier-linter-helpers" "^1.0.0"
 
-"eslint-scope@^5.1.1":
+"eslint-scope@^5.1.1", "eslint-scope@5.1.1":
   "integrity" "sha512-2NxwbF/hZ0KpepYN0cNbo+FN6XoK7GaHlQhgx/hIZl6Va0bF45RQOOwhLIy8lQDbuCiadSLCBnH2CFYquit5bw=="
   "resolved" "https://registry.npmjs.org/eslint-scope/-/eslint-scope-5.1.1.tgz"
   "version" "5.1.1"
@@ -2420,14 +2420,6 @@
   dependencies:
     "esrecurse" "^4.3.0"
     "estraverse" "^5.2.0"
-
-"eslint-scope@5.1.1":
-  "integrity" "sha512-2NxwbF/hZ0KpepYN0cNbo+FN6XoK7GaHlQhgx/hIZl6Va0bF45RQOOwhLIy8lQDbuCiadSLCBnH2CFYquit5bw=="
-  "resolved" "https://registry.npmjs.org/eslint-scope/-/eslint-scope-5.1.1.tgz"
-  "version" "5.1.1"
-  dependencies:
-    "esrecurse" "^4.3.0"
-    "estraverse" "^4.1.1"
 
 "eslint-utils@^3.0.0":
   "integrity" "sha512-uuQC43IGctw68pJA1RgbQS8/NP7rch6Cwd4j3ZBtgo4/8Flj4eGE7ZYSZRN3iq5pVUv6GPdW5Z1RFleo84uLDA=="
@@ -2518,7 +2510,12 @@
   "resolved" "https://registry.npmjs.org/estraverse/-/estraverse-4.3.0.tgz"
   "version" "4.3.0"
 
-"estraverse@^5.1.0", "estraverse@^5.2.0":
+"estraverse@^5.1.0":
+  "integrity" "sha512-MMdARuVEQziNTeJD8DgMqmhwR11BRQ/cBP+pLtYdSTnf3MIO8fFeiINEbX36ZdNlfU/7A9f3gUw49B3oQsvwBA=="
+  "resolved" "https://registry.npmjs.org/estraverse/-/estraverse-5.3.0.tgz"
+  "version" "5.3.0"
+
+"estraverse@^5.2.0":
   "integrity" "sha512-MMdARuVEQziNTeJD8DgMqmhwR11BRQ/cBP+pLtYdSTnf3MIO8fFeiINEbX36ZdNlfU/7A9f3gUw49B3oQsvwBA=="
   "resolved" "https://registry.npmjs.org/estraverse/-/estraverse-5.3.0.tgz"
   "version" "5.3.0"
@@ -3858,10 +3855,10 @@
   "resolved" "https://registry.npmjs.org/oc-client-browser/-/oc-client-browser-1.5.4.tgz"
   "version" "1.5.4"
 
-"oc-client-browser@1.5.7":
-  "integrity" "sha512-TO7FVwJ+FDcrejXWjVkpp1ddgG/7No1nWZGs552iOz8m+Gqfq6ES+d2hnUXz7BtH4GrDr6l9RQwJhci+fqIQtQ=="
-  "resolved" "https://registry.npmjs.org/oc-client-browser/-/oc-client-browser-1.5.7.tgz"
-  "version" "1.5.7"
+"oc-client-browser@1.5.8":
+  "integrity" "sha512-2EKANYx7u0Vm1qYfU328L3P28KzZTTUJB2Dkbic4/WhE+WskBmdPfJyGoufuJBipXygvlqqXQ5lnaZ6Roq0JuQ=="
+  "resolved" "https://registry.npmjs.org/oc-client-browser/-/oc-client-browser-1.5.8.tgz"
+  "version" "1.5.8"
   dependencies:
     "universalify" "2.0.0"
 
