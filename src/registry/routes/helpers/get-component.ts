@@ -275,7 +275,7 @@ export default function getComponent(conf: Config, repository: Repository) {
               err ||
               new Error(strings.errors.registry.DATA_OBJECT_IS_UNDEFINED);
             return callback({
-              status: 500,
+              status: Number(err.status) || 500,
               response: {
                 code: 'GENERIC_ERROR',
                 error: strings.errors.registry.COMPONENT_EXECUTION_ERROR(
