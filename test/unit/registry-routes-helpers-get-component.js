@@ -151,7 +151,7 @@ describe('registry : routes : helpers : get-component', () => {
       );
     });
 
-    it.only('should return that status code to the client', () => {
+    it('should return that status code to the client', () => {
       expect(fireStub.args[0][1].status).to.equal(404);
     });
   });
