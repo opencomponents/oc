@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.12
+- [#1295](https://github.com/opencomponents/oc/pull/1295) add option to send custom status code back to the registry
+
 ### v0.49.8
 - [#1292](https://github.com/opencomponents/oc/pull/1292) dont watch files on temp folder from templates
 - [#1289](https://github.com/opencomponents/oc/pull/1289) use polling on watch
