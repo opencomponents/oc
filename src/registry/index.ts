@@ -26,7 +26,7 @@ export default function registry(inputOptions: Input) {
   const options = sanitiseOptions(inputOptions);
 
   const plugins: Plugin[] = [];
-  const { app, router } = middleware.bind(express(), options);
+  const app = middleware.bind(express(), options);
   let server: http.Server;
   const repository = Repository(options);
 
@@ -52,7 +52,7 @@ export default function registry(inputOptions: Input) {
   ) => {
     // eslint-disable-next-line no-console
     const ok = (msg: string) => console.log(colors.green(msg));
-    createRouter(router, options, repository);
+    createRouter(app, options, repository);
 
     try {
       options.plugins = await pluginsInitialiser.init(plugins);

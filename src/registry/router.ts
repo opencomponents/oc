@@ -8,10 +8,10 @@ import StaticRedirectorRoute from './routes/static-redirector';
 import PluginsRoute from './routes/plugins';
 import DependenciesRoute from './routes/dependencies';
 import settings from '../resources/settings';
-import { Router } from 'express';
+import type { Express } from 'express';
 import { Config, Repository } from '../types';
 
-export function create(app: Router, conf: Config, repository: Repository) {
+export function create(app: Express, conf: Config, repository: Repository) {
   const routes = {
     component: ComponentRoute(conf, repository),
     components: ComponentsRoute(conf, repository),
