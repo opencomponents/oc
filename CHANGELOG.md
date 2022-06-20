@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.13
+- [#1296](https://github.com/opencomponents/oc/pull/1296) removing express-promise-router
+
 ### v0.49.12
 - [#1295](https://github.com/opencomponents/oc/pull/1295) add option to send custom status code back to the registry
 
