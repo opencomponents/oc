@@ -34,7 +34,7 @@ export default async function installTemplate(
     const installedCompiler = tryRequire(result.dest);
 
     if (!isTemplateValid(installedCompiler, { compiler: true })) {
-      throw errorMessage;
+      throw new Error(errorMessage);
     }
     const version = installedCompiler.getInfo().version;
     logger.log(
@@ -47,6 +47,6 @@ export default async function installTemplate(
 
     return { ok: true };
   } catch (err) {
-    throw errorMessage;
+    throw new Error(errorMessage);
   }
 }

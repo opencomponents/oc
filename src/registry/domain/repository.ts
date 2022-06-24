@@ -10,9 +10,9 @@ import strings from '../../resources';
 import * as validator from './validators';
 import getPromiseBasedAdapter from './storage-adapter';
 import * as versionHandler from './version-handler';
-import errorToString from '../../utils/error-to-string';
 import { Component, Config, Repository } from '../../types';
 import { StorageAdapter } from 'oc-storage-adapters-utils';
+import { OcError } from '../../utils/errors';
 
 const packageInfo = fs.readJsonSync(
   path.join(__dirname, '..', '..', '..', 'package.json')
@@ -123,9 +123,11 @@ export default function repository(conf: Config): Repository {
       const allVersions = await repository.getComponentVersions(componentName);
 
       if (allVersions.length === 0) {
-        throw strings.errors.registry.COMPONENT_NOT_FOUND(
-          componentName,
-          repositorySource
+        throw new OcError(
+          strings.errors.registry.COMPONENT_NOT_FOUND(
+            componentName,
+            repositorySource
+          )
         );
       }
 
@@ -135,17 +137,19 @@ export default function repository(conf: Config): Repository {
       );
 
       if (!version) {
-        throw strings.errors.registry.COMPONENT_VERSION_NOT_FOUND(
-          componentName,
-          componentVersion || '',
-          repositorySource
+        throw new OcError(
+          strings.errors.registry.COMPONENT_VERSION_NOT_FOUND(
+            componentName,
+            componentVersion || '',
+            repositorySource
+          )
         );
       }
 
       const component = await repository
         .getComponentInfo(componentName, version)
         .catch(err => {
-          throw `component not available: ${errorToString(err)}`;
+          throw new OcError(`component not available: ${String(err)}`);
         });
 
       return Object.assign(component, { allVersions });
@@ -171,7 +175,7 @@ export default function repository(conf: Config): Repository {
           return Promise.resolve(componentInfo);
         } else {
           // eslint-disable-next-line prefer-promise-reject-errors
-          return Promise.reject('version not available');
+          return Promise.reject(new Error('version not available'));
         }
       }
 
@@ -267,26 +271,24 @@ export default function repository(conf: Config): Repository {
       componentVersion: string
     ) {
       if (conf.local) {
-        throw {
-          code: strings.errors.registry.LOCAL_PUBLISH_NOT_ALLOWED_CODE,
-          msg: strings.errors.registry.LOCAL_PUBLISH_NOT_ALLOWED
-        };
+        throw new OcError(
+          strings.errors.registry.LOCAL_PUBLISH_NOT_ALLOWED,
+          strings.errors.registry.LOCAL_PUBLISH_NOT_ALLOWED_CODE
+        );
       }
 
       if (!validator.validateComponentName(componentName)) {
-        throw {
-          code: strings.errors.registry.COMPONENT_NAME_NOT_VALID_CODE,
-          msg: strings.errors.registry.COMPONENT_NAME_NOT_VALID
-        };
+        throw new OcError(
+          strings.errors.registry.COMPONENT_NAME_NOT_VALID,
+          strings.errors.registry.COMPONENT_NAME_NOT_VALID_CODE
+        );
       }
 
       if (!validator.validateVersion(componentVersion)) {
-        throw {
-          code: strings.errors.registry.COMPONENT_VERSION_NOT_VALID_CODE,
-          msg: strings.errors.registry.COMPONENT_VERSION_NOT_VALID(
-            componentVersion
-          )
-        };
+        throw new OcError(
+          strings.errors.registry.COMPONENT_VERSION_NOT_VALID(componentVersion),
+          strings.errors.registry.COMPONENT_VERSION_NOT_VALID_CODE
+        );
       }
 
       const validationResult = validator.validatePackageJson(
@@ -297,12 +299,12 @@ export default function repository(conf: Config): Repository {
       );
 
       if (!validationResult.isValid) {
-        throw {
-          code: strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL_CODE,
-          msg: strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL(
+        throw new OcError(
+          strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL(
             String(validationResult.error)
-          )
-        };
+          ),
+          strings.errors.registry.COMPONENT_PUBLISHVALIDATION_FAIL_CODE
+        );
       }
 
       const componentVersions = await repository.getComponentVersions(
@@ -312,14 +314,14 @@ export default function repository(conf: Config): Repository {
       if (
         !versionHandler.validateNewVersion(componentVersion, componentVersions)
       ) {
-        throw {
-          code: strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND_CODE,
-          msg: strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND(
+        throw new OcError(
+          strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND(
             componentName,
             componentVersion,
             repositorySource
-          )
-        };
+          ),
+          strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND_CODE
+        );
       }
 
       pkgDetails.packageJson.oc.date = getUnixUtcTimestamp();

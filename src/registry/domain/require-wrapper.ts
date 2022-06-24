@@ -3,7 +3,7 @@ import path from 'path';
 import requirePackageName from 'require-package-name';
 import tryRequire from 'try-require';
 
-import strings from '../../resources';
+import { RequireError } from '../../utils/errors';
 
 const isCoreDependency = (x: string) => coreModules.includes(x);
 const requireCoreDependency = (x: string) =>
@@ -16,10 +16,7 @@ const requireDependency = (requirePath: string) => {
 };
 
 const throwError = (requirePath: string) => {
-  throw {
-    code: strings.errors.registry.DEPENDENCY_NOT_FOUND_CODE,
-    missing: [requirePath]
-  };
+  throw new RequireError([requirePath]);
 };
 
 export default (injectedDependencies: string[]) =>

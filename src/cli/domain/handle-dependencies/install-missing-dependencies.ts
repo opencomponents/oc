@@ -36,13 +36,13 @@ export default async function installMissingDependencies(options: {
 
     if (getMissingDependencies(dependencies).length) {
       logger.err('FAIL');
-      throw strings.errors.cli.DEPENDENCIES_INSTALL_FAIL;
+      throw new Error(strings.errors.cli.DEPENDENCIES_INSTALL_FAIL);
     }
 
     logger.ok('OK');
   } catch (err) {
     logger.err('FAIL');
     if (err) logger.err(String(err));
-    throw strings.errors.cli.DEPENDENCIES_INSTALL_FAIL;
+    throw new Error(strings.errors.cli.DEPENDENCIES_INSTALL_FAIL);
   }
 }

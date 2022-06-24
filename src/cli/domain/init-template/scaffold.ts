@@ -40,6 +40,6 @@ export default async function scaffold(
     const url =
       (compilerPackage.bugs && compilerPackage.bugs.url) ||
       `the ${templateType} repo`;
-    throw strings.errors.cli.scaffoldError(url, String(error));
+    throw new Error(strings.errors.cli.scaffoldError(url, String(error)));
   }
 }

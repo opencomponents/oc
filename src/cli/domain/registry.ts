@@ -54,7 +54,7 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
 
         return fs.writeJson(settings.configFile.src, res);
       } catch (err) {
-        throw 'oc registry not available';
+        throw new Error('oc registry not available');
       }
     },
     async get() {
@@ -66,11 +66,11 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
         const res = await fs.readJson(settings.configFile.src);
 
         if (!res.registries || res.registries.length === 0)
-          throw 'No oc registries';
+          throw new Error('No oc registries');
 
         return res.registries;
       } catch (err) {
-        throw 'No oc registries';
+        throw new Error('No oc registries');
       }
     },
     getApiComponentByHref(href: string) {

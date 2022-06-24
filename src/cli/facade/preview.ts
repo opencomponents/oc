@@ -21,7 +21,7 @@ const preview = ({
       return href;
     } catch (err) {
       logger.err(strings.errors.cli.COMPONENT_HREF_NOT_FOUND);
-      throw strings.errors.cli.COMPONENT_HREF_NOT_FOUND;
+      throw new Error(strings.errors.cli.COMPONENT_HREF_NOT_FOUND);
     }
   });
 

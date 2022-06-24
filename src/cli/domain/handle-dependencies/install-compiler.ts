@@ -31,13 +31,13 @@ export default async function installCompiler(options: {
     const compiler = cleanRequire<Template>(compilerPath, { justTry: true });
 
     if (!isTemplateValid(compiler)) {
-      throw errorMsg;
+      throw new Error(errorMsg);
     }
 
     return compiler;
   } catch (err) {
     logger.err('FAIL');
 
-    throw errorMsg;
+    throw new Error(errorMsg);
   }
 }

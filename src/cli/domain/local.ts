@@ -36,7 +36,7 @@ export default function local(): Local {
       const { componentName, logger } = options;
       let { templateType } = options;
       if (!validator.validateComponentName(componentName)) {
-        throw 'name not valid';
+        throw new Error('name not valid');
       }
 
       // LEGACY TEMPLATES WARNING
@@ -61,7 +61,7 @@ export default function local(): Local {
           })
         );
       } catch (e) {
-        throw 'template type not valid';
+        throw new Error('template type not valid');
       }
     },
     mock: mock(),

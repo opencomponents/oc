@@ -100,7 +100,7 @@ export default function registry(inputOptions: Input) {
         callback(error, undefined as any);
       });
     } catch (err) {
-      callback((err as any)?.msg || err, undefined as any);
+      callback(err, undefined as any);
     }
   };
 

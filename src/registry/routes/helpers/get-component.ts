@@ -21,6 +21,7 @@ import * as validator from '../../domain/validators';
 import { Config, Repository } from '../../../types';
 import { IncomingHttpHeaders } from 'http';
 import { fromPromise } from 'universalify';
+import { RequireError, toOcError } from '../../../utils/errors';
 
 export interface RendererOptions {
   conf: Config;
@@ -45,7 +46,7 @@ export interface GetComponentResult {
     name?: string;
     details?: {
       message: string;
-      stack: string;
+      stack?: string;
       originalError: unknown;
     };
     missingPlugins?: string[];
@@ -213,7 +214,7 @@ export default function getComponent(conf: Config, repository: Repository) {
             : headers;
         };
 
-        const returnComponent = (err: any, data: any) => {
+        const returnComponent = (err: unknown, data: any) => {
           if (componentCallbackDone) {
             return;
           }
@@ -271,20 +272,21 @@ export default function getComponent(conf: Config, repository: Repository) {
           });
 
           if (!!err || !data) {
-            err =
-              err ||
-              new Error(strings.errors.registry.DATA_OBJECT_IS_UNDEFINED);
+            const error = toOcError(
+              err || new Error(strings.errors.registry.DATA_OBJECT_IS_UNDEFINED)
+            );
+
             return callback({
-              status: Number(err.status) || 500,
+              status: Number(error.status) || 500,
               response: {
                 code: 'GENERIC_ERROR',
                 error: strings.errors.registry.COMPONENT_EXECUTION_ERROR(
-                  err.message || ''
+                  error.message
                 ),
                 details: {
-                  message: err.message,
-                  stack: err.stack,
-                  originalError: err
+                  message: error.message,
+                  stack: error.stack,
+                  originalError: error
                 }
               }
             });
@@ -382,7 +384,7 @@ export default function getComponent(conf: Config, repository: Repository) {
 
                   try {
                     ocTemplate = repository.getTemplate(templateType);
-                  } catch (err) {
+                  } catch {
                     return callback({
                       status: 400,
                       response: {
@@ -462,8 +464,8 @@ export default function getComponent(conf: Config, repository: Repository) {
                 cached(contextObj, returnComponent);
                 setCallbackTimeout();
               });
-            } catch (e) {
-              return returnComponent(e, undefined);
+            } catch (err) {
+              return returnComponent(err, undefined);
             }
           } else {
             fromPromise(repository.getDataProvider)(
@@ -495,11 +497,8 @@ export default function getComponent(conf: Config, repository: Repository) {
                   Buffer
                 };
 
-                const handleError = (err: {
-                  code: string;
-                  missing: string[];
-                }) => {
-                  if (err.code === 'DEPENDENCY_MISSING_FROM_REGISTRY') {
+                const handleError = (err: unknown) => {
+                  if (err instanceof RequireError) {
                     componentCallbackDone = true;
 
                     return callback({
@@ -535,7 +534,7 @@ export default function getComponent(conf: Config, repository: Repository) {
                     setCallbackTimeout();
                   });
                 } catch (err) {
-                  handleError(err as any);
+                  handleError(err);
                 }
               }
             );

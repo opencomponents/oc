@@ -3,6 +3,7 @@ import strings from '../../resources/index';
 import * as validator from '../domain/validators';
 import { Request, Response } from 'express';
 import { Repository } from '../../types';
+import { toOcError } from '../../utils/errors';
 
 export default function publish(repository: Repository) {
   return async function (req: Request, res: Response): Promise<void> {
@@ -63,22 +64,23 @@ export default function publish(repository: Repository) {
           req.params['componentVersion']
         );
         res.status(200).json({ ok: true });
-      } catch (err: any) {
-        if (err.code === 'not_allowed') {
-          res.errorDetails = `Publish not allowed: ${err.msg}`;
-          res.status(403).json({ error: err.msg });
-        } else if (err.code === 'already_exists') {
-          res.errorDetails = `Component already exists: ${err.msg}`;
-          res.status(403).json({ error: err.msg });
-        } else if (err.code === 'name_not_valid') {
-          res.errorDetails = `Component name not valid: ${err.msg}`;
-          res.status(409).json({ error: err.msg });
-        } else if (err.code === 'version_not_valid') {
-          res.errorDetails = `Component version not valid: ${err.msg}`;
-          res.status(409).json({ error: err.msg });
+      } catch (err: unknown) {
+        const error = toOcError(err);
+        if (error.code === 'not_allowed') {
+          res.errorDetails = `Publish not allowed: ${error.message}`;
+          res.status(403).json({ error: error.message });
+        } else if (error.code === 'already_exists') {
+          res.errorDetails = `Component already exists: ${error.message}`;
+          res.status(403).json({ error: error.message });
+        } else if (error.code === 'name_not_valid') {
+          res.errorDetails = `Component name not valid: ${error.message}`;
+          res.status(409).json({ error: error.message });
+        } else if (error.code === 'version_not_valid') {
+          res.errorDetails = `Component version not valid: ${error.message}`;
+          res.status(409).json({ error: error.message });
         } else {
-          res.errorDetails = `Publish failed: ${err.msg}`;
-          res.status(500).json({ error: err.msg });
+          res.errorDetails = `Publish failed: ${error.message}`;
+          res.status(500).json({ error: error.message });
         }
       }
     } catch (err) {

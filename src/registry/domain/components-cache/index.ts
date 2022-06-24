@@ -21,10 +21,10 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
         if (data.lastEdit > cachedComponentsList.lastEdit) {
           cachedComponentsList = data;
         }
-      } catch (err: any) {
+      } catch (err) {
         eventsHandler.fire('error', {
           code: 'components_list_get',
-          message: err?.message || String(err)
+          message: String(err)
         });
       }
       refreshLoop = poll();

@@ -3,6 +3,7 @@ import pLimit from 'p-limit';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import { ComponentsList, Config } from '../../../types';
 import { StorageAdapter } from 'oc-storage-adapters-utils';
+import { toOcError } from '../../../utils/errors';
 
 export default function componentsList(conf: Config, cdn: StorageAdapter) {
   const filePath = (): string =>
@@ -44,8 +45,9 @@ export default function componentsList(conf: Config, cdn: StorageAdapter) {
           lastEdit: getUnixUTCTimestamp(),
           components: componentsInfo
         };
-      } catch (err: any) {
-        if (err.code === 'dir_not_found') {
+      } catch (err: unknown) {
+        const error = toOcError(err);
+        if (error.code === 'dir_not_found') {
           throw {
             lastEdit: getUnixUTCTimestamp(),
             components: [] as any

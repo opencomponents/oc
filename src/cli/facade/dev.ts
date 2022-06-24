@@ -12,6 +12,7 @@ import strings from '../../resources/index';
 import watch from '../domain/watch';
 import { Logger } from '../logger';
 import { Local } from '../../types';
+import { OcError, toOcError } from '../../utils/errors';
 
 type Registry = ReturnType<typeof oc.Registry>;
 
@@ -87,14 +88,9 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
               await local.package(packageOptions);
               packaging = false;
               logger.ok('OK');
-            } catch (error: any) {
-              const errorDescription =
-                error instanceof SyntaxError || !!error.message
-                  ? error.message
-                  : error;
-              logger.err(
-                cliErrors.PACKAGING_FAIL(dir, String(errorDescription))
-              );
+            } catch (err: unknown) {
+              const error = toOcError(err);
+              logger.err(cliErrors.PACKAGING_FAIL(dir, error.toString()));
               logger.warn(cliMessages.RETRYING_10_SECONDS);
               await delay(10000);
               packaging = false;
@@ -201,14 +197,14 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
         }
 
         return registry;
-      } catch (err: any) {
-        if (err.code === 'EADDRINUSE') {
-          // eslint-disable-next-line no-ex-assign
-          err = cliErrors.PORT_IS_BUSY(port) as any;
+      } catch (err: unknown) {
+        let error = toOcError(err);
+        if (error.code === 'EADDRINUSE') {
+          error = new OcError(cliErrors.PORT_IS_BUSY(port));
         }
 
-        logger.err(String(err));
-        throw err;
+        logger.err(error.toString());
+        throw error;
       }
     }
   );

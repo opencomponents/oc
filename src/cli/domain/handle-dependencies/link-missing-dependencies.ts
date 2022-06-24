@@ -39,7 +39,7 @@ export default async function linkMissingDependencies(options: {
       logger.err(
         strings.errors.cli.DEPENDENCY_LINK_FAIL(moduleName, String(err))
       );
-      throw strings.errors.cli.DEPENDENCIES_LINK_FAIL;
+      throw new Error(strings.errors.cli.DEPENDENCIES_LINK_FAIL);
     }
   }
 }

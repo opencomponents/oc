@@ -3,6 +3,7 @@ import { fromPromise } from 'universalify';
 
 import strings from '../../resources/index';
 import { Local } from '../../types';
+import { toOcError } from '../../utils/errors';
 import { Logger } from '../logger';
 
 const init = ({ local, logger }: { local: Local; logger: Logger }) =>
@@ -32,17 +33,18 @@ const init = ({ local, logger }: { local: Local; logger: Logger }) =>
         logger.log(messages.initSuccess(componentName, componentPath));
 
         return componentName;
-      } catch (err) {
-        let errMsg = String(err);
+      } catch (err: unknown) {
+        const error = toOcError(err);
+        let errMsg = error.message;
 
-        if (err === 'name not valid') {
+        if (errMsg === 'name not valid') {
           errMsg = errors.NAME_NOT_VALID;
-        } else if (err === 'template type not valid') {
+        } else if (errMsg === 'template type not valid') {
           errMsg = errors.TEMPLATE_TYPE_NOT_VALID(templateType);
         }
 
         logger.err(errors.INIT_FAIL(errMsg));
-        throw err;
+        throw error;
       }
     }
   );
