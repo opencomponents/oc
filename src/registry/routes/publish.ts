@@ -85,7 +85,12 @@ export default function publish(repository: Repository) {
       }
     } catch (err) {
       res.errorDetails = `Package is not valid: ${err}`;
-      res.status(500).json({ error: 'package is not valid', details: err });
+      res
+        .status(500)
+        .json({
+          error: 'package is not valid',
+          details: toOcError(err).message
+        });
     }
   };
 }

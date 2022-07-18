@@ -9,6 +9,7 @@ import { fromPromise } from 'universalify';
 
 import handleDependencies from '../domain/handle-dependencies';
 import strings from '../../resources/index';
+import { toOcError } from '../../utils/errors';
 
 const read = promisify(readCb);
 
@@ -88,15 +89,16 @@ const publish = ({
         try {
           await registry.putComponent(options);
           logger.ok(strings.messages.cli.PUBLISHED(options.route));
-        } catch (err: any) {
-          if (err === 'Unauthorized' || err.message === 'Unauthorized') {
+        } catch (err_: any) {
+          const error = toOcError(err_);
+          if (error.message === 'Unauthorized') {
             if (!!options.username || !!options.password) {
               logger.err(
                 strings.errors.cli.PUBLISHING_FAIL(
                   strings.errors.cli.INVALID_CREDENTIALS
                 )
               );
-              throw err;
+              throw error;
             }
 
             logger.warn(strings.messages.cli.REGISTRY_CREDENTIALS_REQUIRED);
@@ -104,7 +106,7 @@ const publish = ({
             const credentials = await getCredentials();
 
             await putComponentToRegistry(Object.assign(options, credentials));
-          } else if (err.code === 'cli_version_not_valid') {
+          } else if (error.code === 'cli_version_not_valid') {
             const upgradeCommand = strings.commands.cli.UPGRADE(
               err.details.suggestedVersion
             );
@@ -117,7 +119,7 @@ const publish = ({
             logger.err(errorMessage);
 
             throw errorMessage;
-          } else if (err.code === 'node_version_not_valid') {
+          } else if (error.code === 'node_version_not_valid') {
             const details = strings.errors.cli.NODE_CLI_VERSION_NEEDS_UPGRADE(
               err.details.suggestedVersion
             );
@@ -127,19 +129,10 @@ const publish = ({
 
             throw errorMessage;
           } else {
-            if (err.message) {
-              // eslint-disable-next-line no-ex-assign
-              err = err.message;
-            } else if (err && typeof err === 'object') {
-              try {
-                // eslint-disable-next-line no-ex-assign
-                err = JSON.stringify(err);
-              } catch (er) {}
-            }
-            errorMessage = strings.errors.cli.PUBLISHING_FAIL(String(err));
+            errorMessage = strings.errors.cli.PUBLISHING_FAIL(String(error));
             logger.err(errorMessage);
 
-            throw errorMessage;
+            throw new Error(errorMessage);
           }
         }
       };
