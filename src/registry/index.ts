@@ -81,7 +81,10 @@ export default function registry(inputOptions: Input) {
             ).length;
             const componentsReleases = Object.values(
               componentsInfo.components
-            ).reduce((acc, component) => acc + component.length, 0);
+            ).reduce(
+              (acc, component) => acc + Object.keys(component).length,
+              0
+            );
 
             ok(
               `Registry serving ${componentsNumber} components for a total of ${componentsReleases} releases.`
