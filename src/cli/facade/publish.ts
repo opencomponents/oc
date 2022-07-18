@@ -4,7 +4,8 @@ import fs from 'fs-extra';
 import readCb from 'read';
 import { promisify } from 'util';
 import { Logger } from '../logger';
-import { Component, RegistryCli, Local } from '../../types';
+import type { Local } from '../domain/local';
+import { Component, RegistryCli } from '../../types';
 import { fromPromise } from 'universalify';
 
 import handleDependencies from '../domain/handle-dependencies';

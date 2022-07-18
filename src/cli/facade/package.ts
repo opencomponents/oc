@@ -3,7 +3,8 @@ import path from 'path';
 import { fromPromise } from 'universalify';
 import handleDependencies from '../domain/handle-dependencies';
 import { Logger } from '../logger';
-import { Component, Local } from '../../types';
+import type { Local } from '../domain/local';
+import { Component } from '../../types';
 
 const cliPackage = ({ local, logger }: { local: Local; logger: Logger }) =>
   fromPromise(

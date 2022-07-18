@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { Logger } from './cli/logger';
 import { PackageJson } from 'type-fest';
 
 export interface Author {
@@ -248,36 +247,6 @@ export interface RegistryCli {
     path: string;
   }): Promise<void>;
   remove(registry: string): Promise<void>;
-}
-
-export interface Local {
-  clean: {
-    fetchList: (dirPath: string) => Promise<string[]>;
-    remove: (list: string[]) => Promise<void>;
-  };
-  cleanup: (compressedPackagePath: string) => Promise<void>;
-  compress: (input: string, output: string) => Promise<void>;
-  getComponentsByDir: (
-    componentsDir: string,
-    componentsToRun?: string[]
-  ) => Promise<string[]>;
-  init: (options: {
-    componentName: string;
-    logger: Logger;
-    componentPath: string;
-    templateType: string;
-  }) => Promise<void>;
-  mock: (params: {
-    targetType: string;
-    targetValue: string;
-    targetName: string;
-  }) => Promise<void>;
-  package: (options: {
-    componentPath: string;
-    minify?: boolean;
-    verbose?: boolean;
-    production?: boolean;
-  }) => Promise<Component>;
 }
 
 declare global {

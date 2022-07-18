@@ -6,7 +6,7 @@ import requireTemplate from './handle-dependencies/require-template';
 import * as validator from '../../registry/domain/validators';
 import { Component } from '../../types';
 
-interface PackageOptions {
+export interface PackageOptions {
   componentPath: string;
   minify?: boolean;
   verbose?: boolean;
