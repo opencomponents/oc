@@ -1,8 +1,8 @@
+import { Request, Response } from 'express';
 import extractPackage from '../domain/extract-package';
 import strings from '../../resources/index';
 import * as validator from '../domain/validators';
-import { Request, Response } from 'express';
-import { Repository } from '../../types';
+import type { Repository } from '../domain/repository';
 
 export default function publish(repository: Repository) {
   return async function (req: Request, res: Response): Promise<void> {

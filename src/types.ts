@@ -280,47 +280,6 @@ export interface Local {
   }) => Promise<Component>;
 }
 
-export interface Repository {
-  getCompiledView(
-    componentName: string,
-    componentVersion: string
-  ): Promise<string>;
-  getComponent(
-    componentName: string,
-    componentVersion?: string
-  ): Promise<Component>;
-  getComponentInfo(
-    componentName: string,
-    componentVersion: string
-  ): Promise<Component>;
-  getComponentPath(componentName: string, componentVersion: string): void;
-  getComponents(): Promise<string[]>;
-  getComponentsDetails(): Promise<ComponentsDetails>;
-  getComponentVersions(componentName: string): Promise<string[]>;
-  getDataProvider(
-    componentName: string,
-    componentVersion: string
-  ): Promise<{
-    content: string;
-    filePath: string;
-  }>;
-  getStaticClientMapPath: () => string;
-  getStaticClientPath: () => string;
-  getStaticFilePath: (
-    componentName: string,
-    componentVersion: string,
-    filePath: string
-  ) => string;
-  getTemplate: (type: string) => Template;
-  getTemplatesInfo: () => TemplateInfo[];
-  init(): Promise<ComponentsList>;
-  publishComponent(
-    pkgDetails: any,
-    componentName: string,
-    componentVersion: string
-  ): Promise<ComponentsDetails>;
-}
-
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {

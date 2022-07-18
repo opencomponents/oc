@@ -2,7 +2,8 @@ import * as getComponentFallback from './helpers/get-component-fallback';
 import previewView from '../views/preview';
 import * as urlBuilder from '../domain/url-builder';
 import { Request, Response } from 'express';
-import { Component, Config, TemplateInfo, Repository } from '../../types';
+import type { Repository } from '../domain/repository';
+import { Component, Config, TemplateInfo } from '../../types';
 import { fromPromise } from 'universalify';
 
 function componentPreview(

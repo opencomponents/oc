@@ -9,7 +9,8 @@ import PluginsRoute from './routes/plugins';
 import DependenciesRoute from './routes/dependencies';
 import settings from '../resources/settings';
 import type { Express } from 'express';
-import { Config, Repository } from '../types';
+import type { Repository } from '../registry/domain/repository';
+import { Config } from '../types';
 
 export function create(app: Express, conf: Config, repository: Repository) {
   const routes = {

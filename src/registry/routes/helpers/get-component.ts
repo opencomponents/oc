@@ -18,7 +18,8 @@ import settings from '../../../resources/settings';
 import strings from '../../../resources';
 import * as urlBuilder from '../../domain/url-builder';
 import * as validator from '../../domain/validators';
-import { Config, Repository } from '../../../types';
+import type { Repository } from '../../domain/repository';
+import { Config } from '../../../types';
 import { IncomingHttpHeaders } from 'http';
 import { fromPromise } from 'universalify';
 

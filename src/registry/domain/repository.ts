@@ -11,14 +11,14 @@ import * as validator from './validators';
 import getPromiseBasedAdapter from './storage-adapter';
 import * as versionHandler from './version-handler';
 import errorToString from '../../utils/error-to-string';
-import { Component, Config, Repository } from '../../types';
+import { Component, Config } from '../../types';
 import { StorageAdapter } from 'oc-storage-adapters-utils';
 
 const packageInfo = fs.readJsonSync(
   path.join(__dirname, '..', '..', '..', 'package.json')
 );
 
-export default function repository(conf: Config): Repository {
+export default function repository(conf: Config) {
   const cdn: StorageAdapter =
     !conf.local &&
     (getPromiseBasedAdapter(conf.storage.adapter(conf.storage.options)) as any);
@@ -341,3 +341,5 @@ export default function repository(conf: Config): Repository {
 
   return repository;
 }
+
+export type Repository = ReturnType<typeof repository>;

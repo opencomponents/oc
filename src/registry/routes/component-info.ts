@@ -6,7 +6,8 @@ import * as getComponentFallback from './helpers/get-component-fallback';
 import infoView from '../views/info';
 import isUrlDiscoverable from './helpers/is-url-discoverable';
 import * as urlBuilder from '../domain/url-builder';
-import { Component, Config, Repository } from '../../types';
+import type { Repository } from '../domain/repository';
+import { Component, Config } from '../../types';
 import { Request, Response } from 'express';
 
 function getParams(component: Component) {
