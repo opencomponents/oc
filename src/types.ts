@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { Logger } from './cli/logger';
 import { PackageJson } from 'type-fest';
 
 export interface Author {
@@ -234,91 +233,6 @@ export interface Plugin {
     execute: (...args: unknown[]) => unknown;
     dependencies?: string[];
   };
-}
-
-export interface RegistryCli {
-  add(registry: string): Promise<void>;
-  get(): Promise<string[]>;
-  getApiComponentByHref(href: string): Promise<Component>;
-  getComponentPreviewUrlByUrl(componentHref: string): Promise<string>;
-  putComponent(options: {
-    username?: string;
-    password?: string;
-    route: string;
-    path: string;
-  }): Promise<void>;
-  remove(registry: string): Promise<void>;
-}
-
-export interface Local {
-  clean: {
-    fetchList: (dirPath: string) => Promise<string[]>;
-    remove: (list: string[]) => Promise<void>;
-  };
-  cleanup: (compressedPackagePath: string) => Promise<void>;
-  compress: (input: string, output: string) => Promise<void>;
-  getComponentsByDir: (
-    componentsDir: string,
-    componentsToRun?: string[]
-  ) => Promise<string[]>;
-  init: (options: {
-    componentName: string;
-    logger: Logger;
-    componentPath: string;
-    templateType: string;
-  }) => Promise<void>;
-  mock: (params: {
-    targetType: string;
-    targetValue: string;
-    targetName: string;
-  }) => Promise<void>;
-  package: (options: {
-    componentPath: string;
-    minify?: boolean;
-    verbose?: boolean;
-    production?: boolean;
-  }) => Promise<Component>;
-}
-
-export interface Repository {
-  getCompiledView(
-    componentName: string,
-    componentVersion: string
-  ): Promise<string>;
-  getComponent(
-    componentName: string,
-    componentVersion?: string
-  ): Promise<Component>;
-  getComponentInfo(
-    componentName: string,
-    componentVersion: string
-  ): Promise<Component>;
-  getComponentPath(componentName: string, componentVersion: string): void;
-  getComponents(): Promise<string[]>;
-  getComponentsDetails(): Promise<ComponentsDetails>;
-  getComponentVersions(componentName: string): Promise<string[]>;
-  getDataProvider(
-    componentName: string,
-    componentVersion: string
-  ): Promise<{
-    content: string;
-    filePath: string;
-  }>;
-  getStaticClientMapPath: () => string;
-  getStaticClientPath: () => string;
-  getStaticFilePath: (
-    componentName: string,
-    componentVersion: string,
-    filePath: string
-  ) => string;
-  getTemplate: (type: string) => Template;
-  getTemplatesInfo: () => TemplateInfo[];
-  init(): Promise<ComponentsList>;
-  publishComponent(
-    pkgDetails: any,
-    componentName: string,
-    componentVersion: string
-  ): Promise<ComponentsDetails>;
 }
 
 declare global {

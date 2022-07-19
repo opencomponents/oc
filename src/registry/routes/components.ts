@@ -5,7 +5,8 @@ import GetComponentHelper, {
   GetComponentResult
 } from './helpers/get-component';
 import strings from '../../resources';
-import { Config, Repository } from '../../types';
+import type { Repository } from '../domain/repository';
+import { Config } from '../../types';
 import { Request, RequestHandler, Response } from 'express';
 
 type Component = {

@@ -4,11 +4,13 @@ import fs from 'fs-extra';
 import readCb from 'read';
 import { promisify } from 'util';
 import { Logger } from '../logger';
-import { Component, RegistryCli, Local } from '../../types';
+import type { Local } from '../domain/local';
+import { Component } from '../../types';
 import { fromPromise } from 'universalify';
 
 import handleDependencies from '../domain/handle-dependencies';
 import strings from '../../resources/index';
+import { RegistryCli } from '../domain/registry';
 
 const read = promisify(readCb);
 

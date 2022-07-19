@@ -10,15 +10,15 @@ import mock from './mock';
 import packageComponents from './package-components';
 import strings from '../../resources';
 import * as validator from '../../registry/domain/validators';
-import { Local } from '../../types';
+import { Logger } from '../logger';
 
-export default function local(): Local {
+export default function local() {
   return {
     clean,
-    cleanup(compressedPackagePath: string) {
+    cleanup(compressedPackagePath: string): Promise<void> {
       return fs.unlink(compressedPackagePath);
     },
-    compress(input, output) {
+    compress(input: string, output: string): Promise<void> {
       return promisify(targz.compress)({
         src: input,
         dest: output,
@@ -32,7 +32,12 @@ export default function local(): Local {
       });
     },
     getComponentsByDir: getComponentsByDir(),
-    async init(options) {
+    async init(options: {
+      componentName: string;
+      logger: Logger;
+      componentPath: string;
+      templateType: string;
+    }): Promise<void> {
       const { componentName, logger } = options;
       let { templateType } = options;
       if (!validator.validateComponentName(componentName)) {
@@ -68,3 +73,5 @@ export default function local(): Local {
     package: packageComponents()
   };
 }
+
+export type Local = ReturnType<typeof local>;

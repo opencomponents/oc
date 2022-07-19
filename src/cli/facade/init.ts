@@ -2,7 +2,7 @@ import path from 'path';
 import { fromPromise } from 'universalify';
 
 import strings from '../../resources/index';
-import { Local } from '../../types';
+import type { Local } from '../domain/local';
 import { Logger } from '../logger';
 
 const init = ({ local, logger }: { local: Local; logger: Logger }) =>

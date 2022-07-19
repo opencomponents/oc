@@ -11,14 +11,19 @@ import * as validator from './validators';
 import getPromiseBasedAdapter from './storage-adapter';
 import * as versionHandler from './version-handler';
 import errorToString from '../../utils/error-to-string';
-import { Component, Config, Repository } from '../../types';
+import {
+  Component,
+  ComponentsDetails,
+  Config,
+  TemplateInfo
+} from '../../types';
 import { StorageAdapter } from 'oc-storage-adapters-utils';
 
 const packageInfo = fs.readJsonSync(
   path.join(__dirname, '..', '..', '..', 'package.json')
 );
 
-export default function repository(conf: Config): Repository {
+export default function repository(conf: Config) {
   const cdn: StorageAdapter =
     !conf.local &&
     (getPromiseBasedAdapter(conf.storage.adapter(conf.storage.options)) as any);
@@ -110,7 +115,10 @@ export default function repository(conf: Config): Repository {
   };
 
   const repository = {
-    getCompiledView(componentName: string, componentVersion: string) {
+    getCompiledView(
+      componentName: string,
+      componentVersion: string
+    ): Promise<string> {
       if (conf.local) {
         return Promise.resolve(local.getCompiledView(componentName));
       }
@@ -119,7 +127,10 @@ export default function repository(conf: Config): Repository {
         getFilePath(componentName, componentVersion, 'template.js')
       );
     },
-    async getComponent(componentName: string, componentVersion?: string) {
+    async getComponent(
+      componentName: string,
+      componentVersion?: string
+    ): Promise<Component> {
       const allVersions = await repository.getComponentVersions(componentName);
 
       if (allVersions.length === 0) {
@@ -150,7 +161,10 @@ export default function repository(conf: Config): Repository {
 
       return Object.assign(component, { allVersions });
     },
-    getComponentInfo(componentName: string, componentVersion: string) {
+    getComponentInfo(
+      componentName: string,
+      componentVersion: string
+    ): Promise<Component> {
       if (conf.local) {
         let componentInfo: Component;
 
@@ -180,13 +194,13 @@ export default function repository(conf: Config): Repository {
         false
       );
     },
-    getComponentPath(componentName: string, componentVersion: string) {
+    getComponentPath(componentName: string, componentVersion: string): string {
       const prefix = conf.local
         ? conf.baseUrl
         : `${options!['path']}${options!.componentsDir}/`;
       return `${prefix}${componentName}/${componentVersion}/`;
     },
-    async getComponents() {
+    async getComponents(): Promise<string[]> {
       if (conf.local) {
         return local.getComponents();
       }
@@ -194,7 +208,7 @@ export default function repository(conf: Config): Repository {
       const { components } = await componentsCache.get();
       return Object.keys(components);
     },
-    getComponentsDetails() {
+    getComponentsDetails(): Promise<ComponentsDetails> {
       if (conf.local) {
         // when in local this won't get called
         return Promise.resolve(null) as any;
@@ -202,7 +216,7 @@ export default function repository(conf: Config): Repository {
 
       return componentsDetails.get();
     },
-    async getComponentVersions(componentName: string) {
+    async getComponentVersions(componentName: string): Promise<string[]> {
       if (conf.local) {
         return local.getComponentVersions(componentName);
       }
@@ -211,7 +225,13 @@ export default function repository(conf: Config): Repository {
 
       return res.components[componentName] ? res.components[componentName] : [];
     },
-    async getDataProvider(componentName: string, componentVersion: string) {
+    async getDataProvider(
+      componentName: string,
+      componentVersion: string
+    ): Promise<{
+      content: string;
+      filePath: string;
+    }> {
       if (conf.local) {
         return local.getDataProvider(componentName);
       }
@@ -226,14 +246,14 @@ export default function repository(conf: Config): Repository {
 
       return { content, filePath };
     },
-    getStaticClientPath: () =>
+    getStaticClientPath: (): string =>
       `${options!['path']}${getFilePath(
         'oc-client',
         packageInfo.version,
         'src/oc-client.min.js'
       )}`,
 
-    getStaticClientMapPath: () =>
+    getStaticClientMapPath: (): string =>
       `${options!['path']}${getFilePath(
         'oc-client',
         packageInfo.version,
@@ -244,14 +264,14 @@ export default function repository(conf: Config): Repository {
       componentName: string,
       componentVersion: string,
       filePath: string
-    ) =>
+    ): string =>
       `${repository.getComponentPath(componentName, componentVersion)}${
         conf.local ? settings.registry.localStaticRedirectorPath : ''
       }${filePath}`,
 
-    getTemplatesInfo: () => templatesInfo,
+    getTemplatesInfo: (): TemplateInfo[] => templatesInfo,
     getTemplate: (type: string) => templatesHash[type],
-    async init() {
+    async init(): Promise<ComponentsDetails> {
       if (conf.local) {
         // when in local this won't get called
         return 'ok' as any;
@@ -265,7 +285,7 @@ export default function repository(conf: Config): Repository {
       pkgDetails: any,
       componentName: string,
       componentVersion: string
-    ) {
+    ): Promise<ComponentsDetails> {
       if (conf.local) {
         throw {
           code: strings.errors.registry.LOCAL_PUBLISH_NOT_ALLOWED_CODE,
@@ -341,3 +361,5 @@ export default function repository(conf: Config): Repository {
 
   return repository;
 }
+
+export type Repository = ReturnType<typeof repository>;

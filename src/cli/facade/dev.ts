@@ -11,7 +11,7 @@ import * as oc from '../../index';
 import strings from '../../resources/index';
 import watch from '../domain/watch';
 import { Logger } from '../logger';
-import { Local } from '../../types';
+import type { Local } from '../domain/local';
 
 type Registry = ReturnType<typeof oc.Registry>;
 
