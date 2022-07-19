@@ -7,7 +7,7 @@ import put from '../../utils/put';
 import settings from '../../resources/settings';
 import * as urlBuilder from '../../registry/domain/url-builder';
 import * as urlParser from '../domain/url-parser';
-import { RegistryCli } from '../../types';
+import { Component } from '../../types';
 
 const getOcVersion = (): string => {
   const ocPackagePath = path.join(__dirname, '../../../package.json');
@@ -20,7 +20,7 @@ interface RegistryOptions {
   registry?: string;
 }
 
-export default function registry(opts: RegistryOptions = {}): RegistryCli {
+export default function registry(opts: RegistryOptions = {}) {
   let requestsHeaders = {
     'user-agent': `oc-cli-${getOcVersion()}/${process.version}-${
       process.platform
@@ -28,7 +28,7 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
   };
 
   return {
-    async add(registry: string) {
+    async add(registry: string): Promise<void> {
       if (registry.slice(registry.length - 1) !== '/') {
         registry += '/';
       }
@@ -57,7 +57,7 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
         throw 'oc registry not available';
       }
     },
-    async get() {
+    async get(): Promise<string[]> {
       if (opts.registry) {
         return [opts.registry];
       }
@@ -73,12 +73,12 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
         throw 'No oc registries';
       }
     },
-    getApiComponentByHref(href: string) {
+    getApiComponentByHref(href: string): Promise<Component> {
       return got(href + settings.registry.componentInfoPath, {
         headers: requestsHeaders
       }).json();
     },
-    async getComponentPreviewUrlByUrl(componentHref: string) {
+    async getComponentPreviewUrlByUrl(componentHref: string): Promise<string> {
       const res: { requestVersion: string; href: string } = await got(
         componentHref,
         { headers: requestsHeaders }
@@ -93,7 +93,7 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
       password?: string;
       route: string;
       path: string;
-    }) {
+    }): Promise<void> {
       if (!!options.username && !!options.password) {
         requestsHeaders = Object.assign(requestsHeaders, {
           Authorization:
@@ -129,7 +129,7 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
         throw errMsg;
       }
     },
-    async remove(registry: string) {
+    async remove(registry: string): Promise<void> {
       if (registry.slice(registry.length - 1) !== '/') {
         registry += '/';
       }
@@ -143,3 +143,5 @@ export default function registry(opts: RegistryOptions = {}): RegistryCli {
     }
   };
 }
+
+export type RegistryCli = ReturnType<typeof registry>;

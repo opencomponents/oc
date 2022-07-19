@@ -235,20 +235,6 @@ export interface Plugin {
   };
 }
 
-export interface RegistryCli {
-  add(registry: string): Promise<void>;
-  get(): Promise<string[]>;
-  getApiComponentByHref(href: string): Promise<Component>;
-  getComponentPreviewUrlByUrl(componentHref: string): Promise<string>;
-  putComponent(options: {
-    username?: string;
-    password?: string;
-    route: string;
-    path: string;
-  }): Promise<void>;
-  remove(registry: string): Promise<void>;
-}
-
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {

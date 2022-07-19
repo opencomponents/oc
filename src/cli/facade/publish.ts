@@ -5,11 +5,12 @@ import readCb from 'read';
 import { promisify } from 'util';
 import { Logger } from '../logger';
 import type { Local } from '../domain/local';
-import { Component, RegistryCli } from '../../types';
+import { Component } from '../../types';
 import { fromPromise } from 'universalify';
 
 import handleDependencies from '../domain/handle-dependencies';
 import strings from '../../resources/index';
+import { RegistryCli } from '../domain/registry';
 
 const read = promisify(readCb);
 
