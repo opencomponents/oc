@@ -54,7 +54,7 @@ export default function publish(repository: Repository) {
     }
 
     try {
-      const pkgDetails = await extractPackage(files);
+      const pkgDetails = await extractPackage(files, res.conf.tarExtractMode);
 
       try {
         await repository.publishComponent(

@@ -154,6 +154,7 @@ export interface Config {
   liveReloadPort: number;
   components?: string[];
   local: boolean;
+  tarExtractMode: number;
   path: string;
   plugins: Record<string, (...args: unknown[]) => void>;
   pollingInterval: number;
