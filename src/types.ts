@@ -24,6 +24,7 @@ export interface TemplateInfo {
     name: string;
     global: string | string[];
     url: string;
+    devUrl?: string;
   }>;
   type: string;
   version: string;

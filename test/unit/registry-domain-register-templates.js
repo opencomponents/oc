@@ -24,31 +24,39 @@ describe('registry : domain : register-templates', () => {
   });
 
   describe('when templates get registered with additional templates', () => {
-    const templateMock = {
+    const getTemplateMock = dev => ({
       getInfo() {
         return {
           type: 'new-tpl',
           version: '6.6.6',
-          externals: {}
+          externals: [{ url: 'produrl', ...(dev && { devUrl: 'devurl' }) }]
         };
       }
-    };
+    });
+    const templateMock = getTemplateMock();
+    const devTemplateMock = getTemplateMock(true);
 
-    const registerd = registerTemplates([templateMock]);
+    const registered = registerTemplates([templateMock]);
 
     it('should correctly register core-templates & extra templates', () => {
-      expect(registerd.templatesHash).to.deep.eql({
+      expect(registered.templatesHash).to.deep.eql({
         'oc-template-es6': require('oc-template-es6'),
         'oc-template-jade': require('oc-template-jade'),
         'oc-template-handlebars': require('oc-template-handlebars'),
         'new-tpl': templateMock
       });
-      expect(registerd.templatesInfo).to.deep.eql([
+      expect(registered.templatesInfo).to.deep.eql([
         require('oc-template-es6').getInfo(),
         require('oc-template-jade').getInfo(),
         require('oc-template-handlebars').getInfo(),
         templateMock.getInfo()
       ]);
+    });
+
+    const devRegistered = registerTemplates([devTemplateMock], true);
+
+    it('should replace the devurl for the url field', () => {
+      expect(devRegistered.templatesInfo[3].externals[0].url).to.eql('devurl');
     });
 
     describe('and additional template is already part of core-templates', () => {

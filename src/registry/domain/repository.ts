@@ -37,7 +37,10 @@ export default function repository(conf: Config) {
   const getFilePath = (component: string, version: string, filePath: string) =>
     `${options!.componentsDir}/${component}/${version}/${filePath}`;
 
-  const { templatesHash, templatesInfo } = registerTemplates(conf.templates);
+  const { templatesHash, templatesInfo } = registerTemplates(
+    conf.templates,
+    conf.local
+  );
 
   const local = {
     getCompiledView(componentName: string): string {
