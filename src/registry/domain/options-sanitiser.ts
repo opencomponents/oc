@@ -60,6 +60,10 @@ export default function optionsSanitiser(input: Input): Config {
     options.dependencies = [];
   }
 
+  if (typeof options.tarExtractMode === 'undefined') {
+    options.tarExtractMode = 766;
+  }
+
   if (
     typeof options.fallbackRegistryUrl !== 'undefined' &&
     !options.fallbackRegistryUrl.endsWith('/')

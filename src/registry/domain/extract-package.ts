@@ -10,7 +10,8 @@ export default async function extractPackage(
     | Express.Multer.File[]
     | {
         [fieldname: string]: Express.Multer.File[];
-      }
+      },
+  tarExtractMode: number
 ): Promise<{
   outputFolder: string;
   packageJson: PackageJson;
@@ -28,7 +29,11 @@ export default async function extractPackage(
 
   await decompress({
     src: packagePath,
-    dest: packageUntarOutput
+    dest: packageUntarOutput,
+    tar: {
+      dmode: tarExtractMode,
+      fmode: tarExtractMode
+    }
   });
 
   const packageJson = await getPackageJsonFromTempDir(packageOutput);
