@@ -4,7 +4,10 @@ import jadeTemplate from 'oc-template-jade';
 import { Template, TemplateInfo } from '../../types';
 import _ from 'lodash';
 
-export default function registerTemplates(extraTemplates: Template[]): {
+export default function registerTemplates(
+  extraTemplates: Template[],
+  dev = false
+): {
   templatesHash: Record<string, Template>;
   templatesInfo: TemplateInfo[];
 } {
@@ -21,7 +24,14 @@ export default function registerTemplates(extraTemplates: Template[]): {
   }, {} as Record<string, Template>);
 
   const templatesInfo = templates.map(template => {
-    return template.getInfo();
+    const { externals, ...rest } = template.getInfo();
+    return {
+      ...rest,
+      externals: externals.map(({ url, devUrl, ...rest }) => ({
+        ...rest,
+        url: dev && devUrl ? devUrl : url
+      }))
+    };
   });
 
   return {
