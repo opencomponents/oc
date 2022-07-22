@@ -268,6 +268,26 @@ describe('registry : domain : repository', () => {
       });
     });
 
+    describe('when getting the .env file', () => {
+      before(done => {
+        s3Mock.getFile.resolves(`
+        VAR1=VAL1
+        VAR2=VAL2
+        `);
+        savePromiseResult(repository.getEnv('hello-world', '1.0.0'), done);
+      });
+
+      it('should respond without an error', () => {
+        expect(response.error).to.be.undefined;
+      });
+
+      it('should return the component info', () => {
+        expect(response.result).not.to.be.empty;
+        expect(response.result.VAR1).to.equal('VAL1');
+        expect(response.result.VAR2).to.equal('VAL2');
+      });
+    });
+
     describe('when getting a static file url', () => {
       let url;
       before(() => {

@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import getUnixUtcTimestamp from 'oc-get-unix-utc-timestamp';
 import path from 'path';
+import dotenv from 'dotenv';
 
 import ComponentsCache from './components-cache';
 import getComponentsDetails from './components-details';
@@ -114,6 +115,14 @@ export default function repository(conf: Config) {
         content: fs.readFileSync(filePath).toString(),
         filePath
       };
+    },
+    getEnv(componentName: string): Record<string, string> {
+      const pkg: Component = fs.readJsonSync(
+        path.join(conf.path, `${componentName}/package.json`)
+      );
+      const filePath = path.join(conf.path, componentName, pkg.oc.files.env!);
+
+      return dotenv.parse(fs.readFileSync(filePath).toString());
     }
   };
 
@@ -248,6 +257,19 @@ export default function repository(conf: Config) {
       const content = await cdn.getFile(filePath);
 
       return { content, filePath };
+    },
+    async getEnv(
+      componentName: string,
+      componentVersion: string
+    ): Promise<Record<string, string>> {
+      if (conf.local) {
+        return local.getEnv(componentName);
+      }
+
+      const filePath = getFilePath(componentName, componentVersion, '.env');
+      const file = await cdn.getFile(filePath);
+
+      return dotenv.parse(file);
     },
     getStaticClientPath: (): string =>
       `${options!['path']}${getFilePath(
