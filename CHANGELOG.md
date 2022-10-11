@@ -1,6 +1,16 @@
 ## Change Log
 
-### v0.49.13
+### v0.49.14
+- [#1308](https://github.com/opencomponents/oc/pull/1308) Update project to Node.js 14.x
+- [#1310](https://github.com/opencomponents/oc/pull/1310) Add Node.js v18 to CI
+- [#1306](https://github.com/opencomponents/oc/pull/1306) Align the Node.js nvm version with the one in package.json
+- [#1301](https://github.com/opencomponents/oc/pull/1301) add tarExtractMode for extracting packages
+- [#1300](https://github.com/opencomponents/oc/pull/1300) allow for dev version for external dependencies
+- [#1302](https://github.com/opencomponents/oc/pull/1302) Bump terser from 5.10.0 to 5.14.2
+- [#1298](https://github.com/opencomponents/oc/pull/1298) Bump got from 11.8.3 to 11.8.5
+- [#1297](https://github.com/opencomponents/oc/pull/1297) [Snyk] Security upgrade got from 11.8.3 to 11.8.5
+- [#1293](https://github.com/opencomponents/oc/pull/1293) Bump minimist from 1.2.5 to 1.2.6
+- [#1299](https://github.com/opencomponents/oc/pull/1299) Refactor types
 - [#1296](https://github.com/opencomponents/oc/pull/1296) removing express-promise-router
 
 ### v0.49.12
