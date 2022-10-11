@@ -2874,7 +2874,7 @@
     "merge2" "^1.3.0"
     "slash" "^3.0.0"
 
-"got@^11.8.5":
+"got@11.8.5":
   "integrity" "sha512-o0Je4NvQObAuZPHLFoRSkdG2lTgtcynqymzg2Vupdx6PorhaT5MCbIyXG6d4D94kk8ZG57QeosgdiqfJWhEhlQ=="
   "resolved" "https://registry.npmjs.org/got/-/got-11.8.5.tgz"
   "version" "11.8.5"
@@ -3922,10 +3922,10 @@
     "oc-templates-messages" "1.0.4"
     "uglify-js" "3.7.6"
 
-"oc-s3-storage-adapter@1.2.0":
-  "integrity" "sha512-moSAU5h2vuzVsSaty7qg/1Fb422v/txt+APKw4gNTmRoL7Q46BLLAu7NGcdmDvZWpWZLpTDMPWPAqnZpF92bDQ=="
-  "resolved" "https://registry.npmjs.org/oc-s3-storage-adapter/-/oc-s3-storage-adapter-1.2.0.tgz"
-  "version" "1.2.0"
+"oc-s3-storage-adapter@1.3.1":
+  "integrity" "sha512-GOF5ozTDhmmrmZPuBl4phzteCyO8tPXGUQdwm/B69VTByfh25EstQSb08YYkK3COxxo3V/I0aclGp4SFB65V+w=="
+  "resolved" "https://registry.npmjs.org/oc-s3-storage-adapter/-/oc-s3-storage-adapter-1.3.1.tgz"
+  "version" "1.3.1"
   dependencies:
     "async" "3.1.1"
     "aws-sdk" "^2.184.0"
@@ -3933,7 +3933,7 @@
     "lodash" "^4.17.4"
     "nice-cache" "^0.0.5"
     "node-dir" "^0.1.17"
-    "oc-storage-adapters-utils" "1.1.0"
+    "oc-storage-adapters-utils" "1.2.0"
     "stringformat" "^0.0.5"
     "universalify" "^2.0.0"
 
@@ -3966,10 +3966,10 @@
     "oc-minify-file" "2.0.0"
     "oc-templates-messages" "1.0.4"
 
-"oc-storage-adapters-utils@1.1.0":
-  "integrity" "sha512-7rsWfZcsXuPE5RxlSqpI0gs5J5bXXHB+GXoroKB/0osCUYwD6re0MHj2qog5Ig16C6DCaJfzEJyxyeZ3zbIxyQ=="
-  "resolved" "https://registry.npmjs.org/oc-storage-adapters-utils/-/oc-storage-adapters-utils-1.1.0.tgz"
-  "version" "1.1.0"
+"oc-storage-adapters-utils@1.2.0":
+  "integrity" "sha512-D0/C0IHKXdL54T5QvhcK32kjMpzu/VyIPl+Ggyj6Q+Olzhx5fikEI1mdYEhcjBrLblZskWEr0PqyKH/5r4fkEw=="
+  "resolved" "https://registry.npmjs.org/oc-storage-adapters-utils/-/oc-storage-adapters-utils-1.2.0.tgz"
+  "version" "1.2.0"
 
 "oc-template-es6-compiler@2.0.0":
   "integrity" "sha512-2/RT6Dg53ERU+27yWTp+EKkH0wSNoSiQnZ4MRdMdy8uJEzTZPGkdC5oIVJTwmi6DQ4n39otnHsw2O13RT2p/WQ=="
