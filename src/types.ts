@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { PackageJson } from 'type-fest';
+import { StorageAdapter } from 'oc-storage-adapters-utils';
 
 export interface Author {
   email?: string;
@@ -183,7 +184,7 @@ export interface Config {
     componentsDir: string;
   };
   storage: {
-    adapter: any;
+    adapter: (options: unknown) => StorageAdapter;
     options: Record<string, any> & { componentsDir: string };
   };
   tempDir: string;

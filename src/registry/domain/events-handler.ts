@@ -5,13 +5,13 @@ type Subscription<T = any> = (data: T) => void;
 let subscriptions: Record<string, Array<Subscription>> = {};
 
 export interface RequestData {
-  body: any;
+  body: unknown;
   duration: number;
   headers: IncomingHttpHeaders;
   method: string;
   path: string;
   relativeUrl: string;
-  query: Record<string, any>;
+  query: Record<string, unknown>;
   url: string;
   statusCode: number;
   errorDetails?: string;

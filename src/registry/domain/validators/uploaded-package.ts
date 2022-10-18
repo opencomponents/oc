@@ -34,12 +34,12 @@ export default function uploadedPackage(
     return returnError('not_valid');
   }
 
-  const file: Express.Multer.File = (input as any)[0];
+  const file: Express.Multer.File = (input as Express.Multer.File[])[0];
   const validTypes = ['application/gzip', 'application/octet-stream'];
 
   if (
     !validTypes.includes(file.mimetype) ||
-    (file as any).truncated ||
+    (file as { truncated?: boolean }).truncated ||
     file.filename.indexOf('.tar.gz') < 0
   ) {
     return returnError('not_valid');

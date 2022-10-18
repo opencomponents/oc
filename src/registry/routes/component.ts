@@ -20,7 +20,7 @@ export default function component(
         headers: req.headers,
         ip: req.ip,
         name: req.params['componentName'],
-        parameters: req.query as any,
+        parameters: req.query as Record<string, string>,
         version: req.params['componentVersion']
       },
       result => {
