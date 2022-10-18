@@ -137,6 +137,6 @@ const argv = cli
   .version()
   .wrap(cli.terminalWidth()).argv;
 
-if ((argv as any)._.length === 0) {
+if ((argv as Awaited<typeof argv>)._.length === 0) {
   cli.showHelp();
 }

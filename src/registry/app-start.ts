@@ -61,7 +61,7 @@ export default async function appStart(
         logger.log(colors.green('Component published.'));
       } catch (err) {
         logger.log(
-          colors.red(`Component not published: ${(err as any).message}`)
+          colors.red(`Component not published: ${(err as Error).message}`)
         );
         throw err;
       }

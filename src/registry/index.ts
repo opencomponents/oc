@@ -47,7 +47,7 @@ export default function registry(inputOptions: Input) {
   const start = async (
     callback: (
       err: unknown,
-      data: { app: express.Express; server: http.Server }
+      data?: { app: express.Express; server: http.Server }
     ) => void
   ) => {
     // eslint-disable-next-line no-console
@@ -68,7 +68,7 @@ export default function registry(inputOptions: Input) {
       // @ts-ignore Type not taking error on callback (this can error, though)
       server.listen(options.port, (err: any) => {
         if (err) {
-          return callback(err, undefined as any);
+          return callback(err);
         }
         eventsHandler.fire('start', {});
 
@@ -100,10 +100,10 @@ export default function registry(inputOptions: Input) {
           code: 'EXPRESS_ERROR',
           message: error?.message ?? String(error)
         });
-        callback(error, undefined as any);
+        callback(error);
       });
     } catch (err) {
-      callback((err as any)?.msg || err, undefined as any);
+      callback((err as any)?.msg || err);
     }
   };
 

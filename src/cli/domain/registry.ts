@@ -123,7 +123,7 @@ export default function registry(opts: RegistryOptions = {}) {
         ) {
           errMsg = parsedError.error;
         } else {
-          errMsg = parsedError as any;
+          errMsg = parsedError;
         }
 
         throw errMsg;

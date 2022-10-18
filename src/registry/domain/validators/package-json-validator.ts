@@ -7,7 +7,7 @@ interface ValidationResult {
 
 interface PkgDetails {
   componentName: string;
-  packageJson: { name: string };
+  packageJson: { name?: string };
   customValidator: (data: unknown) => ValidationResult | boolean;
 }
 
