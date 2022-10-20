@@ -229,9 +229,9 @@ export interface Plugin {
   options?: any;
   register: {
     register: (
-      options: unknown,
-      dependencies: unknown,
-      next: (error?: unknown) => void
+      options: any,
+      dependencies: any,
+      next: (error?: Error) => void
     ) => void;
     execute: (...args: unknown[]) => unknown;
     dependencies?: string[];
