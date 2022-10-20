@@ -233,7 +233,7 @@ export interface Plugin {
       dependencies: any,
       next: (error?: Error) => void
     ) => void;
-    execute: (...args: unknown[]) => unknown;
+    execute: (...args: any[]) => any;
     dependencies?: string[];
   };
 }
