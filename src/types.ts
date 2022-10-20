@@ -184,7 +184,7 @@ export interface Config {
     componentsDir: string;
   };
   storage: {
-    adapter: (options: unknown) => StorageAdapter;
+    adapter: (options: any) => StorageAdapter;
     options: Record<string, any> & { componentsDir: string };
   };
   tempDir: string;
