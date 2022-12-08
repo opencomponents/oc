@@ -491,7 +491,7 @@ export default function getComponent(conf: Config, repository: Repository) {
                       (...args: unknown[]) => unknown
                     >
                   },
-                  console: conf.local ? console : { log: _.noop },
+                  console: conf.local ? console : Object.fromEntries(Object.keys(console).map(key => [key, _.noop])),
                   setTimeout,
                   Buffer
                 };
