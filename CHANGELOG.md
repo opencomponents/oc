@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.49.19
+
+- [#1315](https://github.com/opencomponents/oc/pull/1315) include the entire console api in the production stub
+
 ### v0.49.16
 
 - [#1313](https://github.com/opencomponents/oc/pull/1313) remove some any types
