@@ -491,7 +491,27 @@ export default function getComponent(conf: Config, repository: Repository) {
                       (...args: unknown[]) => unknown
                     >
                   },
-                  console: conf.local ? console : { log: _.noop },
+                  console: conf.local ? console : {
+                    assert: _.noop,
+                    clear: _.noop,
+                    count: _.noop,
+                    countReset: _.noop,
+                    debug: _.noop,
+                    dir: _.noop,
+                    dirxml: _.noop,
+                    error: _.noop,
+                    group: _.noop,
+                    groupCollapsed: _.noop,
+                    groupEnd: _.noop,
+                    info: _.noop,
+                    log: _.noop,
+                    table: _.noop,
+                    time: _.noop,
+                    timeEnd: _.noop,
+                    timeLog: _.noop,
+                    trace: _.noop,
+                    warn: _.noop,
+                    },
                   setTimeout,
                   Buffer
                 };
