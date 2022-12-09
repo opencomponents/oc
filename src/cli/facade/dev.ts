@@ -202,13 +202,11 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
 
         return registry;
       } catch (err: any) {
-        if (err.code === 'EADDRINUSE') {
-          // eslint-disable-next-line no-ex-assign
-          err = cliErrors.PORT_IS_BUSY(port) as any;
-        }
+        const error =
+          err.code === 'EADDRINUSE' ? cliErrors.PORT_IS_BUSY(port) : err;
 
-        logger.err(String(err));
-        throw err;
+        logger.err(String(error));
+        throw error;
       }
     }
   );

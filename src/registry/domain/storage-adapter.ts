@@ -49,16 +49,16 @@ function isLegacyAdapter(
 
 function convertLegacyAdapter(adapter: LegacyStorageAdapter): StorageAdapter {
   return {
-    getFile: fromCallback(adapter.getFile),
-    getJson: fromCallback(adapter.getJson),
-    listSubDirectories: fromCallback(adapter.listSubDirectories),
-    putDir: fromCallback(adapter.putDir),
-    putFile: fromCallback(adapter.putFile),
-    putFileContent: fromCallback(adapter.putFileContent),
+    getFile: fromCallback(adapter.getFile as any),
+    getJson: fromCallback(adapter.getJson as any),
+    listSubDirectories: fromCallback(adapter.listSubDirectories as any),
+    putDir: fromCallback(adapter.putDir as any),
+    putFile: fromCallback(adapter.putFile as any),
+    putFileContent: fromCallback(adapter.putFileContent as any),
     getUrl: adapter.getUrl,
     maxConcurrentRequests: adapter.maxConcurrentRequests,
     adapterType: adapter.adapterType
-  };
+  } as any;
 }
 
 export default function getPromiseBasedAdapter(

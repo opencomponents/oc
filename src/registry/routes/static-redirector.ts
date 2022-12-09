@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { Request, Response } from 'express';
 
-import storageUtils from 'oc-storage-adapters-utils';
+import * as storageUtils from 'oc-storage-adapters-utils';
 import type { Repository } from '../domain/repository';
 
 export default function staticRedirector(repository: Repository) {

@@ -296,10 +296,10 @@ export default function repository(conf: Config) {
 
     getTemplatesInfo: (): TemplateInfo[] => templatesInfo,
     getTemplate: (type: string) => templatesHash[type],
-    async init(): Promise<ComponentsDetails> {
+    async init(): Promise<ComponentsDetails | undefined> {
       if (conf.local) {
         // when in local this won't get called
-        return 'ok' as any;
+        return;
       }
 
       const componentsList = await componentsCache.load();
@@ -307,7 +307,7 @@ export default function repository(conf: Config) {
       return componentsDetails.refresh(componentsList);
     },
     async publishComponent(
-      pkgDetails: any,
+      pkgDetails: { outputFolder: string; packageJson: Component },
       componentName: string,
       componentVersion: string
     ): Promise<ComponentsDetails> {

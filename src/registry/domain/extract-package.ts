@@ -1,9 +1,9 @@
 import path from 'path';
 import targz from 'targz';
 import { promisify } from 'util';
-import { PackageJson } from 'type-fest';
 
 import getPackageJsonFromTempDir from './get-package-json-from-temp-dir';
+import { Component } from '../../types';
 
 export default async function extractPackage(
   files:
@@ -14,9 +14,9 @@ export default async function extractPackage(
   tarExtractMode: number
 ): Promise<{
   outputFolder: string;
-  packageJson: PackageJson;
+  packageJson: Component;
 }> {
-  const packageFile: Express.Multer.File = (files as any)[0];
+  const packageFile = (files as Express.Multer.File[])[0];
   const packagePath = path.resolve(packageFile.path);
   const packageUntarOutput = path.resolve(
     packageFile.path,
@@ -40,6 +40,6 @@ export default async function extractPackage(
 
   return {
     outputFolder: packageOutput,
-    packageJson: packageJson
+    packageJson
   };
 }

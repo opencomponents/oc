@@ -46,9 +46,9 @@ export default function componentsList(conf: Config, cdn: StorageAdapter) {
         };
       } catch (err: any) {
         if (err.code === 'dir_not_found') {
-          throw {
+          return {
             lastEdit: getUnixUTCTimestamp(),
-            components: [] as any
+            components: {}
           };
         }
         throw err;

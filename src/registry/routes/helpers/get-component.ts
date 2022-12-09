@@ -54,6 +54,10 @@ export interface GetComponentResult {
   };
 }
 
+const noopConsole = Object.fromEntries(
+  Object.keys(console).map(key => [key, _.noop])
+);
+
 export default function getComponent(conf: Config, repository: Repository) {
   const client = Client({ templates: conf.templates });
   const cache = new Cache({
@@ -517,12 +521,9 @@ export default function getComponent(conf: Config, repository: Repository) {
                   const context = {
                     require: RequireWrapper(conf.dependencies),
                     module: {
-                      exports: {} as Record<
-                        string,
-                        (...args: unknown[]) => unknown
-                      >
+                      exports: {} as Record<string, (...args: any[]) => any>
                     },
-                    console: conf.local ? console : { log: _.noop },
+                    console: conf.local ? console : noopConsole,
                     setTimeout,
                     Buffer
                   };
