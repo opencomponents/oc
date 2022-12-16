@@ -7,3 +7,4 @@ appveyor.yml
 Gruntfile.js
 tasks
 test
+src

@@ -3,7 +3,7 @@ import getComponentsList from './components-list';
 import eventsHandler from '../events-handler';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import { ComponentsList, Config } from '../../../types';
-import { StorageAdapter } from 'oc-storage-adapters-utils';
+import { StorageAdapter, strings } from 'oc-storage-adapters-utils';
 
 export default function componentsCache(conf: Config, cdn: StorageAdapter) {
   let cachedComponentsList: ComponentsList;
@@ -56,9 +56,12 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
     },
 
     async load(): Promise<ComponentsList> {
-      const jsonComponents = await componentsList
-        .getFromJson()
-        .catch(() => null);
+      const jsonComponents = await componentsList.getFromJson().catch(err => {
+        if (err?.code === strings.errors.STORAGE.FILE_NOT_FOUND_CODE)
+          return null;
+
+        return Promise.reject(err);
+      });
       const dirComponents = await componentsList
         .getFromDirectories(jsonComponents)
         .catch(err => throwError('components_list_get', err));

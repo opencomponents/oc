@@ -59,11 +59,27 @@ describe('registry : domain : components-cache', () => {
   };
 
   describe('when library does not contain components.json', () => {
+    describe('when getting the json fails', () => {
+      let error;
+      before(done => {
+        mockedCdn.getJson = sinon.stub();
+        mockedCdn.getJson.rejects('FILE_ERROR');
+        initialise();
+        componentsCache
+          .load()
+          .catch(err => (error = err))
+          .finally(done);
+      });
+
+      it('should throw with the error message', () => {
+        expect(error).to.equal('FILE_ERROR');
+      });
+    });
     describe('when initialising the cache', () => {
       before(done => {
         mockedCdn.getJson = sinon.stub();
         mockedCdn.getJson.resolves({});
-        mockedCdn.getJson.onFirstCall(0).rejects('not_found');
+        mockedCdn.getJson.onFirstCall(0).rejects({ code: 'file_not_found' });
         mockedCdn.listSubDirectories = sinon.stub();
         mockedCdn.listSubDirectories.onCall(0).resolves(['hello-world']);
         mockedCdn.listSubDirectories.onCall(1).resolves(['1.0.0', '1.0.2']);
