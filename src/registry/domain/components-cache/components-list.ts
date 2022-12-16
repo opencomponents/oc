@@ -58,7 +58,7 @@ export default function componentsList(conf: Config, cdn: StorageAdapter) {
 
         if (invalidVersions.length > 0) {
           eventsHandler.fire('error', {
-            code: 'CORRUPTED_VERSION',
+            code: 'corrupted_version',
             message: `Couldn't validate the integrity of the component ${componentName} on the following versions: ${invalidVersions.join(
               ', '
             )}.`
