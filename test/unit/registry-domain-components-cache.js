@@ -62,7 +62,8 @@ describe('registry : domain : components-cache', () => {
     describe('when initialising the cache', () => {
       before(done => {
         mockedCdn.getJson = sinon.stub();
-        mockedCdn.getJson.rejects('not_found');
+        mockedCdn.getJson.resolves({});
+        mockedCdn.getJson.onFirstCall(0).rejects('not_found');
         mockedCdn.listSubDirectories = sinon.stub();
         mockedCdn.listSubDirectories.onCall(0).resolves(['hello-world']);
         mockedCdn.listSubDirectories.onCall(1).resolves(['1.0.0', '1.0.2']);
@@ -72,10 +73,16 @@ describe('registry : domain : components-cache', () => {
         componentsCache.load().finally(done);
       });
 
-      it('should try fetching the components.json', () => {
-        expect(mockedCdn.getJson.calledOnce).to.be.true;
+      it('should try fetching the components.json and check components', () => {
+        expect(mockedCdn.getJson.calledThrice).to.be.true;
         expect(mockedCdn.getJson.args[0][0]).to.be.equal(
           'component/components.json'
+        );
+        expect(mockedCdn.getJson.args[1][0]).to.be.equal(
+          'component/hello-world/1.0.0/package.json'
+        );
+        expect(mockedCdn.getJson.args[2][0]).to.be.equal(
+          'component/hello-world/1.0.2/package.json'
         );
       });
 
@@ -118,9 +125,12 @@ describe('registry : domain : components-cache', () => {
       });
 
       it('should fetch the components.json', () => {
-        expect(mockedCdn.getJson.calledOnce).to.be.true;
+        expect(mockedCdn.getJson.calledTwice).to.be.true;
         expect(mockedCdn.getJson.args[0][0]).to.be.equal(
           'component/components.json'
+        );
+        expect(mockedCdn.getJson.args[1][0]).to.be.equal(
+          'component/hello-world/2.0.0/package.json'
         );
       });
 

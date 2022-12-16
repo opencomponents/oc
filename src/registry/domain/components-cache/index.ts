@@ -11,8 +11,8 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
 
   const componentsList = getComponentsList(conf, cdn);
 
-  const poll = () =>
-    setTimeout(async () => {
+  const poll = () => {
+    return setTimeout(async () => {
       try {
         const data = await componentsList.getFromJson();
 
@@ -29,6 +29,7 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
       }
       refreshLoop = poll();
     }, conf.pollingInterval * 1000);
+  };
 
   const cacheDataAndStartPolling = (data: ComponentsList) => {
     cachedComponentsList = data;
@@ -55,12 +56,12 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
     },
 
     async load(): Promise<ComponentsList> {
-      const dirComponents = await componentsList
-        .getFromDirectories()
-        .catch(err => throwError('components_list_get', err));
       const jsonComponents = await componentsList
         .getFromJson()
         .catch(() => null);
+      const dirComponents = await componentsList
+        .getFromDirectories(jsonComponents)
+        .catch(err => throwError('components_list_get', err));
 
       if (
         !jsonComponents ||
@@ -78,7 +79,7 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
     async refresh(): Promise<ComponentsList> {
       clearTimeout(refreshLoop);
       try {
-        const components = await componentsList.refresh();
+        const components = await componentsList.refresh(cachedComponentsList);
         cacheDataAndStartPolling(components);
 
         return components;
