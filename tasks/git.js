@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 'use strict';
 
 const path = require('path');
@@ -76,13 +77,14 @@ const utils = {
 
 module.exports = {
   // Fetches PRs
-  prs: (options, cb) => {
-    const opts = Object.assign({}, options, {
+  prs(options, cb) {
+    const opts = {
+      ...options,
       format: {
         message: '%s',
         body: '%b'
       }
-    });
+    };
     git.log(opts, (err, changes) => {
       if (err) {
         cb(err, null);
@@ -91,7 +93,7 @@ module.exports = {
     });
   },
   // Fetches all tags
-  tags: cb => {
+  tags(cb) {
     utils.getFirstCommitHash((err, hash) => {
       git.tags((err, tags) => {
         if (err) {

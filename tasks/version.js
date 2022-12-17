@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 'use strict';
 
 const fs = require('fs-extra');
@@ -24,6 +25,6 @@ if (
   log.complete(`Package version upgraded to: ${packageJson.version}`);
 } else {
   log.error(
-    `Incorrect --type input: ${argv.type}. Use \'patch\', \'minor\' or \'major\'`
+    `Incorrect --type input: ${argv.type}. Use 'patch', 'minor' or 'major'`
   );
 }
