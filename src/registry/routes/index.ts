@@ -89,8 +89,11 @@ export default function (repository: Repository) {
                     components: componentsInfo,
                     componentsReleases,
                     componentsList: componentsInfo.map(component => {
-                      const state: 'deprecated' | 'experimental' | undefined =
-                        _.get(component, 'oc.state', '');
+                      const state: 'deprecated' | 'experimental' | '' = _.get(
+                        component,
+                        'oc.state',
+                        ''
+                      );
                       if (state) {
                         stateCounts[state] = (stateCounts[state] || 0) + 1;
                       }

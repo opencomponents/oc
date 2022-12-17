@@ -16,7 +16,7 @@ interface Vm {
   href: string;
   sandBoxDefaultQs: string;
   title: string;
-  repositoryUrl: string;
+  repositoryUrl: string | null;
 }
 
 export default function info(vm: Vm): string {
