@@ -82,6 +82,7 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
     async refresh(): Promise<ComponentsList> {
       clearTimeout(refreshLoop);
       try {
+        // Passing components that we know are fine, so it doesn't refresh invalid components
         const components = await componentsList.refresh(cachedComponentsList);
         cacheDataAndStartPolling(components);
 

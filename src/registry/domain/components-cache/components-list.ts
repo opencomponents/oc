@@ -17,7 +17,7 @@ export default function componentsList(conf: Config, cdn: StorageAdapter) {
     ): Promise<ComponentsList> => {
       const componentsInfo: Record<string, string[]> = {};
 
-      const checkVersion = (
+      const validateComponentVersion = (
         componentName: string,
         componentVersion: string
       ) => {
@@ -45,7 +45,7 @@ export default function componentsList(conf: Config, cdn: StorageAdapter) {
           await Promise.all(
             unCheckedVersions.map(unCheckedVersion =>
               limit(async () => {
-                const isValid = await checkVersion(
+                const isValid = await validateComponentVersion(
                   componentName,
                   unCheckedVersion
                 );
