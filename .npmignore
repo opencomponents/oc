@@ -5,6 +5,6 @@
 .travis.yml
 appveyor.yml
 Gruntfile.js
-tasks
-test
-src
+/tasks
+/test
+/src
