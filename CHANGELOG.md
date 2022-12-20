@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.49.23
+
+- [#1320](https://github.com/opencomponents/oc/pull/1320) make npmignore applied only to root folders
+
 ### v0.49.22
 
 - [#1319](https://github.com/opencomponents/oc/pull/1319) Check unverified packages after start/publishing
