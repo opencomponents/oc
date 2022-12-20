@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.49.22
+
+- [#1319](https://github.com/opencomponents/oc/pull/1319) Check unverified packages after start/publishing
+
 ### v0.49.21
 
 - [#1303](https://github.com/opencomponents/oc/pull/1303) add ability to retreieve environment variables from an env file
