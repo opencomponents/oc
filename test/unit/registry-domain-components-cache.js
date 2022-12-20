@@ -45,7 +45,8 @@ describe('registry : domain : components-cache', () => {
         './components-list': injectr(
           '../../dist/registry/domain/components-cache/components-list.js',
           {
-            'oc-get-unix-utc-timestamp': getTimestamp
+            'oc-get-unix-utc-timestamp': getTimestamp,
+            '../events-handler': eventsHandlerStub
           }
         ).default
       },
@@ -59,10 +60,27 @@ describe('registry : domain : components-cache', () => {
   };
 
   describe('when library does not contain components.json', () => {
+    describe('when getting the json fails', () => {
+      let error;
+      before(done => {
+        mockedCdn.getJson = sinon.stub();
+        mockedCdn.getJson.rejects(new Error('FILE_ERROR'));
+        initialise();
+        componentsCache
+          .load()
+          .catch(err => (error = err))
+          .finally(done);
+      });
+
+      it('should throw with the error message', () => {
+        expect(error.message).to.equal('FILE_ERROR');
+      });
+    });
     describe('when initialising the cache', () => {
       before(done => {
         mockedCdn.getJson = sinon.stub();
-        mockedCdn.getJson.rejects('not_found');
+        mockedCdn.getJson.resolves({});
+        mockedCdn.getJson.onFirstCall(0).rejects({ code: 'file_not_found' });
         mockedCdn.listSubDirectories = sinon.stub();
         mockedCdn.listSubDirectories.onCall(0).resolves(['hello-world']);
         mockedCdn.listSubDirectories.onCall(1).resolves(['1.0.0', '1.0.2']);
@@ -72,10 +90,16 @@ describe('registry : domain : components-cache', () => {
         componentsCache.load().finally(done);
       });
 
-      it('should try fetching the components.json', () => {
-        expect(mockedCdn.getJson.calledOnce).to.be.true;
+      it('should try fetching the components.json and check components', () => {
+        expect(mockedCdn.getJson.calledThrice).to.be.true;
         expect(mockedCdn.getJson.args[0][0]).to.be.equal(
           'component/components.json'
+        );
+        expect(mockedCdn.getJson.args[1][0]).to.be.equal(
+          'component/hello-world/1.0.0/package.json'
+        );
+        expect(mockedCdn.getJson.args[2][0]).to.be.equal(
+          'component/hello-world/1.0.2/package.json'
         );
       });
 
@@ -106,11 +130,14 @@ describe('registry : domain : components-cache', () => {
       before(done => {
         mockedCdn.getJson = sinon.stub();
         mockedCdn.getJson.resolves(baseResponse());
+        mockedCdn.getJson
+          .withArgs('component/hello-world/3.0.0/package.json')
+          .rejects('ERROR');
         mockedCdn.listSubDirectories = sinon.stub();
         mockedCdn.listSubDirectories.onCall(0).resolves(['hello-world']);
         mockedCdn.listSubDirectories
           .onCall(1)
-          .resolves(['1.0.0', '1.0.2', '2.0.0']);
+          .resolves(['1.0.0', '1.0.2', '2.0.0', '3.0.0']);
         mockedCdn.putFileContent = sinon.stub();
         mockedCdn.putFileContent.resolves('ok');
         initialise();
@@ -118,10 +145,31 @@ describe('registry : domain : components-cache', () => {
       });
 
       it('should fetch the components.json', () => {
-        expect(mockedCdn.getJson.calledOnce).to.be.true;
         expect(mockedCdn.getJson.args[0][0]).to.be.equal(
           'component/components.json'
         );
+      });
+
+      it('should verify new versions', () => {
+        expect(mockedCdn.getJson.calledThrice).to.be.true;
+        expect(mockedCdn.getJson.args[1][0]).to.be.equal(
+          'component/hello-world/2.0.0/package.json'
+        );
+        expect(mockedCdn.getJson.args[2][0]).to.be.equal(
+          'component/hello-world/3.0.0/package.json'
+        );
+      });
+
+      it('should ignore corrupted versions and generate an error event', () => {
+        expect(eventsHandlerStub.fire.called).to.be.true;
+        expect(eventsHandlerStub.fire.args[0][0]).to.equal('error');
+        expect(eventsHandlerStub.fire.args[0][1].code).to.equal(
+          'corrupted_version'
+        );
+        expect(eventsHandlerStub.fire.args[0][1].message).to.contain(
+          'hello-world'
+        );
+        expect(eventsHandlerStub.fire.args[0][1].message).to.contain('3.0.0');
       });
 
       it('should scan for directories to fetch components and versions', () => {
