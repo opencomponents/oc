@@ -4,9 +4,7 @@
   "description": "A framework for developing and distributing html components",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "bin": {
-    "oc": "./dist/oc-cli.js"
-  },
+  "bin": "./dist/oc-cli.js",
   "scripts": {
     "lint": "eslint src",
     "prebuild": "rimraf dist",
