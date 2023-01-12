@@ -2,6 +2,8 @@ import fs from 'fs-extra';
 import getUnixUtcTimestamp from 'oc-get-unix-utc-timestamp';
 import path from 'path';
 import dotenv from 'dotenv';
+import { promisify } from 'util';
+import nodeDir, { PathsResult } from 'node-dir';
 
 import ComponentsCache from './components-cache';
 import getComponentsDetails from './components-details';
@@ -22,6 +24,9 @@ import { StorageAdapter } from 'oc-storage-adapters-utils';
 
 const packageInfo = fs.readJsonSync(
   path.join(__dirname, '..', '..', '..', 'package.json')
+);
+const getPaths: (path: string) => Promise<PathsResult> = promisify(
+  nodeDir.paths
 );
 
 export default function repository(conf: Config) {
@@ -124,6 +129,37 @@ export default function repository(conf: Config) {
 
       return dotenv.parse(fs.readFileSync(filePath).toString());
     }
+  };
+
+  const putDir = async (dirInput: string, dirOutput: string) => {
+    const paths = await getPaths(dirInput);
+    const packageJsonFile = path.join(dirInput, 'package.json');
+    const files = paths.files.filter(file => file !== packageJsonFile);
+
+    const filesResults = await Promise.all(
+      files.map((file: string) => {
+        const relativeFile = file.slice(dirInput.length);
+        const url = (dirOutput + relativeFile).replace(/\\/g, '/');
+
+        const serverPattern = /(\\|\/)server\.js/;
+        const dotFilePattern = /(\\|\/)\..+/;
+        const privateFilePatterns = [serverPattern, dotFilePattern];
+        return cdn.putFile(
+          file,
+          url,
+          privateFilePatterns.some(r => r.test(relativeFile))
+        );
+      })
+    );
+    // Ensuring package.json is uploaded last so we can verify that a component
+    // was properly uploaded by checking if package.json exists
+    const packageJsonFileResult = await cdn.putFile(
+      packageJsonFile,
+      `${dirOutput}/package.json`.replace(/\\/g, '/'),
+      false
+    );
+
+    return [...filesResults, packageJsonFileResult];
   };
 
   const repository = {
@@ -374,7 +410,7 @@ export default function repository(conf: Config) {
         pkgDetails.packageJson
       );
 
-      await cdn.putDir(
+      await putDir(
         pkgDetails.outputFolder,
         `${options!.componentsDir}/${componentName}/${componentVersion}`
       );

@@ -52,7 +52,6 @@ function convertLegacyAdapter(adapter: LegacyStorageAdapter): StorageAdapter {
     getFile: fromCallback(adapter.getFile as any),
     getJson: fromCallback(adapter.getJson as any),
     listSubDirectories: fromCallback(adapter.listSubDirectories as any),
-    putDir: fromCallback(adapter.putDir as any),
     putFile: fromCallback(adapter.putFile as any),
     putFileContent: fromCallback(adapter.putFileContent as any),
     getUrl: adapter.getUrl,
