@@ -426,6 +426,27 @@ describe('registry : domain : repository', () => {
               'components/hello-world/1.0.1/server.js'
             );
           });
+
+          it('should store package.json as the last file', () => {
+            expect(s3Mock.putFile.args[3][1]).to.equal(
+              'components/hello-world/1.0.1/package.json'
+            );
+          });
+
+          it('should store server.js and dotfiles as private and the rest public', () => {
+            const getVisibility = name => {
+              const file = s3Mock.putFile.args.find(x => x[0].endsWith(name));
+
+              if (!file) return 'unknown';
+
+              return file[2] ? 'private' : 'public';
+            };
+
+            expect(getVisibility('server.js')).to.equal('private');
+            expect(getVisibility('.env')).to.equal('private');
+            expect(getVisibility('template.js')).to.equal('public');
+            expect(getVisibility('package.json')).to.equal('public');
+          });
         });
       });
     });
