@@ -40,15 +40,28 @@ describe('registry : domain : repository', () => {
       listSubDirectories: sinon.stub().resolves(),
       putFile: sinon.stub().resolves(),
       getJson: sinon.stub().resolves(),
-      putDir: sinon.stub().resolves(),
       putFileContent: sinon.stub().resolves(),
       adapterType: 's3'
+    };
+
+    const nodeDirMock = {
+      paths(pathToDir, cb) {
+        cb(null, {
+          files: [
+            `${pathToDir}/package.json`,
+            `${pathToDir}/server.js`,
+            `${pathToDir}/.env`,
+            `${pathToDir}/template.js`
+          ]
+        });
+      }
     };
 
     const Repository = injectr(
       '../../dist/registry/domain/repository.js',
       {
         'fs-extra': fsMock,
+        'node-dir': nodeDirMock,
         './components-cache': () => componentsCacheMock,
         './components-details': () => componentsDetailsMock
       },
@@ -378,8 +391,8 @@ describe('registry : domain : repository', () => {
             componentsDetailsMock.refresh.resolves(
               componentsDetailsBaseResponse
             );
-            s3Mock.putDir = sinon.stub();
-            s3Mock.putDir.resolves('done');
+            s3Mock.putFile = sinon.stub();
+            s3Mock.putFile.resolves('done');
             savePromiseResult(
               repository.publishComponent(
                 {
@@ -406,10 +419,33 @@ describe('registry : domain : repository', () => {
           });
 
           it('should store the component in the correct directory', () => {
-            expect(s3Mock.putDir.args[0][0]).to.equal('/path/to/component');
-            expect(s3Mock.putDir.args[0][1]).to.equal(
-              'components/hello-world/1.0.1'
+            expect(s3Mock.putFile.args[0][0]).to.equal(
+              '/path/to/component/server.js'
             );
+            expect(s3Mock.putFile.args[0][1]).to.equal(
+              'components/hello-world/1.0.1/server.js'
+            );
+          });
+
+          it('should store package.json as the last file', () => {
+            expect(s3Mock.putFile.args[3][1]).to.equal(
+              'components/hello-world/1.0.1/package.json'
+            );
+          });
+
+          it('should store server.js and dotfiles as private and the rest public', () => {
+            const getVisibility = name => {
+              const file = s3Mock.putFile.args.find(x => x[0].endsWith(name));
+
+              if (!file) return 'unknown';
+
+              return file[2] ? 'private' : 'public';
+            };
+
+            expect(getVisibility('server.js')).to.equal('private');
+            expect(getVisibility('.env')).to.equal('private');
+            expect(getVisibility('template.js')).to.equal('public');
+            expect(getVisibility('package.json')).to.equal('public');
           });
         });
       });

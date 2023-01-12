@@ -91,7 +91,6 @@ describe('registry : domain : adapter', () => {
       expect(parsed.getFile).to.be.equal('promisified');
       expect(parsed.getJson).to.be.equal('promisified');
       expect(parsed.listSubDirectories).to.be.equal('promisified');
-      expect(parsed.putDir).to.be.equal('promisified');
       expect(parsed.putFile).to.be.equal('promisified');
       expect(parsed.putFileContent).to.be.equal('promisified');
     });
