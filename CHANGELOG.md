@@ -1,5 +1,23 @@
 ## Change Log
 
+### v0.49.23
+
+- [#1320](https://github.com/opencomponents/oc/pull/1320) make npmignore applied only to root folders
+
+### v0.49.22
+
+- [#1319](https://github.com/opencomponents/oc/pull/1319) Check unverified packages after start/publishing
+
+### v0.49.21
+
+- [#1303](https://github.com/opencomponents/oc/pull/1303) add ability to retreieve environment variables from an env file
+- [#1312](https://github.com/opencomponents/oc/pull/1312) Upgrade project default Node.js version to 16
+- [#1317](https://github.com/opencomponents/oc/pull/1317) Bump loader-utils from 1.4.0 to 1.4.2
+
+### v0.49.19
+
+- [#1315](https://github.com/opencomponents/oc/pull/1315) include the entire console api in the production stub
+
 ### v0.49.16
 
 - [#1313](https://github.com/opencomponents/oc/pull/1313) remove some any types

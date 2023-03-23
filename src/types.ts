@@ -79,6 +79,7 @@ interface OcConfiguration {
       type: string;
       version: string;
     };
+    env?: string;
   };
   packaged: boolean;
   parameters: Record<string, OcParameter>;

@@ -41,6 +41,9 @@ describe('registry : routes : helpers : get-component', () => {
     mockedRepository = {
       getCompiledView: sinon.stub().resolves(params.view),
       getComponent: sinon.stub().resolves(params.package),
+      getEnv: params.package.oc.files.env
+        ? sinon.stub().resolves({ secret: 'secretvalue' })
+        : sinon.stub().rejects(),
       getDataProvider: sinon
         .stub()
         .resolves({ content: params.data, filePath: '/path/to/server.js' }),
@@ -68,6 +71,41 @@ describe('registry : routes : helpers : get-component', () => {
       getStaticFilePath: sinon.stub().returns('//my-cdn.com/files/')
     };
   };
+
+  describe('when the component has an env file', () => {
+    let callBack;
+
+    before(done => {
+      const headers = {
+        'user-agent': 'oc-client-0/0-0-0',
+        templates: 'oc-template-jade,6.0.1;oc-template-handlebars,6.0.2',
+        accept: 'application/vnd.oc.unrendered+json'
+      };
+      initialise(mockedComponents['env-component']);
+      const getComponent = GetComponent({}, mockedRepository);
+
+      callBack = sinon.spy(() => done());
+      getComponent(
+        {
+          name: 'env-component',
+          headers,
+          parameters: {},
+          version: '1.X.X',
+          conf: {
+            env: { registry: 'REGISTRYVALUE' },
+            baseUrl: 'http://components.com/'
+          }
+        },
+        callBack
+      );
+    });
+
+    it('should put the env data as part of the context, available to the server', () => {
+      expect(callBack.args[0][0].response.data).to.deep.equal({
+        mySecret: 'secretvalue'
+      });
+    });
+  });
 
   describe('when getting a component with success', () => {
     before(done => {

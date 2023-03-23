@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const fs = require('fs-extra');
 const log = require('./logger');
 const spawn = require('cross-spawn');

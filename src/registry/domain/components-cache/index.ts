@@ -3,7 +3,7 @@ import getComponentsList from './components-list';
 import eventsHandler from '../events-handler';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import { ComponentsList, Config } from '../../../types';
-import { StorageAdapter } from 'oc-storage-adapters-utils';
+import { StorageAdapter, strings } from 'oc-storage-adapters-utils';
 
 export default function componentsCache(conf: Config, cdn: StorageAdapter) {
   let cachedComponentsList: ComponentsList;
@@ -11,8 +11,8 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
 
   const componentsList = getComponentsList(conf, cdn);
 
-  const poll = () =>
-    setTimeout(async () => {
+  const poll = () => {
+    return setTimeout(async () => {
       try {
         const data = await componentsList.getFromJson();
 
@@ -29,6 +29,7 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
       }
       refreshLoop = poll();
     }, conf.pollingInterval * 1000);
+  };
 
   const cacheDataAndStartPolling = (data: ComponentsList) => {
     cachedComponentsList = data;
@@ -55,12 +56,15 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
     },
 
     async load(): Promise<ComponentsList> {
+      const jsonComponents = await componentsList.getFromJson().catch(err => {
+        if (err?.code === strings.errors.STORAGE.FILE_NOT_FOUND_CODE)
+          return null;
+
+        return Promise.reject(err);
+      });
       const dirComponents = await componentsList
-        .getFromDirectories()
+        .getFromDirectories(jsonComponents)
         .catch(err => throwError('components_list_get', err));
-      const jsonComponents = await componentsList
-        .getFromJson()
-        .catch(() => null);
 
       if (
         !jsonComponents ||
@@ -78,7 +82,8 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
     async refresh(): Promise<ComponentsList> {
       clearTimeout(refreshLoop);
       try {
-        const components = await componentsList.refresh();
+        // Passing components that we know are fine, so it doesn't refresh invalid components
+        const components = await componentsList.refresh(cachedComponentsList);
         cacheDataAndStartPolling(components);
 
         return components;
