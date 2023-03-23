@@ -21,7 +21,7 @@ module.exports = {
       }
     }
   },
-  data: '"use strict";module.exports.data=function(t,n){n(null,{a:t.plugins.doSomething()})};',
+  data: '"use strict";exports.data=function(t,n){n(null,{a:t.plugins.doSomething()})};',
   view:
     'var oc=oc||{};oc.components=oc.components||{},oc.components["8b3650989d66345eea8152e89ec03e1dad8e8e9b"]' +
     '=function(e){var n,o=[],c=e||{};return function(e){o.push("<div>"+jade.escape(null==(n=e)?"":n)+" John  </div>")}.' +
