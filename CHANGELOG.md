@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.49.24
+
+- [#1329](https://github.com/opencomponents/oc/pull/1329) check for exports data too
+
 ### v0.49.23
 
 - [#1320](https://github.com/opencomponents/oc/pull/1320) make npmignore applied only to root folders
