@@ -523,6 +523,7 @@ export default function getComponent(conf: Config, repository: Repository) {
                     module: {
                       exports: {} as Record<string, (...args: any[]) => any>
                     },
+                    exports: {} as Record<string, (...args: any[]) => any>,
                     console: conf.local ? console : noopConsole,
                     setTimeout,
                     Buffer
@@ -559,7 +560,8 @@ export default function getComponent(conf: Config, repository: Repository) {
 
                   try {
                     vm.runInNewContext(dataProvider.content, context, options);
-                    const processData = context.module.exports['data'];
+                    const processData =
+                      context.module.exports['data'] || context.exports['data'];
                     cache.set('file-contents', cacheKey, processData);
 
                     domain.on('error', handleError);
