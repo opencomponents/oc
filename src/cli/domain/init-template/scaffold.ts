@@ -30,6 +30,9 @@ export default async function scaffold(
       path.join(componentPath, 'package.json')
     );
     componentPackage.name = componentName;
+    componentPackage.scripts ??= {};
+    componentPackage.scripts.start ??= `oc dev .. --components ${componentName}`;
+    componentPackage.scripts.build ??= `oc package .`;
     componentPackage.devDependencies[compiler] = compilerPackage.version;
     await fs.writeJson(componentPath + '/package.json', componentPackage, {
       spaces: 2
