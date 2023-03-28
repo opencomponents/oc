@@ -4643,10 +4643,10 @@
   "resolved" "https://registry.npmjs.org/oc-client-browser/-/oc-client-browser-1.5.4.tgz"
   "version" "1.5.4"
 
-"oc-client-browser@1.6.2":
-  "integrity" "sha512-770sUUCGjAbXPc2Ij8ZQK+qVd98RlQiCqhHRWUqS/Zwsg/0OIX9K9V0Yh2dHtEvVKn8syUi2gZlwnRQtjJGc7Q=="
-  "resolved" "https://registry.npmjs.org/oc-client-browser/-/oc-client-browser-1.6.2.tgz"
-  "version" "1.6.2"
+"oc-client-browser@1.6.3":
+  "integrity" "sha512-pxtIEFxxuhaQG+HlQBKT97O09mOPfif+BKxdnc2OPvqxoIPoq55K+Y16RVhT4xXBofmWJnH5+WqXEn+sAfyySg=="
+  "resolved" "https://registry.npmjs.org/oc-client-browser/-/oc-client-browser-1.6.3.tgz"
+  "version" "1.6.3"
   dependencies:
     "uglify-js" "3.14.2"
     "universalify" "2.0.0"
