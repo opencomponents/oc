@@ -4643,11 +4643,12 @@
   "resolved" "https://registry.npmjs.org/oc-client-browser/-/oc-client-browser-1.5.4.tgz"
   "version" "1.5.4"
 
-"oc-client-browser@1.5.9":
-  "integrity" "sha512-phH1rw1EYeAQH2dmpmoto1guqtOlCAfdiocJdWnrr4z7f+g26a+WS1GPasqn5qR3uIK/NpIShQZaijUHeTgbSQ=="
-  "resolved" "https://registry.npmjs.org/oc-client-browser/-/oc-client-browser-1.5.9.tgz"
-  "version" "1.5.9"
+"oc-client-browser@1.6.1":
+  "integrity" "sha512-Q+LO0jwtS8L65JsovHxYCcnPf5aP3/904gmzgAh938HEyBIIyfgpdwhDTfsnb1q21WQqzwW27diivRWLCDRiuA=="
+  "resolved" "https://registry.npmjs.org/oc-client-browser/-/oc-client-browser-1.6.1.tgz"
+  "version" "1.6.1"
   dependencies:
+    "uglify-js" "3.14.2"
     "universalify" "2.0.0"
 
 "oc-client@4.0.1":
@@ -6262,6 +6263,11 @@
   dependencies:
     "commander" "~2.20.3"
     "source-map" "~0.6.1"
+
+"uglify-js@3.14.2":
+  "integrity" "sha512-rtPMlmcO4agTUfz10CbgJ1k6UAoXM2gWb3GoMPPZB/+/Ackf8lNWk11K4rYi2D0apgoFRLtQOZhb+/iGNJq26A=="
+  "resolved" "https://registry.npmjs.org/uglify-js/-/uglify-js-3.14.2.tgz"
+  "version" "3.14.2"
 
 "uglify-to-browserify@~1.0.0":
   "integrity" "sha1-bgkk1r2mta/jSeOabWMoUKD4grc="
