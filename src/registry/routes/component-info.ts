@@ -1,5 +1,4 @@
 import parseAuthor from 'parse-author';
-import _ from 'lodash';
 import { fromPromise } from 'universalify';
 
 import * as getComponentFallback from './helpers/get-component-fallback';
@@ -11,19 +10,14 @@ import { Component, Config } from '../../types';
 import { Request, Response } from 'express';
 
 function getParams(component: Component) {
-  let params = {};
+  let params: Record<string, string> = {};
   if (component.oc.parameters) {
-    const mandatoryParams = _.filter(
-      Object.keys(component.oc.parameters || {}),
-      paramName => {
-        const param = component.oc.parameters[paramName];
-        return !!param.mandatory && !!param.example;
-      }
-    );
-
-    params = _.mapValues(
-      _.pick(component.oc.parameters, mandatoryParams),
-      x => x.example
+    params = Object.fromEntries(
+      Object.entries(component.oc.parameters || {})
+        .filter(([, param]) => {
+          return !!param.mandatory && 'example' in param;
+        })
+        .map(([paramName, param]) => [paramName, param.example!])
     );
   }
 
@@ -60,11 +54,10 @@ function componentInfo(
     const parsedAuthor = getParsedAuthor(component);
     let href = res.conf.baseUrl;
 
-    const repositoryUrl = _.get(
-      component,
-      'repository.url',
-      typeof component.repository === 'string' ? component.repository : null
-    );
+    const repositoryUrl =
+      typeof component.repository === 'string'
+        ? component.repository
+        : component.repository?.url ?? null;
 
     fromPromise(isUrlDiscoverable)(href, (_err, result) => {
       if (!result.isDiscoverable) {
