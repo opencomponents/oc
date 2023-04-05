@@ -110,7 +110,7 @@
     "oc-s3-storage-adapter": "2.1.1",
     "oc-storage-adapters-utils": "2.0.2",
     "oc-template-es6": "1.0.7",
-    "oc-template-es6-compiler": "2.1.0",
+    "oc-template-es6-compiler": "3.0.0",
     "oc-template-handlebars": "6.0.25",
     "oc-template-handlebars-compiler": "6.5.0",
     "oc-template-jade": "7.0.6",
