@@ -526,7 +526,8 @@ export default function getComponent(conf: Config, repository: Repository) {
                     exports: {} as Record<string, (...args: any[]) => any>,
                     console: conf.local ? console : noopConsole,
                     setTimeout,
-                    Buffer
+                    Buffer,
+                    fetch: globalThis?.fetch
                   };
 
                   const handleError = (err: {
