@@ -30,6 +30,14 @@ type Events = {
     requestVersion: string;
     duration: number;
   };
+  'data-provider-error': {
+    name: string;
+    version: string;
+    parameters: Record<string, string | boolean | number>;
+    requestVersion: string;
+    status: number;
+    error: Error;
+  };
 };
 
 type EventsHandler = {
