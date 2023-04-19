@@ -125,18 +125,20 @@ describe('registry : routes : helpers : get-component', () => {
     });
 
     it('should fire a component-retrieved event', () => {
-      expect(fireStub.args[0][0]).to.equal('component-retrieved');
-      expect(fireStub.args[0][1].headers).to.eql({});
-      expect(fireStub.args[0][1].name).to.equal('async-error2-component');
-      expect(fireStub.args[0][1].parameters).to.eql({});
-      expect(fireStub.args[0][1].requestVersion).to.equal('1.X.X');
-      expect(fireStub.args[0][1].href).to.equal(
+      const [eventName, eventData] = fireStub.args[0];
+
+      expect(eventName).to.equal('component-retrieved');
+      expect(eventData.headers).to.eql({});
+      expect(eventData.name).to.equal('async-error2-component');
+      expect(eventData.parameters).to.eql({});
+      expect(eventData.requestVersion).to.equal('1.X.X');
+      expect(eventData.href).to.equal(
         'http://components.com/async-error2-component/1.X.X'
       );
-      expect(fireStub.args[0][1].version).to.equal('1.0.0');
-      expect(fireStub.args[0][1].renderMode).to.equal('rendered');
-      expect(fireStub.args[0][1].duration).to.be.above(0);
-      expect(fireStub.args[0][1].status).to.equal(200);
+      expect(eventData.version).to.equal('1.0.0');
+      expect(eventData.renderMode).to.equal('rendered');
+      expect(eventData.duration).to.be.above(0);
+      expect(eventData.status).to.equal(200);
     });
   });
 
@@ -157,19 +159,33 @@ describe('registry : routes : helpers : get-component', () => {
       );
     });
 
+    it('should fire a data-provider-error event', () => {
+      const [eventName, eventData] = fireStub.args[0];
+
+      expect(eventName).to.equal('data-provider-error');
+      expect(eventData.name).to.equal('async-error2-component');
+      expect(eventData.parameters).to.eql({ error: true });
+      expect(eventData.requestVersion).to.equal('1.X.X');
+      expect(eventData.version).to.equal('1.0.0');
+      expect(eventData.status).to.equal(500);
+      expect(eventData.error).to.be.an('error');
+    });
+
     it('should fire a component-retrieved event', () => {
-      expect(fireStub.args[0][0]).to.equal('component-retrieved');
-      expect(fireStub.args[0][1].headers).to.eql({});
-      expect(fireStub.args[0][1].name).to.equal('async-error2-component');
-      expect(fireStub.args[0][1].parameters).to.eql({ error: true });
-      expect(fireStub.args[0][1].requestVersion).to.equal('1.X.X');
-      expect(fireStub.args[0][1].href).to.equal(
+      const [eventName, eventData] = fireStub.args[1];
+
+      expect(eventName).to.equal('component-retrieved');
+      expect(eventData.headers).to.eql({});
+      expect(eventData.name).to.equal('async-error2-component');
+      expect(eventData.parameters).to.eql({ error: true });
+      expect(eventData.requestVersion).to.equal('1.X.X');
+      expect(eventData.href).to.equal(
         'http://components.com/async-error2-component/1.X.X?error=true'
       );
-      expect(fireStub.args[0][1].version).to.equal('1.0.0');
-      expect(fireStub.args[0][1].renderMode).to.equal('rendered');
-      expect(fireStub.args[0][1].duration).to.be.above(0);
-      expect(fireStub.args[0][1].status).to.equal(500);
+      expect(eventData.version).to.equal('1.0.0');
+      expect(eventData.renderMode).to.equal('rendered');
+      expect(eventData.duration).to.be.above(0);
+      expect(eventData.status).to.equal(500);
     });
   });
 

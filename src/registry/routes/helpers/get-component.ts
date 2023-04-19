@@ -295,8 +295,19 @@ export default function getComponent(conf: Config, repository: Repository) {
             err =
               err ||
               new Error(strings.errors.registry.DATA_OBJECT_IS_UNDEFINED);
+            const status = Number(err.status) || 500;
+
+            eventsHandler.fire('data-provider-error', {
+              status,
+              name: component.name,
+              requestVersion: requestedComponent.version,
+              parameters: params,
+              version: component.version,
+              error: err
+            });
+
             return callback({
-              status: Number(err.status) || 500,
+              status,
               response: {
                 code: 'GENERIC_ERROR',
                 error: strings.errors.registry.COMPONENT_EXECUTION_ERROR(
