@@ -4522,10 +4522,10 @@
   "resolved" "https://registry.npmjs.org/oc-client-browser/-/oc-client-browser-1.5.4.tgz"
   "version" "1.5.4"
 
-"oc-client-browser@1.6.3":
-  "integrity" "sha512-pxtIEFxxuhaQG+HlQBKT97O09mOPfif+BKxdnc2OPvqxoIPoq55K+Y16RVhT4xXBofmWJnH5+WqXEn+sAfyySg=="
-  "resolved" "https://registry.npmjs.org/oc-client-browser/-/oc-client-browser-1.6.3.tgz"
-  "version" "1.6.3"
+"oc-client-browser@1.6.4":
+  "integrity" "sha512-shiJL1J8RzR9cpqT9dNYOyh8j3VKAswPegf6Gi6oYUibPTv7cka7+JqawbloqPO/WngF0QYqTpvO9d7vOuq2jw=="
+  "resolved" "https://registry.npmjs.org/oc-client-browser/-/oc-client-browser-1.6.4.tgz"
+  "version" "1.6.4"
   dependencies:
     "uglify-js" "3.14.2"
     "universalify" "2.0.0"
