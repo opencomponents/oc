@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.49.28
+
+- [#1337](https://github.com/opencomponents/oc/pull/1337) send data-provider-error event
+
 ### v0.49.27
 
 - [#1336](https://github.com/opencomponents/oc/pull/1336) add support for global fetch on components
