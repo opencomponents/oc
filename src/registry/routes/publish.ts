@@ -65,13 +65,13 @@ export default function publish(repository: Repository) {
         res.status(200).json({ ok: true });
       } catch (err: any) {
         let errorMessage;
-        if(err.msg) {
+        if(res.conf.local){
+          errorMessage = JSON.stringify(err);
+        }else if(err.msg) {
           errorMessage = err.msg;
         } else if (err.message){
           errorMessage = err.message;
-        } else {
-          errorMessage = JSON.stringify(err);
-        }
+        } 
         if (err.code === 'not_allowed') {
           res.errorDetails = `Publish not allowed: ${errorMessage}`;
           res.status(403).json({ error: err });
