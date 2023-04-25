@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.49.29
+
+- [#1327](https://github.com/opencomponents/oc/pull/1327) showing all error when publishing fails
+
 ### v0.49.28
 
 - [#1337](https://github.com/opencomponents/oc/pull/1337) send data-provider-error event
