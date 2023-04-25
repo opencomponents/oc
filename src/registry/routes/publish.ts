@@ -64,21 +64,29 @@ export default function publish(repository: Repository) {
         );
         res.status(200).json({ ok: true });
       } catch (err: any) {
+        let errorMessage;
+        if(res.conf.local){
+          errorMessage = JSON.stringify(err);
+        }else if(err.msg) {
+          errorMessage = err.msg;
+        } else if (err.message){
+          errorMessage = err.message;
+        } 
         if (err.code === 'not_allowed') {
-          res.errorDetails = `Publish not allowed: ${err.msg}`;
-          res.status(403).json({ error: err.msg });
+          res.errorDetails = `Publish not allowed: ${errorMessage}`;
+          res.status(403).json({ error: err });
         } else if (err.code === 'already_exists') {
-          res.errorDetails = `Component already exists: ${err.msg}`;
-          res.status(403).json({ error: err.msg });
+          res.errorDetails = `Component already exists: ${errorMessage}`;
+          res.status(403).json({ error: err });
         } else if (err.code === 'name_not_valid') {
-          res.errorDetails = `Component name not valid: ${err.msg}`;
-          res.status(409).json({ error: err.msg });
+          res.errorDetails = `Component name not valid: ${errorMessage}`;
+          res.status(409).json({ error: err });
         } else if (err.code === 'version_not_valid') {
-          res.errorDetails = `Component version not valid: ${err.msg}`;
-          res.status(409).json({ error: err.msg });
+          res.errorDetails = `Component version not valid: ${errorMessage}`;
+          res.status(409).json({ error: err });
         } else {
-          res.errorDetails = `Publish failed: ${err.msg}`;
-          res.status(500).json({ error: err.msg });
+          res.errorDetails = `Publish failed: ${errorMessage}`;
+          res.status(500).json({ error: err });
         }
       }
     } catch (err) {
