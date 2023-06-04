@@ -53,11 +53,11 @@ export default async function appStart(
       };
 
       try {
-        await repository.publishComponent(
-          pkgInfo,
-          'oc-client',
-          packageInfo.version
-        );
+        await repository.publishComponent({
+          pkgDetails: pkgInfo,
+          componentName: 'oc-client',
+          componentVersion: packageInfo.version
+        });
         logger.log(colors.green('Component published.'));
       } catch (err) {
         logger.log(

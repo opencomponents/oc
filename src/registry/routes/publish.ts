@@ -57,11 +57,12 @@ export default function publish(repository: Repository) {
       const pkgDetails = await extractPackage(files, res.conf.tarExtractMode);
 
       try {
-        await repository.publishComponent(
+        await repository.publishComponent({
           pkgDetails,
-          req.params['componentName'],
-          req.params['componentVersion']
-        );
+          componentName: req.params['componentName'],
+          componentVersion: req.params['componentVersion'],
+          onlyCheck: !!req.query['dryRun']
+        });
         res.status(200).json({ ok: true });
       } catch (err: any) {
         let errorMessage = err.msg || err.message;

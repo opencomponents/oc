@@ -27,12 +27,14 @@ const publish = ({
     async (opts: {
       componentPath: string;
       skipPackage?: boolean;
+      dryRun?: boolean;
       username?: string;
       password?: string;
       registries?: string[];
     }): Promise<void> => {
       const componentPath = opts.componentPath;
       const skipPackage = opts.skipPackage;
+      const dryRun = opts.dryRun;
       const packageDir = path.resolve(componentPath, '_package');
       const compressedPackagePath = path.resolve(
         componentPath,
@@ -85,11 +87,11 @@ const publish = ({
         username?: string;
         password?: string;
       }): Promise<void> => {
-        logger.warn(strings.messages.cli.PUBLISHING(options.route));
+        logger.warn(strings.messages.cli.PUBLISHING(options.route, dryRun));
 
         try {
           await registry.putComponent(options);
-          logger.ok(strings.messages.cli.PUBLISHED(options.route));
+          logger.ok(strings.messages.cli.PUBLISHED(options.route), dryRun);
         } catch (err: any) {
           if (err === 'Unauthorized' || err.message === 'Unauthorized') {
             if (!!options.username || !!options.password) {
@@ -152,7 +154,10 @@ const publish = ({
       ) => {
         for (const registryUrl of registryLocations) {
           const registryNormalised = registryUrl.replace(/\/$/, '');
-          const componentRoute = `${registryNormalised}/${component.name}/${component.version}`;
+          let componentRoute = `${registryNormalised}/${component.name}/${component.version}`;
+          if (dryRun) {
+            componentRoute += '?dryRun';
+          }
 
           await putComponentToRegistry({
             route: componentRoute,

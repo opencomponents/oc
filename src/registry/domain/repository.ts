@@ -306,11 +306,17 @@ export default function repository(conf: Config) {
 
       return componentsDetails.refresh(componentsList);
     },
-    async publishComponent(
-      pkgDetails: { outputFolder: string; packageJson: Component },
-      componentName: string,
-      componentVersion: string
-    ): Promise<ComponentsDetails> {
+    async publishComponent({
+      componentName,
+      componentVersion,
+      pkgDetails,
+      onlyCheck = false
+    }: {
+      pkgDetails: { outputFolder: string; packageJson: Component };
+      componentName: string;
+      componentVersion: string;
+      onlyCheck?: boolean;
+    }): Promise<void> {
       if (conf.local) {
         throw {
           code: strings.errors.registry.LOCAL_PUBLISH_NOT_ALLOWED_CODE,
@@ -369,6 +375,8 @@ export default function repository(conf: Config) {
 
       pkgDetails.packageJson.oc.date = getUnixUtcTimestamp();
 
+      if (onlyCheck) return;
+
       await fs.writeJson(
         path.join(pkgDetails.outputFolder, 'package.json'),
         pkgDetails.packageJson
@@ -380,7 +388,7 @@ export default function repository(conf: Config) {
       );
 
       const componentsList = await componentsCache.refresh();
-      return componentsDetails.refresh(componentsList);
+      await componentsDetails.refresh(componentsList);
     }
   };
 
