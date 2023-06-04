@@ -91,7 +91,7 @@ const publish = ({
 
         try {
           await registry.putComponent(options);
-          logger.ok(strings.messages.cli.PUBLISHED(options.route), dryRun);
+          logger.ok(strings.messages.cli.PUBLISHED(options.route, dryRun));
         } catch (err: any) {
           if (err === 'Unauthorized' || err.message === 'Unauthorized') {
             if (!!options.username || !!options.password) {
