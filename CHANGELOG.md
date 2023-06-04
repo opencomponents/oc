@@ -1,5 +1,19 @@
 ## Change Log
 
+### v0.49.29
+
+- [#1327](https://github.com/opencomponents/oc/pull/1327) showing all error when publishing fails
+
+### v0.49.28
+
+- [#1337](https://github.com/opencomponents/oc/pull/1337) send data-provider-error event
+
+### v0.49.27
+
+- [#1336](https://github.com/opencomponents/oc/pull/1336) add support for global fetch on components
+- [#1324](https://github.com/opencomponents/oc/pull/1324) Bump http-cache-semantics from 4.1.0 to 4.1.1
+- [#1332](https://github.com/opencomponents/oc/pull/1332) Bump webpack from 5.64.4 to 5.77.0
+
 ### v0.49.24
 
 - [#1329](https://github.com/opencomponents/oc/pull/1329) check for exports data too
