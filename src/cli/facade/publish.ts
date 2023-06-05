@@ -156,7 +156,7 @@ const publish = ({
           const registryNormalised = registryUrl.replace(/\/$/, '');
           let componentRoute = `${registryNormalised}/${component.name}/${component.version}`;
           if (dryRun) {
-            componentRoute += '?dryRun';
+            componentRoute += '?checkOnly';
           }
 
           await putComponentToRegistry({
