@@ -401,7 +401,7 @@ describe('registry : domain : repository', () => {
                 },
                 componentName: 'hello-world',
                 componentVersion: '1.0.1',
-                checkOnly: true
+                dryRun: true
               }),
               done
             );

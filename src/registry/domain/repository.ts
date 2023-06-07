@@ -310,12 +310,12 @@ export default function repository(conf: Config) {
       componentName,
       componentVersion,
       pkgDetails,
-      checkOnly = false
+      dryRun = false
     }: {
       pkgDetails: { outputFolder: string; packageJson: Component };
       componentName: string;
       componentVersion: string;
-      checkOnly?: boolean;
+      dryRun?: boolean;
     }): Promise<void> {
       if (conf.local) {
         throw {
@@ -375,7 +375,7 @@ export default function repository(conf: Config) {
 
       pkgDetails.packageJson.oc.date = getUnixUtcTimestamp();
 
-      if (checkOnly) return;
+      if (dryRun) return;
 
       await fs.writeJson(
         path.join(pkgDetails.outputFolder, 'package.json'),
