@@ -261,8 +261,10 @@ export default {
       PACKAGING: (dir: string): string => `Packaging -> ${dir}`,
       PACKAGED: (dir: string): string => `Packaged -> ${dir}`,
       PACKAGING_COMPONENTS: 'Packaging components...',
-      PUBLISHED: (component: string): string => `Published -> ${component}`,
-      PUBLISHING: (component: string): string => `Publishing -> ${component}`,
+      PUBLISHED: (component: string, dryRun?: boolean): string =>
+        `${dryRun ? 'Publish check OK' : 'Published'} -> ${component}`,
+      PUBLISHING: (component: string, dryRun?: boolean): string =>
+        `${dryRun ? 'Checking publish' : 'Publishing'} -> ${component}`,
       REGISTERING_MOCKED_PLUGINS: 'Registering mocked plugins...',
       REGISTRY_ADDED: 'oc registry added',
       REGISTRY_CREDENTIALS_REQUIRED: 'Registry requires credentials.',
