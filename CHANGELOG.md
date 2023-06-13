@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.49.30
+
+- [#1339](https://github.com/opencomponents/oc/pull/1339) add dryrun on CLI and Registry
+- [#1334](https://github.com/opencomponents/oc/pull/1334) [Snyk] Security upgrade oc-template-es6-compiler from 2.1.0 to 3.0.0
+
 ### v0.49.29
 
 - [#1327](https://github.com/opencomponents/oc/pull/1327) showing all error when publishing fails
