@@ -33,12 +33,6 @@ export default {
             'Enable hot reloading. Note: when hot reloading is set to true, each request to the component will make the registry to create a new instance for the javascript closures to be loaded, while when false the instance will be recycled between components executions',
           default: true
         },
-        dryRun: {
-          boolean: true,
-          description:
-            "Indicates that you don't want to publish the OC and that it should only report what it would have done.",
-          default: false
-        },
         verbose: {
           boolean: true,
           description: 'Verbosity',
@@ -144,6 +138,12 @@ export default {
           array: true,
           description:
             'List of registries to publish to. This setting will take precedence over oc.json file'
+        },
+        dryRun: {
+          boolean: true,
+          description:
+            "Indicates that you don't want to publish the OC and that it should only report what it would have done.",
+          default: false
         }
       },
       description: 'Publish a component',
