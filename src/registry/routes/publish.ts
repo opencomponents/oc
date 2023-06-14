@@ -61,7 +61,7 @@ export default function publish(repository: Repository) {
           pkgDetails,
           componentName: req.params['componentName'],
           componentVersion: req.params['componentVersion'],
-          dryRun: !!req.query['dryRun']
+          dryRun: typeof req.query['dryRun'] !== 'undefined'
         });
         res.status(200).json({ ok: true });
       } catch (err: any) {
