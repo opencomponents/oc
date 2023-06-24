@@ -120,7 +120,7 @@
     "read": "1.0.7",
     "require-package-name": "2.0.1",
     "response-time": "2.3.2",
-    "semver": "7.4.0",
+    "semver": "7.5.2",
     "semver-extra": "3.0.0",
     "serialize-error": "8.1.0",
     "targz": "1.0.1",
