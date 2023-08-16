@@ -22,7 +22,7 @@
     "prepare": "husky install"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=16"
   },
   "repository": {
     "type": "git",
@@ -120,7 +120,7 @@
     "read": "1.0.7",
     "require-package-name": "2.0.1",
     "response-time": "2.3.2",
-    "semver": "7.5.2",
+    "semver": "7.5.4",
     "semver-extra": "3.0.0",
     "serialize-error": "8.1.0",
     "targz": "1.0.1",
