@@ -36,7 +36,11 @@ export default function requireTemplate(
     template = `${template}-compiler`;
   }
 
-  const localTemplate = path.join(__dirname, '../../node_modules', template);
+  const localTemplate = path.join(
+    __dirname,
+    '../../../../node_modules',
+    template
+  );
   const relativeTemplate = path.resolve('.', 'node_modules', template);
   const componentRelativePath = path.join(
     requireOptions.componentPath,
