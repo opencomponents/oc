@@ -18,7 +18,7 @@ export default function component(
       {
         conf: res.conf,
         headers: req.headers,
-        ip: req.ip,
+        ip: req.ip!,
         name: req.params['componentName'],
         parameters: req.query as Record<string, string>,
         version: req.params['componentVersion']

@@ -71,7 +71,7 @@ export default function components(
             conf: res.conf,
             name: component.name,
             headers: req.headers,
-            ip: req.ip,
+            ip: req.ip!,
             omitHref: !!req.body.omitHref,
             parameters: { ...req.body.parameters, ...component.parameters },
             version: component.version
