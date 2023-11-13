@@ -56,7 +56,7 @@ describe('cli : domain : handle-dependencies : require-template', () => {
 
       it('should try requiring it relatively to the oc runtime as third attempt', () => {
         expect(requireMock.args[2][0]).to.equal(
-          '__dirname/../../node_modules/oc-template-jade'
+          '__dirname/../../../../node_modules/oc-template-jade'
         );
       });
 
