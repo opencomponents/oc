@@ -768,4 +768,102 @@ describe('registry : routes : component', () => {
       expect(resJsonStub.args[0][0].html).to.be.undefined;
     });
   });
+
+  describe('when getting a component that has custom parameters', () => {
+    before(() => {
+      initialise(mockedComponents['required-parameter-component']);
+      componentRoute = ComponentRoute({}, mockedRepository);
+
+      componentRoute(
+        {
+          headers: {},
+          params: {
+            componentName: 'required-parameter-component',
+            componentVersion: '1.0.0'
+          },
+          query: {
+            userId: 'user'
+          }
+        },
+        {
+          conf: {
+            baseUrl: 'http://component.com/',
+            executionTimeout: 0.1
+          },
+          status: statusStub,
+          set: resSetStub
+        }
+      );
+    });
+
+    it('should return 200 status code', () => {
+      expect(statusStub.args[0][0]).to.be.equal(200);
+    });
+
+    it("should return component's name and request version", () => {
+      expect(resJsonStub.args[0][0].name).to.equal(
+        'required-parameter-component'
+      );
+      expect(resJsonStub.args[0][0].requestVersion).to.equal('1.0.0');
+    });
+  });
+
+  describe('when getting a component that has missing required parameters', () => {
+    before(() => {
+      initialise(mockedComponents['required-parameter-component']);
+      componentRoute = ComponentRoute({}, mockedRepository);
+
+      componentRoute(
+        {
+          headers: {},
+          params: {
+            componentName: 'required-parameter-component',
+            componentVersion: '1.0.0'
+          }
+        },
+        {
+          conf: {
+            baseUrl: 'http://component.com/',
+            executionTimeout: 0.1
+          },
+          status: statusStub,
+          set: resSetStub
+        }
+      );
+    });
+
+    it('should return 400 status code', () => {
+      expect(statusStub.args[0][0]).to.be.equal(400);
+    });
+  });
+
+  describe('when getting a component that has missing required parameters but it is an action', () => {
+    before(() => {
+      initialise(mockedComponents['required-parameter-component']);
+      componentRoute = ComponentRoute({}, mockedRepository);
+
+      componentRoute(
+        {
+          headers: {},
+          params: {
+            action: 'some-action',
+            componentName: 'required-parameter-component',
+            componentVersion: '1.0.0'
+          }
+        },
+        {
+          conf: {
+            baseUrl: 'http://component.com/',
+            executionTimeout: 0.1
+          },
+          status: statusStub,
+          set: resSetStub
+        }
+      );
+    });
+
+    it('should return 200 status code', () => {
+      expect(statusStub.args[0][0]).to.be.equal(200);
+    });
+  });
 });
