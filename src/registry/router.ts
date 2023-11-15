@@ -72,14 +72,6 @@ export function create(app: Express, conf: Config, repository: Repository) {
     routes.componentPreview
   );
 
-  app.get(
-    `${prefix}:componentName/:componentVersion${settings.registry.componentActionPath}/:action`,
-    routes.component
-  );
-  app.get(
-    `${prefix}:componentName${settings.registry.componentActionPath}/:action`,
-    routes.component
-  );
   app.get(`${prefix}:componentName/:componentVersion`, routes.component);
   app.get(`${prefix}:componentName`, routes.component);
 

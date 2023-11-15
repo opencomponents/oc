@@ -11,7 +11,6 @@ export default {
     acceptInfoHeader: 'application/vnd.oc.info+json',
     componentInfoPath: '/~info',
     componentPreviewPath: '/~preview',
-    componentActionPath: '/~action',
     defaultTempPath: './temp/',
     localStaticRedirectorPath: 'static/'
   }

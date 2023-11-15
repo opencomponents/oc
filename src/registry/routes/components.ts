@@ -10,6 +10,7 @@ import { Config } from '../../types';
 import { Request, RequestHandler, Response } from 'express';
 
 type Component = {
+  action?: string;
   name: string;
   version: string;
   parameters: Record<string, string>;
@@ -69,6 +70,7 @@ export default function components(
         getComponent(
           {
             conf: res.conf,
+            action: component.action,
             name: component.name,
             headers: req.headers,
             ip: req.ip!,

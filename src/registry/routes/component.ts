@@ -16,7 +16,6 @@ export default function component(
   return (req: Request, res: Response): void => {
     getComponent(
       {
-        action: req.params['action'],
         conf: res.conf,
         headers: req.headers,
         ip: req.ip!,

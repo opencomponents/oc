@@ -2,6 +2,7 @@
 
 const expect = require('chai').expect;
 const sinon = require('sinon');
+const settings = require('../../dist/resources/settings').default;
 
 describe('registry : routes : components', () => {
   const ComponentsRoute =
@@ -41,9 +42,17 @@ describe('registry : routes : components', () => {
     };
   };
 
-  const makeRequest = function (body, cb) {
+  const makeRequest = function (body, headersOrCallback, cb) {
+    let callback = cb;
+    let headers = headersOrCallback;
+
+    if (typeof headersOrCallback === 'function') {
+      callback = headersOrCallback;
+      headers = {};
+    }
+
     componentsRoute(
-      { headers: {}, body: body },
+      { headers, body },
       {
         conf: { baseUrl: 'http://components.com/' },
         status: function (jsonCode) {
@@ -51,7 +60,7 @@ describe('registry : routes : components', () => {
           return {
             json: function (jsonResponse) {
               response = jsonResponse;
-              cb();
+              callback();
             }
           };
         }
@@ -317,6 +326,118 @@ describe('registry : routes : components', () => {
           'The request body is malformed: component 0 must have name property, component 1 must have name property'
         );
       });
+    });
+  });
+
+  describe('when getting a component that has custom parameters', () => {
+    before(done => {
+      initialise(mockedComponents['required-parameter-component']);
+      componentsRoute = ComponentsRoute({}, mockedRepository);
+
+      makeRequest(
+        {
+          components: [
+            {
+              name: 'required-parameter-component',
+              version: '1.X.X',
+              parameters: { userId: 'USERID' }
+            }
+          ]
+        },
+        done
+      );
+    });
+
+    const expectedResponse = [
+      {
+        status: 200,
+        response: {
+          name: 'required-parameter-component',
+          type: 'oc-component',
+          requestVersion: '1.X.X',
+          version: '1.0.0'
+        }
+      }
+    ];
+
+    it('should return a 200 response', () => {
+      expect(response[0].response).to.include(expectedResponse[0].response);
+    });
+  });
+
+  describe('when getting a component that has missing required parameters', () => {
+    before(done => {
+      initialise(mockedComponents['required-parameter-component']);
+      componentsRoute = ComponentsRoute({}, mockedRepository);
+
+      makeRequest(
+        {
+          components: [
+            {
+              name: 'required-parameter-component',
+              version: '1.X.X'
+            }
+          ]
+        },
+        done
+      );
+    });
+
+    const expectedResponse = [
+      {
+        status: 400,
+        response: {
+          name: 'required-parameter-component',
+          code: 'NOT_VALID_REQUEST',
+          error: 'Expected mandatory parameters are missing: userId',
+          requestVersion: '1.X.X'
+        }
+      }
+    ];
+
+    it('should return 400 status code', () => {
+      expect(response).to.be.eql(expectedResponse);
+    });
+  });
+
+  describe('when making valid info request for a component action', () => {
+    before(done => {
+      initialise(mockedComponents['required-parameter-component']);
+      componentsRoute = ComponentsRoute({}, mockedRepository);
+
+      makeRequest(
+        {
+          components: [
+            {
+              action: 'someAction',
+              name: 'required-parameter-component',
+              version: '1.X.X'
+            }
+          ]
+        },
+        {
+          accept: settings.registry.acceptUnrenderedHeader
+        },
+        done
+      );
+    });
+
+    const expectedResponse = [
+      {
+        status: 200,
+        response: {
+          href: 'http://components.com/required-parameter-component/1.X.X',
+          name: 'required-parameter-component',
+          type: 'oc-component',
+          requestVersion: '1.X.X',
+          version: '1.0.0',
+          renderMode: 'unrendered'
+        }
+      }
+    ];
+
+    it('should return a 200 response', () => {
+      expect(response[0].response).to.include(expectedResponse[0].response);
     });
   });
 });
