@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.36
+- [#1346](https://github.com/opencomponents/oc/pull/1346) Add support for Actions
+
 ### v0.49.34
 - [#1342](https://github.com/opencomponents/oc/pull/1342) [Snyk] Security upgrade semver from 7.4.0 to 7.5.2
 - [#1344](https://github.com/opencomponents/oc/pull/1344) Bump word-wrap from 1.2.3 to 1.2.4
