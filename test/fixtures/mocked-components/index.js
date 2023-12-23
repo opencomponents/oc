@@ -13,6 +13,7 @@ module.exports = {
   'timeout-component': require('./timeout'),
   'undefined-component': require('./undefined'),
   'simple-component': require('./simple'),
+  'required-parameter-component': require('./parameters'),
   'response-headers-component': require('./response-headers'),
   'another-response-headers-component': require('./another-response-headers')
 };

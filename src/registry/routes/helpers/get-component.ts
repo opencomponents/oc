@@ -24,6 +24,7 @@ import { IncomingHttpHeaders } from 'http';
 import { fromPromise } from 'universalify';
 
 export interface RendererOptions {
+  action?: string;
   conf: Config;
   headers: IncomingHttpHeaders;
   ip: string;
@@ -191,7 +192,7 @@ export default function getComponent(conf: Config, repository: Repository) {
           component.oc.parameters
         );
 
-        if (!validationResult.isValid) {
+        if (!options.action && !validationResult.isValid) {
           return callback({
             status: 400,
             response: {
@@ -323,6 +324,7 @@ export default function getComponent(conf: Config, repository: Repository) {
           }
 
           const response: {
+            baseUrl: string;
             type: string;
             version: string;
             requestVersion: string;
@@ -330,6 +332,7 @@ export default function getComponent(conf: Config, repository: Repository) {
             renderMode: string;
             href?: string;
           } = {
+            baseUrl: conf.baseUrl,
             type: conf.local ? 'oc-component-local' : 'oc-component',
             version: component.version,
             requestVersion: requestedComponent.version,
@@ -461,6 +464,7 @@ export default function getComponent(conf: Config, repository: Repository) {
             const setEmptyResponse =
               emptyResponseHandler.contextDecorator(returnComponent);
             const contextObj = {
+              action: options.action,
               acceptLanguage: acceptLanguageParser.parse(acceptLanguage!),
               baseUrl: conf.baseUrl,
               env: { ...conf.env, ...env },
