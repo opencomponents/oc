@@ -324,6 +324,7 @@ export default function getComponent(conf: Config, repository: Repository) {
           }
 
           const response: {
+            baseUrl: string;
             type: string;
             version: string;
             requestVersion: string;
@@ -331,6 +332,7 @@ export default function getComponent(conf: Config, repository: Repository) {
             renderMode: string;
             href?: string;
           } = {
+            baseUrl: conf.baseUrl,
             type: conf.local ? 'oc-component-local' : 'oc-component',
             version: component.version,
             requestVersion: requestedComponent.version,
