@@ -441,9 +441,19 @@ export default function getComponent(conf: Config, repository: Repository) {
             }
           }
         };
+        const staticPath = repository
+          .getStaticFilePath(component.name, component.version, '')
+          .replace('https:', '');
 
         if (!component.oc.files.dataProvider) {
-          returnComponent(null, {});
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { __oc_Retry, ...props } = params;
+          props['_staticPath'] = staticPath;
+          props['_baseUrl'] = conf.baseUrl;
+          props['_componentName'] = component.name;
+          props['_componentVersion'] = component.version;
+
+          returnComponent(null, { component: { props } });
         } else {
           fromPromise(getEnv)(component, (err, env) => {
             if (err) {
@@ -475,9 +485,7 @@ export default function getComponent(conf: Config, repository: Repository) {
               requestHeaders: options.headers,
               requestIp: options.ip,
               setEmptyResponse,
-              staticPath: repository
-                .getStaticFilePath(component.name, component.version, '')
-                .replace('https:', ''),
+              staticPath,
               setHeader: (header?: string, value?: string) => {
                 if (
                   !(typeof header === 'string' && typeof value === 'string')
