@@ -17,7 +17,7 @@ export default function staticRedirector(repository: Repository) {
       if (res.conf.local) {
         filePath = path.join(
           __dirname,
-          '../../components/oc-client/_package/src/oc-client.min.js'
+          '../../components/oc-client/_package/src/oc-client.js'
         );
       } else {
         return res.redirect(repository.getStaticClientPath());

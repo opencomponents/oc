@@ -15,10 +15,11 @@ log['start']('Building client');
 
 fs.emptyDirSync(path.join(__dirname, clientComponentDir, 'src'));
 
-ocClientBrowser.getLib((err, libContent) => {
+ocClientBrowser.getLibs((err, libs) => {
   if (err) {
     log['error'](err);
   }
+  const { dev, prod } = libs;
 
   ocClientPackageInfo.version = ocVersion;
   fs.writeJsonSync(
@@ -29,7 +30,11 @@ ocClientBrowser.getLib((err, libContent) => {
 
   fs.writeFileSync(
     path.join(__dirname, clientComponentDir, 'src/oc-client.min.js'),
-    libContent
+    prod
+  );
+  fs.writeFileSync(
+    path.join(__dirname, clientComponentDir, 'src/oc-client.js'),
+    dev
   );
 
   ocClientBrowser.getMap((err, mapContent) => {
