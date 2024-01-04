@@ -76,10 +76,7 @@ export default function repository(conf: Config) {
           return isValidComponent;
         });
 
-      if (!validComponents.includes('oc-client')) {
-        validComponents.push('oc-client');
-      }
-      return validComponents;
+      return [...validComponents, 'oc-client'];
     },
     getComponentVersions(componentName: string): Promise<string[]> {
       if (componentName === 'oc-client') {
