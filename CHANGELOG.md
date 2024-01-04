@@ -1,7 +1,7 @@
 ## Change Log
 
-### v0.49.36
-  Fix issues with rendering ocs that do not have a data provider specified
+### v0.49.40
+- [#1350](https://github.com/opencomponents/oc/pull/1350) fix not adding oc-client on dev mode multiple times
 
 ### v0.49.36
 - [#1346](https://github.com/opencomponents/oc/pull/1346) Add support for Actions
