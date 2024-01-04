@@ -76,8 +76,7 @@ export default function repository(conf: Config) {
           return isValidComponent;
         });
 
-      validComponents.push('oc-client');
-      return validComponents;
+      return [...validComponents, 'oc-client'];
     },
     getComponentVersions(componentName: string): Promise<string[]> {
       if (componentName === 'oc-client') {
@@ -356,9 +355,8 @@ export default function repository(conf: Config) {
         };
       }
 
-      const componentVersions = await repository.getComponentVersions(
-        componentName
-      );
+      const componentVersions =
+        await repository.getComponentVersions(componentName);
 
       if (
         !versionHandler.validateNewVersion(componentVersion, componentVersions)
