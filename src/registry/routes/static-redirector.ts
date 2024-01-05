@@ -7,7 +7,7 @@ import type { Repository } from '../domain/repository';
 
 export default function staticRedirector(repository: Repository) {
   return function (req: Request, res: Response): void {
-    let filePath = '';
+    let filePath;
     const clientPath = `${res.conf.prefix || '/'}oc-client/client.js`;
     const clientMapPath = `${
       res.conf.prefix || '/'
