@@ -7,7 +7,7 @@ import type { Repository } from '../domain/repository';
 
 export default function staticRedirector(repository: Repository) {
   return function (req: Request, res: Response): void {
-    let filePath;
+    let filePath = '';
     const clientPath = `${res.conf.prefix || '/'}oc-client/client.js`;
     const clientMapPath = `${
       res.conf.prefix || '/'
@@ -20,6 +20,11 @@ export default function staticRedirector(repository: Repository) {
           '../../components/oc-client/_package/src/oc-client.js'
         );
       } else {
+        if (res.conf.compiledClient) {
+          res.type('application/javascript');
+          res.send(res.conf.compiledClient.code);
+          return;
+        }
         return res.redirect(repository.getStaticClientPath());
       }
     } else if (req.route.path === clientMapPath) {
@@ -29,6 +34,11 @@ export default function staticRedirector(repository: Repository) {
           '../../components/oc-client/_package/src/oc-client.min.map'
         );
       } else {
+        if (res.conf.compiledClient) {
+          res.type('text/plain');
+          res.send(res.conf.compiledClient.map);
+          return;
+        }
         return res.redirect(repository.getStaticClientMapPath());
       }
     } else if (req.params['componentName'] === 'oc-client') {
