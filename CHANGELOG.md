@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.41
+- [#1351](https://github.com/opencomponents/oc/pull/1351) update oc client browser to 1.7.3
+
 ### v0.49.40
 - [#1350](https://github.com/opencomponents/oc/pull/1350) fix not adding oc-client on dev mode multiple times
 
