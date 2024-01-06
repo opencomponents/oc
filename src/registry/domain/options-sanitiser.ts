@@ -7,7 +7,7 @@ const DEFAULT_NODE_KEEPALIVE_MS = 5000;
 
 export interface Input extends Partial<Omit<Config, 'beforePublish'>> {
   baseUrl: string;
-  customClient?: boolean;
+  compileClient?: boolean;
 }
 
 export default function optionsSanitiser(input: Input): Config {
@@ -58,7 +58,7 @@ export default function optionsSanitiser(input: Input): Config {
     options.templates = [];
   }
 
-  if (options.customClient) {
+  if (options.compileClient) {
     options.compiledClient = compileSync({ templates: options.templates });
   }
 
