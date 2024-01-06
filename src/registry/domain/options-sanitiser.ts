@@ -9,9 +9,6 @@ export interface Input extends Partial<Omit<Config, 'beforePublish'>> {
   baseUrl: string;
   customClient?: boolean;
 }
-type RegisteredTemplate = {
-  externals: Array<{ global: string | string[]; url: string; name: string }>;
-};
 
 export default function optionsSanitiser(input: Input): Config {
   const options = { ...input };
@@ -62,12 +59,7 @@ export default function optionsSanitiser(input: Input): Config {
   }
 
   if (options.customClient) {
-    const templates: Record<string, RegisteredTemplate> = {};
-    for (const template of options.templates) {
-      const { externals, type } = template.getInfo();
-      templates[type] = { externals };
-    }
-    options.compiledClient = compileSync({ templates });
+    options.compiledClient = compileSync({ templates: options.templates });
   }
 
   if (!options.dependencies) {
