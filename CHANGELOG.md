@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.42
+- [#1352](https://github.com/opencomponents/oc/pull/1352) Add a compileClient option
+
 ### v0.49.41
 - [#1351](https://github.com/opencomponents/oc/pull/1351) update oc client browser to 1.7.3
 
