@@ -9,13 +9,9 @@ import * as middleware from './middleware';
 import * as pluginsInitialiser from './domain/plugins-initialiser';
 import Repository from './domain/repository';
 import { create as createRouter } from './router';
-import sanitiseOptions from './domain/options-sanitiser';
+import sanitiseOptions, { Input } from './domain/options-sanitiser';
 import * as validator from './domain/validators';
-import { Config, Plugin } from '../types';
-
-interface Input extends Partial<Omit<Config, 'beforePublish'>> {
-  baseUrl: string;
-}
+import { Plugin } from '../types';
 
 export default function registry(inputOptions: Input) {
   const validationResult =

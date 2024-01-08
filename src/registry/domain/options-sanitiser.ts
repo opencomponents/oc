@@ -1,11 +1,13 @@
+import { compileSync } from 'oc-client-browser';
 import settings from '../../resources/settings';
 import { Config } from '../../types';
 import * as auth from './authentication';
 
 const DEFAULT_NODE_KEEPALIVE_MS = 5000;
 
-interface Input extends Partial<Omit<Config, 'beforePublish'>> {
+export interface Input extends Partial<Omit<Config, 'beforePublish'>> {
   baseUrl: string;
+  compileClient?: boolean;
 }
 
 export default function optionsSanitiser(input: Input): Config {
@@ -54,6 +56,10 @@ export default function optionsSanitiser(input: Input): Config {
 
   if (!options.templates) {
     options.templates = [];
+  }
+
+  if (options.compileClient) {
+    options.compiledClient = compileSync({ templates: options.templates });
   }
 
   if (!options.dependencies) {
