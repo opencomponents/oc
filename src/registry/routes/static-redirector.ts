@@ -15,10 +15,16 @@ export default function staticRedirector(repository: Repository) {
 
     if (req.route.path === clientPath) {
       if (res.conf.local) {
-        filePath = path.join(
-          __dirname,
-          '../../components/oc-client/_package/src/oc-client.js'
-        );
+        if (res.conf.compiledClient) {
+          res.type('application/javascript');
+          res.send(res.conf.compiledClient.dev);
+          return;
+        } else {
+          filePath = path.join(
+            __dirname,
+            '../../components/oc-client/_package/src/oc-client.js'
+          );
+        }
       } else {
         if (res.conf.compiledClient) {
           res.type('application/javascript');
