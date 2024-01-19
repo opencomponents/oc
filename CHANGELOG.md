@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.43
+- [#1353](https://github.com/opencomponents/oc/pull/1353) always compile client on dev
+
 ### v0.49.42
 - [#1352](https://github.com/opencomponents/oc/pull/1352) Add a compileClient option
 
