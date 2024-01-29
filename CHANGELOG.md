@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.44
+- [#1354](https://github.com/opencomponents/oc/pull/1354) update client browser
+
 ### v0.49.43
 - [#1353](https://github.com/opencomponents/oc/pull/1353) always compile client on dev
 
