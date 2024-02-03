@@ -5,12 +5,13 @@ import * as auth from './authentication';
 
 const DEFAULT_NODE_KEEPALIVE_MS = 5000;
 
-export interface Input extends Partial<Omit<Config, 'beforePublish'>> {
+export interface RegistryOptions<T = any>
+  extends Partial<Omit<Config<T>, 'beforePublish'>> {
   baseUrl: string;
   compileClient?: boolean | { retryLimit?: number; retryInterval?: number };
 }
 
-export default function optionsSanitiser(input: Input): Config {
+export default function optionsSanitiser(input: RegistryOptions): Config {
   const options = { ...input };
 
   if (!options.publishAuth) {
