@@ -7,7 +7,7 @@ const DEFAULT_NODE_KEEPALIVE_MS = 5000;
 
 export interface Input extends Partial<Omit<Config, 'beforePublish'>> {
   baseUrl: string;
-  compileClient?: boolean;
+  compileClient?: boolean | { retryLimit?: number; retryInterval?: number };
 }
 
 export default function optionsSanitiser(input: Input): Config {
@@ -59,7 +59,13 @@ export default function optionsSanitiser(input: Input): Config {
   }
 
   if (options.compileClient) {
-    options.compiledClient = compileSync({ templates: options.templates });
+    const clientOptions =
+      typeof options.compileClient === 'boolean' ? {} : options.compileClient;
+
+    options.compiledClient = compileSync({
+      templates: options.templates,
+      ...clientOptions
+    });
   }
 
   if (!options.dependencies) {
