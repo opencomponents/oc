@@ -9,11 +9,13 @@ import * as middleware from './middleware';
 import * as pluginsInitialiser from './domain/plugins-initialiser';
 import Repository from './domain/repository';
 import { create as createRouter } from './router';
-import sanitiseOptions, { Input } from './domain/options-sanitiser';
+import sanitiseOptions, { RegistryOptions } from './domain/options-sanitiser';
 import * as validator from './domain/validators';
 import { Plugin } from '../types';
 
-export default function registry(inputOptions: Input) {
+export { RegistryOptions };
+
+export default function registry<T = any>(inputOptions: RegistryOptions<T>) {
   const validationResult =
     validator.validateRegistryConfiguration(inputOptions);
   if (!validationResult.isValid) {

@@ -141,7 +141,7 @@ export type PublishAuthConfig =
     }
   | ({ type: string | Authentication } & Record<string, any>);
 
-export interface Config {
+export interface Config<T = any> {
   baseUrl: string;
   compiledClient?: { code: string; map: string; dev: string };
   baseUrlFunc?: (opts: { host?: string; secure: boolean }) => string;
@@ -186,8 +186,8 @@ export interface Config {
     componentsDir: string;
   };
   storage: {
-    adapter: (options: any) => StorageAdapter;
-    options: Record<string, any> & { componentsDir: string };
+    adapter: (options: T) => StorageAdapter;
+    options: T & { componentsDir: string };
   };
   tempDir: string;
   templates: Template[];
