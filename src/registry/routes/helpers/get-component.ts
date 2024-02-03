@@ -38,6 +38,7 @@ export interface GetComponentResult {
   status: number;
   headers?: Record<string, string>;
   response: {
+    data?: any;
     type?: string;
     code?: string;
     error?: unknown;
