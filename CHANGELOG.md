@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.46
+- [#1357](https://github.com/opencomponents/oc/pull/1357) ban eval from ocs
+
 ### v0.49.45
 - [#1356](https://github.com/opencomponents/oc/pull/1356) infer storage type and export config type
 - [#1355](https://github.com/opencomponents/oc/pull/1355) add retry options to compiled client
