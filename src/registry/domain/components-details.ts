@@ -1,3 +1,4 @@
+import pLimit from '../../utils/pLimit';
 import _ from 'lodash';
 import eventsHandler from './events-handler';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
@@ -41,7 +42,6 @@ export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
       });
     });
 
-    const { default: pLimit } = await import('p-limit');
     const limit = pLimit(cdn.maxConcurrentRequests);
 
     await Promise.all(

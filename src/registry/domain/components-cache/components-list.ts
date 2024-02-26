@@ -3,6 +3,7 @@ import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import { StorageAdapter } from 'oc-storage-adapters-utils';
 import eventsHandler from '../events-handler';
 import { ComponentsList, Config } from '../../../types';
+import pLimit from '../../../utils/pLimit';
 
 export default function componentsList(conf: Config, cdn: StorageAdapter) {
   const filePath = (): string =>
@@ -39,7 +40,6 @@ export default function componentsList(conf: Config, cdn: StorageAdapter) {
         const unCheckedVersions = allVersions.filter(
           version => !jsonList?.components[componentName]?.includes(version)
         );
-        const { default: pLimit } = await import('p-limit');
         const limit = pLimit(cdn.maxConcurrentRequests);
         const invalidVersions = (
           await Promise.all(
@@ -76,7 +76,6 @@ export default function componentsList(conf: Config, cdn: StorageAdapter) {
         const components = await cdn.listSubDirectories(
           conf.storage.options.componentsDir
         );
-        const { default: pLimit } = await import('p-limit');
         const limit = pLimit(cdn.maxConcurrentRequests);
 
         const versions = await Promise.all(
