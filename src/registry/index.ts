@@ -35,8 +35,8 @@ export default function registry<T = any>(inputOptions: RegistryOptions<T>) {
     return callback('not opened');
   };
 
-  const register = (
-    plugin: Omit<Plugin, 'callback'>,
+  const register = <T = any>(
+    plugin: Omit<Plugin<T>, 'callback'>,
     callback?: (...args: any[]) => void
   ) => {
     plugins.push(Object.assign(plugin, { callback }));

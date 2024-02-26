@@ -224,14 +224,14 @@ export interface Template {
   ) => void;
 }
 
-export interface Plugin {
+export interface Plugin<T = any> {
   callback?: (error: unknown) => void;
   description?: string;
   name: string;
-  options?: any;
+  options?: T;
   register: {
     register: (
-      options: any,
+      options: T,
       dependencies: any,
       next: (error?: Error) => void
     ) => void;

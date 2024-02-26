@@ -22,7 +22,7 @@
     "prepare": "husky install"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "repository": {
     "type": "git",
@@ -71,7 +71,7 @@
     "minimist": "^1.2.8",
     "mocha": "^9.1.3",
     "node-emoji": "^1.11.0",
-    "p-limit": "^3.1.0",
+    "p-limit": "^5.0.0",
     "prettier": "^3.2.4",
     "rimraf": "^3.0.2",
     "semver-sort": "^1.0.0",
