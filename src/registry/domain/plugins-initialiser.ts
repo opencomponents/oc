@@ -1,4 +1,3 @@
-import pLimit from 'p-limit';
 import _ from 'lodash';
 import { DepGraph } from 'dependency-graph';
 import { promisify } from 'util';
@@ -117,6 +116,7 @@ export async function init(
     return registered;
   };
 
+  const { default: pLimit } = await import('p-limit');
   const onSeries = pLimit(1);
 
   await Promise.all(
