@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.47
+- [#1358](https://github.com/opencomponents/oc/pull/1358) move to p-limit await import. node 18 and improve plugin type
+
 ### v0.49.46
 - [#1357](https://github.com/opencomponents/oc/pull/1357) ban eval from ocs
 
