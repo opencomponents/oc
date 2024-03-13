@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.48
+- [#1359](https://github.com/opencomponents/oc/pull/1359) add postRequestPayloadSize on dev and fix type
+
 ### v0.49.47
 - [#1358](https://github.com/opencomponents/oc/pull/1358) move to p-limit await import. node 18 and improve plugin type
 
