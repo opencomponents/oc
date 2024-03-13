@@ -163,7 +163,7 @@ export interface Config<T = any> {
   plugins: Record<string, (...args: unknown[]) => void>;
   pollingInterval: number;
   port: number | string;
-  postRequestPayloadSize?: number;
+  postRequestPayloadSize?: string | number;
   prefix: string;
   publishAuth?: PublishAuthConfig;
   publishValidation: (data: unknown) =>
