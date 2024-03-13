@@ -33,6 +33,10 @@ export default {
             'Enable hot reloading. Note: when hot reloading is set to true, each request to the component will make the registry to create a new instance for the javascript closures to be loaded, while when false the instance will be recycled between components executions',
           default: true
         },
+        postRequestPayloadSize: {
+          description: 'Maximum payload size for post requests',
+          default: '100kb'
+        },
         verbose: {
           boolean: true,
           description: 'Verbosity',

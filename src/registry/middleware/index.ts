@@ -29,8 +29,10 @@ export const bind = (app: Express, options: Config): Express => {
   app.use(requestHandler());
 
   if (options.postRequestPayloadSize) {
-    bodyParserJsonArgument.limit = options.postRequestPayloadSize;
-    bodyParserUrlEncodedArgument.limit = options.postRequestPayloadSize;
+    // Type is incorrect since limit can be a string like '50mb'
+    bodyParserJsonArgument.limit = options.postRequestPayloadSize as number;
+    bodyParserUrlEncodedArgument.limit =
+      options.postRequestPayloadSize as number;
   }
 
   app.use(express.json(bodyParserJsonArgument));

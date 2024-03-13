@@ -30,6 +30,7 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
       baseUrl: string;
       fallbackRegistryUrl: string;
       hotReloading?: boolean;
+      postRequestPayloadSize?: string;
       components?: string[];
       watch?: boolean;
       verbose?: boolean;
@@ -43,6 +44,7 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
         typeof opts.hotReloading === 'undefined' ? true : opts.hotReloading;
       const optWatch = typeof opts.watch === 'undefined' ? true : opts.watch;
       let packaging = false;
+      const postRequestPayloadSize = opts.postRequestPayloadSize || '100kb';
 
       const watchForChanges = function (
         {
@@ -176,6 +178,7 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
         hotReloading,
         liveReloadPort: liveReload.port,
         local: true,
+        postRequestPayloadSize,
         components: opts.components,
         path: path.resolve(componentsDir),
         port,
