@@ -5,10 +5,15 @@ import * as auth from './authentication';
 
 const DEFAULT_NODE_KEEPALIVE_MS = 5000;
 
+type CompileOptions = Omit<
+  Exclude<Parameters<typeof compileSync>[0], undefined>,
+  'templates'
+>;
+
 export interface RegistryOptions<T = any>
   extends Partial<Omit<Config<T>, 'beforePublish'>> {
   baseUrl: string;
-  compileClient?: boolean | { retryLimit?: number; retryInterval?: number };
+  compileClient?: boolean | CompileOptions;
 }
 
 export default function optionsSanitiser(input: RegistryOptions): Config {
