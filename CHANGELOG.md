@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.49.49
+- [#1360](https://github.com/opencomponents/oc/pull/1360) [Snyk] Security upgrade express from 4.18.2 to 4.19.2
+- [#1361](https://github.com/opencomponents/oc/pull/1361) update packages
+
 ### v0.49.48
 - [#1359](https://github.com/opencomponents/oc/pull/1359) add postRequestPayloadSize on dev and fix type
 
