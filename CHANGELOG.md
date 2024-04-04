@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.50
+- [#1362](https://github.com/opencomponents/oc/pull/1362) update oc client to fix a bug with externals
+
 ### v0.49.49
 - [#1360](https://github.com/opencomponents/oc/pull/1360) [Snyk] Security upgrade express from 4.18.2 to 4.19.2
 - [#1361](https://github.com/opencomponents/oc/pull/1361) update packages
