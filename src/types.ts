@@ -71,6 +71,7 @@ interface OcConfiguration {
       hashKey: string;
       src: string;
       type: string;
+      size?: number;
     };
     static: string[];
     template: {
@@ -78,6 +79,7 @@ interface OcConfiguration {
       src: string;
       type: string;
       version: string;
+      size?: number;
     };
     env?: string;
   };

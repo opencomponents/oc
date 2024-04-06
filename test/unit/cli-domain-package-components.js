@@ -23,7 +23,10 @@ describe('cli : domain : package-components', () => {
     const fsMock = {
       existsSync: sinon.stub(),
       emptyDir: sinon.stub().resolves(),
-      readJson: sinon.stub()
+      readJson: sinon.stub(),
+      readdirSync: sinon.stub().returns(['template.js']),
+      statSync: sinon.stub().returns({ size: 300 }),
+      writeJsonSync: sinon.stub().returns({})
     };
 
     fsMock.existsSync.returns(true);
@@ -38,7 +41,8 @@ describe('cli : domain : package-components', () => {
       return {
         compile: function (options, callback) {
           if (options.componentPath === '.') {
-            callback(null, 'ok');
+            callback(null, { oc: { files: { template: {} } } });
+            // callback(null, 'ok');
           }
           if (options.componentPath === '') {
             callback(new Error('Ouch'));
@@ -63,15 +67,19 @@ describe('cli : domain : package-components', () => {
   describe('when packaging', () => {
     describe('when component is valid', () => {
       const PackageComponents = initialise();
-      it('should correctly invoke the callback when template succeed packaging', done => {
+      it.only('should add sizes and correctly invoke the callback when template succeed packaging', done => {
         let info;
         PackageComponents()({
           componentPath: '.',
           minify: true
         })
-          .then(res => (info = res))
+          .then(res => {
+            info = res;
+          })
           .finally(() => {
-            expect(info).to.equal('ok');
+            expect(info).to.deep.equal({
+              oc: { files: { template: { size: 300 } } }
+            });
             done();
           });
       });

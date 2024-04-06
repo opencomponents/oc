@@ -3,11 +3,16 @@ import getSelectedCheckbox from './selected-checkbox';
 
 export default function componentsList(vm: VM): string {
   const isLocal = vm.type !== 'oc-registry';
+  const isRemote = !isLocal;
+  const sizeAvailable = vm.components.some(
+    component => component.oc.files.template.size
+  );
   const selectedCheckbox = getSelectedCheckbox(vm);
 
-  const extraColumn = !isLocal
+  const remoteServerColumns = isRemote
     ? '<div class="date">Updated</div><div class="activity">Activity</div>'
     : '';
+  const sizeColumn = sizeAvailable ? '<div>Size</div>' : '';
 
   const componentRow = (component: ParsedComponent) => {
     const componentState = component.oc.state
@@ -20,16 +25,21 @@ export default function componentsList(vm: VM): string {
       component.oc.state === 'deprecated' ||
       component.oc.state === 'experimental';
 
-    const extraColumn = !isLocal
+    const remoteServerColumns = isRemote
       ? `<div class="date">${
           component.oc.stringifiedDate || ''
         }</div><div class="activity">${component.allVersions.length}</div>`
       : '';
+    const sizeColumn = sizeAvailable
+      ? component.oc.files.template.size
+        ? `<div>${Math.round(component.oc.files.template.size / 1024)} kb</div>`
+        : '<div>? Kb</div>'
+      : '';
 
     return `<a href="${component.name}/${component.version}/~info">
   <div id="component-${component.name}" class="componentRow row table${
-      isHidden ? ' hide' : ''
-    }">
+    isHidden ? ' hide' : ''
+  }">
     <div class="title">
       <p class="name">${component.name}</p>
       <span class="description">${component.description}</span>
@@ -37,7 +47,8 @@ export default function componentsList(vm: VM): string {
     ${componentState}
     <div class="author">${component.author.name || ''}</div>
     <div>${component.version}</div>
-    ${extraColumn}
+    ${remoteServerColumns}
+    ${sizeColumn}
   </div>
 </a>`;
   };
@@ -58,7 +69,8 @@ export default function componentsList(vm: VM): string {
     <div class="title"></div>
     <div class="author">Author</div>
     <div>Latest version</div>
-    ${extraColumn}
+    ${remoteServerColumns}
+    ${sizeColumn}
   </div>
   ${vm.components.map(componentRow).join('')}
 </div>`;
