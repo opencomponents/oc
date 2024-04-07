@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.51
+- [#1363](https://github.com/opencomponents/oc/pull/1363) calculate sizes on packaging and show in registry UI if available
+
 ### v0.49.50
 - [#1362](https://github.com/opencomponents/oc/pull/1362) update oc client to fix a bug with externals
 
