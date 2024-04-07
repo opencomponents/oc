@@ -18,6 +18,7 @@ interface ComponentHistory {
   name: string;
   publishDate: string;
   version: string;
+  templateSize: number;
 }
 
 export interface TemplateInfo {
@@ -34,7 +35,10 @@ export interface TemplateInfo {
 export interface ComponentsDetails {
   components: {
     [componentName: string]: {
-      [componentVersion: string]: { publishDate: number };
+      [componentVersion: string]: {
+        publishDate: number;
+        templateSize?: number;
+      };
     };
   };
   lastEdit: number;

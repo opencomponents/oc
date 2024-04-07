@@ -52,7 +52,8 @@ export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
             true
           );
           details.components[name][version] = {
-            publishDate: content.oc.date || 0
+            publishDate: content.oc.date || 0,
+            templateSize: content.oc.files.template.size
           };
         })
       )

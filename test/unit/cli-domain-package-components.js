@@ -67,7 +67,7 @@ describe('cli : domain : package-components', () => {
   describe('when packaging', () => {
     describe('when component is valid', () => {
       const PackageComponents = initialise();
-      it.only('should add sizes and correctly invoke the callback when template succeed packaging', done => {
+      it('should add sizes and correctly invoke the callback when template succeed packaging', done => {
         let info;
         PackageComponents()({
           componentPath: '.',

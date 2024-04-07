@@ -5,12 +5,14 @@ interface UnformmatedComponentHistory {
   name: string;
   version: string;
   publishDate: number;
+  templateSize?: number;
 }
 
 interface ComponentHistory {
   name: string;
   version: string;
   publishDate: string;
+  templateSize?: number;
 }
 
 export default function getComponentsHistory(
@@ -23,6 +25,7 @@ export default function getComponentsHistory(
       result.push({
         name,
         publishDate: details.publishDate,
+        templateSize: details.templateSize,
         version
       });
     }
@@ -33,6 +36,7 @@ export default function getComponentsHistory(
     .map(x => ({
       name: x.name,
       version: x.version,
+      templateSize: x.templateSize,
       publishDate: !x.publishDate
         ? 'Unknown'
         : dateStringified(new Date(x.publishDate))
