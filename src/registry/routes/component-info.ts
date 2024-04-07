@@ -6,7 +6,7 @@ import infoView from '../views/info';
 import isUrlDiscoverable from './helpers/is-url-discoverable';
 import * as urlBuilder from '../domain/url-builder';
 import type { Repository } from '../domain/repository';
-import { Component, Config } from '../../types';
+import { Component, ComponentDetail, Config } from '../../types';
 import { Request, Response } from 'express';
 
 function getParams(component: Component) {
@@ -38,9 +38,10 @@ function componentInfo(
   err: InfoError | string | null,
   req: Request,
   res: Response,
-  component: Component
+  component?: Component,
+  componentDetail?: ComponentDetail
 ): void {
-  if (err) {
+  if (!component || err) {
     res.errorDetails = (err as any).registryError || err;
     res.status(404).json(err);
     return;
@@ -67,6 +68,7 @@ function componentInfo(
       res.send(
         infoView({
           component,
+          componentDetail,
           dependencies: Object.keys(component.dependencies || {}),
           href,
           parsedAuthor,
@@ -89,24 +91,32 @@ export default function componentInfoRoute(
   conf: Config,
   repository: Repository
 ) {
-  return function (req: Request, res: Response): void {
-    fromPromise(repository.getComponent)(
-      req.params['componentName'],
-      req.params['componentVersion'],
-      (registryError: any, component) => {
-        if (registryError && conf.fallbackRegistryUrl) {
-          return getComponentFallback.getComponentInfo(
-            conf,
-            req,
-            res,
-            registryError,
-            (fallbackError, fallbackComponent) =>
-              componentInfo(fallbackError, req, res, fallbackComponent)
-          );
-        }
-
-        componentInfo(registryError, req, res, component);
+  async function handler(req: Request, res: Response): Promise<void> {
+    try {
+      const history = await repository
+        .getComponentsDetails()
+        .catch(() => undefined);
+      const componentDetail = history?.components[req.params['componentName']];
+      const component = await repository.getComponent(
+        req.params['componentName'],
+        req.params['componentVersion']
+      );
+      componentInfo(null, req, res, component, componentDetail);
+    } catch (registryError) {
+      if (conf.fallbackRegistryUrl) {
+        return getComponentFallback.getComponentInfo(
+          conf,
+          req,
+          res,
+          registryError as any,
+          (fallbackError, fallbackComponent) =>
+            componentInfo(fallbackError, req, res, fallbackComponent)
+        );
       }
-    );
-  };
+
+      componentInfo(registryError as any, req, res);
+    }
+  }
+
+  return handler;
 }

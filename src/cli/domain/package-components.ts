@@ -13,6 +13,38 @@ export interface PackageOptions {
   production?: boolean;
 }
 
+interface Sizes {
+  client: number;
+  server?: number;
+}
+
+function checkSizes(folder: string) {
+  const jsFiles = fs.readdirSync(folder).filter(x => x.endsWith('.js'));
+
+  const sizes: Sizes = {
+    client: 0
+  };
+
+  for (const file of jsFiles) {
+    if (file === 'server.js') {
+      sizes.server = fs.statSync(path.join(folder, file)).size;
+    } else {
+      sizes.client += fs.statSync(path.join(folder, file)).size;
+    }
+  }
+
+  return sizes;
+}
+
+function addSizes(folder: string, component: Component, sizes: Sizes) {
+  component.oc.files.template.size = sizes.client;
+  if (sizes.server) {
+    component.oc.files.dataProvider.size = sizes.server;
+  }
+
+  fs.writeJsonSync(path.join(folder, 'package.json'), component, { spaces: 2 });
+}
+
 const packageComponents =
   () =>
   async (options: PackageOptions): Promise<Component> => {
@@ -55,7 +87,11 @@ const packageComponents =
       componentPath
     });
     const compile = promisify(ocTemplate.compile);
-    return compile(compileOptions);
+    const component = await compile(compileOptions);
+
+    addSizes(publishPath, component, checkSizes(publishPath));
+
+    return component;
   };
 
 export default packageComponents;

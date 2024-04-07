@@ -18,6 +18,7 @@ interface ComponentHistory {
   name: string;
   publishDate: string;
   version: string;
+  templateSize: number;
 }
 
 export interface TemplateInfo {
@@ -31,11 +32,16 @@ export interface TemplateInfo {
   version: string;
 }
 
+export type ComponentDetail = {
+  [componentVersion: string]: {
+    publishDate: number;
+    templateSize?: number;
+  };
+};
+
 export interface ComponentsDetails {
   components: {
-    [componentName: string]: {
-      [componentVersion: string]: { publishDate: number };
-    };
+    [componentName: string]: ComponentDetail;
   };
   lastEdit: number;
 }
@@ -71,6 +77,7 @@ interface OcConfiguration {
       hashKey: string;
       src: string;
       type: string;
+      size?: number;
     };
     static: string[];
     template: {
@@ -78,6 +85,7 @@ interface OcConfiguration {
       src: string;
       type: string;
       version: string;
+      size?: number;
     };
     env?: string;
   };

@@ -103,7 +103,9 @@ describe('registry : domain : components-details', () => {
         before(done => {
           stubs = { getJson: sinon.stub() };
           stubs.getJson.onCall(0).resolves(details);
-          stubs.getJson.onCall(1).resolves({ oc: { date: 1459864868001 } });
+          stubs.getJson.onCall(1).resolves({
+            oc: { date: 1459864868001, files: { template: { size: 300 } } }
+          });
           stubs.maxConcurrentRequests = 20;
           stubs.putFileContent = sinon.stub().resolves('ok');
           const componentsDetails = ComponentsDetails(conf, stubs);
@@ -144,7 +146,9 @@ describe('registry : domain : components-details', () => {
           before(done => {
             stubs = { getJson: sinon.stub() };
             stubs.getJson.onCall(0).resolves(details);
-            stubs.getJson.onCall(1).resolves({ oc: { date: 1459864868001 } });
+            stubs.getJson.onCall(1).resolves({
+              oc: { date: 1459864868001, files: { template: { size: 300 } } }
+            });
             stubs.maxConcurrentRequests = 20;
             stubs.putFileContent = sinon.stub().resolves('ok');
             const componentsDetails = ComponentsDetails(conf, stubs);
@@ -161,7 +165,7 @@ describe('registry : domain : components-details', () => {
                 components: {
                   hello: {
                     '1.0.0': { publishDate: 1459864868000 },
-                    '1.0.1': { publishDate: 1459864868001 }
+                    '1.0.1': { publishDate: 1459864868001, templateSize: 300 }
                   }
                 }
               })
@@ -173,7 +177,12 @@ describe('registry : domain : components-details', () => {
               fireStub.reset();
               stubs = { getJson: sinon.stub() };
               stubs.getJson.onCall(0).resolves(details);
-              stubs.getJson.onCall(1).resolves({ oc: { date: 1459864868001 } });
+              stubs.getJson.onCall(1).resolves({
+                oc: {
+                  date: 1459864868001,
+                  files: { template: { size: 300 } }
+                }
+              });
               stubs.maxConcurrentRequests = 20;
               stubs.putFileContent = sinon
                 .stub()
@@ -208,7 +217,9 @@ describe('registry : domain : components-details', () => {
             before(done => {
               stubs = { getJson: sinon.stub() };
               stubs.getJson.onCall(0).resolves(details);
-              stubs.getJson.onCall(1).resolves({ oc: { date: 1459864868001 } });
+              stubs.getJson.onCall(1).resolves({
+                oc: { date: 1459864868001, files: { template: { size: 300 } } }
+              });
               stubs.maxConcurrentRequests = 20;
               stubs.putFileContent = sinon.stub().resolves('ok');
               const componentsDetails = ComponentsDetails(conf, stubs);
@@ -225,7 +236,7 @@ describe('registry : domain : components-details', () => {
                 components: {
                   hello: {
                     '1.0.0': { publishDate: 1459864868000 },
-                    '1.0.1': { publishDate: 1459864868001 }
+                    '1.0.1': { publishDate: 1459864868001, templateSize: 300 }
                   }
                 }
               });
@@ -298,8 +309,12 @@ describe('registry : domain : components-details', () => {
       before(done => {
         stubs = { getJson: sinon.stub() };
         stubs.getJson.onCall(0).resolves('not found');
-        stubs.getJson.onCall(1).resolves({ oc: { date: 1459864868000 } });
-        stubs.getJson.onCall(2).resolves({ oc: { date: 1459864868001 } });
+        stubs.getJson.onCall(1).resolves({
+          oc: { date: 1459864868000, files: { template: { size: 300 } } }
+        });
+        stubs.getJson.onCall(2).resolves({
+          oc: { date: 1459864868001, files: { template: { size: 300 } } }
+        });
         stubs.maxConcurrentRequests = 20;
         stubs.putFileContent = sinon.stub().resolves('ok');
         const componentsDetails = ComponentsDetails(conf, stubs);
@@ -344,8 +359,12 @@ describe('registry : domain : components-details', () => {
         before(done => {
           stubs = { getJson: sinon.stub() };
           stubs.getJson.onCall(0).rejects('not found');
-          stubs.getJson.onCall(1).resolves({ oc: { date: 1459864868000 } });
-          stubs.getJson.onCall(2).resolves({ oc: { date: 1459864868001 } });
+          stubs.getJson.onCall(1).resolves({
+            oc: { date: 1459864868000, files: { template: { size: 300 } } }
+          });
+          stubs.getJson.onCall(2).resolves({
+            oc: { date: 1459864868001, files: { template: { size: 300 } } }
+          });
           stubs.maxConcurrentRequests = 20;
           stubs.putFileContent = sinon.stub().resolves('ok');
           const componentsDetails = ComponentsDetails(conf, stubs);
@@ -361,8 +380,8 @@ describe('registry : domain : components-details', () => {
               lastEdit: 1234567890,
               components: {
                 hello: {
-                  '1.0.0': { publishDate: 1459864868000 },
-                  '1.0.1': { publishDate: 1459864868001 }
+                  '1.0.0': { publishDate: 1459864868000, templateSize: 300 },
+                  '1.0.1': { publishDate: 1459864868001, templateSize: 300 }
                 }
               }
             })
@@ -374,8 +393,12 @@ describe('registry : domain : components-details', () => {
             fireStub.reset();
             stubs = { getJson: sinon.stub() };
             stubs.getJson.onCall(0).rejects('not found');
-            stubs.getJson.onCall(1).resolves({ oc: { date: 1459864868000 } });
-            stubs.getJson.onCall(2).resolves({ oc: { date: 1459864868001 } });
+            stubs.getJson.onCall(1).resolves({
+              oc: { date: 1459864868000, files: { template: { size: 300 } } }
+            });
+            stubs.getJson.onCall(2).resolves({
+              oc: { date: 1459864868001, files: { template: { size: 300 } } }
+            });
             stubs.maxConcurrentRequests = 20;
             stubs.putFileContent = sinon
               .stub()
@@ -410,8 +433,12 @@ describe('registry : domain : components-details', () => {
           before(done => {
             stubs = { getJson: sinon.stub() };
             stubs.getJson.onCall(0).rejects('not found');
-            stubs.getJson.onCall(1).resolves({ oc: { date: 1459864868000 } });
-            stubs.getJson.onCall(2).resolves({ oc: { date: 1459864868001 } });
+            stubs.getJson.onCall(1).resolves({
+              oc: { date: 1459864868000, files: { template: { size: 300 } } }
+            });
+            stubs.getJson.onCall(2).resolves({
+              oc: { date: 1459864868001, files: { template: { size: 300 } } }
+            });
             stubs.maxConcurrentRequests = 20;
             stubs.putFileContent = sinon.stub().resolves('ok');
             const componentsDetails = ComponentsDetails(conf, stubs);
@@ -427,8 +454,8 @@ describe('registry : domain : components-details', () => {
               lastEdit: 1234567890,
               components: {
                 hello: {
-                  '1.0.0': { publishDate: 1459864868000 },
-                  '1.0.1': { publishDate: 1459864868001 }
+                  '1.0.0': { publishDate: 1459864868000, templateSize: 300 },
+                  '1.0.1': { publishDate: 1459864868001, templateSize: 300 }
                 }
               }
             });
