@@ -32,14 +32,16 @@ export interface TemplateInfo {
   version: string;
 }
 
+export type ComponentDetail = {
+  [componentVersion: string]: {
+    publishDate: number;
+    templateSize?: number;
+  };
+};
+
 export interface ComponentsDetails {
   components: {
-    [componentName: string]: {
-      [componentVersion: string]: {
-        publishDate: number;
-        templateSize?: number;
-      };
-    };
+    [componentName: string]: ComponentDetail;
   };
   lastEdit: number;
 }
