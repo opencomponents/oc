@@ -27,7 +27,6 @@ function statsJs(componentDetail: ComponentDetail) {
   <script>
   (function () {
     const componentDetail = ${JSON.stringify(componentDetail)};
-    window.componentDetail = componentDetail;
     const ctx = document.getElementById('stats');
     const dataPoints = [];
     const versionNumbers = Object.keys(componentDetail);
