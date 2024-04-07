@@ -165,7 +165,7 @@ describe('registry : domain : components-details', () => {
                 components: {
                   hello: {
                     '1.0.0': { publishDate: 1459864868000 },
-                    '1.0.1': { publishDate: 1459864868001 }
+                    '1.0.1': { publishDate: 1459864868001, templateSize: 300 }
                   }
                 }
               })
@@ -236,7 +236,7 @@ describe('registry : domain : components-details', () => {
                 components: {
                   hello: {
                     '1.0.0': { publishDate: 1459864868000 },
-                    '1.0.1': { publishDate: 1459864868001 }
+                    '1.0.1': { publishDate: 1459864868001, templateSize: 300 }
                   }
                 }
               });
@@ -380,8 +380,8 @@ describe('registry : domain : components-details', () => {
               lastEdit: 1234567890,
               components: {
                 hello: {
-                  '1.0.0': { publishDate: 1459864868000 },
-                  '1.0.1': { publishDate: 1459864868001 }
+                  '1.0.0': { publishDate: 1459864868000, templateSize: 300 },
+                  '1.0.1': { publishDate: 1459864868001, templateSize: 300 }
                 }
               }
             })
@@ -454,8 +454,8 @@ describe('registry : domain : components-details', () => {
               lastEdit: 1234567890,
               components: {
                 hello: {
-                  '1.0.0': { publishDate: 1459864868000 },
-                  '1.0.1': { publishDate: 1459864868001 }
+                  '1.0.0': { publishDate: 1459864868000, templateSize: 300 },
+                  '1.0.1': { publishDate: 1459864868001, templateSize: 300 }
                 }
               }
             });
