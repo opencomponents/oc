@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
@@ -7,7 +5,7 @@ const sinon = require('sinon');
 describe('cli : domain : handle-dependencies : require-template', () => {
   let result;
   let error;
-  const execute = options => {
+  const execute = (options) => {
     error = null;
     result = null;
     const requireTemplate = injectr(

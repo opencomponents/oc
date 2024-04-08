@@ -1,14 +1,10 @@
-'use strict';
-
 const expect = require('chai').expect;
 
 describe('registry : domain : version-handler', () => {
   const versionHandler = require('../../dist/registry/domain/version-handler');
 
   describe('when getting component', () => {
-    const get = function (a, b) {
-      return versionHandler.getAvailableVersion(a, b);
-    };
+    const get = (a, b) => versionHandler.getAvailableVersion(a, b);
 
     describe('when versions not available', () => {
       const availableVersions = [];
@@ -112,9 +108,7 @@ describe('registry : domain : version-handler', () => {
 
   describe('when publishing component', () => {
     const existingVersions = ['1.0.0', '1.0.1', '1.0.3', '1.1.0', '2.0.0'];
-    const validate = function (a, b) {
-      return versionHandler.validateNewVersion(a, b);
-    };
+    const validate = (a, b) => versionHandler.validateNewVersion(a, b);
 
     describe('when version already exists', () => {
       it("shouldn't be valid", () => {

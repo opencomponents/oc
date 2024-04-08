@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
@@ -10,7 +8,7 @@ describe('registry : routes : plugins', () => {
   let pluginsRoute;
   let plugins;
 
-  const initialise = function () {
+  const initialise = () => {
     resJsonStub = sinon.stub();
     statusStub = sinon.stub().returns({ json: resJsonStub });
     const plugin1 = () => {};

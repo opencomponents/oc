@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 
 describe('registry : routes : helpers : get-components-history', () => {

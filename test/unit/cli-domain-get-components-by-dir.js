@@ -1,11 +1,9 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const path = require('path');
 const sinon = require('sinon');
 
-const initialise = function () {
+const initialise = () => {
   const fsMock = {
     readdir: sinon.stub(),
     readJsonSync: sinon.stub()
@@ -14,9 +12,7 @@ const initialise = function () {
   const pathMock = {
     extname: path.extname,
     join: path.join,
-    resolve: function () {
-      return Array.from(arguments).join('/');
-    }
+    resolve: (...args) => args.join('/')
   };
 
   const GetComponentsByDir = injectr(
@@ -33,9 +29,8 @@ const initialise = function () {
   return { local: local, fs: fsMock };
 };
 
-const executeComponentsListingByDir = function (local, componentsToRun) {
-  return local('.', componentsToRun);
-};
+const executeComponentsListingByDir = (local, componentsToRun) =>
+  local('.', componentsToRun);
 
 describe('cli : domain : get-components-by-dir', () => {
   describe('when getting components from dir', () => {

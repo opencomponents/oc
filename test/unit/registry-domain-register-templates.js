@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 
 describe('registry : domain : register-templates', () => {
@@ -24,7 +22,7 @@ describe('registry : domain : register-templates', () => {
   });
 
   describe('when templates get registered with additional templates', () => {
-    const getTemplateMock = dev => ({
+    const getTemplateMock = (dev) => ({
       getInfo() {
         return {
           type: 'new-tpl',

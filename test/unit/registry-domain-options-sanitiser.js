@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 
 describe('registry : domain : options-sanitiser', () => {
@@ -110,7 +108,7 @@ describe('registry : domain : options-sanitiser', () => {
     ];
 
     it('should support various scenarios correctly', () => {
-      prefixAndBaseUrlScenarios.forEach(scenario => {
+      prefixAndBaseUrlScenarios.forEach((scenario) => {
         expect(sanitise(scenario.options).prefix).to.equal(
           scenario.expected.prefix
         );

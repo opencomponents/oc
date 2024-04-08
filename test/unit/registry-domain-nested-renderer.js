@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
@@ -10,7 +8,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
   let nestedRenderer;
   let renderer;
 
-  const initialise = function (rendererMocks, conf) {
+  const initialise = (rendererMocks, conf) => {
     if (Array.isArray(rendererMocks)) {
       renderer = sinon.stub();
 
@@ -32,7 +30,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
         });
 
         it('should throw an error', () => {
-          const f = function () {
+          const f = () => {
             nestedRenderer.renderComponent();
           };
           expect(f).to.throw("component's name is not valid");
@@ -45,7 +43,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
         });
 
         it('should throw an error', () => {
-          const f = function () {
+          const f = () => {
             nestedRenderer.renderComponent('');
           };
           expect(f).to.throw("component's name is not valid");
@@ -54,7 +52,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
 
       describe('when requesting a not existent component', () => {
         let error;
-        beforeEach(done => {
+        beforeEach((done) => {
           initialise({
             status: 404,
             response: {
@@ -64,7 +62,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
 
           nestedRenderer
             .renderComponent('404-component', {})
-            .catch(err => (error = err))
+            .catch((err) => (error = err))
             .finally(done);
         });
 
@@ -78,7 +76,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
       describe('when all params specified', () => {
         let result;
         let error;
-        beforeEach(done => {
+        beforeEach((done) => {
           initialise(
             {
               status: 200,
@@ -98,8 +96,8 @@ describe('registry : routes : helpers : nested-renderer', () => {
               parameters: { a: 1234 },
               version: '1.2.X'
             })
-            .then(res => (result = res))
-            .catch(err => (error = err))
+            .then((res) => (result = res))
+            .catch((err) => (error = err))
             .finally(done);
         });
 
@@ -129,7 +127,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
       describe('when minimal params specified', () => {
         let result;
         let error;
-        beforeEach(done => {
+        beforeEach((done) => {
           initialise(
             {
               status: 200,
@@ -142,8 +140,8 @@ describe('registry : routes : helpers : nested-renderer', () => {
 
           nestedRenderer
             .renderComponent('my-component')
-            .then(res => (result = res))
-            .catch(err => (error = err))
+            .then((res) => (result = res))
+            .catch((err) => (error = err))
             .finally(done);
         });
 
@@ -179,7 +177,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
         });
 
         it('should throw an error', () => {
-          const f = function () {
+          const f = () => {
             nestedRenderer.renderComponents();
           };
           expect(f).to.throw('components is not valid');
@@ -192,7 +190,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
         });
 
         it('should throw an error', () => {
-          const f = function () {
+          const f = () => {
             nestedRenderer.renderComponents([]);
           };
           expect(f).to.throw('components is not valid');
@@ -202,7 +200,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
       describe('when requesting not existent components', () => {
         let result;
         let error;
-        beforeEach(done => {
+        beforeEach((done) => {
           initialise({
             status: 404,
             response: {
@@ -218,10 +216,10 @@ describe('registry : routes : helpers : nested-renderer', () => {
               ],
               {}
             )
-            .then(res => {
+            .then((res) => {
               result = res;
             })
-            .catch(err => {
+            .catch((err) => {
               error = err;
             })
             .finally(done);
@@ -242,7 +240,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
       describe('when all params specified', () => {
         let result;
         let error;
-        beforeEach(done => {
+        beforeEach((done) => {
           initialise(
             [
               {
@@ -282,8 +280,8 @@ describe('registry : routes : helpers : nested-renderer', () => {
                 }
               }
             )
-            .then(res => (result = res))
-            .catch(err => (error = err))
+            .then((res) => (result = res))
+            .catch((err) => (error = err))
             .finally(done);
         });
 
@@ -334,7 +332,7 @@ describe('registry : routes : helpers : nested-renderer', () => {
       describe('when minimal params specified', () => {
         let result;
         let error;
-        beforeEach(done => {
+        beforeEach((done) => {
           initialise(
             [
               {
@@ -354,8 +352,8 @@ describe('registry : routes : helpers : nested-renderer', () => {
               { name: 'my-component' },
               { name: 'my-other-component' }
             ])
-            .then(res => (result = res))
-            .catch(err => (error = err))
+            .then((res) => (result = res))
+            .catch((err) => (error = err))
             .finally(done);
         });
 

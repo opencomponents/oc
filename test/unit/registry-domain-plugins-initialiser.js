@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 
 describe('registry : domain : plugins-initialiser', () => {
@@ -8,7 +6,7 @@ describe('registry : domain : plugins-initialiser', () => {
   describe('when initialising not valid plugins', () => {
     describe('when plugin not registered correctly', () => {
       let error;
-      beforeEach(done => {
+      beforeEach((done) => {
         const plugins = [
           {
             name: 'doSomething'
@@ -17,7 +15,7 @@ describe('registry : domain : plugins-initialiser', () => {
 
         pluginsInitialiser
           .init(plugins)
-          .catch(err => (error = err))
+          .catch((err) => (error = err))
           .finally(done);
       });
 
@@ -30,19 +28,19 @@ describe('registry : domain : plugins-initialiser', () => {
 
     describe('when plugin is anonymous', () => {
       let error;
-      beforeEach(done => {
+      beforeEach((done) => {
         const plugins = [
           {
             register: {
-              register: function () {},
-              execute: function () {}
+              register: () => {},
+              execute: () => {}
             }
           }
         ];
 
         pluginsInitialiser
           .init(plugins)
-          .catch(err => (error = err))
+          .catch((err) => (error = err))
           .finally(done);
       });
 
@@ -53,17 +51,17 @@ describe('registry : domain : plugins-initialiser', () => {
 
     describe('when plugin does not expose a register method', () => {
       let error;
-      beforeEach(done => {
+      beforeEach((done) => {
         const plugins = [
           {
             name: 'doSomething',
-            register: { execute: function () {} }
+            register: { execute: () => {} }
           }
         ];
 
         pluginsInitialiser
           .init(plugins)
-          .catch(err => (error = err))
+          .catch((err) => (error = err))
           .finally(done);
       });
 
@@ -76,17 +74,17 @@ describe('registry : domain : plugins-initialiser', () => {
 
     describe('when plugin does not expose an execute method', () => {
       let error;
-      beforeEach(done => {
+      beforeEach((done) => {
         const plugins = [
           {
             name: 'doSomething',
-            register: { register: function () {} }
+            register: { register: () => {} }
           }
         ];
 
         pluginsInitialiser
           .init(plugins)
-          .catch(err => (error = err))
+          .catch((err) => (error = err))
           .finally(done);
       });
 
@@ -102,7 +100,7 @@ describe('registry : domain : plugins-initialiser', () => {
     let passedOptions;
     let flag;
     let result;
-    beforeEach(done => {
+    beforeEach((done) => {
       const plugins = [
         {
           name: 'getValue',
@@ -112,7 +110,7 @@ describe('registry : domain : plugins-initialiser', () => {
               passedOptions = options;
               cb();
             },
-            execute: key => passedOptions[key]
+            execute: (key) => passedOptions[key]
           },
           options: { a: 123, b: 456 }
         },
@@ -132,7 +130,7 @@ describe('registry : domain : plugins-initialiser', () => {
 
       pluginsInitialiser
         .init(plugins)
-        .then(res => (result = res))
+        .then((res) => (result = res))
         .finally(done);
     });
 
@@ -162,28 +160,26 @@ describe('registry : domain : plugins-initialiser', () => {
   describe('when plugin specifies dependencies', () => {
     let passedDeps;
     let flag;
-    beforeEach(done => {
+    beforeEach((done) => {
       const plugins = [
         {
           name: 'isFlagged',
           register: {
-            register: function (options, deps, cb) {
+            register: (options, deps, cb) => {
               flag = true;
               cb();
             },
-            execute: function () {
-              return flag;
-            }
+            execute: () => flag
           }
         },
         {
           name: 'getValue',
           register: {
-            register: function (options, deps, cb) {
+            register: (options, deps, cb) => {
               passedDeps = deps;
               cb();
             },
-            execute: function () {},
+            execute: () => {},
             dependencies: ['isFlagged']
           },
           options: {}
@@ -204,15 +200,15 @@ describe('registry : domain : plugins-initialiser', () => {
   describe('when plugins have a circular dependency', () => {
     let flag;
     let error;
-    beforeEach(done => {
+    beforeEach((done) => {
       const plugins = [
         {
           name: 'getValue',
           register: {
-            register: function (options, deps, cb) {
+            register: (options, deps, cb) => {
               cb();
             },
-            execute: function () {},
+            execute: () => {},
             dependencies: ['isFlagged']
           },
           options: {}
@@ -220,13 +216,11 @@ describe('registry : domain : plugins-initialiser', () => {
         {
           name: 'isFlagged',
           register: {
-            register: function (options, deps, cb) {
+            register: (options, deps, cb) => {
               flag = true;
               cb();
             },
-            execute: function () {
-              return flag;
-            },
+            execute: () => flag,
             dependencies: ['getValue']
           }
         }
@@ -234,7 +228,7 @@ describe('registry : domain : plugins-initialiser', () => {
 
       pluginsInitialiser
         .init(plugins)
-        .catch(err => (error = err))
+        .catch((err) => (error = err))
         .finally(done);
     });
 
@@ -247,15 +241,15 @@ describe('registry : domain : plugins-initialiser', () => {
 
   describe('when plugin depends on a plugin that is not registered', () => {
     let error;
-    beforeEach(done => {
+    beforeEach((done) => {
       const plugins = [
         {
           name: 'getValue',
           register: {
-            register: function (options, deps, cb) {
+            register: (options, deps, cb) => {
               cb();
             },
-            execute: function () {},
+            execute: () => {},
             dependencies: ['isFlagged']
           },
           options: {}
@@ -264,7 +258,7 @@ describe('registry : domain : plugins-initialiser', () => {
 
       pluginsInitialiser
         .init(plugins)
-        .catch(err => (error = err))
+        .catch((err) => (error = err))
         .finally(done);
     });
 
@@ -278,17 +272,15 @@ describe('registry : domain : plugins-initialiser', () => {
   describe('when plugin chain requires multiple passes', () => {
     let flag;
     let result;
-    beforeEach(done => {
+    beforeEach((done) => {
       const plugins = [
         {
           name: 'doSomething',
           register: {
-            register: function (options, deps, cb) {
+            register: (options, deps, cb) => {
               cb();
             },
-            execute: function () {
-              return true;
-            },
+            execute: () => true,
             dependencies: ['getValue']
           },
           options: {}
@@ -296,10 +288,10 @@ describe('registry : domain : plugins-initialiser', () => {
         {
           name: 'getValue',
           register: {
-            register: function (options, deps, cb) {
+            register: (options, deps, cb) => {
               cb();
             },
-            execute: function () {},
+            execute: () => {},
             dependencies: ['isFlagged']
           },
           options: {}
@@ -307,20 +299,18 @@ describe('registry : domain : plugins-initialiser', () => {
         {
           name: 'isFlagged',
           register: {
-            register: function (options, deps, cb) {
+            register: (options, deps, cb) => {
               flag = true;
               cb();
             },
-            execute: function () {
-              return flag;
-            }
+            execute: () => flag
           }
         }
       ];
 
       pluginsInitialiser
         .init(plugins)
-        .then(res => (result = res))
+        .then((res) => (result = res))
         .finally(done);
     });
 

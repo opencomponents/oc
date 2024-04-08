@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
@@ -22,7 +20,7 @@ describe('registry : domain : extract-package', () => {
   describe('when successfully extracting package', () => {
     let response;
 
-    beforeEach(done => {
+    beforeEach((done) => {
       pathResolveStub.reset();
       pathResolveStub
         .onCall(0)
@@ -45,7 +43,7 @@ describe('registry : domain : extract-package', () => {
         ],
         766
       )
-        .then(res => (response = res))
+        .then((res) => (response = res))
         .finally(done);
     });
 
@@ -71,7 +69,7 @@ describe('registry : domain : extract-package', () => {
   describe('when extracting package fails', () => {
     let error;
 
-    beforeEach(done => {
+    beforeEach((done) => {
       pathResolveStub.reset();
       pathResolveStub
         .onCall(0)
@@ -94,7 +92,7 @@ describe('registry : domain : extract-package', () => {
         ],
         766
       )
-        .catch(err => (error = err))
+        .catch((err) => (error = err))
         .finally(done);
     });
 

@@ -1,11 +1,9 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
 const path = require('path');
 
-const getAppStart = function (mockedRepository, options, callback) {
+const getAppStart = (mockedRepository, options, callback) => {
   const appStart = injectr(
     '../../dist/registry/app-start.js',
     {
@@ -34,7 +32,7 @@ describe('registry : app-start', () => {
   describe('when registry starting', () => {
     describe('when not in local mode', () => {
       describe('when oc-client found on library', () => {
-        it('should not publish it', done => {
+        it('should not publish it', (done) => {
           const mockedRepository = {
             getComponentVersions: sinon.stub().resolves(['1.2.3']),
             publishComponent: sinon.spy()
@@ -48,7 +46,7 @@ describe('registry : app-start', () => {
       });
 
       describe('when oc-client not found on library', () => {
-        it('should publish it', done => {
+        it('should publish it', (done) => {
           const mockedRepository = {
             getComponentVersions: sinon.stub().resolves(['1.0.0']),
             publishComponent: sinon.stub().yields(null, 'ok')

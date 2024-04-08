@@ -1,14 +1,10 @@
-'use strict';
-
 const expect = require('chai').expect;
 
 describe('registry : routes : helpers : apply-default-values', () => {
   let parameters;
   const applyDefaultValues =
     require('../../dist/registry/routes/helpers/apply-default-values').default;
-  const apply = function (a, b) {
-    return applyDefaultValues(a, b);
-  };
+  const apply = (a, b) => applyDefaultValues(a, b);
 
   describe("when component deesn't have optional parameters", () => {
     const componentParameters = {

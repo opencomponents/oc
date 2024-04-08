@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 
@@ -8,7 +6,7 @@ describe('registry : routes : helpers : get-available-dependencies', () => {
     '../../dist/registry/routes/helpers/get-available-dependencies.js',
     {
       'builtin-modules': ['url'],
-      '../../domain/require-wrapper': () => pathToPackageJson => ({
+      '../../domain/require-wrapper': () => (pathToPackageJson) => ({
         version: '1.2.3',
         homepage: `https://${pathToPackageJson.split('/')[0]}.com/`
       })

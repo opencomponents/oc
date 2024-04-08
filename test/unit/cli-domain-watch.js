@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
@@ -8,7 +6,7 @@ describe('cli : domain : watch', () => {
   const execute = (fileChanged, separator, cb) => {
     const watch = injectr('../../dist/cli/domain/watch.js', {
       'node:path': {
-        resolve: x => x,
+        resolve: (x) => x,
         sep: separator
       },
       chokidar: {
@@ -32,7 +30,7 @@ describe('cli : domain : watch', () => {
 
   describe('when a file from a component changes', () => {
     let result;
-    before(done => {
+    before((done) => {
       execute(
         '/path/to/my-component/server.js',
         '/',
@@ -58,7 +56,7 @@ describe('cli : domain : watch', () => {
 
   describe('when a file from a component whose name matches another component changes', () => {
     let result;
-    before(done => {
+    before((done) => {
       execute(
         '/path/to/my-component2/server.js',
         '/',
@@ -84,7 +82,7 @@ describe('cli : domain : watch', () => {
 
   describe('when a file from a component on Windows-like path changes', () => {
     let result;
-    before(done => {
+    before((done) => {
       execute(
         'C:\\Windows-like\\path\\to\\yet-another-component\\server.js',
         '\\',

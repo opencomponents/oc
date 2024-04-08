@@ -1,11 +1,9 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const path = require('path');
 const sinon = require('sinon');
 
-const initialise = function () {
+const initialise = () => {
   const fsMock = {
     existsSync: sinon.stub(),
     readJson: sinon.stub(),
@@ -32,20 +30,19 @@ const initialise = function () {
   return { local: local, fs: fsMock };
 };
 
-const executeMocking = function (local, type, name, value, cb) {
-  return local({
+const executeMocking = (local, type, name, value, cb) =>
+  local({
     targetType: type,
     targetName: name,
     targetValue: value
   })
     .catch(() => {})
     .finally(cb);
-};
 
 describe('cli : domain : mock', () => {
   describe('when mocking a static plugin', () => {
     let data;
-    beforeEach(done => {
+    beforeEach((done) => {
       data = initialise();
 
       data.fs.readJson.resolves({ something: 'hello' });
@@ -71,7 +68,7 @@ describe('cli : domain : mock', () => {
 
   describe('when mocking a static plugin using a bool value', () => {
     let data;
-    beforeEach(done => {
+    beforeEach((done) => {
       data = initialise();
 
       data.fs.readJson.resolves({ something: 'hello' });
@@ -97,7 +94,7 @@ describe('cli : domain : mock', () => {
 
   describe('when mocking a dynamic plugin', () => {
     let data;
-    beforeEach(done => {
+    beforeEach((done) => {
       data = initialise();
 
       data.fs.readJson.resolves({ something: 'hello' });

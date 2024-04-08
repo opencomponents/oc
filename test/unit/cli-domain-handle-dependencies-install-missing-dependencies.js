@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
@@ -28,14 +26,14 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     const installOptions = { dependencies, logger };
 
     installMissingDependencies(installOptions)
-      .catch(err => (error = err))
+      .catch((err) => (error = err))
       .finally(done);
   };
 
   describe('when there is no missing dependency', () => {
     let dependencies;
     let stubs;
-    beforeEach(done => {
+    beforeEach((done) => {
       stubs = {
         getMissingDependencies: sinon.stub().returns([]),
         installDependencies: sinon.stub().resolves()
@@ -58,7 +56,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     let dependencies;
     let stubs;
 
-    beforeEach(done => {
+    beforeEach((done) => {
       stubs = {
         getMissingDependencies: sinon.stub(),
         installDependencies: sinon.stub().resolves()
@@ -102,7 +100,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     let dependencies;
     let stubs;
 
-    beforeEach(done => {
+    beforeEach((done) => {
       stubs = {
         getMissingDependencies: sinon.stub(),
         installDependencies: sinon.stub().rejects('got an error')
@@ -138,7 +136,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     let dependencies;
     let stubs;
 
-    beforeEach(done => {
+    beforeEach((done) => {
       stubs = {
         getMissingDependencies: sinon.stub(),
         installDependencies: sinon.stub().resolves()

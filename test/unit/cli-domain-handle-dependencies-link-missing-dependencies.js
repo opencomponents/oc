@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
@@ -29,14 +27,14 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
       logger
     };
     linkMissingDependencies(installOptions)
-      .catch(err => (error = err))
+      .catch((err) => (error = err))
       .finally(done);
   };
 
   describe('when there is no missing dependency', () => {
     let dependencies;
     let stubs;
-    beforeEach(done => {
+    beforeEach((done) => {
       stubs = {
         getMissingDependencies: sinon.stub().returns([]),
         ensureSymlink: sinon.stub().onCall().resolves()
@@ -59,7 +57,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     let dependencies;
     let stubs;
 
-    beforeEach(done => {
+    beforeEach((done) => {
       stubs = {
         getMissingDependencies: sinon.stub(),
         ensureSymlink: sinon.stub().onCall().resolves(null)
@@ -96,7 +94,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     let dependencies;
     let stubs;
 
-    beforeEach(done => {
+    beforeEach((done) => {
       stubs = {
         getMissingDependencies: sinon.stub(),
         ensureSymlink: sinon.stub().rejects(new Error('symlink error'))

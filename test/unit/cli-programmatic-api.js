@@ -1,5 +1,3 @@
-'use strict';
-
 const _ = require('lodash');
 const expect = require('chai').expect;
 const injectr = require('injectr');
@@ -54,7 +52,7 @@ describe('cli : programmatic-api', () => {
     }
   ];
 
-  scenarios.forEach(scenario => {
+  scenarios.forEach((scenario) => {
     describe(`cmd: cli.${scenario.cmd}`, () => {
       const fn = _.get(programmaticApi, scenario.cmd);
 

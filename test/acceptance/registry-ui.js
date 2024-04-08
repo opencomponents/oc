@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const oc = require('../../dist/index');
 const path = require('path');
@@ -13,11 +11,11 @@ describe('registry (ui interface)', () => {
 
   const next = (promise, done) => {
     promise
-      .then(r => {
+      .then((r) => {
         headers = r.headers;
         result = r.body;
       })
-      .catch(e => (error = e))
+      .catch((e) => (error = e))
       .finally(done);
   };
 
@@ -37,12 +35,12 @@ describe('registry (ui interface)', () => {
     registry.start(cb);
   };
 
-  before(done => initializeRegistry(conf, done));
+  before((done) => initializeRegistry(conf, done));
 
-  after(done => registry.close(done));
+  after((done) => registry.close(done));
 
   describe('GET / with Accept: text/html', () => {
-    before(done => {
+    before((done) => {
       next(
         got('http://localhost:3030', {
           headers: { accept: 'text/html' }
@@ -62,7 +60,7 @@ describe('registry (ui interface)', () => {
   });
 
   describe('GET /oc-client/~info with Accept: text/html', () => {
-    before(done => {
+    before((done) => {
       next(
         got('http://localhost:3030/oc-client/~info', {
           headers: { accept: 'text/html' }

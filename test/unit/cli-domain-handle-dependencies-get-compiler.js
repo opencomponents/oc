@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
@@ -33,12 +31,12 @@ describe('cli : domain : handle-dependencies : get-compiler', () => {
     ).default;
 
     getCompiler(options)
-      .catch(err => (error = err.name))
+      .catch((err) => (error = err.name))
       .finally(done);
   };
 
   describe("when compiler is already installed inside the component's folder", () => {
-    beforeEach(done => {
+    beforeEach((done) => {
       installCompilerStub = sinon.stub().resolves({ ok: true });
       cleanRequireStub = sinon.stub().returns({ thisIsACompiler: true });
       execute(done);
@@ -61,7 +59,7 @@ describe('cli : domain : handle-dependencies : get-compiler', () => {
 
   describe("when compiler is not installed inside the component's folder", () => {
     describe('when compiler version is specified', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         installCompilerStub = sinon.stub().resolves({ ok: true });
         cleanRequireStub = sinon.stub().returns(undefined);
 
@@ -84,7 +82,7 @@ describe('cli : domain : handle-dependencies : get-compiler', () => {
     });
 
     describe('when compiler version is not specified', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         installCompilerStub = sinon.stub().resolves({ ok: true });
         cleanRequireStub = sinon.stub().returns(undefined);
         execute({ compilerVersionEmpty: true }, done);
@@ -106,7 +104,7 @@ describe('cli : domain : handle-dependencies : get-compiler', () => {
     });
 
     describe('when install fails', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         installCompilerStub = sinon.stub().rejects('Install failed!');
         cleanRequireStub = sinon.stub().returns(undefined);
         execute(done);

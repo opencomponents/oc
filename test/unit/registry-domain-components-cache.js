@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
@@ -33,7 +31,7 @@ describe('registry : domain : components-cache', () => {
 
   const getTimestamp = () => 12345678;
 
-  const initialise = function () {
+  const initialise = () => {
     clearTimeoutStub = sinon.stub();
     setTimeoutStub = sinon.stub();
     eventsHandlerStub = { fire: sinon.stub() };
@@ -62,13 +60,13 @@ describe('registry : domain : components-cache', () => {
   describe('when library does not contain components.json', () => {
     describe('when getting the json fails', () => {
       let error;
-      before(done => {
+      before((done) => {
         mockedCdn.getJson = sinon.stub();
         mockedCdn.getJson.rejects(new Error('FILE_ERROR'));
         initialise();
         componentsCache
           .load()
-          .catch(err => (error = err))
+          .catch((err) => (error = err))
           .finally(done);
       });
 
@@ -77,7 +75,7 @@ describe('registry : domain : components-cache', () => {
       });
     });
     describe('when initialising the cache', () => {
-      before(done => {
+      before((done) => {
         mockedCdn.getJson = sinon.stub();
         mockedCdn.getJson.resolves({});
         mockedCdn.getJson.onFirstCall(0).rejects({ code: 'file_not_found' });
@@ -127,7 +125,7 @@ describe('registry : domain : components-cache', () => {
 
   describe('when library contains outdated components.json', () => {
     describe('when initialising the cache', () => {
-      before(done => {
+      before((done) => {
         mockedCdn.getJson = sinon.stub();
         mockedCdn.getJson.resolves(baseResponse());
         mockedCdn.getJson
@@ -196,7 +194,7 @@ describe('registry : domain : components-cache', () => {
 
   describe('when library contains updated components.json', () => {
     describe('when initialising the cache', () => {
-      before(done => {
+      before((done) => {
         mockedCdn.getJson = sinon.stub();
         mockedCdn.getJson.resolves(baseResponse());
         mockedCdn.listSubDirectories = sinon.stub();
@@ -245,7 +243,7 @@ describe('registry : domain : components-cache', () => {
       baseResponseUpdated.lastEdit++;
 
       describe('when refresh errors', () => {
-        before(done => {
+        before((done) => {
           mockedCdn.getJson = sinon.stub();
           mockedCdn.getJson.resolves(baseResponse());
           mockedCdn.putFileContent = sinon.stub();
@@ -280,7 +278,7 @@ describe('registry : domain : components-cache', () => {
       });
 
       describe('when refresh does not generate errors', () => {
-        before(done => {
+        before((done) => {
           mockedCdn.getJson = sinon.stub();
           mockedCdn.getJson.resolves(baseResponse());
           mockedCdn.putFileContent = sinon.stub();

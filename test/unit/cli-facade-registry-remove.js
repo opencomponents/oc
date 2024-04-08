@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
@@ -11,14 +9,14 @@ describe('cli : facade : registry : remove', () => {
     require('../../dist/cli/facade/registry-remove').default;
   const registryFacade = RegistryFacade({ registry: registry, logger: logSpy });
 
-  const execute = function (done) {
+  const execute = (done) => {
     logSpy.err = sinon.spy();
     logSpy.ok = sinon.spy();
     registryFacade({}, () => done());
   };
 
   describe('when removing a registry and having some problem removing it', () => {
-    beforeEach(done => {
+    beforeEach((done) => {
       sinon
         .stub(registry, 'remove')
         .rejects(new Error('something bad happened!'));
@@ -35,7 +33,7 @@ describe('cli : facade : registry : remove', () => {
   });
 
   describe('when removing a valid registry', () => {
-    beforeEach(done => {
+    beforeEach((done) => {
       sinon.stub(registry, 'remove').resolves('ok!');
       execute(done);
     });

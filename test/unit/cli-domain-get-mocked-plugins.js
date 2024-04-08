@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
@@ -18,7 +16,7 @@ describe('cli : domain : get-mocked-plugins', () => {
   let fsMock;
   let getMockedPlugins;
 
-  const initialise = function (fs, pathJoinStub) {
+  const initialise = (fs, pathJoinStub) => {
     fsMock = {
       existsSync: sinon.stub().returns(true),
       readFileSync: sinon.stub().returns('file content'),
@@ -28,11 +26,8 @@ describe('cli : domain : get-mocked-plugins', () => {
       ...fs
     };
 
-    const fakePathFunc = function () {
-      return Array.from(arguments)
-        .map(x => x.replace(/\.\//g, ''))
-        .join('');
-    };
+    const fakePathFunc = (...args) =>
+      args.map(x => x.replace(/\.\//g, '')).join('');
 
     getMockedPlugins = injectr('../../dist/cli/domain/get-mocked-plugins.js', {
       'fs-extra': fsMock,

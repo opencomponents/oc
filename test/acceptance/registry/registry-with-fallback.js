@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const path = require('path');
 const got = require('got');
@@ -30,13 +28,13 @@ describe('registry', () => {
 
     const next = (promise, done) => {
       promise
-        .then(r => {
+        .then((r) => {
           result = JSON.parse(r.body);
         })
         .finally(done);
     };
 
-    before(done => {
+    before((done) => {
       registry = oc.Registry(
         retrieveRegistryConfiguration(
           3030,
@@ -55,14 +53,14 @@ describe('registry', () => {
       });
     });
 
-    after(done => {
+    after((done) => {
       registry.close(() => {
         fallbackRegistry.close(done);
       });
     });
 
     describe('GET /welcome', () => {
-      before(done => {
+      before((done) => {
         next(got('http://localhost:3030/welcome'), done);
       });
 
@@ -76,7 +74,7 @@ describe('registry', () => {
     });
 
     describe('GET /fallback-hello-world', () => {
-      before(done => {
+      before((done) => {
         next(got('http://localhost:3030/fallback-hello-world'), done);
       });
 
@@ -92,7 +90,7 @@ describe('registry', () => {
     });
 
     describe('GET /fallback-hello-world/~info', () => {
-      before(done => {
+      before((done) => {
         next(
           got(
             'http://localhost:3030/fallback-welcome-with-optional-parameters/~info'
@@ -111,7 +109,7 @@ describe('registry', () => {
     });
 
     describe('GET /fallback-hello-world/~preview', () => {
-      before(done => {
+      before((done) => {
         next(
           got(
             'http://localhost:3030/fallback-welcome-with-optional-parameters/~preview'

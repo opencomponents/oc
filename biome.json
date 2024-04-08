@@ -12,7 +12,8 @@
   },
   "files": {
     "ignore": [
-      "src/components/oc-client/*"
+      "src/components/oc-client/*",
+      "test/fixtures/*"
     ]
   },
   "linter": {
