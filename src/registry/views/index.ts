@@ -7,7 +7,7 @@ import indexJS from './static/index';
 
 import getLayout from './partials/layout';
 import getProperty from './partials/property';
-import { VM } from '../../types';
+import type { VM } from '../../types';
 
 export default function indexView(vm: VM): string {
   const tabs = {

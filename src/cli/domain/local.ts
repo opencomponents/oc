@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import targz from 'targz';
-import { promisify } from 'util';
+import { promisify } from 'node:util';
 
 import * as clean from './clean';
 import getComponentsByDir from './get-components-by-dir';
@@ -10,7 +10,7 @@ import mock from './mock';
 import packageComponents from './package-components';
 import strings from '../../resources';
 import * as validator from '../../registry/domain/validators';
-import { Logger } from '../logger';
+import type { Logger } from '../logger';
 
 export default function local() {
   return {
@@ -23,11 +23,10 @@ export default function local() {
         src: input,
         dest: output,
         tar: {
-          map: function (file) {
-            return Object.assign(file, {
+          map: file =>
+            Object.assign(file, {
               name: `_package/${file.name}`
-            });
-          }
+            })
         }
       });
     },

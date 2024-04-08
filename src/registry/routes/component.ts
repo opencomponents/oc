@@ -4,8 +4,8 @@ import _ from 'lodash';
 import GetComponentHelper from './helpers/get-component';
 import strings from '../../resources';
 import type { Repository } from '../domain/repository';
-import { Config } from '../../types';
-import { Request, RequestHandler, Response } from 'express';
+import type { Config } from '../../types';
+import type { Request, RequestHandler, Response } from 'express';
 
 export default function component(
   conf: Config,

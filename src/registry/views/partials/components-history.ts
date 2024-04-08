@@ -1,4 +1,4 @@
-import { VM } from '../../../types';
+import type { VM } from '../../../types';
 
 export default function componentsHistory(vm: VM): string {
   const componentRow = ({

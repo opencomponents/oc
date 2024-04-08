@@ -1,16 +1,16 @@
 import colors from 'colors/safe';
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
 import readCb from 'read';
-import { promisify } from 'util';
-import { Logger } from '../logger';
+import { promisify } from 'node:util';
+import type { Logger } from '../logger';
 import type { Local } from '../domain/local';
-import { Component } from '../../types';
+import type { Component } from '../../types';
 import { fromPromise } from 'universalify';
 
 import handleDependencies from '../domain/handle-dependencies';
 import strings from '../../resources/index';
-import { RegistryCli } from '../domain/registry';
+import type { RegistryCli } from '../domain/registry';
 
 const read = promisify(readCb);
 
@@ -41,7 +41,7 @@ const publish = ({
         'package.tar.gz'
       );
 
-      let errorMessage;
+      let errorMessage: string;
 
       const readPackageJson = () =>
         fs.readJson(path.join(packageDir, 'package.json'));
@@ -174,12 +174,12 @@ const publish = ({
           await handleDependencies({
             components: [path.resolve(componentPath)],
             logger
-          }).catch((err) => {
+          }).catch(err => {
             logger.err(err);
             return Promise.reject(err);
           });
 
-          const component = await packageAndCompress().catch((err) => {
+          const component = await packageAndCompress().catch(err => {
             errorMessage = strings.errors.cli.PACKAGE_CREATION_FAIL(
               String(err)
             );
@@ -189,11 +189,11 @@ const publish = ({
           await publishToRegistries(registryLocations, component);
         } else {
           if (fs.existsSync(packageDir)) {
-            const component = await readPackageJson().catch((err) => {
+            const component = await readPackageJson().catch(err => {
               logger.err(String(err));
               return Promise.reject(err);
             });
-            await compress().catch((err) => {
+            await compress().catch(err => {
               logger.err(String(err));
               return Promise.reject(err);
             });

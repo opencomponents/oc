@@ -5,7 +5,8 @@ function hasMessage(obj: unknown): obj is { msg: string } {
 export default function errorToString(err: unknown): string {
   if (typeof err === 'string') {
     return err;
-  } else if (hasMessage(err)) {
+  }
+  if (hasMessage(err)) {
     return err.msg;
   }
 

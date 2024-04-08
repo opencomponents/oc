@@ -1,9 +1,9 @@
 import acceptLanguageParser from 'accept-language-parser';
 import Cache from 'nice-cache';
 import Client from 'oc-client';
-import Domain from 'domain';
+import Domain from 'node:domain';
 import emptyResponseHandler from 'oc-empty-response-handler';
-import vm from 'vm';
+import vm from 'node:vm';
 import _ from 'lodash';
 
 import applyDefaultValues from './apply-default-values';
@@ -19,8 +19,8 @@ import strings from '../../../resources';
 import * as urlBuilder from '../../domain/url-builder';
 import * as validator from '../../domain/validators';
 import type { Repository } from '../../domain/repository';
-import { Component, Config } from '../../../types';
-import { IncomingHttpHeaders } from 'http';
+import type { Component, Config, Template } from '../../../types';
+import type { IncomingHttpHeaders } from 'node:http';
 import { fromPromise } from 'universalify';
 
 export interface RendererOptions {
@@ -57,7 +57,7 @@ export interface GetComponentResult {
 }
 
 const noopConsole = Object.fromEntries(
-  Object.keys(console).map((key) => [key, _.noop])
+  Object.keys(console).map(key => [key, _.noop])
 );
 
 export default function getComponent(conf: Config, repository: Repository) {
@@ -83,10 +83,10 @@ export default function getComponent(conf: Config, repository: Repository) {
     return env;
   };
 
-  const renderer = function (
+  const renderer = (
     options: RendererOptions,
     cb: (result: GetComponentResult) => void
-  ) {
+  ) => {
     const nestedRenderer = NestedRenderer(renderer, options.conf);
     const retrievingInfo = GetComponentRetrievingInfo(options);
     let responseHeaders: Record<string, string> = {};
@@ -260,7 +260,7 @@ export default function getComponent(conf: Config, repository: Repository) {
             !!options.headers['user-agent'].match('oc-client-');
 
           const parseTemplatesHeader = (t: string) =>
-            t.split(';').map((t) => t.split(',')[0]);
+            t.split(';').map(t => t.split(',')[0]);
           const supportedTemplates = options.headers['templates']
             ? parseTemplatesHeader(options.headers['templates'] as string)
             : [];
@@ -414,7 +414,7 @@ export default function getComponent(conf: Config, repository: Repository) {
                 component.name,
                 component.version,
                 (_err, templateText) => {
-                  let ocTemplate;
+                  let ocTemplate: Template;
 
                   try {
                     ocTemplate = repository.getTemplate(templateType);

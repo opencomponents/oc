@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { Config } from '../../types';
+import type { Request, Response } from 'express';
+import type { Config } from '../../types';
 
 export default function plugins(conf: Config) {
   return (_req: Request, res: Response): void => {

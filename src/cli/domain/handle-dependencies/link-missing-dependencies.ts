@@ -1,9 +1,9 @@
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
 import getMissingDependencies from './get-missing-dependencies';
 import strings from '../../../resources/index';
 import stripVersion from '../../../utils/strip-version';
-import { Logger } from '../../logger';
+import type { Logger } from '../../logger';
 
 export default async function linkMissingDependencies(options: {
   componentPath: string;

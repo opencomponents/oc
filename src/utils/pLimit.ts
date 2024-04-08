@@ -77,7 +77,7 @@ export type LimitFunction = {
 const pLimit = (concurrency: number): LimitFunction => {
   if (
     !(
-      (Number.isInteger(concurrency) || concurrency === Infinity) &&
+      (Number.isInteger(concurrency) || concurrency === Number.POSITIVE_INFINITY) &&
       concurrency > 0
     )
   ) {

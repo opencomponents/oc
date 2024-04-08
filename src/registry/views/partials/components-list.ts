@@ -1,4 +1,4 @@
-import { ParsedComponent, VM } from '../../../types';
+import type { ParsedComponent, VM } from '../../../types';
 import getSelectedCheckbox from './selected-checkbox';
 
 export default function componentsList(vm: VM): string {

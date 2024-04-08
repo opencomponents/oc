@@ -1,7 +1,7 @@
 import settings from '../../resources/settings';
 import strings from '../../resources';
-import { Config } from '../../types';
-import {
+import type { Config } from '../../types';
+import type {
   GetComponentResult,
   RendererOptions
 } from '../routes/helpers/get-component';

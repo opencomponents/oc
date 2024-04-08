@@ -2,13 +2,13 @@ import pLimit from '../../utils/pLimit';
 import _ from 'lodash';
 import eventsHandler from './events-handler';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
-import {
+import type {
   Component,
   ComponentsDetails,
   ComponentsList,
   Config
 } from '../../types';
-import { StorageAdapter } from 'oc-storage-adapters-utils';
+import type { StorageAdapter } from 'oc-storage-adapters-utils';
 
 export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
   const returnError = (code: string, message: string | Error) => {

@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 
 import strings from '../../../resources';
 
@@ -32,7 +32,7 @@ export default async function scaffold(
     componentPackage.name = componentName;
     componentPackage.scripts ??= {};
     componentPackage.scripts.start ??= `oc dev .. --components ${componentName}`;
-    componentPackage.scripts.build ??= `oc package .`;
+    componentPackage.scripts.build ??= 'oc package .';
     componentPackage.devDependencies[compiler] = compilerPackage.version;
     await fs.writeJson(componentPath + '/package.json', componentPackage, {
       spaces: 2
@@ -40,9 +40,7 @@ export default async function scaffold(
 
     return { ok: true };
   } catch (error) {
-    const url =
-      (compilerPackage.bugs && compilerPackage.bugs.url) ||
-      `the ${templateType} repo`;
+    const url = compilerPackage.bugs?.url || `the ${templateType} repo`;
     throw strings.errors.cli.scaffoldError(url, String(error));
   }
 }

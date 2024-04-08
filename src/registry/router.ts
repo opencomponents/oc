@@ -10,7 +10,7 @@ import DependenciesRoute from './routes/dependencies';
 import settings from '../resources/settings';
 import type { Express } from 'express';
 import type { Repository } from '../registry/domain/repository';
-import { Config } from '../types';
+import type { Config } from '../types';
 
 export function create(app: Express, conf: Config, repository: Repository) {
   const routes = {

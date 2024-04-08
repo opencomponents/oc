@@ -2,8 +2,8 @@ import open from 'open';
 import { fromPromise } from 'universalify';
 
 import strings from '../../resources/index';
-import { RegistryCli } from '../domain/registry';
-import { Logger } from '../logger';
+import type { RegistryCli } from '../domain/registry';
+import type { Logger } from '../logger';
 
 const preview = ({
   logger,

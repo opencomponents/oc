@@ -1,14 +1,14 @@
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 
 import settings from '../../resources/settings';
 
 export default function mock() {
-  return async function (params: {
+  return async (params: {
     targetType: string;
     targetValue: string;
     targetName: string;
-  }): Promise<void> {
+  }): Promise<void> => {
     const localConfig = await fs
       .readJson(settings.configFile.src)
       .catch(() => ({}));

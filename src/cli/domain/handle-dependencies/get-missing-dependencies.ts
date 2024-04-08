@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import moduleExists from '../../../utils/module-exists';
 
 export default function getMissingDependencies(

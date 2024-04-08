@@ -1,7 +1,7 @@
 import es6Template from 'oc-template-es6';
 import handlebarsTemplate from 'oc-template-handlebars';
 import jadeTemplate from 'oc-template-jade';
-import { Template, TemplateInfo } from '../../types';
+import type { Template, TemplateInfo } from '../../types';
 import _ from 'lodash';
 
 export default function registerTemplates(

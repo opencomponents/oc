@@ -1,10 +1,10 @@
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 
 import settings from '../../resources/settings';
 import strings from '../../resources/';
-import { Logger } from '../logger';
-import { OcJsonConfig } from '../../types';
+import type { Logger } from '../logger';
+import type { OcJsonConfig } from '../../types';
 
 interface MockedPlugin {
   register: (options: unknown, dependencies: unknown, next: () => void) => void;
@@ -67,7 +67,7 @@ const registerDynamicMocks = (
 ) =>
   Object.entries(mocks)
     .map(([pluginName, source]) => {
-      let pluginMock;
+      let pluginMock: any;
       try {
         pluginMock = require(path.resolve(ocJsonLocation, source));
       } catch (er) {
@@ -103,14 +103,13 @@ const findPath = (
   if (!fs.existsSync(fileToResolve)) {
     if (pathToResolve === rootDir) {
       return undefined;
-    } else {
-      const getParent = (pathToResolve: string) =>
-        pathToResolve.split('/').slice(0, -1).join('/');
-
-      const parentDir = pathToResolve ? getParent(pathToResolve) : rootDir;
-
-      return findPath(parentDir, fileName);
     }
+    const getParent = (pathToResolve: string) =>
+      pathToResolve.split('/').slice(0, -1).join('/');
+
+    const parentDir = pathToResolve ? getParent(pathToResolve) : rootDir;
+
+    return findPath(parentDir, fileName);
   }
 
   return fileToResolve;

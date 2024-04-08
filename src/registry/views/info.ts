@@ -1,4 +1,4 @@
-import { Component, ComponentDetail } from '../../types';
+import type { Component, ComponentDetail } from '../../types';
 
 import getComponentAuthor from './partials/component-author';
 import getComponentParameters from './partials/component-parameters';

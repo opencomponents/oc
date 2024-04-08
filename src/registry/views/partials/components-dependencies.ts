@@ -1,4 +1,4 @@
-import { VM } from '../../../types';
+import type { VM } from '../../../types';
 
 export default function componentsDependencies(vm: VM): string {
   const dependencyRow = ({
@@ -12,7 +12,7 @@ export default function componentsDependencies(vm: VM): string {
     name: string;
     version: string;
   }) => {
-    const label = name + (core ? ` (node.js core dependency)` : `@${version}`);
+    const label = name + (core ? ' (node.js core dependency)' : `@${version}`);
     return `<a href="${link}" target="_blank">
   <div class="componentRow row table">
     <p class="release">${label}</p>

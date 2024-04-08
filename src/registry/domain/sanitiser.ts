@@ -1,11 +1,12 @@
-import { OcParameter } from '../../types';
+import type { OcParameter } from '../../types';
 
 const sanitise = {
   booleanParameter(variable: string | number | boolean) {
     if (typeof variable === 'string') {
       if (variable === 'true') {
         return true;
-      } else if (variable === 'false') {
+      }
+      if (variable === 'false') {
         return false;
       }
     }
@@ -21,9 +22,11 @@ const sanitise = {
   parameter(variable: string | number | boolean, type: string) {
     if (type === 'boolean') {
       return sanitise.booleanParameter(variable);
-    } else if (type === 'number') {
+    }
+    if (type === 'number') {
       return sanitise.numberParameter(variable);
-    } else if (type === 'string') {
+    }
+    if (type === 'string') {
       return sanitise.stringParameter(variable);
     }
 

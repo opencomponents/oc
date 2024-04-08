@@ -1,8 +1,8 @@
 import semver from 'semver';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
-import { StorageAdapter } from 'oc-storage-adapters-utils';
+import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import eventsHandler from '../events-handler';
-import { ComponentsList, Config } from '../../../types';
+import type { ComponentsList, Config } from '../../../types';
 import pLimit from '../../../utils/pLimit';
 
 export default function componentsList(conf: Config, cdn: StorageAdapter) {

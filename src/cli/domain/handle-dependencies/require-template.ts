@@ -1,10 +1,10 @@
-import path from 'path';
+import path from 'node:path';
 
 import cleanRequire from '../../../utils/clean-require';
 import isTemplateLegacy from '../../../utils/is-template-legacy';
 import isTemplateValid from '../../../utils/is-template-valid';
 import strings from '../../../resources';
-import { Component } from '../../../types';
+import type { Component } from '../../../types';
 
 interface Template {
   compile: (
@@ -49,7 +49,7 @@ export default function requireTemplate(
   );
 
   [componentRelativePath, template, localTemplate, relativeTemplate].forEach(
-    (pathToTry) => {
+    pathToTry => {
       ocTemplate = ocTemplate || cleanRequire(pathToTry, { justTry: true });
     }
   );

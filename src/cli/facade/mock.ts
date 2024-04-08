@@ -1,7 +1,7 @@
 import { fromPromise } from 'universalify';
 import strings from '../../resources/index';
 import type { Local } from '../domain/local';
-import { Logger } from '../logger';
+import type { Logger } from '../logger';
 
 const mock = ({ local, logger }: { local: Local; logger: Logger }) =>
   fromPromise(

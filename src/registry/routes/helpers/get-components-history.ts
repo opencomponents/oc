@@ -1,4 +1,4 @@
-import { ComponentsDetails } from '../../../types';
+import type { ComponentsDetails } from '../../../types';
 import dateStringified from '../../../utils/date-stringify';
 
 interface UnformmatedComponentHistory {

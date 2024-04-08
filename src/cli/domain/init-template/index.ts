@@ -1,10 +1,10 @@
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 
 import installTemplate from './install-template';
 import * as npm from '../../../utils/npm-utils';
 import scaffold from './scaffold';
-import { Logger } from '../../logger';
+import type { Logger } from '../../logger';
 
 export default async function initTemplate(options: {
   componentPath: string;

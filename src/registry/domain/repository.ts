@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import getUnixUtcTimestamp from 'oc-get-unix-utc-timestamp';
-import path from 'path';
+import path from 'node:path';
 import dotenv from 'dotenv';
 
 import ComponentsCache from './components-cache';
@@ -12,13 +12,13 @@ import * as validator from './validators';
 import getPromiseBasedAdapter from './storage-adapter';
 import * as versionHandler from './version-handler';
 import errorToString from '../../utils/error-to-string';
-import {
+import type {
   Component,
   ComponentsDetails,
   Config,
   TemplateInfo
 } from '../../types';
-import { StorageAdapter } from 'oc-storage-adapters-utils';
+import type { StorageAdapter } from 'oc-storage-adapters-utils';
 
 const packageInfo = fs.readJsonSync(
   path.join(__dirname, '..', '..', '..', 'package.json')
@@ -65,12 +65,12 @@ export default function repository(conf: Config) {
     getComponents(): string[] {
       const validComponents =
         conf.components ||
-        fs.readdirSync(conf.path).filter((file) => {
+        fs.readdirSync(conf.path).filter(file => {
           const isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory();
           const isValidComponent = isDir
             ? fs
                 .readdirSync(path.join(conf.path, file))
-                .filter((file) => file === '_package').length === 1
+                .filter(file => file === '_package').length === 1
             : false;
 
           return isValidComponent;
@@ -83,7 +83,7 @@ export default function repository(conf: Config) {
         return Promise.all([
           fs
             .readJson(path.join(__dirname, '../../../package.json'))
-            .then((x) => x.version)
+            .then(x => x.version)
         ]);
       }
 
@@ -99,7 +99,7 @@ export default function repository(conf: Config) {
       return Promise.all([
         fs
           .readJson(path.join(conf.path, `${componentName}/package.json`))
-          .then((x) => x.version)
+          .then(x => x.version)
       ]);
     },
     getDataProvider(componentName: string) {
@@ -166,7 +166,7 @@ export default function repository(conf: Config) {
 
       const component = await repository
         .getComponentInfo(componentName, version)
-        .catch((err) => {
+        .catch(err => {
           throw `component not available: ${errorToString(err)}`;
         });
 
@@ -194,10 +194,9 @@ export default function repository(conf: Config) {
 
         if (componentInfo.version === componentVersion) {
           return Promise.resolve(componentInfo);
-        } else {
-          // eslint-disable-next-line prefer-promise-reject-errors
-          return Promise.reject('version not available');
         }
+        // eslint-disable-next-line prefer-promise-reject-errors
+        return Promise.reject('version not available');
       }
 
       return cdn.getJson<Component>(
@@ -355,8 +354,9 @@ export default function repository(conf: Config) {
         };
       }
 
-      const componentVersions =
-        await repository.getComponentVersions(componentName);
+      const componentVersions = await repository.getComponentVersions(
+        componentName
+      );
 
       if (
         !versionHandler.validateNewVersion(componentVersion, componentVersions)

@@ -1,6 +1,6 @@
-import local, { Local } from './domain/local';
-import { Logger } from './logger';
-import Registry, { RegistryCli } from './domain/registry';
+import local, { type Local } from './domain/local';
+import type { Logger } from './logger';
+import Registry, { type RegistryCli } from './domain/registry';
 
 import dev from './facade/dev';
 import init from './facade/init';

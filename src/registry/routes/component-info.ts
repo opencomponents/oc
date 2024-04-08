@@ -6,8 +6,8 @@ import infoView from '../views/info';
 import isUrlDiscoverable from './helpers/is-url-discoverable';
 import * as urlBuilder from '../domain/url-builder';
 import type { Repository } from '../domain/repository';
-import { Component, ComponentDetail, Config } from '../../types';
-import { Request, Response } from 'express';
+import type { Component, ComponentDetail, Config } from '../../types';
+import type { Request, Response } from 'express';
 
 function getParams(component: Component) {
   let params: Record<string, string> = {};

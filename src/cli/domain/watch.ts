@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import chokidar from 'chokidar';
 
 import settings from '../../resources/settings';
@@ -15,7 +15,7 @@ export default function watch(
     usePolling: true
   });
   const onChange = (fileName: string) => {
-    const componentDir = dirs.find((dir) =>
+    const componentDir = dirs.find(dir =>
       Boolean(fileName.match(escapeRegularExpression(dir + path.sep)))
     );
     changed(null, fileName, componentDir);

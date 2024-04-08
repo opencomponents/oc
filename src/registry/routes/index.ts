@@ -1,7 +1,7 @@
 import async from 'async';
 import parseAuthor from 'parse-author';
 import _ from 'lodash';
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
 
 import dateStringified from '../../utils/date-stringify';
@@ -10,10 +10,10 @@ import getAvailableDependencies from './helpers/get-available-dependencies';
 import indexView from '../views';
 import urlBuilder = require('../domain/url-builder');
 import type { Repository } from '../domain/repository';
-import { Author, Component, ParsedComponent } from '../../types';
-import { NextFunction, Request, Response } from 'express';
-import { IncomingHttpHeaders } from 'http';
-import { PackageJson } from 'type-fest';
+import type { Author, Component, ParsedComponent } from '../../types';
+import type { NextFunction, Request, Response } from 'express';
+import type { IncomingHttpHeaders } from 'node:http';
+import type { PackageJson } from 'type-fest';
 import { fromPromise } from 'universalify';
 
 const packageInfo: PackageJson = fs.readJsonSync(
@@ -60,7 +60,7 @@ export default function (repository: Repository) {
               (err, result) => {
                 if (err) return callback(err as any);
 
-                if (result.oc && result.oc.date) {
+                if (result.oc?.date) {
                   result.oc.stringifiedDate = dateStringified(
                     new Date(result.oc.date)
                   );
@@ -71,7 +71,7 @@ export default function (repository: Repository) {
                 callback();
               }
             ),
-          (err) => {
+          err => {
             if (err) return next(err);
 
             componentsInfo = _.sortBy(componentsInfo, 'name');
@@ -88,7 +88,7 @@ export default function (repository: Repository) {
                     availablePlugins: res.conf.plugins,
                     components: componentsInfo,
                     componentsReleases,
-                    componentsList: componentsInfo.map((component) => {
+                    componentsList: componentsInfo.map(component => {
                       const state: 'deprecated' | 'experimental' | '' = _.get(
                         component,
                         'oc.state',
@@ -119,7 +119,7 @@ export default function (repository: Repository) {
       } else {
         res.status(200).json(
           Object.assign(baseResponse, {
-            components: _.map(components, (component) =>
+            components: _.map(components, component =>
               urlBuilder.component(component, res.conf.baseUrl)
             )
           })

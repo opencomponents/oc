@@ -1,4 +1,4 @@
-import { OcParameter } from '../../../types';
+import type { OcParameter } from '../../../types';
 
 interface OptionalParameterWithDefault extends OcParameter {
   mandatory: false;

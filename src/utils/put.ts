@@ -1,6 +1,6 @@
 import FormData from 'form-data';
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 import got from 'got';
 
 async function put(
@@ -14,7 +14,7 @@ async function put(
     files = [files];
   }
 
-  files.forEach((file) => {
+  files.forEach(file => {
     const fileName = path.basename(file);
     form.append(fileName, fs.createReadStream(file));
   });

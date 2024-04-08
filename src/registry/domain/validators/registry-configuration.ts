@@ -1,6 +1,6 @@
 import * as auth from '../authentication';
 import strings from '../../../resources';
-import { Config } from '../../../types';
+import type { Config } from '../../../types';
 
 type ValidationResult = { isValid: true } | { isValid: false; message: string };
 
@@ -57,27 +57,26 @@ export default function registryConfiguration(
     return returnError(
       strings.errors.registry.CONFIGURATION_ROUTES_MUST_BE_ARRAY
     );
-  } else {
-    for (const route of routes || []) {
-      if (!route.route || !route.handler || !route.method) {
-        return returnError(
-          strings.errors.registry.CONFIGURATION_ROUTES_NOT_VALID
-        );
-      }
+  }
+  for (const route of routes || []) {
+    if (!route.route || !route.handler || !route.method) {
+      return returnError(
+        strings.errors.registry.CONFIGURATION_ROUTES_NOT_VALID
+      );
+    }
 
-      if (typeof route.handler !== 'function') {
-        return returnError(
-          strings.errors.registry.CONFIGURATION_ROUTES_HANDLER_MUST_BE_FUNCTION
-        );
-      }
+    if (typeof route.handler !== 'function') {
+      return returnError(
+        strings.errors.registry.CONFIGURATION_ROUTES_HANDLER_MUST_BE_FUNCTION
+      );
+    }
 
-      if (route.route.indexOf(prefix || '') === 0) {
-        return returnError(
-          strings.errors.registry.CONFIGURATION_ROUTES_ROUTE_CONTAINS_PREFIX(
-            prefix || ''
-          )
-        );
-      }
+    if (route.route.indexOf(prefix || '') === 0) {
+      return returnError(
+        strings.errors.registry.CONFIGURATION_ROUTES_ROUTE_CONTAINS_PREFIX(
+          prefix || ''
+        )
+      );
     }
   }
 
@@ -128,7 +127,7 @@ export default function registryConfiguration(
     }
 
     const hasNonStringElements = conf.customHeadersToSkipOnWeakVersion.find(
-      (element) => typeof element !== 'string'
+      element => typeof element !== 'string'
     );
 
     if (hasNonStringElements) {

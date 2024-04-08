@@ -1,9 +1,9 @@
 import readCb from 'read';
 import { fromPromise } from 'universalify';
-import { promisify } from 'util';
+import { promisify } from 'node:util';
 import strings from '../../resources/index';
 import type { Local } from '../domain/local';
-import { Logger } from '../logger';
+import type { Logger } from '../logger';
 
 const read = promisify(readCb);
 

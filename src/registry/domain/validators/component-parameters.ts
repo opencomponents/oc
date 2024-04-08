@@ -1,17 +1,19 @@
 import strings from '../../../resources';
-import { OcParameter } from '../../../types';
+import type { OcParameter } from '../../../types';
 
-const validateParameter = function (
+const validateParameter = (
   parameter: string | number | boolean,
   expectedType: string
-): boolean {
+): boolean => {
   const expected = expectedType.toLowerCase();
 
   if (expected === 'boolean') {
     return typeof parameter === 'boolean';
-  } else if (expected === 'number') {
+  }
+  if (expected === 'number') {
     return typeof parameter === 'number';
-  } else if (expected === 'string') {
+  }
+  if (expected === 'string') {
     return typeof parameter === 'string';
   }
 
@@ -80,12 +82,12 @@ export default function componentParameters(
     }
   }
 
-  result.errors.message = (function () {
+  result.errors.message = (() => {
     let errorString = '';
 
     if (Object.keys(result.errors.mandatory || {}).length > 0) {
       const missingParams = Object.keys(result.errors.mandatory || {})
-        .map((mandatoryParameterName) => mandatoryParameterName + ', ')
+        .map(mandatoryParameterName => mandatoryParameterName + ', ')
         .join('')
         .slice(0, -2);
 
@@ -99,7 +101,7 @@ export default function componentParameters(
       }
 
       const badParams = Object.keys(result.errors.types || {})
-        .map((parameterName) => parameterName + ', ')
+        .map(parameterName => parameterName + ', ')
         .join('')
         .slice(0, -2);
 

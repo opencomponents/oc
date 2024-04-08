@@ -219,12 +219,12 @@ export default {
   },
   messages: {
     cli: {
-      cleanAlreadyClean: `The folders are already clean`,
+      cleanAlreadyClean: 'The folders are already clean',
       cleanList: (list: string[]): string =>
         `The following folders will be removed:\n${list.join('\n')}`,
       cleanPrompt: 'Proceed? [Y/n]',
       cleanPromptDefault: 'Y',
-      cleanSuccess: `Folders removed`,
+      cleanSuccess: 'Folders removed',
       initSuccess,
       installCompiler: (compiler: string): string =>
         `Installing ${compiler} from npm...`,

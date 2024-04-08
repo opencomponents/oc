@@ -10,10 +10,29 @@
       "quoteStyle": "single"
     }
   },
+  "files": {
+    "ignore": [
+      "src/components/oc-client/*"
+    ]
+  },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "complexity": {
+        "noForEach": "off",
+        "useLiteralKeys": "off"
+      },
+      "style": {
+        "noParameterAssign": "off",
+        "noNonNullAssertion": "off",
+        "useTemplate": "off"
+      },
+      "suspicious": {
+        "noCatchAssign": "off",
+        "noExplicitAny": "off",
+        "noPrototypeBuiltins": "off"
+      }
     }
   }
 }

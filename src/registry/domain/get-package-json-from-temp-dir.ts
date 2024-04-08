@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
-import path from 'path';
-import { Component } from '../../types';
+import path from 'node:path';
+import type { Component } from '../../types';
 
 export default function getPackageJsonFromTempDir(
   tempDirPath: string

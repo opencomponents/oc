@@ -1,6 +1,6 @@
 import semver from 'semver';
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 
 const packageInfo = fs.readJsonSync(
   path.join(__dirname, '..', '..', '..', '..', 'package.json')

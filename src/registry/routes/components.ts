@@ -2,12 +2,12 @@ import async from 'async';
 import _ from 'lodash';
 
 import GetComponentHelper, {
-  GetComponentResult
+  type GetComponentResult
 } from './helpers/get-component';
 import strings from '../../resources';
 import type { Repository } from '../domain/repository';
-import { Config } from '../../types';
-import { Request, RequestHandler, Response } from 'express';
+import type { Config } from '../../types';
+import type { Request, RequestHandler, Response } from 'express';
 
 type Component = {
   action?: string;
@@ -35,7 +35,7 @@ export default function components(
     const components = req.body.components as Component[];
     const registryErrors = strings.errors.registry;
 
-    const returnError = function (message: string) {
+    const returnError = (message: string) => {
       res.status(400).json({
         code: registryErrors.BATCH_ROUTE_BODY_NOT_VALID_CODE,
         error: registryErrors.BATCH_ROUTE_BODY_NOT_VALID(message)
@@ -46,7 +46,8 @@ export default function components(
       return returnError(
         registryErrors.BATCH_ROUTE_COMPONENTS_PROPERTY_MISSING
       );
-    } else if (!Array.isArray(components)) {
+    }
+    if (!Array.isArray(components)) {
       return returnError(registryErrors.BATCH_ROUTE_COMPONENTS_NOT_ARRAY);
     }
 
@@ -78,7 +79,7 @@ export default function components(
             parameters: { ...req.body.parameters, ...component.parameters },
             version: component.version
           },
-          (result) => callback(null, result)
+          result => callback(null, result)
         );
       },
       // @ts-ignore
@@ -96,7 +97,7 @@ export default function components(
               code: 'RENDER_ERROR',
               error: strings.errors.registry.RENDER_ERROR(
                 results
-                  .map((x) => `${x.response.name}@${x.response.version}`)
+                  .map(x => `${x.response.name}@${x.response.version}`)
                   .join(', '),
                 String(e)
               )

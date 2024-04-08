@@ -1,9 +1,9 @@
-import path from 'path';
+import path from 'node:path';
 
 import getMissingDependencies from './get-missing-dependencies';
 import * as npm from '../../../utils/npm-utils';
 import strings from '../../../resources/index';
-import { Logger } from '../../logger';
+import type { Logger } from '../../logger';
 
 export default async function installMissingDependencies(options: {
   dependencies: Record<string, string>;

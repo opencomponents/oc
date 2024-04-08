@@ -2,8 +2,8 @@ import _ from 'lodash';
 import getComponentsList from './components-list';
 import eventsHandler from '../events-handler';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
-import { ComponentsList, Config } from '../../../types';
-import { StorageAdapter, strings } from 'oc-storage-adapters-utils';
+import type { ComponentsList, Config } from '../../../types';
+import { type StorageAdapter, strings } from 'oc-storage-adapters-utils';
 
 export default function componentsCache(conf: Config, cdn: StorageAdapter) {
   let cachedComponentsList: ComponentsList;

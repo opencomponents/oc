@@ -1,5 +1,5 @@
 import { fromCallback } from 'universalify';
-import { StorageAdapter } from 'oc-storage-adapters-utils';
+import type { StorageAdapter } from 'oc-storage-adapters-utils';
 
 type RemovePromiseOverload<T> = T extends {
   (...args: infer B): void;

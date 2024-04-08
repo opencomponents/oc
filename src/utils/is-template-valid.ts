@@ -1,4 +1,4 @@
-import { Template } from '../types';
+import type { Template } from '../types';
 
 export default function isTemplateValid(
   template: unknown,

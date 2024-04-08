@@ -1,4 +1,4 @@
-import express, { Express } from 'express';
+import express, { type Express } from 'express';
 import errorhandler from 'errorhandler';
 import morgan from 'morgan';
 
@@ -7,7 +7,7 @@ import cors from './cors';
 import discoveryHandler from './discovery-handler';
 import fileUploads from './file-uploads';
 import requestHandler from './request-handler';
-import { Config } from '../../types';
+import type { Config } from '../../types';
 
 const bodyParserJsonArgument: { inflate: boolean; limit?: number } = {
   inflate: true

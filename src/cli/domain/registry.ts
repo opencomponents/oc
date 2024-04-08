@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 import got from 'got';
 import _ from 'lodash';
 
@@ -7,7 +7,7 @@ import put from '../../utils/put';
 import settings from '../../resources/settings';
 import * as urlBuilder from '../../registry/domain/url-builder';
 import * as urlParser from '../domain/url-parser';
-import { Component } from '../../types';
+import type { Component } from '../../types';
 
 const getOcVersion = (): string => {
   const ocPackagePath = path.join(__dirname, '../../../package.json');

@@ -1,8 +1,8 @@
-import path from 'path';
-import { Template } from '../../../types';
+import path from 'node:path';
+import type { Template } from '../../../types';
 
 import cleanRequire from '../../../utils/clean-require';
-import { Logger } from '../../logger';
+import type { Logger } from '../../logger';
 import installCompiler from './install-compiler';
 
 export default function getCompiler(options: {

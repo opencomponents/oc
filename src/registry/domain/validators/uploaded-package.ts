@@ -19,12 +19,10 @@ export default function uploadedPackage(
         [fieldname: string]: Express.Multer.File[];
       }
 ): ValidationResponse {
-  const returnError = function (message?: string): ValidationResponse {
-    return {
+  const returnError = (message?: string): ValidationResponse => ({
       isValid: false,
       message: message || 'uploaded package is not valid'
-    };
-  };
+    });
 
   if (!input || typeof input !== 'object' || Object.keys(input).length === 0) {
     return returnError('empty');

@@ -1,5 +1,5 @@
 import strings from '../../../resources';
-import { Component } from '../../../types';
+import type { Component } from '../../../types';
 
 export default function ensureCompilerIsDeclaredAsDevDependency(options: {
   componentPath: string;
