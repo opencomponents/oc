@@ -24,7 +24,7 @@ cmd.on('error', () => {
   log.fatal('npm publish failed');
 });
 
-cmd.on('close', code => {
+cmd.on('close', (code) => {
   if (code === 0) {
     log.complete('npm publish succeeded');
   }

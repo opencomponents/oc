@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-'use strict';
-
 const async = require('async');
-const fs = require('fs');
+const fs = require('node:fs');
 const path = require('node:path');
 const git = require('./git');
 
@@ -10,7 +7,7 @@ module.exports = () =>
   new Promise((resolve, reject) => {
     const writeChangelog = (changelog, cb) => {
       let result = '## Change Log';
-      changelog.forEach(pr => {
+      changelog.forEach((pr) => {
         if (pr.changes.length > 0) {
           result += `\n\n### ${pr.tag.to}\n${pr.changes.join('\n')}`;
         }
@@ -31,7 +28,7 @@ module.exports = () =>
             next(err);
           });
         },
-        err => {
+        (err) => {
           if (err) {
             return reject(err);
           }

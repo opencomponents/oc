@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-'use strict';
-
 const fs = require('fs-extra');
 const log = require('./logger');
 const packageJson = require('../package');

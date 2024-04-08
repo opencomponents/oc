@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-'use strict';
-
 const async = require('async');
 const fs = require('fs-extra');
 const glob = require('glob');
@@ -25,7 +22,7 @@ if (argv.silent) {
 
 const componentsToPackage = fs
   .readdirSync(componentsFixturesPath)
-  .filter(x => x !== 'handlebars3-component');
+  .filter((x) => x !== 'handlebars3-component');
 
 const packageComponent = (componentName, done) =>
   oc.cli.package(
@@ -33,24 +30,24 @@ const packageComponent = (componentName, done) =>
       componentPath: path.join(componentsFixturesPath, componentName),
       compress: false
     },
-    err => done(err)
+    (err) => done(err)
   );
 
 const addTestSuite = (dir, done) =>
   glob(path.join(__dirname, '..', dir), (err, files) => {
-    files.forEach(file => mocha.addFile(file));
+    files.forEach((file) => mocha.addFile(file));
     done();
   });
 
-async.eachSeries(componentsToPackage, packageComponent, err => {
+async.eachSeries(componentsToPackage, packageComponent, (err) => {
   if (err) {
     log.error(`Error during test components packaging: ${err}`);
     process.exit(1);
   } else {
-    log.complete(`Test components packaged`);
+    log.complete('Test components packaged');
   }
 
   async.each(testDirs, addTestSuite, () =>
-    mocha.run(err => process.on('exit', () => process.exit(err)))
+    mocha.run((err) => process.on('exit', () => process.exit(err)))
   );
 });

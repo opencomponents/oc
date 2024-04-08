@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-'use strict';
-
 const fs = require('fs-extra');
 const ocClientBrowser = require('oc-client-browser');
 const log = require('./logger');
@@ -63,7 +60,7 @@ ocClientBrowser.getLibs((err, libs) => {
         );
         log.complete('Client has been built and packaged');
       })
-      .catch(err => {
+      .catch((err) => {
         log.error(err);
       });
   });

@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-'use strict';
-
 const changelog = require('./changelog');
 const packageJson = require('../package');
 const path = require('node:path');
