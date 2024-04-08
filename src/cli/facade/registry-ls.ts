@@ -24,7 +24,9 @@ const registryLs = ({
         throw err;
       }
 
-      registries.forEach((registryLocation) => logger.ok(registryLocation));
+      for (const registryLocation of registries) {
+        logger.ok(registryLocation);
+      }
 
       return registries;
     } catch (err) {

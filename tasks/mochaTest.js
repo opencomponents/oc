@@ -35,7 +35,9 @@ const packageComponent = (componentName, done) =>
 
 const addTestSuite = (dir, done) =>
   glob(path.join(__dirname, '..', dir), (err, files) => {
-    files.forEach((file) => mocha.addFile(file));
+    for (const file of files) {
+      mocha.addFile(file);
+    }
     done();
   });
 

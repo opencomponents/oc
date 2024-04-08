@@ -48,11 +48,14 @@ export default function requireTemplate(
     template
   );
 
-  [componentRelativePath, template, localTemplate, relativeTemplate].forEach(
-    (pathToTry) => {
-      ocTemplate = ocTemplate || cleanRequire(pathToTry, { justTry: true });
-    }
-  );
+  for (const pathToTry of [
+    componentRelativePath,
+    template,
+    localTemplate,
+    relativeTemplate
+  ]) {
+    ocTemplate = ocTemplate || cleanRequire(pathToTry, { justTry: true });
+  }
 
   if (!ocTemplate) {
     throw new Error(strings.errors.cli.TEMPLATE_NOT_FOUND(template));

@@ -133,14 +133,16 @@ const publish = ({
           } else {
             if (err.message) {
               // eslint-disable-next-line no-ex-assign
-              err = err.message;
+              errorMessage = err.message;
             } else if (err && typeof err === 'object') {
               try {
                 // eslint-disable-next-line no-ex-assign
-                err = JSON.stringify(err);
+                errorMessage = JSON.stringify(err);
               } catch (er) {}
             }
-            errorMessage = strings.errors.cli.PUBLISHING_FAIL(String(err));
+            errorMessage = strings.errors.cli.PUBLISHING_FAIL(
+              String(errorMessage)
+            );
             logger.err(errorMessage);
 
             throw errorMessage;

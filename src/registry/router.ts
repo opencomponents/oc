@@ -76,10 +76,10 @@ export function create(app: Express, conf: Config, repository: Repository) {
   app.get(`${prefix}:componentName`, routes.component);
 
   if (conf.routes) {
-    conf.routes.forEach((route) =>
+    for (const route of conf.routes) {
       app[
         route.method.toLowerCase() as 'get' | 'post' | 'put' | 'patch' | 'head'
-      ](route.route, route.handler)
-    );
+      ](route.route, route.handler);
+    }
   }
 }

@@ -27,21 +27,23 @@ function validatePlugins(plugins: unknown[]): asserts plugins is Plugin[] {
 function checkDependencies(plugins: Plugin[]) {
   const graph = new DepGraph();
 
-  plugins.forEach((p) => graph.addNode(p.name));
+  for (const plugin of plugins) {
+    graph.addNode(plugin.name);
+  }
 
-  plugins.forEach((p) => {
+  for (const p of plugins) {
     if (!p.register.dependencies) {
       return;
     }
 
-    p.register.dependencies.forEach((d) => {
+    for (const d of p.register.dependencies) {
       try {
         graph.addDependency(p.name, d);
       } catch (err) {
         throw new Error(`unknown plugin dependency: ${d}`);
       }
-    });
-  });
+    }
+  }
 
   return graph.overallOrder();
 }
@@ -64,11 +66,11 @@ export async function init(
     }
 
     let present = true;
-    dependencies.forEach((d) => {
+    for (const d of dependencies) {
       if (!registered[d]) {
         present = false;
       }
-    });
+    }
 
     return present;
   };

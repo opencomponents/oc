@@ -21,7 +21,7 @@ describe('cli : domain : handle-dependencies - get-missing-dependencies', () => 
     }
   ];
 
-  scenarios.forEach((scenario) => {
+  for (const scenario of scenarios) {
     const { dependencies, installed, output } = scenario;
     describe(`When dependencies: ${JSON.stringify(
       dependencies
@@ -58,5 +58,5 @@ describe('cli : domain : handle-dependencies - get-missing-dependencies', () => 
         });
       });
     });
-  });
+  }
 });

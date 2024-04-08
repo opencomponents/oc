@@ -6,12 +6,12 @@ export default function getMissingDependencies(
 ): string[] {
   const missing: string[] = [];
 
-  Object.entries(dependencies).forEach(([dependency, version]) => {
+  for (const [dependency, version] of Object.entries(dependencies)) {
     const pathToModule = path.resolve('node_modules/', dependency);
     if (!moduleExists(pathToModule)) {
       missing.push(`${dependency}@${version || 'latest'}`);
     }
-  });
+  }
 
   return missing;
 }

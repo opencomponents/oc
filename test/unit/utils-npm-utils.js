@@ -27,7 +27,7 @@ describe('utils : npm-utils', () => {
       }
     ];
 
-    scenarios.forEach((scenario) => {
+    for (const scenario of scenarios) {
       const { initPath, silent } = scenario.input;
       describe(`when invoked for ${initPath} with silent=${silent}`, () => {
         let error;
@@ -60,7 +60,7 @@ describe('utils : npm-utils', () => {
           expect(onStub.args[1][0]).to.equal('close');
         });
       });
-    });
+    }
   });
 
   describe('installDependency()', () => {
@@ -115,7 +115,7 @@ describe('utils : npm-utils', () => {
       }
     ];
 
-    scenarios.forEach((scenario) => {
+    for (const scenario of scenarios) {
       const dependency = scenario.input.dependency;
       describe(`when invoked for installing ${dependency}`, () => {
         let error;
@@ -162,7 +162,7 @@ describe('utils : npm-utils', () => {
           expect(onStub.args[1][0]).to.equal('close');
         });
       });
-    });
+    }
   });
 
   describe('installDependencies()', () => {
@@ -230,7 +230,7 @@ describe('utils : npm-utils', () => {
       }
     ];
 
-    scenarios.forEach((scenario) => {
+    for (const scenario of scenarios) {
       const dependencies = scenario.input.dependencies;
       describe(`when invoked for installing [${dependencies.join(
         ', '
@@ -281,6 +281,6 @@ describe('utils : npm-utils', () => {
           expect(onStub.args[1][0]).to.equal('close');
         });
       });
-    });
+    }
   });
 });

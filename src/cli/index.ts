@@ -123,9 +123,9 @@ function processCommand(
   );
 }
 
-Object.entries(commands.commands).forEach(([commandName, command]) => {
+for (const [commandName, command] of Object.entries(commands.commands)) {
   processCommand(command, commandName, cli);
-});
+}
 
 const argv = cli
   .completion()

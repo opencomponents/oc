@@ -21,7 +21,6 @@
     "rules": {
       "recommended": true,
       "complexity": {
-        "noForEach": "off",
         "useLiteralKeys": "off"
       },
       "style": {
@@ -30,7 +29,6 @@
         "useTemplate": "off"
       },
       "suspicious": {
-        "noCatchAssign": "off",
         "noExplicitAny": "off",
         "noPrototypeBuiltins": "off"
       }

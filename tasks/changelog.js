@@ -7,11 +7,11 @@ module.exports = () =>
   new Promise((resolve, reject) => {
     const writeChangelog = (changelog, cb) => {
       let result = '## Change Log';
-      changelog.forEach((pr) => {
+      for (const pr of changelog) {
         if (pr.changes.length > 0) {
           result += `\n\n### ${pr.tag.to}\n${pr.changes.join('\n')}`;
         }
-      });
+      }
       fs.writeFile(path.join(__dirname, '../CHANGELOG.md'), result, cb);
     };
 

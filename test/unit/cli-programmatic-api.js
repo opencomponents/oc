@@ -52,7 +52,7 @@ describe('cli : programmatic-api', () => {
     }
   ];
 
-  scenarios.forEach((scenario) => {
+  for (const scenario of scenarios) {
     describe(`cmd: cli.${scenario.cmd}`, () => {
       const fn = _.get(programmaticApi, scenario.cmd);
 
@@ -68,5 +68,5 @@ describe('cli : programmatic-api', () => {
           .that.has.all.keys(scenario.dependencies);
       });
     });
-  });
+  }
 });

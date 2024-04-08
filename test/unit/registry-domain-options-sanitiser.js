@@ -15,11 +15,11 @@ describe('registry : domain : options-sanitiser', () => {
       timeout: 120000
     };
 
-    Object.entries(defaults).forEach(([property, value]) => {
+    for (const [property, value] of Object.entries(defaults)) {
       it(`should set ${property} to ${JSON.stringify(value)}`, () => {
         expect(sanitise(options)[property]).to.eql(value);
       });
-    });
+    }
   });
 
   describe('when verbosity is provided', () => {
@@ -108,14 +108,14 @@ describe('registry : domain : options-sanitiser', () => {
     ];
 
     it('should support various scenarios correctly', () => {
-      prefixAndBaseUrlScenarios.forEach((scenario) => {
+      for (const scenario of prefixAndBaseUrlScenarios) {
         expect(sanitise(scenario.options).prefix).to.equal(
           scenario.expected.prefix
         );
         expect(sanitise(scenario.options).baseUrl).to.equal(
           scenario.expected.baseUrl
         );
-      });
+      }
     });
   });
 

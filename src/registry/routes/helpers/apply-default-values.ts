@@ -16,14 +16,15 @@ export default function applyDefaultValues(
       !params[1].mandatory && typeof params[1].default !== 'undefined'
   );
 
-  optionalParametersWithDefaults.forEach(
-    ([expectedParameterName, expectedParameter]) => {
-      const param = requestParameters[expectedParameterName];
-      if (param === null || param === undefined) {
-        requestParameters[expectedParameterName] = expectedParameter.default;
-      }
+  for (const [
+    expectedParameterName,
+    expectedParameter
+  ] of optionalParametersWithDefaults) {
+    const param = requestParameters[expectedParameterName];
+    if (param === null || param === undefined) {
+      requestParameters[expectedParameterName] = expectedParameter.default;
     }
-  );
+  }
 
   return requestParameters;
 }

@@ -7,7 +7,7 @@ const utils = {
   formatPrs: (commits) => {
     const result = [];
 
-    commits.forEach((commit) => {
+    for (const commit of commits) {
       const commitMessages = commit.message.split('Merge pull request');
       const isPr = commitMessages.length > 1;
       const isSquashedPr = !!commit.message.match(/(.*?)\(#(.*?)\)/g);
@@ -40,7 +40,7 @@ const utils = {
           `- [#${prNumber}](https://github.com/opencomponents/oc/pull/${prNumber}) ${commitMessage}`
         );
       }
-    });
+    }
 
     return result;
   },

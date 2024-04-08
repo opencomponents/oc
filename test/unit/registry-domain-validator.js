@@ -908,11 +908,11 @@ describe('registry : domain : validator', () => {
         }
       ];
 
-      scenarios.forEach((scenario) => {
+      for (const scenario of scenarios) {
         it(`should be valid with mimetype ${scenario.mimetype}`, () => {
           expect(validate([scenario]).isValid).to.be.true;
         });
-      });
+      }
     });
   });
 

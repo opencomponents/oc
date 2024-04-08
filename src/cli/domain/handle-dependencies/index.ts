@@ -29,12 +29,13 @@ export default async function handleDependencies(options: {
   const { components, logger, useComponentDependencies } = options;
 
   const dependencies: Record<string, string> = {};
-  const addDependencies = (componentDependencies?: Record<string, string>) =>
-    Object.entries(componentDependencies || {}).forEach(
-      ([dependency, version]) => {
-        dependencies[dependency] = version;
-      }
-    );
+  const addDependencies = (componentDependencies?: Record<string, string>) => {
+    for (const [dependency, version] of Object.entries(
+      componentDependencies || {}
+    )) {
+      dependencies[dependency] = version;
+    }
+  };
 
   const templates: Record<string, Template> = {};
   const addTemplate = (templateName: string, template: Template) => {

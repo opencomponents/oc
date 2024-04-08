@@ -108,7 +108,9 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
 
       const registerPlugins = (registry: Registry) => {
         const mockedPlugins = getMockedPlugins(logger, componentsDir);
-        mockedPlugins.forEach((p) => registry.register(p));
+        for (const plugin of mockedPlugins) {
+          registry.register(plugin);
+        }
 
         registry.on('request', (data) => {
           if (data.errorCode === 'PLUGIN_MISSING_FROM_REGISTRY') {
@@ -135,10 +137,9 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
       }
 
       logger.ok('OK');
-      components.forEach((component) =>
-        logger.log(colors.green('├── ') + component)
-      );
-
+      for (const component of components) {
+        logger.log(colors.green('├── ') + component);
+      }
       const dependencies = await handleDependencies({
         components,
         logger
