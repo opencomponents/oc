@@ -19,7 +19,7 @@ interface Sizes {
 }
 
 function checkSizes(folder: string) {
-  const jsFiles = fs.readdirSync(folder).filter(x => x.endsWith('.js'));
+  const jsFiles = fs.readdirSync(folder).filter((x) => x.endsWith('.js'));
 
   const sizes: Sizes = {
     client: 0

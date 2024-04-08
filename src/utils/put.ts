@@ -14,7 +14,7 @@ async function put(
     files = [files];
   }
 
-  files.forEach(file => {
+  files.forEach((file) => {
     const fileName = path.basename(file);
     form.append(fileName, fs.createReadStream(file));
   });

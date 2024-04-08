@@ -17,13 +17,16 @@ export default function registerTemplates(
     handlebarsTemplate
   ];
   const templates = _.union(coreTemplates, extraTemplates);
-  const templatesHash = templates.reduce((hash, template) => {
-    const type = template.getInfo().type;
-    hash[type] = template;
-    return hash;
-  }, {} as Record<string, Template>);
+  const templatesHash = templates.reduce(
+    (hash, template) => {
+      const type = template.getInfo().type;
+      hash[type] = template;
+      return hash;
+    },
+    {} as Record<string, Template>
+  );
 
-  const templatesInfo = templates.map(template => {
+  const templatesInfo = templates.map((template) => {
     const { externals, ...rest } = template.getInfo();
     return {
       ...rest,

@@ -56,7 +56,7 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
     },
 
     async load(): Promise<ComponentsList> {
-      const jsonComponents = await componentsList.getFromJson().catch(err => {
+      const jsonComponents = await componentsList.getFromJson().catch((err) => {
         if (err?.code === strings.errors.STORAGE.FILE_NOT_FOUND_CODE)
           return null;
 
@@ -64,7 +64,7 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
       });
       const dirComponents = await componentsList
         .getFromDirectories(jsonComponents)
-        .catch(err => throwError('components_list_get', err));
+        .catch((err) => throwError('components_list_get', err));
 
       if (
         !jsonComponents ||
@@ -72,7 +72,7 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
       ) {
         await componentsList
           .save(dirComponents)
-          .catch(err => throwError('components_list_save', err));
+          .catch((err) => throwError('components_list_save', err));
       }
       cacheDataAndStartPolling(dirComponents);
 

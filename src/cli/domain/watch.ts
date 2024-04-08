@@ -15,7 +15,7 @@ export default function watch(
     usePolling: true
   });
   const onChange = (fileName: string) => {
-    const componentDir = dirs.find(dir =>
+    const componentDir = dirs.find((dir) =>
       Boolean(fileName.match(escapeRegularExpression(dir + path.sep)))
     );
     changed(null, fileName, componentDir);

@@ -30,14 +30,14 @@ export default function getComponentsByDir() {
     try {
       let dirContent = await fs.readdir(componentsDir);
       if (componentsToRun) {
-        dirContent = dirContent.filter(content =>
+        dirContent = dirContent.filter((content) =>
           componentsToRun.includes(content)
         );
       }
 
       const components = dirContent
         .filter(isOcComponent)
-        .map(component => path.resolve(componentsDir, component));
+        .map((component) => path.resolve(componentsDir, component));
 
       return components;
     } catch (err) {

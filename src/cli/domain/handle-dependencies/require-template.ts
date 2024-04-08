@@ -49,7 +49,7 @@ export default function requireTemplate(
   );
 
   [componentRelativePath, template, localTemplate, relativeTemplate].forEach(
-    pathToTry => {
+    (pathToTry) => {
       ocTemplate = ocTemplate || cleanRequire(pathToTry, { justTry: true });
     }
   );

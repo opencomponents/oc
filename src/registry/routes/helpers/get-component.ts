@@ -57,7 +57,7 @@ export interface GetComponentResult {
 }
 
 const noopConsole = Object.fromEntries(
-  Object.keys(console).map(key => [key, _.noop])
+  Object.keys(console).map((key) => [key, _.noop])
 );
 
 export default function getComponent(conf: Config, repository: Repository) {
@@ -260,7 +260,7 @@ export default function getComponent(conf: Config, repository: Repository) {
             !!options.headers['user-agent'].match('oc-client-');
 
           const parseTemplatesHeader = (t: string) =>
-            t.split(';').map(t => t.split(',')[0]);
+            t.split(';').map((t) => t.split(',')[0]);
           const supportedTemplates = options.headers['templates']
             ? parseTemplatesHeader(options.headers['templates'] as string)
             : [];

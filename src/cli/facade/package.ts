@@ -34,7 +34,7 @@ const cliPackage = ({ local, logger }: { local: Local; logger: Logger }) =>
           componentPath: path.resolve(componentPath)
         };
 
-        const component = await local.package(packageOptions).catch(err => {
+        const component = await local.package(packageOptions).catch((err) => {
           logger.err(strings.errors.cli.PACKAGE_CREATION_FAIL(String(err)));
           return Promise.reject(err);
         });
@@ -44,10 +44,12 @@ const cliPackage = ({ local, logger }: { local: Local; logger: Logger }) =>
         if (opts.compress) {
           logger.warn(strings.messages.cli.COMPRESSING(compressedPackagePath));
 
-          await local.compress(packageDir, compressedPackagePath).catch(err => {
-            logger.err(strings.errors.cli.PACKAGE_CREATION_FAIL(String(err)));
-            return Promise.reject(err);
-          });
+          await local
+            .compress(packageDir, compressedPackagePath)
+            .catch((err) => {
+              logger.err(strings.errors.cli.PACKAGE_CREATION_FAIL(String(err)));
+              return Promise.reject(err);
+            });
 
           logger.ok(strings.messages.cli.COMPRESSED(compressedPackagePath));
 

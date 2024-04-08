@@ -65,12 +65,12 @@ export default function repository(conf: Config) {
     getComponents(): string[] {
       const validComponents =
         conf.components ||
-        fs.readdirSync(conf.path).filter(file => {
+        fs.readdirSync(conf.path).filter((file) => {
           const isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory();
           const isValidComponent = isDir
             ? fs
                 .readdirSync(path.join(conf.path, file))
-                .filter(file => file === '_package').length === 1
+                .filter((file) => file === '_package').length === 1
             : false;
 
           return isValidComponent;
@@ -83,7 +83,7 @@ export default function repository(conf: Config) {
         return Promise.all([
           fs
             .readJson(path.join(__dirname, '../../../package.json'))
-            .then(x => x.version)
+            .then((x) => x.version)
         ]);
       }
 
@@ -99,7 +99,7 @@ export default function repository(conf: Config) {
       return Promise.all([
         fs
           .readJson(path.join(conf.path, `${componentName}/package.json`))
-          .then(x => x.version)
+          .then((x) => x.version)
       ]);
     },
     getDataProvider(componentName: string) {
@@ -166,7 +166,7 @@ export default function repository(conf: Config) {
 
       const component = await repository
         .getComponentInfo(componentName, version)
-        .catch(err => {
+        .catch((err) => {
           throw `component not available: ${errorToString(err)}`;
         });
 

@@ -9,7 +9,7 @@ export async function fetchList(dirPath: string): Promise<string[]> {
 
   if (list.length === 0) return [];
 
-  const toRemove = list.map(folder => path.join(folder, 'node_modules'));
+  const toRemove = list.map((folder) => path.join(folder, 'node_modules'));
 
   return toRemove.filter(fs.existsSync);
 }

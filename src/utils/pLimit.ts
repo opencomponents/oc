@@ -130,7 +130,7 @@ const pLimit = (concurrency: number): LimitFunction => {
     fn: (...args: Arguments) => PromiseLike<ReturnType> | ReturnType,
     ...args: Arguments
   ) =>
-    new Promise(resolve => {
+    new Promise((resolve) => {
       enqueue(fn, resolve, ...args);
     });
 

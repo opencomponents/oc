@@ -58,8 +58,8 @@ export default function indexView(vm: VM): string {
 
   const scripts = `<script>
     var q = "${encodeURIComponent(vm.q)}", componentsList = ${JSON.stringify(
-    vm.componentsList
-  )};
+      vm.componentsList
+    )};
 ${indexJS}</script>`;
 
   return layout({ content, scripts });

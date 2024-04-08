@@ -85,7 +85,7 @@ export default function componentParameters(
 
     if (Object.keys(result.errors.mandatory || {}).length > 0) {
       const missingParams = Object.keys(result.errors.mandatory || {})
-        .map(mandatoryParameterName => mandatoryParameterName + ', ')
+        .map((mandatoryParameterName) => mandatoryParameterName + ', ')
         .join('')
         .slice(0, -2);
 
@@ -99,7 +99,7 @@ export default function componentParameters(
       }
 
       const badParams = Object.keys(result.errors.types || {})
-        .map(parameterName => parameterName + ', ')
+        .map((parameterName) => parameterName + ', ')
         .join('')
         .slice(0, -2);
 

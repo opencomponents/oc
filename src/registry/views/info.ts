@@ -144,7 +144,14 @@ export default function info(vm: Vm): string {
     ${property('Template', template)}
     ${showArray('Node.js dependencies', dependencies)}
     ${showArray('Plugin dependencies', component.oc.plugins)}
-    ${component.oc.files.template.size ? property('Template size', `${Math.round(component.oc.files.template.size / 1024)} kb`) : ''}
+    ${
+      component.oc.files.template.size
+        ? property(
+            'Template size',
+            `${Math.round(component.oc.files.template.size / 1024)} kb`
+          )
+        : ''
+    }
     ${componentParameters()}
     <h3>Code</h3>
     <p>

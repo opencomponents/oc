@@ -78,7 +78,7 @@ export default function components(
             parameters: { ...req.body.parameters, ...component.parameters },
             version: component.version
           },
-          result => callback(null, result)
+          (result) => callback(null, result)
         );
       },
       // @ts-ignore
@@ -96,7 +96,7 @@ export default function components(
               code: 'RENDER_ERROR',
               error: strings.errors.registry.RENDER_ERROR(
                 results
-                  .map(x => `${x.response.name}@${x.response.version}`)
+                  .map((x) => `${x.response.name}@${x.response.version}`)
                   .join(', '),
                 String(e)
               )

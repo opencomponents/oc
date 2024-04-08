@@ -18,7 +18,7 @@ type Registry = ReturnType<typeof oc.Registry>;
 const cliMessages = strings.messages.cli;
 const cliErrors = strings.errors.cli;
 
-const delay = (time = 0) => new Promise(res => setTimeout(res, time));
+const delay = (time = 0) => new Promise((res) => setTimeout(res, time));
 const getPort = promisify(getPortCb);
 
 const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
@@ -108,9 +108,9 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
 
       const registerPlugins = (registry: Registry) => {
         const mockedPlugins = getMockedPlugins(logger, componentsDir);
-        mockedPlugins.forEach(p => registry.register(p));
+        mockedPlugins.forEach((p) => registry.register(p));
 
-        registry.on('request', data => {
+        registry.on('request', (data) => {
           if (data.errorCode === 'PLUGIN_MISSING_FROM_REGISTRY') {
             logger.err(
               cliErrors.PLUGIN_MISSING_FROM_REGISTRY(
@@ -135,14 +135,14 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
       }
 
       logger.ok('OK');
-      components.forEach(component =>
+      components.forEach((component) =>
         logger.log(colors.green('├── ') + component)
       );
 
       const dependencies = await handleDependencies({
         components,
         logger
-      }).catch(err => {
+      }).catch((err) => {
         logger.err(err);
         return Promise.reject(err);
       });
@@ -155,7 +155,7 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
         port: undefined
       };
       if (hotReloading) {
-        const otherPort = await getPort(port + 1).catch(err => {
+        const otherPort = await getPort(port + 1).catch((err) => {
           logger.err(String(err));
           return Promise.reject(err);
         });

@@ -71,7 +71,7 @@ export default function (repository: Repository) {
                 callback();
               }
             ),
-          err => {
+          (err) => {
             if (err) return next(err);
 
             componentsInfo = _.sortBy(componentsInfo, 'name');
@@ -88,7 +88,7 @@ export default function (repository: Repository) {
                     availablePlugins: res.conf.plugins,
                     components: componentsInfo,
                     componentsReleases,
-                    componentsList: componentsInfo.map(component => {
+                    componentsList: componentsInfo.map((component) => {
                       const state: 'deprecated' | 'experimental' | '' = _.get(
                         component,
                         'oc.state',
@@ -119,7 +119,7 @@ export default function (repository: Repository) {
       } else {
         res.status(200).json(
           Object.assign(baseResponse, {
-            components: _.map(components, component =>
+            components: _.map(components, (component) =>
               urlBuilder.component(component, res.conf.baseUrl)
             )
           })

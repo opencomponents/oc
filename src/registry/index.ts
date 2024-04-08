@@ -93,7 +93,7 @@ export default function registry<T = any>(inputOptions: RegistryOptions<T>) {
         callback(null, { app, server });
       });
 
-      server.on('error', error => {
+      server.on('error', (error) => {
         eventsHandler.fire('error', {
           code: 'EXPRESS_ERROR',
           message: error?.message ?? String(error)

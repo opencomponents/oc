@@ -13,7 +13,7 @@ interface AvailableDependency {
 export default function getAvailableDependencies(
   dependencies: string[]
 ): AvailableDependency[] {
-  return _.map(dependencies, dependency => {
+  return _.map(dependencies, (dependency) => {
     const requirer = RequireWrapper(dependencies);
     const core = _.includes(coreModules, dependency);
     const packageJson = !core

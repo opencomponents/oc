@@ -174,12 +174,12 @@ const publish = ({
           await handleDependencies({
             components: [path.resolve(componentPath)],
             logger
-          }).catch(err => {
+          }).catch((err) => {
             logger.err(err);
             return Promise.reject(err);
           });
 
-          const component = await packageAndCompress().catch(err => {
+          const component = await packageAndCompress().catch((err) => {
             errorMessage = strings.errors.cli.PACKAGE_CREATION_FAIL(
               String(err)
             );
@@ -189,11 +189,11 @@ const publish = ({
           await publishToRegistries(registryLocations, component);
         } else {
           if (fs.existsSync(packageDir)) {
-            const component = await readPackageJson().catch(err => {
+            const component = await readPackageJson().catch((err) => {
               logger.err(String(err));
               return Promise.reject(err);
             });
-            await compress().catch(err => {
+            await compress().catch((err) => {
               logger.err(String(err));
               return Promise.reject(err);
             });

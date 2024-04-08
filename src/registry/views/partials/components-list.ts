@@ -5,7 +5,7 @@ export default function componentsList(vm: VM): string {
   const isLocal = vm.type !== 'oc-registry';
   const isRemote = !isLocal;
   const sizeAvailable = vm.components.some(
-    component => component.oc.files.template.size
+    (component) => component.oc.files.template.size
   );
   const selectedCheckbox = getSelectedCheckbox(vm);
 

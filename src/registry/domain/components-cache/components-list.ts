@@ -38,12 +38,12 @@ export default function componentsList(conf: Config, cdn: StorageAdapter) {
           `${conf.storage.options.componentsDir}/${componentName}`
         );
         const unCheckedVersions = allVersions.filter(
-          version => !jsonList?.components[componentName]?.includes(version)
+          (version) => !jsonList?.components[componentName]?.includes(version)
         );
         const limit = pLimit(cdn.maxConcurrentRequests);
         const invalidVersions = (
           await Promise.all(
-            unCheckedVersions.map(unCheckedVersion =>
+            unCheckedVersions.map((unCheckedVersion) =>
               limit(async () => {
                 const isValid = await validateComponentVersion(
                   componentName,
@@ -66,7 +66,7 @@ export default function componentsList(conf: Config, cdn: StorageAdapter) {
         }
 
         const validVersions = allVersions.filter(
-          version => !invalidVersions.includes(version)
+          (version) => !invalidVersions.includes(version)
         );
 
         return validVersions.sort(semver.compare);
@@ -79,7 +79,7 @@ export default function componentsList(conf: Config, cdn: StorageAdapter) {
         const limit = pLimit(cdn.maxConcurrentRequests);
 
         const versions = await Promise.all(
-          components.map(component =>
+          components.map((component) =>
             limit(() => getVersionsForComponent(component))
           )
         );

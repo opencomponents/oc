@@ -76,7 +76,7 @@ export function create(app: Express, conf: Config, repository: Repository) {
   app.get(`${prefix}:componentName`, routes.component);
 
   if (conf.routes) {
-    conf.routes.forEach(route =>
+    conf.routes.forEach((route) =>
       app[
         route.method.toLowerCase() as 'get' | 'post' | 'put' | 'patch' | 'head'
       ](route.route, route.handler)

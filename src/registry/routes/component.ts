@@ -23,7 +23,7 @@ export default function component(
         parameters: req.query as Record<string, string>,
         version: req.params['componentVersion']
       },
-      result => {
+      (result) => {
         if (result.response.error) {
           if (_.isError(result.response.error)) {
             result.response.error = serializeError(result.response.error);

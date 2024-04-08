@@ -80,7 +80,7 @@ function processCommand(
   cli.command(
     command.cmd || commandName,
     command.description,
-    yargs => {
+    (yargs) => {
       yargs.usage(command.usage);
 
       if (command.options) {
@@ -89,7 +89,7 @@ function processCommand(
 
       if (command.commands) {
         yargs
-          .check(argv => validateCommand(argv, level))
+          .check((argv) => validateCommand(argv, level))
           .epilogue(strings.messages.cli.HELP_HINT);
 
         const newPrefix = (prefix ? prefix + '-' : '') + commandName + '-';
@@ -114,7 +114,7 @@ function processCommand(
 
       return yargs;
     },
-    options => {
+    (options) => {
       // @ts-ignore not callable
       facade(options).catch(() => {
         process.exit(1);
@@ -129,7 +129,7 @@ Object.entries(commands.commands).forEach(([commandName, command]) => {
 
 const argv = cli
   .completion()
-  .check(argv => validateCommand(argv, 0))
+  .check((argv) => validateCommand(argv, 0))
   .usage(commands.usage)
   .epilogue(strings.messages.cli.HELP_HINT)
   .help('h')

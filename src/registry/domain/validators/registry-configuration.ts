@@ -128,7 +128,7 @@ export default function registryConfiguration(
     }
 
     const hasNonStringElements = conf.customHeadersToSkipOnWeakVersion.find(
-      element => typeof element !== 'string'
+      (element) => typeof element !== 'string'
     );
 
     if (hasNonStringElements) {
