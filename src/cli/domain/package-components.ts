@@ -1,10 +1,10 @@
-import fs from 'fs-extra';
-import { promisify } from 'node:util';
 import path from 'node:path';
+import { promisify } from 'node:util';
+import fs from 'fs-extra';
 
-import requireTemplate from './handle-dependencies/require-template';
 import * as validator from '../../registry/domain/validators';
 import type { Component } from '../../types';
+import requireTemplate from './handle-dependencies/require-template';
 
 export interface PackageOptions {
   componentPath: string;
@@ -19,7 +19,7 @@ interface Sizes {
 }
 
 function checkSizes(folder: string) {
-  const jsFiles = fs.readdirSync(folder).filter(x => x.endsWith('.js'));
+  const jsFiles = fs.readdirSync(folder).filter((x) => x.endsWith('.js'));
 
   const sizes: Sizes = {
     client: 0

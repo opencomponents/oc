@@ -6,7 +6,8 @@
   "types": "./dist/index.d.ts",
   "bin": "./dist/oc-cli.js",
   "scripts": {
-    "lint": "eslint src",
+    "lint": "npx @biomejs/biome check src",
+    "lint:apply": "npx @biomejs/biome check --apply src",
     "prebuild": "rimraf dist",
     "build": "npm run lint && tsc && node tasks/build.js",
     "git-stage-and-push": "node tasks/git-stage-and-push.js",

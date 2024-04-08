@@ -1,16 +1,16 @@
+import { promisify } from 'node:util';
 import fs from 'fs-extra';
 import targz from 'targz';
-import { promisify } from 'node:util';
 
+import * as validator from '../../registry/domain/validators';
+import strings from '../../resources';
+import isTemplateLegacy from '../../utils/is-template-legacy';
+import type { Logger } from '../logger';
 import * as clean from './clean';
 import getComponentsByDir from './get-components-by-dir';
 import initTemplate from './init-template';
-import isTemplateLegacy from '../../utils/is-template-legacy';
 import mock from './mock';
 import packageComponents from './package-components';
-import strings from '../../resources';
-import * as validator from '../../registry/domain/validators';
-import type { Logger } from '../logger';
 
 export default function local() {
   return {
@@ -23,7 +23,7 @@ export default function local() {
         src: input,
         dest: output,
         tar: {
-          map: file =>
+          map: (file) =>
             Object.assign(file, {
               name: `_package/${file.name}`
             })

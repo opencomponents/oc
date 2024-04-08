@@ -1,11 +1,11 @@
-import { serializeError } from 'serialize-error';
 import _ from 'lodash';
+import { serializeError } from 'serialize-error';
 
-import GetComponentHelper from './helpers/get-component';
-import strings from '../../resources';
-import type { Repository } from '../domain/repository';
-import type { Config } from '../../types';
 import type { Request, RequestHandler, Response } from 'express';
+import strings from '../../resources';
+import type { Config } from '../../types';
+import type { Repository } from '../domain/repository';
+import GetComponentHelper from './helpers/get-component';
 
 export default function component(
   conf: Config,

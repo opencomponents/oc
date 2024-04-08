@@ -1,13 +1,13 @@
 import type { Component, ComponentDetail } from '../../types';
 
+import isTemplateLegacy from '../../utils/is-template-legacy';
 import getComponentAuthor from './partials/component-author';
 import getComponentParameters from './partials/component-parameters';
 import getComponentState from './partials/component-state';
 import getComponentVersions from './partials/component-versions';
-import infoJS from './static/info';
 import getLayout from './partials/layout';
 import getProperty from './partials/property';
-import isTemplateLegacy from '../../utils/is-template-legacy';
+import infoJS from './static/info';
 
 interface Vm {
   parsedAuthor: { name?: string; email?: string; url?: string };

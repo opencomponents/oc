@@ -1,6 +1,6 @@
+import { promisify } from 'node:util';
 import readCb from 'read';
 import { fromPromise } from 'universalify';
-import { promisify } from 'node:util';
 import strings from '../../resources/index';
 import type { Local } from '../domain/local';
 import type { Logger } from '../logger';

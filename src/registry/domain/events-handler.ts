@@ -56,7 +56,7 @@ type EventsHandler = {
 const eventsHandler: EventsHandler = {
   fire(eventName: string, eventData: unknown): void {
     if (subscriptions[eventName]) {
-      subscriptions[eventName].forEach(callback => {
+      subscriptions[eventName].forEach((callback) => {
         callback(eventData);
       });
     }
@@ -81,7 +81,7 @@ const eventsHandler: EventsHandler = {
 
     if (subscriptions[eventName]) {
       subscriptions[eventName] = subscriptions[eventName].filter(
-        sub => sub !== callback
+        (sub) => sub !== callback
       );
     }
   },

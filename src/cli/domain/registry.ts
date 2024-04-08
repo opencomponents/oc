@@ -1,13 +1,13 @@
-import fs from 'fs-extra';
 import path from 'node:path';
+import fs from 'fs-extra';
 import got from 'got';
 import _ from 'lodash';
 
-import put from '../../utils/put';
-import settings from '../../resources/settings';
 import * as urlBuilder from '../../registry/domain/url-builder';
-import * as urlParser from '../domain/url-parser';
+import settings from '../../resources/settings';
 import type { Component } from '../../types';
+import put from '../../utils/put';
+import * as urlParser from '../domain/url-parser';
 
 const getOcVersion = (): string => {
   const ocPackagePath = path.join(__dirname, '../../../package.json');

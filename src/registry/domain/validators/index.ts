@@ -1,13 +1,13 @@
 import semver from 'semver';
 
-import ocCliVersionValidator from './oc-cli-version';
 import componentParametersValidator from './component-parameters';
+import ocCliVersionValidator from './oc-cli-version';
 import packageJsonValidator from './package-json-validator';
 import pluginsRequirementsValidator from './plugins-requirements';
 import registryConfigurationValidator from './registry-configuration';
 
-import uploadedPackageValidator from './uploaded-package';
 import nodeVersionValidator from './node-version';
+import uploadedPackageValidator from './uploaded-package';
 
 export function validateComponentName(componentName: string): boolean {
   return !/[^a-zA-Z0-9\-_]/.test(componentName) && componentName !== '_package';

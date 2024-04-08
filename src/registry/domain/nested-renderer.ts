@@ -1,5 +1,5 @@
-import settings from '../../resources/settings';
 import strings from '../../resources';
+import settings from '../../resources/settings';
 import type { Config } from '../../types';
 import type {
   GetComponentResult,

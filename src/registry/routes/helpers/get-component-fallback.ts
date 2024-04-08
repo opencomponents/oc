@@ -1,7 +1,7 @@
-import type { Request, Response } from 'express';
 import type { IncomingHttpHeaders } from 'node:http';
-import request from 'minimal-request';
 import url from 'node:url';
+import type { Request, Response } from 'express';
+import request from 'minimal-request';
 import type { Component, Config } from '../../../types';
 import * as urlBuilder from '../../domain/url-builder';
 import type { GetComponentResult } from './get-component';

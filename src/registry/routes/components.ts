@@ -1,13 +1,13 @@
 import async from 'async';
 import _ from 'lodash';
 
+import type { Request, RequestHandler, Response } from 'express';
+import strings from '../../resources';
+import type { Config } from '../../types';
+import type { Repository } from '../domain/repository';
 import GetComponentHelper, {
   type GetComponentResult
 } from './helpers/get-component';
-import strings from '../../resources';
-import type { Repository } from '../domain/repository';
-import type { Config } from '../../types';
-import type { Request, RequestHandler, Response } from 'express';
 
 type Component = {
   action?: string;
@@ -79,7 +79,7 @@ export default function components(
             parameters: { ...req.body.parameters, ...component.parameters },
             version: component.version
           },
-          result => callback(null, result)
+          (result) => callback(null, result)
         );
       },
       // @ts-ignore
@@ -97,7 +97,7 @@ export default function components(
               code: 'RENDER_ERROR',
               error: strings.errors.registry.RENDER_ERROR(
                 results
-                  .map(x => `${x.response.name}@${x.response.version}`)
+                  .map((x) => `${x.response.name}@${x.response.version}`)
                   .join(', '),
                 String(e)
               )

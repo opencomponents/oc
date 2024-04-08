@@ -1,20 +1,20 @@
-import async from 'async';
-import parseAuthor from 'parse-author';
-import _ from 'lodash';
 import path from 'node:path';
+import async from 'async';
 import fs from 'fs-extra';
+import _ from 'lodash';
+import parseAuthor from 'parse-author';
 
 import dateStringified from '../../utils/date-stringify';
-import getComponentsHistory from './helpers/get-components-history';
-import getAvailableDependencies from './helpers/get-available-dependencies';
 import indexView from '../views';
+import getAvailableDependencies from './helpers/get-available-dependencies';
+import getComponentsHistory from './helpers/get-components-history';
 import urlBuilder = require('../domain/url-builder');
-import type { Repository } from '../domain/repository';
-import type { Author, Component, ParsedComponent } from '../../types';
-import type { NextFunction, Request, Response } from 'express';
 import type { IncomingHttpHeaders } from 'node:http';
+import type { NextFunction, Request, Response } from 'express';
 import type { PackageJson } from 'type-fest';
 import { fromPromise } from 'universalify';
+import type { Author, Component, ParsedComponent } from '../../types';
+import type { Repository } from '../domain/repository';
 
 const packageInfo: PackageJson = fs.readJsonSync(
   path.join(__dirname, '..', '..', '..', 'package.json')
@@ -71,7 +71,7 @@ export default function (repository: Repository) {
                 callback();
               }
             ),
-          err => {
+          (err) => {
             if (err) return next(err);
 
             componentsInfo = _.sortBy(componentsInfo, 'name');
@@ -88,7 +88,7 @@ export default function (repository: Repository) {
                     availablePlugins: res.conf.plugins,
                     components: componentsInfo,
                     componentsReleases,
-                    componentsList: componentsInfo.map(component => {
+                    componentsList: componentsInfo.map((component) => {
                       const state: 'deprecated' | 'experimental' | '' = _.get(
                         component,
                         'oc.state',
@@ -119,7 +119,7 @@ export default function (repository: Repository) {
       } else {
         res.status(200).json(
           Object.assign(baseResponse, {
-            components: _.map(components, component =>
+            components: _.map(components, (component) =>
               urlBuilder.component(component, res.conf.baseUrl)
             )
           })

@@ -1,8 +1,8 @@
 import tryRequire from 'try-require';
 
+import strings from '../../../resources';
 import isTemplateValid from '../../../utils/is-template-valid';
 import * as npm from '../../../utils/npm-utils';
-import strings from '../../../resources';
 import type { Logger } from '../../logger';
 
 interface Options {

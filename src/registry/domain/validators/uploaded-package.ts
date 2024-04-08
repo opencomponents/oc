@@ -20,9 +20,9 @@ export default function uploadedPackage(
       }
 ): ValidationResponse {
   const returnError = (message?: string): ValidationResponse => ({
-      isValid: false,
-      message: message || 'uploaded package is not valid'
-    });
+    isValid: false,
+    message: message || 'uploaded package is not valid'
+  });
 
   if (!input || typeof input !== 'object' || Object.keys(input).length === 0) {
     return returnError('empty');

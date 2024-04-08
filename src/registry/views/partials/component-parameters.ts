@@ -34,7 +34,7 @@ const componentParameters =
     };
 
     const rows = Object.keys(component.oc.parameters)
-      .map(parameterName =>
+      .map((parameterName) =>
         parameterRow(component.oc.parameters[parameterName], parameterName)
       )
       .join('');

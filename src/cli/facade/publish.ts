@@ -1,15 +1,15 @@
-import colors from 'colors/safe';
 import path from 'node:path';
+import { promisify } from 'node:util';
+import colors from 'colors/safe';
 import fs from 'fs-extra';
 import readCb from 'read';
-import { promisify } from 'node:util';
-import type { Logger } from '../logger';
-import type { Local } from '../domain/local';
-import type { Component } from '../../types';
 import { fromPromise } from 'universalify';
+import type { Component } from '../../types';
+import type { Local } from '../domain/local';
+import type { Logger } from '../logger';
 
-import handleDependencies from '../domain/handle-dependencies';
 import strings from '../../resources/index';
+import handleDependencies from '../domain/handle-dependencies';
 import type { RegistryCli } from '../domain/registry';
 
 const read = promisify(readCb);
@@ -174,12 +174,12 @@ const publish = ({
           await handleDependencies({
             components: [path.resolve(componentPath)],
             logger
-          }).catch(err => {
+          }).catch((err) => {
             logger.err(err);
             return Promise.reject(err);
           });
 
-          const component = await packageAndCompress().catch(err => {
+          const component = await packageAndCompress().catch((err) => {
             errorMessage = strings.errors.cli.PACKAGE_CREATION_FAIL(
               String(err)
             );
@@ -189,11 +189,11 @@ const publish = ({
           await publishToRegistries(registryLocations, component);
         } else {
           if (fs.existsSync(packageDir)) {
-            const component = await readPackageJson().catch(err => {
+            const component = await readPackageJson().catch((err) => {
               logger.err(String(err));
               return Promise.reject(err);
             });
-            await compress().catch(err => {
+            await compress().catch((err) => {
               logger.err(String(err));
               return Promise.reject(err);
             });

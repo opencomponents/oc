@@ -1,6 +1,6 @@
-import _ from 'lodash';
-import { DepGraph } from 'dependency-graph';
 import { promisify } from 'node:util';
+import { DepGraph } from 'dependency-graph';
+import _ from 'lodash';
 import pLimit from '../../utils/pLimit';
 
 import strings from '../../resources';
@@ -27,14 +27,14 @@ function validatePlugins(plugins: unknown[]): asserts plugins is Plugin[] {
 function checkDependencies(plugins: Plugin[]) {
   const graph = new DepGraph();
 
-  plugins.forEach(p => graph.addNode(p.name));
+  plugins.forEach((p) => graph.addNode(p.name));
 
-  plugins.forEach(p => {
+  plugins.forEach((p) => {
     if (!p.register.dependencies) {
       return;
     }
 
-    p.register.dependencies.forEach(d => {
+    p.register.dependencies.forEach((d) => {
       try {
         graph.addDependency(p.name, d);
       } catch (err) {
@@ -64,7 +64,7 @@ export async function init(
     }
 
     let present = true;
-    dependencies.forEach(d => {
+    dependencies.forEach((d) => {
       if (!registered[d]) {
         present = false;
       }
@@ -92,7 +92,7 @@ export async function init(
     const register = promisify(plugin.register.register);
 
     const pluginCallback = plugin.callback || _.noop;
-    await register(plugin.options || {}, dependencies).catch(err => {
+    await register(plugin.options || {}, dependencies).catch((err) => {
       pluginCallback(err);
       throw err;
     });
@@ -109,7 +109,7 @@ export async function init(
       deferredLoads = [];
 
       await Promise.all(
-        deferredPlugins.map(plugin => onSeries(() => loadPlugin(plugin)))
+        deferredPlugins.map((plugin) => onSeries(() => loadPlugin(plugin)))
       );
       return terminator();
     }
@@ -120,7 +120,7 @@ export async function init(
   const onSeries = pLimit(1);
 
   await Promise.all(
-    pluginsToRegister.map(plugin => onSeries(() => loadPlugin(plugin)))
+    pluginsToRegister.map((plugin) => onSeries(() => loadPlugin(plugin)))
   );
 
   return terminator();

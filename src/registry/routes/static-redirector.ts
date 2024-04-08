@@ -1,6 +1,6 @@
-import fs from 'fs-extra';
 import path from 'node:path';
 import type { Request, Response } from 'express';
+import fs from 'fs-extra';
 
 import * as storageUtils from 'oc-storage-adapters-utils';
 import type { Repository } from '../domain/repository';

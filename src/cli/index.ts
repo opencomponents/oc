@@ -1,12 +1,12 @@
+import _ from 'lodash';
+import semver from 'semver';
 import cli from 'yargs';
 import commands from './commands';
-import semver from 'semver';
-import _ from 'lodash';
 
-import Local from './domain/local';
-import logger from './logger';
-import Registry from './domain/registry';
 import strings from '../resources';
+import Local from './domain/local';
+import Registry from './domain/registry';
+import logger from './logger';
 import validateCommand from './validate-command';
 
 import clean from './facade/clean';

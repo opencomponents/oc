@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import type { PackageJson } from 'type-fest';
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
+import type { PackageJson } from 'type-fest';
 
 export interface Author {
   email?: string;

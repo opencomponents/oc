@@ -1,9 +1,9 @@
-import semver from 'semver';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
-import eventsHandler from '../events-handler';
+import semver from 'semver';
 import type { ComponentsList, Config } from '../../../types';
 import pLimit from '../../../utils/pLimit';
+import eventsHandler from '../events-handler';
 
 export default function componentsList(conf: Config, cdn: StorageAdapter) {
   const filePath = (): string =>

@@ -91,7 +91,7 @@ export default function optionsSanitiser(input: RegistryOptions): Config {
 
   options.customHeadersToSkipOnWeakVersion = (
     options.customHeadersToSkipOnWeakVersion || []
-  ).map(s => s.toLowerCase());
+  ).map((s) => s.toLowerCase());
 
   options.port = options.port || process.env['PORT'] || 3000;
   options.timeout = options.timeout || 1000 * 60 * 2;

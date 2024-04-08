@@ -1,6 +1,6 @@
+import path from 'node:path';
 import fs from 'fs-extra';
 import makeGetComponentsByDir from './get-components-by-dir';
-import path from 'node:path';
 
 const getComponentsByDir = makeGetComponentsByDir();
 
@@ -9,7 +9,7 @@ export async function fetchList(dirPath: string): Promise<string[]> {
 
   if (list.length === 0) return [];
 
-  const toRemove = list.map(folder => path.join(folder, 'node_modules'));
+  const toRemove = list.map((folder) => path.join(folder, 'node_modules'));
 
   return toRemove.filter(fs.existsSync);
 }

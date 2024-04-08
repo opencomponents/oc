@@ -1,6 +1,6 @@
-import * as auth from '../authentication';
 import strings from '../../../resources';
 import type { Config } from '../../../types';
+import * as auth from '../authentication';
 
 type ValidationResult = { isValid: true } | { isValid: false; message: string };
 
@@ -127,7 +127,7 @@ export default function registryConfiguration(
     }
 
     const hasNonStringElements = conf.customHeadersToSkipOnWeakVersion.find(
-      element => typeof element !== 'string'
+      (element) => typeof element !== 'string'
     );
 
     if (hasNonStringElements) {

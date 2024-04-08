@@ -1,10 +1,10 @@
-import fs from 'fs-extra';
 import path from 'node:path';
+import fs from 'fs-extra';
 
-import settings from '../../resources/settings';
 import strings from '../../resources/';
-import type { Logger } from '../logger';
+import settings from '../../resources/settings';
 import type { OcJsonConfig } from '../../types';
+import type { Logger } from '../logger';
 
 interface MockedPlugin {
   register: (options: unknown, dependencies: unknown, next: () => void) => void;

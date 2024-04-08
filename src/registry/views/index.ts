@@ -1,13 +1,13 @@
 import dependencies from './partials/components-dependencies';
 import history from './partials/components-history';
 import list from './partials/components-list';
-import templates from './partials/components-templates';
 import plugins from './partials/components-plugins';
+import templates from './partials/components-templates';
 import indexJS from './static/index';
 
+import type { VM } from '../../types';
 import getLayout from './partials/layout';
 import getProperty from './partials/property';
-import type { VM } from '../../types';
 
 export default function indexView(vm: VM): string {
   const tabs = {
