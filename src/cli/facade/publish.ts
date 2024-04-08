@@ -132,11 +132,9 @@ const publish = ({
             throw errorMessage;
           } else {
             if (err.message) {
-              // eslint-disable-next-line no-ex-assign
               errorMessage = err.message;
             } else if (err && typeof err === 'object') {
               try {
-                // eslint-disable-next-line no-ex-assign
                 errorMessage = JSON.stringify(err);
               } catch (er) {}
             }

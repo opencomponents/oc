@@ -249,7 +249,6 @@ export interface Plugin<T = any> {
 }
 
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Response {
       conf: Config;

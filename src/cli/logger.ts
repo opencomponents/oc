@@ -13,7 +13,6 @@ type Color =
   | 'grey';
 
 const logFns = {
-  // eslint-disable-next-line no-console
   writeLn: console.log,
   write: (msg: string) => process.stdout.write(msg.toString())
 };

@@ -76,7 +76,6 @@ export default function (repository: Repository) {
 
             componentsInfo = _.sortBy(componentsInfo, 'name');
             fromPromise(repository.getComponentsDetails)((err, details) => {
-              // eslint-disable-next-line no-console
               if (err) console.log(err);
               res.send(
                 indexView(

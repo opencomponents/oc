@@ -195,7 +195,6 @@ export default function repository(conf: Config) {
         if (componentInfo.version === componentVersion) {
           return Promise.resolve(componentInfo);
         }
-        // eslint-disable-next-line prefer-promise-reject-errors
         return Promise.reject('version not available');
       }
 

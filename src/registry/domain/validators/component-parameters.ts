@@ -66,7 +66,7 @@ export default function componentParameters(
     if (
       typeof expectedParameters === 'object' &&
       // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
-            expectedParameters.hasOwnProperty(requestParameterName)
+      expectedParameters.hasOwnProperty(requestParameterName)
     ) {
       const expectedType = expectedParameters[requestParameterName].type;
 

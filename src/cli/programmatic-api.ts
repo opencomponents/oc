@@ -31,7 +31,6 @@ function getDeps(options: {
 }) {
   const deps = {
     local: local(),
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     logger: options.logger || { log() {}, err() {}, ok() {}, warn() {} }
   };
 

@@ -99,7 +99,6 @@ const pLimit = (concurrency: number): LimitFunction => {
   const run = async (fn: any, resolve: any, ...args: any) => {
     activeCount++;
 
-    // eslint-disable-next-line require-await
     const result = (async () => fn(...args))();
 
     resolve(result);

@@ -11,7 +11,6 @@ const registryLs = ({
   logger: Logger;
   registry: RegistryCli;
 }) =>
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   fromPromise(async (_opts: unknown): Promise<string[]> => {
     try {
       const registries = await registry.get();

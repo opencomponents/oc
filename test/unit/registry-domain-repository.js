@@ -198,7 +198,6 @@ describe('registry : domain : repository', () => {
         before((done) => {
           componentsCacheMock.get.returns(componentsCacheBaseResponse);
           sinon.stub(repository, 'getComponentInfo').callsFake(() =>
-            // eslint-disable-next-line prefer-promise-reject-errors
             Promise.reject({
               msg: 'File not valid',
               code: 'file_not_valid'

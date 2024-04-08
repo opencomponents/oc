@@ -48,7 +48,6 @@ export default function registry<T = any>(inputOptions: RegistryOptions<T>) {
       data?: { app: express.Express; server: http.Server }
     ) => void
   ) => {
-    // eslint-disable-next-line no-console
     const ok = (msg: string) => console.log(colors.green(msg));
     createRouter(app, options, repository);
 

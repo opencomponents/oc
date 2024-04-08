@@ -447,7 +447,6 @@ export default function getComponent(conf: Config, repository: Repository) {
           .replace('https:', '');
 
         if (!component.oc.files.dataProvider) {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { __oc_Retry, ...props } = params;
           props['_staticPath'] = staticPath;
           props['_baseUrl'] = conf.baseUrl;

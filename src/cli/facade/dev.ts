@@ -151,7 +151,6 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
       await packageComponents(components);
 
       let liveReload: { refresher: () => void; port: number | undefined } = {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         refresher: () => {},
         port: undefined
       };

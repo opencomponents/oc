@@ -23,7 +23,6 @@ export default async function appStart(
     return;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   const logger = options.verbosity ? console : { log: () => {} };
 
   logger.log(
