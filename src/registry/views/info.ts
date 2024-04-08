@@ -20,7 +20,7 @@ interface Vm {
   repositoryUrl: string | null;
 }
 
-function statsJs(componentDetail: ComponentDetail) {
+function statsJs(name: string, componentDetail: ComponentDetail) {
   return `
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
@@ -41,7 +41,7 @@ function statsJs(componentDetail: ComponentDetail) {
     }
   
     const dataset = {
-      label: 'guest-stay-config',
+      label: "${name}",
       data: dataPoints,
       tension: 0.1,
       borderWidth: 1
@@ -176,7 +176,7 @@ export default function info(vm: Vm): string {
   <script>var thisComponentHref="${href}${component.name}/";
     ${infoJS}
   </script>
-  ${statsAvailable ? statsJs(vm.componentDetail!) : ''}
+  ${statsAvailable ? statsJs(vm.component.name, vm.componentDetail!) : ''}
   `;
 
   return layout({ content, scripts });
