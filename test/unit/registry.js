@@ -11,7 +11,7 @@ describe('registry', () => {
     './app-start': sinon.stub(),
     './domain/events-handler': { fire: sinon.stub() },
     express: sinon.stub(),
-    http: {
+    'node:http': {
       createServer: sinon.stub()
     },
     './middleware': { bind: sinon.stub().returns({}) },
@@ -135,7 +135,7 @@ describe('registry', () => {
                   repositoryInitStub.resolves('ok');
                   deps['./app-start'].resolves('ok');
 
-                  deps['http'].createServer.returns({
+                  deps['node:http'].createServer.returns({
                     listen: sinon.stub().yields('Port is already used'),
                     on: sinon.stub()
                   });
@@ -160,7 +160,7 @@ describe('registry', () => {
                   deps['./app-start'].resolves('ok');
                   deps['./domain/events-handler'].fire = sinon.stub();
 
-                  deps['http'].createServer.returns({
+                  deps['node:http'].createServer.returns({
                     listen: sinon.stub().yields(null, 'ok'),
                     on: sinon.stub()
                   });
@@ -197,7 +197,7 @@ describe('registry', () => {
                   deps['./app-start'].resolves('ok');
                   deps['./domain/events-handler'].fire = sinon.stub();
 
-                  deps['http'].createServer.returns({
+                  deps['node:http'].createServer.returns({
                     listen: sinon.stub(),
                     on: sinon.stub().yields('I failed for some reason')
                   });

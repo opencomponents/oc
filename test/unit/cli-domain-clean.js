@@ -16,7 +16,7 @@ describe('cli : domain : clean', () => {
         existsSync: dir => dir.indexOf('my-component1') >= 0,
         remove: options.removeMock
       },
-      path: { join: (...params) => params.join('/') }
+      'node:path': { join: (...params) => params.join('/') }
     });
   };
 

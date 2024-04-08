@@ -16,7 +16,7 @@ describe('cli : domain : handle-dependencies : require-template', () => {
         '../../../utils/clean-require': options.requireMock,
         '../../../utils/is-template-valid':
           options.isTemplateValidMock || sinon.stub().returns(true),
-        path: {
+        'node:path': {
           join: (...args) => args.join('/').replace(/\/\//gi, '/'),
           resolve: (...args) =>
             ['path/to/oc-cli'].concat(args.slice(1)).join('/')

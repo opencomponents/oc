@@ -9,7 +9,7 @@ describe('utils : npm-utils', () => {
 
   const npmUtils = injectr('../../dist/utils/npm-utils.js', {
     'cross-spawn': crossSpawnStub,
-    path: { join: (...items) => items.join('/') }
+    'node:path': { join: (...items) => items.join('/') }
   });
 
   const installPath = 'path/to/component';

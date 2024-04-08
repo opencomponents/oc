@@ -19,7 +19,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
       {
         './get-missing-dependencies': stubs.getMissingDependencies,
         'fs-extra': { ensureSymlink: stubs.ensureSymlink },
-        path: { resolve: () => '/path/to/oc-running' }
+        'node:path': { resolve: () => '/path/to/oc-running' }
       }
     ).default;
 

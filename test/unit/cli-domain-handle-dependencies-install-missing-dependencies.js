@@ -21,7 +21,7 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
         '../../../utils/npm-utils': {
           installDependencies: stubs.installDependencies
         },
-        path: { resolve: () => '/path/to/oc-running' }
+        'node:path': { resolve: () => '/path/to/oc-running' }
       }
     ).default;
 

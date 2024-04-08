@@ -26,7 +26,7 @@ describe('cli : domain : handle-dependencies : get-compiler', () => {
     const getCompiler = injectr(
       '../../dist/cli/domain/handle-dependencies/get-compiler.js',
       {
-        path: { join: (...args) => args.join('/') },
+        'node:path': { join: (...args) => args.join('/') },
         '../../../utils/clean-require': cleanRequireStub,
         './install-compiler': installCompilerStub
       }

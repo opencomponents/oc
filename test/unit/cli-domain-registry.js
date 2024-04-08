@@ -14,7 +14,7 @@ const getRegistry = function (dependencies, opts) {
       'fs-extra': dependencies.fs,
       '../../utils/put': dependencies.put,
       '../domain/url-parser': dependencies.urlParser,
-      path: {
+      'node:path': {
         join: sinon.stub().returns('/hello/world')
       }
     },

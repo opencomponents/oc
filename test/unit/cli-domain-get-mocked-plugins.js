@@ -36,7 +36,7 @@ describe('cli : domain : get-mocked-plugins', () => {
 
     getMockedPlugins = injectr('../../dist/cli/domain/get-mocked-plugins.js', {
       'fs-extra': fsMock,
-      path: {
+      'node:path': {
         join: pathJoinStub || fakePathFunc,
         resolve: fakePathFunc
       },

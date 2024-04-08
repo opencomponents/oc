@@ -53,7 +53,7 @@ describe('cli : domain : handle-dependencies', () => {
             readJson: path =>
               Promise.resolve(components[path.replace('/package.json', '')])
           },
-          path: { join: (...args) => args.join('/') },
+          'node:path': { join: (...args) => args.join('/') },
           './ensure-compiler-is-declared-as-devDependency': options => {
             spies.ensureCompilerIsDeclaredAsDevDependency(options);
             return `${options.template}-compiler`;

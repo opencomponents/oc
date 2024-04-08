@@ -12,7 +12,7 @@ describe('registry : domain : extract-package', () => {
     '../../dist/registry/domain/extract-package.js',
     {
       targz: { decompress: decompressStub },
-      path: { resolve: pathResolveStub },
+      'node:path': { resolve: pathResolveStub },
       './get-package-json-from-temp-dir': sinon
         .stub()
         .resolves({ package: 'hello' })

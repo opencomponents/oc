@@ -37,7 +37,7 @@ describe('cli : domain : handle-dependencies - get-missing-dependencies', () => 
             moduleExistsSpy(name);
             return installed[name];
           },
-          path: {
+          'node:path': {
             resolve: (...args) => {
               pathResolveSpy(...args);
               return args[args.length - 1];

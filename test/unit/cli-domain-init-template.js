@@ -13,7 +13,7 @@ describe('cli : domain : init-template', () => {
         'fs-extra': {
           ensureDir: stubs.fsExtraStub
         },
-        path: { join: (...args) => args.join('/') },
+        'node:path': { join: (...args) => args.join('/') },
         './install-template': stubs.installTemplateStub,
         '../../../utils/npm-utils': {
           init: stubs.npmStub

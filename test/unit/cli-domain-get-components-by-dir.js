@@ -23,7 +23,7 @@ const initialise = function () {
     '../../dist/cli/domain/get-components-by-dir.js',
     {
       'fs-extra': fsMock,
-      path: pathMock
+      'node:path': pathMock
     },
     { __dirname: '' }
   );
