@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.52
+- [#1364](https://github.com/opencomponents/oc/pull/1364) Move to Biome
+
 ### v0.49.51
 - [#1363](https://github.com/opencomponents/oc/pull/1363) calculate sizes on packaging and show in registry UI if available
 
