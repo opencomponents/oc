@@ -29,8 +29,7 @@
         "useTemplate": "off"
       },
       "suspicious": {
-        "noExplicitAny": "off",
-        "noPrototypeBuiltins": "off"
+        "noExplicitAny": "off"
       }
     }
   }
