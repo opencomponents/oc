@@ -62,7 +62,9 @@ describe('registry : routes : helpers : nested-renderer', () => {
 
           nestedRenderer
             .renderComponent('404-component', {})
-            .catch((err) => (error = err))
+            .catch((err) => {
+              error = err;
+            })
             .finally(done);
         });
 
@@ -96,8 +98,12 @@ describe('registry : routes : helpers : nested-renderer', () => {
               parameters: { a: 1234 },
               version: '1.2.X'
             })
-            .then((res) => (result = res))
-            .catch((err) => (error = err))
+            .then((res) => {
+              result = res;
+            })
+            .catch((err) => {
+              error = err;
+            })
             .finally(done);
         });
 
@@ -140,8 +146,12 @@ describe('registry : routes : helpers : nested-renderer', () => {
 
           nestedRenderer
             .renderComponent('my-component')
-            .then((res) => (result = res))
-            .catch((err) => (error = err))
+            .then((res) => {
+              result = res;
+            })
+            .catch((err) => {
+              error = err;
+            })
             .finally(done);
         });
 
@@ -280,8 +290,12 @@ describe('registry : routes : helpers : nested-renderer', () => {
                 }
               }
             )
-            .then((res) => (result = res))
-            .catch((err) => (error = err))
+            .then((res) => {
+              result = res;
+            })
+            .catch((err) => {
+              error = err;
+            })
             .finally(done);
         });
 
@@ -352,8 +366,12 @@ describe('registry : routes : helpers : nested-renderer', () => {
               { name: 'my-component' },
               { name: 'my-other-component' }
             ])
-            .then((res) => (result = res))
-            .catch((err) => (error = err))
+            .then((res) => {
+              result = res;
+            })
+            .catch((err) => {
+              error = err;
+            })
             .finally(done);
         });
 

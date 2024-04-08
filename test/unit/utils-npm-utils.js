@@ -127,8 +127,12 @@ describe('utils : npm-utils', () => {
           crossSpawnStub.returns({ on: onStub });
           npmUtils
             .installDependency(scenario.input)
-            .then((res) => (result = res))
-            .catch((err) => (error = err))
+            .then((res) => {
+              result = res;
+            })
+            .catch((err) => {
+              error = err;
+            })
             .finally(done);
 
           onStub.args[1][1](0);
@@ -240,8 +244,12 @@ describe('utils : npm-utils', () => {
           crossSpawnStub.returns({ on: onStub });
           npmUtils
             .installDependencies(scenario.input)
-            .then((res) => (result = res))
-            .catch((err) => (error = err))
+            .then((res) => {
+              result = res;
+            })
+            .catch((err) => {
+              error = err;
+            })
             .finally(done);
           onStub.args[1][1](0);
         });

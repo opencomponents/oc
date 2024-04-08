@@ -43,7 +43,9 @@ describe('registry : domain : extract-package', () => {
         ],
         766
       )
-        .then((res) => (response = res))
+        .then((res) => {
+          response = res;
+        })
         .finally(done);
     });
 
@@ -92,7 +94,9 @@ describe('registry : domain : extract-package', () => {
         ],
         766
       )
-        .catch((err) => (error = err))
+        .catch((err) => {
+          error = err;
+        })
         .finally(done);
     });
 

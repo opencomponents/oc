@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
 const fs = require('fs-extra');
 const injectr = require('injectr');
-const path = require('path');
+const path = require('node:path');
 const sinon = require('sinon');
 
 describe('registry : domain : repository', () => {
@@ -9,8 +9,12 @@ describe('registry : domain : repository', () => {
   const savePromiseResult = (promise, done) => {
     response = {};
     promise
-      .then((res) => (response.result = res))
-      .catch((err) => (response.error = err))
+      .then((res) => {
+        response.result = res;
+      })
+      .catch((err) => {
+        response.error = err;
+      })
       .finally(done);
   };
 
@@ -211,7 +215,7 @@ describe('registry : domain : repository', () => {
         it('should respond with a proper error', () => {
           expect(response.error).not.to.be.empty;
           expect(response.error).to.equal(
-            `component not available: File not valid`
+            'component not available: File not valid'
           );
         });
       });

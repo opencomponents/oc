@@ -15,7 +15,9 @@ describe('registry : domain : plugins-initialiser', () => {
 
         pluginsInitialiser
           .init(plugins)
-          .catch((err) => (error = err))
+          .catch((err) => {
+            error = err;
+          })
           .finally(done);
       });
 
@@ -40,7 +42,9 @@ describe('registry : domain : plugins-initialiser', () => {
 
         pluginsInitialiser
           .init(plugins)
-          .catch((err) => (error = err))
+          .catch((err) => {
+            error = err;
+          })
           .finally(done);
       });
 
@@ -61,7 +65,9 @@ describe('registry : domain : plugins-initialiser', () => {
 
         pluginsInitialiser
           .init(plugins)
-          .catch((err) => (error = err))
+          .catch((err) => {
+            error = err;
+          })
           .finally(done);
       });
 
@@ -84,7 +90,9 @@ describe('registry : domain : plugins-initialiser', () => {
 
         pluginsInitialiser
           .init(plugins)
-          .catch((err) => (error = err))
+          .catch((err) => {
+            error = err;
+          })
           .finally(done);
       });
 
@@ -130,7 +138,9 @@ describe('registry : domain : plugins-initialiser', () => {
 
       pluginsInitialiser
         .init(plugins)
-        .then((res) => (result = res))
+        .then((res) => {
+          result = res;
+        })
         .finally(done);
     });
 
@@ -228,7 +238,9 @@ describe('registry : domain : plugins-initialiser', () => {
 
       pluginsInitialiser
         .init(plugins)
-        .catch((err) => (error = err))
+        .catch((err) => {
+          error = err;
+        })
         .finally(done);
     });
 
@@ -258,7 +270,9 @@ describe('registry : domain : plugins-initialiser', () => {
 
       pluginsInitialiser
         .init(plugins)
-        .catch((err) => (error = err))
+        .catch((err) => {
+          error = err;
+        })
         .finally(done);
     });
 
@@ -310,7 +324,9 @@ describe('registry : domain : plugins-initialiser', () => {
 
       pluginsInitialiser
         .init(plugins)
-        .then((res) => (result = res))
+        .then((res) => {
+          result = res;
+        })
         .finally(done);
     });
 

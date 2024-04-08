@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 const injectr = require('injectr');
-const path = require('path');
+const path = require('node:path');
 const sinon = require('sinon');
 
 const initialise = () => {

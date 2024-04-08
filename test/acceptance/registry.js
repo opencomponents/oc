@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 const emptyResponseHandler = require('oc-empty-response-handler');
-const path = require('path');
+const path = require('node:path');
 const got = require('got');
 
 describe('registry', () => {

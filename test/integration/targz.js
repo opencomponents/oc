@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 const fs = require('fs-extra');
-const path = require('path');
+const path = require('node:path');
 const targz = require('targz');
 
 describe('The targz dependency', () => {

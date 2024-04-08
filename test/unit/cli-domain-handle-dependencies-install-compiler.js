@@ -40,8 +40,12 @@ describe('cli : domain : handle-dependencies : install-compiler', () => {
     ).default;
 
     installCompiler(installOptions)
-      .then((compiler) => (result = compiler))
-      .catch((err) => (error = err))
+      .then((compiler) => {
+        result = compiler;
+      })
+      .catch((err) => {
+        error = err;
+      })
       .finally(done);
   };
 
@@ -68,7 +72,7 @@ describe('cli : domain : handle-dependencies : install-compiler', () => {
 
     it('should log progress', () => {
       expect(loggerMock.warn.args[0][0]).to.contain(
-        `Trying to install missing modules: oc-template-react-compiler@1.2.3`
+        'Trying to install missing modules: oc-template-react-compiler@1.2.3'
       );
       expect(loggerMock.warn.args[0][0]).to.contain(
         "If you aren't connected to the internet, or npm isn't configured then this step will fail..."
@@ -88,7 +92,7 @@ describe('cli : domain : handle-dependencies : install-compiler', () => {
 
     it('should log progress', () => {
       expect(loggerMock.warn.args[0][0]).to.contain(
-        `Trying to install missing modules: oc-template-react-compiler@1.2.3`
+        'Trying to install missing modules: oc-template-react-compiler@1.2.3'
       );
       expect(loggerMock.warn.args[0][0]).to.contain(
         "If you aren't connected to the internet, or npm isn't configured then this step will fail..."
@@ -108,7 +112,7 @@ describe('cli : domain : handle-dependencies : install-compiler', () => {
 
     it('should log progress', () => {
       expect(loggerMock.warn.args[0][0]).to.contain(
-        `Trying to install missing modules: oc-template-react-compiler@1.2.3`
+        'Trying to install missing modules: oc-template-react-compiler@1.2.3'
       );
       expect(loggerMock.warn.args[0][0]).to.contain(
         "If you aren't connected to the internet, or npm isn't configured then this step will fail..."

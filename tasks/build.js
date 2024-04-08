@@ -4,7 +4,7 @@
 const fs = require('fs-extra');
 const ocClientBrowser = require('oc-client-browser');
 const log = require('./logger');
-const path = require('path');
+const path = require('node:path');
 const packageJson = require('../package');
 
 const ocVersion = packageJson.version;

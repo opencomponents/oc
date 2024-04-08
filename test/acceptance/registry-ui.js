@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 const oc = require('../../dist/index');
-const path = require('path');
+const path = require('node:path');
 const got = require('got');
 
 describe('registry (ui interface)', () => {
@@ -15,7 +15,9 @@ describe('registry (ui interface)', () => {
         headers = r.headers;
         result = r.body;
       })
-      .catch((e) => (error = e))
+      .catch((e) => {
+        error = e;
+      })
       .finally(done);
   };
 

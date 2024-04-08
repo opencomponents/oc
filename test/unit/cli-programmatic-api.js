@@ -56,12 +56,12 @@ describe('cli : programmatic-api', () => {
     describe(`cmd: cli.${scenario.cmd}`, () => {
       const fn = _.get(programmaticApi, scenario.cmd);
 
-      it(`should be function`, () => {
+      it('should be function', () => {
         expect(typeof fn).to.equal('function');
         expect(fn.length).to.equal(2);
       });
 
-      it(`should correctly wrap the related facade`, () => {
+      it('should correctly wrap the related facade', () => {
         fn({}, () => {});
         expect(deps[`./facade/${scenario.facade}`].args[0][0])
           .to.be.an('object')

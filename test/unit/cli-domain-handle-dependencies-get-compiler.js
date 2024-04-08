@@ -31,7 +31,9 @@ describe('cli : domain : handle-dependencies : get-compiler', () => {
     ).default;
 
     getCompiler(options)
-      .catch((err) => (error = err.name))
+      .catch((err) => {
+        error = err.name;
+      })
       .finally(done);
   };
 

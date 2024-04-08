@@ -26,8 +26,12 @@ describe('cli : domain : clean', () => {
         const clean = initialize();
         clean
           .fetchList('my-components-folder')
-          .then((res) => (result = res))
-          .catch((err) => (error = err))
+          .then((res) => {
+            result = res;
+          })
+          .catch((err) => {
+            error = err;
+          })
           .finally(done);
       });
 
@@ -46,7 +50,9 @@ describe('cli : domain : clean', () => {
 
         clean
           .fetchList('my-components-folder')
-          .catch((err) => (error = err))
+          .catch((err) => {
+            error = err;
+          })
           .finally(done);
       });
 
@@ -65,7 +71,9 @@ describe('cli : domain : clean', () => {
 
         clean
           .remove(['path/to/my-component1/node_modules'])
-          .catch((err) => (error = err))
+          .catch((err) => {
+            error = err;
+          })
           .finally(done);
       });
 
@@ -88,7 +96,9 @@ describe('cli : domain : clean', () => {
 
         clean
           .remove(['path/to/my-component1/node_modules'])
-          .catch((err) => (error = err))
+          .catch((err) => {
+            error = err;
+          })
           .finally(done);
       });
 

@@ -5,7 +5,7 @@ const fs = require('fs-extra');
 const log = require('./logger');
 const packageJson = require('../package');
 const minimist = require('minimist');
-const path = require('path');
+const path = require('node:path');
 const semver = require('semver');
 
 const argv = minimist(process.argv.slice(2), {

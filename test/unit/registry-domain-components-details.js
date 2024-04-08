@@ -25,8 +25,12 @@ describe('registry : domain : components-details', () => {
 
   const next = (promise, done) =>
     promise
-      .then((res) => (result = res))
-      .catch((err) => (error = err))
+      .then((res) => {
+        result = res;
+      })
+      .catch((err) => {
+        error = err;
+      })
       .finally(done);
 
   describe('get()', () => {
@@ -208,8 +212,12 @@ describe('registry : domain : components-details', () => {
 
             const next = (promise, done) =>
               promise
-                .then((res) => (result = res))
-                .catch((err) => (error = err))
+                .then((res) => {
+                  result = res;
+                })
+                .catch((err) => {
+                  error = err;
+                })
                 .finally(done);
 
             before((done) => {
@@ -267,8 +275,12 @@ describe('registry : domain : components-details', () => {
 
         const next = (promise, done) =>
           promise
-            .then((res) => (result = res))
-            .catch((err) => (error = err))
+            .then((res) => {
+              result = res;
+            })
+            .catch((err) => {
+              error = err;
+            })
             .finally(done);
 
         before((done) => {
@@ -424,8 +436,12 @@ describe('registry : domain : components-details', () => {
 
           const next = (promise, done) =>
             promise
-              .then((res) => (result = res))
-              .catch((err) => (error = err))
+              .then((res) => {
+                result = res;
+              })
+              .catch((err) => {
+                error = err;
+              })
               .finally(done);
 
           before((done) => {

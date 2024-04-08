@@ -27,7 +27,9 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
       logger
     };
     linkMissingDependencies(installOptions)
-      .catch((err) => (error = err))
+      .catch((err) => {
+        error = err;
+      })
       .finally(done);
   };
 

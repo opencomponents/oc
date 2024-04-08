@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('node:path');
 const expect = require('chai').expect;
 const sinon = require('sinon');
 const injectr = require('injectr');

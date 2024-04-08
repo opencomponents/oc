@@ -66,7 +66,9 @@ describe('registry : domain : components-cache', () => {
         initialise();
         componentsCache
           .load()
-          .catch((err) => (error = err))
+          .catch((err) => {
+            error = err;
+          })
           .finally(done);
       });
 

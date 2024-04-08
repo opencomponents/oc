@@ -29,7 +29,9 @@ describe('cli : domain : init-template', () => {
     };
 
     initTemplate(options)
-      .catch((err) => (error = err))
+      .catch((err) => {
+        error = err;
+      })
       .finally(cb);
   };
 

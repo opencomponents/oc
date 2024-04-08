@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const path = require('path');
+const path = require('node:path');
 const got = require('got');
 
 describe('registry', () => {

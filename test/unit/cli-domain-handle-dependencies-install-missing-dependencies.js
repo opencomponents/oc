@@ -26,7 +26,9 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
     const installOptions = { dependencies, logger };
 
     installMissingDependencies(installOptions)
-      .catch((err) => (error = err))
+      .catch((err) => {
+        error = err;
+      })
       .finally(done);
   };
 

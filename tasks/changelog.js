@@ -3,7 +3,7 @@
 
 const async = require('async');
 const fs = require('fs');
-const path = require('path');
+const path = require('node:path');
 const git = require('./git');
 
 module.exports = () =>

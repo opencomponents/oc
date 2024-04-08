@@ -70,7 +70,7 @@ describe('cli : facade : clean', () => {
           'The following folders will be removed:\n/folder/to/remove'
         ));
 
-      it(`should remove the folder`, () =>
+      it('should remove the folder', () =>
         expect(removeMock.args[0][0]).to.eql(['/folder/to/remove']));
 
       it('should show a message when done', () =>
@@ -102,7 +102,7 @@ describe('cli : facade : clean', () => {
           prompt: 'Proceed? [Y/n]'
         }));
 
-      it(`should then remove the folder`, () =>
+      it('should then remove the folder', () =>
         expect(removeMock.args[0][0]).to.eql(['/folder/to/remove']));
 
       it('should show a message when done', () =>
@@ -158,7 +158,7 @@ describe('cli : facade : clean', () => {
           'The following folders will be removed:\n/folder/to/remove'
         ));
 
-      it(`should try removing the folder`, () =>
+      it('should try removing the folder', () =>
         expect(removeMock.args[0][0]).to.eql(['/folder/to/remove']));
 
       it('should show an error message at the end', () =>

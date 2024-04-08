@@ -93,7 +93,7 @@ describe('cli : domain : package-components', () => {
             error = err;
           })
           .finally(() => {
-            expect(error && error.message).to.equal('Ouch');
+            expect(error?.message).to.equal('Ouch');
             done();
           });
       });
@@ -107,7 +107,9 @@ describe('cli : domain : package-components', () => {
           componentPath: '.',
           minify: true
         })
-          .catch((err) => (error = err))
+          .catch((err) => {
+            error = err;
+          })
           .finally(() => {
             expect(error.message).to.equal('name not valid');
             done();

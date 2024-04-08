@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 const injectr = require('injectr');
-const path = require('path');
+const path = require('node:path');
 const sinon = require('sinon');
 
 const initialise = () => {
@@ -36,7 +36,7 @@ describe('cli : domain : get-components-by-dir', () => {
   describe('when getting components from dir', () => {
     let error;
     let result;
-    beforeEach(done => {
+    beforeEach((done) => {
       const data = initialise();
 
       data.fs.readdir
@@ -60,8 +60,12 @@ describe('cli : domain : get-components-by-dir', () => {
       data.fs.readJsonSync.onCall(4).returns({});
 
       executeComponentsListingByDir(data.local)
-        .then(res => (result = res))
-        .catch(err => (error = err))
+        .then((res) => {
+          result = res;
+        })
+        .catch((err) => {
+          error = err;
+        })
         .finally(done);
     });
 
@@ -77,7 +81,7 @@ describe('cli : domain : get-components-by-dir', () => {
   describe('when reading a broken package.json', () => {
     let error;
     let result;
-    beforeEach(done => {
+    beforeEach((done) => {
       const data = initialise();
 
       data.fs.readdir
@@ -88,8 +92,12 @@ describe('cli : domain : get-components-by-dir', () => {
       data.fs.readJsonSync.onCall(1).returns({ oc: {} });
 
       executeComponentsListingByDir(data.local)
-        .then(res => (result = res))
-        .catch(err => (error = err))
+        .then((res) => {
+          result = res;
+        })
+        .catch((err) => {
+          error = err;
+        })
         .finally(done);
     });
 
@@ -105,7 +113,7 @@ describe('cli : domain : get-components-by-dir', () => {
   describe('when finds no components', () => {
     let error;
     let result;
-    beforeEach(done => {
+    beforeEach((done) => {
       const data = initialise();
 
       data.fs.readdir
@@ -121,8 +129,12 @@ describe('cli : domain : get-components-by-dir', () => {
         .throws(new Error('ENOENT: no such file or directory'));
 
       executeComponentsListingByDir(data.local)
-        .then(res => (result = res))
-        .catch(err => (error = err))
+        .then((res) => {
+          result = res;
+        })
+        .catch((err) => {
+          error = err;
+        })
         .finally(done);
     });
 
@@ -138,7 +150,7 @@ describe('cli : domain : get-components-by-dir', () => {
   describe('when components are filtered', () => {
     let error;
     let result;
-    beforeEach(done => {
+    beforeEach((done) => {
       const data = initialise();
 
       data.fs.readdir
@@ -160,8 +172,12 @@ describe('cli : domain : get-components-by-dir', () => {
         .throws(new Error('ENOENT: no such file or directory'));
 
       executeComponentsListingByDir(data.local, ['component1', 'component3'])
-        .then(res => (result = res))
-        .catch(err => (error = err))
+        .then((res) => {
+          result = res;
+        })
+        .catch((err) => {
+          error = err;
+        })
         .finally(done);
     });
 

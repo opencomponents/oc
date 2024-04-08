@@ -8,7 +8,7 @@ const log = require('./logger');
 const Mocha = require('mocha');
 const minimist = require('minimist');
 const oc = require('../dist');
-const path = require('path');
+const path = require('node:path');
 
 const mocha = new Mocha({ timeout: 20000 });
 const argv = minimist(process.argv.slice(2), { boolean: 'silent' });

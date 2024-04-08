@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
-const path = require('path');
+const path = require('node:path');
 
 const getAppStart = (mockedRepository, options, callback) => {
   const appStart = injectr(

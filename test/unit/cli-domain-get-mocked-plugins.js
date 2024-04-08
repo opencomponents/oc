@@ -5,7 +5,7 @@ const sinon = require('sinon');
 const noop = () => {};
 
 describe('cli : domain : get-mocked-plugins', () => {
-  const dynamicPluginModule = a => (a ? 'blarg' : 'flarg');
+  const dynamicPluginModule = (a) => (a ? 'blarg' : 'flarg');
   const notAFunctionModule = { foo: 'bar' };
   const dynamicObjectPluginModule = {
     register: (opts, deps, next) => next(),
@@ -27,7 +27,7 @@ describe('cli : domain : get-mocked-plugins', () => {
     };
 
     const fakePathFunc = (...args) =>
-      args.map(x => x.replace(/\.\//g, '')).join('');
+      args.map((x) => x.replace(/\.\//g, '')).join('');
 
     getMockedPlugins = injectr('../../dist/cli/domain/get-mocked-plugins.js', {
       'fs-extra': fsMock,

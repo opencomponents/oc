@@ -15,7 +15,9 @@ describe('registry : routes : helpers : get-available-dependencies', () => {
 
   describe('happy path', () => {
     let result;
-    before(() => (result = getAvailableDependencies(['moment', 'url'])));
+    before(() => {
+      result = getAvailableDependencies(['moment', 'url']);
+    });
 
     it('should map to structured view-model', () => {
       expect(result).to.eql([

@@ -165,8 +165,12 @@ describe('cli : domain : registry', () => {
       });
       registry
         .getComponentPreviewUrlByUrl(href)
-        .then((r) => (res = r))
-        .catch((e) => (err = e))
+        .then((r) => {
+          res = r;
+        })
+        .catch((e) => {
+          err = e;
+        })
         .finally(done);
     };
 

@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const path = require('path');
+const path = require('node:path');
 
 describe('utils : stripVersion', () => {
   const stripVersion = require('../../dist/utils/strip-version').default;

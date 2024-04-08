@@ -33,8 +33,12 @@ describe('cli : domain : init-template : install-template', () => {
       npmUtils.installDependency.resolves({ dest });
       isTemplateValid.returns(true);
       installTemplate(config)
-        .then((res) => (result = res))
-        .catch((err) => (error = err))
+        .then((res) => {
+          result = res;
+        })
+        .catch((err) => {
+          error = err;
+        })
         .finally(done);
     });
 
