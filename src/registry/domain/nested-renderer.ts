@@ -1,7 +1,7 @@
-import settings from '../../resources/settings';
 import strings from '../../resources';
-import { Config } from '../../types';
-import {
+import settings from '../../resources/settings';
+import type { Config } from '../../types';
+import type {
   GetComponentResult,
   RendererOptions
 } from '../routes/helpers/get-component';
@@ -23,7 +23,7 @@ export default function nestedRenderer(
 ) {
   const renderer = (options: RendererOptions) =>
     new Promise<string>((res, rej) => {
-      rendererWithCallback(options, result => {
+      rendererWithCallback(options, (result) => {
         if (result.response.error) {
           rej(result.response.error);
         } else {
@@ -66,7 +66,7 @@ export default function nestedRenderer(
       }
 
       return Promise.all(
-        components.map(component => {
+        components.map((component) => {
           return renderer({
             conf: conf,
             headers: {
@@ -80,7 +80,7 @@ export default function nestedRenderer(
               ...component.parameters
             },
             version: component.version || ''
-          }).catch(err => new Error(err));
+          }).catch((err) => new Error(err));
         })
       );
     }

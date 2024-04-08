@@ -1,27 +1,27 @@
+import Domain from 'node:domain';
+import vm from 'node:vm';
 import acceptLanguageParser from 'accept-language-parser';
+import _ from 'lodash';
 import Cache from 'nice-cache';
 import Client from 'oc-client';
-import Domain from 'domain';
 import emptyResponseHandler from 'oc-empty-response-handler';
-import vm from 'vm';
-import _ from 'lodash';
 
-import applyDefaultValues from './apply-default-values';
-import eventsHandler from '../../domain/events-handler';
-import GetComponentRetrievingInfo from './get-component-retrieving-info';
-import * as getComponentFallback from './get-component-fallback';
+import type { IncomingHttpHeaders } from 'node:http';
+import { fromPromise } from 'universalify';
+import strings from '../../../resources';
+import settings from '../../../resources/settings';
+import type { Component, Config, Template } from '../../../types';
 import isTemplateLegacy from '../../../utils/is-template-legacy';
+import eventsHandler from '../../domain/events-handler';
 import NestedRenderer from '../../domain/nested-renderer';
+import type { Repository } from '../../domain/repository';
 import RequireWrapper from '../../domain/require-wrapper';
 import * as sanitiser from '../../domain/sanitiser';
-import settings from '../../../resources/settings';
-import strings from '../../../resources';
 import * as urlBuilder from '../../domain/url-builder';
 import * as validator from '../../domain/validators';
-import type { Repository } from '../../domain/repository';
-import { Component, Config } from '../../../types';
-import { IncomingHttpHeaders } from 'http';
-import { fromPromise } from 'universalify';
+import applyDefaultValues from './apply-default-values';
+import * as getComponentFallback from './get-component-fallback';
+import GetComponentRetrievingInfo from './get-component-retrieving-info';
 
 export interface RendererOptions {
   action?: string;
@@ -57,7 +57,7 @@ export interface GetComponentResult {
 }
 
 const noopConsole = Object.fromEntries(
-  Object.keys(console).map(key => [key, _.noop])
+  Object.keys(console).map((key) => [key, _.noop])
 );
 
 export default function getComponent(conf: Config, repository: Repository) {
@@ -83,10 +83,10 @@ export default function getComponent(conf: Config, repository: Repository) {
     return env;
   };
 
-  const renderer = function (
+  const renderer = (
     options: RendererOptions,
     cb: (result: GetComponentResult) => void
-  ) {
+  ) => {
     const nestedRenderer = NestedRenderer(renderer, options.conf);
     const retrievingInfo = GetComponentRetrievingInfo(options);
     let responseHeaders: Record<string, string> = {};
@@ -260,7 +260,7 @@ export default function getComponent(conf: Config, repository: Repository) {
             !!options.headers['user-agent'].match('oc-client-');
 
           const parseTemplatesHeader = (t: string) =>
-            t.split(';').map(t => t.split(',')[0]);
+            t.split(';').map((t) => t.split(',')[0]);
           const supportedTemplates = options.headers['templates']
             ? parseTemplatesHeader(options.headers['templates'] as string)
             : [];
@@ -414,7 +414,7 @@ export default function getComponent(conf: Config, repository: Repository) {
                 component.name,
                 component.version,
                 (_err, templateText) => {
-                  let ocTemplate;
+                  let ocTemplate: Template;
 
                   try {
                     ocTemplate = repository.getTemplate(templateType);
@@ -447,7 +447,6 @@ export default function getComponent(conf: Config, repository: Repository) {
           .replace('https:', '');
 
         if (!component.oc.files.dataProvider) {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { __oc_Retry, ...props } = params;
           props['_staticPath'] = staticPath;
           props['_baseUrl'] = conf.baseUrl;

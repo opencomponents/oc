@@ -1,4 +1,4 @@
-import { Template } from '../types';
+import type { Template } from '../types';
 
 export default function isTemplateValid(
   template: unknown,
@@ -14,6 +14,6 @@ export default function isTemplateValid(
   const api = options && options.compiler === true ? compilerApi : templateApi;
 
   return api.every(
-    method => typeof (template as Template)[method] === 'function'
+    (method) => typeof (template as Template)[method] === 'function'
   );
 }

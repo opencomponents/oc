@@ -1,10 +1,8 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
 
-const getRegistry = function (dependencies, opts) {
+const getRegistry = (dependencies, opts) => {
   dependencies.fs = dependencies.fs || {};
   dependencies.fs.readJsonSync = sinon.stub().returns({ version: '1.2.3' });
   const Registry = injectr(
@@ -14,7 +12,7 @@ const getRegistry = function (dependencies, opts) {
       'fs-extra': dependencies.fs,
       '../../utils/put': dependencies.put,
       '../domain/url-parser': dependencies.urlParser,
-      path: {
+      'node:path': {
         join: sinon.stub().returns('/hello/world')
       }
     },
@@ -48,7 +46,7 @@ describe('cli : domain : registry', () => {
 
   describe('when adding registry', () => {
     describe('when registry does not end with "/"', () => {
-      it('should append the slash when doing the request', done => {
+      it('should append the slash when doing the request', (done) => {
         const gotStub = sinon.stub().rejects(new Error('err'));
         const registry = getRegistry({ got: gotStub });
 
@@ -58,7 +56,7 @@ describe('cli : domain : registry', () => {
         });
       });
 
-      it('should save the file with slashed url', done => {
+      it('should save the file with slashed url', (done) => {
         const gotStub = sinon.stub().returns({
           json: sinon.stub().resolves({ type: 'oc-registry' })
         });
@@ -153,7 +151,7 @@ describe('cli : domain : registry', () => {
   describe('when getting preview url', () => {
     let err;
     let res;
-    const execute = function (href, error, parsed, done) {
+    const execute = (href, error, parsed, done) => {
       const registry = getRegistry({
         request: sinon.stub().yields(error, parsed),
         got: sinon.stub().returns({
@@ -167,13 +165,17 @@ describe('cli : domain : registry', () => {
       });
       registry
         .getComponentPreviewUrlByUrl(href)
-        .then(r => (res = r))
-        .catch(e => (err = e))
+        .then((r) => {
+          res = r;
+        })
+        .catch((e) => {
+          err = e;
+        })
         .finally(done);
     };
 
     describe('when href not valid', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         execute(
           'http://registry.com/not-existing-component',
           new Error('404!!!'),
@@ -188,7 +190,7 @@ describe('cli : domain : registry', () => {
     });
 
     describe('when href = /component', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         execute(
           'http://registry.com/component',
           null,
@@ -209,7 +211,7 @@ describe('cli : domain : registry', () => {
     });
 
     describe('when href = /component/1.X.X', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         execute(
           'http://registry.com/component/1.X.X',
           null,
@@ -230,7 +232,7 @@ describe('cli : domain : registry', () => {
     });
 
     describe('when href = /component?hello=world', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         execute(
           'http://registry.com/component?hello=world',
           null,
@@ -253,7 +255,7 @@ describe('cli : domain : registry', () => {
     });
 
     describe('when href = /component/?hello=world', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         execute(
           'http://registry.com/component/?hello=world',
           null,
@@ -276,7 +278,7 @@ describe('cli : domain : registry', () => {
     });
 
     describe('when href = /component/1.X.X?hello=world', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         execute(
           'http://registry.com/component/1.X.X?hello=world',
           null,
@@ -299,7 +301,7 @@ describe('cli : domain : registry', () => {
     });
 
     describe('when href = /component/1.X.X/?hello=world', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         execute(
           'http://registry.com/component/1.X.X/?hello=world',
           null,

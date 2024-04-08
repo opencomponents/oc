@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
@@ -31,10 +29,10 @@ describe('registry : domain : events-handler', () => {
     let c = 0;
 
     before(() => {
-      eventsHandler.on('fire', payload => {
+      eventsHandler.on('fire', (payload) => {
         spy(++c, payload);
       });
-      eventsHandler.on('fire', payload => {
+      eventsHandler.on('fire', (payload) => {
         spy(++c, payload);
       });
       eventsHandler.fire('fire', { hello: true });
@@ -56,7 +54,7 @@ describe('registry : domain : events-handler', () => {
   });
 
   describe('when subscribing a request event using a not valid handler', () => {
-    const execute = function () {
+    const execute = () => {
       eventsHandler.on('request', 'this is not a function');
     };
 
@@ -68,10 +66,10 @@ describe('registry : domain : events-handler', () => {
   });
 
   describe('when unsubscribing a request event', () => {
-    const executeNonFunction = function () {
+    const executeNonFunction = () => {
       eventsHandler.off('request', 'this is not a function');
     };
-    const execute = function () {
+    const execute = () => {
       eventsHandler.off('request', () => {});
     };
 

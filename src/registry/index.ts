@@ -1,17 +1,17 @@
+import http from 'node:http';
 import colors from 'colors/safe';
 import express from 'express';
-import http from 'http';
 import _ from 'lodash';
 
+import type { Plugin } from '../types';
 import appStart from './app-start';
 import eventsHandler from './domain/events-handler';
-import * as middleware from './middleware';
+import sanitiseOptions, { RegistryOptions } from './domain/options-sanitiser';
 import * as pluginsInitialiser from './domain/plugins-initialiser';
 import Repository from './domain/repository';
-import { create as createRouter } from './router';
-import sanitiseOptions, { RegistryOptions } from './domain/options-sanitiser';
 import * as validator from './domain/validators';
-import { Plugin } from '../types';
+import * as middleware from './middleware';
+import { create as createRouter } from './router';
 
 export { RegistryOptions };
 
@@ -29,7 +29,7 @@ export default function registry<T = any>(inputOptions: RegistryOptions<T>) {
   const repository = Repository(options);
 
   const close = (callback: (err?: Error | undefined | string) => void) => {
-    if (server && server.listening) {
+    if (server?.listening) {
       return server.close(callback);
     }
     return callback('not opened');
@@ -48,7 +48,6 @@ export default function registry<T = any>(inputOptions: RegistryOptions<T>) {
       data?: { app: express.Express; server: http.Server }
     ) => void
   ) => {
-    // eslint-disable-next-line no-console
     const ok = (msg: string) => console.log(colors.green(msg));
     createRouter(app, options, repository);
 
@@ -93,7 +92,7 @@ export default function registry<T = any>(inputOptions: RegistryOptions<T>) {
         callback(null, { app, server });
       });
 
-      server.on('error', error => {
+      server.on('error', (error) => {
         eventsHandler.fire('error', {
           code: 'EXPRESS_ERROR',
           message: error?.message ?? String(error)

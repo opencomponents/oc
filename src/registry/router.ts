@@ -1,16 +1,16 @@
-import ComponentRoute from './routes/component';
-import ComponentsRoute from './routes/components';
-import ComponentInfoRoute from './routes/component-info';
-import ComponentPreviewRoute from './routes/component-preview';
-import IndexRoute from './routes';
-import PublishRoute from './routes/publish';
-import StaticRedirectorRoute from './routes/static-redirector';
-import PluginsRoute from './routes/plugins';
-import DependenciesRoute from './routes/dependencies';
-import settings from '../resources/settings';
 import type { Express } from 'express';
 import type { Repository } from '../registry/domain/repository';
-import { Config } from '../types';
+import settings from '../resources/settings';
+import type { Config } from '../types';
+import IndexRoute from './routes';
+import ComponentRoute from './routes/component';
+import ComponentInfoRoute from './routes/component-info';
+import ComponentPreviewRoute from './routes/component-preview';
+import ComponentsRoute from './routes/components';
+import DependenciesRoute from './routes/dependencies';
+import PluginsRoute from './routes/plugins';
+import PublishRoute from './routes/publish';
+import StaticRedirectorRoute from './routes/static-redirector';
 
 export function create(app: Express, conf: Config, repository: Repository) {
   const routes = {
@@ -76,10 +76,10 @@ export function create(app: Express, conf: Config, repository: Repository) {
   app.get(`${prefix}:componentName`, routes.component);
 
   if (conf.routes) {
-    conf.routes.forEach(route =>
+    for (const route of conf.routes) {
       app[
         route.method.toLowerCase() as 'get' | 'post' | 'put' | 'patch' | 'head'
-      ](route.route, route.handler)
-    );
+      ](route.route, route.handler);
+    }
   }
 }

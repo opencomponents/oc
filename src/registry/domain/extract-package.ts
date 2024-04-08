@@ -1,9 +1,9 @@
-import path from 'path';
+import path from 'node:path';
+import { promisify } from 'node:util';
 import targz from 'targz';
-import { promisify } from 'util';
 
+import type { Component } from '../../types';
 import getPackageJsonFromTempDir from './get-package-json-from-temp-dir';
-import { Component } from '../../types';
 
 export default async function extractPackage(
   files:

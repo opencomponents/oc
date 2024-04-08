@@ -1,4 +1,4 @@
-import { Component, TemplateInfo } from '../../types';
+import type { Component, TemplateInfo } from '../../types';
 
 export default function preview(vm: {
   href: string;

@@ -1,5 +1,5 @@
-import querystring from 'querystring';
-import url from 'url';
+import querystring from 'node:querystring';
+import url from 'node:url';
 
 type Component = {
   name: string;

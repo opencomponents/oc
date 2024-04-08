@@ -1,16 +1,11 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-'use strict';
-
 const chalk = require('chalk');
 const nodeEmoji = require('node-emoji');
 
-const log = (col, style, emoji) =>
-  function (msg) {
-    // eslint-disable-next-line no-console
-    console.log(
-      chalk[style][col](msg) + (emoji ? ` ${nodeEmoji.get(emoji)}` : '')
-    );
-  };
+const log = (col, style, emoji) => (msg) => {
+  console.log(
+    chalk[style][col](msg) + (emoji ? ` ${nodeEmoji.get(emoji)}` : '')
+  );
+};
 
 module.exports = {
   complete: log('green', 'reset', 'thumbsup'),

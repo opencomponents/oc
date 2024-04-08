@@ -1,6 +1,6 @@
 import { compileSync } from 'oc-client-browser';
 import settings from '../../resources/settings';
-import { Config } from '../../types';
+import type { Config } from '../../types';
 import * as auth from './authentication';
 
 const DEFAULT_NODE_KEEPALIVE_MS = 5000;
@@ -91,7 +91,7 @@ export default function optionsSanitiser(input: RegistryOptions): Config {
 
   options.customHeadersToSkipOnWeakVersion = (
     options.customHeadersToSkipOnWeakVersion || []
-  ).map(s => s.toLowerCase());
+  ).map((s) => s.toLowerCase());
 
   options.port = options.port || process.env['PORT'] || 3000;
   options.timeout = options.timeout || 1000 * 60 * 2;
@@ -117,11 +117,7 @@ export default function optionsSanitiser(input: RegistryOptions): Config {
     options.storage.options['verbosity'] = options.verbosity;
   }
 
-  if (
-    options.storage &&
-    options.storage.options &&
-    options.storage.options['path']
-  ) {
+  if (options.storage?.options?.['path']) {
     options.storage.options['path'] =
       options.storage.options['path'].indexOf('http') === 0
         ? options.storage.options['path']

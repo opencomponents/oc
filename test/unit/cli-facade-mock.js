@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
@@ -10,7 +8,7 @@ describe('cli : facade : mock', () => {
   const local = Local();
   const mockFacade = MockFacade({ local: local, logger: logSpy });
 
-  const execute = function (done) {
+  const execute = (done) => {
     logSpy.ok = sinon.spy();
     mockFacade(
       { targetType: 'plugin', targetName: 'getValue', targetValue: 'value' },
@@ -20,7 +18,7 @@ describe('cli : facade : mock', () => {
 
   describe('when mocking plugin', () => {
     describe('when it succeeds', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         sinon.stub(local, 'mock').resolves('ok');
         execute(done);
       });

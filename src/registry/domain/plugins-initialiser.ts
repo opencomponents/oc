@@ -1,10 +1,10 @@
-import _ from 'lodash';
+import { promisify } from 'node:util';
 import { DepGraph } from 'dependency-graph';
-import { promisify } from 'util';
+import _ from 'lodash';
 import pLimit from '../../utils/pLimit';
 
 import strings from '../../resources';
-import { Plugin } from '../../types';
+import type { Plugin } from '../../types';
 
 function validatePlugins(plugins: unknown[]): asserts plugins is Plugin[] {
   for (let idx = 0; idx < plugins.length; idx++) {
@@ -27,21 +27,23 @@ function validatePlugins(plugins: unknown[]): asserts plugins is Plugin[] {
 function checkDependencies(plugins: Plugin[]) {
   const graph = new DepGraph();
 
-  plugins.forEach(p => graph.addNode(p.name));
+  for (const plugin of plugins) {
+    graph.addNode(plugin.name);
+  }
 
-  plugins.forEach(p => {
+  for (const p of plugins) {
     if (!p.register.dependencies) {
       return;
     }
 
-    p.register.dependencies.forEach(d => {
+    for (const d of p.register.dependencies) {
       try {
         graph.addDependency(p.name, d);
       } catch (err) {
         throw new Error(`unknown plugin dependency: ${d}`);
       }
-    });
-  });
+    }
+  }
 
   return graph.overallOrder();
 }
@@ -64,11 +66,11 @@ export async function init(
     }
 
     let present = true;
-    dependencies.forEach(d => {
+    for (const d of dependencies) {
       if (!registered[d]) {
         present = false;
       }
-    });
+    }
 
     return present;
   };
@@ -92,7 +94,7 @@ export async function init(
     const register = promisify(plugin.register.register);
 
     const pluginCallback = plugin.callback || _.noop;
-    await register(plugin.options || {}, dependencies).catch(err => {
+    await register(plugin.options || {}, dependencies).catch((err) => {
       pluginCallback(err);
       throw err;
     });
@@ -109,7 +111,7 @@ export async function init(
       deferredLoads = [];
 
       await Promise.all(
-        deferredPlugins.map(plugin => onSeries(() => loadPlugin(plugin)))
+        deferredPlugins.map((plugin) => onSeries(() => loadPlugin(plugin)))
       );
       return terminator();
     }
@@ -120,7 +122,7 @@ export async function init(
   const onSeries = pLimit(1);
 
   await Promise.all(
-    pluginsToRegister.map(plugin => onSeries(() => loadPlugin(plugin)))
+    pluginsToRegister.map((plugin) => onSeries(() => loadPlugin(plugin)))
   );
 
   return terminator();

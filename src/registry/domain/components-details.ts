@@ -1,14 +1,14 @@
-import pLimit from '../../utils/pLimit';
 import _ from 'lodash';
-import eventsHandler from './events-handler';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
-import {
+import type { StorageAdapter } from 'oc-storage-adapters-utils';
+import type {
   Component,
   ComponentsDetails,
   ComponentsList,
   Config
 } from '../../types';
-import { StorageAdapter } from 'oc-storage-adapters-utils';
+import pLimit from '../../utils/pLimit';
+import eventsHandler from './events-handler';
 
 export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
   const returnError = (code: string, message: string | Error) => {
@@ -35,7 +35,7 @@ export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
     const missing: Array<{ name: string; version: string }> = [];
     _.each(options.componentsList.components, (versions, name) => {
       details.components[name] = details.components[name] || {};
-      _.each(versions, version => {
+      _.each(versions, (version) => {
         if (!details.components[name][version]) {
           missing.push({ name, version });
         }
@@ -75,13 +75,13 @@ export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
     const dirDetails = await getFromDirectories({
       componentsList,
       details: jsonDetails
-    }).catch(err => returnError('components_details_get', err));
+    }).catch((err) => returnError('components_details_get', err));
 
     if (
       !jsonDetails ||
       !_.isEqual(dirDetails.components, jsonDetails.components)
     ) {
-      await save(dirDetails).catch(err =>
+      await save(dirDetails).catch((err) =>
         returnError('components_details_save', err)
       );
       return dirDetails;

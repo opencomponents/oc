@@ -1,4 +1,4 @@
-import { ComponentsDetails } from '../../../types';
+import type { ComponentsDetails } from '../../../types';
 import dateStringified from '../../../utils/date-stringify';
 
 interface UnformmatedComponentHistory {
@@ -33,7 +33,7 @@ export default function getComponentsHistory(
 
   return result
     .sort((a, b) => b.publishDate - a.publishDate)
-    .map(x => ({
+    .map((x) => ({
       name: x.name,
       version: x.version,
       templateSize: x.templateSize,

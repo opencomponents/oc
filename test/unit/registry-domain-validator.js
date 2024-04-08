@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 
@@ -13,9 +11,7 @@ describe('registry : domain : validator', () => {
   };
 
   describe('when validating registry configuration', () => {
-    const validate = function (a) {
-      return validator.validateRegistryConfiguration(a);
-    };
+    const validate = (a) => validator.validateRegistryConfiguration(a);
 
     describe('when configuration null', () => {
       const conf = null;
@@ -275,7 +271,7 @@ describe('registry : domain : validator', () => {
 
         describe('when route does not contain route', () => {
           const conf = {
-            routes: [{ method: 'get', handler: function () {} }],
+            routes: [{ method: 'get', handler: () => {} }],
             s3: baseS3Conf
           };
 
@@ -303,7 +299,7 @@ describe('registry : domain : validator', () => {
 
         describe('when route does not contain method', () => {
           const conf = {
-            routes: [{ route: '/hello', handler: function () {} }],
+            routes: [{ route: '/hello', handler: () => {} }],
             s3: baseS3Conf
           };
 
@@ -337,7 +333,7 @@ describe('registry : domain : validator', () => {
               {
                 route: '/components/hello',
                 method: 'get',
-                handler: function () {}
+                handler: () => {}
               }
             ]
           };
@@ -398,9 +394,7 @@ describe('registry : domain : validator', () => {
   });
 
   describe('when validating component request by parameter', () => {
-    const validate = function (a, b) {
-      return validator.validateComponentParameters(a, b);
-    };
+    const validate = (a, b) => validator.validateComponentParameters(a, b);
 
     describe('when component have not parameters', () => {
       const componentParameters = {};
@@ -427,7 +421,7 @@ describe('registry : domain : validator', () => {
           .true;
       });
 
-      it('should be valid when non mandatory parameters provided in a valid format', done => {
+      it('should be valid when non mandatory parameters provided in a valid format', (done) => {
         const requestParameters = { name: 'Walter White' };
         expect(validate(requestParameters, componentParameters).isValid).to.be
           .true;
@@ -731,9 +725,7 @@ describe('registry : domain : validator', () => {
   });
 
   describe('when validating component name for new candidate', () => {
-    const validate = function (a) {
-      return validator.validateComponentName(a);
-    };
+    const validate = (a) => validator.validateComponentName(a);
 
     describe('when name has spaces', () => {
       const name = 'hello ha';
@@ -766,9 +758,7 @@ describe('registry : domain : validator', () => {
 
   describe('when validating component version for new candidate', () => {
     const existingVersions = ['1.0.0', '1.0.1', '2.0.0', '2.1.0'];
-    const isValid = function (a, b) {
-      return validator.validateVersion(a, b);
-    };
+    const isValid = (a, b) => validator.validateVersion(a, b);
 
     describe('when version already exists', () => {
       it('should not be valid', () => {
@@ -846,11 +836,9 @@ describe('registry : domain : validator', () => {
     });
 
     describe('when custom validation provided', () => {
-      const validate = function (obj) {
-        return validator.validatePackageJson(obj);
-      };
+      const validate = (obj) => validator.validatePackageJson(obj);
 
-      const customValidator = function (pkg) {
+      const customValidator = (pkg) => {
         const isValid = !!pkg.author && !!pkg.repository;
         return isValid
           ? isValid
@@ -920,11 +908,11 @@ describe('registry : domain : validator', () => {
         }
       ];
 
-      scenarios.forEach(scenario => {
+      for (const scenario of scenarios) {
         it(`should be valid with mimetype ${scenario.mimetype}`, () => {
           expect(validate([scenario]).isValid).to.be.true;
         });
-      });
+      }
     });
   });
 
@@ -934,7 +922,7 @@ describe('registry : domain : validator', () => {
     describe('when component does not require any plugin', () => {
       const requirements = null;
       const supportedPlugins = {
-        log: function () {}
+        log: () => {}
       };
 
       it('should be valid', () => {
@@ -946,7 +934,7 @@ describe('registry : domain : validator', () => {
       const requirements = ['getToggle'];
       describe('when registry does not support plugin', () => {
         const supportedPlugins = {
-          log: function () {}
+          log: () => {}
         };
 
         const validationResult = validate(requirements, supportedPlugins);
@@ -962,9 +950,7 @@ describe('registry : domain : validator', () => {
 
       describe('when registry supports plugin', () => {
         const supportedPlugins = {
-          getToggle: function () {
-            return true;
-          }
+          getToggle: () => true
         };
 
         it('should be valid', () => {
@@ -992,9 +978,7 @@ describe('registry : domain : validator', () => {
       }
     );
 
-    const validate = function (userAgent) {
-      return validator.validateOcCliVersion(userAgent);
-    };
+    const validate = (userAgent) => validator.validateOcCliVersion(userAgent);
 
     describe('when user-agent header is not specified', () => {
       const result = validate('value');
@@ -1075,9 +1059,8 @@ describe('registry : domain : validator', () => {
       }
     );
 
-    const validate = function (userAgent) {
-      return validator.validateNodeVersion(userAgent, 'v0.10.36');
-    };
+    const validate = (userAgent) =>
+      validator.validateNodeVersion(userAgent, 'v0.10.36');
 
     describe('when user-agent header is not specified', () => {
       const result = validate('value');

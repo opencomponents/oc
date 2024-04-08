@@ -1,10 +1,10 @@
-import strings from '../../resources/index';
-import path from 'path';
+import path from 'node:path';
 import { fromPromise } from 'universalify';
+import strings from '../../resources/index';
+import type { Component } from '../../types';
 import handleDependencies from '../domain/handle-dependencies';
-import { Logger } from '../logger';
 import type { Local } from '../domain/local';
-import { Component } from '../../types';
+import type { Logger } from '../logger';
 
 const cliPackage = ({ local, logger }: { local: Local; logger: Logger }) =>
   fromPromise(
@@ -34,7 +34,7 @@ const cliPackage = ({ local, logger }: { local: Local; logger: Logger }) =>
           componentPath: path.resolve(componentPath)
         };
 
-        const component = await local.package(packageOptions).catch(err => {
+        const component = await local.package(packageOptions).catch((err) => {
           logger.err(strings.errors.cli.PACKAGE_CREATION_FAIL(String(err)));
           return Promise.reject(err);
         });
@@ -44,17 +44,18 @@ const cliPackage = ({ local, logger }: { local: Local; logger: Logger }) =>
         if (opts.compress) {
           logger.warn(strings.messages.cli.COMPRESSING(compressedPackagePath));
 
-          await local.compress(packageDir, compressedPackagePath).catch(err => {
-            logger.err(strings.errors.cli.PACKAGE_CREATION_FAIL(String(err)));
-            return Promise.reject(err);
-          });
+          await local
+            .compress(packageDir, compressedPackagePath)
+            .catch((err) => {
+              logger.err(strings.errors.cli.PACKAGE_CREATION_FAIL(String(err)));
+              return Promise.reject(err);
+            });
 
           logger.ok(strings.messages.cli.COMPRESSED(compressedPackagePath));
 
           return component;
-        } else {
-          return component;
         }
+        return component;
       } catch (err) {
         logger.err(String(err));
         throw err;

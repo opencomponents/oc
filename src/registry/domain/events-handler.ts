@@ -1,4 +1,4 @@
-import { IncomingHttpHeaders } from 'http';
+import type { IncomingHttpHeaders } from 'node:http';
 import strings from '../../resources';
 
 type Subscription<T = any> = (data: T) => void;
@@ -56,9 +56,9 @@ type EventsHandler = {
 const eventsHandler: EventsHandler = {
   fire(eventName: string, eventData: unknown): void {
     if (subscriptions[eventName]) {
-      subscriptions[eventName].forEach(callback => {
+      for (const callback of subscriptions[eventName]) {
         callback(eventData);
-      });
+      }
     }
   },
 
@@ -81,7 +81,7 @@ const eventsHandler: EventsHandler = {
 
     if (subscriptions[eventName]) {
       subscriptions[eventName] = subscriptions[eventName].filter(
-        sub => sub !== callback
+        (sub) => sub !== callback
       );
     }
   },

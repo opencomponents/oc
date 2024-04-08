@@ -1,6 +1,6 @@
+import path from 'node:path';
 import fs from 'fs-extra';
-import path from 'path';
-import { Component } from '../../types';
+import type { Component } from '../../types';
 
 export default function getComponentsByDir() {
   return async (
@@ -22,7 +22,7 @@ export default function getComponentsByDir() {
         return false;
       }
 
-      const packagedProperty = content.oc && content.oc.packaged;
+      const packagedProperty = content.oc?.packaged;
 
       return typeof packagedProperty === 'undefined';
     };
@@ -30,14 +30,14 @@ export default function getComponentsByDir() {
     try {
       let dirContent = await fs.readdir(componentsDir);
       if (componentsToRun) {
-        dirContent = dirContent.filter(content =>
+        dirContent = dirContent.filter((content) =>
           componentsToRun.includes(content)
         );
       }
 
       const components = dirContent
         .filter(isOcComponent)
-        .map(component => path.resolve(componentsDir, component));
+        .map((component) => path.resolve(componentsDir, component));
 
       return components;
     } catch (err) {

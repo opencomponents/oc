@@ -1,9 +1,9 @@
 import tryRequire from 'try-require';
 
+import strings from '../../../resources';
 import isTemplateValid from '../../../utils/is-template-valid';
 import * as npm from '../../../utils/npm-utils';
-import strings from '../../../resources';
-import { Logger } from '../../logger';
+import type { Logger } from '../../logger';
 
 interface Options {
   componentPath: string;

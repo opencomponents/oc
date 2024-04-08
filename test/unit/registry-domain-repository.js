@@ -1,9 +1,7 @@
-'use strict';
-
 const expect = require('chai').expect;
 const fs = require('fs-extra');
 const injectr = require('injectr');
-const path = require('path');
+const path = require('node:path');
 const sinon = require('sinon');
 
 describe('registry : domain : repository', () => {
@@ -11,8 +9,12 @@ describe('registry : domain : repository', () => {
   const savePromiseResult = (promise, done) => {
     response = {};
     promise
-      .then(res => (response.result = res))
-      .catch(err => (response.error = err))
+      .then((res) => {
+        response.result = res;
+      })
+      .catch((err) => {
+        response.error = err;
+      })
       .finally(done);
   };
 
@@ -58,16 +60,14 @@ describe('registry : domain : repository', () => {
     const cdnConfiguration = {
       port: 3000,
       prefix: '/v2/',
-      publishValidation: function (pkg) {
+      publishValidation: (pkg) => {
         const ok = !!pkg.author && !!pkg.repository;
         return ok ? ok : { isValid: false, error: 'forbidden!!!' };
       },
       baseUrl: 'http://saymyname.com:3000/v2/',
       env: { name: 'prod' },
       storage: {
-        adapter: function () {
-          return s3Mock;
-        },
+        adapter: () => s3Mock,
         options: {
           key: 'a-key',
           secret: 'secrety-key',
@@ -96,7 +96,7 @@ describe('registry : domain : repository', () => {
     const repository = Repository(cdnConfiguration);
 
     describe('when getting the list of available components', () => {
-      before(done => {
+      before((done) => {
         componentsCacheMock.get.returns(componentsCacheBaseResponse);
         savePromiseResult(repository.getComponents(), done);
       });
@@ -121,7 +121,7 @@ describe('registry : domain : repository', () => {
     });
 
     describe('when getting the components details', () => {
-      before(done => {
+      before((done) => {
         componentsDetailsMock.get.resolves(componentsDetailsBaseResponse);
         savePromiseResult(repository.getComponentsDetails(), done);
       });
@@ -179,7 +179,7 @@ describe('registry : domain : repository', () => {
 
     describe('when trying to get a not valid component', () => {
       describe('when the component does not exist', () => {
-        before(done => {
+        before((done) => {
           componentsCacheMock.get.returns(componentsCacheBaseResponse);
           savePromiseResult(
             repository.getComponent('form-component', '1.0.0'),
@@ -195,10 +195,9 @@ describe('registry : domain : repository', () => {
         });
       });
       describe('when the get component info fails', () => {
-        before(done => {
+        before((done) => {
           componentsCacheMock.get.returns(componentsCacheBaseResponse);
           sinon.stub(repository, 'getComponentInfo').callsFake(() =>
-            // eslint-disable-next-line prefer-promise-reject-errors
             Promise.reject({
               msg: 'File not valid',
               code: 'file_not_valid'
@@ -215,12 +214,12 @@ describe('registry : domain : repository', () => {
         it('should respond with a proper error', () => {
           expect(response.error).not.to.be.empty;
           expect(response.error).to.equal(
-            `component not available: File not valid`
+            'component not available: File not valid'
           );
         });
       });
       describe('when the component exists but version does not', () => {
-        before(done => {
+        before((done) => {
           componentsCacheMock.get.returns(componentsCacheBaseResponse);
           savePromiseResult(
             repository.getComponent('hello-world', '2.0.0'),
@@ -238,7 +237,7 @@ describe('registry : domain : repository', () => {
     });
 
     describe('when getting an existing component', () => {
-      before(done => {
+      before((done) => {
         componentsCacheMock.get.returns(componentsCacheBaseResponse);
         s3Mock.getJson.resolves({ name: 'hello-world', version: '1.0.0' });
         savePromiseResult(
@@ -269,7 +268,7 @@ describe('registry : domain : repository', () => {
     });
 
     describe('when getting the .env file', () => {
-      before(done => {
+      before((done) => {
         s3Mock.getFile.resolves(`
         VAR1=VAL1
         VAR2=VAL2
@@ -303,7 +302,7 @@ describe('registry : domain : repository', () => {
 
     describe('when publishing a component', () => {
       describe('when component has a not valid name', () => {
-        before(done => {
+        before((done) => {
           savePromiseResult(
             repository.publishComponent({
               pkgDetails: {},
@@ -324,7 +323,7 @@ describe('registry : domain : repository', () => {
       });
 
       describe('when component has a not valid version', () => {
-        before(done => {
+        before((done) => {
           savePromiseResult(
             repository.publishComponent({
               pkgDetails: {},
@@ -357,7 +356,7 @@ describe('registry : domain : repository', () => {
         };
 
         describe('when component with same name and version is already in library', () => {
-          before(done => {
+          before((done) => {
             componentsCacheMock.get.returns(componentsCacheBaseResponse);
             savePromiseResult(
               repository.publishComponent({
@@ -381,7 +380,7 @@ describe('registry : domain : repository', () => {
         });
 
         describe('when is in check mode only', () => {
-          before(done => {
+          before((done) => {
             componentsCacheMock.get = sinon.stub();
             componentsCacheMock.get.returns(componentsCacheBaseResponse);
             componentsCacheMock.refresh = sinon.stub();
@@ -421,7 +420,7 @@ describe('registry : domain : repository', () => {
         });
 
         describe('when component with same name and version is not in library', () => {
-          before(done => {
+          before((done) => {
             componentsCacheMock.get = sinon.stub();
             componentsCacheMock.get.returns(componentsCacheBaseResponse);
             componentsCacheMock.refresh = sinon.stub();
@@ -483,7 +482,7 @@ describe('registry : domain : repository', () => {
     const repository = Repository(localConfiguration);
 
     describe('when getting the list of available components', () => {
-      before(done => {
+      before((done) => {
         savePromiseResult(repository.getComponents(), done);
       });
 
@@ -513,7 +512,7 @@ describe('registry : domain : repository', () => {
 
     describe('when trying to get a not valid component', () => {
       describe('when the component does not exist', () => {
-        before(done => {
+        before((done) => {
           savePromiseResult(
             repository.getComponent('form-component', '1.0.0'),
             done
@@ -529,7 +528,7 @@ describe('registry : domain : repository', () => {
       });
 
       describe('when the component exists but version does not', () => {
-        before(done => {
+        before((done) => {
           savePromiseResult(
             repository.getComponent('hello-world', '2.0.0'),
             done
@@ -546,7 +545,7 @@ describe('registry : domain : repository', () => {
     });
 
     describe('when getting an existing component', () => {
-      before(done => {
+      before((done) => {
         savePromiseResult(
           repository.getComponent('hello-world', '1.0.0'),
           done
@@ -580,7 +579,7 @@ describe('registry : domain : repository', () => {
     describe('when trying to publish a component', () => {
       const componentDir = path.resolve('../fixtures/components/hello-world');
 
-      before(done => {
+      before((done) => {
         savePromiseResult(
           repository.publishComponent({
             pkgDetails: componentDir,

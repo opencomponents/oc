@@ -1,8 +1,8 @@
+import path from 'node:path';
 import colors from 'colors/safe';
-import path from 'path';
 import fs from 'fs-extra';
+import type { Config } from '../types';
 import type { Repository } from './domain/repository';
-import { Config } from '../types';
 
 const packageInfo = fs.readJsonSync(
   path.join(
@@ -23,7 +23,6 @@ export default async function appStart(
     return;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   const logger = options.verbosity ? console : { log: () => {} };
 
   logger.log(

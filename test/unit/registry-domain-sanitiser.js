@@ -1,14 +1,10 @@
-'use strict';
-
 const expect = require('chai').expect;
 
 describe('registry : domain : sanitiser', () => {
   const sanitiser = require('../../dist/registry/domain/sanitiser');
 
   describe("when sanitising component's request parameters", () => {
-    const sanitise = function (a, b) {
-      return sanitiser.sanitiseComponentParameters(a, b);
-    };
+    const sanitise = (a, b) => sanitiser.sanitiseComponentParameters(a, b);
 
     describe('when component has boolean parameter', () => {
       it('should convert string to boolean when true', () => {

@@ -11,7 +11,7 @@ const componentAuthor =
     let placeholder = '';
 
     if (!author.name && !author.email && !author.url) {
-      placeholder += `<span>not available</span>`;
+      placeholder += '<span>not available</span>';
     }
 
     if (author.name) {

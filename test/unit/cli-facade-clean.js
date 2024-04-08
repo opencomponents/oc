@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
@@ -36,7 +34,7 @@ describe('cli : facade : clean', () => {
   describe('when cleaning folder', () => {
     describe('when folder is already clean', () => {
       let removeMock;
-      beforeEach(done => {
+      beforeEach((done) => {
         removeMock = sinon.stub().resolves('ok');
         const options = {
           mocks: { fetchList: () => Promise.resolve([]), remove: removeMock },
@@ -55,7 +53,7 @@ describe('cli : facade : clean', () => {
 
     describe('when folder needs cleaning and --yes flag passed down', () => {
       let removeMock;
-      beforeEach(done => {
+      beforeEach((done) => {
         removeMock = sinon.stub().resolves('ok');
         const options = {
           mocks: {
@@ -72,7 +70,7 @@ describe('cli : facade : clean', () => {
           'The following folders will be removed:\n/folder/to/remove'
         ));
 
-      it(`should remove the folder`, () =>
+      it('should remove the folder', () =>
         expect(removeMock.args[0][0]).to.eql(['/folder/to/remove']));
 
       it('should show a message when done', () =>
@@ -81,7 +79,7 @@ describe('cli : facade : clean', () => {
 
     describe('when folder needs cleaning and no --yes flag passed down and users says yes', () => {
       let removeMock;
-      beforeEach(done => {
+      beforeEach((done) => {
         removeMock = sinon.stub().resolves('ok');
         const options = {
           mocks: {
@@ -104,7 +102,7 @@ describe('cli : facade : clean', () => {
           prompt: 'Proceed? [Y/n]'
         }));
 
-      it(`should then remove the folder`, () =>
+      it('should then remove the folder', () =>
         expect(removeMock.args[0][0]).to.eql(['/folder/to/remove']));
 
       it('should show a message when done', () =>
@@ -113,7 +111,7 @@ describe('cli : facade : clean', () => {
 
     describe('when folder needs cleaning and no --yes flag passed down and users says no', () => {
       let removeMock;
-      beforeEach(done => {
+      beforeEach((done) => {
         removeMock = sinon.stub().resolves('ok');
         const options = {
           mocks: {
@@ -143,7 +141,7 @@ describe('cli : facade : clean', () => {
 
     describe('when removing causes an error', () => {
       let removeMock;
-      beforeEach(done => {
+      beforeEach((done) => {
         removeMock = sinon.mock().rejects(new Error('permission error'));
         const options = {
           mocks: {
@@ -160,7 +158,7 @@ describe('cli : facade : clean', () => {
           'The following folders will be removed:\n/folder/to/remove'
         ));
 
-      it(`should try removing the folder`, () =>
+      it('should try removing the folder', () =>
         expect(removeMock.args[0][0]).to.eql(['/folder/to/remove']));
 
       it('should show an error message at the end', () =>

@@ -1,8 +1,8 @@
 import { fromPromise } from 'universalify';
 
 import strings from '../../resources/index';
-import { RegistryCli } from '../domain/registry';
-import { Logger } from '../logger';
+import type { RegistryCli } from '../domain/registry';
+import type { Logger } from '../logger';
 
 const registryLs = ({
   registry,
@@ -11,7 +11,6 @@ const registryLs = ({
   logger: Logger;
   registry: RegistryCli;
 }) =>
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   fromPromise(async (_opts: unknown): Promise<string[]> => {
     try {
       const registries = await registry.get();
@@ -24,7 +23,9 @@ const registryLs = ({
         throw err;
       }
 
-      registries.forEach(registryLocation => logger.ok(registryLocation));
+      for (const registryLocation of registries) {
+        logger.ok(registryLocation);
+      }
 
       return registries;
     } catch (err) {

@@ -1,11 +1,11 @@
-import { serializeError } from 'serialize-error';
 import _ from 'lodash';
+import { serializeError } from 'serialize-error';
 
-import GetComponentHelper from './helpers/get-component';
+import type { Request, RequestHandler, Response } from 'express';
 import strings from '../../resources';
+import type { Config } from '../../types';
 import type { Repository } from '../domain/repository';
-import { Config } from '../../types';
-import { Request, RequestHandler, Response } from 'express';
+import GetComponentHelper from './helpers/get-component';
 
 export default function component(
   conf: Config,
@@ -23,7 +23,7 @@ export default function component(
         parameters: req.query as Record<string, string>,
         version: req.params['componentVersion']
       },
-      result => {
+      (result) => {
         if (result.response.error) {
           if (_.isError(result.response.error)) {
             result.response.error = serializeError(result.response.error);

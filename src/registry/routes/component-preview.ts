@@ -1,10 +1,10 @@
-import * as getComponentFallback from './helpers/get-component-fallback';
-import previewView from '../views/preview';
-import * as urlBuilder from '../domain/url-builder';
-import { Request, Response } from 'express';
-import type { Repository } from '../domain/repository';
-import { Component, Config, TemplateInfo } from '../../types';
+import type { Request, Response } from 'express';
 import { fromPromise } from 'universalify';
+import type { Component, Config, TemplateInfo } from '../../types';
+import type { Repository } from '../domain/repository';
+import * as urlBuilder from '../domain/url-builder';
+import previewView from '../views/preview';
+import * as getComponentFallback from './helpers/get-component-fallback';
 
 function componentPreview(
   err: any,

@@ -1,9 +1,7 @@
-'use strict';
-
 const colors = require('colors/safe');
 const expect = require('chai').expect;
 const injectr = require('injectr');
-const path = require('path');
+const path = require('node:path');
 const sinon = require('sinon');
 
 describe('cli : facade : publish', () => {
@@ -18,10 +16,10 @@ describe('cli : facade : publish', () => {
     version: '1.0.0'
   };
 
-  const execute = function (
+  const execute = (
     cb,
     { creds = {}, skipPackage = false, fs = {}, registries } = {}
-  ) {
+  ) => {
     logSpy.err = sinon.stub();
     logSpy.log = sinon.stub();
     logSpy.ok = sinon.stub();
@@ -58,7 +56,7 @@ describe('cli : facade : publish', () => {
 
   describe('when publishing component', () => {
     describe('when api is not valid', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         sinon.stub(registry, 'get').rejects('an error!');
         execute(done);
       });
@@ -83,7 +81,7 @@ describe('cli : facade : publish', () => {
         registry.get.restore();
       });
 
-      it('should show a message', done => {
+      it('should show a message', (done) => {
         sinon.stub(local, 'package').rejects('the component is not valid');
         execute(() => {
           local.package.restore();
@@ -102,7 +100,7 @@ describe('cli : facade : publish', () => {
         });
       });
 
-      it('should take precedence over the registries set through oc.json', done => {
+      it('should take precedence over the registries set through oc.json', (done) => {
         sinon.stub(registry, 'putComponent').resolves('ok');
         execute(
           () => {
@@ -118,7 +116,7 @@ describe('cli : facade : publish', () => {
 
       describe('when packaging', () => {
         describe('when a component is not valid', () => {
-          beforeEach(done => {
+          beforeEach((done) => {
             sinon.stub(local, 'package').rejects('the component is not valid');
             execute(done);
           });
@@ -152,7 +150,7 @@ describe('cli : facade : publish', () => {
               local.compress.restore();
             });
 
-            it('should show a message', done => {
+            it('should show a message', (done) => {
               sinon.stub(registry, 'putComponent').rejects('blabla');
               execute(() => {
                 registry.putComponent.restore();
@@ -169,7 +167,7 @@ describe('cli : facade : publish', () => {
             });
 
             describe('when publishing', () => {
-              it('should show a message', done => {
+              it('should show a message', (done) => {
                 sinon.stub(registry, 'putComponent').rejects('blabla');
                 execute(() => {
                   registry.putComponent.restore();
@@ -179,7 +177,7 @@ describe('cli : facade : publish', () => {
                 });
               });
 
-              it('should publish to all registries', done => {
+              it('should publish to all registries', (done) => {
                 sinon.stub(registry, 'putComponent').resolves('ok');
                 execute(() => {
                   registry.putComponent.restore();
@@ -193,7 +191,7 @@ describe('cli : facade : publish', () => {
               });
 
               describe('when a generic error happens', () => {
-                beforeEach(done => {
+                beforeEach((done) => {
                   sinon
                     .stub(registry, 'putComponent')
                     .rejects(new Error('nope!'));
@@ -212,7 +210,7 @@ describe('cli : facade : publish', () => {
               });
 
               describe('when a generic error happens from the api', () => {
-                beforeEach(done => {
+                beforeEach((done) => {
                   sinon
                     .stub(registry, 'putComponent')
                     .rejects({ IgotAnError: true });
@@ -231,7 +229,7 @@ describe('cli : facade : publish', () => {
               });
 
               describe('when using an old cli', () => {
-                beforeEach(done => {
+                beforeEach((done) => {
                   sinon.stub(registry, 'putComponent').rejects({
                     code: 'cli_version_not_valid',
                     error:
@@ -260,7 +258,7 @@ describe('cli : facade : publish', () => {
               });
 
               describe('when using an old node version', () => {
-                beforeEach(done => {
+                beforeEach((done) => {
                   sinon.stub(registry, 'putComponent').rejects({
                     code: 'node_version_not_valid',
                     error:
@@ -288,7 +286,7 @@ describe('cli : facade : publish', () => {
               });
 
               describe('when registry requires authentication', () => {
-                beforeEach(done => {
+                beforeEach((done) => {
                   sinon
                     .stub(registry, 'putComponent')
                     .rejects(new Error('Unauthorized'));
@@ -307,7 +305,7 @@ describe('cli : facade : publish', () => {
               });
 
               describe('when credentials are prepopulated', () => {
-                beforeEach(done => {
+                beforeEach((done) => {
                   sinon
                     .stub(registry, 'putComponent')
                     .rejects(new Error('Unauthorized'));
@@ -332,7 +330,7 @@ describe('cli : facade : publish', () => {
 
               describe('when it succeeds', () => {
                 let stub;
-                beforeEach(done => {
+                beforeEach((done) => {
                   sinon.stub(registry, 'putComponent').resolves('yay');
                   stub = sinon.stub(local, 'cleanup').resolves('done');
                   execute(done);
@@ -367,7 +365,7 @@ describe('cli : facade : publish', () => {
           local.compress.restore();
         });
 
-        it('should publish the package to all registries', done => {
+        it('should publish the package to all registries', (done) => {
           sinon.stub(registry, 'putComponent').resolves('ok');
           execute(
             () => {
@@ -380,7 +378,7 @@ describe('cli : facade : publish', () => {
             { skipPackage: true }
           );
         });
-        it('should skip packaging', done => {
+        it('should skip packaging', (done) => {
           sinon.stub(registry, 'putComponent').resolves('ok');
           sinon.stub(local, 'package');
           execute(
@@ -395,7 +393,7 @@ describe('cli : facade : publish', () => {
             { skipPackage: true }
           );
         });
-        it('should show an error message if the package folder does not exist', done => {
+        it('should show an error message if the package folder does not exist', (done) => {
           execute(
             () => {
               expect(logSpy.err.args[0][0]).to.equal(

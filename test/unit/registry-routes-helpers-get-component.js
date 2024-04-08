@@ -1,5 +1,3 @@
-'use strict';
-
 const Client = require('oc-client');
 const expect = require('chai').expect;
 const injectr = require('injectr');
@@ -14,7 +12,7 @@ describe('registry : routes : helpers : get-component', () => {
     'oc-template-jade': require('oc-template-jade'),
     'oc-template-handlebars': require('oc-template-handlebars')
   };
-  const initialise = function (params) {
+  const initialise = (params) => {
     fireStub = sinon.stub();
     GetComponent = injectr(
       '../../dist/registry/routes/helpers/get-component.js',
@@ -23,7 +21,7 @@ describe('registry : routes : helpers : get-component', () => {
           on: () => {},
           fire: fireStub
         },
-        'oc-client': function () {
+        'oc-client': () => {
           const client = Client();
           return {
             renderTemplate: (template, data, renderOptions, cb) => {
@@ -64,7 +62,7 @@ describe('registry : routes : helpers : get-component', () => {
           externals: []
         }
       ]),
-      getTemplate: type =>
+      getTemplate: (type) =>
         type === 'oc-template-supported'
           ? templates['oc-template-jade']
           : templates[type],
@@ -75,7 +73,7 @@ describe('registry : routes : helpers : get-component', () => {
   describe('when the component has an env file', () => {
     let callBack;
 
-    before(done => {
+    before((done) => {
       const headers = {
         'user-agent': 'oc-client-0/0-0-0',
         templates: 'oc-template-jade,6.0.1;oc-template-handlebars,6.0.2',
@@ -108,7 +106,7 @@ describe('registry : routes : helpers : get-component', () => {
   });
 
   describe('when getting a component with success', () => {
-    before(done => {
+    before((done) => {
       initialise(mockedComponents['async-error2-component']);
       const getComponent = GetComponent({}, mockedRepository);
 
@@ -143,7 +141,7 @@ describe('registry : routes : helpers : get-component', () => {
   });
 
   describe('when getting a component with failure', () => {
-    before(done => {
+    before((done) => {
       initialise(mockedComponents['async-error2-component']);
       const getComponent = GetComponent({}, mockedRepository);
 
@@ -190,7 +188,7 @@ describe('registry : routes : helpers : get-component', () => {
   });
 
   describe('when the component sends a custom status code', () => {
-    before(done => {
+    before((done) => {
       initialise(mockedComponents['async-custom-error-component']);
       const getComponent = GetComponent({}, mockedRepository);
 
@@ -218,7 +216,7 @@ describe('registry : routes : helpers : get-component', () => {
       };
       let callBack;
 
-      before(done => {
+      before((done) => {
         initialise(mockedComponents['async-error2-component']);
         const getComponent = GetComponent({}, mockedRepository);
         callBack = sinon.spy(() => done());
@@ -254,7 +252,7 @@ describe('registry : routes : helpers : get-component', () => {
       };
       let callBack;
 
-      before(done => {
+      before((done) => {
         initialise(mockedComponents['async-error2-component']);
         const getComponent = GetComponent({}, mockedRepository);
         callBack = sinon.spy(() => done());
@@ -293,7 +291,7 @@ describe('registry : routes : helpers : get-component', () => {
         };
         let callBack;
 
-        before(done => {
+        before((done) => {
           initialise(mockedComponents['async-error3-component']);
           const getComponent = GetComponent({}, mockedRepository);
           callBack = sinon.spy(() => done());
@@ -328,7 +326,7 @@ describe('registry : routes : helpers : get-component', () => {
         };
         let callBack;
 
-        before(done => {
+        before((done) => {
           initialise(mockedComponents['async-error3-component']);
           const getComponent = GetComponent({}, mockedRepository);
           callBack = sinon.spy(() => done());
@@ -368,7 +366,7 @@ describe('registry : routes : helpers : get-component', () => {
         };
         let callBack;
 
-        before(done => {
+        before((done) => {
           initialise(mockedComponents['async-error4-component']);
           const getComponent = GetComponent({}, mockedRepository);
           callBack = sinon.spy(() => done());
@@ -404,7 +402,7 @@ describe('registry : routes : helpers : get-component', () => {
         };
         let callBack;
 
-        before(done => {
+        before((done) => {
           initialise(mockedComponents['async-error4-component']);
           const getComponent = GetComponent({}, mockedRepository);
           callBack = sinon.spy(() => done());

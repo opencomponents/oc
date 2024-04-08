@@ -1,6 +1,4 @@
-'use strict';
-
-const path = require('path');
+const path = require('node:path');
 const expect = require('chai').expect;
 const sinon = require('sinon');
 const injectr = require('injectr');
@@ -18,7 +16,7 @@ describe('cli : facade : init', () => {
   const local = Local({ logger: { log: () => {} } });
   const initFacade = InitFacade({ local: local, logger: logSpy });
 
-  const execute = function (componentPath, templateType, done) {
+  const execute = (componentPath, templateType, done) => {
     logSpy.err = sinon.spy();
     logSpy.ok = sinon.spy();
     logSpy.log = sinon.spy();
@@ -32,7 +30,7 @@ describe('cli : facade : init', () => {
 
   describe('when initialising a new component', () => {
     describe('when the component is an empty string', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         execute(' ', undefined, done);
       });
 
@@ -44,7 +42,7 @@ describe('cli : facade : init', () => {
     });
 
     describe('when the component has a non valid name', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         execute('hello-asd$qwe:11', 'handlebars', done);
       });
 
@@ -56,7 +54,7 @@ describe('cli : facade : init', () => {
     });
 
     describe('when the template is of a non valid type', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         execute('valid-component', 'invalid-type', done);
       });
 
@@ -68,7 +66,7 @@ describe('cli : facade : init', () => {
     });
 
     describe('when an error happens', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         sinon.stub(local, 'init').rejects('nope!');
         execute('the-best-component', 'handlebars', done);
       });
@@ -85,7 +83,7 @@ describe('cli : facade : init', () => {
     });
 
     describe('when the component has relative path', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         sinon.stub(local, 'init').resolves('yes man');
         execute('this/is/relative/path/to/the-best-component', 'jade', done);
       });
@@ -108,7 +106,7 @@ describe('cli : facade : init', () => {
     });
 
     describe('when succeeds', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         sinon.stub(local, 'init').resolves('yes man');
         execute('the-best-component', 'jade', done);
       });

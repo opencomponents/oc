@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 
 describe('cli : domain : handle-dependencies : ensure-compiler-is-declared-as-devDependency', () => {

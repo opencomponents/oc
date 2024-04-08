@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
@@ -42,13 +40,17 @@ describe('cli : domain : handle-dependencies : install-compiler', () => {
     ).default;
 
     installCompiler(installOptions)
-      .then(compiler => (result = compiler))
-      .catch(err => (error = err))
+      .then((compiler) => {
+        result = compiler;
+      })
+      .catch((err) => {
+        error = err;
+      })
       .finally(done);
   };
 
   describe('when succeeds', () => {
-    beforeEach(done => initialise({}, done));
+    beforeEach((done) => initialise({}, done));
 
     it('should run npm install with correct parameters', () => {
       expect(installDependencyMock.args[0][0]).to.deep.equal({
@@ -70,7 +72,7 @@ describe('cli : domain : handle-dependencies : install-compiler', () => {
 
     it('should log progress', () => {
       expect(loggerMock.warn.args[0][0]).to.contain(
-        `Trying to install missing modules: oc-template-react-compiler@1.2.3`
+        'Trying to install missing modules: oc-template-react-compiler@1.2.3'
       );
       expect(loggerMock.warn.args[0][0]).to.contain(
         "If you aren't connected to the internet, or npm isn't configured then this step will fail..."
@@ -80,7 +82,7 @@ describe('cli : domain : handle-dependencies : install-compiler', () => {
   });
 
   describe('when install fails', () => {
-    beforeEach(done => initialise({ shouldInstallFail: true }, done));
+    beforeEach((done) => initialise({ shouldInstallFail: true }, done));
 
     it('should return an error', () => {
       expect(error).to.be.equal(
@@ -90,7 +92,7 @@ describe('cli : domain : handle-dependencies : install-compiler', () => {
 
     it('should log progress', () => {
       expect(loggerMock.warn.args[0][0]).to.contain(
-        `Trying to install missing modules: oc-template-react-compiler@1.2.3`
+        'Trying to install missing modules: oc-template-react-compiler@1.2.3'
       );
       expect(loggerMock.warn.args[0][0]).to.contain(
         "If you aren't connected to the internet, or npm isn't configured then this step will fail..."
@@ -100,7 +102,7 @@ describe('cli : domain : handle-dependencies : install-compiler', () => {
   });
 
   describe('when install succeeds but validation fails', () => {
-    beforeEach(done => initialise({ shouldValidationFail: true }, done));
+    beforeEach((done) => initialise({ shouldValidationFail: true }, done));
 
     it('should return an error', () => {
       expect(error).to.be.equal(
@@ -110,7 +112,7 @@ describe('cli : domain : handle-dependencies : install-compiler', () => {
 
     it('should log progress', () => {
       expect(loggerMock.warn.args[0][0]).to.contain(
-        `Trying to install missing modules: oc-template-react-compiler@1.2.3`
+        'Trying to install missing modules: oc-template-react-compiler@1.2.3'
       );
       expect(loggerMock.warn.args[0][0]).to.contain(
         "If you aren't connected to the internet, or npm isn't configured then this step will fail..."

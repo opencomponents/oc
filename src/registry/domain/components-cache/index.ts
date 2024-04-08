@@ -1,9 +1,9 @@
 import _ from 'lodash';
-import getComponentsList from './components-list';
-import eventsHandler from '../events-handler';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
-import { ComponentsList, Config } from '../../../types';
-import { StorageAdapter, strings } from 'oc-storage-adapters-utils';
+import { type StorageAdapter, strings } from 'oc-storage-adapters-utils';
+import type { ComponentsList, Config } from '../../../types';
+import eventsHandler from '../events-handler';
+import getComponentsList from './components-list';
 
 export default function componentsCache(conf: Config, cdn: StorageAdapter) {
   let cachedComponentsList: ComponentsList;
@@ -56,7 +56,7 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
     },
 
     async load(): Promise<ComponentsList> {
-      const jsonComponents = await componentsList.getFromJson().catch(err => {
+      const jsonComponents = await componentsList.getFromJson().catch((err) => {
         if (err?.code === strings.errors.STORAGE.FILE_NOT_FOUND_CODE)
           return null;
 
@@ -64,7 +64,7 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
       });
       const dirComponents = await componentsList
         .getFromDirectories(jsonComponents)
-        .catch(err => throwError('components_list_get', err));
+        .catch((err) => throwError('components_list_get', err));
 
       if (
         !jsonComponents ||
@@ -72,7 +72,7 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
       ) {
         await componentsList
           .save(dirComponents)
-          .catch(err => throwError('components_list_save', err));
+          .catch((err) => throwError('components_list_save', err));
       }
       cacheDataAndStartPolling(dirComponents);
 

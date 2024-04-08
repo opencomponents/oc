@@ -1,15 +1,15 @@
+import path from 'node:path';
 import coreModules from 'builtin-modules';
 import fs from 'fs-extra';
-import path from 'path';
 
+import strings from '../../../resources';
+import type { Component, Template } from '../../../types';
+import isTemplateLegacy from '../../../utils/is-template-legacy';
+import type { Logger } from '../../logger';
 import ensureCompilerIsDeclaredAsDevDependency from './ensure-compiler-is-declared-as-devDependency';
 import getCompiler from './get-compiler';
 import installMissingDependencies from './install-missing-dependencies';
 import linkMissingDependencies from './link-missing-dependencies';
-import isTemplateLegacy from '../../../utils/is-template-legacy';
-import strings from '../../../resources';
-import { Logger } from '../../logger';
-import { Component, Template } from '../../../types';
 
 const getComponentPackageJson = (componentPath: string): Promise<Component> =>
   fs.readJson(path.join(componentPath, 'package.json'));
@@ -29,12 +29,13 @@ export default async function handleDependencies(options: {
   const { components, logger, useComponentDependencies } = options;
 
   const dependencies: Record<string, string> = {};
-  const addDependencies = (componentDependencies?: Record<string, string>) =>
-    Object.entries(componentDependencies || {}).forEach(
-      ([dependency, version]) => {
-        dependencies[dependency] = version;
-      }
-    );
+  const addDependencies = (componentDependencies?: Record<string, string>) => {
+    for (const [dependency, version] of Object.entries(
+      componentDependencies || {}
+    )) {
+      dependencies[dependency] = version;
+    }
+  };
 
   const templates: Record<string, Template> = {};
   const addTemplate = (templateName: string, template: Template) => {

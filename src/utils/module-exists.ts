@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import tryRequire from 'try-require';
 
 export default function moduleExists(moduleName: string): boolean {

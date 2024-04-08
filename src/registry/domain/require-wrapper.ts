@@ -1,5 +1,5 @@
+import path from 'node:path';
 import coreModules from 'builtin-modules';
-import path from 'path';
 import requirePackageName from 'require-package-name';
 import tryRequire from 'try-require';
 

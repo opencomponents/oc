@@ -1,5 +1,3 @@
-'use strict';
-
 const coreModules = require('builtin-modules');
 const expect = require('chai').expect;
 const injectr = require('injectr');
@@ -39,7 +37,7 @@ describe('cli : domain : handle-dependencies', () => {
     let spies;
     let error;
     let result;
-    beforeEach(done => {
+    beforeEach((done) => {
       spies = {
         ensureCompilerIsDeclaredAsDevDependency: sinon.spy(),
         getCompiler: sinon.spy(),
@@ -50,19 +48,19 @@ describe('cli : domain : handle-dependencies', () => {
         '../../dist/cli/domain/handle-dependencies/index.js',
         {
           'fs-extra': {
-            readJson: path =>
+            readJson: (path) =>
               Promise.resolve(components[path.replace('/package.json', '')])
           },
-          path: { join: (...args) => args.join('/') },
-          './ensure-compiler-is-declared-as-devDependency': options => {
+          'node:path': { join: (...args) => args.join('/') },
+          './ensure-compiler-is-declared-as-devDependency': (options) => {
             spies.ensureCompilerIsDeclaredAsDevDependency(options);
             return `${options.template}-compiler`;
           },
-          './get-compiler': options => {
+          './get-compiler': (options) => {
             spies.getCompiler(options);
             return Promise.resolve({ thisIsACompiler: true });
           },
-          './install-missing-dependencies': options => {
+          './install-missing-dependencies': (options) => {
             spies.installMissingDependencies(options);
             return Promise.resolve();
           }
@@ -76,8 +74,12 @@ describe('cli : domain : handle-dependencies', () => {
       };
 
       handleDependencies({ components: Object.keys(components), logger })
-        .then(res => (result = res))
-        .catch(err => (error = err))
+        .then((res) => {
+          result = res;
+        })
+        .catch((err) => {
+          error = err;
+        })
         .finally(done);
     });
 

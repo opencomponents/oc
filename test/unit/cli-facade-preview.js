@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
@@ -9,7 +7,7 @@ describe('cli : facade : preview', () => {
   let logSpy;
   let registryStub;
 
-  const execute = function (error, url, done) {
+  const execute = (error, url, done) => {
     openSpy = sinon.spy();
     registryStub = {
       getComponentPreviewUrlByUrl: error
@@ -32,7 +30,7 @@ describe('cli : facade : preview', () => {
   };
 
   describe('when previewing not valid component', () => {
-    beforeEach(done => {
+    beforeEach((done) => {
       execute('404!!!', {}, done);
     });
 
@@ -48,7 +46,7 @@ describe('cli : facade : preview', () => {
   });
 
   describe('when previewing valid component', () => {
-    beforeEach(done => {
+    beforeEach((done) => {
       execute(null, 'http://registry.com/component/~preview/', done);
     });
 

@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
-import { Config } from '../../types';
+import type { Request, Response } from 'express';
+import type { Config } from '../../types';
 import getAvailableDependencies from './helpers/get-available-dependencies';
 
 export default function dependencies(conf: Config) {
-  return function (_req: Request, res: Response): void {
+  return (_req: Request, res: Response): void => {
     if (res.conf.discovery) {
       const dependencies = getAvailableDependencies(conf.dependencies).map(
         ({ core, name, version }) => {

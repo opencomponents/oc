@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
@@ -11,7 +9,7 @@ describe('registry', () => {
     './app-start': sinon.stub(),
     './domain/events-handler': { fire: sinon.stub() },
     express: sinon.stub(),
-    http: {
+    'node:http': {
       createServer: sinon.stub()
     },
     './middleware': { bind: sinon.stub().returns({}) },
@@ -36,7 +34,7 @@ describe('registry', () => {
           isValid: false,
           message: 'blargh'
         });
-        init = function () {
+        init = () => {
           Registry({});
         };
       });
@@ -75,11 +73,11 @@ describe('registry', () => {
       describe('when starting it', () => {
         describe('when plugins initialiser fails', () => {
           let error;
-          beforeEach(done => {
+          beforeEach((done) => {
             deps['./domain/plugins-initialiser'].init.rejects(
               new Error('error!')
             );
-            registry.start(err => {
+            registry.start((err) => {
               error = err;
               done();
             });
@@ -93,11 +91,11 @@ describe('registry', () => {
         describe('when plugins initialiser succeeds', () => {
           describe('when repository initialisation fails', () => {
             let error;
-            beforeEach(done => {
+            beforeEach((done) => {
               deps['./domain/plugins-initialiser'].init.resolves('ok');
               repositoryInitStub.rejects(new Error('nope'));
 
-              registry.start(err => {
+              registry.start((err) => {
                 error = err;
                 done();
               });
@@ -111,12 +109,12 @@ describe('registry', () => {
           describe('when repository initialisation succeeds', () => {
             describe('when app fails to start', () => {
               let error;
-              beforeEach(done => {
+              beforeEach((done) => {
                 deps['./domain/plugins-initialiser'].init.resolves('ok');
                 repositoryInitStub.resolves('ok');
                 deps['./app-start'].rejects({ msg: 'I got a problem' });
 
-                registry.start(err => {
+                registry.start((err) => {
                   error = err;
                   done();
                 });
@@ -130,17 +128,17 @@ describe('registry', () => {
             describe('when app starts', () => {
               describe('when http listener errors', () => {
                 let error;
-                beforeEach(done => {
+                beforeEach((done) => {
                   deps['./domain/plugins-initialiser'].init.resolves('ok');
                   repositoryInitStub.resolves('ok');
                   deps['./app-start'].resolves('ok');
 
-                  deps['http'].createServer.returns({
+                  deps['node:http'].createServer.returns({
                     listen: sinon.stub().yields('Port is already used'),
                     on: sinon.stub()
                   });
 
-                  registry.start(err => {
+                  registry.start((err) => {
                     error = err;
                     done();
                   });
@@ -154,13 +152,13 @@ describe('registry', () => {
               describe('when http listener succeeds', () => {
                 let error;
                 let result;
-                beforeEach(done => {
+                beforeEach((done) => {
                   deps['./domain/plugins-initialiser'].init.resolves('ok');
                   repositoryInitStub.resolves('ok');
                   deps['./app-start'].resolves('ok');
                   deps['./domain/events-handler'].fire = sinon.stub();
 
-                  deps['http'].createServer.returns({
+                  deps['node:http'].createServer.returns({
                     listen: sinon.stub().yields(null, 'ok'),
                     on: sinon.stub()
                   });
@@ -191,18 +189,18 @@ describe('registry', () => {
 
               describe('when http listener emits an error before the listener to start', () => {
                 let error;
-                beforeEach(done => {
+                beforeEach((done) => {
                   deps['./domain/plugins-initialiser'].init.resolves('ok');
                   repositoryInitStub.resolves('ok');
                   deps['./app-start'].resolves('ok');
                   deps['./domain/events-handler'].fire = sinon.stub();
 
-                  deps['http'].createServer.returns({
+                  deps['node:http'].createServer.returns({
                     listen: sinon.stub(),
                     on: sinon.stub().yields('I failed for some reason')
                   });
 
-                  registry.start(err => {
+                  registry.start((err) => {
                     error = err;
                     done();
                   });

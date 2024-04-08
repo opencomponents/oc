@@ -1,10 +1,7 @@
-import { VM } from '../../../types';
+import type { VM } from '../../../types';
 
 export default function componentsPlugins(vm: VM): string {
-  const pluginRow = ([
-    name,
-    description
-  ]: string[]) => `<div class="componentRow row table">
+  const pluginRow = ([name, description]: string[]) => `<div class="componentRow row table">
     <p class="release">
       <span style="font-weight: bold">${
         name + (description ? ':' : '')

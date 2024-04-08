@@ -1,7 +1,7 @@
-import querystring from 'querystring';
-import url from 'url';
+import querystring from 'node:querystring';
+import url from 'node:url';
 
-const removeFinalSlashes = function (s: string) {
+const removeFinalSlashes = (s: string) => {
   while (s.slice(-1) === '/') {
     s = s.slice(0, -1);
   }

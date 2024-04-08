@@ -1,10 +1,8 @@
-'use strict';
-
 const expect = require('chai').expect;
 
 describe('cli : domain : url-parser', () => {
   let parsed;
-  const execute = function (url, returnVersion) {
+  const execute = (url, returnVersion) => {
     const urlParser = require('../../dist/cli/domain/url-parser');
 
     parsed = urlParser.parse({

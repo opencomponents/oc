@@ -1,7 +1,5 @@
-'use strict';
-
 const expect = require('chai').expect;
-const path = require('path');
+const path = require('node:path');
 const sinon = require('sinon');
 
 describe('cli : facade : package', () => {
@@ -11,7 +9,7 @@ describe('cli : facade : package', () => {
   const PackageFacade = require('../../dist/cli/facade/package.js').default;
   const packageFacade = PackageFacade({ local: local, logger: logSpy });
 
-  const execute = function (compress, cb) {
+  const execute = (compress, cb) => {
     logSpy.err = sinon.stub();
     logSpy.ok = sinon.stub();
     logSpy.warn = sinon.stub();
@@ -27,7 +25,7 @@ describe('cli : facade : package', () => {
   };
 
   describe('before packaging a component', () => {
-    it('should always show a message', done => {
+    it('should always show a message', (done) => {
       sinon.stub(local, 'package').rejects('the component is not valid');
       execute(false, () => {
         local.package.restore();
@@ -46,7 +44,7 @@ describe('cli : facade : package', () => {
 
     describe('when packaging', () => {
       describe('when a component is not valid', () => {
-        beforeEach(done => {
+        beforeEach((done) => {
           sinon.stub(local, 'package').rejects('the component is not valid');
           execute(false, done);
         });
@@ -74,7 +72,7 @@ describe('cli : facade : package', () => {
           local.package.restore();
         });
 
-        it('should package and show success message', done => {
+        it('should package and show success message', (done) => {
           execute(false, () => {
             const warnMessage = logSpy.warn.args[0][0];
             const okMessage = logSpy.ok.args[0][0];
@@ -96,7 +94,7 @@ describe('cli : facade : package', () => {
         });
 
         describe('when creating tar.gz archive', () => {
-          it('should not compress when option set to false', done => {
+          it('should not compress when option set to false', (done) => {
             sinon.stub(local, 'compress').resolves(null);
 
             execute(false, () => {
@@ -128,7 +126,7 @@ describe('cli : facade : package', () => {
               local.compress.restore();
             });
 
-            it('should show a message for success', done => {
+            it('should show a message for success', (done) => {
               execute(true, () => {
                 const warnDependenciesMessage = logSpy.warn.args[1][0];
                 const warnMessage = logSpy.warn.args[2][0];
@@ -169,7 +167,7 @@ describe('cli : facade : package', () => {
               local.compress.restore();
             });
 
-            it('should show a message for failure', done => {
+            it('should show a message for failure', (done) => {
               execute(true, () => {
                 const warnDependenciesMessage = logSpy.warn.args[1][0];
                 const warnMessage = logSpy.warn.args[2][0];

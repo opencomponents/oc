@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
@@ -9,7 +7,7 @@ describe('utils : npm-utils', () => {
 
   const npmUtils = injectr('../../dist/utils/npm-utils.js', {
     'cross-spawn': crossSpawnStub,
-    path: { join: (...items) => items.join('/') }
+    'node:path': { join: (...items) => items.join('/') }
   });
 
   const installPath = 'path/to/component';
@@ -29,18 +27,18 @@ describe('utils : npm-utils', () => {
       }
     ];
 
-    scenarios.forEach(scenario => {
+    for (const scenario of scenarios) {
       const { initPath, silent } = scenario.input;
       describe(`when invoked for ${initPath} with silent=${silent}`, () => {
         let error;
         let onStub;
-        beforeEach(done => {
+        beforeEach((done) => {
           onStub = sinon.stub();
           crossSpawnStub.reset();
           crossSpawnStub.returns({ on: onStub });
           npmUtils
             .init(scenario.input)
-            .catch(err => {
+            .catch((err) => {
               error = err;
             })
             .finally(done);
@@ -62,7 +60,7 @@ describe('utils : npm-utils', () => {
           expect(onStub.args[1][0]).to.equal('close');
         });
       });
-    });
+    }
   });
 
   describe('installDependency()', () => {
@@ -117,20 +115,24 @@ describe('utils : npm-utils', () => {
       }
     ];
 
-    scenarios.forEach(scenario => {
+    for (const scenario of scenarios) {
       const dependency = scenario.input.dependency;
       describe(`when invoked for installing ${dependency}`, () => {
         let error;
         let result;
         let onStub;
-        beforeEach(done => {
+        beforeEach((done) => {
           onStub = sinon.stub();
           crossSpawnStub.reset();
           crossSpawnStub.returns({ on: onStub });
           npmUtils
             .installDependency(scenario.input)
-            .then(res => (result = res))
-            .catch(err => (error = err))
+            .then((res) => {
+              result = res;
+            })
+            .catch((err) => {
+              error = err;
+            })
             .finally(done);
 
           onStub.args[1][1](0);
@@ -160,7 +162,7 @@ describe('utils : npm-utils', () => {
           expect(onStub.args[1][0]).to.equal('close');
         });
       });
-    });
+    }
   });
 
   describe('installDependencies()', () => {
@@ -228,7 +230,7 @@ describe('utils : npm-utils', () => {
       }
     ];
 
-    scenarios.forEach(scenario => {
+    for (const scenario of scenarios) {
       const dependencies = scenario.input.dependencies;
       describe(`when invoked for installing [${dependencies.join(
         ', '
@@ -236,14 +238,18 @@ describe('utils : npm-utils', () => {
         let error;
         let result;
         let onStub;
-        beforeEach(done => {
+        beforeEach((done) => {
           onStub = sinon.stub();
           crossSpawnStub.reset();
           crossSpawnStub.returns({ on: onStub });
           npmUtils
             .installDependencies(scenario.input)
-            .then(res => (result = res))
-            .catch(err => (error = err))
+            .then((res) => {
+              result = res;
+            })
+            .catch((err) => {
+              error = err;
+            })
             .finally(done);
           onStub.args[1][1](0);
         });
@@ -264,7 +270,7 @@ describe('utils : npm-utils', () => {
         it('should return the installation path', () => {
           expect(result).to.deep.equal({
             dest: dependencies.map(
-              dependency =>
+              (dependency) =>
                 `path/to/component/node_modules/${dependency.split('@')[0]}`
             )
           });
@@ -275,6 +281,6 @@ describe('utils : npm-utils', () => {
           expect(onStub.args[1][0]).to.equal('close');
         });
       });
-    });
+    }
   });
 });

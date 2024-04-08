@@ -1,8 +1,6 @@
-'use strict';
-
 const expect = require('chai').expect;
 const emptyResponseHandler = require('oc-empty-response-handler');
-const path = require('path');
+const path = require('node:path');
 const got = require('got');
 
 describe('registry', () => {
@@ -15,7 +13,7 @@ describe('registry', () => {
 
   const next = (promise, done) => {
     promise
-      .then(r => {
+      .then((r) => {
         headers = r.headers;
         status = r.statusCode;
         result = JSON.parse(r.body);
@@ -23,33 +21,31 @@ describe('registry', () => {
       .finally(done);
   };
 
-  const getDefaultTestConfiguration = function () {
-    return {
-      local: true,
-      path: path.resolve('test/fixtures/components'),
-      port: 3030,
-      baseUrl: 'http://localhost:3030/',
-      env: { name: 'local' },
-      verbosity: 0,
-      dependencies: ['lodash']
-    };
-  };
+  const getDefaultTestConfiguration = () => ({
+    local: true,
+    path: path.resolve('test/fixtures/components'),
+    port: 3030,
+    baseUrl: 'http://localhost:3030/',
+    env: { name: 'local' },
+    verbosity: 0,
+    dependencies: ['lodash']
+  });
 
-  const initializeRegistry = function (configuration, cb) {
+  const initializeRegistry = (configuration, cb) => {
     registry = oc.Registry(configuration);
     registry.start(cb);
   };
 
-  before(done => {
+  before((done) => {
     initializeRegistry(getDefaultTestConfiguration(), done);
   });
 
-  after(done => {
+  after((done) => {
     registry.close(done);
   });
 
   describe('when initialised with invalid configuration', () => {
-    it('should throw an error', done => {
+    it('should throw an error', (done) => {
       expect(() => {
         oc.Registry({});
       }).to.throw('Registry configuration is empty');
@@ -60,7 +56,7 @@ describe('registry', () => {
 
   describe('GET /hello-world-custom-headers', () => {
     describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and strong version 1.0.0', () => {
-      before(done => {
+      before((done) => {
         next(
           got('http://localhost:3030/hello-world-custom-headers/1.0.0'),
           done
@@ -80,7 +76,7 @@ describe('registry', () => {
     });
 
     describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and weak version 1.x.x', () => {
-      before(done => {
+      before((done) => {
         next(
           got('http://localhost:3030/hello-world-custom-headers/1.x.x'),
           done
@@ -100,7 +96,7 @@ describe('registry', () => {
     });
 
     describe('with a custom configuration with customHeadersToSkipOnWeakVersion defined', () => {
-      before(done => {
+      before((done) => {
         registry.close();
         initializeRegistry(
           {
@@ -111,14 +107,14 @@ describe('registry', () => {
         );
       });
 
-      after(done => {
+      after((done) => {
         registry.close(() => {
           initializeRegistry(getDefaultTestConfiguration(), done);
         });
       });
 
       describe('when strong version is requested 1.0.0', () => {
-        before(done => {
+        before((done) => {
           next(
             got('http://localhost:3030/hello-world-custom-headers/1.0.0'),
             done
@@ -138,7 +134,7 @@ describe('registry', () => {
       });
 
       describe('when weak version is requested 1.x.x', () => {
-        before(done => {
+        before((done) => {
           next(
             got('http://localhost:3030/hello-world-custom-headers/1.x.x'),
             done
@@ -158,7 +154,7 @@ describe('registry', () => {
 
   describe('POST /hello-world-custom-headers', () => {
     describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and strong version 1.0.0', () => {
-      before(done => {
+      before((done) => {
         next(
           got('http://localhost:3030', {
             method: 'post',
@@ -191,7 +187,7 @@ describe('registry', () => {
     });
 
     describe('request with two components', () => {
-      before(done => {
+      before((done) => {
         next(
           got('http://localhost:3030', {
             method: 'post',
@@ -218,7 +214,7 @@ describe('registry', () => {
     });
 
     describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and weak version 1.x.x', () => {
-      before(done => {
+      before((done) => {
         next(
           got('http://localhost:3030', {
             method: 'post',
@@ -251,7 +247,7 @@ describe('registry', () => {
     });
 
     describe('with a custom configuration with customHeadersToSkipOnWeakVersion defined', () => {
-      before(done => {
+      before((done) => {
         registry.close();
         initializeRegistry(
           {
@@ -262,14 +258,14 @@ describe('registry', () => {
         );
       });
 
-      after(done => {
+      after((done) => {
         registry.close(() => {
           initializeRegistry(getDefaultTestConfiguration(), done);
         });
       });
 
       describe('when strong version is requested 1.0.0', () => {
-        before(done => {
+        before((done) => {
           next(
             got('http://localhost:3030', {
               method: 'post',
@@ -304,7 +300,7 @@ describe('registry', () => {
       });
 
       describe('when weak version is requested 1.x.x', () => {
-        before(done => {
+        before((done) => {
           next(
             got('http://localhost:3030', {
               method: 'post',
@@ -339,7 +335,7 @@ describe('registry', () => {
   });
 
   describe('GET /', () => {
-    before(done => {
+    before((done) => {
       next(got('http://localhost:3030'), done);
     });
 
@@ -368,7 +364,7 @@ describe('registry', () => {
   });
 
   describe('POST / (with circular-json)', () => {
-    before(done => {
+    before((done) => {
       next(
         got('http://localhost:3030/', {
           method: 'post',
@@ -392,7 +388,7 @@ describe('registry', () => {
   });
 
   describe('GET /circular-json-error', () => {
-    before(done => {
+    before((done) => {
       next(
         got('http://localhost:3030/circular-json-error', {
           headers: { accept: 'application/vnd.oc.unrendered+json' },
@@ -414,7 +410,7 @@ describe('registry', () => {
   });
 
   describe('GET /handlebars3-component', () => {
-    before(done => {
+    before((done) => {
       next(
         got('http://localhost:3030/handlebars3-component', {
           throwHttpErrors: false
@@ -435,7 +431,7 @@ describe('registry', () => {
   });
 
   describe('GET /jade-filters', () => {
-    before(done => {
+    before((done) => {
       next(got('http://localhost:3030/jade-filters'), done);
     });
 
@@ -446,7 +442,7 @@ describe('registry', () => {
 
   describe('GET /hello-world', () => {
     describe('when Accept header not specified', () => {
-      before(done => {
+      before((done) => {
         next(got('http://localhost:3030/hello-world'), done);
       });
 
@@ -479,7 +475,7 @@ describe('registry', () => {
     });
 
     describe('when Accept header set to application/vnd.oc.unrendered+json', () => {
-      before(done => {
+      before((done) => {
         next(
           got('http://localhost:3030/hello-world', {
             headers: { Accept: 'application/vnd.oc.unrendered+json' }
@@ -515,7 +511,7 @@ describe('registry', () => {
   });
 
   describe('GET /container-with-nested', () => {
-    before(done => {
+    before((done) => {
       next(got('http://localhost:3030/container-with-nested'), done);
     });
 
@@ -535,7 +531,7 @@ describe('registry', () => {
   });
 
   describe('GET /container-with-multiple-nested', () => {
-    before(done => {
+    before((done) => {
       next(got('http://localhost:3030/container-with-multiple-nested'), done);
     });
 
@@ -558,7 +554,7 @@ describe('registry', () => {
 
   describe('GET /no-containers', () => {
     describe('when Accept header not specified', () => {
-      before(done => {
+      before((done) => {
         next(got('http://localhost:3030/no-containers'), done);
       });
 
@@ -579,7 +575,7 @@ describe('registry', () => {
 
   describe('GET /language', () => {
     describe('when Accept-Language: en-US', () => {
-      before(done => {
+      before((done) => {
         next(
           got('http://localhost:3030/language', {
             headers: { 'accept-language': 'en-US' }
@@ -598,7 +594,7 @@ describe('registry', () => {
     });
 
     describe('when Accept-Language: ja-JP', () => {
-      before(done => {
+      before((done) => {
         next(
           got('http://localhost:3030/language', {
             headers: { 'accept-language': 'ja-JP' }
@@ -617,7 +613,7 @@ describe('registry', () => {
     });
 
     describe('when Accept-Language: ja-JP but __ocAcceptLanguage overrides with en-US (client-side failover)', () => {
-      before(done => {
+      before((done) => {
         next(
           got('http://localhost:3030/language/?__ocAcceptLanguage=en-US', {
             headers: { 'accept-language': 'ja-JP' }
@@ -637,7 +633,7 @@ describe('registry', () => {
   });
 
   describe('GET /lodash-component', () => {
-    before(done => {
+    before((done) => {
       next(got('http://localhost:3030/lodash-component'), done);
     });
 
@@ -652,7 +648,7 @@ describe('registry', () => {
 
   describe('GET /empty', () => {
     describe('rendered', () => {
-      before(done => {
+      before((done) => {
         next(got('http://localhost:3030/empty'), done);
       });
 
@@ -666,7 +662,7 @@ describe('registry', () => {
     });
 
     describe('unrendered', () => {
-      before(done => {
+      before((done) => {
         next(
           got('http://localhost:3030/empty', {
             headers: { Accept: 'application/vnd.oc.unrendered+json' }
@@ -689,7 +685,7 @@ describe('registry', () => {
 
   describe('POST /', () => {
     describe('when body is malformed', () => {
-      before(done => {
+      before((done) => {
         next(
           got('http://localhost:3030/', {
             method: 'post',
@@ -713,7 +709,7 @@ describe('registry', () => {
 
     describe('when body contains multiple components', () => {
       describe('when Accept header not specified', () => {
-        before(done => {
+        before((done) => {
           next(
             got('http://localhost:3030/', {
               method: 'post',
@@ -742,7 +738,7 @@ describe('registry', () => {
 
       describe('when omitHref=true', () => {
         describe('when getting rendered components', () => {
-          before(done => {
+          before((done) => {
             next(
               got('http://localhost:3030/', {
                 method: 'post',
@@ -765,7 +761,7 @@ describe('registry', () => {
         });
 
         describe('when getting unrendered components', () => {
-          before(done => {
+          before((done) => {
             next(
               got('http://localhost:3030/', {
                 method: 'post',
@@ -790,7 +786,7 @@ describe('registry', () => {
       });
 
       describe('when Accept header set to application/vnd.oc.unrendered+json', () => {
-        before(done => {
+        before((done) => {
           next(
             got('http://localhost:3030/', {
               method: 'post',
@@ -813,7 +809,7 @@ describe('registry', () => {
 
       describe('when components require params', () => {
         describe('when each component requires different params', () => {
-          before(done => {
+          before((done) => {
             next(
               got('http://localhost:3030/', {
                 method: 'post',
@@ -845,7 +841,7 @@ describe('registry', () => {
         });
 
         describe('when components require same parameters', () => {
-          before(done => {
+          before((done) => {
             next(
               got('http://localhost:3030/', {
                 method: 'post',
@@ -869,7 +865,7 @@ describe('registry', () => {
         });
 
         describe('when components have some common parameters and some different', () => {
-          before(done => {
+          before((done) => {
             next(
               got('http://localhost:3030/', {
                 method: 'post',
@@ -896,7 +892,7 @@ describe('registry', () => {
         });
 
         describe('when components have global parameters with local overrides', () => {
-          before(done => {
+          before((done) => {
             next(
               got('http://localhost:3030/', {
                 method: 'post',
@@ -923,7 +919,7 @@ describe('registry', () => {
         });
 
         describe('when components accept optional parameters', () => {
-          before(done => {
+          before((done) => {
             next(
               got('http://localhost:3030/', {
                 method: 'post',

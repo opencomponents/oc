@@ -1,6 +1,6 @@
-import { Arguments } from 'yargs';
-import commands from './commands';
+import type { Arguments } from 'yargs';
 import strings from '../resources';
+import commands from './commands';
 
 export default function validateCommand(argv: Arguments, level: number): true {
   let keys = Object.keys(commands.commands);

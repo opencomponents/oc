@@ -1,9 +1,6 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-'use strict';
-
 const changelog = require('./changelog');
 const packageJson = require('../package');
-const path = require('path');
+const path = require('node:path');
 const simpleGit = require('simple-git');
 
 const git = simpleGit(path.join(__dirname, '..'));

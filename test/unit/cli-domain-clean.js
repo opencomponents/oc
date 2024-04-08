@@ -1,11 +1,9 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
 
 describe('cli : domain : clean', () => {
-  const initialize = options => {
+  const initialize = (options) => {
     options = options || {};
     return injectr('../../dist/cli/domain/clean.js', {
       './get-components-by-dir': () => () =>
@@ -13,10 +11,10 @@ describe('cli : domain : clean', () => {
           ? Promise.reject(options.getComponentsByDirError)
           : Promise.resolve(['path/to/my-component1', 'path/to/my-component2']),
       'fs-extra': {
-        existsSync: dir => dir.indexOf('my-component1') >= 0,
+        existsSync: (dir) => dir.indexOf('my-component1') >= 0,
         remove: options.removeMock
       },
-      path: { join: (...params) => params.join('/') }
+      'node:path': { join: (...params) => params.join('/') }
     });
   };
 
@@ -24,12 +22,16 @@ describe('cli : domain : clean', () => {
     describe('happy path', () => {
       let error;
       let result;
-      beforeEach(done => {
+      beforeEach((done) => {
         const clean = initialize();
         clean
           .fetchList('my-components-folder')
-          .then(res => (result = res))
-          .catch(err => (error = err))
+          .then((res) => {
+            result = res;
+          })
+          .catch((err) => {
+            error = err;
+          })
           .finally(done);
       });
 
@@ -41,14 +43,16 @@ describe('cli : domain : clean', () => {
 
     describe('getComponentsByDir error', () => {
       let error;
-      beforeEach(done => {
+      beforeEach((done) => {
         const clean = initialize({
           getComponentsByDirError: new Error('oops')
         });
 
         clean
           .fetchList('my-components-folder')
-          .catch(err => (error = err))
+          .catch((err) => {
+            error = err;
+          })
           .finally(done);
       });
 
@@ -61,13 +65,15 @@ describe('cli : domain : clean', () => {
     describe('happy path', () => {
       let error;
       let removeMock;
-      beforeEach(done => {
+      beforeEach((done) => {
         removeMock = sinon.stub().resolves('ok');
         const clean = initialize({ removeMock });
 
         clean
           .remove(['path/to/my-component1/node_modules'])
-          .catch(err => (error = err))
+          .catch((err) => {
+            error = err;
+          })
           .finally(done);
       });
 
@@ -84,13 +90,15 @@ describe('cli : domain : clean', () => {
     describe('fs.remove error', () => {
       let error;
       let removeMock;
-      beforeEach(done => {
+      beforeEach((done) => {
         removeMock = sinon.stub().rejects(new Error('nope'));
         const clean = initialize({ removeMock });
 
         clean
           .remove(['path/to/my-component1/node_modules'])
-          .catch(err => (error = err))
+          .catch((err) => {
+            error = err;
+          })
           .finally(done);
       });
 

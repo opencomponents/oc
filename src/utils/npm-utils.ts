@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import spawn from 'cross-spawn';
 import stripVersion from './strip-version';
 
@@ -36,7 +36,7 @@ const executeCommand = (options: {
 
   return new Promise<void>((res, rej) => {
     cmd.on('error', () => rej(new Error('error')));
-    cmd.on('close', code => {
+    cmd.on('close', (code) => {
       if (code !== 0) {
         rej(code);
       } else {
@@ -79,7 +79,7 @@ export const installDependencies = async (options: {
     silent
   };
 
-  const dest = dependencies.map(dependency =>
+  const dest = dependencies.map((dependency) =>
     getFullPath({ installPath, dependency })
   );
 

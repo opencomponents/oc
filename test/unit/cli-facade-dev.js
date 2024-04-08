@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
@@ -10,7 +8,7 @@ describe('cli : facade : dev', () => {
   const local = Local();
   const devFacade = DevFacade({ local, logger: logSpy });
 
-  const execute = function (done) {
+  const execute = (done) => {
     logSpy.err = sinon.spy();
     logSpy.warn = () => {};
     devFacade({}, () => done());
@@ -18,7 +16,7 @@ describe('cli : facade : dev', () => {
 
   describe('when running a dev version of the registry', () => {
     describe('when the directory is not found', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         sinon.stub(local, 'getComponentsByDir').resolves([]);
         execute(done);
       });
@@ -33,7 +31,7 @@ describe('cli : facade : dev', () => {
     });
 
     describe('when the directory does not contain any valid component', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         sinon.stub(local, 'getComponentsByDir').resolves([]);
         execute(done);
       });

@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
@@ -17,7 +15,7 @@ describe('registry : routes : component', () => {
     'oc-template-jade': require('oc-template-jade'),
     'oc-template-handlebars': require('oc-template-handlebars')
   };
-  const initialise = function (params) {
+  const initialise = (params) => {
     resJsonStub = sinon.stub();
     resSetStub = sinon.stub();
     statusStub = sinon.stub().returns({
@@ -41,7 +39,7 @@ describe('registry : routes : component', () => {
           externals: []
         }
       ]),
-      getTemplate: type => templates[type],
+      getTemplate: (type) => templates[type],
       getStaticFilePath: sinon.stub().returns('//my-cdn.com/files/')
     };
   };
@@ -49,14 +47,14 @@ describe('registry : routes : component', () => {
   describe('when getting a component with server.js execution timeout', () => {
     let code;
     let response;
-    before(done => {
+    before((done) => {
       initialise(mockedComponents['timeout-component']);
       componentRoute = ComponentRoute({}, mockedRepository);
 
-      const resStatus = function (calledCode) {
+      const resStatus = (calledCode) => {
         code = calledCode;
         return {
-          json: function (calledResponse) {
+          json: (calledResponse) => {
             response = calledResponse;
             done();
           }
@@ -146,9 +144,7 @@ describe('registry : routes : component', () => {
           conf: {
             baseUrl: 'http://components.com/',
             plugins: {
-              a: function () {
-                return '';
-              }
+              a: () => ''
             }
           },
           status: statusStub
@@ -174,11 +170,11 @@ describe('registry : routes : component', () => {
 
   describe('when getting a component with server.js asynchronous execution errors', () => {
     describe('when has error that gets fired on first execution', () => {
-      before(done => {
+      before((done) => {
         initialise(mockedComponents['async-error-component']);
         componentRoute = ComponentRoute({}, mockedRepository);
         statusStub.returns({
-          json: function (response) {
+          json: (response) => {
             resJsonStub(response);
             done();
           }
@@ -216,11 +212,11 @@ describe('registry : routes : component', () => {
     });
 
     describe('when has error that gets fired on following executions', () => {
-      before(done => {
+      before((done) => {
         initialise(mockedComponents['async-error2-component']);
         componentRoute = ComponentRoute({}, mockedRepository);
         statusStub.returns({
-          json: function (response) {
+          json: (response) => {
             resJsonStub(response);
             if (statusStub.args.length >= 2) {
               done();
@@ -335,7 +331,7 @@ describe('registry : routes : component', () => {
       });
 
       describe('when registry implements plugin', () => {
-        beforeEach(done => {
+        beforeEach((done) => {
           componentRoute(
             {
               headers: {},
@@ -345,9 +341,7 @@ describe('registry : routes : component', () => {
               conf: {
                 baseUrl: 'http://components.com/',
                 plugins: {
-                  doSomething: function () {
-                    return 'hello hello hello my friend';
-                  }
+                  doSomething: () => 'hello hello hello my friend'
                 }
               },
               status: statusStub
@@ -373,7 +367,7 @@ describe('registry : routes : component', () => {
       });
 
       describe('when registry does not implement plugin', () => {
-        beforeEach(done => {
+        beforeEach((done) => {
           componentRoute(
             {
               headers: {},
@@ -413,7 +407,7 @@ describe('registry : routes : component', () => {
 
   describe('when getting a component that requires a npm module', () => {
     describe('when registry implements dependency', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         initialise(mockedComponents['npm-component']);
         componentRoute = ComponentRoute({}, mockedRepository);
 
@@ -450,7 +444,7 @@ describe('registry : routes : component', () => {
     });
 
     describe('when registry does not implement dependency', () => {
-      beforeEach(done => {
+      beforeEach((done) => {
         initialise(mockedComponents['npm-component']);
         componentRoute = ComponentRoute({}, mockedRepository);
 
@@ -539,12 +533,12 @@ describe('registry : routes : component', () => {
   });
 
   describe('when getting a component with server.js that sets custom headers with non-empty customHeadersToSkipOnWeakVersion', () => {
-    before(done => {
+    before((done) => {
       initialise(mockedComponents['response-headers-component']);
       componentRoute = ComponentRoute({}, mockedRepository);
 
       statusStub.returns({
-        json: function (response) {
+        json: (response) => {
           resJsonStub(response);
           done();
         }
@@ -588,7 +582,7 @@ describe('registry : routes : component', () => {
   });
 
   describe('when getting a simple component with server.js after headers component no custom headers should be set', () => {
-    before(done => {
+    before((done) => {
       const headersComponent =
         mockedComponents['another-response-headers-component'];
       const simpleComponent = mockedComponents['simple-component'];
@@ -613,7 +607,7 @@ describe('registry : routes : component', () => {
             externals: []
           }
         ]),
-        getTemplate: type => templates[type],
+        getTemplate: (type) => templates[type],
         getStaticFilePath: sinon.stub().returns('//my-cdn.com/files/')
       };
 
@@ -645,7 +639,7 @@ describe('registry : routes : component', () => {
       resSetStub = sinon.stub();
 
       statusStub = sinon.stub().returns({
-        json: function (response) {
+        json: (response) => {
           resJsonStub(response);
           if (statusStub.args.length >= 2) {
             done();

@@ -77,7 +77,8 @@ export type LimitFunction = {
 const pLimit = (concurrency: number): LimitFunction => {
   if (
     !(
-      (Number.isInteger(concurrency) || concurrency === Infinity) &&
+      (Number.isInteger(concurrency) ||
+        concurrency === Number.POSITIVE_INFINITY) &&
       concurrency > 0
     )
   ) {
@@ -98,7 +99,6 @@ const pLimit = (concurrency: number): LimitFunction => {
   const run = async (fn: any, resolve: any, ...args: any) => {
     activeCount++;
 
-    // eslint-disable-next-line require-await
     const result = (async () => fn(...args))();
 
     resolve(result);
@@ -130,7 +130,7 @@ const pLimit = (concurrency: number): LimitFunction => {
     fn: (...args: Arguments) => PromiseLike<ReturnType> | ReturnType,
     ...args: Arguments
   ) =>
-    new Promise(resolve => {
+    new Promise((resolve) => {
       enqueue(fn, resolve, ...args);
     });
 

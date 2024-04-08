@@ -1,13 +1,13 @@
-import { Component, ComponentDetail } from '../../types';
+import type { Component, ComponentDetail } from '../../types';
 
+import isTemplateLegacy from '../../utils/is-template-legacy';
 import getComponentAuthor from './partials/component-author';
 import getComponentParameters from './partials/component-parameters';
 import getComponentState from './partials/component-state';
 import getComponentVersions from './partials/component-versions';
-import infoJS from './static/info';
 import getLayout from './partials/layout';
 import getProperty from './partials/property';
-import isTemplateLegacy from '../../utils/is-template-legacy';
+import infoJS from './static/info';
 
 interface Vm {
   parsedAuthor: { name?: string; email?: string; url?: string };
@@ -20,7 +20,7 @@ interface Vm {
   repositoryUrl: string | null;
 }
 
-function statsJs(componentDetail: ComponentDetail) {
+function statsJs(name: string, componentDetail: ComponentDetail) {
   return `
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
@@ -41,7 +41,7 @@ function statsJs(componentDetail: ComponentDetail) {
     }
   
     const dataset = {
-      label: 'guest-stay-config',
+      label: "${name}",
       data: dataPoints,
       tension: 0.1,
       borderWidth: 1
@@ -144,7 +144,14 @@ export default function info(vm: Vm): string {
     ${property('Template', template)}
     ${showArray('Node.js dependencies', dependencies)}
     ${showArray('Plugin dependencies', component.oc.plugins)}
-    ${component.oc.files.template.size ? property('Template size', `${Math.round(component.oc.files.template.size / 1024)} kb`) : ''}
+    ${
+      component.oc.files.template.size
+        ? property(
+            'Template size',
+            `${Math.round(component.oc.files.template.size / 1024)} kb`
+          )
+        : ''
+    }
     ${componentParameters()}
     <h3>Code</h3>
     <p>
@@ -169,7 +176,7 @@ export default function info(vm: Vm): string {
   <script>var thisComponentHref="${href}${component.name}/";
     ${infoJS}
   </script>
-  ${statsAvailable ? statsJs(vm.componentDetail!) : ''}
+  ${statsAvailable ? statsJs(vm.component.name, vm.componentDetail!) : ''}
   `;
 
   return layout({ content, scripts });

@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const sinon = require('sinon');
 const injectr = require('injectr');
@@ -29,14 +27,18 @@ describe('cli : domain : init-template : install-template', () => {
 
     let error;
     let result;
-    before(done => {
+    before((done) => {
       const dest = 'path/to/component/node_modules/oc-template-jade-compiler';
       npmUtils.installDependency.reset();
       npmUtils.installDependency.resolves({ dest });
       isTemplateValid.returns(true);
       installTemplate(config)
-        .then(res => (result = res))
-        .catch(err => (error = err))
+        .then((res) => {
+          result = res;
+        })
+        .catch((err) => {
+          error = err;
+        })
         .finally(done);
     });
 

@@ -1,4 +1,4 @@
-import { VM } from '../../../types';
+import type { VM } from '../../../types';
 
 type State = keyof VM['stateCounts'];
 

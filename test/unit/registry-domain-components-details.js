@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
@@ -27,8 +25,12 @@ describe('registry : domain : components-details', () => {
 
   const next = (promise, done) =>
     promise
-      .then(res => (result = res))
-      .catch(err => (error = err))
+      .then((res) => {
+        result = res;
+      })
+      .catch((err) => {
+        error = err;
+      })
       .finally(done);
 
   describe('get()', () => {
@@ -36,7 +38,7 @@ describe('registry : domain : components-details', () => {
       let details;
       let stubs;
 
-      before(done => {
+      before((done) => {
         details = {
           lastEdit: 1459864868000,
           components: {
@@ -67,7 +69,7 @@ describe('registry : domain : components-details', () => {
     });
 
     describe('when details file does not exist on cdn', () => {
-      before(done => {
+      before((done) => {
         const stubs = { getJson: sinon.stub().rejects(new Error('an error')) };
         const componentsDetails = ComponentsDetails(conf, stubs);
         next(componentsDetails.get(), done);
@@ -100,7 +102,7 @@ describe('registry : domain : components-details', () => {
 
         let stubs;
 
-        before(done => {
+        before((done) => {
           stubs = { getJson: sinon.stub() };
           stubs.getJson.onCall(0).resolves(details);
           stubs.getJson.onCall(1).resolves({
@@ -119,7 +121,7 @@ describe('registry : domain : components-details', () => {
         });
 
         describe('when component details fetch fails', () => {
-          before(done => {
+          before((done) => {
             fireStub.reset();
             stubs = { getJson: sinon.stub() };
             stubs.getJson.onCall(0).resolves(details);
@@ -143,7 +145,7 @@ describe('registry : domain : components-details', () => {
         });
 
         describe('when component details fetch succeeds', () => {
-          before(done => {
+          before((done) => {
             stubs = { getJson: sinon.stub() };
             stubs.getJson.onCall(0).resolves(details);
             stubs.getJson.onCall(1).resolves({
@@ -173,7 +175,7 @@ describe('registry : domain : components-details', () => {
           });
 
           describe('when component details save fails', () => {
-            before(done => {
+            before((done) => {
               fireStub.reset();
               stubs = { getJson: sinon.stub() };
               stubs.getJson.onCall(0).resolves(details);
@@ -210,11 +212,15 @@ describe('registry : domain : components-details', () => {
 
             const next = (promise, done) =>
               promise
-                .then(res => (result = res))
-                .catch(err => (error = err))
+                .then((res) => {
+                  result = res;
+                })
+                .catch((err) => {
+                  error = err;
+                })
                 .finally(done);
 
-            before(done => {
+            before((done) => {
               stubs = { getJson: sinon.stub() };
               stubs.getJson.onCall(0).resolves(details);
               stubs.getJson.onCall(1).resolves({
@@ -269,11 +275,15 @@ describe('registry : domain : components-details', () => {
 
         const next = (promise, done) =>
           promise
-            .then(res => (result = res))
-            .catch(err => (error = err))
+            .then((res) => {
+              result = res;
+            })
+            .catch((err) => {
+              error = err;
+            })
             .finally(done);
 
-        before(done => {
+        before((done) => {
           stubs = { getJson: sinon.stub() };
           stubs.getJson.resolves(details);
           stubs.maxConcurrentRequests = 20;
@@ -306,7 +316,7 @@ describe('registry : domain : components-details', () => {
 
       let stubs;
 
-      before(done => {
+      before((done) => {
         stubs = { getJson: sinon.stub() };
         stubs.getJson.onCall(0).resolves('not found');
         stubs.getJson.onCall(1).resolves({
@@ -331,7 +341,7 @@ describe('registry : domain : components-details', () => {
       });
 
       describe('when component details fetch fails', () => {
-        before(done => {
+        before((done) => {
           fireStub.reset();
           stubs = { getJson: sinon.stub() };
           stubs.getJson.onCall(0).rejects(new Error('not found'));
@@ -356,7 +366,7 @@ describe('registry : domain : components-details', () => {
       });
 
       describe('when component details fetch succeeds', () => {
-        before(done => {
+        before((done) => {
           stubs = { getJson: sinon.stub() };
           stubs.getJson.onCall(0).rejects('not found');
           stubs.getJson.onCall(1).resolves({
@@ -389,7 +399,7 @@ describe('registry : domain : components-details', () => {
         });
 
         describe('when component details save fails', () => {
-          before(done => {
+          before((done) => {
             fireStub.reset();
             stubs = { getJson: sinon.stub() };
             stubs.getJson.onCall(0).rejects('not found');
@@ -426,11 +436,15 @@ describe('registry : domain : components-details', () => {
 
           const next = (promise, done) =>
             promise
-              .then(res => (result = res))
-              .catch(err => (error = err))
+              .then((res) => {
+                result = res;
+              })
+              .catch((err) => {
+                error = err;
+              })
               .finally(done);
 
-          before(done => {
+          before((done) => {
             stubs = { getJson: sinon.stub() };
             stubs.getJson.onCall(0).rejects('not found');
             stubs.getJson.onCall(1).resolves({

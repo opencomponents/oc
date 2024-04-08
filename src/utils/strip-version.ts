@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 
 export default function stripVersion(dependency: string): string {
   const parts = path.parse(dependency);

@@ -1,16 +1,16 @@
+import path from 'node:path';
+import { promisify } from 'node:util';
 import colors from 'colors/safe';
-import path from 'path';
 import fs from 'fs-extra';
 import readCb from 'read';
-import { promisify } from 'util';
-import { Logger } from '../logger';
-import type { Local } from '../domain/local';
-import { Component } from '../../types';
 import { fromPromise } from 'universalify';
+import type { Component } from '../../types';
+import type { Local } from '../domain/local';
+import type { Logger } from '../logger';
 
-import handleDependencies from '../domain/handle-dependencies';
 import strings from '../../resources/index';
-import { RegistryCli } from '../domain/registry';
+import handleDependencies from '../domain/handle-dependencies';
+import type { RegistryCli } from '../domain/registry';
 
 const read = promisify(readCb);
 
@@ -41,7 +41,7 @@ const publish = ({
         'package.tar.gz'
       );
 
-      let errorMessage;
+      let errorMessage: string;
 
       const readPackageJson = () =>
         fs.readJson(path.join(packageDir, 'package.json'));
@@ -132,15 +132,15 @@ const publish = ({
             throw errorMessage;
           } else {
             if (err.message) {
-              // eslint-disable-next-line no-ex-assign
-              err = err.message;
+              errorMessage = err.message;
             } else if (err && typeof err === 'object') {
               try {
-                // eslint-disable-next-line no-ex-assign
-                err = JSON.stringify(err);
+                errorMessage = JSON.stringify(err);
               } catch (er) {}
             }
-            errorMessage = strings.errors.cli.PUBLISHING_FAIL(String(err));
+            errorMessage = strings.errors.cli.PUBLISHING_FAIL(
+              String(errorMessage)
+            );
             logger.err(errorMessage);
 
             throw errorMessage;
@@ -174,12 +174,12 @@ const publish = ({
           await handleDependencies({
             components: [path.resolve(componentPath)],
             logger
-          }).catch(err => {
+          }).catch((err) => {
             logger.err(err);
             return Promise.reject(err);
           });
 
-          const component = await packageAndCompress().catch(err => {
+          const component = await packageAndCompress().catch((err) => {
             errorMessage = strings.errors.cli.PACKAGE_CREATION_FAIL(
               String(err)
             );
@@ -189,11 +189,11 @@ const publish = ({
           await publishToRegistries(registryLocations, component);
         } else {
           if (fs.existsSync(packageDir)) {
-            const component = await readPackageJson().catch(err => {
+            const component = await readPackageJson().catch((err) => {
               logger.err(String(err));
               return Promise.reject(err);
             });
-            await compress().catch(err => {
+            await compress().catch((err) => {
               logger.err(String(err));
               return Promise.reject(err);
             });

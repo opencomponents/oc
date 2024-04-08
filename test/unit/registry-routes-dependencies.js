@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const sinon = require('sinon');
 const injectr = require('injectr');
@@ -25,12 +23,12 @@ describe('registry : routes : plugins', () => {
   const DependenciesRoute = injectr(
     '../../dist/registry/routes/dependencies.js',
     {
-      './helpers/get-available-dependencies': list =>
-        list.map(dep => dependencyMap[dep])
+      './helpers/get-available-dependencies': (list) =>
+        list.map((dep) => dependencyMap[dep])
     }
   ).default;
 
-  const initialise = function () {
+  const initialise = () => {
     resJsonStub = sinon.stub();
     statusStub = sinon.stub().returns({ json: resJsonStub });
   };

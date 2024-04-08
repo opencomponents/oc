@@ -1,12 +1,12 @@
+import _ from 'lodash';
+import semver from 'semver';
 import cli from 'yargs';
 import commands from './commands';
-import semver from 'semver';
-import _ from 'lodash';
 
-import Local from './domain/local';
-import logger from './logger';
-import Registry from './domain/registry';
 import strings from '../resources';
+import Local from './domain/local';
+import Registry from './domain/registry';
+import logger from './logger';
 import validateCommand from './validate-command';
 
 import clean from './facade/clean';
@@ -80,7 +80,7 @@ function processCommand(
   cli.command(
     command.cmd || commandName,
     command.description,
-    yargs => {
+    (yargs) => {
       yargs.usage(command.usage);
 
       if (command.options) {
@@ -89,7 +89,7 @@ function processCommand(
 
       if (command.commands) {
         yargs
-          .check(argv => validateCommand(argv, level))
+          .check((argv) => validateCommand(argv, level))
           .epilogue(strings.messages.cli.HELP_HINT);
 
         const newPrefix = (prefix ? prefix + '-' : '') + commandName + '-';
@@ -114,7 +114,7 @@ function processCommand(
 
       return yargs;
     },
-    options => {
+    (options) => {
       // @ts-ignore not callable
       facade(options).catch(() => {
         process.exit(1);
@@ -123,13 +123,13 @@ function processCommand(
   );
 }
 
-Object.entries(commands.commands).forEach(([commandName, command]) => {
+for (const [commandName, command] of Object.entries(commands.commands)) {
   processCommand(command, commandName, cli);
-});
+}
 
 const argv = cli
   .completion()
-  .check(argv => validateCommand(argv, 0))
+  .check((argv) => validateCommand(argv, 0))
   .usage(commands.usage)
   .epilogue(strings.messages.cli.HELP_HINT)
   .help('h')

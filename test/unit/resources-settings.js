@@ -1,12 +1,10 @@
-'use strict';
-
 const expect = require('chai').expect;
 
 describe('resources : settings', () => {
   const settings = require('../../dist/resources/settings').default;
 
   describe('files to watch ignore regex', () => {
-    const execute = fileName => {
+    const execute = (fileName) => {
       const regex = settings.filesToIgnoreOnDevWatch;
       return regex.test(fileName) === true;
     };

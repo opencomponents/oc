@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from 'express';
-import { PackageJson } from 'type-fest';
-import { StorageAdapter } from 'oc-storage-adapters-utils';
+import type { NextFunction, Request, Response } from 'express';
+import type { StorageAdapter } from 'oc-storage-adapters-utils';
+import type { PackageJson } from 'type-fest';
 
 export interface Author {
   email?: string;
@@ -249,7 +249,6 @@ export interface Plugin<T = any> {
 }
 
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Response {
       conf: Config;

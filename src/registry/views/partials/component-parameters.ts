@@ -1,9 +1,9 @@
-import { Component, OcParameter } from '../../../types';
+import type { Component, OcParameter } from '../../../types';
 
 const componentParameters =
   ({ component }: { component: Component }) =>
   (): string => {
-    let parameters = `<h3>Parameters</h3>`;
+    let parameters = '<h3>Parameters</h3>';
 
     if (!component.oc.parameters) {
       return `${parameters}<p class="w-100">none</p>`;
@@ -34,7 +34,7 @@ const componentParameters =
     };
 
     const rows = Object.keys(component.oc.parameters)
-      .map(parameterName =>
+      .map((parameterName) =>
         parameterRow(component.oc.parameters[parameterName], parameterName)
       )
       .join('');

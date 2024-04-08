@@ -1,16 +1,13 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-'use strict';
-
-const path = require('path');
+const path = require('node:path');
 const simpleGit = require('simple-git');
 const git = simpleGit(path.join(__dirname, '..'));
-const fs = require('fs');
+const fs = require('node:fs');
 
 const utils = {
-  formatPrs: commits => {
+  formatPrs: (commits) => {
     const result = [];
 
-    commits.forEach(commit => {
+    for (const commit of commits) {
       const commitMessages = commit.message.split('Merge pull request');
       const isPr = commitMessages.length > 1;
       const isSquashedPr = !!commit.message.match(/(.*?)\(#(.*?)\)/g);
@@ -43,11 +40,11 @@ const utils = {
           `- [#${prNumber}](https://github.com/opencomponents/oc/pull/${prNumber}) ${commitMessage}`
         );
       }
-    });
+    }
 
     return result;
   },
-  getFirstCommitHash: cb => {
+  getFirstCommitHash: (cb) => {
     git.log(['--reverse'], (err, changes) => {
       if (err) {
         cb(err, null);

@@ -1,8 +1,8 @@
 import basicAuth from 'basic-auth-connect';
-import { RequestHandler } from 'express';
+import type { RequestHandler } from 'express';
 
 import strings from '../../resources/';
-import { Authentication, PublishAuthConfig } from '../../types';
+import type { Authentication, PublishAuthConfig } from '../../types';
 
 const basicAuthentication: Authentication<{
   username: string;

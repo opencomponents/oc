@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
-import { IncomingHttpHeaders } from 'http';
+import type { IncomingHttpHeaders } from 'node:http';
+import url from 'node:url';
+import type { Request, Response } from 'express';
 import request from 'minimal-request';
-import url from 'url';
-import { Component, Config } from '../../../types';
+import type { Component, Config } from '../../../types';
 import * as urlBuilder from '../../domain/url-builder';
-import { GetComponentResult } from './get-component';
+import type { GetComponentResult } from './get-component';
 
 type ComponentCallback = (
   err: { registryError: any; fallbackError: any } | null,
@@ -80,7 +80,7 @@ export function getComponent(
   component: { name: string; version: string; parameters: IncomingHttpHeaders },
   callback: (result: GetComponentResult) => void
 ): void {
-  return request(
+  request(
     {
       method: 'post',
       url: fallbackRegistryUrl,

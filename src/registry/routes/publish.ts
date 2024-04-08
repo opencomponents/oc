@@ -1,11 +1,11 @@
-import { Request, Response } from 'express';
-import extractPackage from '../domain/extract-package';
+import type { Request, Response } from 'express';
 import strings from '../../resources/index';
-import * as validator from '../domain/validators';
+import extractPackage from '../domain/extract-package';
 import type { Repository } from '../domain/repository';
+import * as validator from '../domain/validators';
 
 export default function publish(repository: Repository) {
-  return async function (req: Request, res: Response): Promise<void> {
+  return async (req: Request, res: Response): Promise<void> => {
     if (!req.params['componentName'] || !req.params['componentVersion']) {
       res.errorDetails = 'malformed request';
       res.status(409).json({ error: res.errorDetails });

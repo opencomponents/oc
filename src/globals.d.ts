@@ -97,7 +97,7 @@ declare module 'minimal-request' {
     ) => void
   ): void;
 
-  const request: Request;
+  const req: Request;
 
   export = request;
 }

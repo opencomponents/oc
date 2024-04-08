@@ -1,4 +1,4 @@
-import { VM } from '../../../types';
+import type { VM } from '../../../types';
 
 export default function componentsHistory(vm: VM): string {
   const componentRow = ({
@@ -14,7 +14,9 @@ export default function componentsHistory(vm: VM): string {
   }) => {
     return `<a href="${name}/${version}/~info">
   <div class="componentRow row table">
-    <p class="release">${publishDate} - Published ${name}@${version}${templateSize ? ` [${Math.round(templateSize / 1024)} kb]` : ''}</p>
+    <p class="release">${publishDate} - Published ${name}@${version}${
+      templateSize ? ` [${Math.round(templateSize / 1024)} kb]` : ''
+    }</p>
   </div>
 </a>`;
   };

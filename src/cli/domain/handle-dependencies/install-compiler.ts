@@ -1,9 +1,9 @@
+import strings from '../../../resources/index';
+import type { Template } from '../../../types';
 import cleanRequire from '../../../utils/clean-require';
 import isTemplateValid from '../../../utils/is-template-valid';
 import * as npm from '../../../utils/npm-utils';
-import strings from '../../../resources/index';
-import { Logger } from '../../logger';
-import { Template } from '../../../types';
+import type { Logger } from '../../logger';
 
 export default async function installCompiler(options: {
   compilerPath: string;

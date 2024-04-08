@@ -1,19 +1,17 @@
-'use strict';
-
 const expect = require('chai').expect;
 const sinon = require('sinon');
 const injectr = require('injectr');
 
 describe('cli : domain : init-template', () => {
   let error;
-  const initialise = stubs => cb => {
+  const initialise = (stubs) => (cb) => {
     const initTemplate = injectr(
       '../../dist/cli/domain/init-template/index.js',
       {
         'fs-extra': {
           ensureDir: stubs.fsExtraStub
         },
-        path: { join: (...args) => args.join('/') },
+        'node:path': { join: (...args) => args.join('/') },
         './install-template': stubs.installTemplateStub,
         '../../../utils/npm-utils': {
           init: stubs.npmStub
@@ -31,7 +29,9 @@ describe('cli : domain : init-template', () => {
     };
 
     initTemplate(options)
-      .catch(err => (error = err))
+      .catch((err) => {
+        error = err;
+      })
       .finally(cb);
   };
 

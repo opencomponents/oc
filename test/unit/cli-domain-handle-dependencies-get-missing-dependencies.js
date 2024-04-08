@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
@@ -23,7 +21,7 @@ describe('cli : domain : handle-dependencies - get-missing-dependencies', () => 
     }
   ];
 
-  scenarios.forEach(scenario => {
+  for (const scenario of scenarios) {
     const { dependencies, installed, output } = scenario;
     describe(`When dependencies: ${JSON.stringify(
       dependencies
@@ -33,11 +31,11 @@ describe('cli : domain : handle-dependencies - get-missing-dependencies', () => 
       const getMissingDependencies = injectr(
         '../../dist/cli/domain/handle-dependencies/get-missing-dependencies.js',
         {
-          '../../../utils/module-exists': name => {
+          '../../../utils/module-exists': (name) => {
             moduleExistsSpy(name);
             return installed[name];
           },
-          path: {
+          'node:path': {
             resolve: (...args) => {
               pathResolveSpy(...args);
               return args[args.length - 1];
@@ -60,5 +58,5 @@ describe('cli : domain : handle-dependencies - get-missing-dependencies', () => 
         });
       });
     });
-  });
+  }
 });

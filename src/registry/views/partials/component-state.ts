@@ -1,4 +1,4 @@
-import { Component } from '../../../types';
+import type { Component } from '../../../types';
 
 const componentState =
   ({ component }: { component: Component }) =>

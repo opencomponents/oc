@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const sinon = require('sinon');
 const settings = require('../../dist/resources/settings').default;
@@ -18,7 +16,7 @@ describe('registry : routes : components', () => {
     'oc-template-handlebars': require('oc-template-handlebars')
   };
 
-  const initialise = function (params) {
+  const initialise = (params) => {
     mockedRepository = {
       getCompiledView: sinon.stub().resolves(params.view),
       getComponent: sinon.stub().resolves(params.package),
@@ -37,12 +35,12 @@ describe('registry : routes : components', () => {
           externals: []
         }
       ]),
-      getTemplate: type => templates[type],
+      getTemplate: (type) => templates[type],
       getStaticFilePath: sinon.stub().returns('//my-cdn.com/files/')
     };
   };
 
-  const makeRequest = function (body, headersOrCallback, cb) {
+  const makeRequest = (body, headersOrCallback, cb) => {
     let callback = cb;
     let headers = headersOrCallback;
 
@@ -55,10 +53,10 @@ describe('registry : routes : components', () => {
       { headers, body },
       {
         conf: { baseUrl: 'http://components.com/' },
-        status: function (jsonCode) {
+        status: (jsonCode) => {
           code = jsonCode;
           return {
-            json: function (jsonResponse) {
+            json: (jsonResponse) => {
               response = jsonResponse;
               callback();
             }
@@ -68,15 +66,15 @@ describe('registry : routes : components', () => {
     );
   };
 
-  const makeInfoRequest = function (body, cb) {
+  const makeInfoRequest = (body, cb) => {
     componentsRoute(
       { headers: { accept: 'application/vnd.oc.info+json' }, body: body },
       {
         conf: { baseUrl: 'http://components.com/' },
-        status: function (jsonCode) {
+        status: (jsonCode) => {
           code = jsonCode;
           return {
-            json: function (jsonResponse) {
+            json: (jsonResponse) => {
               response = jsonResponse;
               cb();
             }
@@ -87,7 +85,7 @@ describe('registry : routes : components', () => {
   };
 
   describe('when making valid request for two components', () => {
-    before(done => {
+    before((done) => {
       initialise(mockedComponents['async-error2-component']);
       componentsRoute = ComponentsRoute({}, mockedRepository);
 
@@ -152,7 +150,7 @@ describe('registry : routes : components', () => {
   });
 
   describe('when making request for 0 components', () => {
-    before(done => {
+    before((done) => {
       makeRequest({ components: [] }, done);
     });
 
@@ -166,7 +164,7 @@ describe('registry : routes : components', () => {
   });
 
   describe('when making valid info request for two components', () => {
-    before(done => {
+    before((done) => {
       initialise(mockedComponents['async-error2-component']);
       componentsRoute = ComponentsRoute({}, mockedRepository);
 
@@ -222,7 +220,7 @@ describe('registry : routes : components', () => {
   });
 
   describe('when making info request for 0 components', () => {
-    before(done => {
+    before((done) => {
       makeInfoRequest({ components: [] }, done);
     });
 
@@ -237,7 +235,7 @@ describe('registry : routes : components', () => {
 
   describe('when making not valid request', () => {
     describe('when not providing components property', () => {
-      before(done => {
+      before((done) => {
         makeRequest({}, done);
       });
 
@@ -254,7 +252,7 @@ describe('registry : routes : components', () => {
     });
 
     describe('when components property is not an array', () => {
-      before(done => {
+      before((done) => {
         makeRequest({ components: {} }, done);
       });
 
@@ -271,7 +269,7 @@ describe('registry : routes : components', () => {
     });
 
     describe('when component does not have name property', () => {
-      before(done => {
+      before((done) => {
         makeRequest(
           {
             components: [
@@ -298,7 +296,7 @@ describe('registry : routes : components', () => {
     });
 
     describe('when components do not have name property', () => {
-      before(done => {
+      before((done) => {
         makeRequest(
           {
             components: [
@@ -330,7 +328,7 @@ describe('registry : routes : components', () => {
   });
 
   describe('when getting a component that has custom parameters', () => {
-    before(done => {
+    before((done) => {
       initialise(mockedComponents['required-parameter-component']);
       componentsRoute = ComponentsRoute({}, mockedRepository);
 
@@ -366,7 +364,7 @@ describe('registry : routes : components', () => {
   });
 
   describe('when getting a component that has missing required parameters', () => {
-    before(done => {
+    before((done) => {
       initialise(mockedComponents['required-parameter-component']);
       componentsRoute = ComponentsRoute({}, mockedRepository);
 
@@ -401,7 +399,7 @@ describe('registry : routes : components', () => {
   });
 
   describe('when making valid info request for a component action', () => {
-    before(done => {
+    before((done) => {
       initialise(mockedComponents['required-parameter-component']);
       componentsRoute = ComponentsRoute({}, mockedRepository);
 

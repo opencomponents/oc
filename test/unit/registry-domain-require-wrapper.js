@@ -1,7 +1,5 @@
-'use strict';
-
 const expect = require('chai').expect;
-const vm = require('vm');
+const vm = require('node:vm');
 
 describe('registry : domain : require-wrapper', () => {
   const RequireWrapper =

@@ -1,5 +1,3 @@
-'use strict';
-
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
@@ -10,7 +8,7 @@ describe('cli : facade : registry : ls', () => {
   const RegistryFacade = require('../../dist/cli/facade/registry-ls').default;
   const registryFacade = RegistryFacade({ registry: registry, logger: logSpy });
 
-  const execute = function (done) {
+  const execute = (done) => {
     logSpy.err = sinon.spy();
     logSpy.ok = sinon.spy();
     logSpy.warn = sinon.spy();
@@ -18,7 +16,7 @@ describe('cli : facade : registry : ls', () => {
   };
 
   describe('when no registries linked to the app', () => {
-    beforeEach(done => {
+    beforeEach((done) => {
       sinon.stub(registry, 'get').resolves([]);
       execute(done);
     });
@@ -39,7 +37,7 @@ describe('cli : facade : registry : ls', () => {
   });
 
   describe('when registries linked to the app', () => {
-    beforeEach(done => {
+    beforeEach((done) => {
       sinon
         .stub(registry, 'get')
         .resolves([

@@ -1,13 +1,13 @@
-import { Request, RequestHandler, Response } from 'express';
+import type { Request, RequestHandler, Response } from 'express';
 import responseTime from 'response-time';
 
-import eventsHandler, { RequestData } from '../domain/events-handler';
+import eventsHandler, { type RequestData } from '../domain/events-handler';
 
 export default function requestHandler(): RequestHandler {
   return responseTime((req: Request, res: Response, time) => {
     const data: RequestData = {
       body: req.body,
-      duration: parseInt(String(time * 1000)),
+      duration: Number.parseInt(String(time * 1000)),
       headers: req.headers,
       method: req.method,
       path: req.path,
