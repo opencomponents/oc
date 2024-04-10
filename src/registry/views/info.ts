@@ -44,7 +44,8 @@ function statsJs(name: string, componentDetail: ComponentDetail) {
       label: "${name}",
       data: dataPoints,
       tension: 0.1,
-      borderWidth: 1
+      borderWidth: 1,
+      backgroundColor: "#FF8C00",
     }
   
     new Chart(ctx, {
@@ -80,6 +81,7 @@ function statsJs(name: string, componentDetail: ComponentDetail) {
             }
           },
           y: {
+            beginAtZero: true,
             display: true,
             title: {
               display: true,
