@@ -98,7 +98,7 @@
     "multer": "^1.4.3",
     "nice-cache": "^0.0.5",
     "oc-client": "^4.0.1",
-    "oc-client-browser": "^1.7.11",
+    "oc-client-browser": "^1.7.12",
     "oc-empty-response-handler": "^1.0.2",
     "oc-get-unix-utc-timestamp": "^1.0.6",
     "oc-s3-storage-adapter": "^2.1.1",
