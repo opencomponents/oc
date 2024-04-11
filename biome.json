@@ -13,7 +13,9 @@
   "files": {
     "ignore": [
       "src/components/oc-client/*",
-      "test/fixtures/*"
+      "test/fixtures/*",
+      "package.json",
+      "biome.json"
     ]
   },
   "linter": {
