@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.53
+- [#1365](https://github.com/opencomponents/oc/pull/1365) update oc-client to 1.7.12
+
 ### v0.49.52
 - [#1364](https://github.com/opencomponents/oc/pull/1364) Move to Biome
 
