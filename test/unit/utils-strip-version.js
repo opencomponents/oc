@@ -22,6 +22,16 @@ describe('utils : stripVersion', () => {
         expect(name).to.equal(path.join('/path/to/dependency'));
       });
     });
+
+    describe('when an aliased version is included', () => {
+      const name = stripVersion(
+        dependency + '@npm:dummy/another_package@1.2.3'
+      );
+
+      it('should return the aliased dependency', () => {
+        expect(name).to.equal(path.join('dummy/another_package'));
+      });
+    });
   });
 
   describe('when a scoped dependency is provided', () => {
@@ -40,6 +50,16 @@ describe('utils : stripVersion', () => {
 
       it('should return the unmodified dependency', () => {
         expect(name).to.equal(path.join('/path/to/@the-scoped/package'));
+      });
+    });
+
+    describe('when an aliased version is included', () => {
+      const name = stripVersion(
+        dependency + '@npm:@the-scoped/another_package@1.2.3'
+      );
+
+      it('should return the aliased dependency', () => {
+        expect(name).to.equal(path.join('@the-scoped/another_package'));
       });
     });
   });
