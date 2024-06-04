@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.54
+- [#1368](https://github.com/opencomponents/oc/pull/1368) update adapters
+
 ### v0.49.53
 - [#1365](https://github.com/opencomponents/oc/pull/1365) update oc-client to 1.7.12
 
