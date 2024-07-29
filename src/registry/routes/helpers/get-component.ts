@@ -550,8 +550,8 @@ export default function getComponent(conf: Config, repository: Repository) {
                     console: conf.local ? console : noopConsole,
                     setTimeout,
                     Buffer,
-                    AbortController,
-                    AbortSignal,
+                    AbortController: globalThis?.AbortController,
+                    AbortSignal: globalThis?.AbortSignal,
                     eval: undefined,
                     fetch: globalThis?.fetch
                   };
