@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.55
+- [#1369](https://github.com/opencomponents/oc/pull/1369) add AbortController to the globals
+
 ### v0.49.54
 - [#1368](https://github.com/opencomponents/oc/pull/1368) update adapters
 
