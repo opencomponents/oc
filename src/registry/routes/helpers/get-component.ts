@@ -551,6 +551,7 @@ export default function getComponent(conf: Config, repository: Repository) {
                     setTimeout,
                     Buffer,
                     AbortController,
+                    AbortSignal,
                     eval: undefined,
                     fetch: globalThis?.fetch
                   };
