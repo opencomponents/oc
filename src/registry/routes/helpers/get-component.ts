@@ -550,6 +550,7 @@ export default function getComponent(conf: Config, repository: Repository) {
                     console: conf.local ? console : noopConsole,
                     setTimeout,
                     Buffer,
+                    AbortController,
                     eval: undefined,
                     fetch: globalThis?.fetch
                   };
