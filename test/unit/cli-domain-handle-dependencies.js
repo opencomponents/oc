@@ -37,14 +37,15 @@ describe('cli : domain : handle-dependencies', () => {
     let spies;
     let error;
     let result;
-    beforeEach((done) => {
+    let handleDependencies;
+    beforeEach(() => {
       spies = {
         ensureCompilerIsDeclaredAsDevDependency: sinon.spy(),
         getCompiler: sinon.spy(),
         installMissingDependencies: sinon.spy()
       };
 
-      const handleDependencies = injectr(
+      handleDependencies = injectr(
         '../../dist/cli/domain/handle-dependencies/index.js',
         {
           'fs-extra': {
@@ -72,71 +73,101 @@ describe('cli : domain : handle-dependencies', () => {
         ok: sinon.spy(),
         warn: sinon.spy()
       };
+    });
 
-      handleDependencies({ components: Object.keys(components), logger })
-        .then((res) => {
-          result = res;
+    describe('when packaging', () => {
+      beforeEach((done) => {
+        handleDependencies({
+          components: Object.keys(components),
+          logger,
+          install: true
         })
-        .catch((err) => {
-          error = err;
+          .then((res) => {
+            result = res;
+          })
+          .catch((err) => {
+            error = err;
+          })
+          .finally(done);
+      });
+
+      it('should return no error', () => {
+        expect(error).to.be.undefined;
+      });
+
+      it('should return modules plus the node.js core modules', () => {
+        expect(result.modules).to.deep.equal(
+          [...coreModules, ...['lodash', 'moment']].sort()
+        );
+      });
+
+      it('should return templates', () => {
+        expect(result.templates.length).to.equal(3);
+        expect(result.templates).to.deep.equal([
+          { thisIsACompiler: true },
+          { thisIsACompiler: true },
+          { thisIsACompiler: true }
+        ]);
+      });
+
+      it('should log progress', () => {
+        expect(logger.warn.args[0][0]).to.equal(
+          'Ensuring dependencies are loaded...'
+        );
+      });
+
+      it('should make sure compilers are declared as devDependencies', () => {
+        const args = spies.ensureCompilerIsDeclaredAsDevDependency.args;
+        expect(args.length).to.equal(3);
+        expect(args[0][0].pkg).to.deep.equal(
+          components['/path/to/components/handlebars']
+        );
+        expect(args[1][0].pkg).to.deep.equal(
+          components['/path/to/components/jade']
+        );
+        expect(args[2][0].pkg).to.deep.equal(
+          components['/path/to/components/react']
+        );
+      });
+
+      it('should fetch the compilers', () => {
+        const args = spies.getCompiler.args;
+        expect(args.length).to.equal(3);
+        expect(args[0][0].compilerDep).to.equal(
+          'oc-template-handlebars-compiler'
+        );
+        expect(args[1][0].compilerDep).to.equal('oc-template-jade-compiler');
+        expect(args[2][0].compilerDep).to.equal('oc-template-react-compiler');
+      });
+
+      it('should install the dependencies if missing', () => {
+        const args = spies.installMissingDependencies.args;
+        expect(args[0][0].dependencies).to.deep.equal({
+          lodash: '1.2.3',
+          moment: '2.x.x'
+        });
+      });
+    });
+
+    describe('when in dev mode', () => {
+      beforeEach((done) => {
+        handleDependencies({
+          components: Object.keys(components),
+          logger,
+          install: false
         })
-        .finally(done);
-    });
+          .then((res) => {
+            result = res;
+          })
+          .catch((err) => {
+            error = err;
+          })
+          .finally(done);
+      });
 
-    it('should return no error', () => {
-      expect(error).to.be.undefined;
-    });
-
-    it('should return modules plus the node.js core modules', () => {
-      expect(result.modules).to.deep.equal(
-        [...coreModules, ...['lodash', 'moment']].sort()
-      );
-    });
-
-    it('should return templates', () => {
-      expect(result.templates.length).to.equal(3);
-      expect(result.templates).to.deep.equal([
-        { thisIsACompiler: true },
-        { thisIsACompiler: true },
-        { thisIsACompiler: true }
-      ]);
-    });
-
-    it('should log progress', () => {
-      expect(logger.warn.args[0][0]).to.equal(
-        'Ensuring dependencies are loaded...'
-      );
-    });
-
-    it('should make sure compilers are declared as devDependencies', () => {
-      const args = spies.ensureCompilerIsDeclaredAsDevDependency.args;
-      expect(args.length).to.equal(3);
-      expect(args[0][0].pkg).to.deep.equal(
-        components['/path/to/components/handlebars']
-      );
-      expect(args[1][0].pkg).to.deep.equal(
-        components['/path/to/components/jade']
-      );
-      expect(args[2][0].pkg).to.deep.equal(
-        components['/path/to/components/react']
-      );
-    });
-
-    it('should fetch the compilers', () => {
-      const args = spies.getCompiler.args;
-      expect(args.length).to.equal(3);
-      expect(args[0][0].compilerDep).to.equal(
-        'oc-template-handlebars-compiler'
-      );
-      expect(args[1][0].compilerDep).to.equal('oc-template-jade-compiler');
-      expect(args[2][0].compilerDep).to.equal('oc-template-react-compiler');
-    });
-
-    it('should install the dependencies if missing', () => {
-      const args = spies.installMissingDependencies.args;
-      expect(args[0][0].dependencies).to.deep.equal({
-        lodash: '1.2.3',
-        moment: '2.x.x'
+      it('should not install the dependencies if missing', () => {
+        const args = spies.installMissingDependencies.args;
+        expect(args).to.deep.equal([]);
       });
     });
   });

@@ -141,6 +141,7 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
         logger.log(colors.green('├── ') + component);
       }
       const dependencies = await handleDependencies({
+        install: true,
         components,
         logger
       }).catch((err) => {

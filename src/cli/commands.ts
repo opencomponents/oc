@@ -107,12 +107,6 @@ export default {
           boolean: true,
           description: 'Create zipped file',
           default: false
-        },
-        useComponentDependencies: {
-          boolean: true,
-          description:
-            'Reuse already installed dependencies to save packaging time and network bandwidth',
-          default: false
         }
       },
       description: 'Create the packaged component ready to be published',

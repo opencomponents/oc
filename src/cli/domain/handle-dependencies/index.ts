@@ -9,7 +9,6 @@ import type { Logger } from '../../logger';
 import ensureCompilerIsDeclaredAsDevDependency from './ensure-compiler-is-declared-as-devDependency';
 import getCompiler from './get-compiler';
 import installMissingDependencies from './install-missing-dependencies';
-import linkMissingDependencies from './link-missing-dependencies';
 
 const getComponentPackageJson = (componentPath: string): Promise<Component> =>
   fs.readJson(path.join(componentPath, 'package.json'));
@@ -19,14 +18,14 @@ const union = (a: ReadonlyArray<string>, b: ReadonlyArray<string>) => [
 ];
 
 export default async function handleDependencies(options: {
+  install?: boolean;
   components: string[];
   logger: Logger;
-  useComponentDependencies?: boolean;
 }): Promise<{
   modules: string[];
   templates: Array<Template>;
 }> {
-  const { components, logger, useComponentDependencies } = options;
+  const { components, logger } = options;
 
   const dependencies: Record<string, string> = {};
   const addDependencies = (componentDependencies?: Record<string, string>) => {
@@ -80,15 +79,9 @@ export default async function handleDependencies(options: {
     modules: union(coreModules, Object.keys(dependencies)).sort(),
     templates: Object.values(templates)
   };
-  if (useComponentDependencies) {
-    linkMissingDependencies({
-      componentPath: components[0],
-      dependencies,
-      logger
-    });
-    return result;
-  }
 
-  await installMissingDependencies({ dependencies, logger });
+  if (options.install) {
+    await installMissingDependencies({ dependencies, logger });
+  }
   return result;
 }
