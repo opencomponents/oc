@@ -10,11 +10,9 @@ const cliPackage = ({ local, logger }: { local: Local; logger: Logger }) =>
   fromPromise(
     async (opts: {
       componentPath: string;
-      useComponentDependencies?: boolean;
       compress?: boolean;
     }): Promise<Component> => {
       const componentPath = opts.componentPath;
-      const useComponentDependencies = opts.useComponentDependencies;
       const packageDir = path.resolve(componentPath, '_package');
       const compressedPackagePath = path.resolve(
         componentPath,
@@ -25,8 +23,7 @@ const cliPackage = ({ local, logger }: { local: Local; logger: Logger }) =>
       try {
         await handleDependencies({
           components: [path.resolve(componentPath)],
-          logger,
-          useComponentDependencies
+          logger
         });
 
         const packageOptions = {
