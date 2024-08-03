@@ -14,7 +14,8 @@ describe('cli : domain : init-template', () => {
         'node:path': { join: (...args) => args.join('/') },
         './install-template': stubs.installTemplateStub,
         '../../../utils/npm-utils': {
-          init: stubs.npmStub
+          init: stubs.npmStub,
+          installDependencies: stubs.npmStub
         },
         './scaffold': stubs.scaffoldStub
       }
@@ -82,6 +83,14 @@ describe('cli : domain : init-template', () => {
       expect(o.componentName).to.equal('new-component');
       expect(o.componentPath).to.equal('path/to/new-component');
       expect(o.templateType).to.equal('oc-template-react');
+    });
+
+    it('should call npm install with correct parameters', () => {
+      expect(npmStub.args[1][0]).to.deep.equal({
+        installPath: 'path/to/new-component',
+        silent: true,
+        usePrefix: true
+      });
     });
   });
 
