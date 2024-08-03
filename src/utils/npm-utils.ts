@@ -4,6 +4,7 @@ import stripVersion from './strip-version';
 
 const buildInstallCommand = (options: {
   installPath: string;
+  all?: boolean;
   save?: boolean;
   isDev?: boolean;
   usePrefix: boolean;
@@ -13,6 +14,8 @@ const buildInstallCommand = (options: {
   if (options.usePrefix) {
     args.push('--prefix', options.installPath);
   }
+
+  if (options.all) return args;
 
   if (options.save) {
     args.push('--save-exact');
@@ -66,22 +69,26 @@ export const init = (options: {
 };
 
 export const installDependencies = async (options: {
-  dependencies: string[];
+  dependencies?: string[];
   installPath: string;
   silent: boolean;
   usePrefix: boolean;
 }): Promise<{ dest: string[] }> => {
   const { dependencies, installPath, silent } = options;
-  const npmi = buildInstallCommand(options);
+  const npmi = buildInstallCommand({
+    ...options,
+    all: !dependencies?.length
+  });
   const cmdOptions = {
-    command: [...npmi, ...dependencies],
+    command: [...npmi, ...(dependencies ?? [])],
     path: installPath,
     silent
   };
 
-  const dest = dependencies.map((dependency) =>
-    getFullPath({ installPath, dependency })
-  );
+  const dest =
+    dependencies?.map((dependency) =>
+      getFullPath({ installPath, dependency })
+    ) ?? [];
 
   await executeCommand(cmdOptions);
 

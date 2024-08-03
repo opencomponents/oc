@@ -21,6 +21,11 @@ export default async function initTemplate(options: {
   await npm.init(npmOptions);
   await installTemplate(options);
   await scaffold(Object.assign(options, { compilerPath }));
+  await npm.installDependencies({
+    installPath: componentPath,
+    silent: true,
+    usePrefix: true
+  });
 
   return { ok: true };
 }
