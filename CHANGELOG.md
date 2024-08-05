@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.57
+- [#1374](https://github.com/opencomponents/oc/pull/1374) serve client dev
+
 ### v0.49.56
 - [#1372](https://github.com/opencomponents/oc/pull/1372) npm install after oc init
 - [#1371](https://github.com/opencomponents/oc/pull/1371) dont install when packaging at all
