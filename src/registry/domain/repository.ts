@@ -268,11 +268,11 @@ export default function repository(conf: Config) {
 
       return dotenv.parse(file);
     },
-    getStaticClientPath: (): string =>
+    getStaticClientPath: (dev?: boolean): string =>
       `${options!['path']}${getFilePath(
         'oc-client',
         packageInfo.version,
-        'src/oc-client.min.js'
+        dev ? 'src/oc-client.js' : 'src/oc-client.min.js'
       )}`,
 
     getStaticClientMapPath: (): string =>

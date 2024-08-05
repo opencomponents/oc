@@ -33,6 +33,7 @@ export function create(app: Express, conf: Config, repository: Repository) {
   }
 
   app.get(`${prefix}oc-client/client.js`, routes.staticRedirector);
+  app.get(`${prefix}oc-client/client.dev.js`, routes.staticRedirector);
   app.get(`${prefix}oc-client/oc-client.min.map`, routes.staticRedirector);
 
   app.get(`${prefix}~registry/plugins`, routes.plugins);
