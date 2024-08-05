@@ -35,6 +35,7 @@ describe('cli : facade : registry : add', () => {
       execute(done);
     });
 
+    // biome-ignore lint/suspicious/noDuplicateTestHooks: <explanation>
     beforeEach(() => {
       registry.add.restore();
     });

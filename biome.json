@@ -5,7 +5,7 @@
   },
   "javascript": {
     "formatter": {
-      "trailingComma": "none",
+      "trailingCommas": "none",
       "indentStyle": "space",
       "quoteStyle": "single"
     }
@@ -23,7 +23,8 @@
     "rules": {
       "recommended": true,
       "complexity": {
-        "useLiteralKeys": "off"
+        "useLiteralKeys": "off",
+        "noExcessiveNestedTestSuites": "off"
       },
       "style": {
         "noParameterAssign": "off",
