@@ -9,11 +9,12 @@ export default function staticRedirector(repository: Repository) {
   return (req: Request, res: Response): void => {
     let filePath: string;
     const clientPath = `${res.conf.prefix || '/'}oc-client/client.js`;
+    const devClientPath = `${res.conf.prefix || '/'}oc-client/client.dev.js`;
     const clientMapPath = `${
       res.conf.prefix || '/'
     }oc-client/oc-client.min.map`;
 
-    if (req.route.path === clientPath) {
+    if (req.route.path === clientPath || req.route.path === devClientPath) {
       if (res.conf.local) {
         if (res.conf.compiledClient) {
           res.type('application/javascript');
@@ -27,10 +28,16 @@ export default function staticRedirector(repository: Repository) {
       } else {
         if (res.conf.compiledClient) {
           res.type('application/javascript');
-          res.send(res.conf.compiledClient.code);
+          res.send(
+            req.route.path === clientPath
+              ? res.conf.compiledClient.code
+              : res.conf.compiledClient.dev
+          );
           return;
         }
-        res.redirect(repository.getStaticClientPath());
+        res.redirect(
+          repository.getStaticClientPath(req.route.path === devClientPath)
+        );
         return;
       }
     } else if (req.route.path === clientMapPath) {
