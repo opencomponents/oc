@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.49.56
+- [#1372](https://github.com/opencomponents/oc/pull/1372) npm install after oc init
+- [#1371](https://github.com/opencomponents/oc/pull/1371) dont install when packaging at all
+
 ### v0.49.55
 - [#1369](https://github.com/opencomponents/oc/pull/1369) add AbortController to the globals
 
