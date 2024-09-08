@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.58
+- [#1375](https://github.com/opencomponents/oc/pull/1375) compress compiled client
+
 ### v0.49.57
 - [#1374](https://github.com/opencomponents/oc/pull/1374) serve client dev
 
