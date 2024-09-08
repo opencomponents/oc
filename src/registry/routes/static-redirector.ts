@@ -4,6 +4,7 @@ import fs from 'fs-extra';
 
 import * as storageUtils from 'oc-storage-adapters-utils';
 import type { Repository } from '../domain/repository';
+import compress from '../middleware/compression';
 
 export default function staticRedirector(repository: Repository) {
   return (req: Request, res: Response): void => {
@@ -28,11 +29,19 @@ export default function staticRedirector(repository: Repository) {
       } else {
         if (res.conf.compiledClient) {
           res.type('application/javascript');
-          res.send(
-            req.route.path === clientPath
-              ? res.conf.compiledClient.code
-              : res.conf.compiledClient.dev
-          );
+          if (req.route.path === clientPath) {
+            compress(
+              {
+                uncompressed: res.conf.compiledClient.code.minified,
+                brotli: res.conf.compiledClient.code.brotli,
+                gzip: res.conf.compiledClient.code.gzip
+              },
+              req,
+              res
+            );
+          } else {
+            res.send(res.conf.compiledClient.dev);
+          }
           return;
         }
         res.redirect(
