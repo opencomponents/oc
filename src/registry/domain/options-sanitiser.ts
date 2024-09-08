@@ -1,3 +1,4 @@
+import zlib from 'node:zlib';
 import { compileSync } from 'oc-client-browser';
 import settings from '../../resources/settings';
 import type { Config } from '../../types';
@@ -68,10 +69,26 @@ export default function optionsSanitiser(input: RegistryOptions): Config {
     const clientOptions =
       typeof options.compileClient === 'boolean' ? {} : options.compileClient;
 
-    options.compiledClient = compileSync({
+    const compiled = compileSync({
       templates: options.templates,
       ...clientOptions
     });
+    const minified = compiled.code;
+    const brotli = zlib.brotliCompressSync(minified, {
+      params: {
+        [zlib.constants.BROTLI_PARAM_QUALITY]: 1,
+        [zlib.constants.BROTLI_PARAM_SIZE_HINT]: minified.length
+      }
+    });
+    const gzip = zlib.gzipSync(minified, { level: 7 });
+    options.compiledClient = {
+      ...compiled,
+      code: {
+        minified,
+        gzip,
+        brotli
+      }
+    };
   }
 
   if (!options.dependencies) {

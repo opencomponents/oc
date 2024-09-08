@@ -151,7 +151,11 @@ export type PublishAuthConfig =
 
 export interface Config<T = any> {
   baseUrl: string;
-  compiledClient?: { code: string; map: string; dev: string };
+  compiledClient?: {
+    code: { gzip: Buffer; brotli: Buffer; minified: string };
+    map: string;
+    dev: string;
+  };
   baseUrlFunc?: (opts: { host?: string; secure: boolean }) => string;
   beforePublish: (req: Request, res: Response, next: NextFunction) => void;
   customHeadersToSkipOnWeakVersion: string[];
