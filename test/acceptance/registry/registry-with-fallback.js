@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 const path = require('node:path');
-const got = require('got');
+const { request } = require('undici');
 
 describe('registry', () => {
   describe('when fallbackRegistryUrl is specified', () => {
@@ -28,8 +28,8 @@ describe('registry', () => {
 
     const next = (promise, done) => {
       promise
-        .then((r) => {
-          result = JSON.parse(r.body);
+        .then(async (r) => {
+          result = await r.body.json();
         })
         .finally(done);
     };
@@ -61,7 +61,7 @@ describe('registry', () => {
 
     describe('GET /welcome', () => {
       before((done) => {
-        next(got('http://localhost:3030/welcome'), done);
+        next(request('http://localhost:3030/welcome'), done);
       });
 
       it('should respond with the local registry url', () => {
@@ -75,7 +75,7 @@ describe('registry', () => {
 
     describe('GET /fallback-hello-world', () => {
       before((done) => {
-        next(got('http://localhost:3030/fallback-hello-world'), done);
+        next(request('http://localhost:3030/fallback-hello-world'), done);
       });
 
       it('should respond with the fallback registry url', () => {
@@ -92,7 +92,7 @@ describe('registry', () => {
     describe('GET /fallback-hello-world/~info', () => {
       before((done) => {
         next(
-          got(
+          request(
             'http://localhost:3030/fallback-welcome-with-optional-parameters/~info'
           ),
           done
@@ -111,7 +111,7 @@ describe('registry', () => {
     describe('GET /fallback-hello-world/~preview', () => {
       before((done) => {
         next(
-          got(
+          request(
             'http://localhost:3030/fallback-welcome-with-optional-parameters/~preview'
           ),
           done

@@ -1,7 +1,7 @@
 import path from 'node:path';
 import FormData from 'form-data';
 import fs from 'fs-extra';
-import got from 'got';
+import { request } from 'undici';
 
 async function put(
   urlPath: string,
@@ -19,17 +19,17 @@ async function put(
     form.append(fileName, fs.createReadStream(file));
   }
 
-  const res = await got(urlPath, {
+  const res = await request(urlPath, {
     headers: { ...headers, ...form.getHeaders() },
     method: 'PUT',
     body: form
   });
 
   if (res.statusCode !== 200) {
-    throw res.body;
+    throw res.body.text();
   }
 
-  return res.body;
+  return res.body.text();
 }
 
 export default put;

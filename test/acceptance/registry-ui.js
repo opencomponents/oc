@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
 const oc = require('../../dist/index');
 const path = require('node:path');
-const got = require('got');
+const { request } = require('undici');
 
 describe('registry (ui interface)', () => {
   let registry;
@@ -11,9 +11,9 @@ describe('registry (ui interface)', () => {
 
   const next = (promise, done) => {
     promise
-      .then((r) => {
+      .then(async (r) => {
         headers = r.headers;
-        result = r.body;
+        result = await r.body.text();
       })
       .catch((e) => {
         error = e;
@@ -44,7 +44,7 @@ describe('registry (ui interface)', () => {
   describe('GET / with Accept: text/html', () => {
     before((done) => {
       next(
-        got('http://localhost:3030', {
+        request('http://localhost:3030', {
           headers: { accept: 'text/html' }
         }),
         done
@@ -64,7 +64,7 @@ describe('registry (ui interface)', () => {
   describe('GET /oc-client/~info with Accept: text/html', () => {
     before((done) => {
       next(
-        got('http://localhost:3030/oc-client/~info', {
+        request('http://localhost:3030/oc-client/~info', {
           headers: { accept: 'text/html' }
         }),
         done

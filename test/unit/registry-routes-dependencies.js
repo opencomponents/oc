@@ -9,8 +9,8 @@ describe('registry : routes : plugins', () => {
       name: 'fs',
       link: 'http://link1.com'
     },
-    got: {
-      name: 'got',
+    undici: {
+      name: 'undici',
       version: '1.2.3',
       core: false,
       link: 'http://link2.com'
@@ -37,7 +37,7 @@ describe('registry : routes : plugins', () => {
     before(() => {
       initialise();
       const conf = {
-        dependencies: ['fs', 'got'],
+        dependencies: ['fs', 'undici'],
         discovery: false
       };
       dependenciesRoute = DependenciesRoute(conf);
@@ -54,7 +54,7 @@ describe('registry : routes : plugins', () => {
     before(() => {
       initialise();
       const conf = {
-        dependencies: ['fs', 'got'],
+        dependencies: ['fs', 'undici'],
         discovery: true
       };
       dependenciesRoute = DependenciesRoute(conf);
@@ -65,7 +65,7 @@ describe('registry : routes : plugins', () => {
     it('should return the list of dependencies', () => {
       expect(resJsonStub.args[0][0]).to.eql([
         { name: 'fs', core: true },
-        { name: 'got', core: false, versions: ['1.2.3'] }
+        { name: 'undici', core: false, versions: ['1.2.3'] }
       ]);
     });
   });
