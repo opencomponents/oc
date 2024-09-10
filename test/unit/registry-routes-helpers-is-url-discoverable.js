@@ -8,12 +8,14 @@ describe('registry : routes : helpers : is-url-discoverable', () => {
       const isDiscoverable = injectr(
         '../../dist/registry/routes/helpers/is-url-discoverable.js',
         {
-          got: () =>
-            Promise.resolve({
-              headers: {
-                'content-type': 'application/json; charset=utf-8'
-              }
-            })
+          undici: {
+            request: () =>
+              Promise.resolve({
+                headers: {
+                  'content-type': 'application/json; charset=utf-8'
+                }
+              })
+          }
         }
       ).default;
 
@@ -35,12 +37,14 @@ describe('registry : routes : helpers : is-url-discoverable', () => {
       const isDiscoverable = injectr(
         '../../dist/registry/routes/helpers/is-url-discoverable.js',
         {
-          got: () =>
-            Promise.resolve({
-              headers: {
-                'content-type': 'text/html; charset=utf-8'
-              }
-            })
+          undici: {
+            request: () =>
+              Promise.resolve({
+                headers: {
+                  'content-type': 'text/html; charset=utf-8'
+                }
+              })
+          }
         }
       ).default;
 

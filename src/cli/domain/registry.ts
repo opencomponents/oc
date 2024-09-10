@@ -1,6 +1,6 @@
 import path from 'node:path';
 import fs from 'fs-extra';
-import got from 'got';
+import { request } from 'undici';
 
 import * as urlBuilder from '../../registry/domain/url-builder';
 import settings from '../../resources/settings';
@@ -32,9 +32,11 @@ export default function registry(opts: RegistryOptions = {}) {
         registry += '/';
       }
       try {
-        const apiResponse: { type: string } = await got(registry, {
-          headers: requestsHeaders
-        }).json();
+        const apiResponse: { type: string } = (await (
+          await request(registry, {
+            headers: requestsHeaders
+          })
+        ).body.json()) as any;
 
         if (!apiResponse) throw 'oc registry not available';
         if (apiResponse.type !== 'oc-registry') throw 'not a valid oc registry';
@@ -73,15 +75,15 @@ export default function registry(opts: RegistryOptions = {}) {
       }
     },
     getApiComponentByHref(href: string): Promise<Component> {
-      return got(href + settings.registry.componentInfoPath, {
+      return request(href + settings.registry.componentInfoPath, {
         headers: requestsHeaders
-      }).json();
+      }).then((x) => x.body.json() as any);
     },
     async getComponentPreviewUrlByUrl(componentHref: string): Promise<string> {
-      const res: { requestVersion: string; href: string } = await got(
+      const res: { requestVersion: string; href: string } = await request(
         componentHref,
         { headers: requestsHeaders }
-      ).json();
+      ).then((x) => x.body.json() as any);
 
       const parsed = urlParser.parse(res);
 

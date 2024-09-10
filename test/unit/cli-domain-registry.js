@@ -8,7 +8,7 @@ const getRegistry = (dependencies, opts) => {
   const Registry = injectr(
     '../../dist/cli/domain/registry.js',
     {
-      got: dependencies.got,
+      undici: dependencies.undici,
       'fs-extra': dependencies.fs,
       '../../utils/put': dependencies.put,
       '../domain/url-parser': dependencies.urlParser,
@@ -47,19 +47,23 @@ describe('cli : domain : registry', () => {
   describe('when adding registry', () => {
     describe('when registry does not end with "/"', () => {
       it('should append the slash when doing the request', (done) => {
-        const gotStub = sinon.stub().rejects(new Error('err'));
-        const registry = getRegistry({ got: gotStub });
+        const undiciStub = { request: sinon.stub().rejects(new Error('err')) };
+        const registry = getRegistry({ undici: undiciStub });
 
         registry.add('http://some-api.com/asd').finally(() => {
-          expect(gotStub.getCall(0).args[0]).to.eql('http://some-api.com/asd/');
+          expect(undiciStub.request.getCall(0).args[0]).to.eql(
+            'http://some-api.com/asd/'
+          );
           done();
         });
       });
 
       it('should save the file with slashed url', (done) => {
-        const gotStub = sinon.stub().returns({
-          json: sinon.stub().resolves({ type: 'oc-registry' })
-        });
+        const undiciStub = {
+          request: sinon.stub().resolves({
+            body: { json: sinon.stub().resolves({ type: 'oc-registry' }) }
+          })
+        };
         const fsStub = {
           readJson: sinon.stub(),
           writeJson: sinon.spy()
@@ -68,7 +72,7 @@ describe('cli : domain : registry', () => {
         fsStub.readJson.resolves({});
 
         const registry = getRegistry({
-          got: gotStub,
+          undici: undiciStub,
           fs: fsStub
         });
 
@@ -154,11 +158,15 @@ describe('cli : domain : registry', () => {
     const execute = (href, error, parsed, done) => {
       const registry = getRegistry({
         request: sinon.stub().yields(error, parsed),
-        got: sinon.stub().returns({
-          json: error
-            ? sinon.stub().rejects(error)
-            : sinon.stub().resolves(parsed)
-        }),
+        undici: {
+          request: sinon.stub().resolves({
+            body: {
+              json: error
+                ? sinon.stub().rejects(error)
+                : sinon.stub().resolves(parsed)
+            }
+          })
+        },
         urlParser: {
           parse: sinon.stub().returns(parsed)
         }
