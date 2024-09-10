@@ -237,7 +237,7 @@ export interface Template {
 }
 
 export interface Plugin<T = any> {
-  callback?: (error: unknown) => void;
+  callback?: (error?: unknown) => void;
   description?: string;
   name: string;
   options?: T;

@@ -318,7 +318,7 @@ describe('registry : domain : components-details', () => {
 
       before((done) => {
         stubs = { getJson: sinon.stub() };
-        stubs.getJson.onCall(0).resolves('not found');
+        stubs.getJson.onCall(0).rejects('not found');
         stubs.getJson.onCall(1).resolves({
           oc: { date: 1459864868000, files: { template: { size: 300 } } }
         });

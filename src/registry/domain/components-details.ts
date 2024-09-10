@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import isEqual from 'lodash.isequal';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import type {
@@ -29,18 +29,25 @@ export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
     componentsList: ComponentsList;
     details?: ComponentsDetails;
   }): Promise<ComponentsDetails> => {
-    const details = Object.assign({}, _.cloneDeep(options.details));
-    details.components = details.components || {};
+    const clone =
+      globalThis.structuredClone ||
+      ((data: any) => JSON.parse(JSON.stringify(data)));
+
+    const details = options.details
+      ? clone(options.details)
+      : { components: {} as ComponentsDetails['components'] };
 
     const missing: Array<{ name: string; version: string }> = [];
-    _.each(options.componentsList.components, (versions, name) => {
+    for (const [name, versions] of Object.entries(
+      options.componentsList.components
+    )) {
       details.components[name] = details.components[name] || {};
-      _.each(versions, (version) => {
+      for (const version of versions) {
         if (!details.components[name][version]) {
           missing.push({ name, version });
         }
-      });
-    });
+      }
+    }
 
     const limit = pLimit(cdn.maxConcurrentRequests);
 
@@ -79,7 +86,7 @@ export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
 
     if (
       !jsonDetails ||
-      !_.isEqual(dirDetails.components, jsonDetails.components)
+      !isEqual(dirDetails.components, jsonDetails.components)
     ) {
       await save(dirDetails).catch((err) =>
         returnError('components_details_save', err)

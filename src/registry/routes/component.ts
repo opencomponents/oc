@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { serializeError } from 'serialize-error';
 
 import type { Request, RequestHandler, Response } from 'express';
@@ -25,7 +24,10 @@ export default function component(
       },
       (result) => {
         if (result.response.error) {
-          if (_.isError(result.response.error)) {
+          if (
+            Object.prototype.toString.call(result.response.error) ===
+            '[object Error]'
+          ) {
             result.response.error = serializeError(result.response.error);
           }
           res.errorCode = result.response.code;
@@ -33,7 +35,7 @@ export default function component(
         }
 
         try {
-          if (!_.isEmpty(result.headers)) {
+          if (Object.keys(result.headers ?? {}).length) {
             res.set(result.headers);
           }
 

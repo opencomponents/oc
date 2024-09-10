@@ -1,7 +1,6 @@
 import path from 'node:path';
 import async from 'async';
 import fs from 'fs-extra';
-import _ from 'lodash';
 import parseAuthor from 'parse-author';
 
 import dateStringified from '../../utils/date-stringify';
@@ -74,7 +73,9 @@ export default function (repository: Repository) {
           (err) => {
             if (err) return next(err);
 
-            componentsInfo = _.sortBy(componentsInfo, 'name');
+            componentsInfo = componentsInfo.sort((a, b) =>
+              a.name.localeCompare(b.name)
+            );
             fromPromise(repository.getComponentsDetails)((err, details) => {
               if (err) console.log(err);
               res.send(
@@ -88,11 +89,8 @@ export default function (repository: Repository) {
                     components: componentsInfo,
                     componentsReleases,
                     componentsList: componentsInfo.map((component) => {
-                      const state: 'deprecated' | 'experimental' | '' = _.get(
-                        component,
-                        'oc.state',
-                        ''
-                      );
+                      const state: 'deprecated' | 'experimental' | '' =
+                        component?.oc?.state || '';
                       if (state) {
                         stateCounts[state] = (stateCounts[state] || 0) + 1;
                       }
@@ -118,7 +116,7 @@ export default function (repository: Repository) {
       } else {
         res.status(200).json(
           Object.assign(baseResponse, {
-            components: _.map(components, (component) =>
+            components: components.map((component) =>
               urlBuilder.component(component, res.conf.baseUrl)
             )
           })

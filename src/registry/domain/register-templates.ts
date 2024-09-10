@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import es6Template from 'oc-template-es6';
 import handlebarsTemplate from 'oc-template-handlebars';
 import jadeTemplate from 'oc-template-jade';
@@ -16,7 +15,7 @@ export default function registerTemplates(
     jadeTemplate,
     handlebarsTemplate
   ];
-  const templates = _.union(coreTemplates, extraTemplates);
+  const templates = [...new Set([...coreTemplates, ...(extraTemplates ?? [])])];
   const templatesHash = templates.reduce(
     (hash, template) => {
       const type = template.getInfo().type;

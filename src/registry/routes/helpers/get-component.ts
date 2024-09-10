@@ -1,7 +1,6 @@
 import Domain from 'node:domain';
 import vm from 'node:vm';
 import acceptLanguageParser from 'accept-language-parser';
-import _ from 'lodash';
 import Cache from 'nice-cache';
 import Client from 'oc-client';
 import emptyResponseHandler from 'oc-empty-response-handler';
@@ -56,8 +55,9 @@ export interface GetComponentResult {
   };
 }
 
+const noop = () => {};
 const noopConsole = Object.fromEntries(
-  Object.keys(console).map((key) => [key, _.noop])
+  Object.keys(console).map((key) => [key, noop])
 );
 
 export default function getComponent(conf: Config, repository: Repository) {
@@ -227,13 +227,17 @@ export default function getComponent(conf: Config, repository: Repository) {
           actualVersion: string
         ) => {
           const needFiltering =
-            !_.isEmpty(headers) &&
-            !_.isEmpty(conf.customHeadersToSkipOnWeakVersion) &&
+            Object.keys(headers).length > 0 &&
+            conf.customHeadersToSkipOnWeakVersion?.length > 0 &&
             requestedVersion !== actualVersion;
 
-          return needFiltering
-            ? _.omit(headers, conf.customHeadersToSkipOnWeakVersion)
-            : headers;
+          if (!needFiltering) return headers;
+
+          return Object.fromEntries(
+            Object.entries(headers).filter(
+              ([key]) => !conf.customHeadersToSkipOnWeakVersion.includes(key)
+            )
+          );
         };
 
         const returnComponent = (err: any, data: any) => {
@@ -262,17 +266,14 @@ export default function getComponent(conf: Config, repository: Repository) {
           const parseTemplatesHeader = (t: string) =>
             t.split(';').map((t) => t.split(',')[0]);
           const supportedTemplates = options.headers['templates']
-            ? parseTemplatesHeader(options.headers['templates'] as string)
+            ? parseTemplatesHeader(options.headers['templates'] as string) ?? []
             : [];
 
           const isTemplateSupportedByClient = Boolean(
             isValidClientRequest &&
               options.headers['templates'] &&
-              (_.includes(
-                supportedTemplates,
-                component.oc.files.template.type
-              ) ||
-                _.includes(supportedTemplates, templateType))
+              (supportedTemplates.includes(component.oc.files.template.type) ||
+                supportedTemplates.includes(templateType))
           );
 
           let renderMode = 'rendered';

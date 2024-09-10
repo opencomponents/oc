@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import semver from 'semver';
 import cli from 'yargs';
 import commands from './commands';
@@ -94,7 +93,9 @@ function processCommand(
 
         const newPrefix = (prefix ? prefix + '-' : '') + commandName + '-';
 
-        _.mapValues(command.commands, (commandConfiguration, commandName) => {
+        for (const [commandName, commandConfiguration] of Object.entries(
+          command.commands
+        )) {
           processCommand(
             commandConfiguration,
             commandName,
@@ -102,7 +103,7 @@ function processCommand(
             level,
             newPrefix
           );
-        });
+        }
       }
 
       if (command.example) {

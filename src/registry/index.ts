@@ -1,7 +1,6 @@
 import http from 'node:http';
 import colors from 'colors/safe';
 import express from 'express';
-import _ from 'lodash';
 
 import type { Plugin } from '../types';
 import appStart from './app-start';
@@ -72,7 +71,7 @@ export default function registry<T = any>(inputOptions: RegistryOptions<T>) {
         if (options.verbosity) {
           ok(`Registry started at port http://localhost:${app.get('port')}`);
 
-          if (_.isObject(componentsInfo)) {
+          if (componentsInfo) {
             const componentsNumber = Object.keys(
               componentsInfo.components
             ).length;

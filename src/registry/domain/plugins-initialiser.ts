@@ -1,6 +1,5 @@
 import { promisify } from 'node:util';
 import { DepGraph } from 'dependency-graph';
-import _ from 'lodash';
 import pLimit from '../../utils/pLimit';
 
 import strings from '../../resources';
@@ -8,17 +7,15 @@ import type { Plugin } from '../../types';
 
 function validatePlugins(plugins: unknown[]): asserts plugins is Plugin[] {
   for (let idx = 0; idx < plugins.length; idx++) {
-    const plugin = plugins[idx];
+    const plugin = plugins[idx] as Plugin;
     if (
-      !_.isObject((plugin as Plugin).register) ||
-      typeof (plugin as Plugin).register.register !== 'function' ||
-      typeof (plugin as Plugin).register.execute !== 'function' ||
-      typeof (plugin as Plugin).name !== 'string'
+      (!plugin.register && typeof plugin.register !== 'object') ||
+      typeof plugin.register.register !== 'function' ||
+      typeof plugin.register.execute !== 'function' ||
+      typeof plugin.name !== 'string'
     ) {
       throw new Error(
-        strings.errors.registry.PLUGIN_NOT_VALID(
-          (plugin as Plugin).name || String(idx + 1)
-        )
+        strings.errors.registry.PLUGIN_NOT_VALID(plugin.name || String(idx + 1))
       );
     }
   }
@@ -89,11 +86,15 @@ export async function init(
       return;
     }
 
-    const dependencies = _.pick(registered, plugin.register.dependencies);
+    const dependencies = Object.fromEntries(
+      Object.entries(registered).filter(([key]) =>
+        plugin.register.dependencies?.includes(key)
+      )
+    );
 
     const register = promisify(plugin.register.register);
 
-    const pluginCallback = plugin.callback || _.noop;
+    const pluginCallback = plugin.callback || (() => {});
     await register(plugin.options || {}, dependencies).catch((err) => {
       pluginCallback(err);
       throw err;
@@ -107,7 +108,7 @@ export async function init(
 
   const terminator = async (): Promise<PluginFunctions> => {
     if (deferredLoads.length > 0) {
-      const deferredPlugins = _.clone(deferredLoads);
+      const deferredPlugins = [...deferredLoads];
       deferredLoads = [];
 
       await Promise.all(

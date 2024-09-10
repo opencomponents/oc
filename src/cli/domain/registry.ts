@@ -1,7 +1,6 @@
 import path from 'node:path';
 import fs from 'fs-extra';
 import got from 'got';
-import _ from 'lodash';
 
 import * as urlBuilder from '../../registry/domain/url-builder';
 import settings from '../../resources/settings';
@@ -48,7 +47,7 @@ export default function registry(opts: RegistryOptions = {}) {
           res.registries = [];
         }
 
-        if (!_.includes(res.registries, registry)) {
+        if (!res.registries.includes(registry)) {
           res.registries.push(registry);
         }
 
@@ -108,7 +107,7 @@ export default function registry(opts: RegistryOptions = {}) {
       } catch (err) {
         let parsedError = (err as any).response.body || (err as any);
         let errMsg = '';
-        if (!_.isObject(parsedError)) {
+        if (!parsedError || typeof parsedError !== 'object') {
           try {
             parsedError = JSON.parse(String(parsedError));
           } catch (er) {}
@@ -134,10 +133,10 @@ export default function registry(opts: RegistryOptions = {}) {
         registry += '/';
       }
 
-      const res = await fs
+      const res: { registries: string[] } = await fs
         .readJson(settings.configFile.src)
         .catch(() => ({ registries: [] }));
-      res.registries = _.without(res.registries, registry);
+      res.registries = res.registries.filter((x) => x !== registry);
 
       await fs.writeJson(settings.configFile.src, res);
     }

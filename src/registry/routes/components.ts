@@ -1,5 +1,4 @@
 import async from 'async';
-import _ from 'lodash';
 
 import type { Request, RequestHandler, Response } from 'express';
 import strings from '../../resources';
@@ -51,16 +50,16 @@ export default function components(
       return returnError(registryErrors.BATCH_ROUTE_COMPONENTS_NOT_ARRAY);
     }
 
-    if (!_.isEmpty(components)) {
-      const errors = _.compact(
-        components.map((component, index) => {
+    if (components.length) {
+      const errors = components
+        .map((component, index) => {
           return !component.name
             ? registryErrors.BATCH_ROUTE_COMPONENT_NAME_MISSING(index)
             : '';
         })
-      );
+        .filter(Boolean);
 
-      if (!_.isEmpty(errors)) {
+      if (errors.length) {
         return returnError(errors.join(', '));
       }
     }

@@ -1,9 +1,9 @@
 'use strict';
 
-var _ = require('lodash');
+var isequal = require('lodash.isequal');
 
 module.exports.data = function (context, callback) {
   callback(null, {
-    magicNumber: _.first([5, 4])
+    magicNumber: isequal(1, 1) ? 5 : 0
   });
 };

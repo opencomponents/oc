@@ -1,5 +1,4 @@
 import coreModules from 'builtin-modules';
-import _ from 'lodash';
 
 import RequireWrapper from '../../domain/require-wrapper';
 
@@ -13,9 +12,9 @@ interface AvailableDependency {
 export default function getAvailableDependencies(
   dependencies: string[]
 ): AvailableDependency[] {
-  return _.map(dependencies, (dependency) => {
+  return dependencies.map((dependency) => {
     const requirer = RequireWrapper(dependencies);
-    const core = _.includes(coreModules, dependency);
+    const core = coreModules.includes(dependency);
     const packageJson = !core
       ? requirer<{ version: string; homepage: string }>(
           `${dependency}/package.json`

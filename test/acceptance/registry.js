@@ -28,7 +28,7 @@ describe('registry', () => {
     baseUrl: 'http://localhost:3030/',
     env: { name: 'local' },
     verbosity: 0,
-    dependencies: ['lodash']
+    dependencies: ['lodash.isequal']
   });
 
   const initializeRegistry = (configuration, cb) => {
