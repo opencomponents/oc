@@ -228,7 +228,7 @@ export default function getComponent(conf: Config, repository: Repository) {
         ) => {
           const needFiltering =
             Object.keys(headers).length > 0 &&
-            conf.customHeadersToSkipOnWeakVersion.length > 0 &&
+            conf.customHeadersToSkipOnWeakVersion?.length > 0 &&
             requestedVersion !== actualVersion;
 
           if (!needFiltering) return headers;

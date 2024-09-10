@@ -108,7 +108,7 @@ export async function init(
 
   const terminator = async (): Promise<PluginFunctions> => {
     if (deferredLoads.length > 0) {
-      const deferredPlugins = structuredClone(deferredLoads);
+      const deferredPlugins = [...deferredLoads];
       deferredLoads = [];
 
       await Promise.all(
