@@ -479,7 +479,7 @@ describe('registry : routes : component', () => {
 
       it('should respond with error message including missing dependency', () => {
         expect(resJsonStub.args[0][0].error).to.equal(
-          'Component is trying to use unavailable dependencies: lodash'
+          'Component is trying to use unavailable dependencies: lodash.isequal'
         );
       });
 

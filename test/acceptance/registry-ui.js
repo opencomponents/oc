@@ -28,7 +28,7 @@ describe('registry (ui interface)', () => {
     baseUrl: 'http://localhost:3030/',
     env: { name: 'local' },
     verbosity: 0,
-    dependencies: ['lodash'],
+    dependencies: ['lodash.isequal'],
     discovery: true
   };
 

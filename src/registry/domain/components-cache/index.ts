@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import isEqual from 'lodash.isequal';
 import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import { type StorageAdapter, strings } from 'oc-storage-adapters-utils';
 import type { ComponentsList, Config } from '../../../types';
@@ -68,7 +68,7 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
 
       if (
         !jsonComponents ||
-        !_.isEqual(dirComponents.components, jsonComponents.components)
+        !isEqual(dirComponents.components, jsonComponents.components)
       ) {
         await componentsList
           .save(dirComponents)

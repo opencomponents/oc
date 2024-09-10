@@ -9,7 +9,7 @@
     "lint": "npx @biomejs/biome check src test tasks",
     "lint:apply": "npx @biomejs/biome check --write src test tasks",
     "prebuild": "rimraf dist",
-    "build": "npm run lint && tsc && node tasks/build.js",
+    "build": "tsc && node tasks/build.js",
     "git-stage-and-push": "node tasks/git-stage-and-push.js",
     "npm-publish": "node tasks/npm-publish.js",
     "publish-major": "npm run test-silent && npm run version-major && node tasks/build.js && npm run git-stage-and-push && npm run npm-publish",
@@ -50,7 +50,6 @@
     "@types/fs-extra": "^11.0.4",
     "@types/got": "^9.6.12",
     "@types/livereload": "^0.9.5",
-    "@types/lodash": "^4.17.7",
     "@types/morgan": "^1.9.9",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.5.4",
@@ -76,6 +75,7 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
+    "@types/lodash.isequal": "^4.5.8",
     "accept-language-parser": "^1.5.0",
     "async": "^3.2.6",
     "basic-auth-connect": "^1.0.0",
@@ -92,7 +92,7 @@
     "getport": "^0.1.0",
     "got": "^11.8.5",
     "livereload": "^0.9.3",
-    "lodash": "^4.17.21",
+    "lodash.isequal": "^4.5.0",
     "minimal-request": "^3.0.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.3",

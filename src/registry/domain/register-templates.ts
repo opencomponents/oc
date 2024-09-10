@@ -15,7 +15,7 @@ export default function registerTemplates(
     jadeTemplate,
     handlebarsTemplate
   ];
-  const templates = [...new Set([...coreTemplates, ...extraTemplates])];
+  const templates = [...new Set([...coreTemplates, ...(extraTemplates ?? [])])];
   const templatesHash = templates.reduce(
     (hash, template) => {
       const type = template.getInfo().type;

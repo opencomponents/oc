@@ -1,7 +1,6 @@
 import Domain from 'node:domain';
 import vm from 'node:vm';
 import acceptLanguageParser from 'accept-language-parser';
-import _ from 'lodash';
 import Cache from 'nice-cache';
 import Client from 'oc-client';
 import emptyResponseHandler from 'oc-empty-response-handler';
@@ -232,9 +231,13 @@ export default function getComponent(conf: Config, repository: Repository) {
             conf.customHeadersToSkipOnWeakVersion.length > 0 &&
             requestedVersion !== actualVersion;
 
-          return needFiltering
-            ? _.omit(headers, conf.customHeadersToSkipOnWeakVersion)
-            : headers;
+          if (!needFiltering) return headers;
+
+          return Object.fromEntries(
+            Object.entries(headers).filter(
+              ([key]) => !conf.customHeadersToSkipOnWeakVersion.includes(key)
+            )
+          );
         };
 
         const returnComponent = (err: any, data: any) => {

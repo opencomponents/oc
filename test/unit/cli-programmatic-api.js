@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
@@ -51,10 +50,12 @@ describe('cli : programmatic-api', () => {
       dependencies: ['local', 'logger', 'registry']
     }
   ];
+  const get = (obj, path) =>
+    path.split('.').reduce((acc, key) => acc[key], obj);
 
   for (const scenario of scenarios) {
     describe(`cmd: cli.${scenario.cmd}`, () => {
-      const fn = _.get(programmaticApi, scenario.cmd);
+      const fn = get(programmaticApi, scenario.cmd);
 
       it('should be function', () => {
         expect(typeof fn).to.equal('function');

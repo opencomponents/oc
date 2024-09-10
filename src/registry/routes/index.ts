@@ -1,7 +1,6 @@
 import path from 'node:path';
 import async from 'async';
 import fs from 'fs-extra';
-import _ from 'lodash';
 import parseAuthor from 'parse-author';
 
 import dateStringified from '../../utils/date-stringify';
@@ -74,7 +73,9 @@ export default function (repository: Repository) {
           (err) => {
             if (err) return next(err);
 
-            componentsInfo = _.sortBy(componentsInfo, 'name');
+            componentsInfo = componentsInfo.sort((a, b) =>
+              a.name.localeCompare(b.name)
+            );
             fromPromise(repository.getComponentsDetails)((err, details) => {
               if (err) console.log(err);
               res.send(

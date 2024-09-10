@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import semver from 'semver';
 import cli from 'yargs';
 import commands from './commands';
