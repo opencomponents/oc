@@ -434,7 +434,6 @@ describe('registry : routes : component', () => {
       });
 
       it('should use plugin inside compiledView', () => {
-        console.log('rrrr', resJsonStub.args[0]);
         expect(resJsonStub.args[0][0].html).to.contain('bye John');
       });
 

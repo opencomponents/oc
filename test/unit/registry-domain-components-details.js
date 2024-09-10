@@ -29,7 +29,6 @@ describe('registry : domain : components-details', () => {
         result = res;
       })
       .catch((err) => {
-        console.log('EEEE', err);
         error = err;
       })
       .finally(done);
