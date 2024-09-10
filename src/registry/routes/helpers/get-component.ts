@@ -56,8 +56,9 @@ export interface GetComponentResult {
   };
 }
 
+const noop = () => {};
 const noopConsole = Object.fromEntries(
-  Object.keys(console).map((key) => [key, _.noop])
+  Object.keys(console).map((key) => [key, noop])
 );
 
 export default function getComponent(conf: Config, repository: Repository) {
@@ -227,8 +228,8 @@ export default function getComponent(conf: Config, repository: Repository) {
           actualVersion: string
         ) => {
           const needFiltering =
-            !_.isEmpty(headers) &&
-            !_.isEmpty(conf.customHeadersToSkipOnWeakVersion) &&
+            Object.keys(headers).length > 0 &&
+            conf.customHeadersToSkipOnWeakVersion.length > 0 &&
             requestedVersion !== actualVersion;
 
           return needFiltering
@@ -262,17 +263,14 @@ export default function getComponent(conf: Config, repository: Repository) {
           const parseTemplatesHeader = (t: string) =>
             t.split(';').map((t) => t.split(',')[0]);
           const supportedTemplates = options.headers['templates']
-            ? parseTemplatesHeader(options.headers['templates'] as string)
+            ? parseTemplatesHeader(options.headers['templates'] as string) ?? []
             : [];
 
           const isTemplateSupportedByClient = Boolean(
             isValidClientRequest &&
               options.headers['templates'] &&
-              (_.includes(
-                supportedTemplates,
-                component.oc.files.template.type
-              ) ||
-                _.includes(supportedTemplates, templateType))
+              (supportedTemplates.includes(component.oc.files.template.type) ||
+                supportedTemplates.includes(templateType))
           );
 
           let renderMode = 'rendered';

@@ -29,18 +29,21 @@ export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
     componentsList: ComponentsList;
     details?: ComponentsDetails;
   }): Promise<ComponentsDetails> => {
-    const details = Object.assign({}, _.cloneDeep(options.details));
-    details.components = details.components || {};
+    const details = options.details
+      ? structuredClone(options.details)
+      : { components: {} as ComponentsDetails['components'] };
 
     const missing: Array<{ name: string; version: string }> = [];
-    _.each(options.componentsList.components, (versions, name) => {
+    for (const [name, versions] of Object.entries(
+      options.componentsList.components
+    )) {
       details.components[name] = details.components[name] || {};
-      _.each(versions, (version) => {
+      for (const version of versions) {
         if (!details.components[name][version]) {
           missing.push({ name, version });
         }
-      });
-    });
+      }
+    }
 
     const limit = pLimit(cdn.maxConcurrentRequests);
 

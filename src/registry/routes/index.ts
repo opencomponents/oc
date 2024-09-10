@@ -88,11 +88,8 @@ export default function (repository: Repository) {
                     components: componentsInfo,
                     componentsReleases,
                     componentsList: componentsInfo.map((component) => {
-                      const state: 'deprecated' | 'experimental' | '' = _.get(
-                        component,
-                        'oc.state',
-                        ''
-                      );
+                      const state: 'deprecated' | 'experimental' | '' =
+                        component?.oc?.state || '';
                       if (state) {
                         stateCounts[state] = (stateCounts[state] || 0) + 1;
                       }
@@ -118,7 +115,7 @@ export default function (repository: Repository) {
       } else {
         res.status(200).json(
           Object.assign(baseResponse, {
-            components: _.map(components, (component) =>
+            components: components.map((component) =>
               urlBuilder.component(component, res.conf.baseUrl)
             )
           })

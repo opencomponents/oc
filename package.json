@@ -83,7 +83,7 @@
     "chokidar": "^3.6.0",
     "colors": "^1.4.0",
     "cross-spawn": "^7.0.3",
-    "dependency-graph": "^0.11.0",
+    "dependency-graph": "^1.0.0",
     "dotenv": "^16.4.5",
     "errorhandler": "^1.5.1",
     "express": "^4.19.2",
