@@ -29,8 +29,12 @@ export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
     componentsList: ComponentsList;
     details?: ComponentsDetails;
   }): Promise<ComponentsDetails> => {
+    const clone =
+      globalThis.structuredClone ||
+      ((data: any) => JSON.parse(JSON.stringify(data)));
+
     const details = options.details
-      ? structuredClone(options.details)
+      ? clone(options.details)
       : { components: {} as ComponentsDetails['components'] };
 
     const missing: Array<{ name: string; version: string }> = [];

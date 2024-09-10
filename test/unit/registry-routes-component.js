@@ -421,7 +421,7 @@ describe('registry : routes : component', () => {
               local: true, //needed to invalidate the cache
               baseUrl: 'http://components.com/',
               plugins: {},
-              dependencies: ['lodash']
+              dependencies: ['lodash.isequal']
             },
             status: statusStub
           }
@@ -434,6 +434,7 @@ describe('registry : routes : component', () => {
       });
 
       it('should use plugin inside compiledView', () => {
+        console.log('rrrr', resJsonStub.args[0]);
         expect(resJsonStub.args[0][0].html).to.contain('bye John');
       });
 

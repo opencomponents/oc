@@ -354,6 +354,7 @@ describe('registry', () => {
         'http://localhost:3030/hello-world-custom-headers',
         'http://localhost:3030/jade-filters',
         'http://localhost:3030/language',
+        'http://localhost:3030/lodash-component',
         'http://localhost:3030/no-containers',
         'http://localhost:3030/welcome',
         'http://localhost:3030/welcome-with-optional-parameters',

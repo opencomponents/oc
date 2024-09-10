@@ -65,7 +65,7 @@
     "injectr": "^0.5.1",
     "lefthook": "^1.7.15",
     "minimist": "^1.2.8",
-    "mocha": "^9.1.3",
+    "mocha": "^10.7.3",
     "node-emoji": "^1.11.0",
     "rimraf": "^3.0.2",
     "semver-sort": "^1.0.0",
