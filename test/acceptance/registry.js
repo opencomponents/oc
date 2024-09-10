@@ -97,14 +97,15 @@ describe('registry', () => {
 
     describe('with a custom configuration with customHeadersToSkipOnWeakVersion defined', () => {
       before((done) => {
-        registry.close();
-        initializeRegistry(
-          {
-            ...getDefaultTestConfiguration(),
-            customHeadersToSkipOnWeakVersion: ['Cache-Control']
-          },
-          done
-        );
+        registry.close(() => {
+          initializeRegistry(
+            {
+              ...getDefaultTestConfiguration(),
+              customHeadersToSkipOnWeakVersion: ['Cache-Control']
+            },
+            done
+          );
+        });
       });
 
       after((done) => {
@@ -257,14 +258,15 @@ describe('registry', () => {
 
     describe('with a custom configuration with customHeadersToSkipOnWeakVersion defined', () => {
       before((done) => {
-        registry.close();
-        initializeRegistry(
-          {
-            ...getDefaultTestConfiguration(),
-            customHeadersToSkipOnWeakVersion: ['Cache-Control']
-          },
-          done
-        );
+        registry.close(() => {
+          initializeRegistry(
+            {
+              ...getDefaultTestConfiguration(),
+              customHeadersToSkipOnWeakVersion: ['Cache-Control']
+            },
+            done
+          );
+        });
       });
 
       after((done) => {
