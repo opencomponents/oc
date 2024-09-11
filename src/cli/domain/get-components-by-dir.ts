@@ -1,6 +1,9 @@
+import { readFileSync } from 'node:fs';
+import fs from 'node:fs/promises';
 import path from 'node:path';
-import fs from 'fs-extra';
 import type { Component } from '../../types';
+
+const readJsonSync = (path: string) => JSON.parse(readFileSync(path, 'utf8'));
 
 export default function getComponentsByDir() {
   return async (
@@ -13,7 +16,7 @@ export default function getComponentsByDir() {
       let content: Component;
 
       try {
-        content = fs.readJsonSync(packagePath);
+        content = readJsonSync(packagePath);
       } catch (err) {
         return false;
       }

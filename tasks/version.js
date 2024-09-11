@@ -1,10 +1,11 @@
-const fs = require('fs-extra');
+const { readFileSync } = require('node:fs');
 const log = require('./logger');
 const packageJson = require('../package');
 const minimist = require('minimist');
 const path = require('node:path');
 const semver = require('semver');
 
+const readJsonSync = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const argv = minimist(process.argv.slice(2), {
   string: 'type',
   default: { type: false },
@@ -16,7 +17,7 @@ if (
   (argv.type === 'patch' || argv.type === 'minor' || argv.type === 'major')
 ) {
   packageJson.version = semver.inc(packageJson.version, argv.type);
-  fs.writeJsonSync(path.join(__dirname, '../package.json'), packageJson, {
+  writeJsonSync(path.join(__dirname, '../package.json'), packageJson, {
     spaces: 2
   });
   log.complete(`Package version upgraded to: ${packageJson.version}`);

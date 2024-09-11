@@ -6,7 +6,7 @@ const sinon = require('sinon');
 const initialise = () => {
   const fsMock = {
     readdir: sinon.stub(),
-    readJsonSync: sinon.stub()
+    readFileSync: sinon.stub()
   };
 
   const pathMock = {
@@ -18,7 +18,8 @@ const initialise = () => {
   const GetComponentsByDir = injectr(
     '../../dist/cli/domain/get-components-by-dir.js',
     {
-      'fs-extra': fsMock,
+      'node:fs': fsMock,
+      'node:fs/promises': fsMock,
       'node:path': pathMock
     },
     { __dirname: '' }
@@ -49,15 +50,17 @@ describe('cli : domain : get-components-by-dir', () => {
           'no-component-but-package-json'
         ]);
 
-      data.fs.readJsonSync.onCall(0).returns({ oc: {} });
-      data.fs.readJsonSync
+      data.fs.readFileSync.onCall(0).returns(JSON.stringify({ oc: {} }));
+      data.fs.readFileSync
         .onCall(1)
         .throws(new Error('ENOENT: no such file or directory'));
-      data.fs.readJsonSync
+      data.fs.readFileSync
         .onCall(2)
         .throws(new Error('ENOENT: no such file or directory'));
-      data.fs.readJsonSync.onCall(3).returns({ oc: { packaged: true } });
-      data.fs.readJsonSync.onCall(4).returns({});
+      data.fs.readFileSync
+        .onCall(3)
+        .returns(JSON.stringify({ oc: { packaged: true } }));
+      data.fs.readFileSync.onCall(4).returns('{}');
 
       executeComponentsListingByDir(data.local)
         .then((res) => {
@@ -88,8 +91,8 @@ describe('cli : domain : get-components-by-dir', () => {
         .onCall(0)
         .resolves(['a-broken-component', 'another-component']);
 
-      data.fs.readJsonSync.onCall(0).throws(new Error('syntax error: fubar'));
-      data.fs.readJsonSync.onCall(1).returns({ oc: {} });
+      data.fs.readFileSync.onCall(0).throws(new Error('syntax error: fubar'));
+      data.fs.readFileSync.onCall(1).returns(JSON.stringify({ oc: {} }));
 
       executeComponentsListingByDir(data.local)
         .then((res) => {
@@ -120,11 +123,11 @@ describe('cli : domain : get-components-by-dir', () => {
         .onCall(0)
         .resolves(['a-broken-component', 'not-a-component-dir', 'file.json']);
 
-      data.fs.readJsonSync.onCall(0).throws(new Error('syntax error: fubar'));
-      data.fs.readJsonSync
+      data.fs.readFileSync.onCall(0).throws(new Error('syntax error: fubar'));
+      data.fs.readFileSync
         .onCall(1)
         .throws(new Error('ENOENT: no such file or directory'));
-      data.fs.readJsonSync
+      data.fs.readFileSync
         .onCall(2)
         .throws(new Error('ENOENT: no such file or directory'));
 
@@ -163,11 +166,11 @@ describe('cli : domain : get-components-by-dir', () => {
           'package.json'
         ]);
 
-      data.fs.readJsonSync.onCall(0).returns({ oc: {} });
-      data.fs.readJsonSync.onCall(1).returns({ oc: {} });
-      data.fs.readJsonSync.onCall(2).returns({ oc: {} });
-      data.fs.readJsonSync.onCall(3).returns({ oc: {} });
-      data.fs.readJsonSync
+      data.fs.readFileSync.onCall(0).returns(JSON.stringify({ oc: {} }));
+      data.fs.readFileSync.onCall(1).returns(JSON.stringify({ oc: {} }));
+      data.fs.readFileSync.onCall(2).returns(JSON.stringify({ oc: {} }));
+      data.fs.readFileSync.onCall(3).returns(JSON.stringify({ oc: {} }));
+      data.fs.readFileSync
         .onCall(4)
         .throws(new Error('ENOENT: no such file or directory'));
 

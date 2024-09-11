@@ -1,6 +1,6 @@
+import { createReadStream } from 'node:fs';
 import path from 'node:path';
 import FormData from 'form-data';
-import fs from 'fs-extra';
 import { request } from 'undici';
 
 async function put(
@@ -16,7 +16,7 @@ async function put(
 
   for (const file of files) {
     const fileName = path.basename(file);
-    form.append(fileName, fs.createReadStream(file));
+    form.append(fileName, createReadStream(file));
   }
 
   const res = await request(urlPath, {

@@ -1,10 +1,15 @@
+import { existsSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
-import fs from 'fs-extra';
 
 import * as validator from '../../registry/domain/validators';
 import type { Component } from '../../types';
 import requireTemplate from './handle-dependencies/require-template';
+
+const writeJsonSync = (path: string, data: unknown) =>
+  writeFileSync(path, JSON.stringify(data, null, 2), 'utf-8');
+const readJson = (path: string) => fs.readFile(path, 'utf8').then(JSON.parse);
 
 export interface PackageOptions {
   componentPath: string;
@@ -19,7 +24,7 @@ interface Sizes {
 }
 
 function checkSizes(folder: string) {
-  const jsFiles = fs.readdirSync(folder).filter((x) => x.endsWith('.js'));
+  const jsFiles = readdirSync(folder).filter((x) => x.endsWith('.js'));
 
   const sizes: Sizes = {
     client: 0
@@ -27,9 +32,9 @@ function checkSizes(folder: string) {
 
   for (const file of jsFiles) {
     if (file === 'server.js') {
-      sizes.server = fs.statSync(path.join(folder, file)).size;
+      sizes.server = statSync(path.join(folder, file)).size;
     } else {
-      sizes.client += fs.statSync(path.join(folder, file)).size;
+      sizes.client += statSync(path.join(folder, file)).size;
     }
   }
 
@@ -42,7 +47,7 @@ function addSizes(folder: string, component: Component, sizes: Sizes) {
     component.oc.files.dataProvider.size = sizes.server;
   }
 
-  fs.writeJsonSync(path.join(folder, 'package.json'), component, { spaces: 2 });
+  writeJsonSync(path.join(folder, 'package.json'), component);
 }
 
 const packageComponents =
@@ -56,17 +61,18 @@ const packageComponents =
     const componentPackagePath = path.join(componentPath, 'package.json');
     const ocPackagePath = path.join(__dirname, '../../../package.json');
 
-    if (!fs.existsSync(componentPackagePath)) {
+    if (!existsSync(componentPackagePath)) {
       throw new Error('component does not contain package.json');
     }
-    if (!fs.existsSync(ocPackagePath)) {
+    if (!existsSync(ocPackagePath)) {
       throw new Error('error resolving oc internal dependencies');
     }
 
-    await fs.emptyDir(publishPath);
+    await fs.rm(publishPath, { recursive: true, force: true });
+    await fs.mkdir(publishPath);
 
-    const componentPackage: Component = await fs.readJson(componentPackagePath);
-    const ocPackage: Component = await fs.readJson(ocPackagePath);
+    const componentPackage: Component = await readJson(componentPackagePath);
+    const ocPackage: Component = await readJson(ocPackagePath);
 
     if (!validator.validateComponentName(componentPackage.name)) {
       throw new Error('name not valid');

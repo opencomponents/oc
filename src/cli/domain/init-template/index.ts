@@ -1,5 +1,5 @@
+import fs from 'node:fs/promises';
 import path from 'node:path';
-import fs from 'fs-extra';
 
 import * as npm from '../../../utils/npm-utils';
 import type { Logger } from '../../logger';
@@ -17,7 +17,7 @@ export default async function initTemplate(options: {
   const compilerPath = path.join(componentPath, 'node_modules', compiler);
   const npmOptions = { initPath: componentPath, silent: true };
 
-  await fs.ensureDir(componentPath);
+  await fs.mkdir(componentPath, { recursive: true });
   await npm.init(npmOptions);
   await installTemplate(options);
   await scaffold(Object.assign(options, { compilerPath }));
