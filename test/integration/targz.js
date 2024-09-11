@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const fs = require('fs-extra');
+const { existsSync, readFileSync } = require('node:fs');
 const path = require('node:path');
 const targz = require('targz');
 
@@ -28,7 +28,7 @@ describe('The targz dependency', () => {
     });
 
     it('should create the file', () => {
-      expect(fs.existsSync(file));
+      expect(existsSync(file));
     });
 
     describe('when decompressing the created file', () => {
@@ -53,9 +53,9 @@ describe('The targz dependency', () => {
       });
 
       it('should contain the files', () => {
-        expect(fs.existsSync(to)).to.be.true;
+        expect(existsSync(to)).to.be.true;
         expect(
-          fs.readFileSync(path.join(to, 'hello-world/template.html')).toString()
+          readFileSync(path.join(to, 'hello-world/template.html')).toString()
         ).to.be.equal('Hello world!');
       });
     });

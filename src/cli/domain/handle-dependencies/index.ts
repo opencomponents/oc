@@ -1,6 +1,6 @@
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import coreModules from 'builtin-modules';
-import fs from 'fs-extra';
 
 import strings from '../../../resources';
 import type { Component, Template } from '../../../types';
@@ -10,8 +10,10 @@ import ensureCompilerIsDeclaredAsDevDependency from './ensure-compiler-is-declar
 import getCompiler from './get-compiler';
 import installMissingDependencies from './install-missing-dependencies';
 
+const readJson = (path: string) => fs.readFile(path, 'utf8').then(JSON.parse);
+
 const getComponentPackageJson = (componentPath: string): Promise<Component> =>
-  fs.readJson(path.join(componentPath, 'package.json'));
+  readJson(path.join(componentPath, 'package.json'));
 
 const union = (a: ReadonlyArray<string>, b: ReadonlyArray<string>) => [
   ...new Set([...a, ...b])

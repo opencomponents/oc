@@ -1,8 +1,10 @@
 const expect = require('chai').expect;
-const fs = require('fs-extra');
+const { readFileSync, readdirSync, lstatSync } = require('node:fs');
 const injectr = require('injectr');
 const path = require('node:path');
 const sinon = require('sinon');
+
+const readJsonSync = (path) => JSON.parse(readFileSync(path, 'utf8'));
 
 describe('registry : domain : repository', () => {
   let response;
@@ -30,11 +32,11 @@ describe('registry : domain : repository', () => {
     };
 
     const fsMock = {
-      readFileSync: fs.readFileSync,
-      readdirSync: fs.readdirSync,
-      lstatSync: fs.lstatSync,
-      readJsonSync: fs.readJsonSync,
-      writeJson: () => Promise.resolve()
+      readFileSync: readFileSync,
+      readdirSync: readdirSync,
+      lstatSync: lstatSync,
+      readJsonSync: readJsonSync,
+      writeFile: () => Promise.resolve()
     };
 
     const s3Mock = {
@@ -50,7 +52,8 @@ describe('registry : domain : repository', () => {
     const Repository = injectr(
       '../../dist/registry/domain/repository.js',
       {
-        'fs-extra': fsMock,
+        'node:fs': fsMock,
+        'node:fs/promises': fsMock,
         './components-cache': () => componentsCacheMock,
         './components-details': () => componentsDetailsMock
       },

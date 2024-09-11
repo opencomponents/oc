@@ -1,10 +1,12 @@
+import { existsSync, readFileSync, realpathSync } from 'node:fs';
 import path from 'node:path';
-import fs from 'fs-extra';
 
 import strings from '../../resources/';
 import settings from '../../resources/settings';
 import type { OcJsonConfig } from '../../types';
 import type { Logger } from '../logger';
+
+const readJsonSync = (path: string) => JSON.parse(readFileSync(path, 'utf8'));
 
 interface MockedPlugin {
   register: (options: unknown, dependencies: unknown, next: () => void) => void;
@@ -97,10 +99,10 @@ const findPath = (
   pathToResolve: string,
   fileName: string
 ): string | undefined => {
-  const rootDir = fs.realpathSync('.');
+  const rootDir = realpathSync('.');
   const fileToResolve = path.join(pathToResolve, fileName);
 
-  if (!fs.existsSync(fileToResolve)) {
+  if (!existsSync(fileToResolve)) {
     if (pathToResolve === rootDir) {
       return undefined;
     }
@@ -129,7 +131,7 @@ export default function getMockedPlugins(
     return plugins;
   }
 
-  const content: OcJsonConfig = fs.readJsonSync(ocJsonPath);
+  const content: OcJsonConfig = readJsonSync(ocJsonPath);
   const ocJsonLocation = ocJsonPath.slice(0, -ocJsonFileName.length);
 
   if (!content.mocks || !content.mocks.plugins) {

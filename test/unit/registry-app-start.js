@@ -7,7 +7,9 @@ const getAppStart = (mockedRepository, options, callback) => {
   const appStart = injectr(
     '../../dist/registry/app-start.js',
     {
-      'fs-extra': { readJsonSync: sinon.stub().returns({ version: '1.2.3' }) }
+      'node:fs': {
+        readFileSync: sinon.stub().returns(JSON.stringify({ version: '1.2.3' }))
+      }
     },
     {
       console: { log: sinon.stub() },

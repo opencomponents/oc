@@ -10,9 +10,11 @@ describe('cli : domain : clean', () => {
         options.getComponentsByDirError
           ? Promise.reject(options.getComponentsByDirError)
           : Promise.resolve(['path/to/my-component1', 'path/to/my-component2']),
-      'fs-extra': {
-        existsSync: (dir) => dir.indexOf('my-component1') >= 0,
-        remove: options.removeMock
+      'node:fs': {
+        existsSync: (dir) => dir.indexOf('my-component1') >= 0
+      },
+      'node:fs/promises': {
+        rmdir: options.rmdirMock
       },
       'node:path': { join: (...params) => params.join('/') }
     });
@@ -64,10 +66,10 @@ describe('cli : domain : clean', () => {
   describe('when removing the folders to clean', () => {
     describe('happy path', () => {
       let error;
-      let removeMock;
+      let rmdirMock;
       beforeEach((done) => {
-        removeMock = sinon.stub().resolves('ok');
-        const clean = initialize({ removeMock });
+        rmdirMock = sinon.stub().resolves('ok');
+        const clean = initialize({ rmdirMock });
 
         clean
           .remove(['path/to/my-component1/node_modules'])
@@ -80,19 +82,19 @@ describe('cli : domain : clean', () => {
       it('should return no error', () => expect(error).to.be.undefined);
 
       it('should remove all the folders', () => {
-        expect(removeMock.args.length).to.equal(1);
-        expect(removeMock.args[0][0]).to.eql(
+        expect(rmdirMock.args.length).to.equal(1);
+        expect(rmdirMock.args[0][0]).to.eql(
           'path/to/my-component1/node_modules'
         );
       });
     });
 
-    describe('fs.remove error', () => {
+    describe('fs.rmdir error', () => {
       let error;
-      let removeMock;
+      let rmdirMock;
       beforeEach((done) => {
-        removeMock = sinon.stub().rejects(new Error('nope'));
-        const clean = initialize({ removeMock });
+        rmdirMock = sinon.stub().rejects(new Error('nope'));
+        const clean = initialize({ rmdirMock });
 
         clean
           .remove(['path/to/my-component1/node_modules'])
@@ -106,8 +108,8 @@ describe('cli : domain : clean', () => {
         expect(error.toString()).to.be.equal('Error: nope'));
 
       it('should try removing all the folders', () => {
-        expect(removeMock.args.length).to.equal(1);
-        expect(removeMock.args[0][0]).to.eql(
+        expect(rmdirMock.args.length).to.equal(1);
+        expect(rmdirMock.args[0][0]).to.eql(
           'path/to/my-component1/node_modules'
         );
       });
