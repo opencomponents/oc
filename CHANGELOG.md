@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.49.59
+- [#1380](https://github.com/opencomponents/oc/pull/1380) update oc-client-browser
+- [#1377](https://github.com/opencomponents/oc/pull/1377) remove got, replace with undici
+- [#1376](https://github.com/opencomponents/oc/pull/1376) Remove lodash
+
 ### v0.49.58
 - [#1375](https://github.com/opencomponents/oc/pull/1375) compress compiled client
 
