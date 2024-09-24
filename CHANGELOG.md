@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.60
+- [#1381](https://github.com/opencomponents/oc/pull/1381) fix put response
+
 ### v0.49.59
 - [#1380](https://github.com/opencomponents/oc/pull/1380) update oc-client-browser
 - [#1377](https://github.com/opencomponents/oc/pull/1377) remove got, replace with undici
