@@ -107,7 +107,7 @@ export default function registry(opts: RegistryOptions = {}) {
       try {
         await put(options.route, options.path, requestsHeaders);
       } catch (err) {
-        let parsedError = (err as any).response.body || (err as any);
+        let parsedError = err as any;
         let errMsg = '';
         if (!parsedError || typeof parsedError !== 'object') {
           try {
