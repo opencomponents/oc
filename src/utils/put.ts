@@ -25,11 +25,12 @@ async function put(
     body: form
   });
 
+  const response = await res.body.text();
   if (res.statusCode !== 200) {
-    throw res.body.text();
+    throw response;
   }
 
-  return res.body.text();
+  return response;
 }
 
 export default put;
