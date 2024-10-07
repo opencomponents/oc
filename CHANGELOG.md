@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.62
+- [#1384](https://github.com/opencomponents/oc/pull/1384) update client-browser
+
 ### v0.49.61
 - [#1383](https://github.com/opencomponents/oc/pull/1383) update oc-client to get element on model
 
