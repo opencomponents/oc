@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.61
+- [#1383](https://github.com/opencomponents/oc/pull/1383) update oc-client to get element on model
+
 ### v0.49.60
 - [#1381](https://github.com/opencomponents/oc/pull/1381) fix put response
 
