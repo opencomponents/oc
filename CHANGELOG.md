@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.63
+- [#1385](https://github.com/opencomponents/oc/pull/1385) update client
+
 ### v0.49.62
 - [#1384](https://github.com/opencomponents/oc/pull/1384) update client-browser
 
