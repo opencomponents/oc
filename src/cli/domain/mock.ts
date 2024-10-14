@@ -1,7 +1,12 @@
+import { existsSync } from 'node:fs';
+import fs from 'node:fs/promises';
 import path from 'node:path';
-import fs from 'fs-extra';
 
 import settings from '../../resources/settings';
+
+const readJson = (path: string) => fs.readFile(path, 'utf8').then(JSON.parse);
+const writeJson = (path: string, data: unknown) =>
+  fs.writeFile(path, JSON.stringify(data, null, 2), 'utf-8');
 
 export default function mock() {
   return async (params: {
@@ -9,9 +14,9 @@ export default function mock() {
     targetValue: string;
     targetName: string;
   }): Promise<void> => {
-    const localConfig = await fs
-      .readJson(settings.configFile.src)
-      .catch(() => ({}));
+    const localConfig = await readJson(settings.configFile.src).catch(
+      () => ({})
+    );
 
     const mockType = params.targetType + 's';
 
@@ -24,7 +29,7 @@ export default function mock() {
     }
 
     let pluginType = 'static';
-    if (fs.existsSync(path.resolve(params.targetValue.toString()))) {
+    if (existsSync(path.resolve(params.targetValue.toString()))) {
       pluginType = 'dynamic';
     }
 
@@ -35,6 +40,6 @@ export default function mock() {
     localConfig.mocks[mockType][pluginType][params.targetName] =
       params.targetValue;
 
-    return fs.writeJson(settings.configFile.src, localConfig, { spaces: 2 });
+    return writeJson(settings.configFile.src, localConfig);
   };
 }

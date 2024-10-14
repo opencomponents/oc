@@ -4,12 +4,15 @@ const sinon = require('sinon');
 
 const getRegistry = (dependencies, opts) => {
   dependencies.fs = dependencies.fs || {};
-  dependencies.fs.readJsonSync = sinon.stub().returns({ version: '1.2.3' });
+  dependencies.fs.readFileSync = sinon
+    .stub()
+    .returns(JSON.stringify({ version: '1.2.3' }));
   const Registry = injectr(
     '../../dist/cli/domain/registry.js',
     {
       undici: dependencies.undici,
-      'fs-extra': dependencies.fs,
+      'node:fs/promises': dependencies.fs,
+      'node:fs': dependencies.fs,
       '../../utils/put': dependencies.put,
       '../domain/url-parser': dependencies.urlParser,
       'node:path': {
@@ -65,11 +68,11 @@ describe('cli : domain : registry', () => {
           })
         };
         const fsStub = {
-          readJson: sinon.stub(),
-          writeJson: sinon.spy()
+          readFile: sinon.stub(),
+          writeFile: sinon.stub().resolves()
         };
 
-        fsStub.readJson.resolves({});
+        fsStub.readFile.resolves('{}');
 
         const registry = getRegistry({
           undici: undiciStub,
@@ -77,9 +80,11 @@ describe('cli : domain : registry', () => {
         });
 
         registry.add('http://some-api.com/asd').finally(() => {
-          expect(fsStub.writeJson.getCall(0).args[1]).to.eql({
-            registries: ['http://some-api.com/asd/']
-          });
+          expect(fsStub.writeFile.getCall(0).args[1]).to.eql(
+            JSON.stringify({
+              registries: ['http://some-api.com/asd/']
+            })
+          );
           done();
         });
       });

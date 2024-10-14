@@ -1,8 +1,10 @@
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import fs from 'fs-extra';
 import semver from 'semver';
 
-const packageInfo = fs.readJsonSync(
+const readJsonSync = (filePath: string) =>
+  JSON.parse(readFileSync(filePath, 'utf8'));
+const packageInfo = readJsonSync(
   path.join(__dirname, '..', '..', '..', '..', 'package.json')
 );
 

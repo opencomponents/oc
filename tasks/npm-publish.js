@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const fs = require('fs-extra');
+const { readFileSync } = require('node:fs');
 const log = require('./logger');
 const spawn = require('cross-spawn');
 
-const builtVersion = fs.readJsonSync(
+const readJsonSync = (path) => JSON.parse(readFileSync(path, 'utf8'));
+
+const builtVersion = readJsonSync(
   './src/components/oc-client/_package/package.json'
 ).version;
-const ocVersion = fs.readJsonSync('./package.json').version;
+const ocVersion = readJsonSync('./package.json').version;
 
 if (builtVersion !== ocVersion) {
   log.fatal(

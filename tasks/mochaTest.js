@@ -1,5 +1,5 @@
 const async = require('async');
-const fs = require('fs-extra');
+const { readdirSync } = require('node:fs');
 const glob = require('glob');
 const log = require('./logger');
 const Mocha = require('mocha');
@@ -20,9 +20,9 @@ if (argv.silent) {
   mocha.reporter('progress');
 }
 
-const componentsToPackage = fs
-  .readdirSync(componentsFixturesPath)
-  .filter((x) => x !== 'handlebars3-component');
+const componentsToPackage = readdirSync(componentsFixturesPath).filter(
+  (x) => x !== 'handlebars3-component'
+);
 
 const packageComponent = (componentName, done) =>
   oc.cli.package(

@@ -6,8 +6,8 @@ const sinon = require('sinon');
 const initialise = () => {
   const fsMock = {
     existsSync: sinon.stub(),
-    readJson: sinon.stub(),
-    writeJson: sinon.stub().resolves('ok')
+    readFile: sinon.stub(),
+    writeFile: sinon.stub().resolves('ok')
   };
 
   const pathMock = {
@@ -19,7 +19,8 @@ const initialise = () => {
   const Local = injectr(
     '../../dist/cli/domain/mock.js',
     {
-      'fs-extra': fsMock,
+      'node:fs': fsMock,
+      'node:fs/promises': fsMock,
       path: pathMock
     },
     { __dirname: '' }
@@ -45,24 +46,30 @@ describe('cli : domain : mock', () => {
     beforeEach((done) => {
       data = initialise();
 
-      data.fs.readJson.resolves({ something: 'hello' });
-      data.fs.writeJson.resolves('ok');
+      data.fs.readFile.resolves(JSON.stringify({ something: 'hello' }));
+      data.fs.writeFile.resolves('ok');
 
       executeMocking(data.local, 'plugin', 'getValue', 'value', done);
     });
 
     it('should add mock to oc.json', () => {
-      expect(data.fs.writeJson.called).to.be.true;
-      expect(data.fs.writeJson.args[0][1]).to.eql({
-        something: 'hello',
-        mocks: {
-          plugins: {
-            static: {
-              getValue: 'value'
+      expect(data.fs.writeFile.called).to.be.true;
+      expect(data.fs.writeFile.args[0][1]).to.eql(
+        JSON.stringify(
+          {
+            something: 'hello',
+            mocks: {
+              plugins: {
+                static: {
+                  getValue: 'value'
+                }
+              }
             }
-          }
-        }
-      });
+          },
+          null,
+          2
+        )
+      );
     });
   });
 
@@ -71,24 +78,30 @@ describe('cli : domain : mock', () => {
     beforeEach((done) => {
       data = initialise();
 
-      data.fs.readJson.resolves({ something: 'hello' });
-      data.fs.writeJson.resolves('ok');
+      data.fs.readFile.resolves(JSON.stringify({ something: 'hello' }));
+      data.fs.writeFile.resolves('ok');
 
       executeMocking(data.local, 'plugin', 'isTrue', false, done);
     });
 
     it('should add mock to oc.json', () => {
-      expect(data.fs.writeJson.called).to.be.true;
-      expect(data.fs.writeJson.args[0][1]).to.eql({
-        something: 'hello',
-        mocks: {
-          plugins: {
-            static: {
-              isTrue: false
+      expect(data.fs.writeFile.called).to.be.true;
+      expect(data.fs.writeFile.args[0][1]).to.eql(
+        JSON.stringify(
+          {
+            something: 'hello',
+            mocks: {
+              plugins: {
+                static: {
+                  isTrue: false
+                }
+              }
             }
-          }
-        }
-      });
+          },
+          null,
+          2
+        )
+      );
     });
   });
 
@@ -97,25 +110,31 @@ describe('cli : domain : mock', () => {
     beforeEach((done) => {
       data = initialise();
 
-      data.fs.readJson.resolves({ something: 'hello' });
+      data.fs.readFile.resolves(JSON.stringify({ something: 'hello' }));
       data.fs.existsSync.returns(true);
-      data.fs.writeJson.resolves('ok');
+      data.fs.writeFile.resolves('ok');
 
       executeMocking(data.local, 'plugin', 'getValue', './value.js', done);
     });
 
     it('should add mock to oc.json', () => {
-      expect(data.fs.writeJson.called).to.be.true;
-      expect(data.fs.writeJson.args[0][1]).to.eql({
-        something: 'hello',
-        mocks: {
-          plugins: {
-            dynamic: {
-              getValue: './value.js'
+      expect(data.fs.writeFile.called).to.be.true;
+      expect(data.fs.writeFile.args[0][1]).to.eql(
+        JSON.stringify(
+          {
+            something: 'hello',
+            mocks: {
+              plugins: {
+                dynamic: {
+                  getValue: './value.js'
+                }
+              }
             }
-          }
-        }
-      });
+          },
+          null,
+          2
+        )
+      );
     });
   });
 });
