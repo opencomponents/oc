@@ -58,7 +58,7 @@ function componentInfo(
     const repositoryUrl =
       typeof component.repository === 'string'
         ? component.repository
-        : component.repository?.url ?? null;
+        : (component.repository?.url ?? null);
 
     fromPromise(isUrlDiscoverable)(href, (_err, result) => {
       if (!result.isDiscoverable) {

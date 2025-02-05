@@ -266,7 +266,8 @@ export default function getComponent(conf: Config, repository: Repository) {
           const parseTemplatesHeader = (t: string) =>
             t.split(';').map((t) => t.split(',')[0]);
           const supportedTemplates = options.headers['templates']
-            ? parseTemplatesHeader(options.headers['templates'] as string) ?? []
+            ? (parseTemplatesHeader(options.headers['templates'] as string) ??
+              [])
             : [];
 
           const isTemplateSupportedByClient = Boolean(
