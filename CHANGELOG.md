@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.64
+- [#1390](https://github.com/opencomponents/oc/pull/1390) update packages
+
 ### v0.49.63
 - [#1385](https://github.com/opencomponents/oc/pull/1385) update client
 
