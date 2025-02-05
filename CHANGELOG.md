@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.65
+- [#1391](https://github.com/opencomponents/oc/pull/1391) udpate legacy compilers
+
 ### v0.49.64
 - [#1390](https://github.com/opencomponents/oc/pull/1390) update packages
 
