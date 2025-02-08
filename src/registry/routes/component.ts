@@ -13,13 +13,22 @@ export default function component(
   const getComponent = GetComponentHelper(conf, repository);
 
   return (req: Request, res: Response): void => {
+    let parameters = req.query as Record<string, string>;
+    if (req.method === 'POST') {
+      parameters = {
+        ...parameters,
+        ...(req.body as Record<string, string>)
+      };
+    }
+
     getComponent(
       {
+        action: req.params['action'],
         conf: res.conf,
         headers: req.headers,
         ip: req.ip!,
         name: req.params['componentName'],
-        parameters: req.query as Record<string, string>,
+        parameters,
         version: req.params['componentVersion']
       },
       (result) => {
