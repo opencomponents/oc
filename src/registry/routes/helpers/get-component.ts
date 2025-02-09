@@ -277,7 +277,7 @@ export default function getComponent(conf: Config, repository: Repository) {
                 supportedTemplates.includes(templateType))
           );
 
-          let renderMode = 'rendered';
+          let renderMode = options.action ? 'unrendered' : 'rendered';
           if (isUnrendered) {
             renderMode = 'unrendered';
             if (
