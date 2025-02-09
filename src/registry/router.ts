@@ -76,11 +76,11 @@ export function create(app: Express, conf: Config, repository: Repository) {
   app.get(`${prefix}:componentName/:componentVersion`, routes.component);
   app.get(`${prefix}:componentName`, routes.component);
 
-  app.get(
+  app.post(
     `${prefix}~actions/:action/:componentName/:componentVersion`,
     routes.component
   );
-  app.get(`${prefix}~actions/:action/:componentName`, routes.component);
+  app.post(`${prefix}~actions/:action/:componentName`, routes.component);
 
   if (conf.routes) {
     for (const route of conf.routes) {
