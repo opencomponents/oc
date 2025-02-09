@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.66
+- [#1392](https://github.com/opencomponents/oc/pull/1392) add actions endpoint
+
 ### v0.49.65
 - [#1391](https://github.com/opencomponents/oc/pull/1391) udpate legacy compilers
 
