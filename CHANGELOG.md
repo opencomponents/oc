@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.49.67
+- [#1393](https://github.com/opencomponents/oc/pull/1393) oc-client-browser@1.95 [ALLOW EMPTY ACTIONS]
+
 ### v0.49.66
 - [#1392](https://github.com/opencomponents/oc/pull/1392) add actions endpoint
 
