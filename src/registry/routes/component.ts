@@ -1,10 +1,12 @@
 import { serializeError } from 'serialize-error';
 
+import { Readable } from 'node:stream';
 import type { Request, RequestHandler, Response } from 'express';
+import { encode } from 'turbo-stream';
 import strings from '../../resources';
 import type { Config } from '../../types';
 import type { Repository } from '../domain/repository';
-import GetComponentHelper from './helpers/get-component';
+import GetComponentHelper, { stream } from './helpers/get-component';
 
 export default function component(
   conf: Config,
@@ -48,7 +50,27 @@ export default function component(
             res.set(result.headers);
           }
 
-          res.status(result.status).json(result.response);
+          res.status(result.status);
+          const streamEnabled =
+            !!result.response.data?.component?.props?.[stream];
+          if (streamEnabled) {
+            delete result.response.data.component.props[stream];
+            const webStream = encode({ ...result.response });
+
+            const nodeStream = Readable.from(webStream);
+
+            nodeStream.on('error', (err) => {
+              res.status(500).end(String(err));
+            });
+
+            res.setHeader('Content-Type', 'x-text/stream');
+
+            nodeStream.pipe(res).on('finish', () => {
+              res.end();
+            });
+          } else {
+            res.json(result.response);
+          }
         } catch (e) {
           res.status(500).json({
             code: 'RENDER_ERROR',
