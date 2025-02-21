@@ -3,6 +3,7 @@ import strings from '../../resources/index';
 import extractPackage from '../domain/extract-package';
 import type { Repository } from '../domain/repository';
 import * as validator from '../domain/validators';
+import { validateTemplateOcVersion } from '../domain/validators';
 
 export default function publish(repository: Repository) {
   return async (req: Request, res: Response): Promise<void> => {
@@ -55,6 +56,21 @@ export default function publish(repository: Repository) {
 
     try {
       const pkgDetails = await extractPackage(files, res.conf.tarExtractMode);
+
+      if (pkgDetails.packageJson.oc.files.template.minOcVersion) {
+        const templateOcVersionResult = validateTemplateOcVersion(
+          pkgDetails.packageJson.oc.files.template.minOcVersion
+        );
+        if (!templateOcVersionResult.isValid) {
+          res.errorDetails = `Your template requires a version of OC higher than ${templateOcVersionResult.error.minOcVersion}`;
+          res.status(409).json({
+            code: 'template_oc_version_not_valid',
+            error: `Your template requires a version of OC higher than ${templateOcVersionResult.error.minOcVersion} but your OC version is ${templateOcVersionResult.error.registryVersion}`,
+            details: templateOcVersionResult.error
+          });
+          return;
+        }
+      }
 
       try {
         await repository.publishComponent({
