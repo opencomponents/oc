@@ -65,7 +65,10 @@ export default function publish(repository: Repository) {
           res.errorDetails = `Your template requires a version of OC higher than ${templateOcVersionResult.error.minOcVersion}`;
           res.status(409).json({
             code: 'template_oc_version_not_valid',
-            error: `Your template requires a version of OC higher than ${templateOcVersionResult.error.minOcVersion} but your OC version is ${templateOcVersionResult.error.registryVersion}`,
+            error: strings.errors.cli.TEMPLATE_OC_VERSION_NOT_VALID(
+              templateOcVersionResult.error.minOcVersion,
+              templateOcVersionResult.error.registryVersion
+            ),
             details: templateOcVersionResult.error
           });
           return;

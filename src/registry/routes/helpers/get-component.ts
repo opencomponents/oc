@@ -213,7 +213,10 @@ export default function getComponent(conf: Config, repository: Repository) {
               status: 400,
               response: {
                 code: 'TEMPLATE_REQUIRES_HIGHER_OC_VERSION',
-                error: `Your template requires a version of OC higher than ${templateOcVersionResult.error.minOcVersion} but your OC version is ${templateOcVersionResult.error.registryVersion}`
+                error: strings.errors.cli.TEMPLATE_OC_VERSION_NOT_VALID(
+                  templateOcVersionResult.error.minOcVersion,
+                  templateOcVersionResult.error.registryVersion
+                )
               }
             });
           }
