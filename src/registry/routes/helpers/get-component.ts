@@ -18,6 +18,7 @@ import RequireWrapper from '../../domain/require-wrapper';
 import * as sanitiser from '../../domain/sanitiser';
 import * as urlBuilder from '../../domain/url-builder';
 import * as validator from '../../domain/validators';
+import { validateTemplateOcVersion } from '../../domain/validators';
 import applyDefaultValues from './apply-default-values';
 import * as getComponentFallback from './get-component-fallback';
 import GetComponentRetrievingInfo from './get-component-retrieving-info';
@@ -201,6 +202,24 @@ export default function getComponent(conf: Config, repository: Repository) {
               error: validationResult.errors.message
             }
           });
+        }
+
+        if (component.oc.files.template.minOcVersion) {
+          const templateOcVersionResult = validateTemplateOcVersion(
+            component.oc.files.template.minOcVersion
+          );
+          if (!templateOcVersionResult.isValid) {
+            return callback({
+              status: 400,
+              response: {
+                code: 'TEMPLATE_REQUIRES_HIGHER_OC_VERSION',
+                error: strings.errors.cli.TEMPLATE_OC_VERSION_NOT_VALID(
+                  templateOcVersionResult.error.minOcVersion,
+                  templateOcVersionResult.error.registryVersion
+                )
+              }
+            });
+          }
         }
 
         // Support legacy templates

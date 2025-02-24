@@ -85,6 +85,7 @@ interface OcConfiguration {
       src: string;
       type: string;
       version: string;
+      minOcVersion?: string;
       size?: number;
     };
     env?: string;
