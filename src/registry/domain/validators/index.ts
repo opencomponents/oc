@@ -5,6 +5,7 @@ import ocCliVersionValidator from './oc-cli-version';
 import packageJsonValidator from './package-json-validator';
 import pluginsRequirementsValidator from './plugins-requirements';
 import registryConfigurationValidator from './registry-configuration';
+import templateOcVersionValidator from './templace-oc-version';
 
 import nodeVersionValidator from './node-version';
 import uploadedPackageValidator from './uploaded-package';
@@ -19,6 +20,8 @@ export const validatePackage = uploadedPackageValidator;
 export const validatePackageJson = packageJsonValidator;
 export const validatePluginsRequirements = pluginsRequirementsValidator;
 export const validateRegistryConfiguration = registryConfigurationValidator;
+export const validateTemplateOcVersion = templateOcVersionValidator;
+
 export function validateVersion(version: string): boolean {
   return !!semver.valid(version);
 }
