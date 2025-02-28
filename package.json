@@ -74,6 +74,7 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
+    "@rdevis/turbo-stream": "^2.4.1",
     "@types/lodash.isequal": "^4.5.8",
     "accept-language-parser": "^1.5.0",
     "async": "^3.2.6",
@@ -116,7 +117,6 @@
     "serialize-error": "^8.1.0",
     "targz": "^1.0.1",
     "try-require": "^1.2.1",
-    "turbo-stream": "^2.4.1",
     "undici": "^6.19.8",
     "universalify": "^2.0.0",
     "yargs": "^17.7.2"

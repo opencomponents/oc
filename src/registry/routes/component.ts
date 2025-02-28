@@ -1,8 +1,8 @@
 import { serializeError } from 'serialize-error';
 
 import { Readable } from 'node:stream';
+import { encode } from '@rdevis/turbo-stream';
 import type { Request, RequestHandler, Response } from 'express';
-import { encode } from 'turbo-stream';
 import strings from '../../resources';
 import type { Config } from '../../types';
 import type { Repository } from '../domain/repository';
