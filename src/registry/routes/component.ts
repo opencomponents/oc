@@ -50,7 +50,6 @@ export default function component(
             res.set(result.headers);
           }
 
-          res.status(result.status);
           const streamEnabled =
             !!result.response.data?.component?.props?.[stream];
           if (streamEnabled) {
@@ -59,6 +58,7 @@ export default function component(
 
             const nodeStream = Readable.from(webStream);
 
+            res.status(result.status);
             nodeStream.on('error', (err) => {
               res.status(500).end(String(err));
             });
@@ -69,7 +69,7 @@ export default function component(
               res.end();
             });
           } else {
-            res.json(result.response);
+            res.status(result.status).json(result.response);
           }
         } catch (e) {
           res.status(500).json({
