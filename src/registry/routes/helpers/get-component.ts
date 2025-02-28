@@ -56,6 +56,7 @@ export interface GetComponentResult {
   };
 }
 
+export const stream = Symbol('stream');
 const noop = () => {};
 const noopConsole = Object.fromEntries(
   Object.keys(console).map((key) => [key, noop])
@@ -520,7 +521,8 @@ export default function getComponent(conf: Config, repository: Repository) {
                   responseHeaders[header.toLowerCase()] = value;
                 }
               },
-              templates: repository.getTemplatesInfo()
+              templates: repository.getTemplatesInfo(),
+              streamSymbol: stream
             };
 
             const setCallbackTimeout = () => {
@@ -573,6 +575,9 @@ export default function getComponent(conf: Config, repository: Repository) {
                     Buffer,
                     AbortController: globalThis?.AbortController,
                     AbortSignal: globalThis?.AbortSignal,
+                    Promise,
+                    Date,
+                    Symbol,
                     eval: undefined,
                     fetch: globalThis?.fetch
                   };
