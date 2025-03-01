@@ -137,7 +137,11 @@ describe('registry : domain : options-sanitiser', () => {
 
   describe('when templates', () => {
     describe('is provided', () => {
-      const options = { baseUrl: 'dummy', templates: [{ name: 'hi' }] };
+      const options = {
+        baseUrl: 'dummy',
+        templates: [{ name: 'hi' }],
+        compileClient: false
+      };
       it('should not modify it', () => {
         expect(sanitise(options).templates).to.deep.equal([{ name: 'hi' }]);
       });
