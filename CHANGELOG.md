@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.50.0
+- [#1396](https://github.com/opencomponents/oc/pull/1396) [v0.50.0] [BREAKING] Switch compile client default to true
+- [#1395](https://github.com/opencomponents/oc/pull/1395) Support stream
+- [#1394](https://github.com/opencomponents/oc/pull/1394) add a min oc version checker for templates if defined
+
 ### v0.49.67
 - [#1393](https://github.com/opencomponents/oc/pull/1393) oc-client-browser@1.95 [ALLOW EMPTY ACTIONS]
 
