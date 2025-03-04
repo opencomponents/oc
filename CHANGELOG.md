@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.1
+- [#1397](https://github.com/opencomponents/oc/pull/1397) update client
+
 ### v0.50.0
 - [#1396](https://github.com/opencomponents/oc/pull/1396) [v0.50.0] [BREAKING] Switch compile client default to true
 - [#1395](https://github.com/opencomponents/oc/pull/1395) Support stream
