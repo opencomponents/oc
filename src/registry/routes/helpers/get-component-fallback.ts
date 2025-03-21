@@ -41,13 +41,13 @@ function getComponentFallbackForViewType(
       accept: 'application/json'
     }
   })
-    .then(response => {
+    .then((response) => {
       if (response.statusCode !== 200) {
         throw response;
       }
       return response.body.text();
     })
-    .then(fallbackResponse => {
+    .then((fallbackResponse) => {
       try {
         return callback(null, JSON.parse(fallbackResponse));
       } catch (parseError) {
@@ -94,7 +94,7 @@ export function getComponent(
     },
     body: JSON.stringify({ components: [component] })
   })
-    .then(response => {
+    .then((response) => {
       if (response.statusCode !== 200) {
         throw response;
       }
