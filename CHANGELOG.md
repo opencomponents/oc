@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.2
+- [#1399](https://github.com/opencomponents/oc/pull/1399) fix content-type header
+
 ### v0.50.1
 - [#1397](https://github.com/opencomponents/oc/pull/1397) update client
 
