@@ -83,10 +83,12 @@ export function getComponent(
   component: { name: string; version: string; parameters: IncomingHttpHeaders },
   callback: (result: GetComponentResult) => void
 ): void {
+  // For some reason, undici doesn't like the content-type header
+  const { 'content-type': _, ...restHeaders } = headers;
   request(fallbackRegistryUrl, {
     method: 'POST',
     headers: {
-      ...headers,
+      ...restHeaders,
       host: new URL(fallbackRegistryUrl).host,
       'Content-Type': 'application/json'
     },
