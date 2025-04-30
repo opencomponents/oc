@@ -579,6 +579,9 @@ export default function getComponent(conf: Config, repository: Repository) {
                     Date,
                     Symbol,
                     eval: undefined,
+                    URL: globalThis?.URL,
+                    URLSearchParams: globalThis?.URLSearchParams,
+                    crypto: globalThis?.crypto,
                     fetch: globalThis?.fetch
                   };
 
