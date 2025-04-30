@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.3
+- [#1400](https://github.com/opencomponents/oc/pull/1400) add crypto and url globals
+
 ### v0.50.2
 - [#1399](https://github.com/opencomponents/oc/pull/1399) fix content-type header
 
