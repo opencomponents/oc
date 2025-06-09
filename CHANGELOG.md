@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.4
+- [#1403](https://github.com/opencomponents/oc/pull/1403) pass id when doing ssr
+
 ### v0.50.3
 - [#1400](https://github.com/opencomponents/oc/pull/1400) add crypto and url globals
 
