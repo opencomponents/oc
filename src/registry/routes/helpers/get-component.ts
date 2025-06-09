@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import Domain from 'node:domain';
 import vm from 'node:vm';
 import acceptLanguageParser from 'accept-language-parser';
@@ -394,7 +395,7 @@ export default function getComponent(conf: Config, repository: Repository) {
             const cacheKey = `${component.name}/${component.version}/template.js`;
             const cached = cache.get('file-contents', cacheKey);
             const key = component.oc.files.template.hashKey;
-            const id = crypto.randomUUID();
+            const id = randomUUID();
             const renderOptions = {
               href: componentHref,
               key,
