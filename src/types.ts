@@ -183,7 +183,10 @@ export interface Config<T = any> {
   postRequestPayloadSize?: string | number;
   prefix: string;
   publishAuth?: PublishAuthConfig;
-  publishValidation: (data: unknown) =>
+  publishValidation: (
+    pkgJson: unknown,
+    context: { user?: string }
+  ) =>
     | {
         isValid: boolean;
         error?: string;
