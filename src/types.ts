@@ -148,6 +148,10 @@ export type PublishAuthConfig =
       username: string;
       password: string;
     }
+  | {
+      type: 'basic';
+      logins: Array<{ username: string; password: string }>;
+    }
   | ({ type: string | Authentication } & Record<string, any>);
 
 export interface Config<T = any> {
@@ -179,7 +183,10 @@ export interface Config<T = any> {
   postRequestPayloadSize?: string | number;
   prefix: string;
   publishAuth?: PublishAuthConfig;
-  publishValidation: (data: unknown) =>
+  publishValidation: (
+    pkgJson: unknown,
+    context: { user?: string }
+  ) =>
     | {
         isValid: boolean;
         error?: string;
@@ -255,6 +262,9 @@ export interface Plugin<T = any> {
 
 declare global {
   namespace Express {
+    interface Request {
+      user?: string;
+    }
     interface Response {
       conf: Config;
       errorCode?: string;
