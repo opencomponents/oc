@@ -80,7 +80,8 @@ export default function publish(repository: Repository) {
           pkgDetails,
           componentName: req.params['componentName'],
           componentVersion: req.params['componentVersion'],
-          dryRun: typeof req.query['dryRun'] !== 'undefined'
+          dryRun: typeof req.query['dryRun'] !== 'undefined',
+          user: req.user
         });
         res.status(200).json({ ok: true });
       } catch (err: any) {

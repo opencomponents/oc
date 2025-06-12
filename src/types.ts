@@ -259,6 +259,9 @@ export interface Plugin<T = any> {
 
 declare global {
   namespace Express {
+    interface Request {
+      user?: string;
+    }
     interface Response {
       conf: Config;
       errorCode?: string;
