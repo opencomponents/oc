@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.5
+- [#1404](https://github.com/opencomponents/oc/pull/1404) Multiple logins
+
 ### v0.50.4
 - [#1403](https://github.com/opencomponents/oc/pull/1403) pass id when doing ssr
 
