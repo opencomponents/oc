@@ -148,6 +148,10 @@ export type PublishAuthConfig =
       username: string;
       password: string;
     }
+  | {
+      type: 'basic';
+      logins: Array<{ username: string; password: string }>;
+    }
   | ({ type: string | Authentication } & Record<string, any>);
 
 export interface Config<T = any> {
