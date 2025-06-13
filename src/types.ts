@@ -238,10 +238,7 @@ export interface Template {
     context?: Record<string, unknown>
   ) => CompiledTemplate;
   getInfo: () => TemplateInfo;
-  render: (
-    options: { model: unknown; template: CompiledTemplate },
-    cb: (err: Error | null, data: string) => void
-  ) => void;
+  render: (options: any, cb: (err: Error | null, data: string) => void) => void;
 }
 
 export interface Plugin<T = any> {
