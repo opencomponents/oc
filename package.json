@@ -1,6 +1,6 @@
 {
   "name": "oc",
-  "version": "0.50.5",
+  "version": "0.50.6",
   "description": "A framework for developing and distributing html components",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
