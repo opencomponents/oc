@@ -10,7 +10,7 @@ export default function cors(
   res.header('Access-Control-Allow-Origin', '*');
   res.header(
     'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept'
+    'Origin, X-Requested-With, Content-Type, Accept, traceparent'
   );
   res.header('Access-Control-Allow-Methods', 'GET, OPTIONS, PUT, POST');
 
