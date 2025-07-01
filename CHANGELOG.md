@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.7
+- [#1406](https://github.com/opencomponents/oc/pull/1406) add traceparent
+
 ### v0.50.6
 - [#1405](https://github.com/opencomponents/oc/pull/1405) fix template type
 
