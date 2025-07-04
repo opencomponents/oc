@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.8
+- [#1407](https://github.com/opencomponents/oc/pull/1407) Esm template
+
 ### v0.50.7
 - [#1406](https://github.com/opencomponents/oc/pull/1406) add traceparent
 
