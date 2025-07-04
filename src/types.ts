@@ -73,6 +73,7 @@ interface OcConfiguration {
   container?: boolean;
   date: number;
   files: {
+    imports?: Record<string, string>;
     dataProvider: {
       hashKey: string;
       src: string;
