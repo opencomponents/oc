@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.9
+- [#1408](https://github.com/opencomponents/oc/pull/1408) update client (fix regression bug with events listeners not getting the type on first parameter)
+
 ### v0.50.8
 - [#1407](https://github.com/opencomponents/oc/pull/1407) Esm template
 
