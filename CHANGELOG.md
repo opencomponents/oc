@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.11
+- [#1411](https://github.com/opencomponents/oc/pull/1411) update client
+
 ### v0.50.10
 - [#1409](https://github.com/opencomponents/oc/pull/1409) update client to support unmounting
 
