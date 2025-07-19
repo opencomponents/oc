@@ -156,34 +156,157 @@ export type PublishAuthConfig =
   | ({ type: string | Authentication } & Record<string, any>);
 
 export interface Config<T = any> {
+  /**
+   * Public base URL where the registry is reachable by consumers.
+   *
+   * The value **must** include the configured {@link prefix} at the end
+   * (e.g. `https://components.mycompany.com/` if `prefix` is `/`).
+   *
+   * When it doesn't, the sanitiser will automatically append it.
+   *
+   * @example "https://components.mycompany.com/"
+   */
   baseUrl: string;
+  /**
+   * Pre-compiled version of the `oc-client` library generated automatically
+   * at runtime when `compileClient` is enabled (default).
+   *
+   * This is filled in by the framework – you normally don't set it yourself.
+   * Declared here to keep the type complete.
+   *
+   * @internal
+   */
   compiledClient?: {
     code: { gzip: Buffer; brotli: Buffer; minified: string };
     map: string;
     dev: string;
   };
+  /**
+   * Dynamically compute the `baseUrl` for the incoming request.
+   * If provided, it overrides the static `baseUrl`.
+   */
   baseUrlFunc?: (opts: { host?: string; secure: boolean }) => string;
+  /**
+   * Express-compatible hook executed before a component is published.
+   * Defaults to a no-op or the authentication middleware specified in
+   * {@link publishAuth}.
+   */
   beforePublish: (req: Request, res: Response, next: NextFunction) => void;
+  /**
+   * List of header names (lower-case) to omit from the response when a
+   * fallback/weak component version is served.
+   *
+   * @default []
+   */
   customHeadersToSkipOnWeakVersion: string[];
+  /**
+   * Names of npm packages that components can `require` at runtime.
+   *
+   * @default []
+   * @example ["lodash", "moment"]
+   */
   dependencies: string[];
+  /**
+   * Enables the HTML discovery page and `/components` endpoint.
+   *
+   * @default true
+   */
   discovery: boolean;
+  /**
+   * Function invoked to decide whether discovery should be enabled for the
+   * current request.
+   */
   discoveryFunc?: (opts: { host?: string; secure: boolean }) => boolean;
+  /**
+   * Environment variables passed to components in `context.env`.
+   *
+   * @default {}
+   */
   env: Record<string, string>;
+  /**
+   * Maximum execution time of a component’s server-side logic, expressed in
+   * seconds. When the timeout elapses the registry returns a 500 error.
+   *
+   * If omitted there is no execution timeout.
+   */
   executionTimeout?: number;
+  /**
+   * URL of a secondary registry that will be queried if a component cannot
+   * be found on this instance. A trailing slash is appended automatically.
+   */
   fallbackRegistryUrl: string;
+  /**
+   * Enables hot-reloading of component code (always `true` when `local` is).
+   *
+   * @default !!local
+   */
   hotReloading: boolean;
+  /**
+   * Milliseconds the HTTP server keeps idle connections alive.
+   *
+   * @default 5000
+   */
   keepAliveTimeout?: number;
+  /**
+   * TCP port of the LiveReload server used by the preview page.
+   */
   liveReloadPort: number;
+  /**
+   * Restricts the registry to serve only the specified component names.
+   */
   components?: string[];
+  /**
+   * Indicates whether the registry serves components from the local file
+   * system (`true`) or from the remote storage (`false`).
+   */
   local: boolean;
+  /**
+   * File and directory mode (octal) applied when extracting tarballs during
+   * publishing.
+   *
+   * @default 0o766
+   */
   tarExtractMode: number;
+  /**
+   * Absolute path where local components are stored.
+   */
   path: string;
+  /**
+   * Collection of plugins initialised for this registry instance.
+   * Populated via `registry.register(...)`.
+   */
   plugins: Record<string, (...args: unknown[]) => void>;
+  /**
+   * Seconds between each poll of the storage adapter for changes.
+   *
+   * @default 5
+   */
   pollingInterval: number;
+  /**
+   * Port the HTTP server listens on.
+   *
+   * @default process.env.PORT ?? 3000
+   */
   port: number | string;
+  /**
+   * Maximum allowed `Content-Length` for *publish* requests.
+   * Accepts any value supported by the `bytes` module (e.g. "10mb").
+   */
   postRequestPayloadSize?: string | number;
+  /**
+   * URL path prefix appended to every registry endpoint.
+   * It **must** start and end with a slash (e.g. `/`, `/components/`).
+   *
+   * @default "/"
+   */
   prefix: string;
+  /**
+   * Authentication strategy for component publishing.
+   */
   publishAuth?: PublishAuthConfig;
+  /**
+   * Custom validation logic executed during component publishing.
+   */
   publishValidation: (
     pkgJson: unknown,
     context: { user?: string }
@@ -193,12 +316,22 @@ export interface Config<T = any> {
         error?: string;
       }
     | boolean;
+  /**
+   * Seconds between each refresh of the internal component list cache.
+   */
   refreshInterval?: number;
+  /**
+   * Additional Express routes to mount on the registry application.
+   */
   routes?: Array<{
     route: string;
     method: string;
     handler: (req: Request, res: Response) => void;
   }>;
+  /**
+   * Convenience S3 configuration – if present the registry will create
+   * a storage adapter automatically.
+   */
   s3?: {
     bucket: string;
     region: string;
@@ -206,13 +339,32 @@ export interface Config<T = any> {
     secret?: string;
     componentsDir: string;
   };
+  /**
+   * Low-level storage adapter used by the registry.
+   */
   storage: {
     adapter: (options: T) => StorageAdapter;
     options: T & { componentsDir: string };
   };
+  /**
+   * Directory used by the registry for temporary files.
+   */
   tempDir: string;
+  /**
+   * List of template engines available for rendering components.
+   */
   templates: Template[];
+  /**
+   * HTTP request timeout in **milliseconds**.
+   *
+   * @default 120000
+   */
   timeout: number;
+  /**
+   * Verbosity level of the console logger (0 = silent).
+   *
+   * @default 0
+   */
   verbosity: number;
 }
 
