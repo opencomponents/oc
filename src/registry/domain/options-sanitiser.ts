@@ -13,6 +13,12 @@ type CompileOptions = Omit<
 
 export interface RegistryOptions<T = any>
   extends Partial<Omit<Config<T>, 'beforePublish'>> {
+  /**
+   * Public base URL where the registry will be accessible by consumers.
+   * It **must** already include the chosen {@link Config.prefix} and end with a trailing slash.
+   *
+   * @example "https://components.mycompany.com/"
+   */
   baseUrl: string;
   /**
    * Set the options for the oc-client-browser
