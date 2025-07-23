@@ -136,7 +136,11 @@ const publish = ({
             } else if (err && typeof err === 'object') {
               try {
                 errorMessage = JSON.stringify(err);
-              } catch (er) {}
+              } catch (er) {
+                errorMessage = err;
+              }
+            } else {
+              errorMessage = err;
             }
             errorMessage = strings.errors.cli.PUBLISHING_FAIL(
               String(errorMessage)
