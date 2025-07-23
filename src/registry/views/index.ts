@@ -1,5 +1,4 @@
 import dependencies from './partials/components-dependencies';
-import history from './partials/components-history';
 import list from './partials/components-list';
 import plugins from './partials/components-plugins';
 import templates from './partials/components-templates';
@@ -12,7 +11,7 @@ import getProperty from './partials/property';
 export default function indexView(vm: VM): string {
   const tabs = {
     dependencies: dependencies(vm),
-    history: history(vm),
+    history: '', // Will be rendered client-side
     list: list(vm),
     templates: templates(vm),
     plugins: plugins(vm)
@@ -51,7 +50,7 @@ export default function indexView(vm: VM): string {
       ${!isLocal ? extraLinks : ''}
     </h2>
     ${tabs.list}
-    ${tabs.history}
+    <div id="components-history" class="box" style="display:none"></div>
     ${tabs.templates}
     ${tabs.dependencies}
     ${tabs.plugins}`;
@@ -59,7 +58,7 @@ export default function indexView(vm: VM): string {
   const scripts = `<script>
     var q = "${encodeURIComponent(vm.q)}", componentsList = ${JSON.stringify(
       vm.componentsList
-    )};
+    )}, historyList = ${JSON.stringify(vm.componentsHistory || [])};
 ${indexJS}</script>`;
 
   return layout({ content, scripts });

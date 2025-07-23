@@ -66,6 +66,20 @@ oc.cmd.push(function() {
       $target.show();
       $('#menuList a').removeClass('selected');
       $('#menuList a[href="' + target + '"]').addClass('selected');
+
+      // Dynamically render history tab if needed
+      if (target === '#components-history' && !$target.data('rendered')) {
+        var history = window.historyList || [];
+        var html = history.map(function(item) {
+          var size = item.templateSize ? ' [' + Math.round(item.templateSize / 1024) + ' kb]' : '';
+          return '<a href="' + item.name + '/' + item.version + '/~info">' +
+            '<div class="componentRow row table">' +
+            '<p class="release">' + item.publishDate + ' - Published ' + item.name + '@' + item.version + size + '</p>' +
+            '</div></a>';
+        }).join('');
+        $target.html(html);
+        $target.data('rendered', true);
+      }
     };
 
     var hash = location.href.split('#')[1] || '';
