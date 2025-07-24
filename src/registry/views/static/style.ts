@@ -254,7 +254,6 @@ textarea:focus {
   margin-bottom: 30px;
   display: flex;
   align-items: center;
-  gap: 1em;
 }
 
 .states span,
