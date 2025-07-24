@@ -74,6 +74,8 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
+    "@kitajs/html": "^4.2.9",
+    "@kitajs/ts-html-plugin": "^4.1.1",
     "@rdevis/turbo-stream": "^2.4.1",
     "@types/lodash.isequal": "^4.5.8",
     "accept-language-parser": "^1.5.0",
