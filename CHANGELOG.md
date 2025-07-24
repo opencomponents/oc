@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.50.12
+- [#1415](https://github.com/opencomponents/oc/pull/1415) Move to JSX and Restyle
+- [#1413](https://github.com/opencomponents/oc/pull/1413) Fix error message on publish when is a string
+- [#1412](https://github.com/opencomponents/oc/pull/1412) Document options
+
 ### v0.50.11
 - [#1411](https://github.com/opencomponents/oc/pull/1411) update client
 
