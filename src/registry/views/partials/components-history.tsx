@@ -22,7 +22,7 @@ const ComponentsHistory = (props: { componentsHistory: ComponentHistory }) => {
 
   return (
     <div id="components-history" class="box">
-      {props.componentsHistory?.map(componentRow) ?? ''}
+      {props.componentsHistory ? props.componentsHistory.map(componentRow) : ''}
     </div>
   );
 };
