@@ -45,7 +45,7 @@ function statsJs(name: string, componentDetail: ComponentDetail) {
       data: dataPoints,
       tension: 0.1,
       borderWidth: 1,
-      backgroundColor: "#FF8C00",
+      backgroundColor: "#fbbf24",
     }
   
     new Chart(ctx, {
@@ -189,7 +189,8 @@ export default function Info(vm: Vm) {
       <p>
         You can edit the following area and then
         <a href="#refresh" class="refresh-preview">
-          refresh
+          {' '}
+          refresh{' '}
         </a>
         to apply the change into the preview window.
       </p>

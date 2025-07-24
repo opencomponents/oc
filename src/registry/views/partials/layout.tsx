@@ -39,6 +39,8 @@ const Layout = ({ title, href, children, scripts }: LayoutProps) => {
               src="//ghbtns.com/github-btn.html?user=opencomponents&repo=oc&type=watch&count=true"
               width="110"
               height="20"
+              // @ts-ignore
+              frameBorder="0"
             />
           </div>
           <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.2/jquery.min.js" />
