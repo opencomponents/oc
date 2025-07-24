@@ -1,50 +1,74 @@
-export default `body {
-  width: 1024px;
+export default `@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+body {
+  width: 100%;
+  max-width: 1100px;
   margin: 0 auto;
-  font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  background: #f8fafc;
+  color: #22223b;
+  line-height: 1.6;
 }
 
 h1, h2, h3 {
-  color: darkred;
-  float: left;
+  color: #5f3dc4;
   width: 100%;
+  font-weight: 600;
+  margin-bottom: 0.5em;
 }
 
 h1 {
   margin-top: 0;
-  color: #000;
-  border-bottom: 1px solid #000;
+  color: #22223b;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 2.5rem;
+  letter-spacing: -1px;
+  padding-bottom: 0.3em;
 }
 
 a {
-  color: #000;
+  color: #5f3dc4;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+a:hover {
+  color: #7c3aed;
+  text-decoration: underline;
+}
+
+#components-list a:hover {
+  text-decoration: none;
 }
 
 p {
-  float: left;
   margin-top: 0;
 }
 
 .back {
-  float: left;
   width: 100%;
   margin-top: -20px;
+  margin-bottom: 1.5em;
+  display: block;
+  color: #64748b;
+  font-size: 0.95em;
 }
 
 .code,
 .preview {
-  float: left;
   width: 100%;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(60,60,100,0.04);
+  margin-bottom: 1.5em;
 }
 
 .preview {
   height: 300px;
-  border: 1px solid #000;
+  border: 1px solid #e0e0e0;
 }
 
 .table {
   width: 100%;
-  float: left;
 }
 
 .w-100 {
@@ -52,20 +76,26 @@ p {
 }
 
 .row {
-  background-color: #F9F9F9;
-  border: 1px solid #000;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
   width: 100%;
   display: flex;
-  padding: 10px 0px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
+  padding: 14px 0px;
   box-sizing: border-box;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(60,60,100,0.04);
+  transition: box-shadow 0.2s, border 0.2s;
 }
 
 .row.header {
-  background-color: #EBE9E9;
-  border: 1px solid #000 !important;
+  background: #f1f5f9;
+  border: 1px solid #d1d5db !important;
+  font-size: 1.1em;
+  font-weight: 600;
+  border-radius: 12px 12px 0 0;
+  box-shadow: none;
 }
 
 .row.header div {
@@ -86,30 +116,38 @@ p {
   padding-right: 10px;
 }
 
+.componentRow {
+  transition: box-shadow 0.2s, background 0.2s;
+}
+
 .componentRow:hover {
-  background-color: #EBE9E9;
+  background: #f3f0ff;
+  box-shadow: 0 4px 16px rgba(95,61,196,0.08);
+  border-color: #b197fc;
 }
 
 .componentRow .title .name {
   font-weight: bold;
-  font-size: 18px;
+  font-size: 1.15rem;
   margin: 0;
   width: 100%;
+  color: #22223b;
 }
 
 .componentRow .release {
-  font-size: 16px;
+  font-size: 1rem;
   margin: 0;
   width: 100%;
+  color: #5f3dc4;
 }
 
 .componentRow .title .description {
   padding: 0;
-  font-size: 14px;
+  font-size: 0.98rem;
+  color: #64748b;
 }
 
 .social {
-  float: left;
   width: 100%;
   margin-top: 20px;
   text-align: center;
@@ -117,18 +155,18 @@ p {
 
 .field {
   width: 100%;
-  float: left;
+  margin-bottom: 1em;
 }
 
 .field p,
 .field span,
 .field a {
-  float: left;
   margin: 0;
+  font-weight: 500;
 }
 
 .field p {
-  color: #8B0000;
+  color: #5f3dc4;
   font-weight: bold;
   margin-right: 10px;
 }
@@ -136,20 +174,28 @@ p {
 input[type=text],
 textarea {
   height: 43px;
-  font-family: Arial;
-  border: 1px solid #8B0000;
+  font-family: 'Inter', Arial, sans-serif;
+  border: 1px solid #b197fc;
   margin-bottom: 10px;
-  font-size: 20px;
+  font-size: 1.05rem;
   padding: 10px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
+  border-radius: 8px;
+  background: #f8fafc;
   box-sizing: border-box;
+  transition: border 0.2s;
+}
+input[type=text]:focus,
+textarea:focus {
+  border: 1.5px solid #7c3aed;
+  outline: none;
 }
 
 .filters {
   width: 100%;
   display: flex;
   justify-content: space-between;
+  gap: 1em;
+  margin-bottom: 0.5em;
 }
 
 .row > * {
@@ -196,6 +242,7 @@ textarea {
 .author {
   flex: 0 1 15%;
   word-break: break-all;
+  color: #3b5bdb;
 }
 
 #href {
@@ -205,66 +252,79 @@ textarea {
 .states {
   width: 100%;
   margin-bottom: 30px;
+  display: flex;
+  align-items: center;
 }
 
 .states span,
 .states .state {
-  float: left;
   margin-right: 20px;
 }
 
 .states input {
-  float: left;
+  margin-right: 6px;
 }
 
 .details-state span {
-  padding: 1px 5px;
+  padding: 1px 8px;
   margin-left: 10px;
-  font-size: 75%;
+  font-size: 0.95em;
   font-weight: bold;
-  color: #FFF;
-  background-color: #1E42B9;
+  color: #fff;
+  background: #5f3dc4;
+  border-radius: 8px;
   white-space: nowrap;
 }
 
 .state {
   margin-right: 10px;
-  font-size: 75%;
+  font-size: 0.95em;
   font-weight: bold;
-  color: #FFF;
+  color: #fff;
+  border-radius: 8px;
   white-space: nowrap;
+  padding: 2px 8px;
 }
 
 .table .state {
-  background-color: #1E42B9;
-  height: 17px;
-  padding: 1px 5px;
+  background: #5f3dc4;
+  height: 20px;
 }
 
 .component-state-experimental,
 .details-state .component-state-experimental,
 .table .component-state-experimental {
-  background-color: #B9961E;
-  height: 17px;
-  padding: 1px 5px;
+  background: #ffe066;
+  color: #7c3aed;
+  border: 1px solid #e9ecef;
 }
 
 .component-state-deprecated,
 .details-state .component-state-deprecated,
 .table .component-state-deprecated {
-  background-color: #B9381E;
-  height: 17px;
-  padding: 1px 5px;
+  background: #ffd6d6;
+  color: #c92a2a;
+  border: 1px solid #e9ecef;
 }
 
 a.tab-link {
-  color: #8B0000;
+  color: #5f3dc4;
+  font-weight: 500;
+  padding: 0.1em 0.6em;
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s;
+  font-size: 1.4rem;
+  line-height: 1.2;
+  vertical-align: middle;
+  display: inline-block;
 }
 
 a.tab-link.selected {
-  background-color: #8b0000;
+  background: #5f3dc4;
   color: #fff;
   text-decoration: none;
+  font-size: 1.5rem;
+  line-height: 1.2;
 }
 
 .bold {
@@ -273,5 +333,32 @@ a.tab-link.selected {
 
 .hide {
   display: none !important;
+}
+
+.box {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(60,60,100,0.04);
+  padding: 1.5em 1em;
+  margin-bottom: 2em;
+}
+
+@media (max-width: 900px) {
+  body {
+    max-width: 100vw;
+    padding: 0 0.5em;
+  }
+  .filters {
+    flex-direction: column;
+    gap: 0.5em;
+  }
+  .row {
+    flex-direction: column;
+    gap: 0.5em;
+    padding: 10px 0;
+  }
+  .box {
+    padding: 1em 0.5em;
+  }
 }
 `;

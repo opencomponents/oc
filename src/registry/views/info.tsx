@@ -1,12 +1,12 @@
 import type { Component, ComponentDetail } from '../../types';
 
 import isTemplateLegacy from '../../utils/is-template-legacy';
-import getComponentAuthor from './partials/component-author';
-import getComponentParameters from './partials/component-parameters';
+import ComponentAuthor from './partials/component-author';
+import ComponentParameters from './partials/component-parameters';
 import getComponentState from './partials/component-state';
-import getComponentVersions from './partials/component-versions';
-import getLayout from './partials/layout';
-import getProperty from './partials/property';
+import ComponentVersions from './partials/component-versions';
+import Layout from './partials/layout';
+import Property from './partials/property';
 import infoJS from './static/info';
 
 interface Vm {
@@ -45,7 +45,7 @@ function statsJs(name: string, componentDetail: ComponentDetail) {
       data: dataPoints,
       tension: 0.1,
       borderWidth: 1,
-      backgroundColor: "#FF8C00",
+      backgroundColor: "#fbbf24",
     }
   
     new Chart(ctx, {
@@ -96,16 +96,17 @@ function statsJs(name: string, componentDetail: ComponentDetail) {
   `;
 }
 
-export default function info(vm: Vm): string {
-  const componentAuthor = getComponentAuthor(vm);
-  const componentParameters = getComponentParameters(vm);
+export default function Info(vm: Vm) {
   const componentState = getComponentState(vm);
-  const componentVersions = getComponentVersions(vm);
-  const layout = getLayout(vm);
-  const property = getProperty();
 
-  const showArray = (title: string, arr?: string[]) =>
-    property(title, !!arr && arr.length > 0 ? arr.join(', ') : 'none');
+  const ShowArray = (props: { title: string; arr?: string[] }) => (
+    <Property
+      display={props.title}
+      value={
+        !!props.arr && props.arr.length > 0 ? props.arr.join(', ') : 'none'
+      }
+    />
+  );
 
   const { component, dependencies, href, repositoryUrl, sandBoxDefaultQs } = vm;
 
@@ -129,51 +130,6 @@ export default function info(vm: Vm): string {
   const statsAvailable =
     !!vm.componentDetail && Object.keys(vm.componentDetail).length > 1;
 
-  const content = `<a class="back" href="${href}">&lt;&lt; All components</a>
-    <h2>${component.name} &nbsp;${componentVersions()}</h2>
-    <p class="w-100">${component.description} ${componentState()}</p>
-    ${
-      statsAvailable
-        ? `<h3>Stats</h3>
-           <canvas id="stats" width="400" height="200"></canvas>`
-        : ''
-    }
-    <h3>Component Info</h3>
-    ${property('Repository', repositoryUrl || 'not available', !!repositoryUrl)}
-    ${componentAuthor()}
-    ${property('Publish date', publishDate)}
-    ${property('Publish agent', publishAgent)}
-    ${property('Template', template)}
-    ${showArray('Node.js dependencies', dependencies)}
-    ${showArray('Plugin dependencies', component.oc.plugins)}
-    ${
-      component.oc.files.template.size
-        ? property(
-            'Template size',
-            `${Math.round(component.oc.files.template.size / 1024)} kb`
-          )
-        : ''
-    }
-    ${componentParameters()}
-    <h3>Code</h3>
-    <p>
-      You can edit the following area and then
-      <a href="#refresh" class="refresh-preview">refresh</a>
-      to apply the change into the preview window.
-    </p>
-    <div class="field"><p>Component's href:</p></div>
-    <textarea class="w-100" id="href" placeholder="Insert component href here">${componentHref}</textarea>
-    <div class="field"><p>Accept-Language header:</p></div>
-    <input class="w-100" id="lang" type="text" value="*" />
-    <h3>
-      Preview (
-      <a class="refresh-preview" href="#refresh">Refresh</a>
-      |
-      <a class="open-preview" href="#open">Open</a>
-      )
-    </h3>
-    <iframe class="preview" src="~preview/${sandBoxDefaultQs}"></iframe>`;
-
   const scripts = `
   <script>var thisComponentHref="${href}${component.name}/";
     ${infoJS}
@@ -181,5 +137,94 @@ export default function info(vm: Vm): string {
   ${statsAvailable ? statsJs(vm.component.name, vm.componentDetail!) : ''}
   `;
 
-  return layout({ content, scripts });
+  return (
+    <Layout scripts={scripts} href={href} title={vm.title}>
+      <a class="back" href={href}>
+        &lt;&lt; All components
+      </a>
+      <h2>
+        {component.name} &nbsp;
+        <ComponentVersions
+          versions={component.allVersions}
+          selectedVersion={component.version}
+        />
+      </h2>
+      <p class="w-100">
+        {component.description} {componentState()}
+      </p>
+      {statsAvailable ? (
+        <>
+          <h3>Stats</h3>
+          <canvas id="stats" width="400" height="200" />
+        </>
+      ) : (
+        ''
+      )}
+      <h3>Component Info</h3>
+      <Property
+        display="Repository"
+        value={repositoryUrl || 'not available'}
+        linked={!!repositoryUrl}
+      />
+      <ComponentAuthor
+        name={vm.parsedAuthor.name}
+        email={vm.parsedAuthor.email}
+        url={vm.parsedAuthor.url}
+      />
+      <Property display="Publish date" value={publishDate} />
+      <Property display="Publish agent" value={publishAgent} />
+      <Property display="Template" value={template} />
+      <ShowArray title="Node.js dependencies" arr={dependencies} />
+      <ShowArray title="Plugin dependencies" arr={component.oc.plugins} />
+      {component.oc.files.template.size ? (
+        <Property
+          display="Template size"
+          value={`${Math.round(component.oc.files.template.size / 1024)} kb`}
+        />
+      ) : (
+        ''
+      )}
+      <ComponentParameters parameters={component.oc.parameters} />
+      <h3>Code</h3>
+      <p>
+        You can edit the following area and then
+        <a href="#refresh" class="refresh-preview">
+          {' '}
+          refresh{' '}
+        </a>
+        to apply the change into the preview window.
+      </p>
+      <div class="field">
+        <p>Component's href:</p>
+      </div>
+      <textarea
+        class="w-100"
+        id="href"
+        placeholder="Insert component href here"
+        readonly
+      >
+        {componentHref}
+      </textarea>
+      <div class="field">
+        <p>Accept-Language header:</p>
+      </div>
+      <input class="w-100" id="lang" type="text" value="*" readonly />
+      <h3>
+        Preview {'( '}
+        <a class="refresh-preview" href="#refresh">
+          Refresh
+        </a>
+        {' | '}
+        <a class="open-preview" href="#open">
+          Open
+        </a>
+        {' )'}
+      </h3>
+      <iframe
+        class="preview"
+        src={`~preview/${sandBoxDefaultQs}`}
+        title="Component Preview"
+      />
+    </Layout>
+  );
 }

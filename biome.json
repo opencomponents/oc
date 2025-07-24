@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.6.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
   "organizeImports": {
     "enabled": true
   },
@@ -22,6 +22,9 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "correctness": {
+        "useJsxKeyInIterable": "off"
+      },
       "complexity": {
         "useLiteralKeys": "off",
         "noExcessiveNestedTestSuites": "off"
