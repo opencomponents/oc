@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.13
+- [#1416](https://github.com/opencomponents/oc/pull/1416) Add history endpoint and lazy load it on the UI
+
 ### v0.50.12
 - [#1415](https://github.com/opencomponents/oc/pull/1415) Move to JSX and Restyle
 - [#1413](https://github.com/opencomponents/oc/pull/1413) Fix error message on publish when is a string
