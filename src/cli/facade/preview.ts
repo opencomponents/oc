@@ -19,7 +19,7 @@ const preview = ({
       );
       await open(href);
       return href;
-    } catch (err) {
+    } catch {
       logger.err(strings.errors.cli.COMPONENT_HREF_NOT_FOUND);
       throw strings.errors.cli.COMPONENT_HREF_NOT_FOUND;
     }

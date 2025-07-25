@@ -51,7 +51,7 @@ export function validate(authConfig: PublishAuthConfig) {
 
     try {
       scheme = require(moduleName);
-    } catch (err) {
+    } catch {
       return {
         isValid: false,
         message:

@@ -13,7 +13,7 @@ export default function history(repository: Repository) {
       } else {
         res.status(401);
       }
-    } catch (error) {
+    } catch {
       res.status(500).json({ error: 'Internal server error' });
     }
   };

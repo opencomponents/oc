@@ -1,22 +1,20 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "organizeImports": {
-    "enabled": true
-  },
-  "javascript": {
-    "formatter": {
-      "trailingCommas": "none",
-      "indentStyle": "space",
-      "quoteStyle": "single"
-    }
+  "$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
+  "vcs": {
+    "enabled": false,
+    "clientKind": "git",
+    "useIgnoreFile": false
   },
   "files": {
-    "ignore": [
-      "src/components/oc-client/*",
-      "test/fixtures/*",
-      "package.json",
-      "biome.json"
+    "ignoreUnknown": false,
+    "includes": [
+      "src/**/*",
+      "!src/components/oc-client/**/*"
     ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "tab"
   },
   "linter": {
     "enabled": true,
@@ -36,6 +34,21 @@
       },
       "suspicious": {
         "noExplicitAny": "off"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "trailingCommas": "none",
+      "indentStyle": "space",
+      "quoteStyle": "single"
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
       }
     }
   }

@@ -1,13 +1,12 @@
+import type { VM } from '../../types';
 import Dependencies from './partials/components-dependencies';
 import History from './partials/components-history';
 import List from './partials/components-list';
 import Plugins from './partials/components-plugins';
 import Templates from './partials/components-templates';
-import indexJS from './static/index';
-
-import type { VM } from '../../types';
 import Layout from './partials/layout';
 import Property from './partials/property';
+import indexJS from './static/index';
 
 export default function indexView(vm: VM) {
   const getCount = (state: 'deprecated' | 'experimental') =>
