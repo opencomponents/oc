@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.14
+- [#1417](https://github.com/opencomponents/oc/pull/1417) add infinite scrolling to history
+
 ### v0.50.13
 - [#1416](https://github.com/opencomponents/oc/pull/1416) Add history endpoint and lazy load it on the UI
 
