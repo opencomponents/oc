@@ -71,7 +71,7 @@ ${indexJS}</script>`;
         components={vm.components}
         stateCounts={vm.stateCounts}
       />
-      <History componentsHistory={vm.componentsHistory} />
+      <History />
       <Templates templates={vm.templates} />
       <Dependencies availableDependencies={vm.availableDependencies} />
       <Plugins

@@ -19,7 +19,7 @@ const ComponentsTemplates = (props: { templates: Templates }) => {
   const templateRow = ({ externals, type, version }: Template) => {
     const externalLinks = externals.map(externalLink);
     const externalsLabel = externalLinks.length ? (
-      <>(Externals: {externalLinks})</>
+      <> (Externals: {externalLinks}) </>
     ) : null;
 
     return (

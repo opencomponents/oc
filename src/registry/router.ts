@@ -8,6 +8,7 @@ import ComponentInfoRoute from './routes/component-info';
 import ComponentPreviewRoute from './routes/component-preview';
 import ComponentsRoute from './routes/components';
 import DependenciesRoute from './routes/dependencies';
+import HistoryRoute from './routes/history';
 import PluginsRoute from './routes/plugins';
 import PublishRoute from './routes/publish';
 import StaticRedirectorRoute from './routes/static-redirector';
@@ -22,7 +23,8 @@ export function create(app: Express, conf: Config, repository: Repository) {
     publish: PublishRoute(repository),
     staticRedirector: StaticRedirectorRoute(repository),
     plugins: PluginsRoute(conf),
-    dependencies: DependenciesRoute(conf)
+    dependencies: DependenciesRoute(conf),
+    history: HistoryRoute(repository)
   };
 
   const prefix = conf.prefix;
@@ -38,6 +40,7 @@ export function create(app: Express, conf: Config, repository: Repository) {
 
   app.get(`${prefix}~registry/plugins`, routes.plugins);
   app.get(`${prefix}~registry/dependencies`, routes.dependencies);
+  app.get(`${prefix}~registry/history`, routes.history);
 
   if (conf.local) {
     app.get(

@@ -59,6 +59,56 @@ oc.cmd.push(function() {
     return false;
   };
 
+  var loadComponentsHistory = function() {
+    var historyLoader = $('#history-loader');
+    var historyContent = $('#history-content');
+    var historyError = $('#history-error');
+
+    // Show loader
+    historyLoader.show();
+    historyContent.hide();
+    historyError.hide();
+
+    // Fetch history data
+    fetch('~registry/history')
+      .then(function(response) {
+        if (!response.ok) {
+          throw new Error('Failed to fetch history');
+        }
+        return response.json();
+      })
+      .then(function(data) {
+        var componentsHistory = data.componentsHistory || [];
+        var historyHtml = '';
+        
+        for (var i = 0; i < componentsHistory.length; i++) {
+          var item = componentsHistory[i];
+          var templateSizeText = item.templateSize ? 
+            ' [' + Math.round(item.templateSize / 1024) + ' kb]' : '';
+          
+          historyHtml += '<a href="' + item.name + '/' + item.version + '/~info">' +
+                        '<div class="componentRow row table">' +
+                        '<p class="release">' +
+                        item.publishDate + ' - Published ' + item.name + '@' + item.version +
+                        templateSizeText +
+                        '</p>' +
+                        '</div>' +
+                        '</a>';
+        }
+        
+        historyContent.html(historyHtml);
+        historyLoader.hide();
+        historyContent.show();
+      })
+      .catch(function(error) {
+        console.error('Error loading components history:', error);
+        historyLoader.hide();
+        historyError.show();
+      });
+  };
+
+  var isHistoryLoaded = false;
+
   var initialiseTabs = function() {
     var selectItem = function(target) {
       var $target = $(target);
@@ -66,6 +116,12 @@ oc.cmd.push(function() {
       $target.show();
       $('#menuList a').removeClass('selected');
       $('#menuList a[href="' + target + '"]').addClass('selected');
+      
+      // Load history data when history tab is selected for the first time
+      if (target === '#components-history' && !isHistoryLoaded) {
+        loadComponentsHistory();
+        isHistoryLoaded = true;
+      }
     };
 
     var hash = location.href.split('#')[1] || '';
