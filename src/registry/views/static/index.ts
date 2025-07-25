@@ -59,6 +59,75 @@ oc.cmd.push(function() {
     return false;
   };
 
+  var historyData = [];
+  var historyRenderedCount = 0;
+  var historyBatchSize = 50; // Number of items to render per batch
+  var isLoadingMore = false;
+
+  var renderHistoryBatch = function() {
+    if (historyRenderedCount >= historyData.length || isLoadingMore) {
+      return;
+    }
+
+    isLoadingMore = true;
+    var historyContent = $('#history-content');
+    var batchEnd = Math.min(historyRenderedCount + historyBatchSize, historyData.length);
+    var batchHtml = '';
+
+    for (var i = historyRenderedCount; i < batchEnd; i++) {
+      var item = historyData[i];
+      var templateSizeText = item.templateSize ? 
+        ' [' + Math.round(item.templateSize / 1024) + ' kb]' : '';
+      
+      batchHtml += '<a href="' + item.name + '/' + item.version + '/~info">' +
+                  '<div class="componentRow row table">' +
+                  '<p class="release">' +
+                  item.publishDate + ' - Published ' + item.name + '@' + item.version +
+                  templateSizeText +
+                  '</p>' +
+                  '</div>' +
+                  '</a>';
+    }
+
+    // Append new batch to existing content
+    historyContent.append(batchHtml);
+    historyRenderedCount = batchEnd;
+    
+    // Add loading indicator if there are more items
+    if (historyRenderedCount < historyData.length) {
+      historyContent.append('<div id="history-loading-more" class="loading-more">Loading more...</div>');
+    }
+    
+    isLoadingMore = false;
+  };
+
+  var setupHistoryScrollListener = function() {
+    var historyContainer = $('#components-history');
+    var checkScroll = function() {
+      if (historyRenderedCount >= historyData.length) {
+        return;
+      }
+
+      var containerTop = historyContainer.offset().top;
+      var containerHeight = historyContainer.outerHeight();
+      var scrollTop = $(window).scrollTop();
+      var windowHeight = $(window).height();
+      
+      // Check if user scrolled close to the bottom of the history container
+      var distanceFromBottom = (containerTop + containerHeight) - (scrollTop + windowHeight);
+      
+      if (distanceFromBottom < 200) { // Load more when 200px from bottom
+        $('#history-loading-more').remove();
+        renderHistoryBatch();
+      }
+    };
+
+    $(window).on('scroll.history', checkScroll);
+    
+    // Also check on resize
+    $(window).on('resize.history', checkScroll);
+  };
+
   var loadComponentsHistory = function() {
     var historyLoader = $('#history-loader');
     var historyContent = $('#history-content');
@@ -69,6 +138,14 @@ oc.cmd.push(function() {
     historyContent.hide();
     historyError.hide();
 
+    // Reset state
+    historyData = [];
+    historyRenderedCount = 0;
+    isLoadingMore = false;
+
+    // Remove any existing scroll listeners
+    $(window).off('scroll.history resize.history');
+
     // Fetch history data
     fetch('~registry/history')
       .then(function(response) {
@@ -78,27 +155,23 @@ oc.cmd.push(function() {
         return response.json();
       })
       .then(function(data) {
-        var componentsHistory = data.componentsHistory || [];
-        var historyHtml = '';
+        historyData = data.componentsHistory || [];
         
-        for (var i = 0; i < componentsHistory.length; i++) {
-          var item = componentsHistory[i];
-          var templateSizeText = item.templateSize ? 
-            ' [' + Math.round(item.templateSize / 1024) + ' kb]' : '';
-          
-          historyHtml += '<a href="' + item.name + '/' + item.version + '/~info">' +
-                        '<div class="componentRow row table">' +
-                        '<p class="release">' +
-                        item.publishDate + ' - Published ' + item.name + '@' + item.version +
-                        templateSizeText +
-                        '</p>' +
-                        '</div>' +
-                        '</a>';
-        }
-        
-        historyContent.html(historyHtml);
+        // Clear content and show container
+        historyContent.empty();
         historyLoader.hide();
         historyContent.show();
+        
+        if (historyData.length === 0) {
+          historyContent.html('<p style="text-align: center; color: #64748b; padding: 2em;">No components history available.</p>');
+          return;
+        }
+
+        // Render first batch
+        renderHistoryBatch();
+        
+        // Setup scroll listener for infinite loading
+        setupHistoryScrollListener();
       })
       .catch(function(error) {
         console.error('Error loading components history:', error);
@@ -117,10 +190,19 @@ oc.cmd.push(function() {
       $('#menuList a').removeClass('selected');
       $('#menuList a[href="' + target + '"]').addClass('selected');
       
+      // Clean up scroll listeners when leaving history tab
+      if (target !== '#components-history') {
+        $(window).off('scroll.history resize.history');
+      }
+      
       // Load history data when history tab is selected for the first time
       if (target === '#components-history' && !isHistoryLoaded) {
         loadComponentsHistory();
         isHistoryLoaded = true;
+      }
+      // Re-enable scroll listeners when returning to history tab
+      else if (target === '#components-history' && isHistoryLoaded && historyRenderedCount < historyData.length) {
+        setupHistoryScrollListener();
       }
     };
 
