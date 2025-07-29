@@ -406,6 +406,11 @@ export interface Plugin<T = any> {
   };
 }
 
+interface IncrementResult {
+  totalHits: number;
+  resetTime: Date;
+}
+
 export interface RateLimitStore {
   /** Called once on registry start-up (optional) */
   init?: () => Promise<void> | void;
@@ -417,10 +422,7 @@ export interface RateLimitStore {
   increment: (
     key: string,
     windowMs: number
-  ) => Promise<{
-    totalHits: number;
-    resetTime: Date;
-  }>;
+  ) => Promise<IncrementResult> | IncrementResult;
 }
 
 export interface PublishRateLimit {
