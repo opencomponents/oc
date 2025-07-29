@@ -1,5 +1,46 @@
 ## Change Log
 
+### v0.50.14
+- [#1417](https://github.com/opencomponents/oc/pull/1417) add infinite scrolling to history
+
+### v0.50.13
+- [#1416](https://github.com/opencomponents/oc/pull/1416) Add history endpoint and lazy load it on the UI
+
+### v0.50.12
+- [#1415](https://github.com/opencomponents/oc/pull/1415) Move to JSX and Restyle
+- [#1413](https://github.com/opencomponents/oc/pull/1413) Fix error message on publish when is a string
+- [#1412](https://github.com/opencomponents/oc/pull/1412) Document options
+
+### v0.50.11
+- [#1411](https://github.com/opencomponents/oc/pull/1411) update client
+
+### v0.50.10
+- [#1409](https://github.com/opencomponents/oc/pull/1409) update client to support unmounting
+
+### v0.50.9
+- [#1408](https://github.com/opencomponents/oc/pull/1408) update client (fix regression bug with events listeners not getting the type on first parameter)
+
+### v0.50.8
+- [#1407](https://github.com/opencomponents/oc/pull/1407) Esm template
+
+### v0.50.7
+- [#1406](https://github.com/opencomponents/oc/pull/1406) add traceparent
+
+### v0.50.6
+- [#1405](https://github.com/opencomponents/oc/pull/1405) fix template type
+
+### v0.50.5
+- [#1404](https://github.com/opencomponents/oc/pull/1404) Multiple logins
+
+### v0.50.4
+- [#1403](https://github.com/opencomponents/oc/pull/1403) pass id when doing ssr
+
+### v0.50.3
+- [#1400](https://github.com/opencomponents/oc/pull/1400) add crypto and url globals
+
+### v0.50.2
+- [#1399](https://github.com/opencomponents/oc/pull/1399) fix content-type header
+
 ### v0.50.1
 - [#1397](https://github.com/opencomponents/oc/pull/1397) update client
 

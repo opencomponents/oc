@@ -32,7 +32,7 @@ const clean = ({
       });
       const lowered = result.toLowerCase().trim();
       return lowered === 'y' || lowered === 'yes';
-    } catch (err) {
+    } catch {
       return false;
     }
   };

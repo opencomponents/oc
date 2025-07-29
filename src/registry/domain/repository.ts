@@ -307,12 +307,14 @@ export default function repository(conf: Config) {
       componentName,
       componentVersion,
       pkgDetails,
+      user,
       dryRun = false
     }: {
       pkgDetails: { outputFolder: string; packageJson: Component };
       componentName: string;
       componentVersion: string;
       dryRun?: boolean;
+      user?: string;
     }): Promise<void> {
       if (conf.local) {
         throw {
@@ -339,6 +341,7 @@ export default function repository(conf: Config) {
 
       const validationResult = validator.validatePackageJson(
         Object.assign(pkgDetails, {
+          context: { user },
           componentName,
           customValidator: conf.publishValidation
         })

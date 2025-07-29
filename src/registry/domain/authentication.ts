@@ -4,12 +4,19 @@ import type { RequestHandler } from 'express';
 import strings from '../../resources/';
 import type { Authentication, PublishAuthConfig } from '../../types';
 
-const basicAuthentication: Authentication<{
-  username: string;
-  password: string;
-}> = {
+const basicAuthentication: Authentication<
+  | {
+      username: string;
+      password: string;
+    }
+  | { logins: Array<{ username: string; password: string }> }
+> = {
   validate(authConfig) {
-    const isValid = !!authConfig.username && !!authConfig.password;
+    const logins = 'logins' in authConfig ? authConfig.logins : [authConfig];
+
+    const isValid =
+      logins.length > 0 &&
+      logins.every((login) => !!login.username && !!login.password);
 
     return {
       isValid,
@@ -20,7 +27,11 @@ const basicAuthentication: Authentication<{
     };
   },
   middleware(authConfig) {
-    return basicAuth(authConfig.username, authConfig.password);
+    const logins = 'logins' in authConfig ? authConfig.logins : [authConfig];
+
+    return basicAuth((user, pass) =>
+      logins.some((login) => login.username === user && login.password === pass)
+    );
   }
 };
 
@@ -40,7 +51,7 @@ export function validate(authConfig: PublishAuthConfig) {
 
     try {
       scheme = require(moduleName);
-    } catch (err) {
+    } catch {
       return {
         isValid: false,
         message:

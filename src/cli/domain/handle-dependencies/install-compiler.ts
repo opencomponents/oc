@@ -35,7 +35,7 @@ export default async function installCompiler(options: {
     }
 
     return compiler;
-  } catch (err) {
+  } catch {
     logger.err('FAIL');
 
     throw errorMsg;

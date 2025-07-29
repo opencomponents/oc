@@ -1,11 +1,11 @@
+import { randomUUID } from 'node:crypto';
 import Domain from 'node:domain';
+import type { IncomingHttpHeaders } from 'node:http';
 import vm from 'node:vm';
 import acceptLanguageParser from 'accept-language-parser';
 import Cache from 'nice-cache';
 import Client from 'oc-client';
 import emptyResponseHandler from 'oc-empty-response-handler';
-
-import type { IncomingHttpHeaders } from 'node:http';
 import { fromPromise } from 'universalify';
 import strings from '../../../resources';
 import settings from '../../../resources/settings';
@@ -394,6 +394,7 @@ export default function getComponent(conf: Config, repository: Repository) {
             const cacheKey = `${component.name}/${component.version}/template.js`;
             const cached = cache.get('file-contents', cacheKey);
             const key = component.oc.files.template.hashKey;
+            const id = randomUUID();
             const renderOptions = {
               href: componentHref,
               key,
@@ -401,8 +402,10 @@ export default function getComponent(conf: Config, repository: Repository) {
               name: component.name,
               templateType: component.oc.files.template.type,
               container: component.oc.container,
-              renderInfo: component.oc.renderInfo
+              renderInfo: component.oc.renderInfo,
+              id
             };
+            data.id = id;
 
             const returnResult = (template: any) => {
               client.renderTemplate(
@@ -440,7 +443,7 @@ export default function getComponent(conf: Config, repository: Repository) {
 
                   try {
                     ocTemplate = repository.getTemplate(templateType);
-                  } catch (err) {
+                  } catch {
                     return callback({
                       status: 400,
                       response: {
@@ -579,6 +582,9 @@ export default function getComponent(conf: Config, repository: Repository) {
                     Date,
                     Symbol,
                     eval: undefined,
+                    URL: globalThis?.URL,
+                    URLSearchParams: globalThis?.URLSearchParams,
+                    crypto: globalThis?.crypto,
                     fetch: globalThis?.fetch
                   };
 
