@@ -46,7 +46,7 @@ export default async function installTemplate(
     );
 
     return { ok: true };
-  } catch (err) {
+  } catch {
     throw errorMessage;
   }
 }

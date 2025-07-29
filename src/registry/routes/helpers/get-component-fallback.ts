@@ -50,7 +50,7 @@ function getComponentFallbackForViewType(
     .then((fallbackResponse) => {
       try {
         return callback(null, JSON.parse(fallbackResponse));
-      } catch (parseError) {
+      } catch {
         return callback(
           {
             registryError: registryError,
@@ -83,10 +83,12 @@ export function getComponent(
   component: { name: string; version: string; parameters: IncomingHttpHeaders },
   callback: (result: GetComponentResult) => void
 ): void {
+  // For some reason, undici doesn't like the content-type header
+  const { 'content-type': _, ...restHeaders } = headers;
   request(fallbackRegistryUrl, {
     method: 'POST',
     headers: {
-      ...headers,
+      ...restHeaders,
       host: new URL(fallbackRegistryUrl).host,
       'Content-Type': 'application/json'
     },

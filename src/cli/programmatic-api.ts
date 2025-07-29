@@ -1,7 +1,5 @@
 import local, { type Local } from './domain/local';
 import Registry, { type RegistryCli } from './domain/registry';
-import type { Logger } from './logger';
-
 import dev from './facade/dev';
 import init from './facade/init';
 import mock from './facade/mock';
@@ -11,6 +9,7 @@ import publish from './facade/publish';
 import registryAdd from './facade/registry-add';
 import registryLs from './facade/registry-ls';
 import registryRemove from './facade/registry-remove';
+import type { Logger } from './logger';
 
 type Options<T extends (...args: any) => any> = Parameters<ReturnType<T>>[0];
 type Cb<T extends (...args: any) => any> = Parameters<ReturnType<T>>[1];

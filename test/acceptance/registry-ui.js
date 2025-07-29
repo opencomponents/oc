@@ -57,7 +57,7 @@ describe('registry (ui interface)', () => {
 
     it('should respond with html result', () => {
       expect(headers['content-type']).to.equal('text/html; charset=utf-8');
-      expect(result).to.match(/<!DOCTYPE html><html>/);
+      expect(result).to.match(/<!DOCTYPE html><html lang="en">/);
     });
   });
 
@@ -77,7 +77,7 @@ describe('registry (ui interface)', () => {
 
     it('should respond with html result', () => {
       expect(headers['content-type']).to.equal('text/html; charset=utf-8');
-      expect(result).to.match(/<!DOCTYPE html><html>/);
+      expect(result).to.match(/<!DOCTYPE html><html lang="en">/);
     });
   });
 });
