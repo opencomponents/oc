@@ -421,9 +421,6 @@ export interface RateLimitStore {
     totalHits: number;
     resetTime: Date;
   }>;
-
-  /** Optionally reset a key before its natural expiry */
-  resetKey?: (key: string) => Promise<void>;
 }
 
 export interface PublishRateLimit {

@@ -58,10 +58,6 @@ export default class MemoryRateLimitStore implements RateLimitStore {
     };
   }
 
-  async resetKey(key: string): Promise<void> {
-    this.store.delete(key);
-  }
-
   // Clean up expired entries periodically
   private cleanup(): void {
     const now = Date.now();
