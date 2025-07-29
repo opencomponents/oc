@@ -1,5 +1,5 @@
+import fs from 'node:fs/promises';
 import { promisify } from 'node:util';
-import fs from 'fs-extra';
 import targz from 'targz';
 
 import * as validator from '../../registry/domain/validators';

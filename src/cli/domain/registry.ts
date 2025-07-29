@@ -1,5 +1,6 @@
+import { readFileSync } from 'node:fs';
+import fs from 'node:fs/promises';
 import path from 'node:path';
-import fs from 'fs-extra';
 import { request } from 'undici';
 
 import * as urlBuilder from '../../registry/domain/url-builder';
@@ -8,9 +9,13 @@ import type { Component } from '../../types';
 import put from '../../utils/put';
 import * as urlParser from '../domain/url-parser';
 
+const readJsonSync = (path: string) => JSON.parse(readFileSync(path, 'utf8'));
+const readJson = (path: string) => fs.readFile(path, 'utf8').then(JSON.parse);
+const writeJson = (path: string, data: unknown) =>
+  fs.writeFile(path, JSON.stringify(data), 'utf-8');
 const getOcVersion = (): string => {
   const ocPackagePath = path.join(__dirname, '../../../package.json');
-  const ocInfo = fs.readJsonSync(ocPackagePath);
+  const ocInfo = readJsonSync(ocPackagePath);
 
   return ocInfo.version;
 };
@@ -41,9 +46,7 @@ export default function registry(opts: RegistryOptions = {}) {
         if (!apiResponse) throw 'oc registry not available';
         if (apiResponse.type !== 'oc-registry') throw 'not a valid oc registry';
 
-        const res = await fs
-          .readJson(settings.configFile.src)
-          .catch(() => ({}));
+        const res = await readJson(settings.configFile.src).catch(() => ({}));
 
         if (!res.registries) {
           res.registries = [];
@@ -53,7 +56,7 @@ export default function registry(opts: RegistryOptions = {}) {
           res.registries.push(registry);
         }
 
-        return fs.writeJson(settings.configFile.src, res);
+        return writeJson(settings.configFile.src, res);
       } catch {
         throw 'oc registry not available';
       }
@@ -64,7 +67,7 @@ export default function registry(opts: RegistryOptions = {}) {
       }
 
       try {
-        const res = await fs.readJson(settings.configFile.src);
+        const res = await readJson(settings.configFile.src);
 
         if (!res.registries || res.registries.length === 0)
           throw 'No oc registries';
@@ -135,12 +138,12 @@ export default function registry(opts: RegistryOptions = {}) {
         registry += '/';
       }
 
-      const res: { registries: string[] } = await fs
-        .readJson(settings.configFile.src)
-        .catch(() => ({ registries: [] }));
+      const res: { registries: string[] } = await readJson(
+        settings.configFile.src
+      ).catch(() => ({ registries: [] }));
       res.registries = res.registries.filter((x) => x !== registry);
 
-      await fs.writeJson(settings.configFile.src, res);
+      await writeJson(settings.configFile.src, res);
     }
   };
 }

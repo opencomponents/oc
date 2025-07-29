@@ -8,8 +8,8 @@ describe('cli : domain : init-template', () => {
     const initTemplate = injectr(
       '../../dist/cli/domain/init-template/index.js',
       {
-        'fs-extra': {
-          ensureDir: stubs.fsExtraStub
+        'node:fs/promises': {
+          mkdir: stubs.fsStub
         },
         'node:path': { join: (...args) => args.join('/') },
         './install-template': stubs.installTemplateStub,
@@ -37,14 +37,14 @@ describe('cli : domain : init-template', () => {
   };
 
   describe('happy path', () => {
-    const fsExtraStub = sinon.stub().resolves('ok');
+    const fsStub = sinon.stub().resolves('ok');
     const npmStub = sinon.stub().resolves('ok');
     const installTemplateStub = sinon.stub().resolves('ok');
     const scaffoldStub = sinon.stub().resolves('ok');
 
     beforeEach(
       initialise({
-        fsExtraStub,
+        fsStub,
         npmStub,
         installTemplateStub,
         scaffoldStub
@@ -56,7 +56,7 @@ describe('cli : domain : init-template', () => {
     });
 
     it('should call ensureDir with correct params', () => {
-      expect(fsExtraStub.args[0][0]).to.equal('path/to/new-component');
+      expect(fsStub.args[0][0]).to.equal('path/to/new-component');
     });
 
     it('should call npm init with correct parameters', () => {
@@ -97,7 +97,7 @@ describe('cli : domain : init-template', () => {
   describe('when component folder creation fails', () => {
     beforeEach(
       initialise({
-        fsExtraStub: sinon.stub().rejects(new Error('folder creation error'))
+        fsStub: sinon.stub().rejects(new Error('folder creation error'))
       })
     );
 
@@ -109,7 +109,7 @@ describe('cli : domain : init-template', () => {
   describe('when npm init fails', () => {
     beforeEach(
       initialise({
-        fsExtraStub: sinon.stub().resolves('ok'),
+        fsStub: sinon.stub().resolves('ok'),
         npmStub: sinon.stub().rejects(new Error('npm init failed'))
       })
     );
@@ -122,7 +122,7 @@ describe('cli : domain : init-template', () => {
   describe('when template compiler installation fails', () => {
     beforeEach(
       initialise({
-        fsExtraStub: sinon.stub().resolves('ok'),
+        fsStub: sinon.stub().resolves('ok'),
         npmStub: sinon.stub().resolves('ok'),
         installTemplateStub: sinon
           .stub()
@@ -138,7 +138,7 @@ describe('cli : domain : init-template', () => {
   describe('when template compiler installation fails', () => {
     beforeEach(
       initialise({
-        fsExtraStub: sinon.stub().resolves('ok'),
+        fsStub: sinon.stub().resolves('ok'),
         npmStub: sinon.stub().resolves('ok'),
         installTemplateStub: sinon.stub().resolves('ok'),
         scaffoldStub: sinon.stub().rejects(new Error('scaffolding failed'))

@@ -1024,8 +1024,8 @@ describe('registry : domain : validator', () => {
         './oc-cli-version': injectr(
           '../../dist/registry/domain/validators/oc-cli-version.js',
           {
-            'fs-extra': {
-              readJsonSync: () => ({ version: '0.16.34' })
+            'node:fs': {
+              readFileSync: () => JSON.stringify({ version: '0.16.34' })
             }
           },
           {
@@ -1105,8 +1105,9 @@ describe('registry : domain : validator', () => {
         './node-version': injectr(
           '../../dist/registry/domain/validators/node-version.js',
           {
-            'fs-extra': {
-              readJsonSync: () => ({ engines: { node: '>=0.10.35' } })
+            'node:fs': {
+              readFileSync: () =>
+                JSON.stringify({ engines: { node: '>=0.10.35' } })
             }
           },
           {

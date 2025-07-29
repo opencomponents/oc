@@ -1,7 +1,8 @@
+import { existsSync } from 'node:fs';
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import colors from 'colors/safe';
-import fs from 'fs-extra';
 import readCb from 'read';
 import { fromPromise } from 'universalify';
 import strings from '../../resources/index';
@@ -12,6 +13,7 @@ import type { RegistryCli } from '../domain/registry';
 import type { Logger } from '../logger';
 
 const read = promisify(readCb);
+const readJson = (path: string) => fs.readFile(path, 'utf8').then(JSON.parse);
 
 const publish = ({
   logger,
@@ -43,7 +45,7 @@ const publish = ({
       let errorMessage: string;
 
       const readPackageJson = () =>
-        fs.readJson(path.join(packageDir, 'package.json'));
+        readJson(path.join(packageDir, 'package.json'));
 
       const getCredentials = async (): Promise<{
         username: string;
@@ -191,7 +193,7 @@ const publish = ({
           });
           await publishToRegistries(registryLocations, component);
         } else {
-          if (fs.existsSync(packageDir)) {
+          if (existsSync(packageDir)) {
             const component = await readPackageJson().catch((err) => {
               logger.err(String(err));
               return Promise.reject(err);

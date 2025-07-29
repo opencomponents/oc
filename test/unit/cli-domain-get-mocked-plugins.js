@@ -30,7 +30,8 @@ describe('cli : domain : get-mocked-plugins', () => {
       args.map((x) => x.replace(/\.\//g, '')).join('');
 
     getMockedPlugins = injectr('../../dist/cli/domain/get-mocked-plugins.js', {
-      'fs-extra': fsMock,
+      'node:fs': fsMock,
+      'node:fs/promises': fsMock,
       'node:path': {
         join: pathJoinStub || fakePathFunc,
         resolve: fakePathFunc
@@ -79,12 +80,12 @@ describe('cli : domain : get-mocked-plugins', () => {
         }
       };
 
-      const readMock = sinon.stub().returns(ocJsonComponent);
+      const readMock = sinon.stub().returns(JSON.stringify(ocJsonComponent));
 
       beforeEach(() => {
         initialise({
           existsSync: sinon.stub().returns(true),
-          readJsonSync: readMock
+          readFileSync: readMock
         });
         result = getMockedPlugins(logMock, '/root/components/');
       });
@@ -118,8 +119,10 @@ describe('cli : domain : get-mocked-plugins', () => {
       const readMock = sinon.stub();
       const existsMock = sinon.stub();
 
-      readMock.withArgs('/root/components/oc.json').returns(ocJsonComponent);
-      readMock.withArgs('/root/oc.json').returns(ocJsonRoot);
+      readMock
+        .withArgs('/root/components/oc.json')
+        .returns(JSON.stringify(ocJsonComponent));
+      readMock.withArgs('/root/oc.json').returns(JSON.stringify(ocJsonRoot));
 
       existsMock.withArgs('/root/components/oc.json').returns(false);
       existsMock.withArgs('/root/oc.json').returns(true);
@@ -127,7 +130,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       beforeEach(() => {
         initialise({
           existsSync: existsMock,
-          readJsonSync: readMock
+          readFileSync: readMock
         });
         result = getMockedPlugins(logMock, '/root/components/');
       });
@@ -161,7 +164,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       beforeEach(() => {
         initialise({
           existsSync: sinon.stub().returns(true),
-          readJsonSync: sinon.stub().returns(ocJson)
+          readFileSync: sinon.stub().returns(JSON.stringify(ocJson))
         });
         result = getMockedPlugins(logMock, '/root/components/');
       });
@@ -187,7 +190,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       beforeEach(() => {
         initialise({
           existsSync: sinon.stub().returns(true),
-          readJsonSync: sinon.stub().returns(ocJson)
+          readFileSync: sinon.stub().returns(JSON.stringify(ocJson))
         });
         result = getMockedPlugins(logMock, '/root/components/');
       });
@@ -218,7 +221,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       beforeEach(() => {
         initialise({
           existsSync: sinon.stub().returns(true),
-          readJsonSync: sinon.stub().returns(ocJson)
+          readFileSync: sinon.stub().returns(JSON.stringify(ocJson))
         });
         result = getMockedPlugins(logMock, '/root/components/');
       });
@@ -250,7 +253,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       beforeEach(() => {
         initialise({
           existsSync: sinon.stub().returns(true),
-          readJsonSync: sinon.stub().returns(ocJson)
+          readFileSync: sinon.stub().returns(JSON.stringify(ocJson))
         });
         result = getMockedPlugins(logMock, '/root/components/');
       });
@@ -283,7 +286,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       beforeEach(() => {
         initialise({
           existsSync: sinon.stub().returns(true),
-          readJsonSync: sinon.stub().returns(ocJson)
+          readFileSync: sinon.stub().returns(JSON.stringify(ocJson))
         });
         result = getMockedPlugins(logger, '/root/components/');
       });
@@ -315,7 +318,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       beforeEach(() => {
         initialise({
           existsSync: sinon.stub().returns(true),
-          readJsonSync: sinon.stub().returns(ocJson)
+          readFileSync: sinon.stub().returns(JSON.stringify(ocJson))
         });
         result = getMockedPlugins(logger, '/root/components/');
       });

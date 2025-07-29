@@ -27,12 +27,13 @@ describe('cli : facade : publish', () => {
     const fsMock = Object.assign(
       {
         existsSync: sinon.stub().returns(true),
-        readJson: sinon.stub().resolves(mockComponent)
+        readFile: sinon.stub().resolves(JSON.stringify(mockComponent))
       },
       fs
     );
     const PublishFacade = injectr('../../dist/cli/facade/publish.js', {
-      'fs-extra': fsMock,
+      'node:fs': fsMock,
+      'node:fs/promises': fsMock,
       read: readStub
     }).default;
     const publishFacade = PublishFacade({

@@ -20,16 +20,17 @@ describe('cli : domain : package-components', () => {
 
     const fsMock = {
       existsSync: sinon.stub(),
-      emptyDir: sinon.stub().resolves(),
-      readJson: sinon.stub(),
+      mkdir: sinon.stub().resolves(),
+      rm: sinon.stub().resolves(),
+      readFile: sinon.stub(),
       readdirSync: sinon.stub().returns(['template.js']),
       statSync: sinon.stub().returns({ size: 300 }),
-      writeJsonSync: sinon.stub().returns({})
+      writeFileSync: sinon.stub().returns({})
     };
 
     fsMock.existsSync.returns(true);
-    fsMock.readJson.onCall(0).resolves(component);
-    fsMock.readJson.onCall(1).resolves({ version: '1.2.3' });
+    fsMock.readFile.onCall(0).resolves(JSON.stringify(component));
+    fsMock.readFile.onCall(1).resolves(JSON.stringify({ version: '1.2.3' }));
 
     const pathMock = {
       join: () => ''
@@ -50,7 +51,8 @@ describe('cli : domain : package-components', () => {
     const PackageComponents = injectr(
       '../../dist/cli/domain/package-components.js',
       {
-        'fs-extra': fsMock,
+        'node:fs': fsMock,
+        'node:fs/promises': fsMock,
         path: pathMock,
         './handle-dependencies/require-template': requireTemplateMock
       },

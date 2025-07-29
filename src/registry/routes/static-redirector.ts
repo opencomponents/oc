@@ -1,6 +1,6 @@
+import { createReadStream, existsSync, statSync } from 'node:fs';
 import path from 'node:path';
 import type { Request, Response } from 'express';
-import fs from 'fs-extra';
 
 import * as storageUtils from 'oc-storage-adapters-utils';
 import type { Repository } from '../domain/repository';
@@ -76,20 +76,20 @@ export default function staticRedirector(repository: Repository) {
         req.params[0];
     }
 
-    if (!fs.existsSync(filePath)) {
+    if (!existsSync(filePath)) {
       res.errorDetails = `File ${filePath} not found`;
       res.status(404).json({ err: res.errorDetails });
       return;
     }
 
-    const stats = fs.statSync(filePath);
+    const stats = statSync(filePath);
     if (stats.isDirectory()) {
       res.errorDetails = 'Forbidden: Directory Listing Denied';
       res.status(403).json({ err: res.errorDetails });
       return;
     }
 
-    const fileStream = fs.createReadStream(filePath);
+    const fileStream = createReadStream(filePath);
     const fileInfo = storageUtils.getFileInfo(filePath);
 
     if (fileInfo.mimeType) {

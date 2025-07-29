@@ -1,5 +1,5 @@
+import fs from 'node:fs/promises';
 import path from 'node:path';
-import fs from 'fs-extra';
 
 import strings from '../../../resources';
 
@@ -11,6 +11,10 @@ interface ScaffoldOptions {
   templateType: string;
 }
 
+const readJson = (path: string) => fs.readFile(path, 'utf8').then(JSON.parse);
+const writeJson = (path: string, data: unknown) =>
+  fs.writeFile(path, JSON.stringify(data, null, 2), 'utf-8');
+
 export default async function scaffold(
   options: ScaffoldOptions
 ): Promise<{ ok: true }> {
@@ -19,14 +23,14 @@ export default async function scaffold(
 
   const baseComponentPath = path.join(compilerPath, 'scaffold');
   const baseComponentFiles = path.join(baseComponentPath, 'src');
-  const compilerPackage = await fs.readJson(
+  const compilerPackage = await readJson(
     path.join(compilerPath, 'package.json')
   );
 
   try {
-    await fs.copy(baseComponentFiles, componentPath);
+    await fs.cp(baseComponentFiles, componentPath, { recursive: true });
 
-    const componentPackage = await fs.readJson(
+    const componentPackage = await readJson(
       path.join(componentPath, 'package.json')
     );
     componentPackage.name = componentName;
@@ -34,9 +38,7 @@ export default async function scaffold(
     componentPackage.scripts.start ??= `oc dev .. --components ${componentName}`;
     componentPackage.scripts.build ??= 'oc package .';
     componentPackage.devDependencies[compiler] = compilerPackage.version;
-    await fs.writeJson(componentPath + '/package.json', componentPackage, {
-      spaces: 2
-    });
+    await writeJson(componentPath + '/package.json', componentPackage);
 
     return { ok: true };
   } catch (error) {

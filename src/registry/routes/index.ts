@@ -1,6 +1,6 @@
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import async from 'async';
-import fs from 'fs-extra';
 import parseAuthor from 'parse-author';
 
 import dateStringified from '../../utils/date-stringify';
@@ -16,7 +16,8 @@ import { fromPromise } from 'universalify';
 import type { Author, Component, ParsedComponent } from '../../types';
 import type { Repository } from '../domain/repository';
 
-const packageInfo: PackageJson = fs.readJsonSync(
+const readJsonSync = (path: string) => JSON.parse(readFileSync(path, 'utf8'));
+const packageInfo: PackageJson = readJsonSync(
   path.join(__dirname, '..', '..', '..', 'package.json')
 );
 

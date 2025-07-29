@@ -1,6 +1,7 @@
+import { lstatSync, readdirSync, readFileSync } from 'node:fs';
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import dotenv from 'dotenv';
-import fs from 'fs-extra';
 import getUnixUtcTimestamp from 'oc-get-unix-utc-timestamp';
 
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
@@ -20,7 +21,11 @@ import getPromiseBasedAdapter from './storage-adapter';
 import * as validator from './validators';
 import * as versionHandler from './version-handler';
 
-const packageInfo = fs.readJsonSync(
+const readJsonSync = (path: string) => JSON.parse(readFileSync(path, 'utf8'));
+const readJson = (path: string) => fs.readFile(path, 'utf8').then(JSON.parse);
+const writeJson = (path: string, data: unknown) =>
+  fs.writeFile(path, JSON.stringify(data, null, 2), 'utf-8');
+const packageInfo = readJsonSync(
   path.join(__dirname, '..', '..', '..', 'package.json')
 );
 
@@ -46,31 +51,29 @@ export default function repository(conf: Config) {
   const local = {
     getCompiledView(componentName: string): string {
       if (componentName === 'oc-client') {
-        return fs
-          .readFileSync(
-            path.join(
-              __dirname,
-              '../../components/oc-client/_package/template.js'
-            )
+        return readFileSync(
+          path.join(
+            __dirname,
+            '../../components/oc-client/_package/template.js',
+            'utf-8'
           )
-          .toString();
+        ).toString();
       }
 
-      return fs
-        .readFileSync(
-          path.join(conf.path, `${componentName}/_package/template.js`)
-        )
-        .toString();
+      return readFileSync(
+        path.join(conf.path, `${componentName}/_package/template.js`),
+        'utf-8'
+      ).toString();
     },
     getComponents(): string[] {
       const validComponents =
         conf.components ||
-        fs.readdirSync(conf.path).filter((file) => {
-          const isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory();
+        readdirSync(conf.path).filter((file) => {
+          const isDir = lstatSync(path.join(conf.path, file)).isDirectory();
           const isValidComponent = isDir
-            ? fs
-                .readdirSync(path.join(conf.path, file))
-                .filter((file) => file === '_package').length === 1
+            ? readdirSync(path.join(conf.path, file)).filter(
+                (file) => file === '_package'
+              ).length === 1
             : false;
 
           return isValidComponent;
@@ -81,9 +84,9 @@ export default function repository(conf: Config) {
     getComponentVersions(componentName: string): Promise<string[]> {
       if (componentName === 'oc-client') {
         return Promise.all([
-          fs
-            .readJson(path.join(__dirname, '../../../package.json'))
-            .then((x) => x.version)
+          readJson(path.join(__dirname, '../../../package.json')).then(
+            (x) => x.version
+          )
         ]);
       }
 
@@ -97,9 +100,9 @@ export default function repository(conf: Config) {
       }
 
       return Promise.all([
-        fs
-          .readJson(path.join(conf.path, `${componentName}/package.json`))
-          .then((x) => x.version)
+        readJson(path.join(conf.path, `${componentName}/package.json`)).then(
+          (x) => x.version
+        )
       ]);
     },
     getDataProvider(componentName: string) {
@@ -111,17 +114,17 @@ export default function repository(conf: Config) {
           : path.join(conf.path, `${componentName}/_package/server.js`);
 
       return {
-        content: fs.readFileSync(filePath).toString(),
+        content: readFileSync(filePath).toString(),
         filePath
       };
     },
     getEnv(componentName: string): Record<string, string> {
-      const pkg: Component = fs.readJsonSync(
+      const pkg: Component = readJsonSync(
         path.join(conf.path, `${componentName}/package.json`)
       );
       const filePath = path.join(conf.path, componentName, pkg.oc.files.env!);
 
-      return dotenv.parse(fs.readFileSync(filePath).toString());
+      return dotenv.parse(readFileSync(filePath).toString());
     }
   };
 
@@ -180,14 +183,14 @@ export default function repository(conf: Config) {
         let componentInfo: Component;
 
         if (componentName === 'oc-client') {
-          componentInfo = fs.readJsonSync(
+          componentInfo = readJsonSync(
             path.join(
               __dirname,
               '../../components/oc-client/_package/package.json'
             )
           );
         } else {
-          componentInfo = fs.readJsonSync(
+          componentInfo = readJsonSync(
             path.join(conf.path, `${componentName}/_package/package.json`)
           );
         }
@@ -376,7 +379,7 @@ export default function repository(conf: Config) {
 
       if (dryRun) return;
 
-      await fs.writeJson(
+      await writeJson(
         path.join(pkgDetails.outputFolder, 'package.json'),
         pkgDetails.packageJson
       );

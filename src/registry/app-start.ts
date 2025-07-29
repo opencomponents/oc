@@ -1,10 +1,11 @@
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import colors from 'colors/safe';
-import fs from 'fs-extra';
 import type { Config } from '../types';
 import type { Repository } from './domain/repository';
 
-const packageInfo = fs.readJsonSync(
+const readJsonSync = (path: string) => JSON.parse(readFileSync(path, 'utf8'));
+const packageInfo = readJsonSync(
   path.join(
     __dirname,
     '..',

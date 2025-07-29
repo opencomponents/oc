@@ -48,9 +48,11 @@ describe('cli : domain : handle-dependencies', () => {
       handleDependencies = injectr(
         '../../dist/cli/domain/handle-dependencies/index.js',
         {
-          'fs-extra': {
-            readJson: (path) =>
-              Promise.resolve(components[path.replace('/package.json', '')])
+          'node:fs/promises': {
+            readFile: (path) =>
+              Promise.resolve(
+                JSON.stringify(components[path.replace('/package.json', '')])
+              )
           },
           'node:path': { join: (...args) => args.join('/') },
           './ensure-compiler-is-declared-as-devDependency': (options) => {
