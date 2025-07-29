@@ -8,6 +8,7 @@ import ComponentInfoRoute from './routes/component-info';
 import ComponentPreviewRoute from './routes/component-preview';
 import ComponentsRoute from './routes/components';
 import DependenciesRoute from './routes/dependencies';
+import HistoryRoute from './routes/history';
 import PluginsRoute from './routes/plugins';
 import PublishRoute from './routes/publish';
 import StaticRedirectorRoute from './routes/static-redirector';
@@ -22,14 +23,15 @@ export function create(app: Express, conf: Config, repository: Repository) {
     publish: PublishRoute(repository),
     staticRedirector: StaticRedirectorRoute(repository),
     plugins: PluginsRoute(conf),
-    dependencies: DependenciesRoute(conf)
+    dependencies: DependenciesRoute(conf),
+    history: HistoryRoute(repository)
   };
 
   const prefix = conf.prefix;
 
   if (prefix !== '/') {
     app.get('/', (_req, res) => res.redirect(prefix));
-    app.get(prefix.substr(0, prefix.length - 1), routes.index);
+    app.get(prefix.substring(0, prefix.length - 1), routes.index);
   }
 
   app.get(`${prefix}oc-client/client.js`, routes.staticRedirector);
@@ -38,10 +40,11 @@ export function create(app: Express, conf: Config, repository: Repository) {
 
   app.get(`${prefix}~registry/plugins`, routes.plugins);
   app.get(`${prefix}~registry/dependencies`, routes.dependencies);
+  app.get(`${prefix}~registry/history`, routes.history);
 
   if (conf.local) {
     app.get(
-      `${prefix}:componentName/:componentVersion/${settings.registry.localStaticRedirectorPath}*`,
+      `${prefix}:componentName/:componentVersion/${settings.registry.localStaticRedirectorPath}*splat`,
       routes.staticRedirector
     );
   } else {
@@ -75,6 +78,12 @@ export function create(app: Express, conf: Config, repository: Repository) {
 
   app.get(`${prefix}:componentName/:componentVersion`, routes.component);
   app.get(`${prefix}:componentName`, routes.component);
+
+  app.post(
+    `${prefix}~actions/:action/:componentName/:componentVersion`,
+    routes.component
+  );
+  app.post(`${prefix}~actions/:action/:componentName`, routes.component);
 
   if (conf.routes) {
     for (const route of conf.routes) {

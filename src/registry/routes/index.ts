@@ -6,8 +6,9 @@ import parseAuthor from 'parse-author';
 import dateStringified from '../../utils/date-stringify';
 import indexView from '../views';
 import getAvailableDependencies from './helpers/get-available-dependencies';
-import getComponentsHistory from './helpers/get-components-history';
+
 import urlBuilder = require('../domain/url-builder');
+
 import type { IncomingHttpHeaders } from 'node:http';
 import type { NextFunction, Request, Response } from 'express';
 import type { PackageJson } from 'type-fest';
@@ -77,41 +78,36 @@ export default function (repository: Repository) {
             componentsInfo = componentsInfo.sort((a, b) =>
               a.name.localeCompare(b.name)
             );
-            fromPromise(repository.getComponentsDetails)((err, details) => {
-              if (err) console.log(err);
-              res.send(
-                indexView(
-                  // @ts-ignore
-                  Object.assign(baseResponse, {
-                    availableDependencies: getAvailableDependencies(
-                      res.conf.dependencies
-                    ),
-                    availablePlugins: res.conf.plugins,
-                    components: componentsInfo,
-                    componentsReleases,
-                    componentsList: componentsInfo.map((component) => {
-                      const state: 'deprecated' | 'experimental' | '' =
-                        component?.oc?.state || '';
-                      if (state) {
-                        stateCounts[state] = (stateCounts[state] || 0) + 1;
-                      }
+            res.send(
+              indexView(
+                // @ts-ignore
+                Object.assign(baseResponse, {
+                  availableDependencies: getAvailableDependencies(
+                    res.conf.dependencies
+                  ),
+                  availablePlugins: res.conf.plugins,
+                  components: componentsInfo,
+                  componentsReleases,
+                  componentsList: componentsInfo.map((component) => {
+                    const state: 'deprecated' | 'experimental' | '' =
+                      component?.oc?.state || '';
+                    if (state) {
+                      stateCounts[state] = (stateCounts[state] || 0) + 1;
+                    }
 
-                      return {
-                        name: component.name,
-                        author: component.author,
-                        state
-                      };
-                    }),
-                    componentsHistory:
-                      !res.conf.local && getComponentsHistory(details),
-                    q: req.query['q'] || '',
-                    stateCounts,
-                    templates: repository.getTemplatesInfo(),
-                    title: 'OpenComponents Registry'
-                  })
-                )
-              );
-            });
+                    return {
+                      name: component.name,
+                      author: component.author,
+                      state
+                    };
+                  }),
+                  q: req.query['q'] || '',
+                  stateCounts,
+                  templates: repository.getTemplatesInfo(),
+                  title: 'OpenComponents Registry'
+                })
+              )
+            );
           }
         );
       } else {

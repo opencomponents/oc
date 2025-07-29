@@ -91,6 +91,63 @@ describe('registry : domain : validator', () => {
           });
         });
 
+        describe('when multiple logins specified', () => {
+          describe('when all logins have username and password', () => {
+            const conf = {
+              publishAuth: {
+                type: 'basic',
+                logins: [
+                  { username: 'user1', password: 'pass1' },
+                  { username: 'user2', password: 'pass2' }
+                ]
+              },
+              s3: baseS3Conf
+            };
+
+            it('should be valid', () => {
+              expect(validate(conf).isValid).to.be.true;
+            });
+          });
+
+          describe('when some logins are missing username or password', () => {
+            const conf = {
+              publishAuth: {
+                type: 'basic',
+                logins: [
+                  { username: 'user1', password: 'pass1' },
+                  { username: 'user2' },
+                  { password: 'pass3' }
+                ]
+              },
+              s3: baseS3Conf
+            };
+
+            it('should not be valid', () => {
+              expect(validate(conf).isValid).to.be.false;
+              expect(validate(conf).message).to.equal(
+                'Registry configuration is not valid: basic auth requires username and password'
+              );
+            });
+          });
+
+          describe('when logins array is empty', () => {
+            const conf = {
+              publishAuth: {
+                type: 'basic',
+                logins: []
+              },
+              s3: baseS3Conf
+            };
+
+            it('should not be valid', () => {
+              expect(validate(conf).isValid).to.be.false;
+              expect(validate(conf).message).to.equal(
+                'Registry configuration is not valid: basic auth requires username and password'
+              );
+            });
+          });
+        });
+
         describe('when username and password not specified', () => {
           const conf = {
             publishAuth: { type: 'basic', a: '' },

@@ -51,7 +51,7 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
           components,
           refreshLiveReload
         }: { components: string[]; refreshLiveReload: () => void },
-        cb: any
+        packageComponents: (components: string[]) => Promise<void>
       ) => {
         watch(components, componentsDir, (err, changedFile, componentDir) => {
           if (err) {
@@ -61,9 +61,13 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
             if (!hotReloading) {
               logger.warn(cliMessages.HOT_RELOADING_DISABLED);
             } else if (!componentDir) {
-              cb(components, refreshLiveReload);
+              packageComponents(components).then(() => {
+                refreshLiveReload();
+              });
             } else {
-              cb([componentDir], refreshLiveReload);
+              packageComponents([componentDir]).then(() => {
+                refreshLiveReload();
+              });
             }
           }
         });

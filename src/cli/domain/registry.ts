@@ -57,7 +57,7 @@ export default function registry(opts: RegistryOptions = {}) {
         }
 
         return writeJson(settings.configFile.src, res);
-      } catch (err) {
+      } catch {
         throw 'oc registry not available';
       }
     },
@@ -73,7 +73,7 @@ export default function registry(opts: RegistryOptions = {}) {
           throw 'No oc registries';
 
         return res.registries;
-      } catch (err) {
+      } catch {
         throw 'No oc registries';
       }
     },
@@ -110,12 +110,12 @@ export default function registry(opts: RegistryOptions = {}) {
       try {
         await put(options.route, options.path, requestsHeaders);
       } catch (err) {
-        let parsedError = (err as any).response.body || (err as any);
+        let parsedError = err as any;
         let errMsg = '';
         if (!parsedError || typeof parsedError !== 'object') {
           try {
             parsedError = JSON.parse(String(parsedError));
-          } catch (er) {}
+          } catch {}
         }
 
         if (!!parsedError.code && parsedError.code === 'ECONNREFUSED') {

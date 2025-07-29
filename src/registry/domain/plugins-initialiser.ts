@@ -1,9 +1,8 @@
 import { promisify } from 'node:util';
 import { DepGraph } from 'dependency-graph';
-import pLimit from '../../utils/pLimit';
-
 import strings from '../../resources';
 import type { Plugin } from '../../types';
+import pLimit from '../../utils/pLimit';
 
 function validatePlugins(plugins: unknown[]): asserts plugins is Plugin[] {
   for (let idx = 0; idx < plugins.length; idx++) {
@@ -36,7 +35,7 @@ function checkDependencies(plugins: Plugin[]) {
     for (const d of p.register.dependencies) {
       try {
         graph.addDependency(p.name, d);
-      } catch (err) {
+      } catch {
         throw new Error(`unknown plugin dependency: ${d}`);
       }
     }

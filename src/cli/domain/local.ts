@@ -64,7 +64,7 @@ export default function local() {
             compiler: `${templateType}-compiler`
           })
         );
-      } catch (e) {
+      } catch {
         throw 'template type not valid';
       }
     },
