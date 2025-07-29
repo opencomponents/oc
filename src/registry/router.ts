@@ -31,7 +31,7 @@ export function create(app: Express, conf: Config, repository: Repository) {
 
   if (prefix !== '/') {
     app.get('/', (_req, res) => res.redirect(prefix));
-    app.get(prefix.substr(0, prefix.length - 1), routes.index);
+    app.get(prefix.substring(0, prefix.length - 1), routes.index);
   }
 
   app.get(`${prefix}oc-client/client.js`, routes.staticRedirector);
@@ -44,7 +44,7 @@ export function create(app: Express, conf: Config, repository: Repository) {
 
   if (conf.local) {
     app.get(
-      `${prefix}:componentName/:componentVersion/${settings.registry.localStaticRedirectorPath}*`,
+      `${prefix}:componentName/:componentVersion/${settings.registry.localStaticRedirectorPath}*splat`,
       routes.staticRedirector
     );
   } else {
