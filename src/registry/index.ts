@@ -61,8 +61,7 @@ export default function registry<T = any>(inputOptions: RegistryOptions<T>) {
         server.keepAliveTimeout = options.keepAliveTimeout;
       }
 
-      // @ts-ignore Type not taking error on callback (this can error, though)
-      server.listen(options.port, (err: any) => {
+      server.listen(options.port, (err?: any) => {
         if (err) {
           return callback(err);
         }
