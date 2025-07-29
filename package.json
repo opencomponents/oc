@@ -119,7 +119,7 @@
     "serialize-error": "^8.1.0",
     "targz": "^1.0.1",
     "try-require": "^1.2.1",
-    "undici": "^6.19.8",
+    "undici": "^6.21.1",
     "universalify": "^2.0.0",
     "yargs": "^17.7.2"
   }
