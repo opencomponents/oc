@@ -23,7 +23,7 @@ export default function getAvailableDependencies(
     const version = packageJson?.version;
     const link = core
       ? `https://nodejs.org/api/${dependency}.html`
-      : packageJson?.homepage ?? '';
+      : (packageJson?.homepage ?? '');
 
     return { core, name: dependency, version, link };
   });

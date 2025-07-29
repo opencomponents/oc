@@ -11,7 +11,7 @@ export default async function isUrlDiscoverable(
     return {
       isDiscoverable: isHtml
     };
-  } catch (err) {
+  } catch {
     return { isDiscoverable: false };
   }
 }

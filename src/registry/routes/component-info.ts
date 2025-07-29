@@ -1,7 +1,6 @@
+import type { Request, Response } from 'express';
 import parseAuthor from 'parse-author';
 import { fromPromise } from 'universalify';
-
-import type { Request, Response } from 'express';
 import type { Component, ComponentDetail, Config } from '../../types';
 import type { Repository } from '../domain/repository';
 import * as urlBuilder from '../domain/url-builder';
@@ -58,7 +57,7 @@ function componentInfo(
     const repositoryUrl =
       typeof component.repository === 'string'
         ? component.repository
-        : component.repository?.url ?? null;
+        : (component.repository?.url ?? null);
 
     fromPromise(isUrlDiscoverable)(href, (_err, result) => {
       if (!result.isDiscoverable) {

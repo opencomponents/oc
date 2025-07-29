@@ -14,7 +14,7 @@ export default function getComponentsByDir() {
 
       try {
         content = fs.readJsonSync(packagePath);
-      } catch (err) {
+      } catch {
         return false;
       }
 
@@ -40,7 +40,7 @@ export default function getComponentsByDir() {
         .map((component) => path.resolve(componentsDir, component));
 
       return components;
-    } catch (err) {
+    } catch {
       return [];
     }
   };

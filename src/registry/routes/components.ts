@@ -82,7 +82,7 @@ export default function components(
         );
       },
       // @ts-ignore
-      (err: any, results: GetComponentResult[]) => {
+      (_err: any, results: GetComponentResult[]) => {
         try {
           setHeaders(results, res);
           res.status(200).json(results);
