@@ -94,6 +94,7 @@
     "getport": "^0.1.0",
     "livereload": "^0.9.3",
     "lodash.isequal": "^4.5.0",
+    "lru-cache": "^11.1.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.3",
     "nice-cache": "^0.0.5",

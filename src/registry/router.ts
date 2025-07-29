@@ -2,6 +2,7 @@ import type { Express } from 'express';
 import type { Repository } from '../registry/domain/repository';
 import settings from '../resources/settings';
 import type { Config } from '../types';
+import createPublishRateLimiter from './middleware/publish-rate-limit';
 import IndexRoute from './routes';
 import ComponentRoute from './routes/component';
 import ComponentInfoRoute from './routes/component-info';
@@ -28,6 +29,7 @@ export function create(app: Express, conf: Config, repository: Repository) {
   };
 
   const prefix = conf.prefix;
+  const publishRateLimiter = createPublishRateLimiter(conf);
 
   if (prefix !== '/') {
     app.get('/', (_req, res) => res.redirect(prefix));
@@ -50,6 +52,7 @@ export function create(app: Express, conf: Config, repository: Repository) {
   } else {
     app.put(
       `${prefix}:componentName/:componentVersion`,
+      publishRateLimiter,
       conf.beforePublish,
       routes.publish
     );

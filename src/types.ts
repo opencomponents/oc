@@ -358,6 +358,10 @@ export interface Config<T = any> {
    * @default 0
    */
   verbosity: number;
+  /**
+   * Rate limiting configuration for component publishing.
+   */
+  publishRateLimit?: PublishRateLimit;
 }
 
 type CompiledTemplate = (model: unknown) => string;
@@ -400,6 +404,61 @@ export interface Plugin<T = any> {
     execute: (...args: any[]) => any;
     dependencies?: string[];
   };
+}
+
+export interface RateLimitStore {
+  /** Called once on registry start-up (optional) */
+  init?: () => Promise<void> | void;
+
+  /**
+   * Atomically increase the counter for the key.
+   * Returns the current hit count and the absolute reset time.
+   */
+  increment: (
+    key: string,
+    windowMs: number
+  ) => Promise<{
+    totalHits: number;
+    resetTime: Date;
+  }>;
+
+  /** Optionally reset a key before its natural expiry */
+  resetKey?: (key: string) => Promise<void>;
+}
+
+export interface PublishRateLimit {
+  /**
+   * Size of the sliding window in **ms** (default 15 min)
+   *
+   * @default 15 * 60 * 1000
+   */
+  windowMs?: number;
+  /**
+   * Maximum hits allowed within `windowMs` (default 100)
+   *
+   * @default 100
+   */
+  max?: number;
+  /**
+   * Custom key generator.
+   *
+   * Defaults to: `${req.ip}:${req.user ?? 'anon'}`
+   */
+  keyGenerator?: (req: Request) => string;
+  /**
+   * Skip throttling for specific requests/users
+   */
+  skip?: (req: Request) => boolean;
+  /**
+   * Custom storage backend. Defaults to in-memory Map.
+   */
+  store?: RateLimitStore;
+  /**
+   * Maximum number of rate limit entries to keep in memory (default 1000)
+   *
+   * @default 1000
+   */
+  maxCacheSize?: number;
 }
 
 declare global {
