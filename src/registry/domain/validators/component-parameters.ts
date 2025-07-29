@@ -47,7 +47,7 @@ export default function componentParameters(
   for (const mandatoryParameterName of mandatoryParameters) {
     if (
       typeof requestParameters === 'object' &&
-      // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
+      // biome-ignore lint/suspicious/noPrototypeBuiltins: hasOwnProperty is fine
       !requestParameters.hasOwnProperty(mandatoryParameterName)
     ) {
       if (!result.errors.mandatory) {
@@ -65,7 +65,7 @@ export default function componentParameters(
   )) {
     if (
       typeof expectedParameters === 'object' &&
-      // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
+      // biome-ignore lint/suspicious/noPrototypeBuiltins: hasOwnProperty is fine
       expectedParameters.hasOwnProperty(requestParameterName)
     ) {
       const expectedType = expectedParameters[requestParameterName].type;

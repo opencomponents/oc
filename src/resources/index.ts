@@ -212,6 +212,11 @@ export default {
         `Error requiring oc-template: "${template}" not found`,
       TEMPLATE_TYPE_NOT_VALID: (template: string): string =>
         `Error requiring oc-template: "${template}" is not a valid oc-template`,
+      TEMPLATE_OC_VERSION_NOT_VALID: (
+        template: string,
+        version: string
+      ): string =>
+        `Your template requires a version of OC higher than ${template} but your OC version is ${version}`,
       TEMPLATE_DEP_MISSING: (template: string, path: string): string =>
         `Template dependency missing. To fix it run:\n\nnpm install --save-dev ${template}-compiler --prefix ${path}\n\n`
     },

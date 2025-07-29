@@ -1,11 +1,11 @@
+import { randomUUID } from 'node:crypto';
 import Domain from 'node:domain';
+import type { IncomingHttpHeaders } from 'node:http';
 import vm from 'node:vm';
 import acceptLanguageParser from 'accept-language-parser';
 import Cache from 'nice-cache';
 import Client from 'oc-client';
 import emptyResponseHandler from 'oc-empty-response-handler';
-
-import type { IncomingHttpHeaders } from 'node:http';
 import { fromPromise } from 'universalify';
 import strings from '../../../resources';
 import settings from '../../../resources/settings';
@@ -18,6 +18,7 @@ import RequireWrapper from '../../domain/require-wrapper';
 import * as sanitiser from '../../domain/sanitiser';
 import * as urlBuilder from '../../domain/url-builder';
 import * as validator from '../../domain/validators';
+import { validateTemplateOcVersion } from '../../domain/validators';
 import applyDefaultValues from './apply-default-values';
 import * as getComponentFallback from './get-component-fallback';
 import GetComponentRetrievingInfo from './get-component-retrieving-info';
@@ -55,6 +56,7 @@ export interface GetComponentResult {
   };
 }
 
+export const stream = Symbol('stream');
 const noop = () => {};
 const noopConsole = Object.fromEntries(
   Object.keys(console).map((key) => [key, noop])
@@ -203,6 +205,24 @@ export default function getComponent(conf: Config, repository: Repository) {
           });
         }
 
+        if (component.oc.files.template.minOcVersion) {
+          const templateOcVersionResult = validateTemplateOcVersion(
+            component.oc.files.template.minOcVersion
+          );
+          if (!templateOcVersionResult.isValid) {
+            return callback({
+              status: 400,
+              response: {
+                code: 'TEMPLATE_REQUIRES_HIGHER_OC_VERSION',
+                error: strings.errors.cli.TEMPLATE_OC_VERSION_NOT_VALID(
+                  templateOcVersionResult.error.minOcVersion,
+                  templateOcVersionResult.error.registryVersion
+                )
+              }
+            });
+          }
+        }
+
         // Support legacy templates
         let templateType = component.oc.files.template.type;
         const isLegacyTemplate = isTemplateLegacy(templateType);
@@ -266,7 +286,8 @@ export default function getComponent(conf: Config, repository: Repository) {
           const parseTemplatesHeader = (t: string) =>
             t.split(';').map((t) => t.split(',')[0]);
           const supportedTemplates = options.headers['templates']
-            ? parseTemplatesHeader(options.headers['templates'] as string) ?? []
+            ? (parseTemplatesHeader(options.headers['templates'] as string) ??
+              [])
             : [];
 
           const isTemplateSupportedByClient = Boolean(
@@ -276,7 +297,7 @@ export default function getComponent(conf: Config, repository: Repository) {
                 supportedTemplates.includes(templateType))
           );
 
-          let renderMode = 'rendered';
+          let renderMode = options.action ? 'unrendered' : 'rendered';
           if (isUnrendered) {
             renderMode = 'unrendered';
             if (
@@ -373,6 +394,7 @@ export default function getComponent(conf: Config, repository: Repository) {
             const cacheKey = `${component.name}/${component.version}/template.js`;
             const cached = cache.get('file-contents', cacheKey);
             const key = component.oc.files.template.hashKey;
+            const id = randomUUID();
             const renderOptions = {
               href: componentHref,
               key,
@@ -380,8 +402,10 @@ export default function getComponent(conf: Config, repository: Repository) {
               name: component.name,
               templateType: component.oc.files.template.type,
               container: component.oc.container,
-              renderInfo: component.oc.renderInfo
+              renderInfo: component.oc.renderInfo,
+              id
             };
+            data.id = id;
 
             const returnResult = (template: any) => {
               client.renderTemplate(
@@ -419,7 +443,7 @@ export default function getComponent(conf: Config, repository: Repository) {
 
                   try {
                     ocTemplate = repository.getTemplate(templateType);
-                  } catch (err) {
+                  } catch {
                     return callback({
                       status: 400,
                       response: {
@@ -500,7 +524,8 @@ export default function getComponent(conf: Config, repository: Repository) {
                   responseHeaders[header.toLowerCase()] = value;
                 }
               },
-              templates: repository.getTemplatesInfo()
+              templates: repository.getTemplatesInfo(),
+              streamSymbol: stream
             };
 
             const setCallbackTimeout = () => {
@@ -553,7 +578,13 @@ export default function getComponent(conf: Config, repository: Repository) {
                     Buffer,
                     AbortController: globalThis?.AbortController,
                     AbortSignal: globalThis?.AbortSignal,
+                    Promise,
+                    Date,
+                    Symbol,
                     eval: undefined,
+                    URL: globalThis?.URL,
+                    URLSearchParams: globalThis?.URLSearchParams,
+                    crypto: globalThis?.crypto,
                     fetch: globalThis?.fetch
                   };
 

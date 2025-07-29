@@ -9,6 +9,7 @@ export default function preview(vm: {
 }): string {
   const baseUrl = vm.href.replace('http://', '//').replace('https://', '//');
   const { name, version } = vm.component;
+  const imports = vm.component.oc.files.imports;
   const componentHref = `${baseUrl}${name}/${version}/${vm.qs}`;
 
   return `<!DOCTYPE html>
@@ -24,6 +25,13 @@ export default function preview(vm: {
       <meta name="robots" content="index, follow" />
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
+      ${
+        imports
+          ? `<script type="importmap">{"imports": ${JSON.stringify(
+              imports
+            )}}</script>`
+          : ''
+      }
     </head>
     <body>
       <oc-component href="${componentHref}"></oc-component>
