@@ -4,13 +4,12 @@ import colors from 'colors/safe';
 import fs from 'fs-extra';
 import readCb from 'read';
 import { fromPromise } from 'universalify';
-import type { Component } from '../../types';
-import type { Local } from '../domain/local';
-import type { Logger } from '../logger';
-
 import strings from '../../resources/index';
+import type { Component } from '../../types';
 import handleDependencies from '../domain/handle-dependencies';
+import type { Local } from '../domain/local';
 import type { RegistryCli } from '../domain/registry';
+import type { Logger } from '../logger';
 
 const read = promisify(readCb);
 
@@ -136,7 +135,11 @@ const publish = ({
             } else if (err && typeof err === 'object') {
               try {
                 errorMessage = JSON.stringify(err);
-              } catch (er) {}
+              } catch {
+                errorMessage = err;
+              }
+            } else {
+              errorMessage = err;
             }
             errorMessage = strings.errors.cli.PUBLISHING_FAIL(
               String(errorMessage)

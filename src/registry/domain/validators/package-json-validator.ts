@@ -8,7 +8,13 @@ interface ValidationResult {
 interface PkgDetails {
   componentName: string;
   packageJson: { name?: string };
-  customValidator: (data: unknown) => ValidationResult | boolean;
+  context: {
+    user?: string;
+  };
+  customValidator: (
+    pkgJson: unknown,
+    context: { user?: string }
+  ) => ValidationResult | boolean;
 }
 
 export default function packageJsonValidator(
@@ -21,7 +27,10 @@ export default function packageJsonValidator(
     };
   }
 
-  let result = pkgDetails.customValidator(pkgDetails.packageJson);
+  let result = pkgDetails.customValidator(
+    pkgDetails.packageJson,
+    pkgDetails.context
+  );
 
   if (typeof result === 'boolean') {
     result = { isValid: result };

@@ -1,5 +1,66 @@
 ## Change Log
 
+### v0.50.14
+- [#1417](https://github.com/opencomponents/oc/pull/1417) add infinite scrolling to history
+
+### v0.50.13
+- [#1416](https://github.com/opencomponents/oc/pull/1416) Add history endpoint and lazy load it on the UI
+
+### v0.50.12
+- [#1415](https://github.com/opencomponents/oc/pull/1415) Move to JSX and Restyle
+- [#1413](https://github.com/opencomponents/oc/pull/1413) Fix error message on publish when is a string
+- [#1412](https://github.com/opencomponents/oc/pull/1412) Document options
+
+### v0.50.11
+- [#1411](https://github.com/opencomponents/oc/pull/1411) update client
+
+### v0.50.10
+- [#1409](https://github.com/opencomponents/oc/pull/1409) update client to support unmounting
+
+### v0.50.9
+- [#1408](https://github.com/opencomponents/oc/pull/1408) update client (fix regression bug with events listeners not getting the type on first parameter)
+
+### v0.50.8
+- [#1407](https://github.com/opencomponents/oc/pull/1407) Esm template
+
+### v0.50.7
+- [#1406](https://github.com/opencomponents/oc/pull/1406) add traceparent
+
+### v0.50.6
+- [#1405](https://github.com/opencomponents/oc/pull/1405) fix template type
+
+### v0.50.5
+- [#1404](https://github.com/opencomponents/oc/pull/1404) Multiple logins
+
+### v0.50.4
+- [#1403](https://github.com/opencomponents/oc/pull/1403) pass id when doing ssr
+
+### v0.50.3
+- [#1400](https://github.com/opencomponents/oc/pull/1400) add crypto and url globals
+
+### v0.50.2
+- [#1399](https://github.com/opencomponents/oc/pull/1399) fix content-type header
+
+### v0.50.1
+- [#1397](https://github.com/opencomponents/oc/pull/1397) update client
+
+### v0.50.0
+- [#1396](https://github.com/opencomponents/oc/pull/1396) [v0.50.0] [BREAKING] Switch compile client default to true
+- [#1395](https://github.com/opencomponents/oc/pull/1395) Support stream
+- [#1394](https://github.com/opencomponents/oc/pull/1394) add a min oc version checker for templates if defined
+
+### v0.49.67
+- [#1393](https://github.com/opencomponents/oc/pull/1393) oc-client-browser@1.95 [ALLOW EMPTY ACTIONS]
+
+### v0.49.66
+- [#1392](https://github.com/opencomponents/oc/pull/1392) add actions endpoint
+
+### v0.49.65
+- [#1391](https://github.com/opencomponents/oc/pull/1391) udpate legacy compilers
+
+### v0.49.64
+- [#1390](https://github.com/opencomponents/oc/pull/1390) update packages
+
 ### v0.49.63
 - [#1385](https://github.com/opencomponents/oc/pull/1385) update client
 

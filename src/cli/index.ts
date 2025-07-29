@@ -1,13 +1,9 @@
 import semver from 'semver';
 import cli from 'yargs';
-import commands from './commands';
-
 import strings from '../resources';
+import commands from './commands';
 import Local from './domain/local';
 import Registry from './domain/registry';
-import logger from './logger';
-import validateCommand from './validate-command';
-
 import clean from './facade/clean';
 import dev from './facade/dev';
 import init from './facade/init';
@@ -19,6 +15,8 @@ import registry from './facade/registry';
 import registryAdd from './facade/registry-add';
 import registryLs from './facade/registry-ls';
 import registryRemove from './facade/registry-remove';
+import logger from './logger';
+import validateCommand from './validate-command';
 
 const cliFunctions = {
   clean,

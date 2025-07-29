@@ -36,7 +36,7 @@ function isPromiseBased(tryFunction: () => unknown) {
       // To not throw unhandled promise exceptions
     });
     return true;
-  } catch (err) {
+  } catch {
     return false;
   }
 }

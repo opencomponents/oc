@@ -47,7 +47,7 @@ export function sanitiseComponentParameters(
   )) {
     if (
       typeof expectedParameters === 'object' &&
-      // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
+      // biome-ignore lint/suspicious/noPrototypeBuiltins: hasOwnProperty is fine
       expectedParameters.hasOwnProperty(requestParameterName)
     ) {
       const expectedType = expectedParameters[requestParameterName].type;

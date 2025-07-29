@@ -5,7 +5,9 @@ import tryRequire from 'try-require';
 
 import strings from '../../resources';
 
-const isCoreDependency = (x: string) => coreModules.includes(x);
+const allCoreModules = [...coreModules, ...coreModules.map((m) => `node:${m}`)];
+
+const isCoreDependency = (x: string) => allCoreModules.includes(x);
 const requireCoreDependency = (x: string) =>
   (isCoreDependency(x) && tryRequire(x)) || undefined;
 

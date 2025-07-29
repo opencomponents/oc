@@ -13,7 +13,18 @@ type CompileOptions = Omit<
 
 export interface RegistryOptions<T = any>
   extends Partial<Omit<Config<T>, 'beforePublish'>> {
+  /**
+   * Public base URL where the registry will be accessible by consumers.
+   * It **must** already include the chosen {@link Config.prefix} and end with a trailing slash.
+   *
+   * @example "https://components.mycompany.com/"
+   */
   baseUrl: string;
+  /**
+   * Set the options for the oc-client-browser
+   * Set it to false to disable the compilation of the client
+   * @default true
+   */
   compileClient?: boolean | CompileOptions;
 }
 
@@ -65,9 +76,11 @@ export default function optionsSanitiser(input: RegistryOptions): Config {
     options.templates = [];
   }
 
-  if (options.compileClient) {
+  if (options.compileClient || options.compileClient !== false) {
     const clientOptions =
-      typeof options.compileClient === 'boolean' ? {} : options.compileClient;
+      typeof options.compileClient === 'boolean'
+        ? {}
+        : (options.compileClient ?? {});
 
     const compiled = compileSync({
       templates: options.templates,
