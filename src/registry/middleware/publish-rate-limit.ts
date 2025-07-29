@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
-import type { Config } from '../../types';
+import type { Config, RateLimitStore } from '../../types';
 import MemoryRateLimitStore from '../domain/memory-rate-limit-store';
 
 const DEFAULT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
@@ -19,7 +19,8 @@ export default function createPublishRateLimiter(conf: Config) {
   const maxCacheSize = rateLimitConfig.maxCacheSize ?? DEFAULT_MAX_CACHE_SIZE;
 
   // Use provided store or create memory store with configurable size
-  const store = rateLimitConfig.store ?? new MemoryRateLimitStore(maxCacheSize);
+  const store: RateLimitStore =
+    rateLimitConfig.store ?? new MemoryRateLimitStore(maxCacheSize);
 
   // Initialize store if it has an init method
   if (store.init) {

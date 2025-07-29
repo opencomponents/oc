@@ -30,6 +30,7 @@ export function create(app: Express, conf: Config, repository: Repository) {
 
   const prefix = conf.prefix;
   const publishRateLimiter = createPublishRateLimiter(conf);
+  console.log('publishRateLimiter', publishRateLimiter);
 
   if (prefix !== '/') {
     app.get('/', (_req, res) => res.redirect(prefix));
@@ -52,7 +53,7 @@ export function create(app: Express, conf: Config, repository: Repository) {
   } else {
     app.put(
       `${prefix}:componentName/:componentVersion`,
-      publishRateLimiter,
+      // publishRateLimiter,
       conf.beforePublish,
       routes.publish
     );

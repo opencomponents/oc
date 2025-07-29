@@ -57,20 +57,4 @@ export default class MemoryRateLimitStore implements RateLimitStore {
       resetTime: new Date(existing.resetTime)
     };
   }
-
-  // Clean up expired entries periodically
-  private cleanup(): void {
-    const now = Date.now();
-    for (const [key, entry] of this.store.entries()) {
-      if (entry.resetTime < now) {
-        this.store.delete(key);
-      }
-    }
-  }
-
-  // Start cleanup interval
-  init(): void {
-    // Clean up expired entries every 5 minutes
-    setInterval(() => this.cleanup(), 5 * 60 * 1000);
-  }
 }
