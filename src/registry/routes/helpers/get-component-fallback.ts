@@ -50,7 +50,7 @@ function getComponentFallbackForViewType(
     .then((fallbackResponse) => {
       try {
         return callback(null, JSON.parse(fallbackResponse));
-      } catch (parseError) {
+      } catch {
         return callback(
           {
             registryError: registryError,

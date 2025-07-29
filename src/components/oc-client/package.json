@@ -1,7 +1,7 @@
 {
   "name": "oc-client",
   "description": "The OpenComponents client-side javascript client",
-  "version": "0.50.11",
+  "version": "0.50.14",
   "repository": "https://github.com/opencomponents/oc/tree/master/components/oc-client",
   "author": "Matteo Figus <matteofigus@gmail.com>",
   "oc": {

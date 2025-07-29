@@ -1,12 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import Domain from 'node:domain';
+import type { IncomingHttpHeaders } from 'node:http';
 import vm from 'node:vm';
 import acceptLanguageParser from 'accept-language-parser';
 import Cache from 'nice-cache';
 import Client from 'oc-client';
 import emptyResponseHandler from 'oc-empty-response-handler';
-
-import type { IncomingHttpHeaders } from 'node:http';
 import { fromPromise } from 'universalify';
 import strings from '../../../resources';
 import settings from '../../../resources/settings';
@@ -444,7 +443,7 @@ export default function getComponent(conf: Config, repository: Repository) {
 
                   try {
                     ocTemplate = repository.getTemplate(templateType);
-                  } catch (err) {
+                  } catch {
                     return callback({
                       status: 400,
                       response: {

@@ -14,13 +14,6 @@ interface ComponentList {
   state: string;
 }
 
-interface ComponentHistory {
-  name: string;
-  publishDate: string;
-  version: string;
-  templateSize: number;
-}
-
 export interface TemplateInfo {
   externals: Array<{
     name: string;
@@ -120,7 +113,6 @@ export interface VM {
   }>;
   availablePlugins: Record<string, (...args: unknown[]) => void>;
   components: ParsedComponent[];
-  componentsHistory?: ComponentHistory[];
   componentsList: ComponentList[];
   componentsReleases: number;
   href: string;

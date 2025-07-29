@@ -1,7 +1,6 @@
+import type { Request, Response } from 'express';
 import parseAuthor from 'parse-author';
 import { fromPromise } from 'universalify';
-
-import type { Request, Response } from 'express';
 import type { Component, ComponentDetail, Config } from '../../types';
 import type { Repository } from '../domain/repository';
 import * as urlBuilder from '../domain/url-builder';

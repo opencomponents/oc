@@ -1,5 +1,16 @@
 ## Change Log
 
+### v0.50.14
+- [#1417](https://github.com/opencomponents/oc/pull/1417) add infinite scrolling to history
+
+### v0.50.13
+- [#1416](https://github.com/opencomponents/oc/pull/1416) Add history endpoint and lazy load it on the UI
+
+### v0.50.12
+- [#1415](https://github.com/opencomponents/oc/pull/1415) Move to JSX and Restyle
+- [#1413](https://github.com/opencomponents/oc/pull/1413) Fix error message on publish when is a string
+- [#1412](https://github.com/opencomponents/oc/pull/1412) Document options
+
 ### v0.50.11
 - [#1411](https://github.com/opencomponents/oc/pull/1411) update client
 

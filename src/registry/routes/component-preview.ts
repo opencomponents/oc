@@ -28,7 +28,7 @@ function componentPreview(
   const isHtmlRequest =
     !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
 
-  if (isHtmlRequest && !!res.conf.discovery) {
+  if (isHtmlRequest) {
     res.send(
       previewView({
         component,
