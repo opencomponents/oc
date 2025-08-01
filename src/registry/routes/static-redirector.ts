@@ -67,13 +67,14 @@ export default function staticRedirector(repository: Repository) {
     } else if (req.params['componentName'] === 'oc-client') {
       filePath = path.join(
         __dirname,
-        '../../components/oc-client/_package/' + req.params[0]
+        '../../components/oc-client/_package/' +
+          (req.params['splat'] as any as string[]).join('/')
       );
     } else {
       filePath =
         path.join(res.conf.path, req.params['componentName']) +
         '/_package/' +
-        req.params[0];
+        (req.params['splat'] as any as string[]).join('/');
     }
 
     if (!fs.existsSync(filePath)) {
