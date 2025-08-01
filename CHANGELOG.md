@@ -1,5 +1,12 @@
 ## Change Log
 
+### v0.50.15
+- [#1421](https://github.com/opencomponents/oc/pull/1421) express 5 migration
+- [#1387](https://github.com/opencomponents/oc/pull/1387) [Snyk] Security upgrade cross-spawn from 7.0.3 to 7.0.5
+- [#1389](https://github.com/opencomponents/oc/pull/1389) [Snyk] Security upgrade undici from 6.19.8 to 6.21.1
+- [#1419](https://github.com/opencomponents/oc/pull/1419) fix livereload so its correctly called after repackaging
+- [#1418](https://github.com/opencomponents/oc/pull/1418) Leave preview open without discovery
+
 ### v0.50.14
 - [#1417](https://github.com/opencomponents/oc/pull/1417) add infinite scrolling to history
 
