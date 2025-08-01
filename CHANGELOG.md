@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.16
+- [#1422](https://github.com/opencomponents/oc/pull/1422) Fix splat path on local static redirector
+
 ### v0.50.15
 - [#1421](https://github.com/opencomponents/oc/pull/1421) express 5 migration
 - [#1387](https://github.com/opencomponents/oc/pull/1387) [Snyk] Security upgrade cross-spawn from 7.0.3 to 7.0.5
