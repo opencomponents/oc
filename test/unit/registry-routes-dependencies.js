@@ -38,7 +38,7 @@ describe('registry : routes : plugins', () => {
       initialise();
       const conf = {
         dependencies: ['fs', 'undici'],
-        discovery: false
+        discovery: { ui: false }
       };
       dependenciesRoute = DependenciesRoute(conf);
 
@@ -55,7 +55,7 @@ describe('registry : routes : plugins', () => {
       initialise();
       const conf = {
         dependencies: ['fs', 'undici'],
-        discovery: true
+        discovery: { ui: true }
       };
       dependenciesRoute = DependenciesRoute(conf);
 
