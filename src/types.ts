@@ -90,7 +90,7 @@ interface OcConfiguration {
   renderInfo?: boolean;
   state?: 'deprecated' | 'experimental';
   stringifiedDate: string;
-  publishedBy?: string;
+  publisher?: string;
   version: string;
 }
 
