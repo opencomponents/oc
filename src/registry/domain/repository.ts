@@ -373,6 +373,7 @@ export default function repository(conf: Config) {
       }
 
       pkgDetails.packageJson.oc.date = getUnixUtcTimestamp();
+      pkgDetails.packageJson.oc.publishedBy = user;
 
       if (dryRun) return;
 
