@@ -12,7 +12,28 @@ type CompileOptions = Omit<
 >;
 
 export interface RegistryOptions<T = any>
-  extends Partial<Omit<Config<T>, 'beforePublish'>> {
+  extends Partial<Omit<Config<T>, 'beforePublish' | 'discovery'>> {
+  /**
+   * Configuration object to enable/disable the HTML discovery page and the API
+   *
+   * @default true
+   */
+  discovery?:
+    | {
+        /**
+         * Enables the HTML discovery page
+         *
+         * @default true
+         */
+        ui?: boolean;
+        /**
+         * Shows experimental components from the API
+         *
+         * @default true
+         */
+        experimental?: boolean;
+      }
+    | boolean;
   /**
    * Public base URL where the registry will be accessible by consumers.
    * It **must** already include the chosen {@link Config.prefix} and end with a trailing slash.
@@ -64,9 +85,20 @@ export default function optionsSanitiser(input: RegistryOptions): Config {
     options.verbosity = 0;
   }
 
-  if (typeof options.discovery === 'undefined') {
-    options.discovery = true;
-  }
+  const showUI =
+    typeof options.discovery === 'boolean'
+      ? options.discovery
+      : (options.discovery?.ui ?? true);
+  const showExperimental =
+    typeof options.discovery === 'boolean'
+      ? // We keep previous default behavior for backward compatibility
+        true
+      : (options.discovery?.experimental ?? true);
+
+  options.discovery = {
+    ui: showUI,
+    experimental: showExperimental
+  };
 
   if (typeof options.pollingInterval === 'undefined') {
     options.pollingInterval = 5;

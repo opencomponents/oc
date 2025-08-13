@@ -5,7 +5,7 @@ import * as auth from '../authentication';
 type ValidationResult = { isValid: true } | { isValid: false; message: string };
 
 export default function registryConfiguration(
-  conf: Partial<Config>
+  conf: Partial<Omit<Config, 'discovery'>>
 ): ValidationResult {
   const returnError = (message: string): ValidationResult => {
     return {

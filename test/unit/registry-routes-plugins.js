@@ -43,7 +43,7 @@ describe('registry : routes : plugins', () => {
       initialise();
       const conf = {
         plugins,
-        discovery: true
+        discovery: { ui: true }
       };
       pluginsRoute = PluginsRoute(conf);
 

@@ -5,7 +5,7 @@ import getComponentsHistory from './helpers/get-components-history';
 export default function history(repository: Repository) {
   return async (_req: Request, res: Response): Promise<void> => {
     try {
-      if (res.conf.discovery && !res.conf.local) {
+      if (res.conf.discovery.ui && !res.conf.local) {
         const details = await repository.getComponentsDetails();
         const componentsHistory = getComponentsHistory(details);
         res.setHeader('Cache-Control', 'public, max-age=600');

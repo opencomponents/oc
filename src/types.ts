@@ -199,11 +199,18 @@ export interface Config<T = any> {
    */
   dependencies: string[];
   /**
-   * Enables the HTML discovery page and `/components` endpoint.
-   *
-   * @default true
+   * Configuration object to enable/disable the HTML discovery page and the API
    */
-  discovery: boolean;
+  discovery: {
+    /**
+     * Enables the HTML discovery page
+     */
+    ui: boolean;
+    /**
+     * Shows experimental components from the API
+     */
+    experimental: boolean;
+  };
   /**
    * Function invoked to decide whether discovery should be enabled for the
    * current request.

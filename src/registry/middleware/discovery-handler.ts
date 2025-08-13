@@ -10,7 +10,7 @@ export default function discoveryHandler(
     (typeof res.conf.discovery === 'function' ? res.conf.discovery : undefined);
 
   if (res.conf.discoveryFunc) {
-    res.conf.discovery = res.conf.discoveryFunc({
+    res.conf.discovery.ui = res.conf.discoveryFunc({
       host: req.headers.host,
       secure: req.secure
     });
