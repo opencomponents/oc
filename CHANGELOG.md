@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.17
+- [#1423](https://github.com/opencomponents/oc/pull/1423) extend discovery options, add a way to filter states (experimental/deprecated), and also a way to hide experiments from api even
+
 ### v0.50.16
 - [#1422](https://github.com/opencomponents/oc/pull/1422) Fix splat path on local static redirector
 
