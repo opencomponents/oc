@@ -44,7 +44,17 @@ export const bind = (app: Express, options: Config): Express => {
   app.use(discoveryHandler);
 
   if (options.verbosity) {
-    app.use(morgan('dev'));
+    app.use(
+      morgan('dev', {
+        skip: (req) => {
+          // Hide logging development console calls
+          return (
+            req.method === 'POST' &&
+            req.url.startsWith('/~actions/$$__oc__server___console__$$')
+          );
+        }
+      })
+    );
   }
 
   if (options.local) {
