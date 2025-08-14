@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.50.18
+- [#1425](https://github.com/opencomponents/oc/pull/1425) hide log calls
+- [#1424](https://github.com/opencomponents/oc/pull/1424) add publisher field
+
 ### v0.50.17
 - [#1423](https://github.com/opencomponents/oc/pull/1423) extend discovery options, add a way to filter states (experimental/deprecated), and also a way to hide experiments from api even
 
