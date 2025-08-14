@@ -46,11 +46,10 @@ export const bind = (app: Express, options: Config): Express => {
   if (options.verbosity) {
     app.use(
       morgan('dev', {
-        skip: (req) => {
+        skip: (req, res) => {
           // Hide logging development console calls
-          return (
-            req.method === 'POST' &&
-            req.url.startsWith('/~actions/$$__oc__server___console__$$')
+          return req.url.startsWith(
+            `${res.conf.prefix}~actions/$$__oc__server___console__$$`
           );
         }
       })
