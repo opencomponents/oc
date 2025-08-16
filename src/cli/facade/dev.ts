@@ -113,7 +113,7 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
       const registerPlugins = (registry: Registry) => {
         const mockedPlugins = getMockedPlugins(logger, componentsDir);
         for (const plugin of mockedPlugins) {
-          registry.register(plugin);
+          registry.register(plugin as any);
         }
 
         registry.on('request', (data) => {

@@ -35,7 +35,7 @@ export default function registry<T = any>(inputOptions: RegistryOptions<T>) {
   };
 
   const register = <T = any>(
-    plugin: Omit<Plugin<T>, 'callback'>,
+    plugin: Plugin<T>,
     callback?: (...args: any[]) => void
   ) => {
     plugins.push(Object.assign(plugin, { callback }));
@@ -48,10 +48,10 @@ export default function registry<T = any>(inputOptions: RegistryOptions<T>) {
     ) => void
   ) => {
     const ok = (msg: string) => console.log(colors.green(msg));
-    createRouter(app, options, repository);
 
     try {
       options.plugins = await pluginsInitialiser.init(plugins);
+      createRouter(app, options, repository);
       const componentsInfo = await repository.init();
       await appStart(repository, options);
 

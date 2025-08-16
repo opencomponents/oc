@@ -5,9 +5,9 @@ export default function plugins(conf: Config) {
   return (_req: Request, res: Response): void => {
     if (res.conf.discovery.ui) {
       const plugins = Object.entries(conf.plugins).map(
-        ([pluginName, pluginFn]) => ({
+        ([pluginName, plugin]) => ({
           name: pluginName,
-          description: pluginFn.toString()
+          description: plugin.description
         })
       );
 

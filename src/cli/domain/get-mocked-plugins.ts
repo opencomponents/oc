@@ -9,9 +9,11 @@ import type { Logger } from '../logger';
 interface MockedPlugin {
   register: (options: unknown, dependencies: unknown, next: () => void) => void;
   execute: (...args: unknown[]) => unknown;
+  context?: boolean;
 }
 
 interface PluginMock {
+  context: boolean;
   name: string;
   register: {
     register: (
@@ -52,6 +54,7 @@ const registerStaticMocks = (
     logger.ok(`├── ${pluginName} () => ${mockedValue}`);
 
     return {
+      context: false,
       name: pluginName,
       register: {
         register: defaultRegister,
@@ -83,12 +86,14 @@ const registerDynamicMocks = (
 
       const register = (pluginMock as MockedPlugin).register || defaultRegister;
       const execute = (pluginMock as MockedPlugin).execute || pluginMock;
+      const context = (pluginMock as MockedPlugin).context || false;
 
       logger.ok(`├── ${pluginName} () => [Function]`);
 
       return {
         name: pluginName,
-        register: { execute, register }
+        register: { execute, register },
+        context
       };
     })
     .filter((pluginMock): pluginMock is PluginMock => !!pluginMock);

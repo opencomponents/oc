@@ -11,13 +11,15 @@ describe('registry : routes : plugins', () => {
   const initialise = () => {
     resJsonStub = sinon.stub();
     statusStub = sinon.stub().returns({ json: resJsonStub });
-    const plugin1 = () => {};
-    plugin1.toString = () => 'Description plugin 1';
-    const plugin2 = () => {};
-    plugin2.toString = () => '';
     plugins = {
-      plugin1,
-      plugin2
+      plugin1: {
+        handler: () => {},
+        description: 'Description plugin 1'
+      },
+      plugin2: {
+        handler: () => {},
+        description: ''
+      }
     };
   };
 

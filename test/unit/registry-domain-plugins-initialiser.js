@@ -149,18 +149,18 @@ describe('registry : domain : plugins-initialiser', () => {
     });
 
     it('should expose the functionalities using the plugin names', () => {
-      expect(result.getValue).to.be.a('function');
-      expect(result.isFlagged).to.be.a('function');
+      expect(result.getValue.handler).to.be.a('function');
+      expect(result.isFlagged.handler).to.be.a('function');
     });
 
     it('should expose descriptions on the plugin functions if defined', () => {
-      expect(result.getValue.toString()).to.equal('Function description');
-      expect(result.isFlagged.toString()).to.equal('');
+      expect(result.getValue.description).to.equal('Function description');
+      expect(result.isFlagged.description).to.equal('');
     });
 
     it('should be make the functionality usable', () => {
-      const a = result.getValue('a');
-      const flagged = result.isFlagged();
+      const a = result.getValue.handler('a');
+      const flagged = result.isFlagged.handler();
 
       expect(a).to.equal(123);
       expect(flagged).to.equal(true);
@@ -203,7 +203,7 @@ describe('registry : domain : plugins-initialiser', () => {
     });
 
     it('should provide the getValue register method with the required dependent plugins', () => {
-      expect(passedDeps.isFlagged()).to.eql(true);
+      expect(passedDeps.isFlagged.handler()).to.eql(true);
     });
   });
 
@@ -331,7 +331,7 @@ describe('registry : domain : plugins-initialiser', () => {
     });
 
     it('should defer the initalisation of the plugin until all dependencies have bee registered', () => {
-      expect(result.doSomething()).to.eql(true);
+      expect(result.doSomething.handler()).to.eql(true);
     });
   });
 });

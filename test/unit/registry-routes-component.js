@@ -133,7 +133,15 @@ describe('registry : routes : component', () => {
   describe('when getting a component with server.js execution errors', () => {
     before(() => {
       initialise(mockedComponents['error-component']);
-      componentRoute = ComponentRoute({}, mockedRepository);
+      const plugins = {
+        a: {
+          handler: () => '',
+          description: ''
+        }
+      };
+      componentRoute = ComponentRoute({
+        plugins
+      }, mockedRepository);
 
       componentRoute(
         {
@@ -143,9 +151,7 @@ describe('registry : routes : component', () => {
         {
           conf: {
             baseUrl: 'http://components.com/',
-            plugins: {
-              a: () => ''
-            }
+            plugins,
           },
           status: statusStub
         }
@@ -323,27 +329,33 @@ describe('registry : routes : component', () => {
     });
 
     describe('when plugin declared in package.json', () => {
+        const conf = {
+          baseUrl: 'http://components.com/',
+          plugins: {
+            doSomething: {
+              handler: () => 'hello hello hello my friend',
+              description: ''
+            }
+          }
+        };
       beforeEach(() => {
         const component = { ...mockedComponents['plugin-component'] };
         component.package.oc.plugins = ['doSomething'];
         initialise(component);
-        componentRoute = ComponentRoute({}, mockedRepository);
+        componentRoute = ComponentRoute(conf, mockedRepository);
       });
 
       describe('when registry implements plugin', () => {
         beforeEach((done) => {
+       
           componentRoute(
             {
               headers: {},
+              conf,
               params: { componentName: 'plugin-component' }
             },
             {
-              conf: {
-                baseUrl: 'http://components.com/',
-                plugins: {
-                  doSomething: () => 'hello hello hello my friend'
-                }
-              },
+              conf,
               status: statusStub
             }
           );
