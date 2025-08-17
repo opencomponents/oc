@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.20
+- [#1426](https://github.com/opencomponents/oc/pull/1426) plugins with context
+
 ### v0.50.18
 - [#1425](https://github.com/opencomponents/oc/pull/1425) hide log calls
 - [#1424](https://github.com/opencomponents/oc/pull/1424) add publisher field
