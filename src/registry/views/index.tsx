@@ -75,9 +75,9 @@ ${indexJS}</script>`;
       <Dependencies availableDependencies={vm.availableDependencies} />
       <Plugins
         availablePlugins={Object.fromEntries(
-          Object.entries(vm.availablePlugins).map(([name, fn]) => [
+          Object.entries(vm.availablePlugins).map(([name, { description }]) => [
             name,
-            fn.toString() as string
+            description
           ])
         )}
       />

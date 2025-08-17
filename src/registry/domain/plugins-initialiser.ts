@@ -1,8 +1,12 @@
 import { promisify } from 'node:util';
 import { DepGraph } from 'dependency-graph';
 import strings from '../../resources';
-import type { Plugin } from '../../types';
+import type { Plugin, Plugins } from '../../types';
 import pLimit from '../../utils/pLimit';
+
+type PluginWithCallback = Plugin & {
+  callback?: (error?: unknown) => void;
+};
 
 function validatePlugins(plugins: unknown[]): asserts plugins is Plugin[] {
   for (let idx = 0; idx < plugins.length; idx++) {
@@ -46,12 +50,8 @@ function checkDependencies(plugins: Plugin[]) {
 
 let deferredLoads: Plugin[] = [];
 
-type PluginFunctions = Record<string, (...args: unknown[]) => void>;
-
-export async function init(
-  pluginsToRegister: unknown[]
-): Promise<PluginFunctions> {
-  const registered: PluginFunctions = {};
+export async function init(pluginsToRegister: unknown[]): Promise<Plugins> {
+  const registered: Plugins = {};
 
   validatePlugins(pluginsToRegister);
   checkDependencies(pluginsToRegister);
@@ -71,7 +71,7 @@ export async function init(
     return present;
   };
 
-  const loadPlugin = async (plugin: Plugin): Promise<void> => {
+  const loadPlugin = async (plugin: PluginWithCallback): Promise<void> => {
     if (registered[plugin.name]) {
       return;
     }
@@ -98,14 +98,15 @@ export async function init(
       pluginCallback(err);
       throw err;
     });
-    // Overriding toString so implementation details of plugins do not
-    // leak to OC consumers
-    plugin.register.execute.toString = () => plugin.description || '';
-    registered[plugin.name] = plugin.register.execute;
+    registered[plugin.name] = {
+      handler: plugin.register.execute as any,
+      description: plugin.description || '',
+      context: plugin.context || false
+    };
     pluginCallback();
   };
 
-  const terminator = async (): Promise<PluginFunctions> => {
+  const terminator = async (): Promise<Plugins> => {
     if (deferredLoads.length > 0) {
       const deferredPlugins = [...deferredLoads];
       deferredLoads = [];

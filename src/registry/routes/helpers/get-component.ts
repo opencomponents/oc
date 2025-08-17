@@ -9,7 +9,13 @@ import emptyResponseHandler from 'oc-empty-response-handler';
 import { fromPromise } from 'universalify';
 import strings from '../../../resources';
 import settings from '../../../resources/settings';
-import type { Component, Config, Template } from '../../../types';
+import type {
+  Component,
+  Config,
+  PluginContext,
+  Plugins,
+  Template
+} from '../../../types';
 import isTemplateLegacy from '../../../utils/is-template-legacy';
 import eventsHandler from '../../domain/events-handler';
 import NestedRenderer from '../../domain/nested-renderer';
@@ -62,12 +68,57 @@ const noopConsole = Object.fromEntries(
   Object.keys(console).map((key) => [key, noop])
 );
 
+/**
+ * Converts the plugins to a function that returns a record of plugins with the context applied
+ * Caches the plugins without context and applies the context to the plugins that need it
+ * to avoid creating a new function for each component if possible
+ * @param plugins - The plugins to convert
+ * @returns A function that returns a record of plugins with the context applied
+ */
+function pluginConverter(plugins: Plugins = {}) {
+  const pluginsMap = {
+    withoutContext: {} as Record<string, (...args: any[]) => any>,
+    withContext: {} as Record<
+      string,
+      (ctx: PluginContext) => (...args: any[]) => any
+    >,
+    needsContext: false
+  };
+  for (const [name, { handler, context }] of Object.entries(plugins)) {
+    if (context) {
+      pluginsMap.withContext[name] = handler as any;
+      pluginsMap.needsContext = true;
+    } else {
+      pluginsMap.withoutContext[name] = handler;
+    }
+  }
+
+  return (ctx: PluginContext) => {
+    if (!pluginsMap.needsContext) {
+      return pluginsMap.withoutContext;
+    }
+    const pluginsWithContextApplied = {} as Record<
+      string,
+      (...args: any[]) => any
+    >;
+    for (const [name, handler] of Object.entries(pluginsMap.withContext)) {
+      pluginsWithContextApplied[name] = handler(ctx);
+    }
+
+    return {
+      ...pluginsMap.withoutContext,
+      ...pluginsWithContextApplied
+    };
+  };
+}
+
 export default function getComponent(conf: Config, repository: Repository) {
   const client = Client({ templates: conf.templates });
   const cache = new Cache({
     verbose: !!conf.verbosity,
     refreshInterval: conf.refreshInterval
   });
+  const convertPlugins = pluginConverter(conf.plugins);
 
   const getEnv = async (
     component: Component
@@ -504,7 +555,10 @@ export default function getComponent(conf: Config, repository: Repository) {
               baseUrl: conf.baseUrl,
               env: { ...conf.env, ...env },
               params,
-              plugins: conf.plugins,
+              plugins: convertPlugins({
+                name: component.name,
+                version: component.version
+              }),
               renderComponent: fromPromise(nestedRenderer.renderComponent),
               renderComponents: fromPromise(nestedRenderer.renderComponents),
               requestHeaders: options.headers,

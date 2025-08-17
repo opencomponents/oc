@@ -201,7 +201,6 @@ export default function Info(vm: Vm) {
         class="w-100"
         id="href"
         placeholder="Insert component href here"
-        readonly
       >
         {componentHref}
       </textarea>

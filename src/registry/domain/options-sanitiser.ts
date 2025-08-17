@@ -12,7 +12,7 @@ type CompileOptions = Omit<
 >;
 
 export interface RegistryOptions<T = any>
-  extends Partial<Omit<Config<T>, 'beforePublish' | 'discovery'>> {
+  extends Partial<Omit<Config<T>, 'beforePublish' | 'discovery' | 'plugins'>> {
   /**
    * Configuration object to enable/disable the HTML discovery page and the API
    *

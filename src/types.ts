@@ -112,7 +112,7 @@ export interface VM {
     version: string;
     link: string;
   }>;
-  availablePlugins: Record<string, (...args: unknown[]) => void>;
+  availablePlugins: Plugins;
   components: ParsedComponent[];
   componentsList: ComponentList[];
   componentsReleases: number;
@@ -275,7 +275,7 @@ export interface Config<T = any> {
    * Collection of plugins initialised for this registry instance.
    * Populated via `registry.register(...)`.
    */
-  plugins: Record<string, (...args: unknown[]) => void>;
+  plugins: Plugins;
   /**
    * Seconds between each poll of the storage adapter for changes.
    *
@@ -394,8 +394,7 @@ export interface Template {
   render: (options: any, cb: (err: Error | null, data: string) => void) => void;
 }
 
-export interface Plugin<T = any> {
-  callback?: (error?: unknown) => void;
+interface BasePLugin<T = any> {
   description?: string;
   name: string;
   options?: T;
@@ -405,8 +404,73 @@ export interface Plugin<T = any> {
       dependencies: any,
       next: (error?: Error) => void
     ) => void;
-    execute: (...args: any[]) => any;
     dependencies?: string[];
+  };
+}
+
+/**
+ * The context object passed to the plugin's execute function
+ */
+export type PluginContext = {
+  /**
+   * The name of the component calling the plugin
+   */
+  name: string;
+  /**
+   * The version of the component calling the plugin
+   */
+  version: string;
+};
+
+export type Plugin<T = any> = BasePLugin<T> &
+  (
+    | {
+        /**
+         * When false or undefined, the plugin's execute function will be called directly.
+         * The execute function should accept any parameters and return any value.
+         */
+        context?: false | undefined;
+        register: {
+          register: (
+            options: T,
+            dependencies: any,
+            next: (error?: Error) => void
+          ) => void;
+          execute: (...args: any[]) => any;
+          dependencies?: string[];
+        };
+      }
+    | {
+        /**
+         * When true, the plugin's execute function will be called with a context object containing
+         * the component name and version. It should return a function that accepts parameters and returns any value.
+         * @example
+         * ```ts
+         * {
+         *   register: {
+         *     execute: (...args: any[]) => any
+         *   }
+         * }
+         * ```
+         */
+        context: true;
+        register: {
+          register: (
+            options: T,
+            dependencies: any,
+            next: (error?: Error) => void
+          ) => void;
+          execute: (context: PluginContext) => (params: any) => any;
+          dependencies?: string[];
+        };
+      }
+  );
+
+export interface Plugins {
+  [pluginName: string]: {
+    handler: (...args: unknown[]) => void;
+    description: string;
+    context: boolean;
   };
 }
 
