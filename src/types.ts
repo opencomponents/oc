@@ -59,6 +59,16 @@ export interface OcParameter {
   description?: string;
   example?: string;
   mandatory?: boolean;
+  /**
+   * You can optionally restrict the values of the parameter to a specific set of values.
+   * @example
+   * ```ts
+   * {
+   *   type: 'string',
+   *   enum: ['foo', 'bar', 'baz']
+   * }
+   */
+  enum?: string[] | number[] | boolean[];
   type: 'string' | 'boolean' | 'number';
 }
 

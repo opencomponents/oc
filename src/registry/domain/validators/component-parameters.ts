@@ -7,25 +7,24 @@ const validateParameter = (
 ): boolean => {
   const expected = expectedType.toLowerCase();
 
-  if (expected === 'boolean') {
-    return typeof parameter === 'boolean';
+  switch (expected) {
+    case 'boolean':
+      return typeof parameter === 'boolean';
+    case 'number':
+      return typeof parameter === 'number';
+    case 'string':
+      return typeof parameter === 'string';
+    default:
+      return false;
   }
-  if (expected === 'number') {
-    return typeof parameter === 'number';
-  }
-  if (expected === 'string') {
-    return typeof parameter === 'string';
-  }
-
-  return false;
 };
 
 interface ValidationResult {
   isValid: boolean;
   errors: {
-    mandatory?: Record<string, string>;
-    types?: Record<string, string>;
-    message?: string;
+    mandatory: Record<string, string>;
+    types: Record<string, string>;
+    message: string;
   };
 }
 
@@ -33,28 +32,19 @@ export default function componentParameters(
   requestParameters: Record<string, string | number | boolean>,
   expectedParameters: Record<string, OcParameter> = {}
 ): ValidationResult {
-  const result: ValidationResult = { isValid: true, errors: {} };
-  const mandatoryParameters: string[] = [];
-
-  for (const [expectedParameterName, expectedParameter] of Object.entries(
-    expectedParameters
-  )) {
-    if (expectedParameter.mandatory) {
-      mandatoryParameters.push(expectedParameterName);
-    }
-  }
+  const result: ValidationResult = {
+    isValid: true,
+    errors: { mandatory: {}, types: {}, message: '' }
+  };
+  requestParameters = requestParameters || {};
+  expectedParameters = expectedParameters || {};
+  const mandatoryParameters: string[] = Object.entries(expectedParameters)
+    .filter(([_, expectedParameter]) => expectedParameter.mandatory)
+    .map(([expectedParameterName]) => expectedParameterName);
 
   for (const mandatoryParameterName of mandatoryParameters) {
-    if (
-      typeof requestParameters === 'object' &&
-      // biome-ignore lint/suspicious/noPrototypeBuiltins: hasOwnProperty is fine
-      !requestParameters.hasOwnProperty(mandatoryParameterName)
-    ) {
-      if (!result.errors.mandatory) {
-        result.errors.mandatory = {};
-        result.isValid = false;
-      }
-
+    if (!(mandatoryParameterName in requestParameters)) {
+      result.isValid = false;
       result.errors.mandatory[mandatoryParameterName] =
         strings.errors.registry.MANDATORY_PARAMETER_MISSING_CODE;
     }
@@ -63,21 +53,27 @@ export default function componentParameters(
   for (const [requestParameterName, requestParameter] of Object.entries(
     requestParameters
   )) {
-    if (
-      typeof expectedParameters === 'object' &&
-      // biome-ignore lint/suspicious/noPrototypeBuiltins: hasOwnProperty is fine
-      expectedParameters.hasOwnProperty(requestParameterName)
-    ) {
+    if (expectedParameters[requestParameterName]) {
       const expectedType = expectedParameters[requestParameterName].type;
 
       if (!validateParameter(requestParameter, expectedType)) {
-        if (!result.errors.types) {
-          result.errors.types = {};
-          result.isValid = false;
-        }
-
+        result.isValid = false;
         result.errors.types[requestParameterName] =
           strings.errors.registry.PARAMETER_WRONG_FORMAT_CODE;
+        continue; // Skip enum validation if type validation fails
+      }
+
+      const expectedValues = expectedParameters[requestParameterName].enum;
+      if (
+        expectedValues &&
+        !(expectedValues as any).includes(requestParameter)
+      ) {
+        result.isValid = false;
+        result.errors.types[requestParameterName] =
+          strings.errors.registry.PARAMETER_WRONG_VALUE(
+            requestParameterName,
+            expectedValues as string[]
+          );
       }
     }
   }
