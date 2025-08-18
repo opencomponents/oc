@@ -149,6 +149,9 @@ export default {
       PARAMETER_WRONG_FORMAT: (parameters: string): string =>
         `Parameters are not correctly formatted: ${parameters}`,
       PARAMETER_WRONG_FORMAT_CODE: 'wrong type',
+      PARAMETER_WRONG_VALUE: (parameter: string, values: string[]): string =>
+        `Parameter ${parameter} is not a valid value. Allowed values are: ${values.join(', ')}`,
+      PARAMETER_WRONG_VALUE_CODE: 'wrong value',
       PLUGIN_NOT_IMPLEMENTED: (plugins: string): string =>
         `registry does not implement plugins: ${plugins}`,
       PLUGIN_NOT_VALID: (plugin: string): string =>

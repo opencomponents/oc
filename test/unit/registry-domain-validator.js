@@ -779,6 +779,259 @@ describe('registry : domain : validator', () => {
         });
       });
     });
+
+    describe('when component parameters have enum constraints', () => {
+      describe('when string parameter has enum constraint', () => {
+        const componentParameters = {
+          status: {
+            type: 'string',
+            mandatory: true,
+            enum: ['active', 'inactive', 'pending'],
+            example: 'active'
+          }
+        };
+
+        it('should be valid when parameter value is in enum', () => {
+          const requestParameters = { status: 'active' };
+          expect(validate(requestParameters, componentParameters).isValid).to.be
+            .true;
+        });
+
+        it('should be valid when parameter value is another valid enum value', () => {
+          const requestParameters = { status: 'pending' };
+          expect(validate(requestParameters, componentParameters).isValid).to.be
+            .true;
+        });
+
+        it('should not be valid when parameter value is not in enum', () => {
+          const requestParameters = { status: 'invalid' };
+          const validateResult = validate(requestParameters, componentParameters);
+
+          expect(validateResult.isValid).to.be.false;
+          expect(validateResult.errors.types['status']).to.equal(
+            'Parameter status is not a valid value. Allowed values are: active, inactive, pending'
+          );
+          expect(validateResult.errors.message).to.equal(
+            'Parameters are not correctly formatted: status'
+          );
+        });
+
+        it('should not be valid when parameter value is case sensitive', () => {
+          const requestParameters = { status: 'Active' };
+          const validateResult = validate(requestParameters, componentParameters);
+
+          expect(validateResult.isValid).to.be.false;
+          expect(validateResult.errors.types['status']).to.equal(
+            'Parameter status is not a valid value. Allowed values are: active, inactive, pending'
+          );
+        });
+      });
+
+      describe('when number parameter has enum constraint', () => {
+        const componentParameters = {
+          priority: {
+            type: 'number',
+            mandatory: true,
+            enum: [1, 2, 3, 4, 5],
+            example: 3
+          }
+        };
+
+        it('should be valid when parameter value is in enum', () => {
+          const requestParameters = { priority: 3 };
+          expect(validate(requestParameters, componentParameters).isValid).to.be
+            .true;
+        });
+
+        it('should be valid when parameter value is another valid enum value', () => {
+          const requestParameters = { priority: 1 };
+          expect(validate(requestParameters, componentParameters).isValid).to.be
+            .true;
+        });
+
+        it('should not be valid when parameter value is not in enum', () => {
+          const requestParameters = { priority: 10 };
+          const validateResult = validate(requestParameters, componentParameters);
+
+          expect(validateResult.isValid).to.be.false;
+          expect(validateResult.errors.types['priority']).to.equal(
+            'Parameter priority is not a valid value. Allowed values are: 1, 2, 3, 4, 5'
+          );
+          expect(validateResult.errors.message).to.equal(
+            'Parameters are not correctly formatted: priority'
+          );
+        });
+
+        it('should not be valid when parameter value is zero but not in enum', () => {
+          const requestParameters = { priority: 0 };
+          const validateResult = validate(requestParameters, componentParameters);
+
+          expect(validateResult.isValid).to.be.false;
+          expect(validateResult.errors.types['priority']).to.equal(
+            'Parameter priority is not a valid value. Allowed values are: 1, 2, 3, 4, 5'
+          );
+        });
+      });
+
+      describe('when boolean parameter has enum constraint', () => {
+        const componentParameters = {
+          enabled: {
+            type: 'boolean',
+            mandatory: true,
+            enum: [true],
+            example: true
+          }
+        };
+
+        it('should be valid when parameter value is in enum', () => {
+          const requestParameters = { enabled: true };
+          expect(validate(requestParameters, componentParameters).isValid).to.be
+            .true;
+        });
+
+        it('should not be valid when parameter value is not in enum', () => {
+          const requestParameters = { enabled: false };
+          const validateResult = validate(requestParameters, componentParameters);
+
+          expect(validateResult.isValid).to.be.false;
+          expect(validateResult.errors.types['enabled']).to.equal(
+            'Parameter enabled is not a valid value. Allowed values are: true'
+          );
+          expect(validateResult.errors.message).to.equal(
+            'Parameters are not correctly formatted: enabled'
+          );
+        });
+      });
+
+      describe('when parameter has both type and enum validation', () => {
+        const componentParameters = {
+          status: {
+            type: 'string',
+            mandatory: true,
+            enum: ['active', 'inactive'],
+            example: 'active'
+          }
+        };
+
+        it('should not be valid when parameter has wrong type', () => {
+          const requestParameters = { status: 123 };
+          const validateResult = validate(requestParameters, componentParameters);
+
+          expect(validateResult.isValid).to.be.false;
+          expect(validateResult.errors.types['status']).to.equal('wrong type');
+          expect(validateResult.errors.message).to.equal(
+            'Parameters are not correctly formatted: status'
+          );
+        });
+
+        it('should not be valid when parameter has correct type but wrong enum value', () => {
+          const requestParameters = { status: 'pending' };
+          const validateResult = validate(requestParameters, componentParameters);
+
+          expect(validateResult.isValid).to.be.false;
+          expect(validateResult.errors.types['status']).to.equal(
+            'Parameter status is not a valid value. Allowed values are: active, inactive'
+          );
+        });
+      });
+
+      describe('when multiple parameters have enum constraints', () => {
+        const componentParameters = {
+          status: {
+            type: 'string',
+            mandatory: true,
+            enum: ['active', 'inactive'],
+            example: 'active'
+          },
+          priority: {
+            type: 'number',
+            mandatory: false,
+            enum: [1, 2, 3],
+            example: 2
+          }
+        };
+
+        it('should be valid when all parameters have valid enum values', () => {
+          const requestParameters = { status: 'active', priority: 2 };
+          expect(validate(requestParameters, componentParameters).isValid).to.be
+            .true;
+        });
+
+        it('should not be valid when one parameter has invalid enum value', () => {
+          const requestParameters = { status: 'active', priority: 5 };
+          const validateResult = validate(requestParameters, componentParameters);
+
+          expect(validateResult.isValid).to.be.false;
+          expect(validateResult.errors.types['priority']).to.equal(
+            'Parameter priority is not a valid value. Allowed values are: 1, 2, 3'
+          );
+        });
+
+        it('should not be valid when multiple parameters have invalid enum values', () => {
+          const requestParameters = { status: 'pending', priority: 5 };
+          const validateResult = validate(requestParameters, componentParameters);
+
+          expect(validateResult.isValid).to.be.false;
+          expect(validateResult.errors.types['status']).to.equal(
+            'Parameter status is not a valid value. Allowed values are: active, inactive'
+          );
+          expect(validateResult.errors.types['priority']).to.equal(
+            'Parameter priority is not a valid value. Allowed values are: 1, 2, 3'
+          );
+          expect(validateResult.errors.message).to.equal(
+            'Parameters are not correctly formatted: status, priority'
+          );
+        });
+      });
+
+      describe('when parameter has empty enum array', () => {
+        const componentParameters = {
+          status: {
+            type: 'string',
+            mandatory: true,
+            enum: [],
+            example: 'active'
+          }
+        };
+
+        it('should not be valid when any value is provided', () => {
+          const requestParameters = { status: 'active' };
+          const validateResult = validate(requestParameters, componentParameters);
+
+          expect(validateResult.isValid).to.be.false;
+          expect(validateResult.errors.types['status']).to.equal(
+            'Parameter status is not a valid value. Allowed values are: '
+          );
+        });
+      });
+
+      describe('when parameter has single value enum', () => {
+        const componentParameters = {
+          mode: {
+            type: 'string',
+            mandatory: true,
+            enum: ['strict'],
+            example: 'strict'
+          }
+        };
+
+        it('should be valid when parameter matches the single enum value', () => {
+          const requestParameters = { mode: 'strict' };
+          expect(validate(requestParameters, componentParameters).isValid).to.be
+            .true;
+        });
+
+        it('should not be valid when parameter does not match the single enum value', () => {
+          const requestParameters = { mode: 'loose' };
+          const validateResult = validate(requestParameters, componentParameters);
+
+          expect(validateResult.isValid).to.be.false;
+          expect(validateResult.errors.types['mode']).to.equal(
+            'Parameter mode is not a valid value. Allowed values are: strict'
+          );
+        });
+      });
+    });
   });
 
   describe('when validating component name for new candidate', () => {
