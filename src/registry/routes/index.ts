@@ -106,6 +106,12 @@ export default function (repository: Repository) {
       );
     } else {
       const state = req.query['state'] || '';
+      const author = req.query['author'] || '';
+      const keyword = Array.isArray(req.query['keyword'])
+        ? req.query['keyword']
+        : req.query['keyword']
+          ? [req.query['keyword']]
+          : '';
       let list = componentResults;
       if (!res.conf.discovery.experimental) {
         list = list.filter(
@@ -114,6 +120,20 @@ export default function (repository: Repository) {
       }
       if (state) {
         list = list.filter((component) => component.oc?.state === state);
+      }
+      if (author) {
+        list = list.filter((component) =>
+          typeof component.author === 'string'
+            ? component.author === author
+            : component.author?.name === author
+        );
+      }
+      if (keyword) {
+        list = list.filter((component) =>
+          Array.isArray(component.keywords)
+            ? component.keywords.some((keyword) => keyword.includes(keyword))
+            : component.keywords === keyword
+        );
       }
 
       res.status(200).json(
