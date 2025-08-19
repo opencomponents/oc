@@ -107,7 +107,7 @@ export default function (repository: Repository) {
     } else {
       const state = req.query['state'] || '';
       const author = req.query['author'] || '';
-      const keyword = Array.isArray(req.query['keyword'])
+      const keywords = Array.isArray(req.query['keyword'])
         ? req.query['keyword']
         : req.query['keyword']
           ? [req.query['keyword']]
@@ -128,11 +128,16 @@ export default function (repository: Repository) {
             : component.author?.name === author
         );
       }
-      if (keyword) {
+      if (keywords) {
         list = list.filter((component) =>
           Array.isArray(component.keywords)
-            ? component.keywords.some((keyword) => keyword.includes(keyword))
-            : component.keywords === keyword
+            ? keywords.some(
+                (requestedKeyword) =>
+                  component.keywords?.some((keyword) =>
+                    keyword.includes(String(requestedKeyword))
+                  ) ?? false
+              )
+            : keywords.includes(component.keywords ?? '')
         );
       }
 
