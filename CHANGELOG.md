@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.22
+- [#1430](https://github.com/opencomponents/oc/pull/1430) Add keywords
+
 ### v0.50.21
 - [#1429](https://github.com/opencomponents/oc/pull/1429) add meta query for components
 - [#1427](https://github.com/opencomponents/oc/pull/1427) add enum prop for params
