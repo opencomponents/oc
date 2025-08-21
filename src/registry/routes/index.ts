@@ -129,6 +129,7 @@ export default function (repository: Repository) {
                   version: component.version,
                   description: component.description,
                   state: component.oc.state,
+                  keywords: component.keywords || [],
                   publishDate: new Date(component.oc.date).toISOString()
                 }
               : href;
