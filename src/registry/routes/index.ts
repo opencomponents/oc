@@ -106,6 +106,7 @@ export default function (repository: Repository) {
       );
     } else {
       const state = req.query['state'] || '';
+      const meta = req.query['meta'] === 'true' && res.conf.discovery.ui;
       let list = componentResults;
       if (!res.conf.discovery.experimental) {
         list = list.filter(
@@ -118,9 +119,20 @@ export default function (repository: Repository) {
 
       res.status(200).json(
         Object.assign(baseResponse, {
-          components: list.map((component) =>
-            urlBuilder.component(component.name, res.conf.baseUrl)
-          )
+          components: list.map((component) => {
+            const href = urlBuilder.component(component.name, res.conf.baseUrl);
+
+            return meta
+              ? {
+                  href,
+                  name: component.name,
+                  version: component.version,
+                  description: component.description,
+                  state: component.oc.state,
+                  publishDate: new Date(component.oc.date).toISOString()
+                }
+              : href;
+          })
         })
       );
     }
