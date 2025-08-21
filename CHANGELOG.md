@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.50.21
+- [#1429](https://github.com/opencomponents/oc/pull/1429) add meta query for components
+- [#1427](https://github.com/opencomponents/oc/pull/1427) add enum prop for params
+
 ### v0.50.20
 - [#1426](https://github.com/opencomponents/oc/pull/1426) plugins with context
 
