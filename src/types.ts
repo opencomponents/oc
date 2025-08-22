@@ -214,11 +214,18 @@ export interface Config<T = any> {
    */
   discovery: {
     /**
+     * Enables API discovery endpoints
+     * @default true
+     */
+    api: boolean;
+    /**
      * Enables the HTML discovery page
+     * @default true
      */
     ui: boolean;
     /**
      * Shows experimental components from the API
+     * @default true
      */
     experimental: boolean;
   };
