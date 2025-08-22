@@ -127,6 +127,7 @@ export default function (repository: Repository) {
                   href,
                   name: component.name,
                   version: component.version,
+                  author: component.author,
                   description: component.description,
                   state: component.oc.state,
                   keywords: component.keywords || [],
