@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.23
+- [#1431](https://github.com/opencomponents/oc/pull/1431) add a toggle to hide api discovery too
+
 ### v0.50.22
 - [#1430](https://github.com/opencomponents/oc/pull/1430) Add keywords
 
