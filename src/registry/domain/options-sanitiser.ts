@@ -20,18 +20,9 @@ export interface RegistryOptions<T = any>
    */
   discovery?:
     | {
-        /**
-         * Enables the HTML discovery page
-         *
-         * @default true
-         */
         ui?: boolean;
-        /**
-         * Shows experimental components from the API
-         *
-         * @default true
-         */
         experimental?: boolean;
+        api?: boolean;
       }
     | boolean;
   /**
@@ -85,19 +76,25 @@ export default function optionsSanitiser(input: RegistryOptions): Config {
     options.verbosity = 0;
   }
 
+  const showApi =
+    typeof options.discovery === 'boolean'
+      ? true
+      : (options.discovery?.api ?? true);
   const showUI =
     typeof options.discovery === 'boolean'
       ? options.discovery
       : (options.discovery?.ui ?? true);
-  const showExperimental =
-    typeof options.discovery === 'boolean'
+  const showExperimental = !showApi
+    ? false
+    : typeof options.discovery === 'boolean'
       ? // We keep previous default behavior for backward compatibility
         true
       : (options.discovery?.experimental ?? true);
 
   options.discovery = {
     ui: showUI,
-    experimental: showExperimental
+    experimental: showExperimental,
+    api: showApi
   };
 
   if (typeof options.pollingInterval === 'undefined') {
