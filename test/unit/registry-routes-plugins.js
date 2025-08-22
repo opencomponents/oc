@@ -45,7 +45,7 @@ describe('registry : routes : plugins', () => {
       initialise();
       const conf = {
         plugins,
-        discovery: { ui: true }
+        discovery: { api: true }
       };
       pluginsRoute = PluginsRoute(conf);
 
