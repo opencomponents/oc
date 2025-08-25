@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.25
+- [#1433](https://github.com/opencomponents/oc/pull/1433) update oc client browser
+
 ### v0.50.24
 - [#1432](https://github.com/opencomponents/oc/pull/1432) add author
 
