@@ -1,7 +1,6 @@
 import path from 'node:path';
 import fs from 'fs-extra';
-import settings from '../../resources/settings';
-import { getOcConfig } from './ocConfig';
+import { getOcConfig, setOcConfig } from './ocConfig';
 
 export default function mock() {
   return async (params: {
@@ -29,6 +28,6 @@ export default function mock() {
     localConfig.development[mockType][pluginType]![params.targetName] =
       params.targetValue;
 
-    return fs.writeJson(settings.configFile.src, localConfig, { spaces: 2 });
+    return setOcConfig(localConfig);
   };
 }

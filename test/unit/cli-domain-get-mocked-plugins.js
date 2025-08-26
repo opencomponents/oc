@@ -16,7 +16,7 @@ describe('cli : domain : get-mocked-plugins', () => {
   let fsMock;
   let getMockedPlugins;
 
-  const initialise = (fs, pathJoinStub) => {
+  const initialise = ({fs = {}, pathJoin, getOcConfig}) => {
     fsMock = {
       existsSync: sinon.stub().returns(true),
       readFileSync: sinon.stub().returns('file content'),
@@ -32,8 +32,16 @@ describe('cli : domain : get-mocked-plugins', () => {
     getMockedPlugins = injectr('../../dist/cli/domain/get-mocked-plugins.js', {
       'fs-extra': fsMock,
       'node:path': {
-        join: pathJoinStub || fakePathFunc,
+        join: pathJoin || fakePathFunc,
         resolve: fakePathFunc
+      },
+      './ocConfig': {
+        getOcConfig: getOcConfig || sinon.stub().returns({
+          registries: [],
+          mocks: {
+            plugins: {}
+          }
+        })
       },
       '/root/components/dynamic-object-plugin.js': dynamicObjectPluginModule,
       '/root/components/dynamic-plugin.js': dynamicPluginModule,
@@ -46,7 +54,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       const joinStub = sinon.stub();
 
       beforeEach(() => {
-        initialise({}, joinStub);
+        initialise({ pathJoin: joinStub });
         getMockedPlugins(logMock, undefined);
       });
 
@@ -59,7 +67,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       const joinStub = sinon.stub();
 
       beforeEach(() => {
-        initialise({}, joinStub);
+        initialise({ pathJoin: joinStub });
         getMockedPlugins(logMock);
       });
 
@@ -72,26 +80,25 @@ describe('cli : domain : get-mocked-plugins', () => {
       let result;
       const ocJsonComponent = {
         registries: [],
-        mocks: {
+        development: {
           plugins: {
             static: { foo: 1, bar: 2 }
           }
         }
       };
 
-      const readMock = sinon.stub().returns(ocJsonComponent);
+      const getOcConfigMock = sinon.stub().returns(ocJsonComponent);
 
       beforeEach(() => {
-        initialise({
+        initialise({fs: {
           existsSync: sinon.stub().returns(true),
-          readJsonSync: readMock
-        });
+        }, getOcConfig: getOcConfigMock});
         result = getMockedPlugins(logMock, '/root/components/');
       });
 
       it('should use components folder oc.json as default', () => {
-        expect(readMock.calledOnce).to.be.true;
-        expect(readMock.args[0][0]).to.equal('/root/components/oc.json');
+        expect(getOcConfigMock.calledOnce).to.be.true;
+        expect(getOcConfigMock.args[0][0]).to.equal('/root/components/oc.json');
         expect(result.length).to.equal(2);
       });
     });
@@ -100,7 +107,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       let result;
       const ocJsonComponent = {
         registries: [],
-        mocks: {
+        development: {
           plugins: {
             static: { foo: 1, bar: 2 }
           }
@@ -108,27 +115,26 @@ describe('cli : domain : get-mocked-plugins', () => {
       };
       const ocJsonRoot = {
         registries: [],
-        mocks: {
+        development: {
           plugins: {
             static: { foo: 1, bar: 2, baz: 3 }
           }
         }
       };
 
-      const readMock = sinon.stub();
+      const getOcConfigMock = sinon.stub();
       const existsMock = sinon.stub();
 
-      readMock.withArgs('/root/components/oc.json').returns(ocJsonComponent);
-      readMock.withArgs('/root/oc.json').returns(ocJsonRoot);
+      getOcConfigMock.withArgs('/root/components/oc.json').returns(ocJsonComponent);
+      getOcConfigMock.withArgs('/root/oc.json').returns(ocJsonRoot);
 
       existsMock.withArgs('/root/components/oc.json').returns(false);
       existsMock.withArgs('/root/oc.json').returns(true);
 
       beforeEach(() => {
-        initialise({
+        initialise({fs:{
           existsSync: existsMock,
-          readJsonSync: readMock
-        });
+        }, getOcConfig: getOcConfigMock});
         result = getMockedPlugins(logMock, '/root/components/');
       });
 
@@ -140,7 +146,9 @@ describe('cli : domain : get-mocked-plugins', () => {
     describe('when oc.json is missing', () => {
       let result;
       beforeEach(() => {
-        initialise({ existsSync: sinon.stub().returns(false) });
+        initialise({fs:{
+          existsSync: sinon.stub().returns(false)
+        }});
         result = getMockedPlugins(logMock, '/root/components/');
       });
 
@@ -159,10 +167,10 @@ describe('cli : domain : get-mocked-plugins', () => {
       };
 
       beforeEach(() => {
-        initialise({
+        initialise({fs:{
           existsSync: sinon.stub().returns(true),
           readJsonSync: sinon.stub().returns(ocJson)
-        });
+        }});
         result = getMockedPlugins(logMock, '/root/components/');
       });
 
@@ -175,7 +183,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       let result;
       const ocJson = {
         registries: [],
-        mocks: {
+        development: {
           plugins: {
             static: {
               foo: 'bar'
@@ -185,10 +193,9 @@ describe('cli : domain : get-mocked-plugins', () => {
       };
 
       beforeEach(() => {
-        initialise({
+        initialise({fs:{
           existsSync: sinon.stub().returns(true),
-          readJsonSync: sinon.stub().returns(ocJson)
-        });
+        }, getOcConfig: sinon.stub().returns(ocJson)});
         result = getMockedPlugins(logMock, '/root/components/');
       });
 
@@ -206,7 +213,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       let result;
       const ocJson = {
         registries: [],
-        mocks: {
+        development: {
           plugins: {
             dynamic: {
               foo: './dynamic-plugin.js'
@@ -216,10 +223,9 @@ describe('cli : domain : get-mocked-plugins', () => {
       };
 
       beforeEach(() => {
-        initialise({
+        initialise({fs:{
           existsSync: sinon.stub().returns(true),
-          readJsonSync: sinon.stub().returns(ocJson)
-        });
+        }, getOcConfig: sinon.stub().returns(ocJson)});
         result = getMockedPlugins(logMock, '/root/components/');
       });
 
@@ -238,7 +244,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       let result;
       const ocJson = {
         registries: [],
-        mocks: {
+        development: {
           plugins: {
             dynamic: {
               myPlugin: './dynamic-object-plugin.js'
@@ -248,10 +254,9 @@ describe('cli : domain : get-mocked-plugins', () => {
       };
 
       beforeEach(() => {
-        initialise({
+        initialise({fs:{
           existsSync: sinon.stub().returns(true),
-          readJsonSync: sinon.stub().returns(ocJson)
-        });
+        }, getOcConfig: sinon.stub().returns(ocJson)});
         result = getMockedPlugins(logMock, '/root/components/');
       });
 
@@ -269,7 +274,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       let result;
       const ocJson = {
         registries: [],
-        mocks: {
+        development: {
           plugins: {
             dynamic: {
               foo: './not-exist.js'
@@ -281,10 +286,9 @@ describe('cli : domain : get-mocked-plugins', () => {
       const logger = { err: sinon.stub(), warn: () => {} };
 
       beforeEach(() => {
-        initialise({
+        initialise({fs:{
           existsSync: sinon.stub().returns(true),
-          readJsonSync: sinon.stub().returns(ocJson)
-        });
+        }, getOcConfig: sinon.stub().returns(ocJson)});
         result = getMockedPlugins(logger, '/root/components/');
       });
 
@@ -301,7 +305,7 @@ describe('cli : domain : get-mocked-plugins', () => {
       let result;
       const ocJson = {
         registries: [],
-        mocks: {
+        development: {
           plugins: {
             dynamic: {
               foo: './not-a-function.js'
@@ -313,10 +317,9 @@ describe('cli : domain : get-mocked-plugins', () => {
       const logger = { err: sinon.stub(), warn: () => {} };
 
       beforeEach(() => {
-        initialise({
+        initialise({fs:{
           existsSync: sinon.stub().returns(true),
-          readJsonSync: sinon.stub().returns(ocJson)
-        });
+        }, getOcConfig: sinon.stub().returns(ocJson)});
         result = getMockedPlugins(logger, '/root/components/');
       });
 

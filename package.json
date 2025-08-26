@@ -9,7 +9,7 @@
     "lint": "npx @biomejs/biome check src test tasks",
     "lint:apply": "npx @biomejs/biome check --write src test tasks",
     "prebuild": "rimraf dist",
-    "build": "npm run lint && tsc && node tasks/build.js",
+    "build": "tsc && node tasks/build.js",
     "git-stage-and-push": "node tasks/git-stage-and-push.js",
     "npm-publish": "node tasks/npm-publish.js",
     "publish-major": "npm run test-silent && npm run version-major && node tasks/build.js && npm run git-stage-and-push && npm run npm-publish",

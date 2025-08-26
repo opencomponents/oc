@@ -9,9 +9,13 @@ const getRegistry = (dependencies, opts) => {
     '../../dist/cli/domain/registry.js',
     {
       undici: dependencies.undici,
-      'fs-extra': dependencies.fs,
+      'fs-extra': dependencies.fs || {},
       '../../utils/put': dependencies.put,
       '../domain/url-parser': dependencies.urlParser,
+      './ocConfig': dependencies.ocConfig || {
+        getOcConfig: sinon.stub(),
+        setOcConfig: sinon.stub()
+      },
       'node:path': {
         join: sinon.stub().returns('/hello/world')
       }
@@ -64,20 +68,18 @@ describe('cli : domain : registry', () => {
             body: { json: sinon.stub().resolves({ type: 'oc-registry' }) }
           })
         };
-        const fsStub = {
-          readJson: sinon.stub(),
-          writeJson: sinon.spy()
+        const ocConfigStub = {
+          getOcConfig: sinon.stub().returns({ registries: [] }),
+          setOcConfig: sinon.stub().returns('ok')
         };
-
-        fsStub.readJson.resolves({});
 
         const registry = getRegistry({
           undici: undiciStub,
-          fs: fsStub
+          ocConfig: ocConfigStub
         });
 
         registry.add('http://some-api.com/asd').finally(() => {
-          expect(fsStub.writeJson.getCall(0).args[1]).to.eql({
+          expect(ocConfigStub.setOcConfig.getCall(0).args[0]).to.eql({
             registries: ['http://some-api.com/asd/']
           });
           done();
