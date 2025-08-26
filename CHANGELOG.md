@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.26
+- [#1434](https://github.com/opencomponents/oc/pull/1434) add fallback client option and new oc.json section for dev
+
 ### v0.50.25
 - [#1433](https://github.com/opencomponents/oc/pull/1433) update oc client browser
 
