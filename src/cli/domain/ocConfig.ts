@@ -60,7 +60,8 @@ function parseConfig(config: OpenComponentsConfig): ParsedConfig {
     ...config,
     registries: config.registries || [],
     development: {
-      plugins
+      plugins,
+      fallback: config.development?.fallback
     }
   };
 
