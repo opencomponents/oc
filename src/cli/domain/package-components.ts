@@ -83,6 +83,7 @@ const packageComponents =
       production
     };
 
+    console.log('compiling component', componentPath);
     const ocTemplate = requireTemplate(type, {
       compiler: true,
       componentPath

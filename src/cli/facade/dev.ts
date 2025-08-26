@@ -1,12 +1,14 @@
 import path from 'node:path';
 import { promisify } from 'node:util';
 import colors from 'colors/safe';
+import fs from 'fs-extra';
 import getPortCb from 'getport';
 import livereload from 'livereload';
 import { fromPromise } from 'universalify';
 
 import * as oc from '../../index';
 import strings from '../../resources/index';
+import settings from '../../resources/settings';
 import getMockedPlugins from '../domain/get-mocked-plugins';
 import handleDependencies from '../domain/handle-dependencies';
 import type { Local } from '../domain/local';
@@ -39,7 +41,24 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
       const componentsDir = opts.dirPath;
       const port = opts.port || 3000;
       const baseUrl = opts.baseUrl || `http://localhost:${port}/`;
-      const fallbackRegistryUrl = opts.fallbackRegistryUrl;
+
+      let fallbackRegistryUrl = opts.fallbackRegistryUrl;
+      let fallbackClient = false;
+      if (!fallbackRegistryUrl) {
+        try {
+          const localConfig = await fs.readJson(settings.configFile.src);
+          if (
+            !fallbackRegistryUrl &&
+            typeof localConfig.development?.fallback?.url === 'string'
+          ) {
+            fallbackRegistryUrl = localConfig.development?.fallback?.url;
+          }
+          fallbackClient = !!localConfig.development?.fallback?.client;
+        } catch {
+          // Config file doesn't exist or is invalid, continue without fallback
+        }
+      }
+
       const hotReloading =
         typeof opts.hotReloading === 'undefined' ? true : opts.hotReloading;
       const optWatch = typeof opts.watch === 'undefined' ? true : opts.watch;
@@ -180,6 +199,7 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
         discovery: true,
         env: { name: 'local' },
         fallbackRegistryUrl,
+        fallbackClient,
         hotReloading,
         liveReloadPort: liveReload.port,
         local: true,

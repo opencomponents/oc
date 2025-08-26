@@ -2,6 +2,7 @@ import type { Component, TemplateInfo } from '../../types';
 
 export default function preview(vm: {
   href: string;
+  fallbackClient?: string;
   component: Component;
   qs: string;
   liveReload: string;
@@ -11,6 +12,7 @@ export default function preview(vm: {
   const { name, version } = vm.component;
   const imports = vm.component.oc.files.imports;
   const componentHref = `${baseUrl}${name}/${version}/${vm.qs}`;
+  const clientHref = vm.fallbackClient || `${baseUrl}oc-client/client.js`;
 
   return `<!DOCTYPE html>
   <html>
@@ -38,7 +40,7 @@ export default function preview(vm: {
       <script>window.oc=window.oc||{};oc.conf=oc.conf||{};oc.conf.templates=(oc.conf.templates||[]).concat(${JSON.stringify(
         vm.templates
       )});</script>
-      <script src="${baseUrl}oc-client/client.js"></script>
+      <script src="${clientHref}"></script>
       ${vm.liveReload}
     </body>
   </html>`;

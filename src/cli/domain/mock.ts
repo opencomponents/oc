@@ -1,38 +1,32 @@
 import path from 'node:path';
 import fs from 'fs-extra';
-
 import settings from '../../resources/settings';
+import { getOcConfig } from './ocConfig';
 
 export default function mock() {
   return async (params: {
-    targetType: string;
+    targetType: 'plugin';
     targetValue: string;
     targetName: string;
   }): Promise<void> => {
-    const localConfig = await fs
-      .readJson(settings.configFile.src)
-      .catch(() => ({}));
+    const localConfig = getOcConfig();
 
-    const mockType = params.targetType + 's';
+    const mockType = `${params.targetType}s` as const;
 
-    if (!localConfig.mocks) {
-      localConfig.mocks = {};
+    if (!localConfig.development[mockType]) {
+      localConfig.development[mockType] = {};
     }
 
-    if (!localConfig.mocks[mockType]) {
-      localConfig.mocks[mockType] = {};
-    }
-
-    let pluginType = 'static';
+    let pluginType: 'static' | 'dynamic' = 'static';
     if (fs.existsSync(path.resolve(params.targetValue.toString()))) {
       pluginType = 'dynamic';
     }
 
-    if (!localConfig.mocks[mockType][pluginType]) {
-      localConfig.mocks[mockType][pluginType] = {};
+    if (!localConfig.development[mockType][pluginType]) {
+      localConfig.development[mockType][pluginType] = {};
     }
 
-    localConfig.mocks[mockType][pluginType][params.targetName] =
+    localConfig.development[mockType][pluginType]![params.targetName] =
       params.targetValue;
 
     return fs.writeJson(settings.configFile.src, localConfig, { spaces: 2 });
