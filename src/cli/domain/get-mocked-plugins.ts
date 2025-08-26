@@ -3,8 +3,8 @@ import fs from 'fs-extra';
 
 import strings from '../../resources/';
 import settings from '../../resources/settings';
-import type { OcJsonConfig } from '../../types';
 import type { Logger } from '../logger';
+import { getOcConfig } from './ocConfig';
 
 interface MockedPlugin {
   register: (options: unknown, dependencies: unknown, next: () => void) => void;
@@ -134,22 +134,22 @@ export default function getMockedPlugins(
     return plugins;
   }
 
-  const content: OcJsonConfig = fs.readJsonSync(ocJsonPath);
+  const content = getOcConfig(ocJsonPath);
   const ocJsonLocation = ocJsonPath.slice(0, -ocJsonFileName.length);
 
-  if (!content.mocks || !content.mocks.plugins) {
+  if (!content.development?.plugins) {
     return plugins;
   }
 
   logger.warn(strings.messages.cli.REGISTERING_MOCKED_PLUGINS);
 
   plugins = plugins.concat(
-    registerStaticMocks(content.mocks.plugins.static ?? {}, logger)
+    registerStaticMocks(content.development.plugins.static ?? {}, logger)
   );
   plugins = plugins.concat(
     registerDynamicMocks(
       ocJsonLocation,
-      content.mocks.plugins.dynamic ?? {},
+      content.development.plugins.dynamic ?? {},
       logger
     )
   );

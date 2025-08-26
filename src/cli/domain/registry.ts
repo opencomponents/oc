@@ -7,6 +7,7 @@ import settings from '../../resources/settings';
 import type { Component } from '../../types';
 import put from '../../utils/put';
 import * as urlParser from '../domain/url-parser';
+import { getOcConfig, setOcConfig } from './ocConfig';
 
 const getOcVersion = (): string => {
   const ocPackagePath = path.join(__dirname, '../../../package.json');
@@ -41,9 +42,7 @@ export default function registry(opts: RegistryOptions = {}) {
         if (!apiResponse) throw 'oc registry not available';
         if (apiResponse.type !== 'oc-registry') throw 'not a valid oc registry';
 
-        const res = await fs
-          .readJson(settings.configFile.src)
-          .catch(() => ({}));
+        const res = getOcConfig();
 
         if (!res.registries) {
           res.registries = [];
@@ -53,7 +52,7 @@ export default function registry(opts: RegistryOptions = {}) {
           res.registries.push(registry);
         }
 
-        return fs.writeJson(settings.configFile.src, res);
+        return setOcConfig(res);
       } catch {
         throw 'oc registry not available';
       }
@@ -64,7 +63,7 @@ export default function registry(opts: RegistryOptions = {}) {
       }
 
       try {
-        const res = await fs.readJson(settings.configFile.src);
+        const res = getOcConfig();
 
         if (!res.registries || res.registries.length === 0)
           throw 'No oc registries';
@@ -135,12 +134,10 @@ export default function registry(opts: RegistryOptions = {}) {
         registry += '/';
       }
 
-      const res: { registries: string[] } = await fs
-        .readJson(settings.configFile.src)
-        .catch(() => ({ registries: [] }));
-      res.registries = res.registries.filter((x) => x !== registry);
+      const res = getOcConfig();
+      res.registries = res.registries?.filter((x) => x !== registry) || [];
 
-      await fs.writeJson(settings.configFile.src, res);
+      setOcConfig(res);
     }
   };
 }

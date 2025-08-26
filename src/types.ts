@@ -44,16 +44,6 @@ export interface ComponentsList {
   lastEdit: number;
 }
 
-export interface OcJsonConfig {
-  registries?: string[];
-  mocks?: {
-    plugins?: {
-      dynamic?: Record<string, string>;
-      static?: Record<string, string>;
-    };
-  };
-}
-
 export interface OcParameter {
   default?: string | boolean | number;
   description?: string;
@@ -252,6 +242,12 @@ export interface Config<T = any> {
    * be found on this instance. A trailing slash is appended automatically.
    */
   fallbackRegistryUrl: string;
+  /**
+   * Enables the fallback client to be used
+   *
+   * @default false
+   */
+  fallbackClient: boolean;
   /**
    * Enables hot-reloading of component code (always `true` when `local` is).
    *

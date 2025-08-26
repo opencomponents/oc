@@ -32,6 +32,9 @@ function componentPreview(
     res.send(
       previewView({
         component,
+        fallbackClient: res.conf.fallbackClient
+          ? res.conf.fallbackRegistryUrl
+          : undefined,
         href: res.conf.baseUrl,
         liveReload,
         qs: urlBuilder.queryString(req.query as any),

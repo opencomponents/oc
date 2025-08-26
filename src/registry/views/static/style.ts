@@ -78,6 +78,10 @@ p {
   margin-top: 0;
 }
 
+.logo {
+  margin-top: 10px;
+}
+
 .back {
   width: 100%;
   margin-top: -20px;
