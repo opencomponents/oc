@@ -33,7 +33,7 @@ function componentPreview(
       previewView({
         component,
         fallbackClient: res.conf.fallbackClient
-          ? res.conf.fallbackRegistryUrl
+          ? `${res.conf.fallbackRegistryUrl.replace(/\/$/, '')}/oc-client/client.dev.js`
           : undefined,
         href: res.conf.baseUrl,
         liveReload,

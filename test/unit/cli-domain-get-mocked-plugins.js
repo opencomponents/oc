@@ -51,28 +51,32 @@ describe('cli : domain : get-mocked-plugins', () => {
 
   describe('when setting up mocked plugins', () => {
     describe('when componentsDir parameter is undefined', () => {
-      const joinStub = sinon.stub();
+      let getOcConfigMock;
 
       beforeEach(() => {
-        initialise({ pathJoin: joinStub });
+        getOcConfigMock = sinon.stub().returns({ registries: [], mocks: { plugins: {} } });
+        initialise({ getOcConfig: getOcConfigMock });
         getMockedPlugins(logMock, undefined);
       });
 
       it('should use . as default', () => {
-        expect(joinStub.args[0][0]).to.equal('.');
+        expect(getOcConfigMock.called).to.be.true;
+        expect(getOcConfigMock.args[0][0]).to.equal('.');
       });
     });
 
     describe('when componentsDir parameter is omitted', () => {
-      const joinStub = sinon.stub();
+      let getOcConfigMock;
 
       beforeEach(() => {
-        initialise({ pathJoin: joinStub });
+        getOcConfigMock = sinon.stub().returns({ registries: [], mocks: { plugins: {} } });
+        initialise({ getOcConfig: getOcConfigMock });
         getMockedPlugins(logMock);
       });
 
       it('should use . as default', () => {
-        expect(joinStub.args[0][0]).to.equal('.');
+        expect(getOcConfigMock.called).to.be.true;
+        expect(getOcConfigMock.args[0][0]).to.equal('.');
       });
     });
 
@@ -90,65 +94,26 @@ describe('cli : domain : get-mocked-plugins', () => {
       const getOcConfigMock = sinon.stub().returns(ocJsonComponent);
 
       beforeEach(() => {
-        initialise({fs: {
-          existsSync: sinon.stub().returns(true),
-        }, getOcConfig: getOcConfigMock});
+        initialise({ getOcConfig: getOcConfigMock });
         result = getMockedPlugins(logMock, '/root/components/');
       });
 
-      it('should use components folder oc.json as default', () => {
+      it('should return plugins from the provided components folder config', () => {
         expect(getOcConfigMock.calledOnce).to.be.true;
-        expect(getOcConfigMock.args[0][0]).to.equal('/root/components/oc.json');
+        expect(getOcConfigMock.args[0][0]).to.equal('/root/components/');
         expect(result.length).to.equal(2);
       });
     });
 
-    describe('when oc.json is in root folder', () => {
-      let result;
-      const ocJsonComponent = {
-        registries: [],
-        development: {
-          plugins: {
-            static: { foo: 1, bar: 2 }
-          }
-        }
-      };
-      const ocJsonRoot = {
-        registries: [],
-        development: {
-          plugins: {
-            static: { foo: 1, bar: 2, baz: 3 }
-          }
-        }
-      };
-
-      const getOcConfigMock = sinon.stub();
-      const existsMock = sinon.stub();
-
-      getOcConfigMock.withArgs('/root/components/oc.json').returns(ocJsonComponent);
-      getOcConfigMock.withArgs('/root/oc.json').returns(ocJsonRoot);
-
-      existsMock.withArgs('/root/components/oc.json').returns(false);
-      existsMock.withArgs('/root/oc.json').returns(true);
-
-      beforeEach(() => {
-        initialise({fs:{
-          existsSync: existsMock,
-        }, getOcConfig: getOcConfigMock});
-        result = getMockedPlugins(logMock, '/root/components/');
-      });
-
-      it('should use root oc.json', () => {
-        expect(result.length).to.equal(3);
-      });
-    });
 
     describe('when oc.json is missing', () => {
       let result;
       beforeEach(() => {
-        initialise({fs:{
-          existsSync: sinon.stub().returns(false)
-        }});
+        const getOcConfigMock = sinon.stub().returns({
+          registries: [],
+          development: { plugins: {} }
+        });
+        initialise({ getOcConfig: getOcConfigMock });
         result = getMockedPlugins(logMock, '/root/components/');
       });
 
@@ -161,16 +126,13 @@ describe('cli : domain : get-mocked-plugins', () => {
       let result;
       const ocJson = {
         registries: [],
-        mocks: {
+        development: {
           plugins: {}
         }
       };
 
       beforeEach(() => {
-        initialise({fs:{
-          existsSync: sinon.stub().returns(true),
-          readJsonSync: sinon.stub().returns(ocJson)
-        }});
+        initialise({ getOcConfig: sinon.stub().returns(ocJson) });
         result = getMockedPlugins(logMock, '/root/components/');
       });
 
