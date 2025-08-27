@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.27
+- [#1435](https://github.com/opencomponents/oc/pull/1435) Fix loading info correctly
+
 ### v0.50.26
 - [#1434](https://github.com/opencomponents/oc/pull/1434) add fallback client option and new oc.json section for dev
 
