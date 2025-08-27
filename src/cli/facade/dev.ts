@@ -1,17 +1,16 @@
 import path from 'node:path';
 import { promisify } from 'node:util';
 import colors from 'colors/safe';
-import fs from 'fs-extra';
 import getPortCb from 'getport';
 import livereload from 'livereload';
 import { fromPromise } from 'universalify';
 
 import * as oc from '../../index';
 import strings from '../../resources/index';
-import settings from '../../resources/settings';
 import getMockedPlugins from '../domain/get-mocked-plugins';
 import handleDependencies from '../domain/handle-dependencies';
 import type { Local } from '../domain/local';
+import { getOcConfig } from '../domain/ocConfig';
 import watch from '../domain/watch';
 import type { Logger } from '../logger';
 
@@ -46,7 +45,7 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
       let fallbackClient = false;
       if (!fallbackRegistryUrl) {
         try {
-          const localConfig = await fs.readJson(settings.configFile.src);
+          const localConfig = getOcConfig(componentsDir);
           if (
             !fallbackRegistryUrl &&
             typeof localConfig.development?.fallback?.url === 'string'

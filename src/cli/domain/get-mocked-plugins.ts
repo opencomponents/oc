@@ -1,8 +1,6 @@
 import path from 'node:path';
-import fs from 'fs-extra';
 
 import strings from '../../resources/';
-import settings from '../../resources/settings';
 import type { Logger } from '../logger';
 import { getOcConfig } from './ocConfig';
 
@@ -98,44 +96,18 @@ const registerDynamicMocks = (
     })
     .filter((pluginMock): pluginMock is PluginMock => !!pluginMock);
 
-const findPath = (
-  pathToResolve: string,
-  fileName: string
-): string | undefined => {
-  const rootDir = fs.realpathSync('.');
-  const fileToResolve = path.join(pathToResolve, fileName);
-
-  if (!fs.existsSync(fileToResolve)) {
-    if (pathToResolve === rootDir) {
-      return undefined;
-    }
-    const getParent = (pathToResolve: string) =>
-      pathToResolve.split('/').slice(0, -1).join('/');
-
-    const parentDir = pathToResolve ? getParent(pathToResolve) : rootDir;
-
-    return findPath(parentDir, fileName);
-  }
-
-  return fileToResolve;
-};
-
 export default function getMockedPlugins(
   logger: Logger,
-  componentsDir: string
+  componentsDir?: string
 ): PluginMock[] {
   componentsDir = path.resolve(componentsDir || '.');
 
   let plugins: PluginMock[] = [];
-  const ocJsonFileName = settings.configFile.src.replace('./', '');
-  const ocJsonPath = findPath(componentsDir, ocJsonFileName);
 
-  if (!ocJsonPath) {
-    return plugins;
-  }
-
-  const content = getOcConfig(ocJsonPath);
-  const ocJsonLocation = ocJsonPath.slice(0, -ocJsonFileName.length);
+  const content = getOcConfig(componentsDir);
+  const ocJsonLocation = content.sourcePath
+    ? path.dirname(content.sourcePath)
+    : componentsDir;
 
   if (!content.development?.plugins) {
     return plugins;

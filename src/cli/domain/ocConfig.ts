@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import settings from '../../resources/settings';
 
 export interface OpenComponentsConfig {
@@ -37,6 +38,7 @@ export interface OpenComponentsConfig {
 }
 
 type ParsedConfig = {
+  sourcePath?: string;
   registries: string[];
   development: {
     plugins: {
@@ -48,6 +50,28 @@ type ParsedConfig = {
       client?: boolean;
     };
   };
+};
+
+const findPath = (
+  pathToResolve: string,
+  fileName: string
+): string | undefined => {
+  const rootDir = fs.realpathSync('.');
+  const fileToResolve = path.join(pathToResolve, fileName);
+
+  if (!fs.existsSync(fileToResolve)) {
+    if (pathToResolve === rootDir) {
+      return undefined;
+    }
+    const getParent = (pathToResolve: string) =>
+      pathToResolve.split('/').slice(0, -1).join('/');
+
+    const parentDir = pathToResolve ? getParent(pathToResolve) : rootDir;
+
+    return findPath(parentDir, fileName);
+  }
+
+  return fileToResolve;
 };
 
 function parseConfig(config: OpenComponentsConfig): ParsedConfig {
@@ -68,12 +92,15 @@ function parseConfig(config: OpenComponentsConfig): ParsedConfig {
   return parsedConfig;
 }
 
-export function getOcConfig(path?: string): ParsedConfig {
+export function getOcConfig(folder?: string): ParsedConfig {
+  const configPath = folder
+    ? findPath(folder, settings.configFile.src.replace('./', '')) ||
+      settings.configFile.src
+    : settings.configFile.src;
+
   try {
-    const config = JSON.parse(
-      fs.readFileSync(path || settings.configFile.src, 'utf8')
-    );
-    return parseConfig(config);
+    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    return { ...parseConfig(config), sourcePath: configPath };
   } catch {
     return {
       registries: [],
@@ -85,8 +112,9 @@ export function getOcConfig(path?: string): ParsedConfig {
 }
 
 export function setOcConfig(config: ParsedConfig, path?: string) {
+  const { sourcePath, ...rest } = config;
   fs.writeFileSync(
-    path || settings.configFile.src,
-    JSON.stringify(parseConfig(config), null, 2)
+    path || sourcePath || settings.configFile.src,
+    JSON.stringify(rest, null, 2)
   );
 }

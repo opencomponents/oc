@@ -5,7 +5,9 @@ const sinon = require('sinon');
 const initialise = () => {
   const fsMock = {
     readFileSync: sinon.stub(),
-    writeFileSync: sinon.stub()
+    writeFileSync: sinon.stub(),
+    realpathSync: sinon.stub().returns('/root/'),
+    existsSync: sinon.stub().returns(true)
   };
 
   const settingsMock = {
@@ -14,10 +16,15 @@ const initialise = () => {
     }
   };
 
+  const pathMock = {
+    join: (...args) => args.join('/')
+  };
+
   const ocConfig = injectr(
     '../../dist/cli/domain/ocConfig.js',
     {
       'node:fs': fsMock,
+      'node:path': pathMock,
       '../../resources/settings': settingsMock
     },
     { __dirname: '' }
@@ -67,14 +74,23 @@ describe('cli : domain : ocConfig', () => {
         });
       });
 
+      it('should include sourcePath in result', () => {
+        const result = data.ocConfig.getOcConfig();
+        expect(result.sourcePath).to.equal('./oc.json');
+      });
+
       it('should use default config file path when no path provided', () => {
         data.ocConfig.getOcConfig();
         expect(data.fs.readFileSync.calledWith('./oc.json', 'utf8')).to.be.true;
       });
 
       it('should use provided path when specified', () => {
+        // Reset existsSync to return false by default, then allow the specific path
+        data.fs.existsSync.reset();
+        data.fs.existsSync.returns(false);
+        data.fs.existsSync.withArgs('./custom-config.json/oc.json').returns(true);
         data.ocConfig.getOcConfig('./custom-config.json');
-        expect(data.fs.readFileSync.calledWith('./custom-config.json', 'utf8')).to.be.true;
+        expect(data.fs.readFileSync.calledWith('./custom-config.json/oc.json', 'utf8')).to.be.true;
       });
     });
 
@@ -194,6 +210,60 @@ describe('cli : domain : ocConfig', () => {
             plugins: {}
           }
         });
+      });
+    });
+
+    describe('when oc.json is in both root and component folder', () => {
+      let data;
+      beforeEach(() => {
+        data = initialise();
+        const mockConfig = {
+          registries: ['http://registry1.com'],
+          development: {
+            plugins: {
+              static: { testPlugin: 'testValue' }
+            }
+          }
+        };
+        data.fs.readFileSync.returns(JSON.stringify(mockConfig));
+        // Reset existsSync to return false by default
+        data.fs.existsSync.reset();
+        data.fs.existsSync.returns(false);
+        // Set up the path resolution: component folder has oc.json
+        data.fs.existsSync.withArgs('/root/components/oc.json').returns(true);
+      });
+
+      it('should use components folder oc.json as default', () => {
+        const result = data.ocConfig.getOcConfig('/root/components/');
+        expect(data.fs.readFileSync.calledWith('/root/components/oc.json', 'utf8')).to.be.true;
+      });
+    });
+
+    describe('when oc.json is in root folder but not component folder', () => {
+      let data;
+      beforeEach(() => {
+        data = initialise();
+        const mockConfig = {
+          registries: ['http://registry1.com'],
+          development: {
+            plugins: {
+              static: { testPlugin: 'testValue' }
+            }
+          }
+        };
+        data.fs.readFileSync.returns(JSON.stringify(mockConfig));
+        // Reset existsSync to return false by default
+        data.fs.existsSync.reset();
+        data.fs.existsSync.returns(false);
+        // Set up the path resolution: component folder doesn't have oc.json, but root does
+        data.fs.existsSync.withArgs('/root/components/oc.json').returns(false);
+        data.fs.existsSync.withArgs('/root/oc.json').returns(true);
+      });
+
+      it('should use root oc.json', () => {
+        const result = data.ocConfig.getOcConfig('/root/components/');
+        expect(data.fs.readFileSync.calledWith('/root/oc.json', 'utf8')).to.be.true;
+        expect(result.sourcePath).to.equal('/root/oc.json');
       });
     });
   });
