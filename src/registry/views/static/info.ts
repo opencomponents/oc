@@ -31,6 +31,14 @@ oc.cmd.push(function() {
   };
   $('.refresh-preview').click(refreshPreview);
 
+  // Add Enter key handler for the href input field
+  $('#href').keypress(function(e) {
+    if (e.which === 13) { // Enter key
+      refreshPreview();
+      return false;
+    }
+  });
+
   $('.open-preview').click(function() {
     refreshPreview();
     var url = $('.preview').attr('src');
