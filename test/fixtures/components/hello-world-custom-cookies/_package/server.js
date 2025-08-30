@@ -1,0 +1,1 @@
+(()=>{"use strict";var e={896:e=>{e.exports.data=function(e,o){e.setCookie("Test-Cookie","Cookie-Value"),e.setCookie("Another-Cookie","Another-Value",{httpOnly:!0}),o(null,{})}}},o={};var t=function t(r){var s=o[r];if(void 0!==s)return s.exports;var i=o[r]={exports:{}};return e[r](i,i.exports,t),i.exports}(896);module.exports=t})();

@@ -3,6 +3,7 @@ import Domain from 'node:domain';
 import type { IncomingHttpHeaders } from 'node:http';
 import vm from 'node:vm';
 import acceptLanguageParser from 'accept-language-parser';
+import type { CookieOptions } from 'express';
 import Cache from 'nice-cache';
 import Client from 'oc-client';
 import emptyResponseHandler from 'oc-empty-response-handler';
@@ -43,6 +44,11 @@ export interface RendererOptions {
 export interface GetComponentResult {
   status: number;
   headers?: Record<string, string>;
+  cookies?: Array<{
+    name: string;
+    value: any;
+    options?: CookieOptions;
+  }>;
   response: {
     data?: any;
     type?: string;
@@ -143,6 +149,11 @@ export default function getComponent(conf: Config, repository: Repository) {
     const nestedRenderer = NestedRenderer(renderer, options.conf);
     const retrievingInfo = GetComponentRetrievingInfo(options);
     let responseHeaders: Record<string, string> = {};
+    const responseCookies: Array<{
+      name: string;
+      value: any;
+      options?: CookieOptions;
+    }> = [];
 
     const getLanguage = () => {
       const paramOverride =
@@ -151,6 +162,9 @@ export default function getComponent(conf: Config, repository: Repository) {
     };
 
     const callback = (result: GetComponentResult) => {
+      if (responseCookies.length > 0 && !result.cookies) {
+        result.cookies = responseCookies;
+      }
       if (result.response.error) {
         retrievingInfo.extend(result.response);
       }
@@ -577,6 +591,17 @@ export default function getComponent(conf: Config, repository: Repository) {
                   responseHeaders = responseHeaders || {};
                   responseHeaders[header.toLowerCase()] = value;
                 }
+              },
+              setCookie: (
+                name?: string,
+                value?: any,
+                options?: CookieOptions
+              ) => {
+                if (typeof name !== 'string') {
+                  throw strings.errors.registry
+                    .COMPONENT_SET_COOKIE_PARAMETERS_NOT_VALID;
+                }
+                responseCookies.push({ name, value, options });
               },
               templates: repository.getTemplatesInfo(),
               streamSymbol: stream
