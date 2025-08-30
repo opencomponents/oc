@@ -98,6 +98,8 @@ export default {
       COMPONENT_VERSION_NOT_VALID_CODE: 'version_not_valid',
       COMPONENT_SET_HEADER_PARAMETERS_NOT_VALID:
         'context.setHeader parameters must be strings',
+      COMPONENT_SET_COOKIE_PARAMETERS_NOT_VALID:
+        'context.setCookie parameters are not valid',
       CONFIGURATION_DEPENDENCIES_MUST_BE_ARRAY:
         'Registry configuration is not valid: dependencies must be an array',
       CONFIGURATION_EMPTY: 'Registry configuration is empty',

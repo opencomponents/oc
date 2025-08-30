@@ -498,6 +498,7 @@ describe('registry : domain : repository', () => {
           'empty',
           'handlebars3-component',
           'hello-world',
+          'hello-world-custom-cookies',
           'hello-world-custom-headers',
           'jade-filters',
           'language',

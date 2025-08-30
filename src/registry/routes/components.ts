@@ -1,6 +1,6 @@
 import async from 'async';
 
-import type { Request, RequestHandler, Response } from 'express';
+import type { CookieOptions, Request, RequestHandler, Response } from 'express';
 import strings from '../../resources';
 import type { Config } from '../../types';
 import type { Repository } from '../domain/repository';
@@ -28,6 +28,23 @@ export default function components(
       return;
     }
     res.set(results[0].headers);
+  };
+
+  const setCookies = (
+    results: GetComponentResult[] | undefined,
+    res: Response
+  ) => {
+    if (!results || results.length !== 1 || !results[0] || !res.cookie) {
+      return;
+    }
+    const cookies = results[0].cookies;
+    if (Array.isArray(cookies) && cookies.length > 0) {
+      for (const cookie of cookies) {
+        const opts: CookieOptions = (cookie.options ?? {}) as CookieOptions;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        res.cookie(cookie.name, cookie.value as any, opts);
+      }
+    }
   };
 
   return (req: Request, res: Response) => {
@@ -85,6 +102,7 @@ export default function components(
       (_err: any, results: GetComponentResult[]) => {
         try {
           setHeaders(results, res);
+          setCookies(results, res);
           res.status(200).json(results);
         } catch (e) {
           // @ts-ignore I think this will never reach (how can setHeaders throw?)

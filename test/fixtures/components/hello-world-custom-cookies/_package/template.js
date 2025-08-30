@@ -1,0 +1,1 @@
+var oc=oc||{};oc.components=oc.components||{},oc.components.dbf1f0cb2ae6a52f402b26dff36d5bd696519933={compiler:[8,">= 4.3.0"],main:function(o,c,n,e,a){return"Hello world!\n"},useData:!0};

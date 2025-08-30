@@ -153,6 +153,27 @@ describe('registry', () => {
     });
   });
 
+  describe('GET /hello-world-custom-cookies', () => {
+    describe('with the default configuration and strong version 1.0.0', () => {
+      before((done) => {
+        next(
+          request('http://localhost:3030/hello-world-custom-cookies/1.0.0'),
+          done
+        );
+      });
+
+      it('should return the component and set cookies', () => {
+        expect(result.version).to.equal('1.0.0');
+        expect(result.name).to.equal('hello-world-custom-cookies');
+        expect(result.headers).to.be.undefined;
+        const setCookie = headers['set-cookie'];
+        expect(setCookie).to.be.an('array');
+        expect(setCookie.join(';')).to.contain('Test-Cookie=Cookie-Value');
+        expect(setCookie.join(';')).to.contain('Another-Cookie=Another-Value');
+      });
+    });
+  });
+
   describe('POST /hello-world-custom-headers', () => {
     describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and strong version 1.0.0', () => {
       before((done) => {
@@ -351,6 +372,43 @@ describe('registry', () => {
     });
   });
 
+  describe('POST /hello-world-custom-cookies', () => {
+    describe('with the default configuration and strong version 1.0.0', () => {
+      before((done) => {
+        next(
+          request('http://localhost:3030', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              components: [
+                {
+                  name: 'hello-world-custom-cookies',
+                  version: '1.0.0'
+                }
+              ]
+            })
+          }),
+          done
+        );
+      });
+
+      it('should set HTTP cookies', () => {
+        const setCookie = headers['set-cookie'];
+        expect(setCookie).to.be.an('array');
+        expect(setCookie.join(';')).to.contain('Test-Cookie=Cookie-Value');
+        expect(setCookie.join(';')).to.contain('Another-Cookie=Another-Value');
+      });
+
+      it('should return the component and keep headers in body the same', () => {
+        expect(result[0].response.version).to.equal('1.0.0');
+        expect(result[0].response.name).to.equal('hello-world-custom-cookies');
+        expect(result[0].headers).to.be.deep.equal({});
+      });
+    });
+  });
+
   describe('GET /', () => {
     before((done) => {
       next(request('http://localhost:3030'), done);
@@ -368,6 +426,7 @@ describe('registry', () => {
         'http://localhost:3030/empty',
         'http://localhost:3030/handlebars3-component',
         'http://localhost:3030/hello-world',
+        'http://localhost:3030/hello-world-custom-cookies',
         'http://localhost:3030/hello-world-custom-headers',
         'http://localhost:3030/jade-filters',
         'http://localhost:3030/language',

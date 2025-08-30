@@ -1,6 +1,6 @@
 import { Readable } from 'node:stream';
 import { encode } from '@rdevis/turbo-stream';
-import type { Request, RequestHandler, Response } from 'express';
+import type { CookieOptions, Request, RequestHandler, Response } from 'express';
 import { serializeError } from 'serialize-error';
 import strings from '../../resources';
 import type { Config } from '../../types';
@@ -47,6 +47,14 @@ export default function component(
         try {
           if (Object.keys(result.headers ?? {}).length) {
             res.set(result.headers);
+          }
+
+          if (Array.isArray(result.cookies) && result.cookies.length > 0) {
+            for (const cookie of result.cookies) {
+              const opts: CookieOptions = (cookie.options ??
+                {}) as CookieOptions;
+              res.cookie(cookie.name, cookie.value as any, opts);
+            }
           }
 
           const streamEnabled =
