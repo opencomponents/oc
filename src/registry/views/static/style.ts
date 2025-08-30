@@ -101,7 +101,7 @@ p {
 }
 
 .preview {
-  height: 300px;
+  height: 600px;
   border: 1px solid var(--color-border-default);
 }
 

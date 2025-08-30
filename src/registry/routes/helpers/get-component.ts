@@ -27,6 +27,7 @@ import * as urlBuilder from '../../domain/url-builder';
 import * as validator from '../../domain/validators';
 import { validateTemplateOcVersion } from '../../domain/validators';
 import applyDefaultValues from './apply-default-values';
+import { processStackTrace } from './format-error-stack';
 import * as getComponentFallback from './get-component-fallback';
 import GetComponentRetrievingInfo from './get-component-retrieving-info';
 
@@ -142,7 +143,7 @@ export default function getComponent(conf: Config, repository: Repository) {
     return env;
   };
 
-  const renderer = (
+  const renderer = async (
     options: RendererOptions,
     cb: (result: GetComponentResult) => void
   ) => {
@@ -325,7 +326,7 @@ export default function getComponent(conf: Config, repository: Repository) {
           );
         };
 
-        const returnComponent = (err: any, data: any) => {
+        const returnComponent = async (err: any, data: any) => {
           if (componentCallbackDone) {
             return;
           }
@@ -395,7 +396,7 @@ export default function getComponent(conf: Config, repository: Repository) {
               error: err
             });
 
-            return callback({
+            const response = {
               status,
               response: {
                 code: 'GENERIC_ERROR',
@@ -405,10 +406,29 @@ export default function getComponent(conf: Config, repository: Repository) {
                 details: {
                   message: err.message,
                   stack: err.stack,
-                  originalError: err
+                  originalError: err,
+                  frame: undefined as string | undefined
                 }
               }
-            });
+            };
+
+            if (conf.local && err.stack) {
+              const { content } = await repository
+                .getDataProvider(component.name, component.version)
+                .catch(() => ({ content: null }));
+              if (content) {
+                const processedStack = await processStackTrace({
+                  stackTrace: err.stack,
+                  code: content
+                }).catch(() => null);
+                if (processedStack) {
+                  response.response.details.stack = processedStack.stack;
+                  response.response.details.frame = processedStack.frame;
+                }
+              }
+            }
+
+            return callback(response);
           }
 
           const response: {

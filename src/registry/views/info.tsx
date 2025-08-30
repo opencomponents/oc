@@ -197,13 +197,13 @@ export default function Info(vm: Vm) {
       <div class="field">
         <p>Component's href:</p>
       </div>
-      <textarea
+      <input
         class="w-100"
         id="href"
+        type="text"
         placeholder="Insert component href here"
-      >
-        {componentHref}
-      </textarea>
+        value={componentHref}
+      />
       <div class="field">
         <p>Accept-Language header:</p>
       </div>
