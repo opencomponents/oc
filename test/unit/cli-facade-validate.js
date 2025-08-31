@@ -1,9 +1,12 @@
 const expect = require('chai').expect;
 const sinon = require('sinon');
 const fs = require('fs-extra');
+const injectr = require('injectr');
 
 describe('cli : facade : validate', () => {
-  const ValidateFacade = require('../../dist/cli/facade/validate').default;
+  const ValidateFacade = injectr('../../dist/cli/facade/validate.js', {
+    '../domain/handle-dependencies': sinon.stub().resolves()
+  }).default;
   let local;
   let registry;
   let logger;
@@ -63,7 +66,7 @@ describe('cli : facade : validate', () => {
         });
         registry.validateComponent.resolves();
         await validate({
-          componentPath: '/path/to/component'
+          componentPath: 'test/fixtures/components/hello-world/'
         });
       });
 
@@ -89,7 +92,7 @@ describe('cli : facade : validate', () => {
         registry.get.resolves(['http://my-registry.com/']);
         registry.validateComponent.resolves();
         await validate({
-          componentPath: '/path/to/component',
+          componentPath: 'test/fixtures/components/hello-world/',
           skipPackage: true
         });
       });
@@ -119,7 +122,7 @@ describe('cli : facade : validate', () => {
             componentPath: '/path/to/component'
           });
         } catch (err) {
-          expect(err).to.be.instanceOf(Error);
+          expect(err).to.contain('Validation failed for registry ');
         }
       });
     });
