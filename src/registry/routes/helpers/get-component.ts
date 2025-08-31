@@ -424,6 +424,12 @@ export default function getComponent(conf: Config, repository: Repository) {
                 if (processedStack) {
                   response.response.details.stack = processedStack.stack;
                   response.response.details.frame = processedStack.frame;
+
+                  console.log(
+                    `Error rendering component ${component.name} ${component.version}`
+                  );
+                  console.log(processedStack.stack);
+                  console.log(processedStack.frame);
                 }
               }
             }
