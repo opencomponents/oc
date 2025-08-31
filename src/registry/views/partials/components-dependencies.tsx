@@ -16,7 +16,9 @@ const ComponentsDependencies = (props: {
     return (
       <a href={link} target="_blank" rel="noreferrer">
         <div class="componentRow row table">
-          <p class="release">{label}</p>
+          <p safe class="release">
+            {label}
+          </p>
         </div>
       </a>
     );

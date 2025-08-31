@@ -29,6 +29,40 @@ oc.cmd.push(function() {
 
     return false;
   };
+
+  var updateHrefFromParameters = function() {
+    var baseUrl = $('#href').val().split('?')[0];
+    var params = {};
+    
+    // Collect all parameter values
+    $('.parameter-input').each(function() {
+      var paramName = $(this).data('parameter');
+      var paramValue;
+      
+      // Handle different input types
+      if ($(this).attr('type') === 'checkbox') {
+        paramValue = $(this).is(':checked') ? 'true' : 'false';
+      } else {
+        paramValue = $(this).val();
+      }
+      
+      if (paramValue && paramValue.trim() !== '' && paramValue !== 'false') {
+        params[paramName] = paramValue.trim();
+      }
+    });
+    
+    // Build query string
+    var queryString = Object.keys(params).map(function(key) {
+      return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+    }).join('&');
+    
+    // Update href
+    var newHref = baseUrl + (queryString ? '?' + queryString : '');
+    $('#href').val(newHref);
+    
+    return newHref;
+  };
+
   $('.refresh-preview').click(refreshPreview);
 
   // Add Enter key handler for the href input field
@@ -37,6 +71,26 @@ oc.cmd.push(function() {
       refreshPreview();
       return false;
     }
+  });
+
+  // Handle parameter input changes
+  $('.parameter-input').on('input blur change', function() {
+    updateHrefFromParameters();
+  });
+
+  // Handle Enter key on parameter inputs (for text and number inputs)
+  $('.parameter-input[type="text"], .parameter-input[type="number"]').keypress(function(e) {
+    if (e.which === 13) { // Enter key
+      updateHrefFromParameters();
+      refreshPreview();
+      return false;
+    }
+  });
+
+  // Handle checkbox changes - immediately refresh preview
+  $('.parameter-input[type="checkbox"]').on('change', function() {
+    updateHrefFromParameters();
+    refreshPreview();
   });
 
   $('.open-preview').click(function() {

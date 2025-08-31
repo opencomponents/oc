@@ -11,7 +11,7 @@ const ComponentsTemplates = (props: { templates: Templates }) => {
     global: string | string[];
     url: string;
   }) => (
-    <a href={url} target="_blank" rel="noreferrer">
+    <a safe href={url} target="_blank" rel="noreferrer">
       {global}
     </a>
   );
@@ -29,6 +29,7 @@ const ComponentsTemplates = (props: { templates: Templates }) => {
             href={`https://www.npmjs.com/package/${type}`}
             target="_blank"
             rel="noreferrer"
+            safe
           >
             {type}@{version}
           </a>

@@ -8,7 +8,7 @@ const componentVersions = ({
   return (
     <select id="versions">
       {versions.map((version) => (
-        <option value={version} selected={version === selectedVersion}>
+        <option safe value={version} selected={version === selectedVersion}>
           {version}
         </option>
       ))}

@@ -149,7 +149,7 @@ export default function Info(vm: Vm) {
           selectedVersion={component.version}
         />
       </h2>
-      <p class="w-100">
+      <p class="w-100" safe>
         {component.description} {componentState()}
       </p>
       {statsAvailable ? (
@@ -184,7 +184,22 @@ export default function Info(vm: Vm) {
       ) : (
         ''
       )}
-      <ComponentParameters parameters={component.oc.parameters} />
+      <ComponentParameters
+        parameters={component.oc.parameters}
+        currentValues={Object.fromEntries(
+          Object.entries(component.oc.parameters || {})
+            .filter(([, param]) => {
+              return param.default !== undefined || param.example !== undefined;
+            })
+            .map(([paramName, param]) => {
+              const value =
+                param.default !== undefined
+                  ? String(param.default)
+                  : param.example!;
+              return [paramName, value];
+            })
+        )}
+      />
       <h3>Code</h3>
       <p>
         You can edit the following area and then
@@ -192,7 +207,7 @@ export default function Info(vm: Vm) {
           {' '}
           refresh{' '}
         </a>
-        to apply the change into the preview window.
+        or hit Enter to apply the change into the preview window.
       </p>
       <div class="field">
         <p>Component's href:</p>

@@ -80,4 +80,34 @@ describe('registry (ui interface)', () => {
       expect(result).to.match(/<!DOCTYPE html><html lang="en">/);
     });
   });
+
+  describe('GET /welcome-with-optional-parameters/~info with Accept: text/html', () => {
+    before((done) => {
+      next(
+        request('http://localhost:3030/welcome-with-optional-parameters/~info', {
+          headers: { accept: 'text/html' }
+        }),
+        done
+      );
+    });
+
+    it('should not error', () => {
+      expect(error).to.be.undefined;
+    });
+
+    it('should respond with html result', () => {
+      expect(headers['content-type']).to.equal('text/html; charset=utf-8');
+      expect(result).to.match(/<!DOCTYPE html><html lang="en">/);
+    });
+
+    it('should include parameter input fields', () => {
+      expect(result).to.include('parameter-input');
+      expect(result).to.include('data-parameter');
+    });
+
+    it('should include parameter update JavaScript', () => {
+      expect(result).to.include('updateHrefFromParameters');
+      expect(result).to.include('.parameter-input');
+    });
+  });
 });

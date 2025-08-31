@@ -20,7 +20,7 @@ const Layout = ({ title, href, children, scripts }: LayoutProps) => {
       {'<!DOCTYPE html>'}
       <html lang="en">
         <head>
-          <title>{title}</title>
+          <title safe>{title}</title>
           <meta name="robots" content="index, follow" />
           <meta name="language" content="EN" />
           <meta name="distribution" content="global" />
