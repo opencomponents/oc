@@ -46,10 +46,6 @@ export function create(app: Express, conf: Config, repository: Repository) {
   if (conf.discovery.validate) {
     app.post(`${prefix}~registry/validate`, routes.validate);
   }
-  app.post(
-    `${prefix}~registry/validate/:componentName/:componentVersion`,
-    routes.validate
-  );
 
   if (conf.local) {
     app.get(

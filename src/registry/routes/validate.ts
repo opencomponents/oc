@@ -15,10 +15,9 @@ export default function validate() {
 
     const packageJson = req.body.packageJson;
 
-    // Get component name and version from package.json or URL params
-    const componentName = req.params['componentName'] || packageJson.name;
-    const componentVersion =
-      req.params['componentVersion'] || packageJson.version;
+    // Get component name and version from package.json
+    const componentName = packageJson.name;
+    const componentVersion = packageJson.version;
 
     if (!componentName || !componentVersion) {
       res.status(400).json({
