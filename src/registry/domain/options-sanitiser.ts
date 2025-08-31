@@ -23,6 +23,7 @@ export interface RegistryOptions<T = any>
         ui?: boolean;
         experimental?: boolean;
         api?: boolean;
+        validate?: boolean;
       }
     | boolean;
   /**
@@ -90,11 +91,18 @@ export default function optionsSanitiser(input: RegistryOptions): Config {
       ? // We keep previous default behavior for backward compatibility
         true
       : (options.discovery?.experimental ?? true);
+  const showValidation = !showApi
+    ? false
+    : typeof options.discovery === 'boolean'
+      ? // We keep previous default behavior for backward compatibility
+        false
+      : (options.discovery?.validate ?? false);
 
   options.discovery = {
     ui: showUI,
     experimental: showExperimental,
-    api: showApi
+    api: showApi,
+    validate: showValidation
   };
 
   if (typeof options.pollingInterval === 'undefined') {

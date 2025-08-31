@@ -214,6 +214,11 @@ export interface Config<T = any> {
      */
     ui: boolean;
     /**
+     * Enables validation for the discovery API
+     * @default false
+     */
+    validate: boolean;
+    /**
      * Shows experimental components from the API
      * @default true
      */

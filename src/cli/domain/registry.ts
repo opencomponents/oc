@@ -138,6 +138,53 @@ export default function registry(opts: RegistryOptions = {}) {
       res.registries = res.registries?.filter((x) => x !== registry) || [];
 
       setOcConfig(res);
+    },
+    async validateComponent(options: {
+      url: string;
+      packageJson: any;
+    }): Promise<void> {
+      try {
+        const response = await request(options.url, {
+          method: 'POST',
+          headers: {
+            ...requestsHeaders,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ packageJson: options.packageJson })
+        });
+
+        if (response.statusCode === 404) {
+          throw 'Registry URL is invalid or does not exist';
+        }
+
+        const result = (await response.body.json()) as any;
+
+        if (response.statusCode !== 200) {
+          throw result;
+        }
+      } catch (err) {
+        let parsedError = err as any;
+        let errMsg = '';
+        if (!parsedError || typeof parsedError !== 'object') {
+          try {
+            parsedError = JSON.parse(String(parsedError));
+          } catch {}
+        }
+
+        if (!!parsedError.code && parsedError.code === 'ECONNREFUSED') {
+          errMsg = 'Connection to registry has not been established';
+        } else if (
+          parsedError.code !== 'cli_version_not_valid' &&
+          parsedError.code !== 'node_version_not_valid' &&
+          !!parsedError.error
+        ) {
+          errMsg = parsedError.error;
+        } else {
+          errMsg = parsedError;
+        }
+
+        throw errMsg;
+      }
     }
   };
 }

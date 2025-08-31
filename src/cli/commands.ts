@@ -148,6 +148,28 @@ export default {
       usage: 'Usage: $0 publish <componentPath>'
     },
 
+    validate: {
+      cmd: 'validate <componentPath>',
+      example: {
+        cmd: '$0 validate my-new-component/'
+      },
+      options: {
+        skipPackage: {
+          boolean: true,
+          description: 'Skip packaging step and validate existing package.json',
+          default: false
+        },
+        registries: {
+          array: true,
+          description:
+            'List of registries to validate against. This setting will take precedence over oc.json file'
+        }
+      },
+      description:
+        'Validate a component against registry requirements without publishing',
+      usage: 'Usage: $0 validate <componentPath>'
+    },
+
     registry: {
       cmd: 'registry <command>',
       description: 'Manage oc registries in the current project',
