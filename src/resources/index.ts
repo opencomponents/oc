@@ -211,6 +211,8 @@ export default {
         `The port ${port} is already in use. Specify the optional port parameter to use another port.`,
       PUBLISHING_FAIL: (error: string): string =>
         `An error happened when publishing the component: ${error}`,
+      VALIDATION_FAIL: (error: string): string =>
+        `An error happened when validating the component: ${error}`,
       REGISTRY_NOT_FOUND:
         'oc registries not found. Run "oc registry add <registry href>"',
       TEMPLATE_NOT_FOUND: (template: string): string =>

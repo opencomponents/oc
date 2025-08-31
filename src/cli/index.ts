@@ -15,6 +15,7 @@ import registry from './facade/registry';
 import registryAdd from './facade/registry-add';
 import registryLs from './facade/registry-ls';
 import registryRemove from './facade/registry-remove';
+import validate from './facade/validate';
 import logger from './logger';
 import validateCommand from './validate-command';
 
@@ -29,7 +30,8 @@ const cliFunctions = {
   registry,
   'registry-add': registryAdd,
   'registry-ls': registryLs,
-  'registry-remove': registryRemove
+  'registry-remove': registryRemove,
+  validate
 };
 
 const currentNodeVersion = process.version;

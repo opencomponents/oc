@@ -12,6 +12,7 @@ import HistoryRoute from './routes/history';
 import PluginsRoute from './routes/plugins';
 import PublishRoute from './routes/publish';
 import StaticRedirectorRoute from './routes/static-redirector';
+import ValidateRoute from './routes/validate';
 
 export function create(app: Express, conf: Config, repository: Repository) {
   const routes = {
@@ -24,7 +25,8 @@ export function create(app: Express, conf: Config, repository: Repository) {
     staticRedirector: StaticRedirectorRoute(repository),
     plugins: PluginsRoute(conf),
     dependencies: DependenciesRoute(conf),
-    history: HistoryRoute(repository)
+    history: HistoryRoute(repository),
+    validate: ValidateRoute()
   };
 
   const prefix = conf.prefix;
@@ -41,6 +43,9 @@ export function create(app: Express, conf: Config, repository: Repository) {
   app.get(`${prefix}~registry/plugins`, routes.plugins);
   app.get(`${prefix}~registry/dependencies`, routes.dependencies);
   app.get(`${prefix}~registry/history`, routes.history);
+  if (conf.discovery.validate) {
+    app.post(`${prefix}~registry/validate`, routes.validate);
+  }
 
   if (conf.local) {
     app.get(
