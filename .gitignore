@@ -41,6 +41,7 @@ test/fixtures/components/lodash-component/_package
 test/fixtures/components/no-containers/_package
 test/fixtures/components/welcome/_package
 test/fixtures/components/welcome-with-optional-parameters/_package
+test/fixtures/components/hello-world-custom-cookies/_package
 
 logintervals.md
 dist/

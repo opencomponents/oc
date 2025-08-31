@@ -14,9 +14,17 @@ function getParams(component: Component) {
     params = Object.fromEntries(
       Object.entries(component.oc.parameters || {})
         .filter(([, param]) => {
-          return !!param.mandatory && 'example' in param;
+          // Include parameters that have either a default value or an example
+          return param.default !== undefined || param.example !== undefined;
         })
-        .map(([paramName, param]) => [paramName, param.example!])
+        .map(([paramName, param]) => {
+          // Prefer default value over example
+          const value =
+            param.default !== undefined
+              ? String(param.default)
+              : param.example!;
+          return [paramName, value];
+        })
     );
   }
 

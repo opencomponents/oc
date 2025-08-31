@@ -30,7 +30,9 @@ const ComponentsList = (props: {
 
     const remoteServerColumns = isRemote
       ? [
-          <div class="date">{component.oc.stringifiedDate || ''}</div>,
+          <div class="date" safe>
+            {component.oc.stringifiedDate || ''}
+          </div>,
           <div class="activity">{component.allVersions.length}</div>
         ]
       : null;
@@ -49,12 +51,18 @@ const ComponentsList = (props: {
           class={`componentRow row table${isHidden ? ' hide' : ''}`}
         >
           <div class="title">
-            <p class="name">{component.name}</p>
-            <span class="description">{component.description}</span>
+            <p class="name" safe>
+              {component.name}
+            </p>
+            <span class="description" safe>
+              {component.description}
+            </span>
           </div>
           {componentState}
-          <div class="author">{component.author.name || ''}</div>
-          <div>{component.version}</div>
+          <div class="author" safe>
+            {component.author.name || ''}
+          </div>
+          <div safe>{component.version}</div>
           {remoteServerColumns}
           {sizeColumn}
         </div>

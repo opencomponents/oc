@@ -6,14 +6,16 @@ const Property = (props: {
   if (!props.value) return null;
 
   const label = props.linked ? (
-    <a href={String(props.value)}>{String(props.value)}</a>
+    <a safe href={String(props.value)}>
+      {String(props.value)}
+    </a>
   ) : (
-    <span>{String(props.value)}</span>
+    <span safe>{String(props.value)}</span>
   );
 
   return (
     <div class="field">
-      <p>{props.display}:</p> {label}
+      <p safe>{props.display}:</p> {label}
     </div>
   );
 };

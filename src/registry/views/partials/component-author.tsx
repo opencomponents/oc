@@ -8,15 +8,15 @@ const componentAuthor = (props: {
     <div class="field">
       <p>Author:</p>
       {!name && !email && !url && <span>not available</span>}
-      {name && <span>{name}&nbsp;</span>}
+      {!!name && <span safe>{name}&nbsp;</span>}
       {email && (
         <span>
           <a href={`mailto:${email}`}>{email}</a>&nbsp;
         </span>
       )}
-      {url && (
+      {!!url && (
         <span>
-          <a href={url} target="_blank" rel="noreferrer">
+          <a safe href={url} target="_blank" rel="noreferrer">
             {url}
           </a>
         </span>
