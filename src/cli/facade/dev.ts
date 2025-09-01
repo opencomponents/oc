@@ -43,9 +43,9 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
 
       let fallbackRegistryUrl = opts.fallbackRegistryUrl;
       let fallbackClient = false;
+      const localConfig = getOcConfig(componentsDir);
       if (!fallbackRegistryUrl) {
         try {
-          const localConfig = getOcConfig(componentsDir);
           if (
             !fallbackRegistryUrl &&
             typeof localConfig.development?.fallback?.url === 'string'
@@ -207,7 +207,8 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
         path: path.resolve(componentsDir),
         port,
         templates: dependencies.templates,
-        verbosity: 1
+        verbosity: 1,
+        preload: localConfig.development?.preload
       });
 
       registerPlugins(registry);

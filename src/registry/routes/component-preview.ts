@@ -37,6 +37,7 @@ function componentPreview(
           : undefined,
         href: res.conf.baseUrl,
         liveReload,
+        preload: res.conf.preload,
         qs: urlBuilder.queryString(req.query as any),
         templates
       })
