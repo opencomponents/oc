@@ -9,6 +9,10 @@ export interface OpenComponentsConfig {
   registries?: string[];
   /** Development-specific configuration settings */
   development?: {
+    /** JavaScript code to be included in the preview HTML's <head> section.
+     * Can be either a filepath to a JS script or inline JavaScript code.
+     */
+    preload?: string;
     /** Fallback configuration for when components cannot be found locally */
     fallback?: {
       /** URL of the fallback registry to use when components cannot be found locally */
@@ -41,6 +45,7 @@ type ParsedConfig = {
   sourcePath?: string;
   registries: string[];
   development: {
+    preload?: string;
     plugins: {
       dynamic?: Record<string, string>;
       static?: Record<string, string>;
@@ -84,6 +89,7 @@ function parseConfig(config: OpenComponentsConfig): ParsedConfig {
     ...config,
     registries: config.registries || [],
     development: {
+      preload: config.development?.preload,
       plugins,
       fallback: config.development?.fallback
     }

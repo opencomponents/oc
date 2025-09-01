@@ -113,6 +113,31 @@ export default function optionsSanitiser(input: RegistryOptions): Config {
     options.templates = [];
   }
 
+  // Handle preload script - if it's a filepath, read the file content
+  if (
+    options.preload &&
+    !options.preload.includes(';') &&
+    !options.preload.includes('{')
+  ) {
+    try {
+      const fs = require('node:fs');
+      const path = require('node:path');
+      const preloadPath = path.isAbsolute(options.preload)
+        ? options.preload
+        : path.resolve(process.cwd(), options.preload);
+
+      if (fs.existsSync(preloadPath)) {
+        options.preload = fs.readFileSync(preloadPath, 'utf8');
+      }
+    } catch (error) {
+      // If file reading fails, keep the original value (might be inline JS)
+      console.warn(
+        `Warning: Could not read preload file "${options.preload}":`,
+        (error as Error).message
+      );
+    }
+  }
+
   if (options.compileClient || options.compileClient !== false) {
     const clientOptions =
       typeof options.compileClient === 'boolean'

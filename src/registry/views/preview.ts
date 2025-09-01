@@ -7,6 +7,7 @@ export default function preview(vm: {
   qs: string;
   liveReload: string;
   templates: TemplateInfo[];
+  preload?: string;
 }): string {
   const baseUrl = vm.href.replace('http://', '//').replace('https://', '//');
   const { name, version } = vm.component;
@@ -18,6 +19,7 @@ export default function preview(vm: {
   return `<!DOCTYPE html>
   <html>
     <head>
+      ${vm.preload ? `<script>${vm.preload}</script>` : ''}
       <style>
         html, body {
           width: 100%;

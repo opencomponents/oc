@@ -243,6 +243,14 @@ export interface Config<T = any> {
    */
   executionTimeout?: number;
   /**
+   * JavaScript code to be included in the preview HTML's <head> section.
+   * Can be either a filepath to a JS script or inline JavaScript code.
+   *
+   * @example "path/to/script.js"
+   * @example "console.log('Hello from preload script');"
+   */
+  preload?: string;
+  /**
    * URL of a secondary registry that will be queried if a component cannot
    * be found on this instance. A trailing slash is appended automatically.
    */
