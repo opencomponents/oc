@@ -352,7 +352,7 @@ export interface Config<T = any> {
   routes?: Array<{
     route: string;
     method: string;
-    handler: (req: Request, res: Response) => void;
+    handler: string | ((req: Request, res: Response) => void);
   }>;
   /**
    * Convenience S3 configuration – if present the registry will create

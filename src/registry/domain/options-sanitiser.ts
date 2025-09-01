@@ -220,5 +220,36 @@ export default function optionsSanitiser(input: RegistryOptions): Config {
     options.env = {};
   }
 
+  // Handle routes with string handlers - load the handler files
+  if (options.routes) {
+    options.routes = options.routes.map((route) => {
+      if (typeof route.handler === 'string') {
+        try {
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const handlerPath = path.isAbsolute(route.handler)
+            ? route.handler
+            : path.resolve(process.cwd(), route.handler);
+
+          if (fs.existsSync(handlerPath)) {
+            // Clear require cache to ensure fresh module loading
+            delete require.cache[require.resolve(handlerPath)];
+            const handlerModule = require(handlerPath);
+            route.handler = handlerModule.default || handlerModule;
+          } else {
+            throw new Error(`Handler file not found: ${handlerPath}`);
+          }
+        } catch (error) {
+          console.warn(
+            `Warning: Could not load route handler "${route.handler}":`,
+            (error as Error).message
+          );
+          // Keep the original string handler to avoid breaking the application
+        }
+      }
+      return route;
+    });
+  }
+
   return options as Config;
 }

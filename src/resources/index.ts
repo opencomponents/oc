@@ -117,8 +117,8 @@ export default {
         'Registry configuration is not valid: prefix should end with "/"',
       CONFIGURATION_PREFIX_DOES_NOT_START_WITH_SLASH:
         'Registry configuration is not valid: prefix should start with "/"',
-      CONFIGURATION_ROUTES_HANDLER_MUST_BE_FUNCTION:
-        'Registry configuration is not valid: handler should be a function',
+      CONFIGURATION_ROUTES_HANDLER_MUST_BE_FUNCTION_OR_FILE_PATH:
+        'Registry configuration is not valid: handler should be a function or a file path',
       CONFIGURATION_ROUTES_NOT_VALID:
         'Registry configuration is not valid: each route should contain route, method and handler',
       CONFIGURATION_ROUTES_MUST_BE_ARRAY:

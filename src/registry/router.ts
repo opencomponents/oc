@@ -31,7 +31,9 @@ export function create(app: Express, conf: Config, repository: Repository) {
 
   const prefix = conf.prefix;
 
-  if (prefix !== '/') {
+  const definedBaseRoute = conf.routes?.find((route) => route.route === '/');
+
+  if (prefix !== '/' && !definedBaseRoute) {
     app.get('/', (_req, res) => res.redirect(prefix));
     app.get(prefix.substring(0, prefix.length - 1), routes.index);
   }
@@ -92,9 +94,21 @@ export function create(app: Express, conf: Config, repository: Repository) {
 
   if (conf.routes) {
     for (const route of conf.routes) {
-      app[
-        route.method.toLowerCase() as 'get' | 'post' | 'put' | 'patch' | 'head'
-      ](route.route, route.handler);
+      // Ensure handler is a function (should be converted by options-sanitiser)
+      if (typeof route.handler === 'function') {
+        app[
+          route.method.toLowerCase() as
+            | 'get'
+            | 'post'
+            | 'put'
+            | 'patch'
+            | 'head'
+        ](route.route, route.handler);
+      } else {
+        console.warn(
+          `Warning: Route handler for "${route.route}" is not a function. Skipping route.`
+        );
+      }
     }
   }
 }

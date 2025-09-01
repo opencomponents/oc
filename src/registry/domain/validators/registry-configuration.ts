@@ -65,9 +65,13 @@ export default function registryConfiguration(
       );
     }
 
-    if (typeof route.handler !== 'function') {
+    if (
+      typeof route.handler !== 'function' &&
+      typeof route.handler !== 'string'
+    ) {
       return returnError(
-        strings.errors.registry.CONFIGURATION_ROUTES_HANDLER_MUST_BE_FUNCTION
+        strings.errors.registry
+          .CONFIGURATION_ROUTES_HANDLER_MUST_BE_FUNCTION_OR_FILE_PATH
       );
     }
 

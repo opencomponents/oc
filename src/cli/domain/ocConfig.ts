@@ -9,6 +9,12 @@ export interface OpenComponentsConfig {
   registries?: string[];
   /** Development-specific configuration settings */
   development?: {
+    /** Additional Express routes to mount on the registry application */
+    routes?: Array<{
+      route: string;
+      method: string;
+      handler: string;
+    }>;
     /** JavaScript code to be included in the preview HTML's <head> section.
      * Can be either a filepath to a JS script or inline JavaScript code.
      */
@@ -45,6 +51,11 @@ type ParsedConfig = {
   sourcePath?: string;
   registries: string[];
   development: {
+    routes?: Array<{
+      route: string;
+      method: string;
+      handler: string;
+    }>;
     preload?: string;
     plugins: {
       dynamic?: Record<string, string>;
@@ -91,7 +102,8 @@ function parseConfig(config: OpenComponentsConfig): ParsedConfig {
     development: {
       preload: config.development?.preload,
       plugins,
-      fallback: config.development?.fallback
+      fallback: config.development?.fallback,
+      routes: config.development?.routes
     }
   };
 
