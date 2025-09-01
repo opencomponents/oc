@@ -368,16 +368,16 @@ describe('registry : domain : validator', () => {
           });
         });
 
-        describe('when route contains handler that is not a function', () => {
+        describe('when route contains handler that is not a function or a string', () => {
           const conf = {
-            routes: [{ route: '/hello', method: 'get', handler: 'hello' }],
+            routes: [{ route: '/hello', method: 'get', handler: 3 }],
             s3: baseS3Conf
           };
 
           it('should not be valid', () => {
             expect(validate(conf).isValid).to.be.false;
             expect(validate(conf).message).to.be.eql(
-              'Registry configuration is not valid: handler should be a function'
+              'Registry configuration is not valid: handler should be a function or a file path'
             );
           });
         });
