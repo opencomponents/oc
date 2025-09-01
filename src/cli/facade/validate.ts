@@ -47,13 +47,10 @@ const validate = ({
       const validateComponentWithRegistry = async (options: {
         registryUrl: string;
         packageJson: any;
-        componentName: string;
-        componentVersion: string;
       }): Promise<void> => {
-        const { registryUrl, packageJson, componentName, componentVersion } =
-          options;
+        const { registryUrl, packageJson } = options;
         const registryNormalised = registryUrl.replace(/\/$/, '');
-        const validateUrl = `${registryNormalised}/~registry/validate/${componentName}/${componentVersion}`;
+        const validateUrl = `${registryNormalised}/~registry/validate`;
 
         logger.warn(
           `Validating component against registry: ${registryNormalised}`
@@ -107,19 +104,14 @@ const validate = ({
         }
       };
 
-      const validateWithRegistries = async (
-        registryLocations: string[],
-        component: Component
-      ) => {
+      const validateWithRegistries = async (registryLocations: string[]) => {
         const packageJsonPath = path.join(packageDir, 'package.json');
         const packageJson = await fs.readJson(packageJsonPath);
 
         for (const registryUrl of registryLocations) {
           await validateComponentWithRegistry({
             registryUrl,
-            packageJson,
-            componentName: component.name,
-            componentVersion: component.version
+            packageJson
           });
         }
       };
@@ -136,21 +128,21 @@ const validate = ({
             return Promise.reject(err);
           });
 
-          const component = await packageComponent().catch((err) => {
+          await packageComponent().catch((err) => {
             errorMessage = strings.errors.cli.PACKAGE_CREATION_FAIL(
               String(err)
             );
             logger.err(errorMessage);
             return Promise.reject(errorMessage);
           });
-          await validateWithRegistries(registryLocations, component);
+          await validateWithRegistries(registryLocations);
         } else {
           if (fs.existsSync(packageDir)) {
-            const component = await readPackageJson().catch((err) => {
+            await readPackageJson().catch((err) => {
               logger.err(String(err));
               return Promise.reject(err);
             });
-            await validateWithRegistries(registryLocations, component);
+            await validateWithRegistries(registryLocations);
           } else {
             errorMessage = strings.errors.cli.PACKAGE_FOLDER_MISSING;
             logger.err(errorMessage);
