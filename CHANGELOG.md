@@ -1,7 +1,7 @@
 ## Change Log
 
-### v0.50.29
-- Fix validate cli command calling wrong url.
+### v0.50.30
+- [#1443](https://github.com/opencomponents/oc/pull/1443) typo
 
 ### v0.50.28
 - [#1442](https://github.com/opencomponents/oc/pull/1442) add routes option in oc.json
