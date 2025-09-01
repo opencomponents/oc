@@ -68,7 +68,9 @@ export default function registry<T = any>(inputOptions: RegistryOptions<T>) {
         eventsHandler.fire('start', {});
 
         if (options.verbosity) {
-          ok(`Registry started at port http://localhost:${app.get('port')}`);
+          ok(
+            `Registry started at port http://localhost:${app.get('port')}${options.prefix}`
+          );
 
           if (componentsInfo) {
             const componentsNumber = Object.keys(

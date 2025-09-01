@@ -280,11 +280,14 @@ export default function preview(vm: {
             });
           }
 
-          if (window.oc && window.oc.events && window.oc.events.on) {
-            window.oc.events.on('oc:error', function(ev, error) {
+          window.oc = window.oc || {};
+          window.oc.cmd = window.oc.cmd || [];
+          window.oc.cmd.push(function(oc) {
+            oc.events.on('oc:error', function(ev, error) {
               ensureOverlay(error);
             });
-          }
+          });
+
         })();
       </script>
 

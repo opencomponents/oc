@@ -190,26 +190,33 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
         liveReload = { refresher, port: otherPort };
       }
 
-      const registry = oc.Registry({
-        baseUrl,
-        prefix: opts.prefix || '',
-        dependencies: dependencies.modules,
-        compileClient: true,
-        discovery: true,
-        env: { name: 'local' },
-        fallbackRegistryUrl,
-        fallbackClient,
-        hotReloading,
-        liveReloadPort: liveReload.port,
-        local: true,
-        postRequestPayloadSize,
-        components: opts.components,
-        path: path.resolve(componentsDir),
-        port,
-        templates: dependencies.templates,
-        verbosity: 1,
-        preload: localConfig.development?.preload
-      });
+      let registry: ReturnType<typeof oc.Registry>;
+      try {
+        registry = oc.Registry({
+          baseUrl,
+          prefix: opts.prefix || '',
+          dependencies: dependencies.modules,
+          compileClient: true,
+          discovery: true,
+          env: { name: 'local' },
+          fallbackRegistryUrl,
+          fallbackClient,
+          hotReloading,
+          liveReloadPort: liveReload.port,
+          local: true,
+          postRequestPayloadSize,
+          components: opts.components,
+          path: path.resolve(componentsDir),
+          port,
+          templates: dependencies.templates,
+          verbosity: 1,
+          preload: localConfig.development?.preload,
+          routes: localConfig.development?.routes
+        });
+      } catch (err: any) {
+        logger.err(String(err));
+        throw err;
+      }
 
       registerPlugins(registry);
 
