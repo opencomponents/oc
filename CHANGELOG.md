@@ -1,5 +1,13 @@
 ## Change Log
 
+### v0.50.28
+- [#1442](https://github.com/opencomponents/oc/pull/1442) add routes option in oc.json
+- [#1441](https://github.com/opencomponents/oc/pull/1441) add preload option
+- [#1440](https://github.com/opencomponents/oc/pull/1440) validate command
+- [#1439](https://github.com/opencomponents/oc/pull/1439) add editable fields
+- [#1436](https://github.com/opencomponents/oc/pull/1436) add preview overlay
+- [#1438](https://github.com/opencomponents/oc/pull/1438) feat: add setCookie functionality to component context
+
 ### v0.50.27
 - [#1435](https://github.com/opencomponents/oc/pull/1435) Fix loading info correctly
 
