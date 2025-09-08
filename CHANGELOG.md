@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.32
+- [#1446](https://github.com/opencomponents/oc/pull/1446) update oc-client-browser
+
 ### v0.50.31
 - [#1445](https://github.com/opencomponents/oc/pull/1445) update oc client. allow lazy load rendering
 - [#1444](https://github.com/opencomponents/oc/pull/1444) update client to work with nonces
