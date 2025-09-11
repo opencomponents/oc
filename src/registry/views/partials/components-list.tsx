@@ -12,37 +12,10 @@ const ComponentsList = (props: {
     (component) => component.oc.files.template.size
   );
 
-  const remoteServerColumns = isRemote
-    ? [<div class="date">Updated</div>, <div class="activity">Activity</div>]
-    : null;
-  const sizeColumn = sizeAvailable ? <div>Size</div> : null;
-
   const componentRow = (component: ParsedComponent) => {
-    const componentState = component.oc.state ? (
-      <div class={`state component-state-${component.oc.state.toLowerCase()}`}>
-        {component.oc.state}
-      </div>
-    ) : null;
-
     const isHidden =
       component.oc.state === 'deprecated' ||
       component.oc.state === 'experimental';
-
-    const remoteServerColumns = isRemote
-      ? [
-          <div class="date" safe>
-            {component.oc.stringifiedDate || ''}
-          </div>,
-          <div class="activity">{component.allVersions.length}</div>
-        ]
-      : null;
-    const sizeColumn = sizeAvailable ? (
-      component.oc.files.template.size ? (
-        <div>{Math.round(component.oc.files.template.size / 1024)} kb</div>
-      ) : (
-        <div>? Kb</div>
-      )
-    ) : null;
 
     return (
       <a href={`${component.name}/${component.version}/~info`}>
@@ -58,13 +31,63 @@ const ComponentsList = (props: {
               {component.description}
             </span>
           </div>
-          {componentState}
+          {component.oc.state && (
+            <div
+              class={`state component-state-${component.oc.state.toLowerCase()}`}
+            >
+              {component.oc.state}
+            </div>
+          )}
           <div class="author" safe>
             {component.author.name || ''}
           </div>
           <div safe>{component.version}</div>
-          {remoteServerColumns}
-          {sizeColumn}
+          {isRemote && (
+            <>
+              <div class="date" safe>
+                {component.oc.stringifiedDate || ''}
+              </div>
+              <div class="activity">{component.allVersions.length}</div>
+            </>
+          )}
+          {sizeAvailable &&
+            (component.oc.files.template.size ? (
+              <div>
+                {Math.round(component.oc.files.template.size / 1024)} kb
+              </div>
+            ) : (
+              <div>? Kb</div>
+            ))}
+          {/* Mobile compact view - hidden on desktop */}
+          <div class="mobile-compact">
+            <div class="mobile-meta">
+              <span class="mobile-author" safe>
+                {component.author.name || ''}
+              </span>
+              <span class="mobile-version" safe>
+                {component.version}
+              </span>
+              {isRemote && (
+                <>
+                  <span class="mobile-date" safe>
+                    {component.oc.stringifiedDate || ''}
+                  </span>
+                  <span class="mobile-activity">
+                    {component.allVersions.length}
+                  </span>
+                </>
+              )}
+              {sizeAvailable && (
+                <span class="mobile-size">
+                  {component.oc.files.template.size
+                    ? `${Math.round(
+                        component.oc.files.template.size / 1024
+                      )} kb`
+                    : '? Kb'}
+                </span>
+              )}
+            </div>
+          </div>
         </div>
       </a>
     );
@@ -75,12 +98,13 @@ const ComponentsList = (props: {
       <form id="filter-components">
         <div class="filters">
           <input
-            class="search-filter"
+            id="search-filter"
             type="text"
+            autofocus
             placeholder="Filter by component name"
           />
           <input
-            class="author-filter"
+            id="author-filter"
             type="text"
             placeholder="Filter by component author"
           />
@@ -98,8 +122,13 @@ const ComponentsList = (props: {
         <div class="title" />
         <div class="author">Author</div>
         <div>Latest version</div>
-        {remoteServerColumns}
-        {sizeColumn}
+        {isRemote && (
+          <>
+            <div class="date">Updated</div>
+            <div class="activity">Activity</div>
+          </>
+        )}
+        {sizeAvailable && <div>Size</div>}
       </div>
       {props.components.map(componentRow)}
     </div>

@@ -1,3 +1,4 @@
+import cookieParser from 'cookie-parser';
 import errorhandler from 'errorhandler';
 import express, { type Express } from 'express';
 import morgan from 'morgan';
@@ -27,6 +28,7 @@ export const bind = (app: Express, options: Config): Express => {
   });
 
   app.use(requestHandler());
+  app.use(cookieParser());
 
   if (options.postRequestPayloadSize) {
     // Type is incorrect since limit can be a string like '50mb'

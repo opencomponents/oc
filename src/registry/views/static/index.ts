@@ -6,8 +6,8 @@ oc.cmd = oc.cmd || [];
 oc.cmd.push(function() {
   var componentsListChanged = function() {
     $('.componentRow').removeClass('hide');
-    var s = $('.search-filter').val(),
-      a = $('.author-filter').val(),
+    var s = $('#search-filter').val(),
+      a = $('#author-filter').val(),
       r = new RegExp(s),
       ar = new RegExp(a, 'i'),
       selectedCheckboxes = $('input[type=checkbox]:checked'),

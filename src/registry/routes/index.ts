@@ -86,6 +86,9 @@ export default function (repository: Repository) {
 
       componentsInfo.sort((a, b) => a.name.localeCompare(b.name));
 
+      // Get theme from cookie or default to dark
+      const theme = req.cookies?.['oc-theme'] || 'dark';
+
       res.send(
         indexView(
           // @ts-ignore existing code relies on runtime merging
@@ -100,7 +103,8 @@ export default function (repository: Repository) {
             q: req.query['q'] || '',
             stateCounts,
             templates: repository.getTemplatesInfo(),
-            title: 'OpenComponents Registry'
+            title: 'OpenComponents Registry',
+            theme
           })
         )
       );

@@ -101,5 +101,55 @@ oc.cmd.push(function() {
     return false;
   });
 
+  // Collapsible sections functionality
+  function initCollapsibleSections() {
+    // Check if we're on mobile (screen width <= 1024px)
+    var isMobile = window.innerWidth <= 1024;
+    
+    $('.collapsible-header').each(function() {
+      var header = $(this);
+      var content = $('#' + header.data('target'));
+      var toggle = header.find('.collapse-toggle');
+      
+      // On mobile, start collapsed; on desktop, start expanded
+      if (isMobile) {
+        content.addClass('collapsed').removeClass('expanded');
+        header.addClass('collapsed');
+      } else {
+        content.addClass('expanded').removeClass('collapsed');
+        header.removeClass('collapsed');
+      }
+      
+      // Handle click on header or toggle button
+      header.on('click', function(e) {
+        e.preventDefault();
+        toggleSection(header, content);
+      });
+      
+      toggle.on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleSection(header, content);
+      });
+    });
+  }
+  
+  function toggleSection(header, content) {
+    if (content.hasClass('collapsed')) {
+      content.removeClass('collapsed').addClass('expanded');
+      header.removeClass('collapsed');
+    } else {
+      content.removeClass('expanded').addClass('collapsed');
+      header.addClass('collapsed');
+    }
+  }
+  
+  // Initialize collapsible sections on page load
+  initCollapsibleSections();
+  
+  // Re-initialize on window resize
+  $(window).on('resize', function() {
+    initCollapsibleSections();
+  });
 
 });`;
