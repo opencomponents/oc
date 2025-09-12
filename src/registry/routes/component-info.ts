@@ -22,7 +22,7 @@ function getParams(component: Component) {
           const value =
             param.default !== undefined
               ? String(param.default)
-              : param.example!;
+              : String(param.example);
           return [paramName, value];
         })
     );
@@ -72,6 +72,9 @@ function componentInfo(
         href = `//${req.headers.host}${res.conf.prefix}`;
       }
 
+      // Get theme from cookie or default to dark
+      const theme = req.cookies?.['oc-theme'] || 'dark';
+
       res.send(
         infoView({
           component,
@@ -81,7 +84,8 @@ function componentInfo(
           parsedAuthor,
           repositoryUrl,
           sandBoxDefaultQs: urlBuilder.queryString(params),
-          title: 'Component Info'
+          title: 'Component Info',
+          theme
         })
       );
     });

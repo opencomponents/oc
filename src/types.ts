@@ -47,7 +47,7 @@ export interface ComponentsList {
 export interface OcParameter {
   default?: string | boolean | number;
   description?: string;
-  example?: string;
+  example?: string | boolean | number;
   mandatory?: boolean;
   /**
    * You can optionally restrict the values of the parameter to a specific set of values.
@@ -125,6 +125,7 @@ export interface VM {
   };
   templates: TemplateInfo[];
   title: string;
+  theme: 'light' | 'dark';
   type: 'oc-registry' | 'oc-registry-local';
 }
 

@@ -8,7 +8,7 @@ interface UnformmatedComponentHistory {
   templateSize?: number;
 }
 
-interface ComponentHistory {
+export interface ComponentHistory {
   name: string;
   version: string;
   publishDate: string;
