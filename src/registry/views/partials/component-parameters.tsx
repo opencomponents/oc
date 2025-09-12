@@ -40,7 +40,7 @@ const componentParameters = ({
               name={paramName}
               data-parameter={paramName}
               value={currentValue}
-              placeholder={param.example || ''}
+              placeholder={String(param.example) || ''}
             />
           );
         case 'boolean': {
@@ -54,7 +54,7 @@ const componentParameters = ({
                 checked={isChecked}
                 style="margin: 0;"
               />
-              <span>Enable {paramName}</span>
+              <span safe>Enable {paramName}</span>
             </label>
           );
         }
@@ -69,7 +69,7 @@ const componentParameters = ({
               placeholder={
                 typeof param.default !== 'undefined'
                   ? String(param.default)
-                  : param.example || ''
+                  : String(param.example) || ''
               }
             />
           );
@@ -79,7 +79,9 @@ const componentParameters = ({
     return (
       <div class="parameter-item">
         <div class="parameter-header">
-          <span class="parameter-name">{paramName}</span>
+          <span class="parameter-name" safe>
+            {paramName}
+          </span>
           <span
             class={`parameter-type ${
               mandatory === 'mandatory' ? 'parameter-required' : ''
@@ -89,7 +91,9 @@ const componentParameters = ({
           </span>
         </div>
         {!!param.description && (
-          <p class="parameter-description">{param.description}</p>
+          <p class="parameter-description" safe>
+            {param.description}
+          </p>
         )}
         {param.type !== 'boolean' && !!param.example && (
           <p class="parameter-description">
@@ -98,7 +102,7 @@ const componentParameters = ({
         )}
         {!param.mandatory && !!param.default && (
           <p class="parameter-description">
-            <strong>Default:</strong> {String(param.default)}
+            <strong>Default:</strong> <span safe>{String(param.default)}</span>
           </p>
         )}
         {renderInput()}
