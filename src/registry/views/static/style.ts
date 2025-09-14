@@ -29,8 +29,8 @@ export default `
   --color-bg-glass: rgba(255, 255, 255, 0.05);
 
   --color-text-primary: #ffffff;
-  --color-text-secondary: #b4b4b8; /* Improved contrast from #a1a1aa */
-  --color-text-muted: #8a8a95;     /* Improved contrast from #71717a */
+  --color-text-secondary: #b4b4b8;
+  --color-text-muted: #acacb9;
 
   --color-border: rgba(255, 255, 255, 0.1);
   --color-border-hover: rgba(255, 255, 255, 0.2);
