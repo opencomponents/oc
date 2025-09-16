@@ -2,6 +2,8 @@ import type { NextFunction, Request, Response } from 'express';
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import type { PackageJson } from 'type-fest';
 
+type Middleware = (req: Request, res: Response, next: NextFunction) => void;
+
 export interface Author {
   email?: string;
   name?: string;
@@ -134,7 +136,7 @@ export type Authentication<T = any> = {
     isValid: boolean;
     message: string;
   };
-  middleware: (config: T) => any;
+  middleware: (config: T) => Middleware;
 };
 
 export type PublishAuthConfig =

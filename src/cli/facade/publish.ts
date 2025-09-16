@@ -29,6 +29,7 @@ const publish = ({
       dryRun?: boolean;
       username?: string;
       password?: string;
+      token?: string;
       registries?: string[];
     }): Promise<void> => {
       const componentPath = opts.componentPath;
@@ -46,9 +47,15 @@ const publish = ({
         fs.readJson(path.join(packageDir, 'package.json'));
 
       const getCredentials = async (): Promise<{
-        username: string;
-        password: string;
+        username?: string;
+        password?: string;
+        token?: string;
       }> => {
+        if (opts.token) {
+          logger.ok(strings.messages.cli.USING_CREDS);
+          return { token: opts.token };
+        }
+
         if (opts.username && opts.password) {
           logger.ok(strings.messages.cli.USING_CREDS);
           const { username, password } = opts;
@@ -85,6 +92,7 @@ const publish = ({
         path: string;
         username?: string;
         password?: string;
+        token?: string;
       }): Promise<void> => {
         logger.warn(strings.messages.cli.PUBLISHING(options.route, dryRun));
 
@@ -93,7 +101,7 @@ const publish = ({
           logger.ok(strings.messages.cli.PUBLISHED(options.route, dryRun));
         } catch (err: any) {
           if (err === 'Unauthorized' || err.message === 'Unauthorized') {
-            if (!!options.username || !!options.password) {
+            if (!!options.username || !!options.password || !!options.token) {
               logger.err(
                 strings.errors.cli.PUBLISHING_FAIL(
                   strings.errors.cli.INVALID_CREDENTIALS
