@@ -1,4 +1,4 @@
-import es6Template from 'oc-template-es6';
+import * as es6Template from 'oc-template-es6';
 import handlebarsTemplate from 'oc-template-handlebars';
 import jadeTemplate from 'oc-template-jade';
 import type { Template, TemplateInfo } from '../../types';

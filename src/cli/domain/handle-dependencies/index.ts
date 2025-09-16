@@ -45,7 +45,7 @@ export default async function handleDependencies(options: {
     componentPath: string
   ): Promise<void> => {
     const pkg = await getComponentPackageJson(componentPath);
-    addDependencies(pkg.dependencies);
+    addDependencies(pkg.dependencies as Record<string, string>);
 
     const template = pkg.oc.files.template.type;
     if (isTemplateLegacy(template)) {
