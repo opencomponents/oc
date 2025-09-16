@@ -256,7 +256,6 @@ export default function getComponent(conf: Config, repository: Repository) {
           component.oc.parameters
         );
         const validationResult = validator.validateComponentParameters(
-          // @ts-ignore
           params,
           component.oc.parameters
         );
@@ -336,8 +335,7 @@ export default function getComponent(conf: Config, repository: Repository) {
             {
               name: component.name,
               version: requestedComponent.version,
-              // @ts-ignore
-              parameters: params
+              parameters: params as Record<string, string>
             },
             conf.baseUrl
           );

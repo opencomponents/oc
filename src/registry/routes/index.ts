@@ -91,7 +91,7 @@ export default function (repository: Repository) {
 
       res.send(
         indexView(
-          // @ts-ignore existing code relies on runtime merging
+          // @ts-expect-error existing code relies on runtime merging
           Object.assign(baseResponse, {
             availableDependencies: getAvailableDependencies(
               res.conf.dependencies

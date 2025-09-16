@@ -116,7 +116,7 @@ function processCommand(
       return yargs;
     },
     (options) => {
-      // @ts-ignore not callable
+      // @ts-expect-error not callable
       facade(options).catch(() => {
         process.exit(1);
       });

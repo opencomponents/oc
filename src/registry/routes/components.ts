@@ -98,16 +98,15 @@ export default function components(
           (result) => callback(null, result)
         );
       },
-      // @ts-ignore
       (_err: any, results: GetComponentResult[]) => {
         try {
           setHeaders(results, res);
           setCookies(results, res);
           res.status(200).json(results);
         } catch (e) {
-          // @ts-ignore I think this will never reach (how can setHeaders throw?)
+          // @ts-expect-error I think this will never reach (how can setHeaders throw?)
           if (results.code && results.error) {
-            // @ts-ignore
+            // @ts-expect-error
             res.status(500).json({ code: results.code, error: results.error });
           } else {
             res.status(500).json({

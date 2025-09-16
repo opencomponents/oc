@@ -73,13 +73,13 @@ const registerDynamicMocks = (
         pluginMock = require(path.resolve(ocJsonLocation, source));
       } catch (er) {
         logger.err(String(er));
-        return;
+        return undefined;
       }
 
       if (!isMockValid(pluginMock)) {
         logger.err(`├── ${pluginName} () => Error (skipping)`);
         logger.err(strings.errors.cli.MOCK_PLUGIN_IS_NOT_VALID);
-        return;
+        return undefined;
       }
 
       const register = (pluginMock as MockedPlugin).register || defaultRegister;
