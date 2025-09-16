@@ -8,9 +8,9 @@ const log = (col, style, emoji) => (msg) => {
 };
 
 module.exports = {
-  complete: log('green', 'reset', 'thumbsup'),
-  error: log('red', 'reset', 'no_good'),
-  fatal: log('red', 'underline', 'no_good'),
+  complete: log('green', 'reset', '+1'),
+  error: log('red', 'reset', 'no_good_man'),
+  fatal: log('red', 'underline', 'no_good_man'),
   ok: log('gray', 'reset'),
   start: log('green', 'reset')
 };

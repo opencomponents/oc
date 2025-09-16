@@ -25,7 +25,13 @@ export default function watch(
     .on('add', onChange)
     .on('change', onChange)
     .on('unlink', onChange)
-    .on('error', changed);
+    .on('error', (err: unknown) => {
+      changed(
+        err instanceof Error ? err : new Error(String(err)),
+        '',
+        undefined
+      );
+    });
 }
 
 function escapeRegularExpression(text: string) {
