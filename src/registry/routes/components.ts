@@ -98,6 +98,7 @@ export default function components(
           (result) => callback(null, result)
         );
       },
+      // @ts-expect-error
       (_err: any, results: GetComponentResult[]) => {
         try {
           setHeaders(results, res);
