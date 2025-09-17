@@ -29,12 +29,13 @@ const mapComponentDetails = (component: Component): ParsedComponent =>
 const isHtmlRequest = (headers: IncomingHttpHeaders) =>
   !!headers.accept && headers.accept.indexOf('text/html') >= 0;
 
+const excludedMeta = ['dependencies', 'devDependencies'];
+
 export default function (repository: Repository) {
   return async (req: Request, res: Response): Promise<void> => {
-    let components: string[];
-
+    let componentNames: string[];
     try {
-      components = await repository.getComponents();
+      componentNames = await repository.getComponents();
     } catch {
       res.errorDetails = 'cdn not available';
       res.status(404).json({ error: res.errorDetails });
@@ -46,48 +47,49 @@ export default function (repository: Repository) {
       ocVersion: packageInfo.version,
       type: res.conf.local ? 'oc-registry-local' : 'oc-registry'
     };
-    const componentResults = await Promise.all(
-      components.map((component) =>
-        repository.getComponent(component, undefined)
+
+    const componentDetails = await Promise.all(
+      componentNames.map((componentName) =>
+        repository.getComponent(componentName, undefined)
       )
     );
 
     if (isHtmlRequest(req.headers) && !!res.conf.discovery.ui) {
-      const componentsInfo: ParsedComponent[] = componentResults.map(
-        (result) => {
-          if (result.oc?.date) {
-            result.oc.stringifiedDate = dateStringified(
-              new Date(result.oc.date)
+      const processedComponents: ParsedComponent[] = componentDetails.map(
+        (component) => {
+          if (component.oc?.date) {
+            component.oc.stringifiedDate = dateStringified(
+              new Date(component.oc.date)
             );
           }
-          return mapComponentDetails(result);
+          return mapComponentDetails(component);
         }
       );
 
-      const componentsReleases = componentResults.reduce(
-        (sum, result) => sum + result.allVersions.length,
+      const totalReleases = componentDetails.reduce(
+        (sum, component) => sum + component.allVersions.length,
         0
       );
 
       const stateCounts: { deprecated?: number; experimental?: number } = {};
-
-      const componentsList = componentsInfo.map((component) => {
-        const state: 'deprecated' | 'experimental' | '' =
+      const componentsList = processedComponents.map((component) => {
+        const componentState: 'deprecated' | 'experimental' | '' =
           (component?.oc?.state as 'deprecated' | 'experimental' | '') || '';
-        if (state) {
-          stateCounts[state] = (stateCounts[state] || 0) + 1;
+
+        if (componentState) {
+          stateCounts[componentState] = (stateCounts[componentState] || 0) + 1;
         }
+
         return {
           name: component.name,
           author: component.author,
-          state
+          state: componentState
         };
       });
 
-      componentsInfo.sort((a, b) => a.name.localeCompare(b.name));
+      processedComponents.sort((a, b) => a.name.localeCompare(b.name));
 
-      // Get theme from cookie or default to dark
-      const theme = req.cookies?.['oc-theme'] || 'dark';
+      const userTheme = req.cookies?.['oc-theme'] || 'dark';
 
       res.send(
         indexView(
@@ -97,50 +99,84 @@ export default function (repository: Repository) {
               res.conf.dependencies
             ),
             availablePlugins: res.conf.plugins,
-            components: componentsInfo,
-            componentsReleases,
+            components: processedComponents,
+            componentsReleases: totalReleases,
             componentsList,
             q: req.query['q'] || '',
             stateCounts,
             templates: repository.getTemplatesInfo(),
             title: 'OpenComponents Registry',
-            theme
+            theme: userTheme
           })
         )
       );
     } else {
-      const state = req.query['state'] || '';
-      const meta = req.query['meta'] === 'true' && res.conf.discovery.api;
-      let list = componentResults;
+      const requestedState = (req.query['state'] as string) || '';
+      const includeMetadata =
+        req.query['meta'] &&
+        req.query['meta'] !== 'false' &&
+        res.conf.discovery.api;
+
+      let filteredComponents = componentDetails;
+
       if (!res.conf.discovery.experimental) {
-        list = list.filter(
+        filteredComponents = filteredComponents.filter(
           (component) => component.oc?.state !== 'experimental'
         );
       }
-      if (state) {
-        list = list.filter((component) => component.oc?.state === state);
+
+      if (requestedState) {
+        filteredComponents = filteredComponents.filter(
+          (component) => component.oc?.state === requestedState
+        );
       }
 
-      res.status(200).json(
-        Object.assign(baseResponse, {
-          components: list.map((component) => {
-            const href = urlBuilder.component(component.name, res.conf.baseUrl);
+      // Build component responses
+      const componentResponses = filteredComponents.map((component) => {
+        const componentUrl = urlBuilder.component(
+          component.name,
+          res.conf.baseUrl
+        );
 
-            return meta
-              ? {
-                  href,
-                  name: component.name,
-                  version: component.version,
-                  author: component.author,
-                  description: component.description,
-                  state: component.oc.state,
-                  keywords: component.keywords || [],
-                  publishDate: new Date(component.oc.date).toISOString()
-                }
-              : href;
-          })
-        })
-      );
+        if (includeMetadata) {
+          const metaQuery = req.query['meta'] as string;
+
+          // Return all metadata fields
+          if (metaQuery === 'true') {
+            return {
+              href: componentUrl,
+              name: component.name,
+              version: component.version,
+              author: component.author,
+              description: component.description,
+              state: component.oc.state,
+              keywords: component.keywords || [],
+              publishDate: new Date(component.oc.date).toISOString()
+            };
+          }
+
+          const requestedFields = metaQuery
+            .split(',')
+            .filter((field) => !excludedMeta.includes(field));
+          const responseData = requestedFields.reduce(
+            (acc, field) => {
+              acc[field] = component[field as keyof Component];
+              return acc;
+            },
+            {} as Record<string, any>
+          );
+          responseData['href'] = componentUrl;
+
+          return responseData;
+        }
+
+        return componentUrl;
+      });
+
+      res.status(200).json({
+        ...baseResponse,
+        components: componentResponses
+      });
     }
   };
 }
