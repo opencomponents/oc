@@ -91,10 +91,15 @@ export default function registry(opts: RegistryOptions = {}) {
     async putComponent(options: {
       username?: string;
       password?: string;
+      token?: string;
       route: string;
       path: string;
     }): Promise<void> {
-      if (!!options.username && !!options.password) {
+      if (options.token) {
+        requestsHeaders = Object.assign(requestsHeaders, {
+          Authorization: `Bearer ${options.token}`
+        });
+      } else if (!!options.username && !!options.password) {
         requestsHeaders = Object.assign(requestsHeaders, {
           Authorization:
             'Basic ' +

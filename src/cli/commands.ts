@@ -127,6 +127,9 @@ export default {
           description:
             'username used to authenticate when publishing to registry'
         },
+        token: {
+          description: 'token used to authenticate when publishing to registry'
+        },
         skipPackage: {
           boolean: true,
           description: 'Skip packaging step',
