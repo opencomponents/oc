@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.34
+- [#1450](https://github.com/opencomponents/oc/pull/1450) revert yargs for now
+
 ### v0.50.33
 - [#1449](https://github.com/opencomponents/oc/pull/1449) allow token pass
 - [#1448](https://github.com/opencomponents/oc/pull/1448) add ability for custom meta query
