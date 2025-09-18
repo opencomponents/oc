@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.50.33
+- [#1449](https://github.com/opencomponents/oc/pull/1449) allow token pass
+- [#1448](https://github.com/opencomponents/oc/pull/1448) add ability for custom meta query
+- [#1447](https://github.com/opencomponents/oc/pull/1447) Revamp UI + Preview server
+
 ### v0.50.32
 - [#1446](https://github.com/opencomponents/oc/pull/1446) update oc-client-browser
 
@@ -309,7 +314,7 @@
 ### v0.49.2
 - [#1259](https://github.com/opencomponents/oc/pull/1259) [BUGFIX] remove prefix command on npm
 - [#1248](https://github.com/opencomponents/oc/pull/1248) Type better baseUrlFunc and discoveryFunc
-- [#1249](https://github.com/opencomponents/oc/pull/1249) use internal body-parser from express >=4.16
+- [#1249](https://github.com/opencomponents/oc/pull/1249) use internal body-parser from express >=4.16 
 - [#1250](https://github.com/opencomponents/oc/pull/1250) reduce lodash functions where they are easy replaceable
 - [#1251](https://github.com/opencomponents/oc/pull/1251) [INTERNAL] remove cjs export from facade, deal with it on cli/index
 - [#1252](https://github.com/opencomponents/oc/pull/1252) [INTERNAL] reduce usage of null assertions
@@ -808,12 +813,12 @@
 
 ### v0.41.16
 - [#733](https://github.com/opencomponents/oc/pull/733) Repackage all components when file is outside component dir
-- [#732](https://github.com/opencomponents/oc/pull/732) Prettify all the things
+- [#732](https://github.com/opencomponents/oc/pull/732) Prettify all the things 
 - [#731](https://github.com/opencomponents/oc/pull/731) this-less cleanup
 - [#729](https://github.com/opencomponents/oc/pull/729) Update aws-sdk to the latest version 🚀
 
 ### v0.41.15
-- [#710](https://github.com/opencomponents/oc/pull/710) [DX-185] install compiler inside each components' dir
+- [#710](https://github.com/opencomponents/oc/pull/710) [DX-185] install compiler inside each components' dir 
 
 ### v0.41.14
 - [#728](https://github.com/opencomponents/oc/pull/728) [DX-226] ]Minimal css for the preview view
@@ -1073,7 +1078,7 @@
 ### v0.37.11
 - [#488](https://github.com/opencomponents/oc/pull/488) yarn-support
 
-closes #487
+closes #487 
 
 ### v0.37.10
 - [#516](https://github.com/opencomponents/oc/pull/516) Improve AWS upload mechanism and allow to override registry timeout settings
@@ -1590,7 +1595,7 @@ tested
 - [#159](https://github.com/opencomponents/oc/pull/159) should have an explicit dep on phantom
 
 ### v0.22.0
-- [#157](https://github.com/opencomponents/oc/pull/157) Server/Client-side render info
+- [#157](https://github.com/opencomponents/oc/pull/157) Server/Client-side render info 
 - [#156](https://github.com/opencomponents/oc/pull/156) House keeping
 
 ### v0.21.0
