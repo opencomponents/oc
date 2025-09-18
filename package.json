@@ -125,6 +125,6 @@
     "try-require": "^1.2.1",
     "undici": "^7.16.0",
     "universalify": "^2.0.1",
-    "yargs": "^18.0.0"
+    "yargs": "^17.7.2"
   }
 }
