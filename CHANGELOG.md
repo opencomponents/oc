@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.50.35
+- [#1453](https://github.com/opencomponents/oc/pull/1453) Fix: Update iframe selector to use 'preview-iframe' class
+- [#1451](https://github.com/opencomponents/oc/pull/1451) update client to fix oc:rendered event
+
 ### v0.50.34
 - [#1450](https://github.com/opencomponents/oc/pull/1450) revert yargs for now
 
