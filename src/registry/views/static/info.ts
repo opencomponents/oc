@@ -25,7 +25,7 @@ oc.cmd.push(function() {
       url += splitted[1];
     }
 
-    $('.preview').attr('src', url);
+    $('.preview-iframe').attr('src', url);
 
     return false;
   };
@@ -95,7 +95,7 @@ oc.cmd.push(function() {
 
   $('.open-preview').click(function() {
     refreshPreview();
-    var url = $('.preview').attr('src');
+    var url = $('.preview-iframe').attr('src');
 
     window.open(url, '_blank');
     return false;
