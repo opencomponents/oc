@@ -7,7 +7,7 @@ export default function requestHandler(): RequestHandler {
   return responseTime((req: Request, res: Response, time) => {
     const data: RequestData = {
       body: req.body,
-      duration: Number.parseInt(String(time * 1000), 10),
+      duration: time,
       headers: req.headers,
       method: req.method,
       path: req.path,
