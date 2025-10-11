@@ -18,6 +18,7 @@ import type {
   Template
 } from '../../../types';
 import isTemplateLegacy from '../../../utils/is-template-legacy';
+import { createBlockedRequester } from '../../domain/blocked-requester';
 import eventsHandler from '../../domain/events-handler';
 import NestedRenderer from '../../domain/nested-renderer';
 import type { Repository } from '../../domain/repository';
@@ -142,6 +143,10 @@ export default function getComponent(conf: Config, repository: Repository) {
 
     return env;
   };
+  const blockedRequester = () =>
+    createBlockedRequester({
+      blacklist: conf.blockedUrls || []
+    });
 
   const renderer = async (
     options: RendererOptions,
@@ -688,7 +693,8 @@ export default function getComponent(conf: Config, repository: Repository) {
                     URL: globalThis?.URL,
                     URLSearchParams: globalThis?.URLSearchParams,
                     crypto: globalThis?.crypto,
-                    fetch: globalThis?.fetch
+                    fetch: globalThis?.fetch,
+                    blockedRequester
                   };
 
                   const handleError = (err: {
@@ -721,7 +727,13 @@ export default function getComponent(conf: Config, repository: Repository) {
                     : {};
 
                   try {
-                    vm.runInNewContext(dataProvider.content, context, options);
+                    vm.runInNewContext(
+                      `"use strict";
+                    blockedRequester.patch();
+                    ${dataProvider.content}`,
+                      context,
+                      options
+                    );
                     const processData =
                       context.module.exports['data'] || context.exports['data'];
                     cache.set('file-contents', cacheKey, processData);

@@ -395,6 +395,12 @@ export interface Config<T = any> {
    * @default 0
    */
   verbosity: number;
+  /**
+   * List of URLs that components are not allowed to fetch.
+   * Can be a list of URLs or a function that returns a boolean.
+   * @default []
+   */
+  blockedUrls?: string[] | ((url: string) => boolean);
 }
 
 type CompiledTemplate = (model: unknown) => string;
