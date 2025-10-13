@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.50.36
+- [#1456](https://github.com/opencomponents/oc/pull/1456) add envs to process.env
+- [#1455](https://github.com/opencomponents/oc/pull/1455) Fix: Remove millisecond-to-microsecond conversion in response times
+
 ### v0.50.35
 - [#1453](https://github.com/opencomponents/oc/pull/1453) Fix: Update iframe selector to use 'preview-iframe' class
 - [#1451](https://github.com/opencomponents/oc/pull/1451) update client to fix oc:rendered event
