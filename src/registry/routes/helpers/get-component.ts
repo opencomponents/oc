@@ -691,6 +691,7 @@ export default function getComponent(conf: Config, repository: Repository) {
                     fetch: globalThis?.fetch,
                     process: {
                       env: {
+                        NODE_ENV: conf.local ? 'development' : 'production',
                         ...conf.env,
                         ...env
                       }
