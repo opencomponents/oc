@@ -688,7 +688,13 @@ export default function getComponent(conf: Config, repository: Repository) {
                     URL: globalThis?.URL,
                     URLSearchParams: globalThis?.URLSearchParams,
                     crypto: globalThis?.crypto,
-                    fetch: globalThis?.fetch
+                    fetch: globalThis?.fetch,
+                    process: {
+                      env: {
+                        ...conf.env,
+                        ...env
+                      }
+                    }
                   };
 
                   const handleError = (err: {
