@@ -395,6 +395,15 @@ export interface Config<T = any> {
    * @default 0
    */
   verbosity: number;
+  /**
+   * Encryption key for securing component .env files in storage.
+   * Must be a 32-byte key represented as 64 hexadecimal characters.
+   * When set, .env files will be encrypted before storage and decrypted on retrieval.
+   * When not set, .env files are stored as plaintext (with a warning).
+   *
+   * @example "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+   */
+  envEncryptionKey?: string;
 }
 
 type CompiledTemplate = (model: unknown) => string;
