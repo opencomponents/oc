@@ -1,6 +1,5 @@
 import strings from '../../../resources';
 import type { Config } from '../../../types';
-import * as envEncryption from '../../../utils/env-encryption';
 import * as auth from '../authentication';
 
 type ValidationResult = { isValid: true } | { isValid: false; message: string };
