@@ -5,25 +5,6 @@ const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 12; // 12 bytes for GCM
 
 /**
- * Validates that the encryption key is properly formatted (32 bytes / 64 hex chars)
- */
-function validateEncryptionKey(key: string): void {
-  if (!key || typeof key !== 'string') {
-    throw new Error('Encryption key must be a non-empty string');
-  }
-
-  // Remove any whitespace
-  const cleanKey = key.trim();
-
-  // Check if it's a valid hex string of 64 characters (32 bytes)
-  if (!/^[0-9a-fA-F]{64}$/.test(cleanKey)) {
-    throw new Error(
-      'Encryption key must be 64 hexadecimal characters (32 bytes)'
-    );
-  }
-}
-
-/**
  * Checks if content is encrypted by looking for the version header
  */
 export function isEncrypted(content: string): boolean {
@@ -35,8 +16,6 @@ export function isEncrypted(content: string): boolean {
  * Returns format: OC_ENCRYPTED_V1:{iv_base64}:{authTag_base64}:{encryptedData_base64}
  */
 export function encrypt(content: string, key: string): string {
-  validateEncryptionKey(key);
-
   // Generate random IV
   const iv = crypto.randomBytes(IV_LENGTH);
 
@@ -59,8 +38,6 @@ export function encrypt(content: string, key: string): string {
  * Expects format: OC_ENCRYPTED_V1:{iv_base64}:{authTag_base64}:{encryptedData_base64}
  */
 export function decrypt(content: string, key: string): string {
-  validateEncryptionKey(key);
-
   // Check for encrypted header
   if (!isEncrypted(content)) {
     throw new Error('Content is not encrypted or uses an unknown format');
