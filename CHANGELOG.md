@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.37
+- [#1457](https://github.com/opencomponents/oc/pull/1457) update client to allow signals on fetch
+
 ### v0.50.36
 - [#1456](https://github.com/opencomponents/oc/pull/1456) add envs to process.env
 - [#1455](https://github.com/opencomponents/oc/pull/1455) Fix: Remove millisecond-to-microsecond conversion in response times
