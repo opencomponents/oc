@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import strings from '../resources';
 
 const ENCRYPTION_VERSION = 'OC_ENCRYPTED_V1';
 const ALGORITHM = 'aes-256-gcm';
@@ -33,7 +34,7 @@ export function encrypt(content: string, keys: string | string[]): string {
   const primaryKey = keyList[keyIndex];
 
   if (!validateEncryptionKey(primaryKey)) {
-    throw new Error('Invalid encryption key');
+    throw new Error(strings.errors.registry.ENV_ENCRYPTION_KEY_NOT_VALID);
   }
 
   // Generate random IV
