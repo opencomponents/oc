@@ -1,5 +1,6 @@
 import strings from '../../../resources';
 import type { Config } from '../../../types';
+import * as envEncryption from '../../../utils/env-encryption';
 import * as auth from '../authentication';
 
 type ValidationResult = { isValid: true } | { isValid: false; message: string };
@@ -123,8 +124,16 @@ export default function registryConfiguration(
   }
 
   if (conf.envEncryptionKey) {
-    if (!/^[0-9a-fA-F]{64}$/.test(conf.envEncryptionKey)) {
-      return returnError(strings.errors.registry.ENV_ENCRYPTION_KEY_NOT_VALID);
+    const keys = Array.isArray(conf.envEncryptionKey)
+      ? conf.envEncryptionKey
+      : [conf.envEncryptionKey];
+
+    for (const key of keys) {
+      if (!envEncryption.validateEncryptionKey(key)) {
+        return returnError(
+          strings.errors.registry.ENV_ENCRYPTION_KEY_NOT_VALID
+        );
+      }
     }
   }
 
