@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { fromPromise } from 'universalify';
+import { getOcConfig } from '../../cli/domain/ocConfig';
 import type { Component, Config, TemplateInfo } from '../../types';
 import type { Repository } from '../domain/repository';
 import * as urlBuilder from '../domain/url-builder';
@@ -32,6 +33,7 @@ function componentPreview(
     res.send(
       previewView({
         component,
+        importmap: getOcConfig(res.conf.path)?.development?.importmap,
         fallbackClient: res.conf.fallbackClient
           ? `${res.conf.fallbackRegistryUrl.replace(/\/$/, '')}/oc-client/client.dev.js`
           : undefined,
