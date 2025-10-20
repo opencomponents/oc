@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.38
+- [#1459](https://github.com/opencomponents/oc/pull/1459) add support for importmap in oc.json for oc dev
+
 ### v0.50.37
 - [#1457](https://github.com/opencomponents/oc/pull/1457) update client to allow signals on fetch
 
