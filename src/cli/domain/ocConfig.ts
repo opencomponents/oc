@@ -9,6 +9,10 @@ export interface OpenComponentsConfig {
   registries?: string[];
   /** Development-specific configuration settings */
   development?: {
+    /** Importmap to add to the preview HTML's <head> section. */
+    importmap?: {
+      imports?: Record<string, string>;
+    };
     /** Additional Express routes to mount on the registry application */
     routes?: Array<{
       route: string;
@@ -48,9 +52,13 @@ export interface OpenComponentsConfig {
 }
 
 type ParsedConfig = {
+  $schema?: string | null;
   sourcePath?: string;
   registries: string[];
   development: {
+    importmap?: {
+      imports?: Record<string, string>;
+    };
     routes?: Array<{
       route: string;
       method: string;
@@ -100,6 +108,7 @@ function parseConfig(config: OpenComponentsConfig): ParsedConfig {
     ...config,
     registries: config.registries || [],
     development: {
+      importmap: config.development?.importmap,
       preload: config.development?.preload,
       plugins,
       fallback: config.development?.fallback,
@@ -131,6 +140,10 @@ export function getOcConfig(folder?: string): ParsedConfig {
 
 export function setOcConfig(config: ParsedConfig, path?: string) {
   const { sourcePath, ...rest } = config;
+  if (!rest.$schema) {
+    rest.$schema = 'https://opencomponents.github.io/schema.json';
+  }
+
   fs.writeFileSync(
     path || sourcePath || settings.configFile.src,
     JSON.stringify(rest, null, 2)

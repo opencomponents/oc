@@ -7,11 +7,14 @@ export default function preview(vm: {
   qs: string;
   liveReload: string;
   templates: TemplateInfo[];
+  importmap?: {
+    imports?: Record<string, string>;
+  };
   preload?: string;
 }): string {
   const baseUrl = vm.href.replace('http://', '//').replace('https://', '//');
   const { name, version } = vm.component;
-  const imports = vm.component.oc.files.imports;
+  const imports = vm.importmap?.imports || vm.component.oc.files.imports;
   const componentHref = `${baseUrl}${name}/${version}/${vm.qs}`;
   const clientHref = vm.fallbackClient || `${baseUrl}oc-client/client.js`;
   const id = `oc-${name}@${version}`;
