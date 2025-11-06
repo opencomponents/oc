@@ -679,6 +679,7 @@ export default function getComponent(conf: Config, repository: Repository) {
                     console: conf.local ? console : noopConsole,
                     setTimeout,
                     Buffer,
+                    Error,
                     AbortController: globalThis?.AbortController,
                     AbortSignal: globalThis?.AbortSignal,
                     Promise,
