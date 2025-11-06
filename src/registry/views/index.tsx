@@ -19,7 +19,13 @@ export default function indexView(vm: VM) {
 ${indexJS}</script>`;
 
   return (
-    <Layout scripts={scripts} href={vm.href} title={vm.title} theme={vm.theme}>
+    <Layout
+      scripts={scripts}
+      href={vm.href}
+      title={vm.title}
+      theme={vm.theme}
+      robots={vm.robots}
+    >
       <section class="hero">
         <h1>OpenComponents Registry</h1>
 

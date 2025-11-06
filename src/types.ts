@@ -129,6 +129,7 @@ export interface VM {
   title: string;
   theme: 'light' | 'dark';
   type: 'oc-registry' | 'oc-registry-local';
+  robots: boolean;
 }
 
 export type Authentication<T = any> = {
@@ -206,6 +207,12 @@ export interface Config<T = any> {
    * Configuration object to enable/disable the HTML discovery page and the API
    */
   discovery: {
+    /**
+     * Appends a <meta name="robots" content="index, follow" /> to the HTML head
+     * False to append a <meta name="robots" content="noindex, nofollow" />
+     * @default true
+     */
+    robots: boolean;
     /**
      * Enables API discovery endpoints
      * @default true

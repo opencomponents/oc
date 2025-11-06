@@ -7,6 +7,7 @@ export default function preview(vm: {
   qs: string;
   liveReload: string;
   templates: TemplateInfo[];
+  robots: boolean;
   importmap?: {
     imports?: Record<string, string>;
   };
@@ -167,7 +168,7 @@ export default function preview(vm: {
           color: #cfe3ff;
         }
       </style>
-      <meta name="robots" content="index, follow" />
+      <meta name="robots" content="${vm.robots ? 'index, follow' : 'noindex, nofollow'}" />
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       ${
