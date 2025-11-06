@@ -7,10 +7,18 @@ interface LayoutProps {
   children: JSX.Element | JSX.Element[];
   scripts: string;
   theme: 'light' | 'dark';
+  robots: boolean;
 }
 
 // const imgSrc = '/logo.png';
-const Layout = ({ title, href, children, scripts, theme }: LayoutProps) => {
+const Layout = ({
+  title,
+  href,
+  children,
+  scripts,
+  theme,
+  robots
+}: LayoutProps) => {
   const normalizedHref = href
     .replace('http://', '//')
     .replace('https://', '//');
@@ -25,7 +33,10 @@ const Layout = ({ title, href, children, scripts, theme }: LayoutProps) => {
         <head>
           <title safe>{title}</title>
           <meta charset="UTF-8" />
-          <meta name="robots" content="index, follow" />
+          <meta
+            name="robots"
+            content={robots ? 'index, follow' : 'noindex, nofollow'}
+          />
           <meta name="language" content="EN" />
           <meta name="distribution" content="global" />
           <meta

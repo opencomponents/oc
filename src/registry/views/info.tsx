@@ -18,6 +18,7 @@ export interface Vm {
   title: string;
   theme: 'light' | 'dark';
   repositoryUrl: string | null;
+  robots: boolean;
 }
 
 function formatDate(date: Date | string) {
@@ -224,7 +225,13 @@ export default function Info(vm: Vm) {
   `;
 
   return (
-    <Layout scripts={scripts} href={href} title={vm.title} theme={vm.theme}>
+    <Layout
+      scripts={scripts}
+      href={href}
+      title={vm.title}
+      theme={vm.theme}
+      robots={vm.robots}
+    >
       <section class="hero">
         <nav class="breadcrumb">
           <a href={href}>← All components</a>

@@ -32,6 +32,7 @@ function componentPreview(
   if (isHtmlRequest) {
     res.send(
       previewView({
+        robots: res.conf.discovery.robots,
         component,
         importmap: getOcConfig(res.conf.path)?.development?.importmap,
         fallbackClient: res.conf.fallbackClient

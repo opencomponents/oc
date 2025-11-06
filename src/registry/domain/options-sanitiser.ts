@@ -24,6 +24,7 @@ export interface RegistryOptions<T = any>
         experimental?: boolean;
         api?: boolean;
         validate?: boolean;
+        robots?: boolean;
       }
     | boolean;
   /**
@@ -85,6 +86,10 @@ export default function optionsSanitiser(input: RegistryOptions): Config {
     typeof options.discovery === 'boolean'
       ? options.discovery
       : (options.discovery?.ui ?? true);
+  const showRobots =
+    typeof options.discovery === 'boolean'
+      ? true
+      : (options.discovery?.robots ?? true);
   const showExperimental = !showApi
     ? false
     : typeof options.discovery === 'boolean'
@@ -102,7 +107,8 @@ export default function optionsSanitiser(input: RegistryOptions): Config {
     ui: showUI,
     experimental: showExperimental,
     api: showApi,
-    validate: showValidation
+    validate: showValidation,
+    robots: showRobots
   };
 
   if (typeof options.pollingInterval === 'undefined') {

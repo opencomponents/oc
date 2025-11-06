@@ -85,7 +85,8 @@ function componentInfo(
           repositoryUrl,
           sandBoxDefaultQs: urlBuilder.queryString(params),
           title: 'Component Info',
-          theme
+          theme,
+          robots: res.conf.discovery.robots
         })
       );
     });

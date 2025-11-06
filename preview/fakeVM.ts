@@ -79,6 +79,7 @@ export const mockComponentHistory: ComponentHistory[] = [
 
 // Mock data for Index VM (main registry page)
 export const mockIndexVM: IndexVm = {
+  robots: true,
   availableDependencies: [
     {
       core: true,
@@ -407,6 +408,7 @@ export const mockIndexVM: IndexVm = {
 
 // Mock data for Info VM (component detail page)
 export const mockInfoVM: InfoVm = {
+  robots: true,
   parsedAuthor: {
     name: 'Jane Smith',
     email: 'jane.smith@company.com',
