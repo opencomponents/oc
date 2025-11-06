@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.39
+- [#1460](https://github.com/opencomponents/oc/pull/1460) pass error instance
+
 ### v0.50.38
 - [#1459](https://github.com/opencomponents/oc/pull/1459) add support for importmap in oc.json for oc dev
 
