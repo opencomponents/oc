@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.40
+- [#1461](https://github.com/opencomponents/oc/pull/1461) add no robots option
+
 ### v0.50.39
 - [#1460](https://github.com/opencomponents/oc/pull/1460) pass error instance
 
