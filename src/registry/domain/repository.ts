@@ -12,6 +12,7 @@ import type {
   Config,
   TemplateInfo
 } from '../../types';
+import * as envEncryption from '../../utils/env-encryption';
 import errorToString from '../../utils/error-to-string';
 import ComponentsCache from './components-cache';
 import getComponentsDetails from './components-details';
@@ -121,7 +122,19 @@ export default function repository(conf: Config) {
       );
       const filePath = path.join(conf.path, componentName, pkg.oc.files.env!);
 
-      return dotenv.parse(fs.readFileSync(filePath).toString());
+      let envContent = fs.readFileSync(filePath).toString();
+
+      // Decrypt if encrypted
+      if (envEncryption.isEncrypted(envContent)) {
+        if (!conf.envEncryptionKey) {
+          throw new Error(
+            'ENV_DECRYPTION_ERROR: .env file is encrypted but no envEncryptionKey configured'
+          );
+        }
+        envContent = envEncryption.decrypt(envContent, conf.envEncryptionKey);
+      }
+
+      return dotenv.parse(envContent);
     }
   };
 
@@ -264,9 +277,19 @@ export default function repository(conf: Config) {
       }
 
       const filePath = getFilePath(componentName, componentVersion, '.env');
-      const file = await cdn.getFile(filePath);
+      let envContent = await cdn.getFile(filePath);
 
-      return dotenv.parse(file);
+      // Decrypt if encrypted
+      if (envEncryption.isEncrypted(envContent)) {
+        if (!conf.envEncryptionKey) {
+          throw new Error(
+            'ENV_DECRYPTION_ERROR: .env file is encrypted but no envEncryptionKey configured'
+          );
+        }
+        envContent = envEncryption.decrypt(envContent, conf.envEncryptionKey);
+      }
+
+      return dotenv.parse(envContent);
     },
     getStaticClientPath: (dev?: boolean): string =>
       `${options!['path']}${getFilePath(
@@ -381,6 +404,30 @@ export default function repository(conf: Config) {
         path.join(pkgDetails.outputFolder, 'package.json'),
         pkgDetails.packageJson
       );
+
+      // Handle .env file encryption if present
+      const envFilePath = path.join(pkgDetails.outputFolder, '.env');
+      if (await fs.pathExists(envFilePath)) {
+        if (conf.envEncryptionKey) {
+          try {
+            const envContent = await fs.readFile(envFilePath, 'utf8');
+            const encryptedContent = envEncryption.encrypt(
+              envContent,
+              conf.envEncryptionKey
+            );
+            await fs.writeFile(envFilePath, encryptedContent, 'utf8');
+          } catch (err) {
+            throw {
+              code: 'env_encryption_error',
+              msg: `Failed to encrypt .env file: ${errorToString(err)}`
+            };
+          }
+        } else {
+          console.warn(
+            `WARNING: Publishing component "${componentName}" with unencrypted .env file. Set envEncryptionKey in config to enable encryption.`
+          );
+        }
+      }
 
       await cdn.putDir(
         pkgDetails.outputFolder,
