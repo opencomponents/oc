@@ -164,6 +164,7 @@ export default function optionsSanitiser(input: RegistryOptions): Config {
     const gzip = zlib.gzipSync(minified, { level: 7 });
     options.compiledClient = {
       ...compiled,
+      imports: clientOptions.imports,
       code: {
         minified,
         gzip,

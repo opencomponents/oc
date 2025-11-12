@@ -34,7 +34,9 @@ function componentPreview(
       previewView({
         robots: res.conf.discovery.robots,
         component,
-        importmap: getOcConfig(res.conf.path)?.development?.importmap,
+        importmap:
+          getOcConfig(res.conf.path)?.development?.importmap ||
+          res.conf.compiledClient?.imports,
         fallbackClient: res.conf.fallbackClient
           ? `${res.conf.fallbackRegistryUrl.replace(/\/$/, '')}/oc-client/client.dev.js`
           : undefined,

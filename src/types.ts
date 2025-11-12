@@ -174,6 +174,7 @@ export interface Config<T = any> {
    * @internal
    */
   compiledClient?: {
+    imports?: Record<string, string>;
     code: { gzip: Buffer; brotli: Buffer; minified: string };
     map: string;
     dev: string;
