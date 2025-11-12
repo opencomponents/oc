@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.41
+- [#1462](https://github.com/opencomponents/oc/pull/1462) pass imports on preview
+
 ### v0.50.40
 - [#1461](https://github.com/opencomponents/oc/pull/1461) add no robots option
 
