@@ -174,6 +174,10 @@ export default function optionsSanitiser(input: RegistryOptions): Config {
     options.tarExtractMode = 766;
   }
 
+  if (typeof options.enableComponentConsoleOutput === 'undefined') {
+    options.enableComponentConsoleOutput = false;
+  }
+
   if (
     typeof options.fallbackRegistryUrl !== 'undefined' &&
     !options.fallbackRegistryUrl.endsWith('/')
