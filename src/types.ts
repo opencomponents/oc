@@ -290,6 +290,14 @@ export interface Config<T = any> {
    */
   local: boolean;
   /**
+   * Enables component console output (console.log, console.error, etc.)
+   * during component execution. Useful for debugging in development and
+   * lower environments.
+   *
+   * @default false
+   */
+  enableComponentConsoleOutput: boolean;
+  /**
    * File and directory mode (octal) applied when extracting tarballs during
    * publishing.
    *

@@ -676,7 +676,9 @@ export default function getComponent(conf: Config, repository: Repository) {
                       exports: {} as Record<string, (...args: any[]) => any>
                     },
                     exports: {} as Record<string, (...args: any[]) => any>,
-                    console: conf.local ? console : noopConsole,
+                    console: conf.enableComponentConsoleOutput
+                      ? console
+                      : noopConsole,
                     setTimeout,
                     Buffer,
                     AbortController: globalThis?.AbortController,
