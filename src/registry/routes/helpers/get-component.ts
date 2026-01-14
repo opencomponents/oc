@@ -70,10 +70,6 @@ export interface GetComponentResult {
 }
 
 export const stream = Symbol('stream');
-const noop = () => {};
-const noopConsole = Object.fromEntries(
-  Object.keys(console).map((key) => [key, noop])
-);
 
 /**
  * Converts the plugins to a function that returns a record of plugins with the context applied
@@ -676,9 +672,7 @@ export default function getComponent(conf: Config, repository: Repository) {
                       exports: {} as Record<string, (...args: any[]) => any>
                     },
                     exports: {} as Record<string, (...args: any[]) => any>,
-                    console: conf.enableComponentConsoleOutput
-                      ? console
-                      : noopConsole,
+                    console: conf.componentConsole,
                     setTimeout,
                     Buffer,
                     AbortController: globalThis?.AbortController,

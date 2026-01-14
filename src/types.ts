@@ -290,13 +290,23 @@ export interface Config<T = any> {
    */
   local: boolean;
   /**
-   * Enables component console output (console.log, console.error, etc.)
-   * during component execution. Useful for debugging in development and
-   * lower environments.
+   * Console interface provided to components during execution.
+   * Allows for flexible logging strategies: pass the real console, a custom
+   * implementation that sends logs to a monitoring provider, or a no-op console.
    *
-   * @default false
+   * @example
+   * // Log to console
+   * componentConsole: console
+   * @example
+   * // Log to monitoring provider
+   * componentConsole: createCustomConsole(monitoringClient)
+   * @example
+   * // Disable component logs
+   * componentConsole: createNoopConsole()
+   *
+   * @default createNoopConsole() - a no-op console that discards all logs
    */
-  enableComponentConsoleOutput: boolean;
+  componentConsole: Partial<Console>;
   /**
    * File and directory mode (octal) applied when extracting tarballs during
    * publishing.

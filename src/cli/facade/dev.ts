@@ -204,7 +204,7 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
           hotReloading,
           liveReloadPort: liveReload.port,
           local: true,
-          enableComponentConsoleOutput: true,
+          componentConsole: console,
           postRequestPayloadSize,
           components: opts.components,
           path: path.resolve(componentsDir),
