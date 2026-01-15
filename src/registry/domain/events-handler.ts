@@ -1,5 +1,6 @@
 import type { IncomingHttpHeaders } from 'node:http';
 import strings from '../../resources';
+import type { Component } from '../../types';
 
 type Subscription<T = any> = (data: T) => void;
 let subscriptions: Record<string, Array<Subscription>> = {};
@@ -37,6 +38,13 @@ type Events = {
     requestVersion: string;
     status: number;
     error: Error;
+  };
+  'component-published': {
+    componentName: string;
+    componentVersion: string;
+    packageJson: Component;
+    componentFolder: string;
+    user?: string;
   };
 };
 
