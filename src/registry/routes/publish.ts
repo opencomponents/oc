@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import strings from '../../resources/index';
+import eventsHandler from '../domain/events-handler';
 import extractPackage from '../domain/extract-package';
 import type { Repository } from '../domain/repository';
 import * as validator from '../domain/validators';
@@ -76,13 +77,28 @@ export default function publish(repository: Repository) {
       }
 
       try {
+        const componentName = req.params['componentName'];
+        const componentVersion = req.params['componentVersion'];
+        const dryRun = typeof req.query['dryRun'] !== 'undefined';
+
         await repository.publishComponent({
           pkgDetails,
-          componentName: req.params['componentName'],
-          componentVersion: req.params['componentVersion'],
-          dryRun: typeof req.query['dryRun'] !== 'undefined',
+          componentName,
+          componentVersion,
+          dryRun,
           user: req.user
         });
+
+        if (!dryRun) {
+          eventsHandler.fire('component-published', {
+            componentName,
+            componentVersion,
+            packageJson: pkgDetails.packageJson,
+            componentFolder: pkgDetails.outputFolder,
+            user: req.user
+          });
+        }
+
         res.status(200).json({ ok: true });
       } catch (err: any) {
         let errorMessage = err.msg || err.message;
