@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.42
+- [#1466](https://github.com/opencomponents/oc/pull/1466) add component-published event
+
 ### v0.50.41
 - [#1462](https://github.com/opencomponents/oc/pull/1462) pass imports on preview
 
