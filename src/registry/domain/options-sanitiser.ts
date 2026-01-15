@@ -2,6 +2,7 @@ import zlib from 'node:zlib';
 import { compileSync } from 'oc-client-browser';
 import settings from '../../resources/settings';
 import type { Config } from '../../types';
+import createNoopConsole from '../../utils/noop-console';
 import * as auth from './authentication';
 
 const DEFAULT_NODE_KEEPALIVE_MS = 5000;
@@ -179,6 +180,10 @@ export default function optionsSanitiser(input: RegistryOptions): Config {
 
   if (typeof options.tarExtractMode === 'undefined') {
     options.tarExtractMode = 766;
+  }
+
+  if (!options.componentConsole) {
+    options.componentConsole = createNoopConsole();
   }
 
   if (
