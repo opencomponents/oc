@@ -118,7 +118,9 @@ export function getComponent(
         status: 404,
         response: {
           code: 'NOT_FOUND',
-          error: await err.body.text().catch(() => err.statusCode)
+          error:
+            (await err?.body?.text?.().catch(() => err?.statusCode)) ||
+            String(err)
         }
       });
     });
