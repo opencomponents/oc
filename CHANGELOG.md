@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.43
+- [#1467](https://github.com/opencomponents/oc/pull/1467) dont assume errors on fallback registry calls might have a body
+
 ### v0.50.42
 - [#1466](https://github.com/opencomponents/oc/pull/1466) add component-published event
 
