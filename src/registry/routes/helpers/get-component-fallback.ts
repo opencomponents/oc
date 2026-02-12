@@ -83,8 +83,8 @@ export function getComponent(
   component: { name: string; version: string; parameters: IncomingHttpHeaders },
   callback: (result: GetComponentResult) => void
 ): void {
-  // For some reason, undici doesn't like the content-type header
-  const { 'content-type': _, ...restHeaders } = headers;
+  // Avoid forwarding body/content negotiation headers that break fallback parsing.
+  const { 'content-type': _, 'accept-encoding': __, ...restHeaders } = headers;
   request(fallbackRegistryUrl, {
     method: 'POST',
     headers: {
