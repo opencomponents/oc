@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.44
+- [#1468](https://github.com/opencomponents/oc/pull/1468) fix fallback
+
 ### v0.50.43
 - [#1467](https://github.com/opencomponents/oc/pull/1467) dont assume errors on fallback registry calls might have a body
 
