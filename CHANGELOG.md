@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.45
+- [#1470](https://github.com/opencomponents/oc/pull/1470) Fix absolute require for ESM modules
+
 ### v0.50.44
 - [#1468](https://github.com/opencomponents/oc/pull/1468) fix fallback
 
