@@ -14,7 +14,8 @@ const requireCoreDependency = (x: string) =>
 const requireDependency = (requirePath: string) => {
   const nodeModulesPath = path.resolve('.', 'node_modules');
   const modulePath = path.resolve(nodeModulesPath, requirePath);
-  return tryRequire(modulePath);
+  // ESM only modules might not define a "main" field and therefore the absolute path of modulePath will not work
+  return tryRequire(modulePath) || tryRequire(requirePath);
 };
 
 const throwError = (requirePath: string) => {
@@ -34,8 +35,8 @@ export default (injectedDependencies: string[]) =>
     }
 
     return (
-      requireDependency(requirePath) ||
       requireCoreDependency(requirePath) ||
+      requireDependency(requirePath) ||
       throwError(requirePath)
     );
   };
