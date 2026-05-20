@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.50.47
+- [#1471](https://github.com/opencomponents/oc/pull/1471) update handlebars cve
+
 ### v0.50.45
 - [#1470](https://github.com/opencomponents/oc/pull/1470) Fix absolute require for ESM modules
 
