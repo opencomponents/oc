@@ -1278,7 +1278,7 @@ describe('registry : domain : validator', () => {
           '../../dist/registry/domain/validators/oc-cli-version.js',
           {
             'fs-extra': {
-              readJsonSync: () => ({ version: '0.16.34' })
+              readJsonSync: () => ({ version: '0.50.47' })
             }
           },
           {
@@ -1298,7 +1298,7 @@ describe('registry : domain : validator', () => {
       });
 
       it('should suggest correct version of CLI', () => {
-        expect(result.error.suggestedVersion).to.equal('0.16.X');
+        expect(result.error.suggestedVersion).to.equal('0.50.X');
       });
     });
 
@@ -1310,24 +1310,24 @@ describe('registry : domain : validator', () => {
       });
 
       it('should suggest correct version of CLI', () => {
-        expect(result.error.suggestedVersion).to.equal('0.16.X');
+        expect(result.error.suggestedVersion).to.equal('0.50.X');
       });
     });
 
     describe('when OC CLI version in user-agent header is lower than Registry version', () => {
-      const result = validate('oc-cli-0.2.3/v0.10.35-darwin-x64');
+      const result = validate('oc-cli-0.49.99/v0.10.35-darwin-x64');
 
       it('should be invalid', () => {
         expect(result.isValid).to.be.false;
       });
 
       it('should suggest correct version of CLI', () => {
-        expect(result.error.suggestedVersion).to.equal('0.16.X');
+        expect(result.error.suggestedVersion).to.equal('0.50.X');
       });
     });
 
-    describe('when OC CLI version in user-agent header is equal to Registry version', () => {
-      const result = validate('oc-cli-0.16.34/v0.10.35-darwin-x64');
+    describe('when OC CLI version in user-agent header is equal to Registry version (same major.minor)', () => {
+      const result = validate('oc-cli-0.50.40/v0.10.35-darwin-x64');
 
       it('should be valid', () => {
         expect(result.isValid).to.be.true;
@@ -1339,7 +1339,19 @@ describe('registry : domain : validator', () => {
     });
 
     describe('when OC CLI version in user-agent header is higher than Registry version', () => {
-      const result = validate('oc-cli-0.16.35/v0.10.35-darwin-x64');
+      const result = validate('oc-cli-0.51.0/v0.10.35-darwin-x64');
+
+      it('should be valid', () => {
+        expect(result.isValid).to.be.true;
+      });
+
+      it('should not return an error', () => {
+        expect(result.error).to.be.undefined;
+      });
+    });
+
+    describe('when OC CLI version has different patch version but same major.minor', () => {
+      const result = validate('oc-cli-0.50.99/v0.10.35-darwin-x64');
 
       it('should be valid', () => {
         expect(result.isValid).to.be.true;

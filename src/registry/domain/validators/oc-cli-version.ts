@@ -44,7 +44,9 @@ export default function ocCliVersion(userAgent?: string): Result {
   }
 
   const cliVersion = matchVersion[1];
-  if (semver.lt(cliVersion, packageInfo.version)) {
+  const cliMajorMinor = `${semver.major(cliVersion)}.${semver.minor(cliVersion)}.0`;
+  const registryMajorMinor = `${semver.major(packageInfo.version)}.${semver.minor(packageInfo.version)}.0`;
+  if (semver.lt(cliMajorMinor, registryMajorMinor)) {
     return baseError({ code: 'old_version', cliVersion });
   }
 
