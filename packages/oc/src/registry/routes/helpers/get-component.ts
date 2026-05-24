@@ -75,6 +75,26 @@ const noopConsole = Object.fromEntries(
   Object.keys(console).map((key) => [key, noop])
 );
 
+const parseTemplatesHeader = (templates: string): string[] => {
+  const result: string[] = [];
+  let start = 0;
+
+  for (let index = 0; index <= templates.length; index++) {
+    const char = templates[index];
+    if (char === ',' || char === ';' || index === templates.length) {
+      result.push(templates.slice(start, index));
+      start = templates.indexOf(';', index);
+      if (start === -1) {
+        break;
+      }
+      index = start;
+      start++;
+    }
+  }
+
+  return result;
+};
+
 /**
  * Converts the plugins to a function that returns a record of plugins with the context applied
  * Caches the plugins without context and applies the context to the plugins that need it
@@ -306,23 +326,29 @@ export default function getComponent(conf: Config, repository: Repository) {
           });
         }
 
+        const customHeadersToSkip = conf.customHeadersToSkipOnWeakVersion;
+        const customHeadersToSkipSet = customHeadersToSkip?.length
+          ? new Set(customHeadersToSkip)
+          : undefined;
+
         const filterCustomHeaders = (
           headers: Record<string, string>,
           requestedVersion: string,
           actualVersion: string
         ) => {
-          const needFiltering =
-            Object.keys(headers).length > 0 &&
-            conf.customHeadersToSkipOnWeakVersion?.length > 0 &&
-            requestedVersion !== actualVersion;
+          if (!customHeadersToSkipSet || requestedVersion === actualVersion) {
+            return headers;
+          }
 
-          if (!needFiltering) return headers;
+          let filteredHeaders: Record<string, string> | undefined;
+          for (const key in headers) {
+            if (!customHeadersToSkipSet.has(key)) {
+              filteredHeaders = filteredHeaders || {};
+              filteredHeaders[key] = headers[key]!;
+            }
+          }
 
-          return Object.fromEntries(
-            Object.entries(headers).filter(
-              ([key]) => !conf.customHeadersToSkipOnWeakVersion.includes(key)
-            )
-          );
+          return filteredHeaders || {};
         };
 
         const returnComponent = async (err: any, data: any) => {
@@ -347,11 +373,8 @@ export default function getComponent(conf: Config, repository: Repository) {
             options.headers['user-agent'] &&
             !!options.headers['user-agent'].match('oc-client-');
 
-          const parseTemplatesHeader = (t: string) =>
-            t.split(';').map((t) => t.split(',')[0]);
           const supportedTemplates = options.headers['templates']
-            ? (parseTemplatesHeader(options.headers['templates'] as string) ??
-              [])
+            ? parseTemplatesHeader(options.headers['templates'] as string)
             : [];
 
           const isTemplateSupportedByClient = Boolean(

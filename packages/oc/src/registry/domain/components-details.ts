@@ -3,6 +3,7 @@ import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import type {
   Component,
+  ComponentDetail,
   ComponentsDetails,
   ComponentsList,
   Config
@@ -29,21 +30,23 @@ export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
     componentsList: ComponentsList;
     details?: ComponentsDetails;
   }): Promise<ComponentsDetails> => {
-    const clone =
-      globalThis.structuredClone ||
-      ((data: any) => JSON.parse(JSON.stringify(data)));
+    const details = { components: {} as ComponentsDetails['components'] };
 
-    const details = options.details
-      ? clone(options.details)
-      : { components: {} as ComponentsDetails['components'] };
+    for (const [name, componentDetails] of Object.entries(
+      options.details?.components || {}
+    )) {
+      details.components[name] = { ...componentDetails };
+    }
 
     const missing: Array<{ name: string; version: string }> = [];
     for (const [name, versions] of Object.entries(
       options.componentsList.components
     )) {
-      details.components[name] = details.components[name] || {};
+      const componentDetails =
+        details.components[name] || ({} as ComponentDetail);
+      details.components[name] = componentDetails;
       for (const version of versions) {
-        if (!details.components[name][version]) {
+        if (!componentDetails[version]) {
           missing.push({ name, version });
         }
       }
@@ -58,7 +61,7 @@ export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
             `${conf.storage.options.componentsDir}/${name}/${version}/package.json`,
             true
           );
-          details.components[name][version] = {
+          details.components[name]![version] = {
             publishDate: content.oc.date || 0,
             templateSize: content.oc.files.template.size
           };

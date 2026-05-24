@@ -44,6 +44,7 @@ export default function repository(conf: Config) {
   );
 
   const local = {
+    components: undefined as string[] | undefined,
     getCompiledView(componentName: string): string {
       if (componentName === 'oc-client') {
         return fs
@@ -63,20 +64,31 @@ export default function repository(conf: Config) {
         .toString();
     },
     getComponents(): string[] {
-      const validComponents =
-        conf.components ||
-        fs.readdirSync(conf.path).filter((file) => {
-          const isDir = fs.lstatSync(path.join(conf.path, file)).isDirectory();
-          const isValidComponent = isDir
-            ? fs
-                .readdirSync(path.join(conf.path, file))
-                .filter((file) => file === '_package').length === 1
-            : false;
+      if (conf.hotReloading === false && local.components) {
+        return local.components;
+      }
 
-          return isValidComponent;
-        });
+      const validComponents = conf.components
+        ? conf.components
+        : fs.readdirSync(conf.path).filter((file) => {
+            const isDir = fs
+              .lstatSync(path.join(conf.path, file))
+              .isDirectory();
+            const isValidComponent = isDir
+              ? fs
+                  .readdirSync(path.join(conf.path, file))
+                  .filter((file) => file === '_package').length === 1
+              : false;
 
-      return [...validComponents, 'oc-client'];
+            return isValidComponent;
+          });
+
+      const components = [...validComponents, 'oc-client'];
+      if (conf.hotReloading === false) {
+        local.components = components;
+      }
+
+      return components;
     },
     getComponentVersions(componentName: string): Promise<string[]> {
       if (componentName === 'oc-client') {
