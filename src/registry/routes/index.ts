@@ -54,7 +54,7 @@ export default function (repository: Repository) {
       )
     );
 
-    if (isHtmlRequest(req.headers) && !!res.conf.discovery.ui) {
+    if (isHtmlRequest(req.headers) && res.conf.discovery.ui) {
       const processedComponents: ParsedComponent[] = componentDetails.map(
         (component) => {
           if (component.oc?.date) {

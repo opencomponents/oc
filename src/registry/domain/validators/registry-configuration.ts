@@ -45,7 +45,7 @@ export default function registryConfiguration(
 
   const dependencies = conf.dependencies;
 
-  if (!!dependencies && !Array.isArray(dependencies)) {
+  if (dependencies && !Array.isArray(dependencies)) {
     return returnError(
       strings.errors.registry.CONFIGURATION_DEPENDENCIES_MUST_BE_ARRAY
     );
@@ -53,7 +53,7 @@ export default function registryConfiguration(
 
   const routes = conf.routes;
 
-  if (!!routes && !Array.isArray(routes)) {
+  if (routes && !Array.isArray(routes)) {
     return returnError(
       strings.errors.registry.CONFIGURATION_ROUTES_MUST_BE_ARRAY
     );
@@ -88,8 +88,7 @@ export default function registryConfiguration(
     // S3 settings should either specify both key/secret or
     // skip both when leveraging IAM Role based S3 access from EC2
     if (
-      !conf.s3 ||
-      !conf.s3.bucket ||
+      !conf.s3?.bucket ||
       !conf.s3.region ||
       (conf.s3.key && !conf.s3.secret) ||
       (!conf.s3.key && conf.s3.secret)

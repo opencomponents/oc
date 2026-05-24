@@ -99,7 +99,7 @@ export default function registry(opts: RegistryOptions = {}) {
         requestsHeaders = Object.assign(requestsHeaders, {
           Authorization: `Bearer ${options.token}`
         });
-      } else if (!!options.username && !!options.password) {
+      } else if (options.username && options.password) {
         requestsHeaders = Object.assign(requestsHeaders, {
           Authorization:
             'Basic ' +
@@ -119,12 +119,12 @@ export default function registry(opts: RegistryOptions = {}) {
           } catch {}
         }
 
-        if (!!parsedError.code && parsedError.code === 'ECONNREFUSED') {
+        if (parsedError.code && parsedError.code === 'ECONNREFUSED') {
           errMsg = 'Connection to registry has not been established';
         } else if (
           parsedError.code !== 'cli_version_not_valid' &&
           parsedError.code !== 'node_version_not_valid' &&
-          !!parsedError.error
+          parsedError.error
         ) {
           errMsg = parsedError.error;
         } else {
@@ -176,12 +176,12 @@ export default function registry(opts: RegistryOptions = {}) {
           } catch {}
         }
 
-        if (!!parsedError.code && parsedError.code === 'ECONNREFUSED') {
+        if (parsedError.code && parsedError.code === 'ECONNREFUSED') {
           errMsg = 'Connection to registry has not been established';
         } else if (
           parsedError.code !== 'cli_version_not_valid' &&
           parsedError.code !== 'node_version_not_valid' &&
-          !!parsedError.error
+          parsedError.error
         ) {
           errMsg = parsedError.error;
         } else {

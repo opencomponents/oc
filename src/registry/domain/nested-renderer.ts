@@ -59,7 +59,7 @@ export default function nestedRenderer(
       components: Options[],
       options: Options = {}
     ): Promise<Array<string | Error>> {
-      if (!components || !components.length) {
+      if (!components?.length) {
         throw new Error(
           strings.errors.registry.NESTED_RENDERER_COMPONENTS_IS_NOT_VALID
         );

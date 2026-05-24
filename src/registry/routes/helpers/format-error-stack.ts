@@ -169,38 +169,3 @@ function getCodeFrame(
     return null;
   }
 }
-
-// async function main() {
-//   const stackTrace = `
-// TypeError: Cannot read properties of undefined (reading 'name')
-//     at HandledServer.initial (/Users/ricardo.agullo/Dev/octests/helpai/_package/server.js:196:38)
-//     at async ocServerWrapper (/Users/ricardo.agullo/Dev/octests/helpai/_package/server.js:83:19)
-// `;
-//   const rawSourceMap = fs.readFileSync(
-//     './helpai/_package/server.js.map',
-//     'utf8'
-//   );
-//   const { stack, codeFrame } = await processStackTrace({
-//     stackTrace,
-//     rawSourceMap
-//   });
-
-//   // Log the stack trace
-//   for (const line of stack) {
-//     console.log(`    ${line}`);
-//   }
-
-//   // Log the code frames
-//   // for (const frame of codeFrame) {
-//   //   console.log(`\n${frame}\n`);
-//   // }
-//   for (let i = 0; i < codeFrame.length; i++) {
-//     if (i === 0) {
-//       console.log(`\n   ${codeFrame[i]}\n`);
-//     } else {
-//       console.log(`\n${codeFrame[i]}\n`);
-//     }
-//   }
-// }
-
-// main().catch(console.error);
