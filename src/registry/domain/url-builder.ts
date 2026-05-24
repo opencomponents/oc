@@ -53,7 +53,7 @@ export function componentPreview(
   baseUrl: string
 ): string {
   let href = componentForType(component, baseUrl, 'preview');
-  if (!!component.parameters && Object.keys(component.parameters).length) {
+  if (component.parameters && Object.keys(component.parameters).length) {
     href += '/?' + querystring.stringify(component.parameters);
   } else {
     href += '/';

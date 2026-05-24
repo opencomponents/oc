@@ -22,7 +22,7 @@ export default function cleanRequire(
 ) {
   const shouldThrow = !justTry;
 
-  if (require.cache && !!require.cache[path]) {
+  if (require.cache?.[path]) {
     delete require.cache[path];
   }
 

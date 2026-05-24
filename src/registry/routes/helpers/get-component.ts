@@ -379,7 +379,7 @@ export default function getComponent(conf: Config, repository: Repository) {
             renderMode
           });
 
-          if (!!err || !data) {
+          if (err || !data) {
             err =
               err ||
               new Error(strings.errors.registry.DATA_OBJECT_IS_UNDEFINED);
@@ -521,7 +521,7 @@ export default function getComponent(conf: Config, repository: Repository) {
               );
             };
 
-            if (!!cached && !conf.hotReloading) {
+            if (cached && !conf.hotReloading) {
               returnResult(cached);
             } else {
               fromPromise(repository.getCompiledView)(
@@ -642,7 +642,7 @@ export default function getComponent(conf: Config, repository: Repository) {
               }
             };
 
-            if (!!cached && !conf.hotReloading) {
+            if (cached && !conf.hotReloading) {
               domain.on('error', returnComponent);
 
               try {

@@ -113,7 +113,7 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
               logger.ok('OK');
             } catch (error: any) {
               const errorDescription =
-                error instanceof SyntaxError || !!error.message
+                error instanceof SyntaxError || error.message
                   ? error.message
                   : error;
               logger.err(

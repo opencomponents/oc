@@ -101,7 +101,7 @@ const publish = ({
           logger.ok(strings.messages.cli.PUBLISHED(options.route, dryRun));
         } catch (err: any) {
           if (err === 'Unauthorized' || err.message === 'Unauthorized') {
-            if (!!options.username || !!options.password || !!options.token) {
+            if (options.username || options.password || options.token) {
               logger.err(
                 strings.errors.cli.PUBLISHING_FAIL(
                   strings.errors.cli.INVALID_CREDENTIALS

@@ -57,7 +57,7 @@ function componentInfo(
   const isHtmlRequest =
     !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
 
-  if (isHtmlRequest && !!res.conf.discovery.ui) {
+  if (isHtmlRequest && res.conf.discovery.ui) {
     const params = getParams(component);
     const parsedAuthor = getParsedAuthor(component);
     let href = res.conf.baseUrl;

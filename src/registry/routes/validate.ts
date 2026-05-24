@@ -6,7 +6,7 @@ import { validateTemplateOcVersion } from '../domain/validators';
 export default function validate() {
   return async (req: Request, res: Response): Promise<void> => {
     // Validate that request has a JSON body with package.json
-    if (!req.body || !req.body.packageJson) {
+    if (!req.body?.packageJson) {
       res.status(400).json({
         error: 'Invalid request: packageJson is required in request body'
       });
