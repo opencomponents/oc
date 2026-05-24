@@ -298,6 +298,24 @@ export interface Config<T = any> {
    */
   local: boolean;
   /**
+   * Console interface provided to components during execution.
+   * Allows for flexible logging strategies: pass the real console, a custom
+   * implementation that sends logs to a monitoring provider, or a no-op console.
+   *
+   * @example
+   * // Log to console
+   * componentConsole: console
+   * @example
+   * // Log to monitoring provider
+   * componentConsole: createCustomConsole(monitoringClient)
+   * @example
+   * // Disable component logs
+   * componentConsole: createNoopConsole()
+   *
+   * @default createNoopConsole() - a no-op console that discards all logs
+   */
+  componentConsole: Partial<Console>;
+  /**
    * File and directory mode (octal) applied when extracting tarballs during
    * publishing.
    *
