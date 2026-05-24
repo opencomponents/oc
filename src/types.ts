@@ -403,6 +403,25 @@ export interface Config<T = any> {
    * @default 0
    */
   verbosity: number;
+  /**
+   * Encryption key(s) for securing component .env files in storage.
+   * Each key must be a 32-byte key represented as 64 hexadecimal characters.
+   *
+   * - **Single key (string)**: Used for both encryption and decryption
+   * - **Multiple keys (array)**: Most recent key at END of array
+   *
+   * Multiple keys enable secure key rotation:
+   * 1. Add new key at end: `[oldKey, newKey]`
+   * 2. New publishes use last key (newKey), but store which key index was used
+   * 3. Decryption tries the stored key index first, then falls back to others
+   * 4. Remove old keys once all components re-published
+   *
+   * When not set, .env files are stored as plaintext (with a warning).
+   *
+   * @example "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+   * @example ["old-key...", "new-key..."] // Key rotation - newest at end
+   */
+  envEncryptionKey?: string | string[];
 }
 
 type CompiledTemplate = (model: unknown) => string;

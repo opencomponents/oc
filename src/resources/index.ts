@@ -61,6 +61,8 @@ export default {
   },
   errors: {
     registry: {
+      ENV_ENCRYPTION_KEY_NOT_VALID:
+        'Encryption key must be 64 hexadecimal characters (32 bytes)',
       BATCH_ROUTE_BODY_NOT_VALID: (message: string): string =>
         `The request body is malformed: ${message}`,
       BATCH_ROUTE_BODY_NOT_VALID_CODE: 'POST_BODY_NOT_VALID',

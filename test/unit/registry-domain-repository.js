@@ -34,7 +34,10 @@ describe('registry : domain : repository', () => {
       readdirSync: fs.readdirSync,
       lstatSync: fs.lstatSync,
       readJsonSync: fs.readJsonSync,
-      writeJson: () => Promise.resolve()
+      writeJson: () => Promise.resolve(),
+      pathExists: () => Promise.resolve(false),
+      readFile: () => Promise.resolve(''),
+      writeFile: () => Promise.resolve()
     };
 
     const s3Mock = {
