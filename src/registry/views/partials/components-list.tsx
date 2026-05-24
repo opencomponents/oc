@@ -100,12 +100,13 @@ const ComponentsList = (props: {
           <input
             id="search-filter"
             type="text"
-            autofocus
+            aria-label="Filter by component name"
             placeholder="Filter by component name"
           />
           <input
             id="author-filter"
             type="text"
+            aria-label="Filter by component author"
             placeholder="Filter by component author"
           />
         </div>

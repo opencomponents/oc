@@ -8,6 +8,7 @@
   "scripts": {
     "lint": "npx @biomejs/biome check preview src test tasks",
     "lint:apply": "npx @biomejs/biome check --write preview src test tasks",
+    "preview": "bun run preview/uiPreview.ts",
     "prebuild": "rimraf dist",
     "build": "npm run lint && tsc && node tasks/build.js",
     "git-stage-and-push": "node tasks/git-stage-and-push.js",
