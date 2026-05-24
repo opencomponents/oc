@@ -205,7 +205,7 @@ body::before {
 }
 
 .theme-toggle:hover .theme-toggle-icon {
-  transform: rotate(180deg);
+  transform: rotate(15deg);
 }
 
 h1, h2, h3 {
@@ -417,14 +417,14 @@ p {
   font-size: 1.15rem;
   margin: 0;
   width: 100%;
-  color: var(--color-text-default);
+  color: var(--color-text-primary);
 }
 
 .componentRow .release {
   font-size: 1rem;
   margin: 0;
   width: 100%;
-  color: var(--color-text-default);
+  color: var(--color-text-primary);
 }
 
 .componentRow .title .description {
@@ -550,16 +550,12 @@ select:focus {
 }
 
 .filters input {
-  color: #0f0f23;
-  background-color: #eee;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-card);
 }
 
 #author-filter {
   flex: 0 1 30%;
-}
-
-@media (min-width: 1024px) {
-  margin-left: 15px;
 }
 
 .parameter {
@@ -576,7 +572,7 @@ select:focus {
 .author {
   flex: 0 1 15%;
   word-break: break-all;
-  color: var(--color-info);
+  color: var(--color-text-secondary);
 }
 
 #href {
@@ -862,7 +858,7 @@ a.tab-link.selected {
 }
 
 .info-item {
-  display: flow;
+  display: flex;
   align-items: start;
   padding: 0.75rem 0;
   border-bottom: 1px solid var(--color-border);
@@ -912,12 +908,12 @@ a.tab-link.selected {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--gradient-primary);
+  background: var(--color-border-hover);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--gradient-secondary);
+  background: var(--color-primary);
 }
 
 /* Main Content Layout */
@@ -1167,6 +1163,14 @@ a.tab-link.selected {
   color: var(--color-text-muted);
 }
 
+.empty-state {
+  text-align: center;
+  padding: 2em;
+  color: var(--color-text-muted);
+  font-style: italic;
+  margin: 0;
+}
+
 .loader p {
   margin: 0;
   font-style: italic;
@@ -1387,17 +1391,17 @@ a.tab-link.selected {
 
 .stats-badge .chart-bar:nth-child(1) {
   height: 12px;
-  background: #10b981; /* green */
+  background: var(--color-primary-light);
 }
 
 .stats-badge .chart-bar:nth-child(2) {
   height: 16px;
-  background: #ef4444; /* red */
+  background: var(--color-primary);
 }
 
 .stats-badge .chart-bar:nth-child(3) {
   height: 20px;
-  background: #3b82f6; /* blue */
+  background: var(--color-primary-dark);
 }
 
 .stats-badge .badge-text {

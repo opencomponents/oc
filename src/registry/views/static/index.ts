@@ -4,12 +4,24 @@ var oc = oc || {};
 oc.cmd = oc.cmd || [];
 
 oc.cmd.push(function() {
+  var escapeRegExp = function(s) {
+    return String(s).replace(/[.*+?^\${}()|[\\]\\\\]/g, '\\\\$&');
+  };
+
+  var safeRegExp = function(pattern, flags) {
+    try {
+      return new RegExp(pattern, flags);
+    } catch (e) {
+      return new RegExp(escapeRegExp(pattern), flags);
+    }
+  };
+
   var componentsListChanged = function() {
     $('.componentRow').removeClass('hide');
     var s = $('#search-filter').val(),
       a = $('#author-filter').val(),
-      r = new RegExp(s),
-      ar = new RegExp(a, 'i'),
+      r = safeRegExp(s, ''),
+      ar = safeRegExp(a, 'i'),
       selectedCheckboxes = $('input[type=checkbox]:checked'),
       hiddenStates = [],
       hidden = 0,
@@ -163,7 +175,7 @@ oc.cmd.push(function() {
         historyContent.show();
         
         if (historyData.length === 0) {
-          historyContent.html('<p style="text-align: center; color: #64748b; padding: 2em;">No components history available.</p>');
+          historyContent.html('<p class="empty-state">No components history available.</p>');
           return;
         }
 
@@ -189,7 +201,14 @@ oc.cmd.push(function() {
       $target.show();
       $('#menuList a').removeClass('selected');
       $('#menuList a[href="' + target + '"]').addClass('selected');
-      
+
+      // Keep URL in sync so tab survives refresh and back/forward
+      try {
+        if (history && history.replaceState && location.hash !== target) {
+          history.replaceState(null, '', target);
+        }
+      } catch (e) {}
+
       // Clean up scroll listeners when leaving history tab
       if (target !== '#components-history') {
         $(window).off('scroll.history resize.history');
@@ -216,13 +235,28 @@ oc.cmd.push(function() {
     });
   };
 
+  var debounce = function(fn, wait) {
+    var t;
+    return function() {
+      var ctx = this, args = arguments;
+      clearTimeout(t);
+      t = setTimeout(function(){ fn.apply(ctx, args); }, wait);
+    };
+  };
+
   $('#filter-components')
     .submit(componentsListChanged)
-    .keyup(componentsListChanged);
+    .keyup(debounce(componentsListChanged, 80));
   $('#filter-components input[type=checkbox]').change(componentsListChanged);
 
   if (q) {
     $('.search').val(q);
+  }
+
+  // Focus the search input only on a fresh load (no tab hash, no in-page nav)
+  if (!location.hash) {
+    var $searchInput = $('#search-filter');
+    if ($searchInput.length) { $searchInput.focus(); }
   }
 
   componentsListChanged();
