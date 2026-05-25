@@ -1,0 +1,16 @@
+{
+  "name": "welcome-with-plugin",
+  "description": "Benchmark fixture for plugin execution on component retrieval",
+  "version": "1.0.0",
+  "repository": "",
+  "oc": {
+    "plugins": ["appendSuffix"],
+    "files": {
+      "data": "server.js",
+      "template": {
+        "src": "template.jade",
+        "type": "jade"
+      }
+    }
+  }
+}
