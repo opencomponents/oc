@@ -1,0 +1,14 @@
+.DS_Store
+
+npm-debug.log
+node_modules
+coverage
+dist
+yarn-error.log
+yarn.lock
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

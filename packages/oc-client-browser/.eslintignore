@@ -1,0 +1,5 @@
+vendor/*
+dist/*
+test/configuration/*
+!test/configuration/karma*
+!test/configuration/test-settings*
