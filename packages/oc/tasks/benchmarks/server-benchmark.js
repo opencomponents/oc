@@ -726,6 +726,9 @@ const main = async () => {
   } else {
     console.log(`\n💡 To set this run as the new baseline, run with --update-baseline=true`);
   }
+  
+  // Ensure process exits cleanly
+  process.exit(0);
 };
 
 main().catch((error) => {

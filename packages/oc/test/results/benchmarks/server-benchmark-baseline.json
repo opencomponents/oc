@@ -1,0 +1,444 @@
+{
+  "createdAt": "2026-05-25T13:03:13.145Z",
+  "host": "ACCESS-PFQNV73L0V",
+  "node": "v26.0.0",
+  "platform": "darwin-arm64",
+  "benchmarkVersion": 2,
+  "options": {
+    "repetitions": 2,
+    "connections": 100,
+    "duration": "15s",
+    "timeout": "5s",
+    "requests": 0,
+    "rate": 0,
+    "disableKeepAlives": false,
+    "headers": [
+      "Accept: application/json"
+    ],
+    "storageMinLatencyMs": 8,
+    "storageMaxLatencyMs": 30,
+    "storageMaxConcurrentRequests": 128
+  },
+  "scenarios": [
+    {
+      "key": "local-memory",
+      "title": "Local memory path (warm cache)",
+      "runs": [
+        {
+          "attempt": 1,
+          "command": "bombardier -o json -p result -l -c 100 -d 15s -t 5s -m GET -H Accept: application/json http://127.0.0.1:2000/welcome/1.0.0?firstName=Jane&lastName=Doe",
+          "metrics": {
+            "totalRequests": 24908,
+            "successRequests": 24908,
+            "req2xx": 24908,
+            "req4xx": 0,
+            "req5xx": 0,
+            "rpsMean": 1655.5989256780128,
+            "rpsMax": 4855.796607199844,
+            "latencyMeanMs": 60.26459221936727,
+            "latencyP95Ms": 70.676,
+            "latencyP99Ms": 81.323,
+            "latencyMaxMs": 761.073,
+            "successRate": 1
+          },
+          "rawResult": {
+            "bytesRead": 17111796,
+            "bytesWritten": 3213132,
+            "timeTakenSeconds": 15.021265833,
+            "req1xx": 0,
+            "req2xx": 24908,
+            "req3xx": 0,
+            "req4xx": 0,
+            "req5xx": 0,
+            "others": 0,
+            "latency": {
+              "mean": 60264.592219367274,
+              "stddev": 21460.634099426483,
+              "max": 761073,
+              "percentiles": {
+                "50": 58746,
+                "75": 60307,
+                "90": 64281,
+                "95": 70676,
+                "99": 81323
+              }
+            },
+            "rps": {
+              "mean": 1655.5989256780128,
+              "stddev": 1074.5560788909308,
+              "max": 4855.796607199844,
+              "percentiles": {
+                "50": 1497.946615,
+                "75": 2694.24106,
+                "90": 3198.933635,
+                "95": 3397.218527,
+                "99": 3948.165682
+              }
+            }
+          },
+          "resourceUsage": {
+            "memory": {
+              "heapUsedDelta": 41,
+              "heapTotalDelta": 53,
+              "rssDelta": 62
+            },
+            "cpu": {
+              "userTimeDelta": 4.970241,
+              "systemTimeDelta": 11.817836999999999,
+              "elapsedSeconds": 15.041194375
+            },
+            "current": {
+              "memory": {
+                "heapUsed": 85,
+                "heapTotal": 121,
+                "rss": 204,
+                "external": 4
+              },
+              "cpu": {
+                "userTime": 5.515435,
+                "systemTime": 11.916644
+              }
+            }
+          }
+        },
+        {
+          "attempt": 2,
+          "command": "bombardier -o json -p result -l -c 100 -d 15s -t 5s -m GET -H Accept: application/json http://127.0.0.1:2000/welcome/1.0.0?firstName=Jane&lastName=Doe",
+          "metrics": {
+            "totalRequests": 25424,
+            "successRequests": 25424,
+            "req2xx": 25424,
+            "req4xx": 0,
+            "req5xx": 0,
+            "rpsMean": 1692.765848314139,
+            "rpsMax": 4157.778580056499,
+            "latencyMeanMs": 59.02852041378225,
+            "latencyP95Ms": 66.052,
+            "latencyP99Ms": 74.092,
+            "latencyMaxMs": 651.927,
+            "successRate": 1
+          },
+          "rawResult": {
+            "bytesRead": 17466288,
+            "bytesWritten": 3279696,
+            "timeTakenSeconds": 15.013133625,
+            "req1xx": 0,
+            "req2xx": 25424,
+            "req3xx": 0,
+            "req4xx": 0,
+            "req5xx": 0,
+            "others": 0,
+            "latency": {
+              "mean": 59028.52041378225,
+              "stddev": 17360.38379294876,
+              "max": 651927,
+              "percentiles": {
+                "50": 58360,
+                "75": 59963,
+                "90": 62676,
+                "95": 66052,
+                "99": 74092
+              }
+            },
+            "rps": {
+              "mean": 1692.765848314139,
+              "stddev": 1081.3231801665574,
+              "max": 4157.778580056499,
+              "percentiles": {
+                "50": 1545.299739,
+                "75": 2605.553085,
+                "90": 3285.645835,
+                "95": 3647.864358,
+                "99": 3899.16324
+              }
+            }
+          },
+          "resourceUsage": {
+            "memory": {
+              "heapUsedDelta": 23,
+              "heapTotalDelta": 31,
+              "rssDelta": 32
+            },
+            "cpu": {
+              "userTimeDelta": 4.449186000000001,
+              "systemTimeDelta": 11.992292,
+              "elapsedSeconds": 15.025998167
+            },
+            "current": {
+              "memory": {
+                "heapUsed": 108,
+                "heapTotal": 152,
+                "rss": 236,
+                "external": 4
+              },
+              "cpu": {
+                "userTime": 9.964828,
+                "systemTime": 23.908963
+              }
+            }
+          }
+        }
+      ],
+      "aggregate": {
+        "samples": 2,
+        "rps": {
+          "average": 1674.1823869960758,
+          "min": 1655.5989256780128,
+          "max": 1692.765848314139
+        },
+        "latencyP95Ms": {
+          "average": 68.364,
+          "min": 66.052,
+          "max": 70.676
+        },
+        "latencyMeanMs": {
+          "average": 59.64655631657476,
+          "min": 59.02852041378225,
+          "max": 60.26459221936727
+        },
+        "successRate": {
+          "average": 1,
+          "min": 1,
+          "max": 1
+        }
+      },
+      "resourceUsage": {
+        "heapUsedDelta": {
+          "average": 32,
+          "min": 23,
+          "max": 41
+        },
+        "heapTotalDelta": {
+          "average": 42,
+          "min": 31,
+          "max": 53
+        },
+        "rssDelta": {
+          "average": 47,
+          "min": 32,
+          "max": 62
+        },
+        "cpuUserTimeDelta": {
+          "average": 4.7097135,
+          "min": 4.449186000000001,
+          "max": 4.970241
+        },
+        "cpuSystemTimeDelta": {
+          "average": 11.9050645,
+          "min": 11.817836999999999,
+          "max": 11.992292
+        }
+      }
+    },
+    {
+      "key": "storage-simulated",
+      "title": "Simulated storage path + plugin execution",
+      "runs": [
+        {
+          "attempt": 1,
+          "command": "bombardier -o json -p result -l -c 100 -d 15s -t 5s -m GET -H Accept: application/json http://127.0.0.1:2000/welcome-with-plugin/1.0.0?firstName=Jane&lastName=Doe&suffix=-Bench",
+          "metrics": {
+            "totalRequests": 73534,
+            "successRequests": 73534,
+            "req2xx": 73534,
+            "req4xx": 0,
+            "req5xx": 0,
+            "rpsMean": 4896.496140030795,
+            "rpsMax": 6501.345804177315,
+            "latencyMeanMs": 20.411392621100443,
+            "latencyP95Ms": 30.79,
+            "latencyP99Ms": 32.85,
+            "latencyMaxMs": 68.168,
+            "successRate": 1
+          },
+          "rawResult": {
+            "bytesRead": 86843654,
+            "bytesWritten": 11397770,
+            "timeTakenSeconds": 15.028231625,
+            "req1xx": 0,
+            "req2xx": 73534,
+            "req3xx": 0,
+            "req4xx": 0,
+            "req5xx": 0,
+            "others": 0,
+            "latency": {
+              "mean": 20411.392621100444,
+              "stddev": 4303.373141411673,
+              "max": 68168,
+              "percentiles": {
+                "50": 20399,
+                "75": 26127,
+                "90": 29613,
+                "95": 30790,
+                "99": 32850
+              }
+            },
+            "rps": {
+              "mean": 4896.496140030795,
+              "stddev": 502.63417742044436,
+              "max": 6501.345804177315,
+              "percentiles": {
+                "50": 4926.741837,
+                "75": 5190.171113,
+                "90": 5407.435223,
+                "95": 5560.982941,
+                "99": 5889.978227
+              }
+            }
+          },
+          "resourceUsage": {
+            "memory": {
+              "heapUsedDelta": -63,
+              "heapTotalDelta": -56,
+              "rssDelta": -37
+            },
+            "cpu": {
+              "userTimeDelta": 10.578921000000001,
+              "systemTimeDelta": 6.835184000000002,
+              "elapsedSeconds": 15.047136708
+            },
+            "current": {
+              "memory": {
+                "heapUsed": 56,
+                "heapTotal": 108,
+                "rss": 212,
+                "external": 5
+              },
+              "cpu": {
+                "userTime": 20.74142,
+                "systemTime": 30.757172
+              }
+            }
+          }
+        },
+        {
+          "attempt": 2,
+          "command": "bombardier -o json -p result -l -c 100 -d 15s -t 5s -m GET -H Accept: application/json http://127.0.0.1:2000/welcome-with-plugin/1.0.0?firstName=Jane&lastName=Doe&suffix=-Bench",
+          "metrics": {
+            "totalRequests": 73080,
+            "successRequests": 73080,
+            "req2xx": 73080,
+            "req4xx": 0,
+            "req5xx": 0,
+            "rpsMean": 4865.725614900515,
+            "rpsMax": 6057.395170894386,
+            "latencyMeanMs": 20.537520621237,
+            "latencyP95Ms": 30.877,
+            "latencyP99Ms": 33.27,
+            "latencyMaxMs": 53.899,
+            "successRate": 1
+          },
+          "rawResult": {
+            "bytesRead": 86307480,
+            "bytesWritten": 11327400,
+            "timeTakenSeconds": 15.028404667,
+            "req1xx": 0,
+            "req2xx": 73080,
+            "req3xx": 0,
+            "req4xx": 0,
+            "req5xx": 0,
+            "others": 0,
+            "latency": {
+              "mean": 20537.520621237,
+              "stddev": 4216.483072258545,
+              "max": 53899,
+              "percentiles": {
+                "50": 20546,
+                "75": 26340,
+                "90": 29722,
+                "95": 30877,
+                "99": 33270
+              }
+            },
+            "rps": {
+              "mean": 4865.725614900515,
+              "stddev": 505.284557109766,
+              "max": 6057.395170894386,
+              "percentiles": {
+                "50": 4903.861791,
+                "75": 5162.519109,
+                "90": 5434.918102,
+                "95": 5583.0994,
+                "99": 5918.128206
+              }
+            }
+          },
+          "resourceUsage": {
+            "memory": {
+              "heapUsedDelta": 3,
+              "heapTotalDelta": -1,
+              "rssDelta": -29
+            },
+            "cpu": {
+              "userTimeDelta": 10.077275999999998,
+              "systemTimeDelta": 6.855706999999999,
+              "elapsedSeconds": 15.050753708
+            },
+            "current": {
+              "memory": {
+                "heapUsed": 59,
+                "heapTotal": 107,
+                "rss": 183,
+                "external": 5
+              },
+              "cpu": {
+                "userTime": 30.819062,
+                "systemTime": 37.612922
+              }
+            }
+          }
+        }
+      ],
+      "aggregate": {
+        "samples": 2,
+        "rps": {
+          "average": 4881.110877465655,
+          "min": 4865.725614900515,
+          "max": 4896.496140030795
+        },
+        "latencyP95Ms": {
+          "average": 30.8335,
+          "min": 30.79,
+          "max": 30.877
+        },
+        "latencyMeanMs": {
+          "average": 20.47445662116872,
+          "min": 20.411392621100443,
+          "max": 20.537520621237
+        },
+        "successRate": {
+          "average": 1,
+          "min": 1,
+          "max": 1
+        }
+      },
+      "resourceUsage": {
+        "heapUsedDelta": {
+          "average": -30,
+          "min": -63,
+          "max": 3
+        },
+        "heapTotalDelta": {
+          "average": -28.5,
+          "min": -56,
+          "max": -1
+        },
+        "rssDelta": {
+          "average": -33,
+          "min": -37,
+          "max": -29
+        },
+        "cpuUserTimeDelta": {
+          "average": 10.3280985,
+          "min": 10.077275999999998,
+          "max": 10.578921000000001
+        },
+        "cpuSystemTimeDelta": {
+          "average": 6.8454455,
+          "min": 6.835184000000002,
+          "max": 6.855706999999999
+        }
+      }
+    }
+  ]
+}
