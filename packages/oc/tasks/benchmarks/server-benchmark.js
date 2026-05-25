@@ -209,9 +209,9 @@ const prepareStorageFixtures = async () => {
     {
       name: 'welcome-with-plugin',
       packagePath: path.resolve(
-        'test/fixtures/components/welcome-with-plugin/_package/package.json'
+        'test/fixtures/benchmark-components/welcome-with-plugin/_package/package.json'
       ),
-      source: path.resolve('test/fixtures/components/welcome-with-plugin/_package')
+      source: path.resolve('test/fixtures/benchmark-components/welcome-with-plugin/_package')
     },
     {
       name: 'oc-client',
