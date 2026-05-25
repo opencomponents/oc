@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
 	"vcs": {
 		"enabled": false,
 		"clientKind": "git",
@@ -7,7 +7,7 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["preview/**/*", "src/**/*", "!src/components/oc-client/**/*"]
+		"includes": ["packages/oc/**/*", "!packages/oc/dist/**/*", "!packages/oc/src/components/oc-client/**/*", "!packages/oc/test/**/*", "!packages/oc/tasks/**/*"]
 	},
 	"formatter": {
 		"enabled": true,

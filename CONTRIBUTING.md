@@ -12,6 +12,15 @@ If you want to send a Pull Request, ensure you join the conversation first on th
 
 When preparing a pull request, ensure all the tests pass locally running `npm test`. If you have write/admin access, do it on a new branch on the upstream opencomponents repo. This allows all the test to run smoothly.
 
+Pull requests should not include release/versioning changes (changesets, version bumps, publish steps) unless explicitly requested by the maintainer.
+
+### Monorepo workflow
+
+- Run repo-level commands from the repository root (`npm run lint`, `npm run build`, `npm run test`).
+- The current workspace package is `packages/oc`.
+- Turborepo orchestrates tasks across workspaces.
+- Changesets are managed at repo root (`.changeset/`).
+
 A couple of coding rules:
 
 - never play with git history
@@ -20,16 +29,23 @@ A couple of coding rules:
 
 ### Publishing new version to npm
 
-You need to be enabled for doing this.
+This section is maintainer-only.
+
+Contributors sending pull requests are **not** required to add changesets or decide version bumps.
+
+Versioning and publishing are managed independently from the pull request workflow by the maintainer.
 
 - `master` should be all green. If not, make it green first.
 - git checkout master
 - git pull --tags
-- Run `npm run <versionType>` for new version.
-  - While on 0.X.X (not stable):
-    - `npm run publish-patch` for bugfixes, new features
-    - `npm run publish-minor` for all breaking changes
-    - `npm run publish-major` NOT YET. Still need to define milestones for 1.0.0.
+- Check pending releases:
+  - `npm run changeset:status`
+- Prepare release versions/changelog when needed:
+  - `npm run release:prepare`
+- Publish to npm when needed (will ask for OTP when needed):
+  - `npm run release:publish`
+
+`npm run release` runs both `release:prepare` and `release:publish`.
 
 ## Code of Conduct
 

@@ -23,26 +23,27 @@ node_modules
 .yarn
 # yarn.lock
 
-src/components/oc.json
-src/components/base-component-handlebars/_package
-src/components/base-component-jade/_package
+packages/oc/src/components/oc.json
+packages/oc/src/components/base-component-handlebars/_package
+packages/oc/src/components/base-component-jade/_package
 
-test/fixtures/test.tar.gz
-test/fixtures/targz-test
-test/fixtures/components/circular-json-error/_package
-test/fixtures/components/container-with-multiple-nested/_package
-test/fixtures/components/container-with-nested/_package
-test/fixtures/components/empty/_package
-test/fixtures/components/hello-world/_package
-test/fixtures/components/hello-world-custom-headers/_package
-test/fixtures/components/jade-filters/_package
-test/fixtures/components/language/_package
-test/fixtures/components/lodash-component/_package
-test/fixtures/components/no-containers/_package
-test/fixtures/components/welcome/_package
-test/fixtures/components/welcome-with-optional-parameters/_package
-test/fixtures/components/hello-world-custom-cookies/_package
+packages/oc/test/fixtures/test.tar.gz
+packages/oc/test/fixtures/targz-test
+packages/oc/test/fixtures/components/circular-json-error/_package
+packages/oc/test/fixtures/components/container-with-multiple-nested/_package
+packages/oc/test/fixtures/components/container-with-nested/_package
+packages/oc/test/fixtures/components/empty/_package
+packages/oc/test/fixtures/components/hello-world/_package
+packages/oc/test/fixtures/components/hello-world-custom-headers/_package
+packages/oc/test/fixtures/components/jade-filters/_package
+packages/oc/test/fixtures/components/language/_package
+packages/oc/test/fixtures/components/lodash-component/_package
+packages/oc/test/fixtures/components/no-containers/_package
+packages/oc/test/fixtures/components/welcome/_package
+packages/oc/test/fixtures/components/welcome-with-optional-parameters/_package
+packages/oc/test/fixtures/components/hello-world-custom-cookies/_package
 
-logintervals.md
-dist/
-test-components/
+packages/oc/logintervals.md
+packages/oc/dist/
+packages/oc/test-components/
+.turbo/
