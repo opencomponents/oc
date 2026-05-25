@@ -1,11 +1,12 @@
 ## Rules
 
 ### 1. File & Folder Organization
-- **Domain-driven structure**: Organize code by business domains (`cli/`, `registry/`, `components/`, `utils/`)
+- **Monorepo-first structure**: Workspace packages live under `packages/` (currently `packages/oc`)
+- **Domain-driven structure (inside each package)**: Organize code by business domains (`cli/`, `registry/`, `components/`, `utils/`)
 - **Subfolder patterns**: Use consistent patterns (`domain/`, `routes/`, `views/`, `middleware/`)
 - **File naming**: Use kebab-case for all files and folders (`components-cache`, `package-json-validator`)
 - **Module exports**: Use `index.ts` files for clean public APIs and re-exports
-- **Centralized types**: Place shared TypeScript interfaces in `src/types.ts`
+- **Centralized types**: Place shared TypeScript interfaces in `<package>/src/types.ts`
 
 ### 2. TypeScript Coding Standards
 - **Strict compilation**: All code must pass TypeScript strict mode checks
@@ -31,23 +32,27 @@
 
 ### Required Directory Structure
 ```
-src/
-├── cli/
-│   ├── commands.ts
-│   ├── domain/           # Business logic
-│   ├── facade/           # Public APIs
-│   └── programmatic-api.ts
-├── registry/
-│   ├── routes/           # Express routes
-│   ├── domain/           # Business logic
-│   │   └── validators/   # Input validation
-│   ├── views/            # JSX components
-│   │   └── partials/     # Reusable components
-│   └── middleware/       # Express middleware
-├── components/           # Component implementations
-├── utils/               # Shared utilities
-├── types.ts            # Centralized type definitions
-└── resources/          # Static resources
+packages/
+└── oc/
+    ├── src/
+    │   ├── cli/
+    │   │   ├── commands.ts
+    │   │   ├── domain/           # Business logic
+    │   │   ├── facade/           # Public APIs
+    │   │   └── programmatic-api.ts
+    │   ├── registry/
+    │   │   ├── routes/           # Express routes
+    │   │   ├── domain/           # Business logic
+    │   │   │   └── validators/   # Input validation
+    │   │   ├── views/            # JSX components
+    │   │   │   └── partials/     # Reusable components
+    │   │   └── middleware/       # Express middleware
+    │   ├── components/           # Component implementations
+    │   ├── utils/                # Shared utilities
+    │   ├── types.ts              # Centralized type definitions
+    │   └── resources/            # Static resources
+    ├── test/
+    └── tasks/
 ```
 
 ### File Extension Rules

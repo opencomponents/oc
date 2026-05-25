@@ -1,41 +1,40 @@
-# ![oc](https://raw.githubusercontent.com/opencomponents/oc/master/logo-type.png)
+# oc monorepo
 
-OpenComponents, **serverless in the front-end world**.
+This repository is now set up as a monorepo foundation using npm workspaces, Turborepo and Changesets.
 
-OpenComponents is an open-source framework that allows fast-moving teams to easily build and deploy front-end components. It abstracts away complicated infrastructure and leaves developers with very simple, but powerful building blocks that handle scale transparently.
+Current workspace packages:
 
-#### How does it work?
+- `packages/oc` (the existing `oc` package)
 
-First, **you create your component**. It can contain logic to get some data (using node.js) and then the view, including css and js. It can be what you want, including _React_ or _Angular_ components or whatever you like.
+## Monorepo structure
 
-Then, **you publish it** to the OpenComponents registry and you wait a couple of seconds while the registry prepares your stuff to be production-ready.
+```text
+.
+├── .changeset/
+├── package.json        # monorepo root scripts (turbo + changesets)
+├── turbo.json          # task pipeline
+└── packages/
+    └── oc/
+        ├── package.json
+        ├── src/
+        ├── test/
+        └── tasks/
+```
 
-Now, every web app in your private or public network can **consume the component** via its own HTTP endpoint during server-side rendering or just in the browser.
+## Common commands (run from repo root)
 
-We have been using it for more than two years in production at OpenTable, for shared components, third party widgets, e-mails and more. [Learn more about OC](http://tech.opentable.co.uk/blog/2016/04/27/opencomponents-microservices-in-the-front-end-world/).
+- `npm run lint` – run lint across workspaces (via Turbo)
+- `npm run build` – build all workspaces
+- `npm run test` / `npm run test-silent` – run test pipelines
+- `npm run changeset:status` – show pending release bumps
+- `npm run release:prepare` – tests + apply pending changesets
+- `npm run release:publish` – build + publish pending package releases
 
-[![npm version](https://img.shields.io/npm/v/oc.svg)](https://npmjs.org/package/oc)
-[![node version](https://img.shields.io/node/v/oc.svg)](https://npmjs.org/package/oc)
-[![Known Vulnerabilities](https://snyk.io/test/github/opencomponents/oc/badge.svg)](https://snyk.io/test/github/opencomponents/oc)
-[![downloads](https://img.shields.io/npm/dm/oc.svg?label=downloads+from+npm)](https://npmjs.org/package/oc)
-[![Join the chat at https://gitter.im/opentable/oc](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/opentable/oc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+## Package documentation
 
-## Links
+- Package docs: `packages/oc/README.md`
+- Package changelog: `packages/oc/CHANGELOG.md`
 
-- [Website](https://opencomponents.github.io)
-- [Documentation](https://opencomponents.github.io/docs/intro)
-- [Requirements and build status](#requirements-and-build-status)
-- [Changelog](CHANGELOG.md)
-- [Awesome resources about OC](https://github.com/matteofigus/awesome-oc)
-- [Contributing guidelines](CONTRIBUTING.md)
-- [Code of conduct](CONTRIBUTING.md#code-of-conduct)
-- [Troubleshooting](CONTRIBUTING.md#troubleshooting)
-- [Gitter chat](https://gitter.im/opentable/oc)
+## Contributing
 
-## Requirements and build status
-
-Disclaimer: This project is still under heavy development and the API is likely to change at any time. In case you would find any issues, check the [troubleshooting page](CONTRIBUTING.md#troubleshooting).
-
-## License
-
-MIT
+See [CONTRIBUTING.md](CONTRIBUTING.md).

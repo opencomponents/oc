@@ -1,0 +1,1759 @@
+## Change Log
+
+### v0.50.47
+- [#1471](https://github.com/opencomponents/oc/pull/1471) update handlebars cve
+
+### v0.50.45
+- [#1470](https://github.com/opencomponents/oc/pull/1470) Fix absolute require for ESM modules
+
+### v0.50.44
+- [#1468](https://github.com/opencomponents/oc/pull/1468) fix fallback
+
+### v0.50.43
+- [#1467](https://github.com/opencomponents/oc/pull/1467) dont assume errors on fallback registry calls might have a body
+
+### v0.50.42
+- [#1466](https://github.com/opencomponents/oc/pull/1466) add component-published event
+
+### v0.50.41
+- [#1462](https://github.com/opencomponents/oc/pull/1462) pass imports on preview
+
+### v0.50.40
+- [#1461](https://github.com/opencomponents/oc/pull/1461) add no robots option
+
+### v0.50.39
+- [#1460](https://github.com/opencomponents/oc/pull/1460) pass error instance
+
+### v0.50.38
+- [#1459](https://github.com/opencomponents/oc/pull/1459) add support for importmap in oc.json for oc dev
+
+### v0.50.37
+- [#1457](https://github.com/opencomponents/oc/pull/1457) update client to allow signals on fetch
+
+### v0.50.36
+- [#1456](https://github.com/opencomponents/oc/pull/1456) add envs to process.env
+- [#1455](https://github.com/opencomponents/oc/pull/1455) Fix: Remove millisecond-to-microsecond conversion in response times
+
+### v0.50.35
+- [#1453](https://github.com/opencomponents/oc/pull/1453) Fix: Update iframe selector to use 'preview-iframe' class
+- [#1451](https://github.com/opencomponents/oc/pull/1451) update client to fix oc:rendered event
+
+### v0.50.34
+- [#1450](https://github.com/opencomponents/oc/pull/1450) revert yargs for now
+
+### v0.50.33
+- [#1449](https://github.com/opencomponents/oc/pull/1449) allow token pass
+- [#1448](https://github.com/opencomponents/oc/pull/1448) add ability for custom meta query
+- [#1447](https://github.com/opencomponents/oc/pull/1447) Revamp UI + Preview server
+
+### v0.50.32
+- [#1446](https://github.com/opencomponents/oc/pull/1446) update oc-client-browser
+
+### v0.50.31
+- [#1445](https://github.com/opencomponents/oc/pull/1445) update oc client. allow lazy load rendering
+- [#1444](https://github.com/opencomponents/oc/pull/1444) update client to work with nonces
+
+### v0.50.30
+- [#1443](https://github.com/opencomponents/oc/pull/1443) typo
+
+### v0.50.28
+- [#1442](https://github.com/opencomponents/oc/pull/1442) add routes option in oc.json
+- [#1441](https://github.com/opencomponents/oc/pull/1441) add preload option
+- [#1440](https://github.com/opencomponents/oc/pull/1440) validate command
+- [#1439](https://github.com/opencomponents/oc/pull/1439) add editable fields
+- [#1436](https://github.com/opencomponents/oc/pull/1436) add preview overlay
+- [#1438](https://github.com/opencomponents/oc/pull/1438) feat: add setCookie functionality to component context
+
+### v0.50.27
+- [#1435](https://github.com/opencomponents/oc/pull/1435) Fix loading info correctly
+
+### v0.50.26
+- [#1434](https://github.com/opencomponents/oc/pull/1434) add fallback client option and new oc.json section for dev
+
+### v0.50.25
+- [#1433](https://github.com/opencomponents/oc/pull/1433) update oc client browser
+
+### v0.50.24
+- [#1432](https://github.com/opencomponents/oc/pull/1432) add author
+
+### v0.50.23
+- [#1431](https://github.com/opencomponents/oc/pull/1431) add a toggle to hide api discovery too
+
+### v0.50.22
+- [#1430](https://github.com/opencomponents/oc/pull/1430) Add keywords
+
+### v0.50.21
+- [#1429](https://github.com/opencomponents/oc/pull/1429) add meta query for components
+- [#1427](https://github.com/opencomponents/oc/pull/1427) add enum prop for params
+
+### v0.50.20
+- [#1426](https://github.com/opencomponents/oc/pull/1426) plugins with context
+
+### v0.50.18
+- [#1425](https://github.com/opencomponents/oc/pull/1425) hide log calls
+- [#1424](https://github.com/opencomponents/oc/pull/1424) add publisher field
+
+### v0.50.17
+- [#1423](https://github.com/opencomponents/oc/pull/1423) extend discovery options, add a way to filter states (experimental/deprecated), and also a way to hide experiments from api even
+
+### v0.50.16
+- [#1422](https://github.com/opencomponents/oc/pull/1422) Fix splat path on local static redirector
+
+### v0.50.15
+- [#1421](https://github.com/opencomponents/oc/pull/1421) express 5 migration
+- [#1387](https://github.com/opencomponents/oc/pull/1387) [Snyk] Security upgrade cross-spawn from 7.0.3 to 7.0.5
+- [#1389](https://github.com/opencomponents/oc/pull/1389) [Snyk] Security upgrade undici from 6.19.8 to 6.21.1
+- [#1419](https://github.com/opencomponents/oc/pull/1419) fix livereload so its correctly called after repackaging
+- [#1418](https://github.com/opencomponents/oc/pull/1418) Leave preview open without discovery
+
+### v0.50.14
+- [#1417](https://github.com/opencomponents/oc/pull/1417) add infinite scrolling to history
+
+### v0.50.13
+- [#1416](https://github.com/opencomponents/oc/pull/1416) Add history endpoint and lazy load it on the UI
+
+### v0.50.12
+- [#1415](https://github.com/opencomponents/oc/pull/1415) Move to JSX and Restyle
+- [#1413](https://github.com/opencomponents/oc/pull/1413) Fix error message on publish when is a string
+- [#1412](https://github.com/opencomponents/oc/pull/1412) Document options
+
+### v0.50.11
+- [#1411](https://github.com/opencomponents/oc/pull/1411) update client
+
+### v0.50.10
+- [#1409](https://github.com/opencomponents/oc/pull/1409) update client to support unmounting
+
+### v0.50.9
+- [#1408](https://github.com/opencomponents/oc/pull/1408) update client (fix regression bug with events listeners not getting the type on first parameter)
+
+### v0.50.8
+- [#1407](https://github.com/opencomponents/oc/pull/1407) Esm template
+
+### v0.50.7
+- [#1406](https://github.com/opencomponents/oc/pull/1406) add traceparent
+
+### v0.50.6
+- [#1405](https://github.com/opencomponents/oc/pull/1405) fix template type
+
+### v0.50.5
+- [#1404](https://github.com/opencomponents/oc/pull/1404) Multiple logins
+
+### v0.50.4
+- [#1403](https://github.com/opencomponents/oc/pull/1403) pass id when doing ssr
+
+### v0.50.3
+- [#1400](https://github.com/opencomponents/oc/pull/1400) add crypto and url globals
+
+### v0.50.2
+- [#1399](https://github.com/opencomponents/oc/pull/1399) fix content-type header
+
+### v0.50.1
+- [#1397](https://github.com/opencomponents/oc/pull/1397) update client
+
+### v0.50.0
+- [#1396](https://github.com/opencomponents/oc/pull/1396) [v0.50.0] [BREAKING] Switch compile client default to true
+- [#1395](https://github.com/opencomponents/oc/pull/1395) Support stream
+- [#1394](https://github.com/opencomponents/oc/pull/1394) add a min oc version checker for templates if defined
+
+### v0.49.67
+- [#1393](https://github.com/opencomponents/oc/pull/1393) oc-client-browser@1.95 [ALLOW EMPTY ACTIONS]
+
+### v0.49.66
+- [#1392](https://github.com/opencomponents/oc/pull/1392) add actions endpoint
+
+### v0.49.65
+- [#1391](https://github.com/opencomponents/oc/pull/1391) udpate legacy compilers
+
+### v0.49.64
+- [#1390](https://github.com/opencomponents/oc/pull/1390) update packages
+
+### v0.49.63
+- [#1385](https://github.com/opencomponents/oc/pull/1385) update client
+
+### v0.49.62
+- [#1384](https://github.com/opencomponents/oc/pull/1384) update client-browser
+
+### v0.49.61
+- [#1383](https://github.com/opencomponents/oc/pull/1383) update oc-client to get element on model
+
+### v0.49.60
+- [#1381](https://github.com/opencomponents/oc/pull/1381) fix put response
+
+### v0.49.59
+- [#1380](https://github.com/opencomponents/oc/pull/1380) update oc-client-browser
+- [#1377](https://github.com/opencomponents/oc/pull/1377) remove got, replace with undici
+- [#1376](https://github.com/opencomponents/oc/pull/1376) Remove lodash
+
+### v0.49.58
+- [#1375](https://github.com/opencomponents/oc/pull/1375) compress compiled client
+
+### v0.49.57
+- [#1374](https://github.com/opencomponents/oc/pull/1374) serve client dev
+
+### v0.49.56
+- [#1372](https://github.com/opencomponents/oc/pull/1372) npm install after oc init
+- [#1371](https://github.com/opencomponents/oc/pull/1371) dont install when packaging at all
+
+### v0.49.55
+- [#1369](https://github.com/opencomponents/oc/pull/1369) add AbortController to the globals
+
+### v0.49.54
+- [#1368](https://github.com/opencomponents/oc/pull/1368) update adapters
+
+### v0.49.53
+- [#1365](https://github.com/opencomponents/oc/pull/1365) update oc-client to 1.7.12
+
+### v0.49.52
+- [#1364](https://github.com/opencomponents/oc/pull/1364) Move to Biome
+
+### v0.49.51
+- [#1363](https://github.com/opencomponents/oc/pull/1363) calculate sizes on packaging and show in registry UI if available
+
+### v0.49.50
+- [#1362](https://github.com/opencomponents/oc/pull/1362) update oc client to fix a bug with externals
+
+### v0.49.49
+- [#1360](https://github.com/opencomponents/oc/pull/1360) [Snyk] Security upgrade express from 4.18.2 to 4.19.2
+- [#1361](https://github.com/opencomponents/oc/pull/1361) update packages
+
+### v0.49.48
+- [#1359](https://github.com/opencomponents/oc/pull/1359) add postRequestPayloadSize on dev and fix type
+
+### v0.49.47
+- [#1358](https://github.com/opencomponents/oc/pull/1358) move to p-limit await import. node 18 and improve plugin type
+
+### v0.49.46
+- [#1357](https://github.com/opencomponents/oc/pull/1357) ban eval from ocs
+
+### v0.49.45
+- [#1356](https://github.com/opencomponents/oc/pull/1356) infer storage type and export config type
+- [#1355](https://github.com/opencomponents/oc/pull/1355) add retry options to compiled client
+
+### v0.49.44
+- [#1354](https://github.com/opencomponents/oc/pull/1354) update client browser
+
+### v0.49.43
+- [#1353](https://github.com/opencomponents/oc/pull/1353) always compile client on dev
+
+### v0.49.42
+- [#1352](https://github.com/opencomponents/oc/pull/1352) Add a compileClient option
+
+### v0.49.41
+- [#1351](https://github.com/opencomponents/oc/pull/1351) update oc client browser to 1.7.3
+
+### v0.49.40
+- [#1350](https://github.com/opencomponents/oc/pull/1350) fix not adding oc-client on dev mode multiple times
+
+### v0.49.36
+- [#1346](https://github.com/opencomponents/oc/pull/1346) Add support for Actions
+
+### v0.49.34
+- [#1342](https://github.com/opencomponents/oc/pull/1342) [Snyk] Security upgrade semver from 7.4.0 to 7.5.2
+- [#1344](https://github.com/opencomponents/oc/pull/1344) Bump word-wrap from 1.2.3 to 1.2.4
+
+### v0.49.30
+- [#1339](https://github.com/opencomponents/oc/pull/1339) add dryrun on CLI and Registry
+- [#1334](https://github.com/opencomponents/oc/pull/1334) [Snyk] Security upgrade oc-template-es6-compiler from 2.1.0 to 3.0.0
+
+### v0.49.29
+- [#1327](https://github.com/opencomponents/oc/pull/1327) showing all error when publishing fails
+
+### v0.49.28
+- [#1337](https://github.com/opencomponents/oc/pull/1337) send data-provider-error event
+
+### v0.49.27
+- [#1336](https://github.com/opencomponents/oc/pull/1336) add support for global fetch on components
+- [#1324](https://github.com/opencomponents/oc/pull/1324) Bump http-cache-semantics from 4.1.0 to 4.1.1
+- [#1332](https://github.com/opencomponents/oc/pull/1332) Bump webpack from 5.64.4 to 5.77.0
+
+### v0.49.24
+- [#1329](https://github.com/opencomponents/oc/pull/1329) check for exports data too
+
+### v0.49.23
+- [#1320](https://github.com/opencomponents/oc/pull/1320) make npmignore applied only to root folders
+
+### v0.49.22
+- [#1319](https://github.com/opencomponents/oc/pull/1319) Check unverified packages after start/publishing
+
+### v0.49.21
+- [#1303](https://github.com/opencomponents/oc/pull/1303) add ability to retreieve environment variables from an env file
+- [#1312](https://github.com/opencomponents/oc/pull/1312) Upgrade project default Node.js version to 16
+- [#1317](https://github.com/opencomponents/oc/pull/1317) Bump loader-utils from 1.4.0 to 1.4.2
+
+### v0.49.19
+- [#1315](https://github.com/opencomponents/oc/pull/1315) include the entire console api in the production stub
+
+### v0.49.16
+- [#1313](https://github.com/opencomponents/oc/pull/1313) remove some any types
+
+### v0.49.14
+- [#1308](https://github.com/opencomponents/oc/pull/1308) Update project to Node.js 14.x
+- [#1310](https://github.com/opencomponents/oc/pull/1310) Add Node.js v18 to CI
+- [#1306](https://github.com/opencomponents/oc/pull/1306) Align the Node.js nvm version with the one in package.json
+- [#1301](https://github.com/opencomponents/oc/pull/1301) add tarExtractMode for extracting packages
+- [#1300](https://github.com/opencomponents/oc/pull/1300) allow for dev version for external dependencies
+- [#1302](https://github.com/opencomponents/oc/pull/1302) Bump terser from 5.10.0 to 5.14.2
+- [#1298](https://github.com/opencomponents/oc/pull/1298) Bump got from 11.8.3 to 11.8.5
+- [#1297](https://github.com/opencomponents/oc/pull/1297) [Snyk] Security upgrade got from 11.8.3 to 11.8.5
+- [#1293](https://github.com/opencomponents/oc/pull/1293) Bump minimist from 1.2.5 to 1.2.6
+- [#1299](https://github.com/opencomponents/oc/pull/1299) Refactor types
+- [#1296](https://github.com/opencomponents/oc/pull/1296) removing express-promise-router
+
+### v0.49.12
+- [#1295](https://github.com/opencomponents/oc/pull/1295) add option to send custom status code back to the registry
+
+### v0.49.8
+- [#1292](https://github.com/opencomponents/oc/pull/1292) dont watch files on temp folder from templates
+- [#1289](https://github.com/opencomponents/oc/pull/1289) use polling on watch
+- [#1288](https://github.com/opencomponents/oc/pull/1288) Update README documentation link
+- [#1287](https://github.com/opencomponents/oc/pull/1287) [INTERNAL] reduce lodash usage on test/code
+- [#1286](https://github.com/opencomponents/oc/pull/1286) Callback to promises
+- [#1285](https://github.com/opencomponents/oc/pull/1285) [CB-INTERNAL] promisify publish route
+- [#1284](https://github.com/opencomponents/oc/pull/1284) Update README.md
+- [#1273](https://github.com/opencomponents/oc/pull/1273) [CB-INTERNAL] move nested renderer to promises
+- [#1272](https://github.com/opencomponents/oc/pull/1272) [CB-INTERNAL] promisify registry
+- [#1269](https://github.com/opencomponents/oc/pull/1269) [CB-INTERNAL] move plugins initialiser to promises
+- [#1267](https://github.com/opencomponents/oc/pull/1267) [CB-INTERNAL] add express-promise-router to allow promises on routes
+- [#1266](https://github.com/opencomponents/oc/pull/1266) [CB-INTERNAL] upgrade storage adapters and parse legacy ones
+- [#1265](https://github.com/opencomponents/oc/pull/1265) [CB-INTERNAL] move components-details and repository to promises
+- [#1258](https://github.com/opencomponents/oc/pull/1258) [INTERNAL-CB] move components cache to promises
+- [#1257](https://github.com/opencomponents/oc/pull/1257) [INTERNAL-CB] Facade to promises
+- [#1247](https://github.com/opencomponents/oc/pull/1247) Some repository methods to promises
+- [#1246](https://github.com/opencomponents/oc/pull/1246) Registry cli to promises
+- [#1245](https://github.com/opencomponents/oc/pull/1245) Local to promises
+- [#1242](https://github.com/opencomponents/oc/pull/1242) move more files to promises
+- [#1241](https://github.com/opencomponents/oc/pull/1241) Start moving callback based functions to promises
+
+### v0.49.7
+- [#1283](https://github.com/opencomponents/oc/pull/1283) add "open" link to component preview page
+- [#1279](https://github.com/opencomponents/oc/pull/1279) improve auth flexibility allowing to pass any library on type field
+
+### v0.49.6
+- [#1282](https://github.com/opencomponents/oc/pull/1282) Minor logging improvements
+
+### v0.49.5
+- [#1280](https://github.com/opencomponents/oc/pull/1280) [INTERNAL] Allow for non-number port (i.e. pipe)
+
+### v0.49.4
+- [#1277](https://github.com/opencomponents/oc/pull/1277) [CLI-FEATURE] add registries options for oc publish
+- [#1276](https://github.com/opencomponents/oc/pull/1276) [CLI-FEATURE] filter components to run when running oc dev
+- [#1270](https://github.com/opencomponents/oc/pull/1270) [INTERNAL] remove code about module.paths pushing on authentication
+- [#1275](https://github.com/opencomponents/oc/pull/1275) [INTERNAL] replace deprecated new Buffer to Buffer.from
+- [#1271](https://github.com/opencomponents/oc/pull/1271) [TYPE IMPROVEMENT] remove global callback and dictionary types
+- [#1268](https://github.com/opencomponents/oc/pull/1268) [IMPROVEMENT] Improve typings of events in events handler
+- [#1264](https://github.com/opencomponents/oc/pull/1264) [INTERNAL] Replace lodash type checkers with typeof
+- [#1263](https://github.com/opencomponents/oc/pull/1263) [INTERNAL] Replace usage of lodash _.extend with Object.assign
+- [#1261](https://github.com/opencomponents/oc/pull/1261) [INTERNAL] type cleanRequire better
+- [#1256](https://github.com/opencomponents/oc/pull/1256) [INTERNAL] enable noUnusedParameters and noImplicitReturns rules. fix problems
+- [#1260](https://github.com/opencomponents/oc/pull/1260) [INTERNAL] Remove pad-zero util
+- [#1255](https://github.com/opencomponents/oc/pull/1255) [INTERNAL] enable noPropertyAccessFromIndexSignature option and fix problems
+- [#1253](https://github.com/opencomponents/oc/pull/1253) [INTERNAL] Simplify log parameter names for newline
+
+### v0.49.3
+- [#1262](https://github.com/opencomponents/oc/pull/1262) [BUGFIX] Add back --prefix when installing dependencies
+
+### v0.49.2
+- [#1259](https://github.com/opencomponents/oc/pull/1259) [BUGFIX] remove prefix command on npm
+- [#1248](https://github.com/opencomponents/oc/pull/1248) Type better baseUrlFunc and discoveryFunc
+- [#1249](https://github.com/opencomponents/oc/pull/1249) use internal body-parser from express >=4.16 
+- [#1250](https://github.com/opencomponents/oc/pull/1250) reduce lodash functions where they are easy replaceable
+- [#1251](https://github.com/opencomponents/oc/pull/1251) [INTERNAL] remove cjs export from facade, deal with it on cli/index
+- [#1252](https://github.com/opencomponents/oc/pull/1252) [INTERNAL] reduce usage of null assertions
+- [#1254](https://github.com/opencomponents/oc/pull/1254) [INTERNAL] disallow usage of one-var declarations
+- [#1244](https://github.com/opencomponents/oc/pull/1244) clean up some ts-ignore comments
+- [#1243](https://github.com/opencomponents/oc/pull/1243) Type a bit better package jsons, component package jsons and author-p…
+- [#1240](https://github.com/opencomponents/oc/pull/1240) Refactor the rest of the remaining src file to TypeScript
+- [#1239](https://github.com/opencomponents/oc/pull/1239) move to TS most of the cli/facade files
+- [#1238](https://github.com/opencomponents/oc/pull/1238) Typescript: type Registry, some routes and refine return types on some files
+- [#1237](https://github.com/opencomponents/oc/pull/1237) move require-wrapper and dependencies handlers to TS
+- [#1236](https://github.com/opencomponents/oc/pull/1236) more registry and cli files to ts
+- [#1235](https://github.com/opencomponents/oc/pull/1235) More registry domain ts
+- [#1234](https://github.com/opencomponents/oc/pull/1234) Handle dependencies ts
+- [#1233](https://github.com/opencomponents/oc/pull/1233) Validators ts
+- [#1232](https://github.com/opencomponents/oc/pull/1232) Partial views ts
+- [#1231](https://github.com/opencomponents/oc/pull/1231) add more types
+- [#1229](https://github.com/opencomponents/oc/pull/1229) move mocks, authentication and clean-require to TS
+- [#1228](https://github.com/opencomponents/oc/pull/1228) move routes helpers to TS
+- [#1227](https://github.com/opencomponents/oc/pull/1227) Refactor some validators and domain files to TS
+- [#1225](https://github.com/opencomponents/oc/pull/1225) Refactor some cli domain utils to TS
+- [#1226](https://github.com/opencomponents/oc/pull/1226) move registry middleware files to TS
+- [#1224](https://github.com/opencomponents/oc/pull/1224) refactor more utils to typescript
+- [#1223](https://github.com/opencomponents/oc/pull/1223) Refactor some CLI and registry files to TS
+- [#1222](https://github.com/opencomponents/oc/pull/1222) refactor views partials to TS
+- [#1221](https://github.com/opencomponents/oc/pull/1221) refactor resources/ files to TS
+- [#1220](https://github.com/opencomponents/oc/pull/1220) Refactor to TS views/static folder
+- [#1219](https://github.com/opencomponents/oc/pull/1219) refactor some utils to TS
+- [#1218](https://github.com/opencomponents/oc/pull/1218) Point tests to dist folder
+- [#1216](https://github.com/opencomponents/oc/pull/1216) Typescript
+- [#1217](https://github.com/opencomponents/oc/pull/1217) update packages
+- [#1209](https://github.com/opencomponents/oc/pull/1209) remove wrap-cli-callback
+- [#1210](https://github.com/opencomponents/oc/pull/1210) remove new references on non-classes
+
+### v0.49.1
+- [#1215](https://github.com/opencomponents/oc/pull/1215) add default empty object for object keys
+- [#1213](https://github.com/opencomponents/oc/pull/1213) replace _.keys and _.values with their Object methods
+- [#1212](https://github.com/opencomponents/oc/pull/1212) add request ip to the context obj
+
+### v0.49.0
+- [#1207](https://github.com/opencomponents/oc/pull/1207) [BREAKING] Update oc-client-browser to 1.5.3
+- [#1205](https://github.com/opencomponents/oc/pull/1205) update packages
+- [#1206](https://github.com/opencomponents/oc/pull/1206) remove stringformat
+- [#1204](https://github.com/opencomponents/oc/pull/1204) sanitise templates and pollinginterval options
+- [#1202](https://github.com/opencomponents/oc/pull/1202) Use chokidar
+- [#1201](https://github.com/opencomponents/oc/pull/1201) add route for dependencies
+- [#1203](https://github.com/opencomponents/oc/pull/1203) Drop support for Node 8/10
+
+### v0.48.22
+- [#1200](https://github.com/opencomponents/oc/pull/1200) upgrade oc-client to have es6 template by default
+
+### v0.48.21
+- [#1199](https://github.com/opencomponents/oc/pull/1199) Publish new version
+- [#1198](https://github.com/opencomponents/oc/pull/1198) Upgrade oc client browser
+- [#1194](https://github.com/opencomponents/oc/pull/1194) Available plugins
+- [#1196](https://github.com/opencomponents/oc/pull/1196) clean eslint rule warnings/errors
+- [#1191](https://github.com/opencomponents/oc/pull/1191) Add cli argument to skip dependencies packaging
+- [#1192](https://github.com/opencomponents/oc/pull/1192) Update husky config
+- [#1190](https://github.com/opencomponents/oc/pull/1190) Fix handling of missing dependencies
+- [#1189](https://github.com/opencomponents/oc/pull/1189) Fix tests for windows
+
+### v0.48.19
+- [#1185](https://github.com/opencomponents/oc/pull/1185) update oc-client-browser package
+
+### v0.48.18
+- [#1184](https://github.com/opencomponents/oc/pull/1184) Add support for custom keepAliveTimeout config
+
+### v0.48.17
+- [#1181](https://github.com/opencomponents/oc/pull/1181) Handle scoped packages when removing version
+
+### v0.48.16
+- [#1180](https://github.com/opencomponents/oc/pull/1180) Respect cdn.maxConcurrentRequests in components-list
+- [#1177](https://github.com/opencomponents/oc/pull/1177) Remove unsupported email address
+
+### v0.48.15
+- [#1174](https://github.com/opencomponents/oc/pull/1174) Handlebars OC Upgrade
+
+### v0.48.14
+- [#1173](https://github.com/opencomponents/oc/pull/1173) [SFX-2153] - Upgraded Handlebars Compiler
+
+### v0.48.12
+- [#1172](https://github.com/opencomponents/oc/pull/1172) [Snyk] Security upgrade oc-client from 3.2.10 to 3.2.11
+
+### v0.48.9
+- [#1170](https://github.com/opencomponents/oc/pull/1170) [SFX-2153] - Upgrading Handlerbars render to latest version
+- [#1158](https://github.com/opencomponents/oc/pull/1158) Update mocha in package.json from 6.2.2 to 7.0.1
+- [#1157](https://github.com/opencomponents/oc/pull/1157) Update async in package.json from 3.1.0 to 3.1.1
+- [#1165](https://github.com/opencomponents/oc/pull/1165) prevent package.json changing when calling oc dev
+- [#1126](https://github.com/opencomponents/oc/pull/1126) Update mocha in package.json from 6.2.1 to 6.2.2
+- [#1125](https://github.com/opencomponents/oc/pull/1125) Update husky in package.json from 3.0.8 to 3.0.9
+- [#1121](https://github.com/opencomponents/oc/pull/1121) Update lint-staged in package.json from 9.4.1 to 9.4.2
+- [#1119](https://github.com/opencomponents/oc/pull/1119) Update cross-spawn in package.json from 7.0.0 to 7.0.1
+
+### v0.48.6
+- [#1123](https://github.com/opencomponents/oc/pull/1123) update travis.yml for node version 12
+
+### v0.48.5
+- [#1124](https://github.com/opencomponents/oc/pull/1124) Rollback handlebars
+
+### v0.48.4
+- [#1114](https://github.com/opencomponents/oc/pull/1114) Update oc-template-es6-compiler in package.json from 1.1.7 to 1.1.8
+- [#1117](https://github.com/opencomponents/oc/pull/1117) Update oc-template-jade-compiler in package.json from 7.0.0 to 7.0.1
+- [#1118](https://github.com/opencomponents/oc/pull/1118) Update various dependencies
+- [#1113](https://github.com/opencomponents/oc/pull/1113) Update livereload in package.json from 0.8.1 to 0.8.2
+- [#1112](https://github.com/opencomponents/oc/pull/1112) Update husky in package.json from 3.0.7 to 3.0.8
+- [#1111](https://github.com/opencomponents/oc/pull/1111) Update lint-staged in package.json from 9.4.0 to 9.4.1
+- [#1109](https://github.com/opencomponents/oc/pull/1109) Update husky in package.json from 3.0.5 to 3.0.7
+- [#1110](https://github.com/opencomponents/oc/pull/1110) Update mocha in package.json from 6.2.0 to 6.2.1
+- [#1108](https://github.com/opencomponents/oc/pull/1108) Update lint-staged in package.json from 9.3.0 to 9.4.0
+- [#1107](https://github.com/opencomponents/oc/pull/1107) Update sinon in package.json from 7.4.2 to 7.5.0
+- [#1104](https://github.com/opencomponents/oc/pull/1104) Update lint-staged in package.json from 9.2.5 to 9.3.0
+- [#1103](https://github.com/opencomponents/oc/pull/1103) Update livereload in package.json from 0.8.0 to 0.8.1
+
+### v0.48.3
+- [#1102](https://github.com/opencomponents/oc/pull/1102) add off method (like EventListener.off)
+
+### v0.48.2
+- [#1101](https://github.com/opencomponents/oc/pull/1101) Update cross-spawn in package.json from ^6.0.3 to 7.0.0
+- [#1100](https://github.com/opencomponents/oc/pull/1100) Update sinon in package.json from 7.4.1 to 7.4.2
+- [#1099](https://github.com/opencomponents/oc/pull/1099) Update husky in package.json from 3.0.4 to 3.0.5
+- [#1087](https://github.com/opencomponents/oc/pull/1087) Add catch and additional logging. #1086
+- [#1096](https://github.com/opencomponents/oc/pull/1096) Circular json handler - tests and improvements
+- [#1098](https://github.com/opencomponents/oc/pull/1098) Update oc-client in package.json from 3.2.7 to 3.2.8
+- [#1097](https://github.com/opencomponents/oc/pull/1097) Update form-data in package.json from 2.5.0 to 2.5.1
+- [#1095](https://github.com/opencomponents/oc/pull/1095) Update lint-staged in package.json from 9.2.3 to 9.2.5
+- [#1093](https://github.com/opencomponents/oc/pull/1093) Update oc-s3-storage-adapter in package.json from 1.1.5 to 1.1.6
+- [#1092](https://github.com/opencomponents/oc/pull/1092) Update oc-client-browser in package.json from 1.3.4 to 1.3.5
+- [#1088](https://github.com/opencomponents/oc/pull/1088) Update semver-extra in package.json from 2.0.1 to 3.0.0
+- [#1090](https://github.com/opencomponents/oc/pull/1090) Update husky in package.json from 3.0.2 to 3.0.4
+- [#1089](https://github.com/opencomponents/oc/pull/1089) Update lint-staged in package.json from 9.2.1 to 9.2.3
+- [#1084](https://github.com/opencomponents/oc/pull/1084) Update sinon in package.json from 7.3.2 to 7.4.1
+- [#1082](https://github.com/opencomponents/oc/pull/1082) Update husky in package.json from 3.0.1 to 3.0.2
+- [#1081](https://github.com/opencomponents/oc/pull/1081) Update lint-staged in package.json from 9.2.0 to 9.2.1
+- [#1080](https://github.com/opencomponents/oc/pull/1080) Update semver in package.json from 6.2.0 to 6.3.0
+- [#1079](https://github.com/opencomponents/oc/pull/1079) Update mocha in package.json from 6.1.4 to 6.2.0
+- [#1078](https://github.com/opencomponents/oc/pull/1078) Update husky in package.json from 3.0.0 to 3.0.1
+- [#1065](https://github.com/opencomponents/oc/pull/1065) Update fs-extra in package.json from 8.0.1 to 8.1.0
+- [#1075](https://github.com/opencomponents/oc/pull/1075) Update lint-staged in package.json from 8.2.1 to 9.2.0
+- [#1076](https://github.com/opencomponents/oc/pull/1076) Update yargs in package.json from 13.2.4 to 13.3.0
+- [#1068](https://github.com/opencomponents/oc/pull/1068) Update semver in package.json from 6.1.1 to 6.2.0
+- [#1069](https://github.com/opencomponents/oc/pull/1069) Update husky in package.json from 2.5.0 to 3.0.0
+- [#1071](https://github.com/opencomponents/oc/pull/1071) Update form-data in package.json from 2.4.0 to 2.5.0
+- [#1061](https://github.com/opencomponents/oc/pull/1061) Update async in package.json from ^2.6.0 to 3.1.0
+- [#1063](https://github.com/opencomponents/oc/pull/1063) Update husky in package.json from 2.4.1 to 2.5.0
+- [#1058](https://github.com/opencomponents/oc/pull/1058) Update prettier-eslint-cli in package.json from ^4.0.4 to 5.0.0
+- [#1059](https://github.com/opencomponents/oc/pull/1059) Update form-data in package.json from 2.3.3 to 2.4.0
+- [#1060](https://github.com/opencomponents/oc/pull/1060) Update oc-client in package.json from 3.2.6 to 3.2.7
+
+### v0.48.1
+- [#1056](https://github.com/opencomponents/oc/pull/1056) Added the support for changing the post request payload size
+- [#1055](https://github.com/opencomponents/oc/pull/1055) Update husky in package.json from 2.4.0 to 2.4.1
+- [#1057](https://github.com/opencomponents/oc/pull/1057) Update lint-staged in package.json from 8.2.0 to 8.2.1
+- [#1053](https://github.com/opencomponents/oc/pull/1053) Update lint-staged in package.json from 8.1.7 to 8.2.0
+- [#1052](https://github.com/opencomponents/oc/pull/1052) Update husky in package.json from 2.3.0 to 2.4.0
+
+### v0.48.0
+- [#1051](https://github.com/opencomponents/oc/pull/1051) Update oc-template-jade-compiler in package.json from 6.2.7 to 7.0.0
+- [#1050](https://github.com/opencomponents/oc/pull/1050) Update oc-template-jade in package.json from 6.0.13 to 7.0.0
+- [#1049](https://github.com/opencomponents/oc/pull/1049) Update oc-template-es6-compiler in package.json from 1.1.6 to 1.1.7
+
+### v0.47.1
+- [#1048](https://github.com/opencomponents/oc/pull/1048) Update semver in package.json from 6.1.0 to 6.1.1
+- [#1047](https://github.com/opencomponents/oc/pull/1047) Update oc-template-jade-compiler in package.json from 6.2.6 to 6.2.7
+- [#1045](https://github.com/opencomponents/oc/pull/1045) Update oc-client in package.json from 3.2.5 to 3.2.6
+- [#1046](https://github.com/opencomponents/oc/pull/1046) Update oc-s3-storage-adapter in package.json from 1.1.4 to 1.1.5
+- [#1044](https://github.com/opencomponents/oc/pull/1044) Update oc-template-es6-compiler in package.json from 1.1.5 to 1.1.6
+- [#1043](https://github.com/opencomponents/oc/pull/1043) [Snyk] Fix for 1 vulnerable dependencies
+- [#1041](https://github.com/opencomponents/oc/pull/1041) Update express in package.json from 4.16.4 to 4.17.1
+- [#1039](https://github.com/opencomponents/oc/pull/1039) Update semver in package.json from 6.0.0 to 6.1.0
+- [#1040](https://github.com/opencomponents/oc/pull/1040) Update livereload in package.json from ^0.7.0 to 0.8.0
+- [#1033](https://github.com/opencomponents/oc/pull/1033) Update fs-extra in package.json from 7.0.1 to 8.0.1
+- [#1035](https://github.com/opencomponents/oc/pull/1035) Update husky in package.json from 2.2.0 to 2.3.0
+- [#1034](https://github.com/opencomponents/oc/pull/1034) Update lint-staged in package.json from 8.1.6 to 8.1.7
+- [#1032](https://github.com/opencomponents/oc/pull/1032) Update yargs in package.json from 13.2.2 to 13.2.4
+- [#1030](https://github.com/opencomponents/oc/pull/1030) Update lint-staged in package.json from 8.1.5 to 8.1.6
+- [#1029](https://github.com/opencomponents/oc/pull/1029) Update husky in package.json from 2.1.0 to 2.2.0
+
+### v0.47.0
+- [#1024](https://github.com/opencomponents/oc/pull/1024) set headers for getComponents
+- [#1028](https://github.com/opencomponents/oc/pull/1028) Update body-parser in package.json from 1.18.3 to 1.19.0
+- [#1027](https://github.com/opencomponents/oc/pull/1027) Update husky in package.json from 1.3.1 to 2.1.0
+- [#1026](https://github.com/opencomponents/oc/pull/1026) Update mocha in package.json from 6.1.3 to 6.1.4
+- [#1025](https://github.com/opencomponents/oc/pull/1025) Update sinon in package.json from 7.3.1 to 7.3.2
+- [#1021](https://github.com/opencomponents/oc/pull/1021) Update mocha in package.json from 6.1.2 to 6.1.3
+- [#1019](https://github.com/opencomponents/oc/pull/1019) Update mocha in package.json from 6.1.1 to 6.1.2
+- [#1018](https://github.com/opencomponents/oc/pull/1018) Update mocha in package.json from 6.0.2 to 6.1.1
+- [#1017](https://github.com/opencomponents/oc/pull/1017) Update serialize-error in package.json from 4.0.0 to 4.1.0
+- [#1016](https://github.com/opencomponents/oc/pull/1016) Update semver in package.json from 5.6.0 to 6.0.0
+- [#1015](https://github.com/opencomponents/oc/pull/1015) Update sinon in package.json from 7.3.0 to 7.3.1
+
+### v0.46.0
+- [#1013](https://github.com/opencomponents/oc/pull/1013) Update oc-client in package.json from 3.2.4 to 3.2.5
+- [#1012](https://github.com/opencomponents/oc/pull/1012) Remove support for node 6
+- [#1010](https://github.com/opencomponents/oc/pull/1010) Update serialize-error in package.json from 3.0.0 to 4.0.0
+- [#1011](https://github.com/opencomponents/oc/pull/1011) Update sinon in package.json from 7.2.7 to 7.3.0
+- [#1009](https://github.com/opencomponents/oc/pull/1009) Update opn in package.json from 5.4.0 to 5.5.0
+- [#1008](https://github.com/opencomponents/oc/pull/1008) Update yargs in package.json from 13.2.1 to 13.2.2
+- [#1007](https://github.com/opencomponents/oc/pull/1007) Update sinon in package.json from 7.2.6 to 7.2.7
+- [#1005](https://github.com/opencomponents/oc/pull/1005) Update lint-staged in package.json from 8.1.4 to 8.1.5
+- [#1006](https://github.com/opencomponents/oc/pull/1006) Update sinon in package.json from 7.2.5 to 7.2.6
+- [#1004](https://github.com/opencomponents/oc/pull/1004) Update sinon in package.json from 7.2.4 to 7.2.5
+- [#1003](https://github.com/opencomponents/oc/pull/1003) Update mocha in package.json from 6.0.1 to 6.0.2
+- [#1002](https://github.com/opencomponents/oc/pull/1002) Update mocha in package.json from 6.0.0 to 6.0.1
+
+### v0.45.4
+- [#1001](https://github.com/opencomponents/oc/pull/1001) [Snyk] Fix for 1 vulnerable dependencies
+
+### v0.45.3
+- [#1000](https://github.com/opencomponents/oc/pull/1000) [Snyk] Fix for 1 vulnerable dependencies
+- [#997](https://github.com/opencomponents/oc/pull/997) Update yargs in package.json from 13.2.0 to 13.2.1
+- [#999](https://github.com/opencomponents/oc/pull/999) Update sinon in package.json from 7.2.3 to 7.2.4
+- [#998](https://github.com/opencomponents/oc/pull/998) Update mocha in package.json from ^5.0.0 to 6.0.0
+- [#996](https://github.com/opencomponents/oc/pull/996) Update yargs in package.json from 13.1.0 to 13.2.0
+- [#995](https://github.com/opencomponents/oc/pull/995) Update lint-staged in package.json from 8.1.3 to 8.1.4
+- [#994](https://github.com/opencomponents/oc/pull/994) Update yargs in package.json from 12.0.5 to 13.1.0
+- [#993](https://github.com/opencomponents/oc/pull/993) Update oc-client in package.json from 3.2.2 to 3.2.3
+- [#992](https://github.com/opencomponents/oc/pull/992) Update lint-staged in package.json from 8.1.2 to 8.1.3
+- [#991](https://github.com/opencomponents/oc/pull/991) Update lint-staged in package.json from 8.1.1 to 8.1.2
+- [#990](https://github.com/opencomponents/oc/pull/990) Update lint-staged in package.json from 8.1.0 to 8.1.1
+- [#988](https://github.com/opencomponents/oc/pull/988) Update sinon in package.json from 7.2.2 to 7.2.3
+- [#986](https://github.com/opencomponents/oc/pull/986) Update husky in package.json from 1.3.0 to 1.3.1
+
+### v0.45.2
+- [#983](https://github.com/opencomponents/oc/pull/983) Update oc-template-handlebars-compiler in package.json from 6.2.4 to 6.2.6
+- [#985](https://github.com/opencomponents/oc/pull/985) Update oc-template-jade-compiler in package.json from 6.2.4 to 6.2.6
+- [#984](https://github.com/opencomponents/oc/pull/984) Update oc-template-es6-compiler in package.json from 1.1.3 to 1.1.5
+- [#979](https://github.com/opencomponents/oc/pull/979) Update oc-template-jade in package.json from 6.0.12 to 6.0.13
+- [#975](https://github.com/opencomponents/oc/pull/975) Update dependency-graph in package.json from 0.7.2 to 0.8.0
+- [#978](https://github.com/opencomponents/oc/pull/978) Update husky in package.json from 1.2.1 to 1.3.0
+- [#976](https://github.com/opencomponents/oc/pull/976) Update sinon in package.json from 7.1.1 to 7.2.2
+- [#977](https://github.com/opencomponents/oc/pull/977) Update husky in package.json from 1.2.0 to 1.2.1
+- [#973](https://github.com/opencomponents/oc/pull/973) Update colors in package.json from 1.3.2 to 1.3.3
+
+### v0.45.1
+- [#971](https://github.com/opencomponents/oc/pull/971) oc package now is able to reuse modules in component path
+- [#951](https://github.com/opencomponents/oc/pull/951) Update form-data in package.json from 2.3.2 to 2.3.3
+- [#970](https://github.com/opencomponents/oc/pull/970) Update lint-staged in package.json from 8.0.5 to 8.1.0
+- [#969](https://github.com/opencomponents/oc/pull/969) Update husky in package.json from 1.1.2 to 1.2.0
+- [#968](https://github.com/opencomponents/oc/pull/968) Update yargs in package.json from 12.0.2 to 12.0.5
+- [#966](https://github.com/opencomponents/oc/pull/966) Update lint-staged in package.json from 8.0.4 to 8.0.5
+- [#958](https://github.com/opencomponents/oc/pull/958) Update fs-extra in package.json from 7.0.0 to 7.0.1
+- [#963](https://github.com/opencomponents/oc/pull/963) Update node dependency to >= 8
+- [#960](https://github.com/opencomponents/oc/pull/960) Added editorconfig file
+- [#956](https://github.com/opencomponents/oc/pull/956) Update sinon in package.json from 7.1.0 to 7.1.1
+- [#955](https://github.com/opencomponents/oc/pull/955) Update lint-staged in package.json from 8.0.0 to 8.0.4
+- [#953](https://github.com/opencomponents/oc/pull/953) Update lint-staged in package.json from ^7.0.0 to 8.0.0
+- [#946](https://github.com/opencomponents/oc/pull/946) Update serialize-error in package.json from ^2.1.0 to 3.0.0
+- [#952](https://github.com/opencomponents/oc/pull/952) Update sinon in package.json from 6.3.5 to 7.1.0
+- [#949](https://github.com/opencomponents/oc/pull/949) Update semver in package.json from 5.5.1 to 5.6.0
+- [#948](https://github.com/opencomponents/oc/pull/948) Update husky in package.json from 1.1.1 to 1.1.2
+- [#947](https://github.com/opencomponents/oc/pull/947) Update express in package.json from 4.16.3 to 4.16.4
+
+### v0.45.0
+- [#941](https://github.com/opencomponents/oc/pull/941) [Suggestion] Handling relative path when initiating component
+- [#944](https://github.com/opencomponents/oc/pull/944) Update sinon in package.json from 6.3.4 to 6.3.5
+- [#945](https://github.com/opencomponents/oc/pull/945) Update husky in package.json from 1.0.1 to 1.1.1
+- [#940](https://github.com/opencomponents/oc/pull/940) Update husky in package.json from ^0.14.3 to 1.0.1
+- [#936](https://github.com/opencomponents/oc/pull/936) Update sinon in package.json from 6.1.5 to 6.3.4
+- [#939](https://github.com/opencomponents/oc/pull/939) Update chai in package.json from 4.1.2 to 4.2.0
+
+### v0.44.13
+- [#933](https://github.com/opencomponents/oc/pull/933) Update morgan in package.json from 1.9.0 to 1.9.1
+- [#926](https://github.com/opencomponents/oc/pull/926) Update dependency-graph in package.json from 0.7.1 to 0.7.2
+- [#937](https://github.com/opencomponents/oc/pull/937) Update opn in package.json from 5.3.0 to 5.4.0
+- [#924](https://github.com/opencomponents/oc/pull/924) Update semver in package.json from 5.5.0 to 5.5.1
+- [#925](https://github.com/opencomponents/oc/pull/925) Update colors in package.json from 1.3.1 to 1.3.2
+- [#930](https://github.com/opencomponents/oc/pull/930) Update oc-s3-storage-adapter in package.json from 1.1.3 to 1.1.4
+- [#932](https://github.com/opencomponents/oc/pull/932) Update yargs in package.json from 12.0.1 to 12.0.2
+- [#931](https://github.com/opencomponents/oc/pull/931) expose express app to registry
+- [#923](https://github.com/opencomponents/oc/pull/923) Update sinon in package.json from 6.1.4 to 6.1.5
+- [#920](https://github.com/opencomponents/oc/pull/920) Update colors in package.json from 1.3.0 to 1.3.1
+- [#919](https://github.com/opencomponents/oc/pull/919) Update sinon in package.json from 6.1.3 to 6.1.4
+- [#917](https://github.com/opencomponents/oc/pull/917) Update fs-extra in package.json from 6.0.1 to 7.0.0
+- [#916](https://github.com/opencomponents/oc/pull/916) Update oc-s3-storage-adapter in package.json from 1.1.2 to 1.1.3
+
+### v0.44.12
+- [#915](https://github.com/opencomponents/oc/pull/915) Update oc-storage-adapters-utils in package.json from 1.0.2 to 1.0.3
+- [#914](https://github.com/opencomponents/oc/pull/914) Update sinon in package.json from 6.1.0 to 6.1.3
+- [#910](https://github.com/opencomponents/oc/pull/910) Update yargs in package.json from ^11.0.0 to 12.0.1
+- [#912](https://github.com/opencomponents/oc/pull/912) Update sinon in package.json from 6.0.1 to 6.1.0
+- [#909](https://github.com/opencomponents/oc/pull/909) fix for issue 907
+- [#908](https://github.com/opencomponents/oc/pull/908) Update sinon in package.json from 6.0.0 to 6.0.1
+- [#905](https://github.com/opencomponents/oc/pull/905) Update sinon in package.json from ^5.0.10 to 6.0.0
+
+### v0.44.11
+- [#904](https://github.com/opencomponents/oc/pull/904) Upgrade deps
+
+### v0.44.10
+- [#902](https://github.com/opencomponents/oc/pull/902) Update oc-client in package.json from 3.2.0 to 3.2.1
+- [#895](https://github.com/opencomponents/oc/pull/895) Update chai in package.json from 3.5.0 to 4.1.2
+- [#903](https://github.com/opencomponents/oc/pull/903) Update oc-client-browser in package.json from 1.3.2 to 1.3.3
+- [#899](https://github.com/opencomponents/oc/pull/899) Fix oc-cli breaking on Windows when modifying files
+- [#901](https://github.com/opencomponents/oc/pull/901) Update dependency-graph in package.json from 0.7.0 to 0.7.1
+- [#900](https://github.com/opencomponents/oc/pull/900) Update oc-client in package.json from 3.1.0 to 3.2.0
+
+### v0.44.9
+- [#897](https://github.com/opencomponents/oc/pull/897) [DX-515] Async waterfall was calling the wrong callback
+
+### v0.44.8
+- [#896](https://github.com/opencomponents/oc/pull/896) Update compilers
+- [#891](https://github.com/opencomponents/oc/pull/891) Update oc-client-browser in package.json from 1.3.1 to 1.3.2
+- [#890](https://github.com/opencomponents/oc/pull/890) Update fs-extra in package.json from 6.0.0 to 6.0.1
+- [#889](https://github.com/opencomponents/oc/pull/889) Update express in package.json from 4.16.2 to 4.16.3
+- [#888](https://github.com/opencomponents/oc/pull/888) Switch from Greenkeeper to dependencies.io
+
+### v0.44.7
+- [#885](https://github.com/opencomponents/oc/pull/885) Add .idea/ in files patterns to ignore
+
+### v0.44.6
+- [#886](https://github.com/opencomponents/oc/pull/886) Lock broken version of es6-compiler
+
+### v0.44.5
+- [#881](https://github.com/opencomponents/oc/pull/881) chore(package): update sinon to version 5.0.10
+- [#884](https://github.com/opencomponents/oc/pull/884) ensuring trailing slash to the registry url before removing
+- [#882](https://github.com/opencomponents/oc/pull/882) Update builtin-modules to the latest version 🚀
+- [#878](https://github.com/opencomponents/oc/pull/878) Update colors to the latest version 🚀
+- [#876](https://github.com/opencomponents/oc/pull/876) Upgrade lodash
+- [#877](https://github.com/opencomponents/oc/pull/877) UI bugfix
+
+### v0.44.4
+- [#875](https://github.com/opencomponents/oc/pull/875) [DX-502] Add templates info into OC UI
+- [#874](https://github.com/opencomponents/oc/pull/874) Update body-parser to the latest version 🚀
+
+### v0.44.3
+- [#872](https://github.com/opencomponents/oc/pull/872) [DX-497] OC Clean
+- [#871](https://github.com/opencomponents/oc/pull/871) [DX-467] Legacy cleanup Part I
+- [#869](https://github.com/opencomponents/oc/pull/869) [DX-496] Fix port allocation for liveReload
+- [#870](https://github.com/opencomponents/oc/pull/870) Update fs-extra to the latest version 🚀
+
+### v0.44.2
+- [#868](https://github.com/opencomponents/oc/pull/868) Live reload to work in dev only when hotReloading flag is on
+- [#867](https://github.com/opencomponents/oc/pull/867) Fix git script
+
+### v0.44.1
+- [#864](https://github.com/opencomponents/oc/pull/864) [DX-467] Remove Pug dependency from the UI
+- [#865](https://github.com/opencomponents/oc/pull/865) Integrate CI to modern node versions
+- [#866](https://github.com/opencomponents/oc/pull/866) Update colors to the latest version 🚀
+
+### v0.44.0
+- [#862](https://github.com/opencomponents/oc/pull/862) [DX-467] Add ES6 template as default core template
+- [#863](https://github.com/opencomponents/oc/pull/863) Update oc-client to the latest version 🚀
+
+### v0.43.2
+- [#861](https://github.com/opencomponents/oc/pull/861) Housekeeping
+
+### v0.43.0
+- [#852](https://github.com/opencomponents/oc/pull/852) [DX-412] Empty response setter on context
+- [#860](https://github.com/opencomponents/oc/pull/860) Housekeeping
+- [#859](https://github.com/opencomponents/oc/pull/859) Update oc-client to the latest version 🚀
+- [#858](https://github.com/opencomponents/oc/pull/858) Update oc-client-browser to the latest version 🚀
+- [#857](https://github.com/opencomponents/oc/pull/857) Update oc-template-jade-compiler to the latest version 🚀
+- [#856](https://github.com/opencomponents/oc/pull/856) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#855](https://github.com/opencomponents/oc/pull/855) Update oc-template-jade to the latest version 🚀
+- [#853](https://github.com/opencomponents/oc/pull/853) Update oc-template-handlebars to the latest version 🚀
+- [#851](https://github.com/opencomponents/oc/pull/851) Update sinon to the latest version 🚀
+- [#849](https://github.com/opencomponents/oc/pull/849) Update pug to the latest version 🚀
+- [#848](https://github.com/opencomponents/oc/pull/848) Update accept-language-parser to the latest version 🚀
+- [#847](https://github.com/opencomponents/oc/pull/847) Update pug to the latest version 🚀
+- [#846](https://github.com/opencomponents/oc/pull/846) Update oc-client to the latest version 🚀
+- [#842](https://github.com/opencomponents/oc/pull/842) Update oc-template-handlebars to the latest version 🚀
+- [#843](https://github.com/opencomponents/oc/pull/843) Update oc-template-jade to the latest version 🚀
+- [#844](https://github.com/opencomponents/oc/pull/844) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#845](https://github.com/opencomponents/oc/pull/845) Update oc-template-jade-compiler to the latest version 🚀
+- [#841](https://github.com/opencomponents/oc/pull/841) Add license scan report and status
+- [#840](https://github.com/opencomponents/oc/pull/840) Update opn to the latest version 🚀
+- [#839](https://github.com/opencomponents/oc/pull/839) Update colors to the latest version 🚀
+- [#838](https://github.com/opencomponents/oc/pull/838) Update colors to the latest version 🚀
+- [#837](https://github.com/opencomponents/oc/pull/837) Update pug to the latest version 🚀
+- [#835](https://github.com/opencomponents/oc/pull/835) Update pug to the latest version 🚀
+- [#834](https://github.com/opencomponents/oc/pull/834) Update livereload to the latest version 🚀
+- [#832](https://github.com/opencomponents/oc/pull/832) Update lint-staged to the latest version 🚀
+- [#830](https://github.com/opencomponents/oc/pull/830) Update form-data to the latest version 🚀
+
+### v0.42.26
+- [#829](https://github.com/opencomponents/oc/pull/829) Added author to components list view and author filter
+
+### v0.42.25
+- [#828](https://github.com/opencomponents/oc/pull/828) Update oc-client to the latest version 🚀
+- [#827](https://github.com/opencomponents/oc/pull/827) Update oc-client-browser to the latest version 🚀
+- [#826](https://github.com/opencomponents/oc/pull/826) Update oc-client to the latest version 🚀
+
+### v0.42.24
+- [#825](https://github.com/opencomponents/oc/pull/825) [DX-385] Add sourcemaps to server.js during dev, add path to node's vm
+
+### v0.42.21
+- [#823](https://github.com/opencomponents/oc/pull/823) [DX-390] Fix protocol sanitization
+- [#822](https://github.com/opencomponents/oc/pull/822) logo-type
+- [#821](https://github.com/opencomponents/oc/pull/821) Node builds matrix
+
+### v0.42.20
+- [#820](https://github.com/opencomponents/oc/pull/820) [DX-353] Serialize exception
+- [#818](https://github.com/opencomponents/oc/pull/818) Update oc-s3-storage-adapter to the latest version 🚀
+- [#816](https://github.com/opencomponents/oc/pull/816) updated logo asset
+- [#815](https://github.com/opencomponents/oc/pull/815) update docs for new organisation
+- [#814](https://github.com/opencomponents/oc/pull/814) Update dependencies to enable Greenkeeper 🌴
+
+### v0.42.19
+- [#813](https://github.com/opencomponents/oc/pull/813) [DX-366] Allow usage of protocol  in storage.options.path
+- [#812](https://github.com/opencomponents/oc/pull/812) Update oc-s3-storage-adapter to the latest version 🚀
+
+### v0.42.18
+- [#811](https://github.com/opencomponents/oc/pull/811) [DX-363] Registry conf.env sanitizer
+
+### v0.42.17
+- [#810](https://github.com/opencomponents/oc/pull/810) [DX-270] Async update
+- [#809](https://github.com/opencomponents/oc/pull/809) fix(package): update cross-spawn to version 6.0.3
+- [#806](https://github.com/opencomponents/oc/pull/806) Update minimal-request to the latest version 🚀
+- [#805](https://github.com/opencomponents/oc/pull/805) Update mocha to the latest version 🚀
+- [#804](https://github.com/opencomponents/oc/pull/804) Update dependency-graph to the latest version 🚀
+- [#802](https://github.com/opencomponents/oc/pull/802) Update semver to the latest version 🚀
+- [#801](https://github.com/opencomponents/oc/pull/801) Update opn to the latest version 🚀
+
+### v0.42.16
+- [#792](https://github.com/opencomponents/oc/pull/792) Add test for issue #789 showing error message [Object object]
+
+### v0.42.15
+- [#798](https://github.com/opencomponents/oc/pull/798) Update oc-client to the latest version 🚀
+- [#797](https://github.com/opencomponents/oc/pull/797) Update oc-client-browser to the latest version 🚀
+
+### v0.42.14
+- [#795](https://github.com/opencomponents/oc/pull/795)  [DX-324] full async plugins initialisation
+
+### v0.42.13
+- [#794](https://github.com/opencomponents/oc/pull/794) [DX-296] Mocks can have the same signature as real plugins
+- [#793](https://github.com/opencomponents/oc/pull/793) Update oc-s3-storage-adapter to the latest version 🚀
+- [#790](https://github.com/opencomponents/oc/pull/790) Update oc-template-jade-compiler to the latest version 🚀
+- [#791](https://github.com/opencomponents/oc/pull/791) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#788](https://github.com/opencomponents/oc/pull/788) Update fs-extra to the latest version 🚀
+
+### v0.42.12
+- [#786](https://github.com/opencomponents/oc/pull/786) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#787](https://github.com/opencomponents/oc/pull/787) Update oc-template-jade-compiler to the latest version 🚀
+- [#785](https://github.com/opencomponents/oc/pull/785) Update oc-client to the latest version 🚀
+- [#784](https://github.com/opencomponents/oc/pull/784) Update oc-client-browser to the latest version 🚀
+- [#782](https://github.com/opencomponents/oc/pull/782) Update oc-template-jade-compiler to the latest version 🚀
+- [#783](https://github.com/opencomponents/oc/pull/783) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#781](https://github.com/opencomponents/oc/pull/781) Update fs-extra to the latest version 🚀
+
+### v0.42.10
+- [#775](https://github.com/opencomponents/oc/pull/775) Add github issue/PR templates
+- [#780](https://github.com/opencomponents/oc/pull/780) Update oc-client to the latest version 🚀
+- [#779](https://github.com/opencomponents/oc/pull/779) Update oc-client-browser to the latest version 🚀
+- [#776](https://github.com/opencomponents/oc/pull/776) Update lint-staged to the latest version 🚀
+
+### v0.42.7
+- [#778](https://github.com/opencomponents/oc/pull/778) Update oc-client to the latest version 🚀
+- [#777](https://github.com/opencomponents/oc/pull/777) Update oc-client-browser to the latest version 🚀
+
+### v0.42.6
+- [#774](https://github.com/opencomponents/oc/pull/774) logger.fail bugfix
+
+### v0.42.5
+- [#773](https://github.com/opencomponents/oc/pull/773) [DX-283] Dependencies handler on packaging
+
+### v0.42.4
+- [#772](https://github.com/opencomponents/oc/pull/772) Update oc-client to the latest version 🚀
+- [#771](https://github.com/opencomponents/oc/pull/771) [DX-277] Pass the templates down to the client via the registry
+- [#770](https://github.com/opencomponents/oc/pull/770) Update oc-client-browser to the latest version 🚀
+
+### v0.42.3
+- [#768](https://github.com/opencomponents/oc/pull/768) [DX-247] dev/publish cli mode - prevent some deps to run in an infinite loop
+
+### v0.42.2
+- [#757](https://github.com/opencomponents/oc/pull/757) [DX-260] s3 storage adapter
+- [#767](https://github.com/opencomponents/oc/pull/767) Update oc-client to the latest version 🚀
+
+### v0.42.1
+- [#765](https://github.com/opencomponents/oc/pull/765) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#766](https://github.com/opencomponents/oc/pull/766) Update oc-template-jade-compiler to the latest version 🚀
+- [#763](https://github.com/opencomponents/oc/pull/763) passing prefix option to dev cmd
+- [#764](https://github.com/opencomponents/oc/pull/764) Revert "Update async to the latest version 🚀"
+- [#740](https://github.com/opencomponents/oc/pull/740) Update async to the latest version 🚀
+- [#761](https://github.com/opencomponents/oc/pull/761) fix(package): update oc-template-handlebars-compiler to version 6.1.7
+- [#649](https://github.com/opencomponents/oc/pull/649) Update yargs to the latest version 🚀
+- [#760](https://github.com/opencomponents/oc/pull/760) Update oc-template-jade-compiler to the latest version 🚀
+- [#759](https://github.com/opencomponents/oc/pull/759) Update aws-sdk to the latest version 🚀
+- [#758](https://github.com/opencomponents/oc/pull/758) Update aws-sdk to the latest version 🚀
+- [#753](https://github.com/opencomponents/oc/pull/753) Update lint-staged to the latest version 🚀
+- [#756](https://github.com/opencomponents/oc/pull/756) Update aws-sdk to the latest version 🚀
+- [#754](https://github.com/opencomponents/oc/pull/754) Update aws-sdk to the latest version 🚀
+- [#755](https://github.com/opencomponents/oc/pull/755) Update builtin-modules to the latest version 🚀
+- [#751](https://github.com/opencomponents/oc/pull/751) Update aws-sdk to the latest version 🚀
+- [#749](https://github.com/opencomponents/oc/pull/749) Update aws-sdk to the latest version 🚀
+- [#747](https://github.com/opencomponents/oc/pull/747) Update oc-template-jade-compiler to the latest version 🚀
+- [#746](https://github.com/opencomponents/oc/pull/746) Update oc-template-handlebars to the latest version 🚀
+
+### v0.42.0
+- [#745](https://github.com/opencomponents/oc/pull/745) Update oc-client to the latest version 🚀
+- [#744](https://github.com/opencomponents/oc/pull/744) Update oc-template-handlebars to the latest version 🚀
+- [#743](https://github.com/opencomponents/oc/pull/743) Update aws-sdk to the latest version 🚀
+- [#742](https://github.com/opencomponents/oc/pull/742) Update oc-client to the latest version 🚀
+- [#739](https://github.com/opencomponents/oc/pull/739) Update aws-sdk to the latest version 🚀
+- [#737](https://github.com/opencomponents/oc/pull/737) Update oc-client to the latest version 🚀
+- [#736](https://github.com/opencomponents/oc/pull/736) Update aws-sdk to the latest version 🚀
+- [#735](https://github.com/opencomponents/oc/pull/735) Update aws-sdk to the latest version 🚀
+- [#734](https://github.com/opencomponents/oc/pull/734) Update aws-sdk to the latest version 🚀
+
+### v0.41.16
+- [#733](https://github.com/opencomponents/oc/pull/733) Repackage all components when file is outside component dir
+- [#732](https://github.com/opencomponents/oc/pull/732) Prettify all the things 
+- [#731](https://github.com/opencomponents/oc/pull/731) this-less cleanup
+- [#729](https://github.com/opencomponents/oc/pull/729) Update aws-sdk to the latest version 🚀
+
+### v0.41.15
+- [#710](https://github.com/opencomponents/oc/pull/710) [DX-185] install compiler inside each components' dir 
+
+### v0.41.14
+- [#728](https://github.com/opencomponents/oc/pull/728) [DX-226] ]Minimal css for the preview view
+- [#727](https://github.com/opencomponents/oc/pull/727) Update aws-sdk to the latest version 🚀
+
+### v0.41.13
+- [#725](https://github.com/opencomponents/oc/pull/725) [DX-221] Removing two clones
+- [#724](https://github.com/opencomponents/oc/pull/724) Update aws-sdk to the latest version 🚀
+- [#723](https://github.com/opencomponents/oc/pull/723) Update aws-sdk to the latest version 🚀
+- [#722](https://github.com/opencomponents/oc/pull/722) [DX-218] Expose cli to be used programmatically
+- [#719](https://github.com/opencomponents/oc/pull/719) Update dependency-graph to the latest version 🚀
+- [#721](https://github.com/opencomponents/oc/pull/721) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#720](https://github.com/opencomponents/oc/pull/720) Update oc-template-jade-compiler to the latest version 🚀
+- [#718](https://github.com/opencomponents/oc/pull/718) Update aws-sdk to the latest version 🚀
+- [#717](https://github.com/opencomponents/oc/pull/717) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#716](https://github.com/opencomponents/oc/pull/716) Update oc-template-jade-compiler to the latest version 🚀
+- [#715](https://github.com/opencomponents/oc/pull/715) Update oc-template-handlebars to the latest version 🚀
+- [#714](https://github.com/opencomponents/oc/pull/714) Update aws-sdk to the latest version 🚀
+- [#713](https://github.com/opencomponents/oc/pull/713) Update aws-sdk to the latest version 🚀
+- [#712](https://github.com/opencomponents/oc/pull/712) Update aws-sdk to the latest version 🚀
+- [#711](https://github.com/opencomponents/oc/pull/711) Update aws-sdk to the latest version 🚀
+- [#709](https://github.com/opencomponents/oc/pull/709) Update aws-sdk to the latest version 🚀
+
+### v0.41.12
+- [#708](https://github.com/opencomponents/oc/pull/708) Update oc-client to the latest version 🚀
+- [#707](https://github.com/opencomponents/oc/pull/707) Update oc-client-browser to the latest version 🚀
+- [#706](https://github.com/opencomponents/oc/pull/706) Update oc-client-browser to the latest version 🚀
+- [#705](https://github.com/opencomponents/oc/pull/705) [DX-202] Changelog fix
+- [#704](https://github.com/opencomponents/oc/pull/704) [DX-202] Execute all the tests
+- [#659](https://github.com/opencomponents/oc/pull/659) Issue #464: Replaces Grunt with NPM scripts
+
+### v0.41.11
+- [#703](https://github.com/opencomponents/oc/pull/703) Infinite npm i loop fix
+- [#702](https://github.com/opencomponents/oc/pull/702) Update dependency-graph to the latest version 🚀
+- [#701](https://github.com/opencomponents/oc/pull/701) Update aws-sdk to the latest version 🚀
+
+### v0.41.10
+- [#700](https://github.com/opencomponents/oc/pull/700) Error publish
+- [#699](https://github.com/opencomponents/oc/pull/699) Meaningful error shown when publish fails due to a generic API error
+- [#695](https://github.com/opencomponents/oc/pull/695) Update aws-sdk to the latest version 🚀
+- [#688](https://github.com/opencomponents/oc/pull/688) Decouple s3
+
+### v0.41.9
+- [#693](https://github.com/opencomponents/oc/pull/693) [DX-198] Watch .github.io folders
+- [#694](https://github.com/opencomponents/oc/pull/694) Npm install for new module bugfix
+
+### v0.41.8
+- [#692](https://github.com/opencomponents/oc/pull/692) [DX-197] Watcher bugfix
+- [#690](https://github.com/opencomponents/oc/pull/690) Update aws-sdk to the latest version 🚀
+- [#689](https://github.com/opencomponents/oc/pull/689) ignoring lock files
+- [#687](https://github.com/opencomponents/oc/pull/687) Update aws-sdk to the latest version 🚀
+- [#686](https://github.com/opencomponents/oc/pull/686) [DX-185] Removed NPM as dependency
+- [#685](https://github.com/opencomponents/oc/pull/685) Update oc-client to the latest version 🚀
+- [#681](https://github.com/opencomponents/oc/pull/681) [DX-185] Refactoring
+- [#684](https://github.com/opencomponents/oc/pull/684) Update mocha to the latest version 🚀
+
+### v0.41.7
+- [#679](https://github.com/opencomponents/oc/pull/679) [Snyk Update] New fixes for 2 vulnerable dependency paths
+- [#678](https://github.com/opencomponents/oc/pull/678) Update aws-sdk to the latest version 🚀
+- [#677](https://github.com/opencomponents/oc/pull/677) Update aws-sdk to the latest version 🚀
+- [#673](https://github.com/opencomponents/oc/pull/673) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#675](https://github.com/opencomponents/oc/pull/675) Update oc-template-jade-compiler to the latest version 🚀
+- [#674](https://github.com/opencomponents/oc/pull/674) Update oc-template-handlebars to the latest version 🚀
+- [#676](https://github.com/opencomponents/oc/pull/676) Update oc-template-jade to the latest version 🚀
+
+### v0.41.6
+- [#672](https://github.com/opencomponents/oc/pull/672) Update oc-client to the latest version 🚀
+- [#670](https://github.com/opencomponents/oc/pull/670) Update morgan to the latest version 🚀
+- [#671](https://github.com/opencomponents/oc/pull/671) Update oc-template-jade to the latest version 🚀
+- [#669](https://github.com/opencomponents/oc/pull/669) Upgrade Express as patch
+- [#666](https://github.com/opencomponents/oc/pull/666) Update oc-template-jade to the latest version 🚀
+- [#667](https://github.com/opencomponents/oc/pull/667) Update aws-sdk to the latest version 🚀
+- [#665](https://github.com/opencomponents/oc/pull/665) Update sinon to the latest version 🚀
+- [#664](https://github.com/opencomponents/oc/pull/664) chore(package): update lint-staged to version 4.2.3
+- [#660](https://github.com/opencomponents/oc/pull/660) Update body-parser to the latest version 🚀
+- [#661](https://github.com/opencomponents/oc/pull/661) Update aws-sdk to the latest version 🚀
+
+### v0.41.5
+- [#658](https://github.com/opencomponents/oc/pull/658) Update aws-sdk to the latest version 🚀
+- [#655](https://github.com/opencomponents/oc/pull/655) fix(package): update oc-template-jade-compiler to version 6.1.1
+- [#656](https://github.com/opencomponents/oc/pull/656) fix(package): update oc-template-handlebars-compiler to version 6.1.1
+- [#657](https://github.com/opencomponents/oc/pull/657) Update aws-sdk to the latest version 🚀
+- [#654](https://github.com/opencomponents/oc/pull/654) Update oc-client to the latest version 🚀
+- [#653](https://github.com/opencomponents/oc/pull/653) Update aws-sdk to the latest version 🚀
+- [#652](https://github.com/opencomponents/oc/pull/652) Update aws-sdk to the latest version 🚀
+- [#645](https://github.com/opencomponents/oc/pull/645) Update oc-template-handlebars to the latest version 🚀
+- [#647](https://github.com/opencomponents/oc/pull/647) Update oc-template-jade to the latest version 🚀
+- [#646](https://github.com/opencomponents/oc/pull/646) Update oc-template-jade-compiler to the latest version 🚀
+- [#644](https://github.com/opencomponents/oc/pull/644) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#648](https://github.com/opencomponents/oc/pull/648) Update aws-sdk to the latest version 🚀
+- [#643](https://github.com/opencomponents/oc/pull/643) Update oc-client to the latest version 🚀
+
+### v0.41.4
+- [#632](https://github.com/opencomponents/oc/pull/632) Improve watching for Dev registry
+- [#641](https://github.com/opencomponents/oc/pull/641) Update aws-sdk to the latest version 🚀
+- [#635](https://github.com/opencomponents/oc/pull/635) liveReload
+- [#639](https://github.com/opencomponents/oc/pull/639) Update fs-extra to the latest version 🚀
+- [#637](https://github.com/opencomponents/oc/pull/637) Update body-parser to the latest version 🚀
+- [#638](https://github.com/opencomponents/oc/pull/638) Update aws-sdk to the latest version 🚀
+
+### v0.41.3
+- [#640](https://github.com/opencomponents/oc/pull/640) Update oc-client to the latest version 🚀
+- [#636](https://github.com/opencomponents/oc/pull/636) Update aws-sdk to the latest version 🚀
+- [#634](https://github.com/opencomponents/oc/pull/634) Update body-parser to the latest version 🚀
+- [#633](https://github.com/opencomponents/oc/pull/633) Update aws-sdk to the latest version 🚀
+- [#631](https://github.com/opencomponents/oc/pull/631) Update aws-sdk to the latest version 🚀
+- [#629](https://github.com/opencomponents/oc/pull/629) Update pug to the latest version 🚀
+- [#630](https://github.com/opencomponents/oc/pull/630) Update aws-sdk to the latest version 🚀
+- [#628](https://github.com/opencomponents/oc/pull/628) Update aws-sdk to the latest version 🚀
+
+### v0.41.2
+- [#626](https://github.com/opencomponents/oc/pull/626) Update oc-client
+- [#625](https://github.com/opencomponents/oc/pull/625) Update oc-client-browser
+- [#624](https://github.com/opencomponents/oc/pull/624) inititalzie the dev registry with the dynamic require templatee
+
+### v0.41.1
+- [#619](https://github.com/opencomponents/oc/pull/619) Issue #618 : Accessing s3 bucket over a proxy from oc-registry
+- [#621](https://github.com/opencomponents/oc/pull/621) Update aws-sdk to the latest version 🚀
+- [#620](https://github.com/opencomponents/oc/pull/620) Update dependencies to enable Greenkeeper 🌴
+
+### v0.41.0
+- [#617](https://github.com/opencomponents/oc/pull/617) [OC-140] Declarative templates initialisation on a registry level
+- [#613](https://github.com/opencomponents/oc/pull/613) Pass option to the compiler for targeting specific build process
+
+### v0.40.10
+- [#616](https://github.com/opencomponents/oc/pull/616) [OC-93] Update oc-client
+
+### v0.40.9
+- [#615](https://github.com/opencomponents/oc/pull/615) [OC-93] Update oc-client
+
+### v0.40.8
+- [#612](https://github.com/opencomponents/oc/pull/612) [OC-127] Fix templates breaking change
+
+### v0.40.7
+- [#605](https://github.com/opencomponents/oc/pull/605) [OC-102] Return rendered version if client doesn't support
+- [#610](https://github.com/opencomponents/oc/pull/610) Update oc-client to the latest version 🚀
+- [#608](https://github.com/opencomponents/oc/pull/608) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#607](https://github.com/opencomponents/oc/pull/607) Update aws-sdk to the latest version 🚀
+- [#609](https://github.com/opencomponents/oc/pull/609) Update oc-template-jade-compiler to the latest version 🚀
+- [#604](https://github.com/opencomponents/oc/pull/604) Updated logo
+- [#606](https://github.com/opencomponents/oc/pull/606) Update aws-sdk to the latest version 🚀
+
+### v0.40.6
+- [#595](https://github.com/opencomponents/oc/pull/595) Add ability to disable watching on local dev registry
+- [#603](https://github.com/opencomponents/oc/pull/603) Update aws-sdk to the latest version 🚀
+- [#597](https://github.com/opencomponents/oc/pull/597) [OC-120] Registry webUI: preview route/view bug
+
+### v0.40.5
+- [#601](https://github.com/opencomponents/oc/pull/601) Update aws-sdk to the latest version 🚀
+
+### v0.40.4
+- [#602](https://github.com/opencomponents/oc/pull/602) Update oc-client to the latest version 🚀
+
+### v0.40.3
+- [#600](https://github.com/opencomponents/oc/pull/600) Update oc-client-browser to the latest version 🚀
+- [#599](https://github.com/opencomponents/oc/pull/599) Update aws-sdk to the latest version 🚀
+- [#594](https://github.com/opencomponents/oc/pull/594) Update sinon to the latest version 🚀
+
+### v0.40.2
+- [#592](https://github.com/opencomponents/oc/pull/592) [OC-103]
+- [#590](https://github.com/opencomponents/oc/pull/590) Update aws-sdk to the latest version 🚀
+- [#589](https://github.com/opencomponents/oc/pull/589) Add viewport meta tag to component preview
+
+### v0.40.1
+- [#588](https://github.com/opencomponents/oc/pull/588) [OC-87] publish with the new template system
+- [#587](https://github.com/opencomponents/oc/pull/587) Update pug to the latest version 🚀
+- [#586](https://github.com/opencomponents/oc/pull/586) Update aws-sdk to the latest version 🚀
+- [#585](https://github.com/opencomponents/oc/pull/585) Update fs-extra to the latest version 🚀
+- [#584](https://github.com/opencomponents/oc/pull/584) Update accept-language-parser to the latest version 🚀
+
+### v0.40.0
+- [#583](https://github.com/opencomponents/oc/pull/583) Saner registry default for config.discovery
+- [#581](https://github.com/opencomponents/oc/pull/581) [OC-79] Housekeeping
+
+### v0.39.8
+- [#580](https://github.com/opencomponents/oc/pull/580) [OC-86] Logging href, renderMode on the component-retrieved events
+- [#578](https://github.com/opencomponents/oc/pull/578) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#579](https://github.com/opencomponents/oc/pull/579) Update oc-template-jade-compiler to the latest version 🚀
+- [#577](https://github.com/opencomponents/oc/pull/577) Update aws-sdk to the latest version 🚀
+- [#576](https://github.com/opencomponents/oc/pull/576) Update aws-sdk to the latest version 🚀
+
+### v0.39.7
+- [#480](https://github.com/opencomponents/oc/pull/480) [OC-28] Cli init allows for --templateType to be npm module
+- [#575](https://github.com/opencomponents/oc/pull/575) Update CONTRIBUTING.md
+
+### v0.39.6
+- [#566](https://github.com/opencomponents/oc/pull/566) [OC-9] Components history seems to have wrong dates
+- [#574](https://github.com/opencomponents/oc/pull/574) fix(package): update semver to version 5.4.1
+- [#570](https://github.com/opencomponents/oc/pull/570) Update oc-template-handlebars to the latest version 🚀
+- [#571](https://github.com/opencomponents/oc/pull/571) Update oc-template-jade-compiler to the latest version 🚀
+- [#572](https://github.com/opencomponents/oc/pull/572) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#573](https://github.com/opencomponents/oc/pull/573) Update aws-sdk to the latest version 🚀
+
+### v0.39.5
+- [#569](https://github.com/opencomponents/oc/pull/569) Validation fix
+
+### v0.39.4
+- [#568](https://github.com/opencomponents/oc/pull/568) Update aws-sdk to the latest version 🚀
+- [#565](https://github.com/opencomponents/oc/pull/565) Housekeeping
+- [#564](https://github.com/opencomponents/oc/pull/564) Removed uglify-js
+- [#560](https://github.com/opencomponents/oc/pull/560) Update oc-template-jade-compiler to the latest version 🚀
+- [#559](https://github.com/opencomponents/oc/pull/559) Update oc-template-handlebars-compiler to the latest version 🚀
+- [#525](https://github.com/opencomponents/oc/pull/525) [OC-49] Templates
+- [#558](https://github.com/opencomponents/oc/pull/558) Update aws-sdk to the latest version 🚀
+
+### v0.39.3
+- [#557](https://github.com/opencomponents/oc/pull/557) [OC-75] Add status to the component-retrieved event log
+- [#555](https://github.com/opencomponents/oc/pull/555) Update aws-sdk to the latest version 🚀
+- [#554](https://github.com/opencomponents/oc/pull/554) Update aws-sdk to the latest version 🚀
+
+### v0.39.2
+- [#552](https://github.com/opencomponents/oc/pull/552) remove .Only from tests
+- [#550](https://github.com/opencomponents/oc/pull/550) Update uglify-js to the latest version 🚀
+- [#551](https://github.com/opencomponents/oc/pull/551) Update lint-staged to the latest version 🚀
+- [#549](https://github.com/opencomponents/oc/pull/549) Update webpack to the latest version 🚀
+- [#548](https://github.com/opencomponents/oc/pull/548) Update aws-sdk to the latest version 🚀
+- [#547](https://github.com/opencomponents/oc/pull/547) Update fs-extra to the latest version 🚀
+- [#501](https://github.com/opencomponents/oc/pull/501) Update dependencies to enable Greenkeeper 🌴
+- [#546](https://github.com/opencomponents/oc/pull/546) Fixing spacing when initializing component package
+
+### v0.39.1
+- [#545](https://github.com/opencomponents/oc/pull/545) Added a mime type for html files.
+
+### v0.39.0
+- [#542](https://github.com/opencomponents/oc/pull/542) Drop node4 tests
+- [#541](https://github.com/opencomponents/oc/pull/541) Housekeeping
+- [#538](https://github.com/opencomponents/oc/pull/538) [OC-69] Remove node client
+
+### v0.38.8
+- [#537](https://github.com/opencomponents/oc/pull/537) No postinstall build
+
+### v0.38.7
+- [#535](https://github.com/opencomponents/oc/pull/535) Fix grunt build to override package version
+- [#534](https://github.com/opencomponents/oc/pull/534) [OC-60] Oc client browser
+
+### v0.38.6
+- [#533](https://github.com/opencomponents/oc/pull/533) [OC-62] Loaders cleanup
+
+### v0.38.5
+- [#532](https://github.com/opencomponents/oc/pull/532) fix-global-ljs
+
+### v0.38.4
+- [#531](https://github.com/opencomponents/oc/pull/531) Fix register plugin
+
+### v0.38.3
+- [#530](https://github.com/opencomponents/oc/pull/530) Remove plugin detective logic
+
+### v0.38.2
+- [#528](https://github.com/opencomponents/oc/pull/528) [OC-50] Log body fix
+
+### v0.38.1
+- [#527](https://github.com/opencomponents/oc/pull/527) Do not watch .DS_Store files
+
+### v0.38.0
+- [#522](https://github.com/opencomponents/oc/pull/522) Issue w/ head.load
+
+### v0.37.11
+- [#488](https://github.com/opencomponents/oc/pull/488) yarn-support
+
+closes #487 
+
+### v0.37.10
+- [#516](https://github.com/opencomponents/oc/pull/516) Improve AWS upload mechanism and allow to override registry timeout settings
+
+### v0.37.9
+- [#515](https://github.com/opencomponents/oc/pull/515) Ignore the .git folder for the dev watcher
+- [#507](https://github.com/opencomponents/oc/pull/507) Pretty printed code
+
+### v0.37.8
+- [#513](https://github.com/opencomponents/oc/pull/513) issue w/ registry add command
+- [#510](https://github.com/opencomponents/oc/pull/510) Hide available dependencies on dev mode
+- [#500](https://github.com/opencomponents/oc/pull/500) Show available dependencies in the UI
+
+### v0.37.7
+- [#509](https://github.com/opencomponents/oc/pull/509) Cleancss fix
+- [#505](https://github.com/opencomponents/oc/pull/505) Node 8
+- [#502](https://github.com/opencomponents/oc/pull/502) Upgrade some dependencies
+- [#503](https://github.com/opencomponents/oc/pull/503) eof
+
+### v0.37.6
+- [#499](https://github.com/opencomponents/oc/pull/499) Snyk
+- [#498](https://github.com/opencomponents/oc/pull/498) Fix build script
+- [#497](https://github.com/opencomponents/oc/pull/497) Fix vulnerabilities and remove npm shrinkwrap
+
+### v0.37.5
+- [#495](https://github.com/opencomponents/oc/pull/495) issue w/ plugins detective
+
+### v0.37.4
+- [#486](https://github.com/opencomponents/oc/pull/486) Render trycatch
+
+### v0.37.3
+- [#482](https://github.com/opencomponents/oc/pull/482) Upgrade multer
+
+### v0.37.2
+- [#481](https://github.com/opencomponents/oc/pull/481) issue-with-amd
+
+### v0.37.1
+- [#479](https://github.com/opencomponents/oc/pull/479) Allow node core deps to be used and whitelisted
+- [#478](https://github.com/opencomponents/oc/pull/478) Upgrade chai
+
+### v0.37.0
+- [#467](https://github.com/opencomponents/oc/pull/467) [MLP-594] History
+
+### v0.36.28
+- [#477](https://github.com/opencomponents/oc/pull/477) get-components-by-dir-issue
+- [#475](https://github.com/opencomponents/oc/pull/475) Housekeeping
+
+### v0.36.27
+- [#472](https://github.com/opencomponents/oc/pull/472) issue-with-component-info-get-params v2
+- [#469](https://github.com/opencomponents/oc/pull/469) Housekeeping
+
+### v0.36.26
+- [#468](https://github.com/opencomponents/oc/pull/468) Underscore to lodash
+
+### v0.36.25
+- [#463](https://github.com/opencomponents/oc/pull/463) Components cache cleanup
+
+### v0.36.24
+- [#461](https://github.com/opencomponents/oc/pull/461) Registry start log fix
+
+### v0.36.23
+- [#460](https://github.com/opencomponents/oc/pull/460) Move to =>
+
+### v0.36.22
+- [#459](https://github.com/opencomponents/oc/pull/459) Fix manual build script
+- [#458](https://github.com/opencomponents/oc/pull/458) Cleanup
+- [#454](https://github.com/opencomponents/oc/pull/454) Logger cleanup
+- [#455](https://github.com/opencomponents/oc/pull/455) UI interface tests
+- [#457](https://github.com/opencomponents/oc/pull/457) Log error before exiting
+- [#456](https://github.com/opencomponents/oc/pull/456) Removed trailing spaces
+- [#452](https://github.com/opencomponents/oc/pull/452) var => let/const
+- [#453](https://github.com/opencomponents/oc/pull/453) Fix indentation
+
+### v0.36.21
+- [#450](https://github.com/opencomponents/oc/pull/450) Replace jshint by eslint
+
+### v0.36.20
+- [#449](https://github.com/opencomponents/oc/pull/449) No unused variables
+
+### v0.36.19
+- [#447](https://github.com/opencomponents/oc/pull/447) Components by dir cleanup
+
+### v0.36.18
+- [#446](https://github.com/opencomponents/oc/pull/446) Consider null a valid string
+
+### v0.36.17
+- [#443](https://github.com/opencomponents/oc/pull/443) Use baseUrl as default with host as fallback
+- [#444](https://github.com/opencomponents/oc/pull/444) Require templates is broken
+- [#430](https://github.com/opencomponents/oc/pull/430) [GPT-567] Registering supported templates on componentPreview view
+- [#429](https://github.com/opencomponents/oc/pull/429) [GPT-518] dynamically register templates on browser client
+- [#426](https://github.com/opencomponents/oc/pull/426) [GPT-565] Dynamic support to oc-templates in oc dev
+
+### v0.36.16
+- [#432](https://github.com/opencomponents/oc/pull/432) prepare-server-get-component-parameters
+- [#428](https://github.com/opencomponents/oc/pull/428) registerTemplate API fix
+
+### v0.36.15
+- [#422](https://github.com/opencomponents/oc/pull/422) adding package cli command
+- [#423](https://github.com/opencomponents/oc/pull/423) [GPT-517] Exposing registry supported templates via context
+
+### v0.36.14
+- [#421](https://github.com/opencomponents/oc/pull/421) Minify static content by transpiling it first
+
+### v0.36.13
+- [#420](https://github.com/opencomponents/oc/pull/420) revert #418
+
+### v0.36.12
+- [#418](https://github.com/opencomponents/oc/pull/418) Transpile static js before minification
+
+### v0.36.11
+- [#417](https://github.com/opencomponents/oc/pull/417) support old and new handlebars type
+
+### v0.36.10
+- [#415](https://github.com/opencomponents/oc/pull/415) [GPT-526] Dynamic requires of oc-templates
+- [#416](https://github.com/opencomponents/oc/pull/416) Updated infinite-loop-loader to fix #410
+
+### v0.36.9
+- [#413](https://github.com/opencomponents/oc/pull/413) Fix ui preview with multiple discover strategies and endpoints
+- [#414](https://github.com/opencomponents/oc/pull/414) [GPT-525] Switch to new templates naming
+
+### v0.36.8
+- [#412](https://github.com/opencomponents/oc/pull/412) Async compile api
+
+### v0.36.7
+- [#411](https://github.com/opencomponents/oc/pull/411) Babili on server.js
+
+### v0.36.6
+- [#408](https://github.com/opencomponents/oc/pull/408) Ensuring we exit the domains in case of timeout
+
+### v0.36.5
+- [#396](https://github.com/opencomponents/oc/pull/396) Make oc-client.js supporting more templates via an extendable API
+
+### v0.36.4
+- [#405](https://github.com/opencomponents/oc/pull/405) Publish bugfix
+- [#402](https://github.com/opencomponents/oc/pull/402) We don't autogenerate cli docs anymore
+
+### v0.36.3
+- [#403](https://github.com/opencomponents/oc/pull/403) Fix for #391 - support pre-release versions of components
+- [#1](https://github.com/opencomponents/oc/pull/1) Thanks @matteofigus. I forgot about it.
+
+### v0.36.2
+- [#401](https://github.com/opencomponents/oc/pull/401) Webpack verbose
+
+### v0.36.1
+- [#380](https://github.com/opencomponents/oc/pull/380) Handle fallbackRegistryUrl for ~info and ~preview
+
+### v0.36.0
+- [#399](https://github.com/opencomponents/oc/pull/399) Changed option parser for cli
+- [#400](https://github.com/opencomponents/oc/pull/400) Fixing typo on registry UI for filtering.
+
+### v0.35.6
+- [#397](https://github.com/opencomponents/oc/pull/397) Fix basicAuth
+
+### v0.35.5
+- [#389](https://github.com/opencomponents/oc/pull/389) Fix regex on win paths normalisation
+
+### v0.35.4
+- [#388](https://github.com/opencomponents/oc/pull/388) Fixing deps on the node client
+
+### v0.35.3
+- [#347](https://github.com/opencomponents/oc/pull/347) 342 - (OC Client) Perform GET instead of POST for single component
+- [#342](https://github.com/opencomponents/oc/pull/342) Change the OC Client to perform GET instead of POST when requesting just one component
+- [#385](https://github.com/opencomponents/oc/pull/385) updated to templates 2.0
+- [#382](https://github.com/opencomponents/oc/pull/382) Consistency
+- [#376](https://github.com/opencomponents/oc/pull/376) Cleanup un-needed files
+
+### v0.35.2
+- [#375](https://github.com/opencomponents/oc/pull/375) oc-template-jade module
+
+### v0.35.1
+- [#371](https://github.com/opencomponents/oc/pull/371) oc-template-handlebars module
+
+### v0.35.0
+- [#366](https://github.com/opencomponents/oc/pull/366) Express 4
+
+### v0.34.8
+- [#370](https://github.com/opencomponents/oc/pull/370) Cleanup on headers handling
+
+### v0.34.7
+- [#372](https://github.com/opencomponents/oc/pull/372) optional fallbackRegistryUrl configuration parameter
+- [#374](https://github.com/opencomponents/oc/pull/374) Es2015 base-component server
+
+### v0.34.6
+- [#367](https://github.com/opencomponents/oc/pull/367) Always create new S3 client before use
+
+### v0.34.5
+- [#365](https://github.com/opencomponents/oc/pull/365) Publish bugfix
+
+### v0.34.4
+- [#364](https://github.com/opencomponents/oc/pull/364) Don't allow routes that contain prefix
+
+### v0.34.3
+- [#362](https://github.com/opencomponents/oc/pull/362) Node 7
+- [#363](https://github.com/opencomponents/oc/pull/363) Extending Integration tests
+
+### v0.34.2
+- [#357](https://github.com/opencomponents/oc/pull/357) Webpack 2
+
+### v0.34.1
+- [#361](https://github.com/opencomponents/oc/pull/361) removed uglify
+- [#359](https://github.com/opencomponents/oc/pull/359) swapped falafel loader with infinite-loop-loader
+
+### v0.34.0
+- [#346](https://github.com/opencomponents/oc/pull/346) [GPT-432] Package server webpack
+- [#356](https://github.com/opencomponents/oc/pull/356) Appveyor cleanup
+- [#355](https://github.com/opencomponents/oc/pull/355) drop support for node 0.10, 0.12 and io
+- [#352](https://github.com/opencomponents/oc/pull/352) Update sauce versions matrix
+- [#353](https://github.com/opencomponents/oc/pull/353) Remove IE8 support
+
+### v0.33.31
+- [#343](https://github.com/opencomponents/oc/pull/343) 333 - Implement customHeadersToSkipOnWeakVersion functionality
+- [#349](https://github.com/opencomponents/oc/pull/349) Upgrade minimal-request
+- [#348](https://github.com/opencomponents/oc/pull/348) [acceptance/registry] remove .only
+- [#344](https://github.com/opencomponents/oc/pull/344) Package server script cleanup
+
+### v0.33.30
+- [#335](https://github.com/opencomponents/oc/pull/335) Add endpoint for getting list of components with their versions (#324)
+
+### v0.33.29
+- [#337](https://github.com/opencomponents/oc/pull/337) Fix for #336 - Make S3 Key/Secret optional to allow support for "IAM role based access to s3 from EC2"
+
+### v0.33.28
+- [#323](https://github.com/opencomponents/oc/pull/323) Fix for #322
+- [#334](https://github.com/opencomponents/oc/pull/334) Acceptance extra test
+
+### v0.33.27
+- [#331](https://github.com/opencomponents/oc/pull/331) Client fixes and some tests
+
+### v0.33.26
+- [#329](https://github.com/opencomponents/oc/pull/329) Cleanup npm-shrinkwrap
+
+### v0.33.25
+- [#328](https://github.com/opencomponents/oc/pull/328) Fix for Custom eaders of one component can appear to another.
+
+### v0.33.24
+- [#326](https://github.com/opencomponents/oc/pull/326) Add optional cache headers for components (#325)
+
+### v0.33.23
+- [#319](https://github.com/opencomponents/oc/pull/319) Extract package bugfix
+
+### v0.33.22
+- [#317](https://github.com/opencomponents/oc/pull/317) Client dynamic hrefs
+
+### v0.33.21
+- [#316](https://github.com/opencomponents/oc/pull/316) Migrate tar.gz to targz
+
+### v0.33.20
+- [#315](https://github.com/opencomponents/oc/pull/315) aws-sdk upgrade
+
+### v0.33.19
+- [#314](https://github.com/opencomponents/oc/pull/314) Revert async upgrade + timeout wrapping
+
+### v0.33.18
+- [#313](https://github.com/opencomponents/oc/pull/313) Recursively look for oc.json, starting from componentsDir
+
+### v0.33.17
+- [#312](https://github.com/opencomponents/oc/pull/312) Options bugfix
+
+### v0.33.16
+- [#311](https://github.com/opencomponents/oc/pull/311) Refactoring, cleanup, test coverage
+
+### v0.33.15
+- [#310](https://github.com/opencomponents/oc/pull/310) Upgrade async + wrap s3 calls to timeout
+
+### v0.33.14
+- [#309](https://github.com/opencomponents/oc/pull/309) Default value for optional parameters
+- [#308](https://github.com/opencomponents/oc/pull/308) Fixed tags order in changelog
+
+### v0.33.13
+- [#305](https://github.com/opencomponents/oc/pull/305) Switch to setTimeout for polling mechanism
+- [#306](https://github.com/opencomponents/oc/pull/306) Default Loading... to blank
+
+### v0.33.12
+- [#303](https://github.com/opencomponents/oc/pull/303) Client#renderComponents accepts global parameters
+
+### v0.33.11
+- [#302](https://github.com/opencomponents/oc/pull/302) Added name and reqest version to each response
+
+### v0.33.10
+- [#301](https://github.com/opencomponents/oc/pull/301) Oc client jadeless
+
+### v0.33.9
+- [#294](https://github.com/opencomponents/oc/pull/294) Upgrade npm dependency
+
+### v0.33.8
+- [#293](https://github.com/opencomponents/oc/pull/293) Ui improvements
+
+### v0.33.7
+- [#291](https://github.com/opencomponents/oc/pull/291) Client errors
+- [#290](https://github.com/opencomponents/oc/pull/290) Update minimal-request@2.1.1
+- [#288](https://github.com/opencomponents/oc/pull/288) oc-client warmup improvements
+
+### v0.33.6
+- [#289](https://github.com/opencomponents/oc/pull/289) Upgrade dependency
+
+### v0.33.5
+- [#287](https://github.com/opencomponents/oc/pull/287) Node 6
+
+### v0.33.4
+- [#286](https://github.com/opencomponents/oc/pull/286) Hot reload
+- [#285](https://github.com/opencomponents/oc/pull/285) npm install and dep resolvement needs to happen in the same dir
+- [#269](https://github.com/opencomponents/oc/pull/269) Removing the loading... indicator when we have an error
+
+### v0.33.3
+- [#278](https://github.com/opencomponents/oc/pull/278) Container client override
+- [#279](https://github.com/opencomponents/oc/pull/279) Update safari configs
+- [#280](https://github.com/opencomponents/oc/pull/280) Respect dependency versions for components
+
+### v0.33.2
+- [#274](https://github.com/opencomponents/oc/pull/274) Revert tar.gz upgrade
+
+### v0.33.1
+- [#270](https://github.com/opencomponents/oc/pull/270) server-side nested rendering
+
+### v0.33.0
+- [#265](https://github.com/opencomponents/oc/pull/265) [careful + breaking change] Removed Handlebars 3 support
+
+### v0.32.6
+- [#268](https://github.com/opencomponents/oc/pull/268) Strict shrinkwrapping
+- [#264](https://github.com/opencomponents/oc/pull/264) Docs cleanup
+
+### v0.32.5
+- [#266](https://github.com/opencomponents/oc/pull/266) Publish fix
+
+### v0.32.4
+- [#263](https://github.com/opencomponents/oc/pull/263) oc-client publish fix
+
+### v0.32.3
+- [#257](https://github.com/opencomponents/oc/pull/257) Publish requirements
+- [#259](https://github.com/opencomponents/oc/pull/259) Upgrade more deps
+
+### v0.32.2
+- [#261](https://github.com/opencomponents/oc/pull/261) Client rendering fix
+
+### v0.32.1
+- [#260](https://github.com/opencomponents/oc/pull/260) Client fix
+
+### v0.32.0
+- [#243](https://github.com/opencomponents/oc/pull/243) [careful] handlebars 3+4
+
+### v0.31.2
+- [#258](https://github.com/opencomponents/oc/pull/258) added support for serving svg
+
+### v0.31.1
+- [#256](https://github.com/opencomponents/oc/pull/256) More dependencies upgrade
+
+### v0.31.0
+- [#254](https://github.com/opencomponents/oc/pull/254) Dependencies upgrade
+- [#255](https://github.com/opencomponents/oc/pull/255) Renamed src to public
+- [#253](https://github.com/opencomponents/oc/pull/253) Updated instructions of how to add static resource to the file
+
+### v0.30.9
+- [#251](https://github.com/opencomponents/oc/pull/251) check is dir with lstatSync
+
+### v0.30.8
+- [#248](https://github.com/opencomponents/oc/pull/248) Amd Support for client-side library
+- [#244](https://github.com/opencomponents/oc/pull/244) Docs updated
+
+### v0.30.7
+- [#245](https://github.com/opencomponents/oc/pull/245) Cache jade view (for web interface)
+- [#246](https://github.com/opencomponents/oc/pull/246) Upgraded some dependencies
+
+### v0.30.6
+- [#242](https://github.com/opencomponents/oc/pull/242) Upgrade npm
+- [#241](https://github.com/opencomponents/oc/pull/241) adds dependencies badge in readme
+- [#240](https://github.com/opencomponents/oc/pull/240) add some basic example components
+- [#239](https://github.com/opencomponents/oc/pull/239) Update README
+
+### v0.30.5
+- [#238](https://github.com/opencomponents/oc/pull/238) Logo path fixed in web interface
+
+### v0.30.4
+- [#236](https://github.com/opencomponents/oc/pull/236) Refactoring tasks code
+- [#237](https://github.com/opencomponents/oc/pull/237) Upgrade and fix jshinting
+
+### v0.30.3
+- [#235](https://github.com/opencomponents/oc/pull/235) Moved things around
+
+### v0.30.2
+- [#232](https://github.com/opencomponents/oc/pull/232) Upgrade async
+
+### v0.30.1
+- [#230](https://github.com/opencomponents/oc/pull/230) Fixed Changelog generator task
+
+### v0.30.0
+- [#229](https://github.com/opencomponents/oc/pull/229) Empty string should be a valid string parameter
+
+### v0.29.3
+- [#227](https://github.com/opencomponents/oc/pull/227) Omit href
+- [#228](https://github.com/opencomponents/oc/pull/228) Global params on POST request
+
+### v0.29.2
+- [#222](https://github.com/opencomponents/oc/pull/222) Compress inlined js and css inside jade views
+
+### v0.29.1
+- [#221](https://github.com/opencomponents/oc/pull/221) Removed ace editor + added Accept-Language box
+
+### v0.29.0
+- [#218](https://github.com/opencomponents/oc/pull/218) Upgrade jade
+
+### v0.28.9
+- [#214](https://github.com/opencomponents/oc/pull/214) S3 validation
+- [#216](https://github.com/opencomponents/oc/pull/216) Looks good;
+tested
+
+### v0.28.8
+- [#215](https://github.com/opencomponents/oc/pull/215) mock bugfix for when a value is not a string
+
+### v0.28.7
+- [#213](https://github.com/opencomponents/oc/pull/213) [Docs] description of oc.renderInfo param
+- [#212](https://github.com/opencomponents/oc/pull/212) Changelog using git history instead of github api
+
+### v0.28.6
+- [#211](https://github.com/opencomponents/oc/pull/211) Forward request headers to component
+
+### v0.28.5
+- [#208](https://github.com/opencomponents/oc/pull/208) When data is undefined, registry should 500
+- [#209](https://github.com/opencomponents/oc/pull/209) Exit 1 in case of CLI error
+
+### v0.28.4
+- [#204](https://github.com/opencomponents/oc/pull/204) add "getRepositoryUrl" in order to support repository package.json property as object
+- [#206](https://github.com/opencomponents/oc/pull/206) Fix travis forks PRs
+
+### v0.28.3
+- [#203](https://github.com/opencomponents/oc/pull/203) Fix githubChanges task name
+- [#199](https://github.com/opencomponents/oc/pull/199) Changelog
+
+### v0.28.2
+- [#201](https://github.com/opencomponents/oc/pull/201) Added license on minified oc-client.min.js
+
+### v0.28.1
+- [#200](https://github.com/opencomponents/oc/pull/200) Have optional callbacks in CLI functions
+
+### v0.28.0
+- [#198](https://github.com/opencomponents/oc/pull/198) More details on errors from node client
+- [#197](https://github.com/opencomponents/oc/pull/197) Return null when there's no error in renderComponents
+
+### v0.27.9
+- [#195](https://github.com/opencomponents/oc/pull/195) Warmup on client.init
+
+### v0.27.8
+- [#196](https://github.com/opencomponents/oc/pull/196) Adding user-agent to node oc-client
+
+### v0.27.7
+- [#194](https://github.com/opencomponents/oc/pull/194) Cleanup on client
+
+### v0.27.6
+- [#193](https://github.com/opencomponents/oc/pull/193) Dev has optional callback in order to be used by grunt-oc
+- [#192](https://github.com/opencomponents/oc/pull/192) Less docs, more links
+
+### v0.27.5
+- [#190](https://github.com/opencomponents/oc/pull/190) Publish error
+
+### v0.27.4
+- [#189](https://github.com/opencomponents/oc/pull/189) Safe colors in order to avoid extending object and better testing
+
+### v0.27.1
+- [#187](https://github.com/opencomponents/oc/pull/187) Moved the request util to its own module
+
+### v0.27.0
+- [#186](https://github.com/opencomponents/oc/pull/186) Preserve language when doing client-side failover
+
+### v0.26.2
+- [#182](https://github.com/opencomponents/oc/pull/182) Node.js client post and various improvements
+
+### v0.26.1
+- [#184](https://github.com/opencomponents/oc/pull/184) Allow oc dev to be hosted from a custom base url
+
+### v0.26.0
+- [#178](https://github.com/opencomponents/oc/pull/178) node.js client should accept serverRendering and clientRendering endpoints instead of generic array (breaking change)
+
+### v0.25.0
+- [#179](https://github.com/opencomponents/oc/pull/179) Oc client cleanup and improvements
+
+### v0.24.1
+- [#180](https://github.com/opencomponents/oc/pull/180) update the dependencies
+
+### v0.24.0
+- [#177](https://github.com/opencomponents/oc/pull/177) Npm ignore to avoid publishing unuseful stuff
+
+### v0.23.7
+- [#173](https://github.com/opencomponents/oc/pull/173) Ownership of $$$
+
+### v0.23.6
+- [#172](https://github.com/opencomponents/oc/pull/172) Avoid client to be multiple times inside the page
+
+### v0.23.5
+- [#171](https://github.com/opencomponents/oc/pull/171) Without cleaning up the namespace
+
+### v0.23.4
+- [#170](https://github.com/opencomponents/oc/pull/170) jQuery in no conflict mode
+
+### v0.23.3
+- [#169](https://github.com/opencomponents/oc/pull/169) pre-rendered modality is deprecated
+
+### v0.23.2
+- [#168](https://github.com/opencomponents/oc/pull/168) Update dependencies
+- [#167](https://github.com/opencomponents/oc/pull/167) Sauce browsers updated + dev dependency updated
+
+### v0.23.1
+- [#166](https://github.com/opencomponents/oc/pull/166) Bugfix and docs
+
+### v0.23.0
+- [#165](https://github.com/opencomponents/oc/pull/165) Making the POST response API return status and response for each comp…
+
+### v0.22.3
+- [#164](https://github.com/opencomponents/oc/pull/164) New component-retrieved event
+
+### v0.22.2
+- [#163](https://github.com/opencomponents/oc/pull/163) POST route for allowing batch request
+- [#160](https://github.com/opencomponents/oc/pull/160) travis run tests with node 5 as well
+
+### v0.22.1
+- [#159](https://github.com/opencomponents/oc/pull/159) should have an explicit dep on phantom
+
+### v0.22.0
+- [#157](https://github.com/opencomponents/oc/pull/157) Server/Client-side render info 
+- [#156](https://github.com/opencomponents/oc/pull/156) House keeping
+
+### v0.21.0
+- [#155](https://github.com/opencomponents/oc/pull/155) Removing info, ls, link, unlink
+
+### v0.20.5
+- [#153](https://github.com/opencomponents/oc/pull/153) js.gz + css.gz handling
+
+### v0.20.4
+- [#148](https://github.com/opencomponents/oc/pull/148) only remove the package once published to all registries
+
+### v0.20.3
+- [#152](https://github.com/opencomponents/oc/pull/152) woopsy, I broke `oc dev`
+
+### v0.20.2
+- [#151](https://github.com/opencomponents/oc/pull/151) Run karma tests by default
+
+### v0.20.1
+- [#144](https://github.com/opencomponents/oc/pull/144) Oc client limited retries
+
+### v0.20.0
+- [#141](https://github.com/opencomponents/oc/pull/141) allow plugins to depend on one another (breaking change)
+
+### v0.19.5
+- [#147](https://github.com/opencomponents/oc/pull/147) Refactor cli/domain/local
+
+### v0.19.4
+- [#145](https://github.com/opencomponents/oc/pull/145) oc dev fix (ie 8+)
+
+### v0.19.3
+- [#143](https://github.com/opencomponents/oc/pull/143) Fix cli crash when `oc dev` reads a broken package.json
+
+### v0.19.1
+- [#140](https://github.com/opencomponents/oc/pull/140) Hacking on travis
+
+### v0.19.0
+- [#139](https://github.com/opencomponents/oc/pull/139) prerendered -> unrendered
+- [#134](https://github.com/opencomponents/oc/pull/134) Added tagging when upgrading version
+- [#133](https://github.com/opencomponents/oc/pull/133) Empty component fix
+- [#132](https://github.com/opencomponents/oc/pull/132) have to actually call registry.register for the plugins
+- [#131](https://github.com/opencomponents/oc/pull/131) Mock plugins tests
+- [#130](https://github.com/opencomponents/oc/pull/130) add support for dynamic plugin mocks
+- [#125](https://github.com/opencomponents/oc/pull/125) Prevent infinite loops
+- [#127](https://github.com/opencomponents/oc/pull/127) Node version validation
+- [#126](https://github.com/opencomponents/oc/pull/126) Client performance optimisations, readme, and cleanup
+- [#123](https://github.com/opencomponents/oc/pull/123) don't set reqinfo on this
+- [#122](https://github.com/opencomponents/oc/pull/122) Don't play with SauceLabs - downgrading all the stuff
+- [#120](https://github.com/opencomponents/oc/pull/120) first go at an interface for auth plugins
+- [#117](https://github.com/opencomponents/oc/pull/117) Some clean-up
+- [#116](https://github.com/opencomponents/oc/pull/116) if creds are specified on the opts object, don't prompt for them
+- [#113](https://github.com/opencomponents/oc/pull/113) Added preventing old oc versions to publish
+- [#112](https://github.com/opencomponents/oc/pull/112) Added 'Updated' date field in web interface (#110)
+- [#108](https://github.com/opencomponents/oc/pull/108) Little improvements
+- [#105](https://github.com/opencomponents/oc/pull/105) Preview refactoring
+- [#102](https://github.com/opencomponents/oc/pull/102) Hacking on web interface
+- [#103](https://github.com/opencomponents/oc/pull/103) publish step has an optional callback
+- [#104](https://github.com/opencomponents/oc/pull/104) pass options to registry to override at runtime
+- [#101](https://github.com/opencomponents/oc/pull/101) Adding some tests and refactoring server.js packaging
+- [#100](https://github.com/opencomponents/oc/pull/100) Execution timeout
+- [#99](https://github.com/opencomponents/oc/pull/99) Static subfolders packaging bugfix
+- [#98](https://github.com/opencomponents/oc/pull/98) Component execution error - more details and bugfix
+- [#97](https://github.com/opencomponents/oc/pull/97) Separating local dependencies and checking tab size
+- [#91](https://github.com/opencomponents/oc/pull/91) Adding 'troubleshooting' section
+- [#96](https://github.com/opencomponents/oc/pull/96) Fixed the oc.build functionality for client-side ie8 execution
+- [#94](https://github.com/opencomponents/oc/pull/94) Support minifying ie8 compatible css files
+- [#81](https://github.com/opencomponents/oc/pull/81) Html components discovery #73
+- [#88](https://github.com/opencomponents/oc/pull/88) err message and stack are stored in getters which don't get resolved.…
+- [#86](https://github.com/opencomponents/oc/pull/86) Don't Watch Vim Swap Files
+- [#85](https://github.com/opencomponents/oc/pull/85) Ruby gems links
+- [#83](https://github.com/opencomponents/oc/pull/83) Auto cli docs
+- [#82](https://github.com/opencomponents/oc/pull/82) Zero number bugfix
+- [#80](https://github.com/opencomponents/oc/pull/80) Correct hashKey spelling
+- [#68](https://github.com/opencomponents/oc/pull/68) Registry Plugins
+- [#79](https://github.com/opencomponents/oc/pull/79) Add a Gitter chat badge to README.md
+- [#77](https://github.com/opencomponents/oc/pull/77) allow jade to render partials
+- [#76](https://github.com/opencomponents/oc/pull/76) Sauce labs stabilization
+- [#75](https://github.com/opencomponents/oc/pull/75) Autocomplete experiment
+- [#74](https://github.com/opencomponents/oc/pull/74) specify registry from terminal
+- [#67](https://github.com/opencomponents/oc/pull/67) Refactoring, cleanup
+- [#66](https://github.com/opencomponents/oc/pull/66) README update
+- [#65](https://github.com/opencomponents/oc/pull/65) server.js' req -> context
+- [#64](https://github.com/opencomponents/oc/pull/64) Upgrading dependencies
+- [#63](https://github.com/opencomponents/oc/pull/63) Fix etag
+- [#60](https://github.com/opencomponents/oc/pull/60) Auto install modules
+- [#58](https://github.com/opencomponents/oc/pull/58) ignore failures in dev server when loading modules
+- [#59](https://github.com/opencomponents/oc/pull/59) Async refactoring
+- [#52](https://github.com/opencomponents/oc/pull/52) publish to all the registries listed in oc.json
+- [#57](https://github.com/opencomponents/oc/pull/57) Some tests in support of json require functionality
+- [#56](https://github.com/opencomponents/oc/pull/56) Enabling json local requires
+- [#55](https://github.com/opencomponents/oc/pull/55) Sauce labs hacking
+- [#54](https://github.com/opencomponents/oc/pull/54) Minify automagically component's static resources when publishing
+- [#53](https://github.com/opencomponents/oc/pull/53) Windows publish
+- [#50](https://github.com/opencomponents/oc/pull/50) Added oc.build functionality and tests
+- [#47](https://github.com/opencomponents/oc/pull/47) Testing
+- [#24](https://github.com/opencomponents/oc/pull/24) Docs Part I
+- [#46](https://github.com/opencomponents/oc/pull/46) Added preview functionality
+- [#45](https://github.com/opencomponents/oc/pull/45) karma
+- [#44](https://github.com/opencomponents/oc/pull/44) Added the container options on package to avoid container to be shown on...
+- [#43](https://github.com/opencomponents/oc/pull/43) Registry on refactoring
+- [#42](https://github.com/opencomponents/oc/pull/42) Cleanup
+- [#41](https://github.com/opencomponents/oc/pull/41) registry cache optimisations
+- [#40](https://github.com/opencomponents/oc/pull/40) Cleanup
+- [#39](https://github.com/opencomponents/oc/pull/39) S3 fix
+- [#37](https://github.com/opencomponents/oc/pull/37) Pre-rendered header -> accept application/vnd.oc.prerendered+json
+- [#35](https://github.com/opencomponents/oc/pull/35) Console log
+- [#32](https://github.com/opencomponents/oc/pull/32) Nodejs client
+- [#31](https://github.com/opencomponents/oc/pull/31) Div rendering
+- [#29](https://github.com/opencomponents/oc/pull/29) added command line parameter for template type
+- [#28](https://github.com/opencomponents/oc/pull/28) throwing exception when registry is initialised with invalid conf #25
+- [#22](https://github.com/opencomponents/oc/pull/22) Ie 9-10 client-side rendering
+- [#21](https://github.com/opencomponents/oc/pull/21) Registry events
+- [#20](https://github.com/opencomponents/oc/pull/20) Added onRequest functionality on config + improved routing
+- [#18](https://github.com/opencomponents/oc/pull/18) Publish basic auth
+- [#14](https://github.com/opencomponents/oc/pull/14) 0.3.2
+- [#11](https://github.com/opencomponents/oc/pull/11) Oc version fix
+- [#10](https://github.com/opencomponents/oc/pull/10) added oc version to component package
+- [#4](https://github.com/opencomponents/oc/pull/4) Some fixes
+- [#3](https://github.com/opencomponents/oc/pull/3) Client componentisation
+- [#2](https://github.com/opencomponents/oc/pull/2) Update README.md
+- [#1](https://github.com/opencomponents/oc/pull/1) Readme
