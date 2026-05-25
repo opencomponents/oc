@@ -11,7 +11,7 @@
     "test-silent": "turbo run test-silent",
     "lint": "turbo run lint",
     "preview": "turbo run preview --filter=oc",
-"changeset:add": "changeset add",
+    "changeset:add": "changeset add",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish",
     "release:prepare": "npm run test-silent && npm run changeset:version",
