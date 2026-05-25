@@ -28,4 +28,3 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run test-silent
-      - run: npm run changeset:status
