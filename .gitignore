@@ -8,7 +8,9 @@ lib-cov
 *.gz
 pids
 logs
-results
+# Benchmark files: ignore timestamped files and latest, track baseline
+packages/oc/test/results/benchmarks/server-benchmark-[0-9]*.json
+packages/oc/test/results/benchmarks/server-benchmark-latest.json
 .idea
 *.swp
 *.swo

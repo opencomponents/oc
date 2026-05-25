@@ -12,7 +12,11 @@
 		"prebuild": "rimraf dist",
 		"build": "npm run lint && tsc && node tasks/build.js",
 		"test": "npm run build && node tasks/mochaTest.js",
-		"test-silent": "npm run build && node tasks/mochaTest.js --silent"
+		"test-silent": "npm run build && node tasks/mochaTest.js --silent",
+		"bench": "node tasks/benchmarks/server-benchmark.js --repetitions=5",
+		"bench:quick": "node tasks/benchmarks/server-benchmark.js --repetitions=3",
+		"bench:update-baseline": "node tasks/benchmarks/server-benchmark.js --repetitions=5 --update-baseline=true",
+		"bench:high-load": "node tasks/benchmarks/server-benchmark.js --scenarios=high-load-local,high-load-storage --high-load-repetitions=3"
 	},
 	"engines": {
 		"node": ">=18"
