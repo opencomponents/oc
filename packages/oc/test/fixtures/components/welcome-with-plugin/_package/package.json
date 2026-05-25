@@ -1,0 +1,30 @@
+{
+  "name": "welcome-with-plugin",
+  "description": "Benchmark fixture for plugin execution on component retrieval",
+  "version": "1.0.0",
+  "repository": "",
+  "oc": {
+    "plugins": [
+      "appendSuffix"
+    ],
+    "files": {
+      "template": {
+        "type": "jade",
+        "hashKey": "c3cb0891eb3509adb10aa54f0fdff8fcade174d3",
+        "src": "template.js",
+        "version": "7.0.6",
+        "size": 417
+      },
+      "dataProvider": {
+        "type": "node.js",
+        "hashKey": "0ea88710f47a709d623fe995e35642389cc12b93",
+        "src": "server.js",
+        "size": 345
+      },
+      "static": []
+    },
+    "version": "0.50.47",
+    "packaged": true,
+    "date": 1779615787949
+  }
+}

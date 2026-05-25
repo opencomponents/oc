@@ -1,0 +1,1 @@
+(()=>{"use strict";var r={520(r){r.exports.data=function(r,a){a(null,{firstName:r.params.firstName||"John",lastName:r.plugins.appendSuffix(r.params.lastName||"Doe",r.params.suffix||"")})}}},a={};var s=function s(t){var e=a[t];if(void 0!==e)return e.exports;var o=a[t]={exports:{}};return r[t](o,o.exports,s),o.exports}(520);module.exports=s})();
