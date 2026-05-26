@@ -1,5 +1,5 @@
-import { LJS } from "./loader";
-import { createOc } from "./oc-client";
+import { LJS } from './loader';
+import { createOc } from './oc-client';
 
 const oc = window.oc || {};
 const ljs = new LJS();

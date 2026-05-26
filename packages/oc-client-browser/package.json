@@ -24,7 +24,7 @@
 		"start": "serve -l 5173",
 		"test": "npm run build && npx playwright test --reporter=html",
 		"build": "node tasks/build.js",
-		"lint": "npx @biomejs/biome check --write ."
+		"lint": "npx @biomejs/biome check src tasks"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.50.1",
