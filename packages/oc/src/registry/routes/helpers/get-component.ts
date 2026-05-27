@@ -10,13 +10,7 @@ import emptyResponseHandler from 'oc-empty-response-handler';
 import { fromPromise } from 'universalify';
 import strings from '../../../resources';
 import settings from '../../../resources/settings';
-import type {
-  Component,
-  Config,
-  PluginContext,
-  Plugins,
-  Template
-} from '../../../types';
+import type { Component, Config, PluginContext, Plugins } from '../../../types';
 import isTemplateLegacy from '../../../utils/is-template-legacy';
 import eventsHandler from '../../domain/events-handler';
 import NestedRenderer from '../../domain/nested-renderer';
@@ -146,6 +140,9 @@ export default function getComponent(conf: Config, repository: Repository) {
     refreshInterval: conf.refreshInterval
   });
   const convertPlugins = pluginConverter(conf.plugins);
+  const customHeadersToSkipSet = conf.customHeadersToSkipOnWeakVersion?.length
+    ? new Set(conf.customHeadersToSkipOnWeakVersion)
+    : undefined;
 
   const getEnv = async (
     component: Component
@@ -315,7 +312,8 @@ export default function getComponent(conf: Config, repository: Repository) {
           templateType = `oc-template-${templateType}`;
         }
 
-        if (!repository.getTemplate(templateType)) {
+        const ocTemplate = repository.getTemplate(templateType);
+        if (!ocTemplate) {
           return callback({
             status: 400,
             response: {
@@ -325,11 +323,6 @@ export default function getComponent(conf: Config, repository: Repository) {
             }
           });
         }
-
-        const customHeadersToSkip = conf.customHeadersToSkipOnWeakVersion;
-        const customHeadersToSkipSet = customHeadersToSkip?.length
-          ? new Set(customHeadersToSkip)
-          : undefined;
 
         const filterCustomHeaders = (
           headers: Record<string, string>,
@@ -551,23 +544,6 @@ export default function getComponent(conf: Config, repository: Repository) {
                 component.name,
                 component.version,
                 (_err, templateText) => {
-                  let ocTemplate: Template;
-
-                  try {
-                    ocTemplate = repository.getTemplate(templateType);
-                  } catch {
-                    return callback({
-                      status: 400,
-                      response: {
-                        code: 'TEMPLATE_NOT_SUPPORTED',
-                        error:
-                          strings.errors.registry.TEMPLATE_NOT_SUPPORTED(
-                            templateType
-                          )
-                      }
-                    });
-                  }
-
                   const template = ocTemplate.getCompiledTemplate(
                     templateText,
                     key
@@ -581,7 +557,7 @@ export default function getComponent(conf: Config, repository: Repository) {
         };
         const staticPath = repository
           .getStaticFilePath(component.name, component.version, '')
-          .replace('https:', '');
+          .replace(/^https:/, '');
 
         if (!component.oc.files.dataProvider) {
           const { __oc_Retry, ...props } = params;
