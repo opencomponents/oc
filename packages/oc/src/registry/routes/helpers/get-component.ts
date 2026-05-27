@@ -140,9 +140,6 @@ export default function getComponent(conf: Config, repository: Repository) {
     refreshInterval: conf.refreshInterval
   });
   const convertPlugins = pluginConverter(conf.plugins);
-  const customHeadersToSkipSet = conf.customHeadersToSkipOnWeakVersion?.length
-    ? new Set(conf.customHeadersToSkipOnWeakVersion)
-    : undefined;
 
   const getEnv = async (
     component: Component
@@ -200,6 +197,9 @@ export default function getComponent(conf: Config, repository: Repository) {
 
     let componentCallbackDone = false;
     const conf = options.conf;
+    const customHeadersToSkipSet = conf.customHeadersToSkipOnWeakVersion?.length
+      ? new Set(conf.customHeadersToSkipOnWeakVersion)
+      : undefined;
     const acceptLanguage = getLanguage();
     const requestedComponent = {
       name: options.name,
