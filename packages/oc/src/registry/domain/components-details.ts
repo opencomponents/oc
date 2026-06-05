@@ -12,6 +12,9 @@ import pLimit from '../../utils/pLimit';
 import eventsHandler from './events-handler';
 
 export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
+  let cachedComponentsDetails: ComponentsDetails | undefined;
+  let refreshLoop: NodeJS.Timeout;
+
   const returnError = (code: string, message: string | Error) => {
     eventsHandler.fire('error', {
       code,
@@ -25,6 +28,36 @@ export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
 
   const getFromJson = (): Promise<ComponentsDetails> =>
     cdn.getJson(filePath(), true);
+
+  const poll = () => {
+    return setTimeout(async () => {
+      try {
+        const data = await getFromJson();
+
+        eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
+
+        if (
+          !cachedComponentsDetails ||
+          data.lastEdit > cachedComponentsDetails.lastEdit
+        ) {
+          cachedComponentsDetails = data;
+        }
+      } catch (err: any) {
+        eventsHandler.fire('error', {
+          code: 'components_details_get',
+          message: err?.message || String(err)
+        });
+      }
+      refreshLoop = poll();
+    }, conf.pollingInterval * 1000);
+  };
+
+  const cacheDataAndStartPolling = (data: ComponentsDetails) => {
+    cachedComponentsDetails = data;
+    refreshLoop = poll();
+
+    return data;
+  };
 
   const getFromDirectories = async (options: {
     componentsList: ComponentsList;
@@ -78,9 +111,21 @@ export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
   const save = (data: ComponentsDetails): Promise<unknown> =>
     cdn.putFileContent(JSON.stringify(data), filePath(), true);
 
+  const get = async (): Promise<ComponentsDetails> => {
+    if (cachedComponentsDetails) {
+      return cachedComponentsDetails;
+    }
+
+    cachedComponentsDetails = await getFromJson();
+
+    return cachedComponentsDetails;
+  };
+
   const refresh = async (
     componentsList: ComponentsList
   ): Promise<ComponentsDetails> => {
+    clearTimeout(refreshLoop);
+
     const jsonDetails = await getFromJson().catch(() => undefined);
     const dirDetails = await getFromDirectories({
       componentsList,
@@ -94,14 +139,14 @@ export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
       await save(dirDetails).catch((err) =>
         returnError('components_details_save', err)
       );
-      return dirDetails;
+      return cacheDataAndStartPolling(dirDetails);
     }
 
-    return jsonDetails;
+    return cacheDataAndStartPolling(jsonDetails);
   };
 
   return {
-    get: getFromJson,
+    get,
     refresh
   };
 }
