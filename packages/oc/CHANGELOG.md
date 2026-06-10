@@ -1,5 +1,11 @@
 ## Change Log
 
+## 0.50.50
+
+### Patch Changes
+
+- Refresh component details on background after publish to not delay response to client
+
 ## 0.50.48
 
 ### Patch Changes
