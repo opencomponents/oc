@@ -399,8 +399,10 @@ export default function repository(conf: Config) {
         `${options!.componentsDir}/${componentName}/${componentVersion}`
       );
 
-      const componentsList = await componentsCache.refresh();
-      await componentsDetails.refresh(componentsList);
+      void componentsCache
+        .refresh()
+        .then((componentsList) => componentsDetails.refresh(componentsList))
+        .catch(() => undefined);
     }
   };
 
