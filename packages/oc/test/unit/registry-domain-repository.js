@@ -463,6 +463,47 @@ describe('registry : domain : repository', () => {
             );
           });
         });
+
+        describe('when refreshing details is slow', () => {
+          let refreshDetailsResolve;
+
+          before((done) => {
+            componentsCacheMock.get = sinon.stub();
+            componentsCacheMock.get.returns(componentsCacheBaseResponse);
+            componentsCacheMock.refresh = sinon.stub();
+            componentsCacheMock.refresh.resolves(componentsCacheBaseResponse);
+            componentsDetailsMock.refresh = sinon.stub();
+            componentsDetailsMock.refresh.returns(
+              new Promise((resolve) => {
+                refreshDetailsResolve = resolve;
+              })
+            );
+            s3Mock.putDir = sinon.stub();
+            s3Mock.putDir.resolves('done');
+            savePromiseResult(
+              repository.publishComponent({
+                pkgDetails: {
+                  ...pkg,
+                  outputFolder: '/path/to/component',
+                  componentName: 'hello-world'
+                },
+                componentName: 'hello-world',
+                componentVersion: '1.0.1'
+              }),
+              done
+            );
+          });
+
+          after(() => {
+            refreshDetailsResolve();
+          });
+
+          it('should resolve publish before details refresh finishes', () => {
+            expect(response.error).to.be.undefined;
+            expect(response.result).to.be.undefined;
+            expect(componentsDetailsMock.refresh.called).to.be.true;
+          });
+        });
       });
     });
   });
