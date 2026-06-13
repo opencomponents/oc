@@ -10,6 +10,7 @@
 		"allowJs": true,
 		"checkJs": true,
 		"declaration": true,
+		"rootDir": "./src",
 		"outDir": "./dist",
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
