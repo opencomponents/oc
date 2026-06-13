@@ -398,6 +398,15 @@ export interface Config<T = any> {
    */
   timeout: number;
   /**
+   * Maximum number of compiled component files (templates, data providers,
+   * env files) kept in the in-memory LRU cache. Older entries are evicted
+   * when the limit is reached. Lower values reduce memory usage; higher
+   * values improve performance for frequently accessed components.
+   *
+   * @default 100
+   */
+  cacheMaxSize: number;
+  /**
    * Verbosity level of the console logger (0 = silent).
    *
    * @default 0

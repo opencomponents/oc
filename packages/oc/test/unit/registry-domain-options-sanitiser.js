@@ -30,6 +30,35 @@ describe('registry : domain : options-sanitiser', () => {
     });
   });
 
+  describe('cacheMaxSize', () => {
+    describe('when not provided', () => {
+      const options = { baseUrl: 'http://my-registry.com' };
+
+      it('should default to 100', () => {
+        expect(sanitise(options).cacheMaxSize).to.equal(100);
+      });
+    });
+
+    describe('when provided', () => {
+      const options = { baseUrl: 'http://my-registry.com', cacheMaxSize: 500 };
+
+      it('should leave value untouched', () => {
+        expect(sanitise(options).cacheMaxSize).to.equal(500);
+      });
+    });
+
+    describe('when provided with an invalid value', () => {
+      const options = {
+        baseUrl: 'http://my-registry.com',
+        cacheMaxSize: -1
+      };
+
+      it('should default to 100', () => {
+        expect(sanitise(options).cacheMaxSize).to.equal(100);
+      });
+    });
+  });
+
   describe('customHeadersToSkipOnWeakVersion', () => {
     describe('when it contains valid elements', () => {
       const options = {

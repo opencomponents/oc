@@ -68,10 +68,11 @@ export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
     for (const [name, componentDetails] of Object.entries(
       options.details?.components || {}
     )) {
-      details.components[name] = { ...componentDetails };
+      details.components[name] = componentDetails;
     }
 
     const missing: Array<{ name: string; version: string }> = [];
+    const componentsNeedingClone = new Set<string>();
     for (const [name, versions] of Object.entries(
       options.componentsList.components
     )) {
@@ -81,8 +82,17 @@ export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
       for (const version of versions) {
         if (!componentDetails[version]) {
           missing.push({ name, version });
+          if (options.details?.components?.[name]) {
+            componentsNeedingClone.add(name);
+          }
         }
       }
+    }
+
+    // Only shallow-clone component detail maps that will be mutated. This
+    // keeps memory usage lower when most components are already up-to-date.
+    for (const name of componentsNeedingClone) {
+      details.components[name] = { ...details.components[name] };
     }
 
     const limit = pLimit(cdn.maxConcurrentRequests);
