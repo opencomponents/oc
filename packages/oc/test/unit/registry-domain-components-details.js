@@ -4,15 +4,22 @@ const sinon = require('sinon');
 
 describe('registry : domain : components-details', () => {
   const fireStub = sinon.stub();
+  const setTimeoutStub = sinon.stub();
+  const clearTimeoutStub = sinon.stub();
   const ComponentsDetails = injectr(
     '../../dist/registry/domain/components-details.js',
     {
       './events-handler': { fire: fireStub },
       'oc-get-unix-utc-timestamp': () => 1234567890
+    },
+    {
+      setTimeout: setTimeoutStub,
+      clearTimeout: clearTimeoutStub
     }
   ).default;
 
   const conf = {
+    pollingInterval: 5,
     storage: {
       options: {
         componentsDir: 'components'
@@ -65,6 +72,16 @@ describe('registry : domain : components-details', () => {
         expect(stubs.getJson.args[0][0]).to.equal(
           'components/components-details.json'
         );
+      });
+
+      it('should cache the details after the first fetch', async () => {
+        const cacheStubs = { getJson: sinon.stub().resolves(details) };
+        const componentsDetails = ComponentsDetails(conf, cacheStubs);
+
+        await componentsDetails.get();
+        await componentsDetails.get();
+
+        expect(cacheStubs.getJson.calledOnce).to.be.true;
       });
     });
 
@@ -246,6 +263,34 @@ describe('registry : domain : components-details', () => {
                   }
                 }
               });
+            });
+
+            it('should cache the refreshed details', async () => {
+              const cacheStubs = { getJson: sinon.stub() };
+              cacheStubs.getJson.onCall(0).resolves(details);
+              cacheStubs.getJson.onCall(1).resolves({
+                oc: {
+                  date: 1459864868001,
+                  files: { template: { size: 300 } }
+                }
+              });
+              cacheStubs.maxConcurrentRequests = 20;
+              cacheStubs.putFileContent = sinon.stub().resolves('ok');
+              const componentsDetails = ComponentsDetails(conf, cacheStubs);
+
+              await componentsDetails.refresh(list);
+              const cachedResult = await componentsDetails.get();
+
+              expect(cachedResult).to.eql({
+                lastEdit: 1234567890,
+                components: {
+                  hello: {
+                    '1.0.0': { publishDate: 1459864868000 },
+                    '1.0.1': { publishDate: 1459864868001, templateSize: 300 }
+                  }
+                }
+              });
+              expect(cacheStubs.getJson.callCount).to.equal(2);
             });
           });
         });
@@ -475,6 +520,100 @@ describe('registry : domain : components-details', () => {
             });
           });
         });
+      });
+    });
+  });
+
+  describe('polling', () => {
+    const list = {
+      lastEdit: 1459864868001,
+      components: {
+        hello: ['1.0.0', '1.0.1']
+      }
+    };
+
+    const details = {
+      lastEdit: 1459864868001,
+      components: {
+        hello: {
+          '1.0.0': { publishDate: 1459864868000 },
+          '1.0.1': { publishDate: 1459864868001 }
+        }
+      }
+    };
+
+    const newerDetails = {
+      lastEdit: 1459864868999,
+      components: {
+        hello: {
+          '1.0.0': { publishDate: 1459864868000 },
+          '1.0.1': { publishDate: 1459864868001 },
+          '2.0.0': { publishDate: 1459864868999 }
+        }
+      }
+    };
+
+    let stubs;
+    let componentsDetails;
+
+    beforeEach(async () => {
+      setTimeoutStub.reset();
+      clearTimeoutStub.reset();
+      fireStub.reset();
+      stubs = { getJson: sinon.stub().resolves(details) };
+      stubs.maxConcurrentRequests = 20;
+      stubs.putFileContent = sinon.stub().resolves('ok');
+      componentsDetails = ComponentsDetails(conf, stubs);
+      await componentsDetails.refresh(list);
+    });
+
+    it('should start the polling loop using the configured interval', () => {
+      expect(setTimeoutStub.called).to.be.true;
+      expect(setTimeoutStub.args[0][1]).to.equal(5000);
+    });
+
+    it('should clear the previous loop when refreshing again', async () => {
+      await componentsDetails.refresh(list);
+      expect(clearTimeoutStub.called).to.be.true;
+    });
+
+    it('should restart the loop after each poll', async () => {
+      const poll = setTimeoutStub.args[0][0];
+      await poll();
+      expect(setTimeoutStub.calledTwice).to.be.true;
+    });
+
+    it('should update the cache when the polled data is newer', async () => {
+      const poll = setTimeoutStub.args[0][0];
+      stubs.getJson.resolves(newerDetails);
+
+      await poll();
+
+      expect(await componentsDetails.get()).to.eql(newerDetails);
+    });
+
+    it('should keep the cached data when the polled data is not newer', async () => {
+      const poll = setTimeoutStub.args[0][0];
+      stubs.getJson.resolves({ ...details, lastEdit: details.lastEdit - 1 });
+
+      await poll();
+
+      expect(await componentsDetails.get()).to.eql(details);
+    });
+
+    it('should fire an error event when polling fails', async () => {
+      const poll = setTimeoutStub.args[0][0];
+      fireStub.reset();
+      stubs.getJson.rejects(new Error('poll failed'));
+
+      await poll();
+
+      const errorCall = fireStub
+        .getCalls()
+        .find((call) => call.args[0] === 'error');
+      expect(errorCall.args[1]).to.eql({
+        code: 'components_details_get',
+        message: 'poll failed'
       });
     });
   });
