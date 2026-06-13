@@ -143,7 +143,7 @@ export default function getComponent(conf: Config, repository: Repository) {
 
   const parseAcceptLanguage = (header: string) => {
     const cached = cache.get('accept-language', header);
-    if (cached) return cached;
+    if (cached !== undefined) return cached;
     const parsed = acceptLanguageParser.parse(header);
     cache.set('accept-language', header, parsed);
     return parsed;
