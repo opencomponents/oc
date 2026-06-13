@@ -87,6 +87,10 @@ export default function optionsSanitiser<
     options.verbosity = 0;
   }
 
+  if (typeof options.cacheMaxSize !== 'number' || options.cacheMaxSize <= 0) {
+    options.cacheMaxSize = 100;
+  }
+
   const showApi =
     typeof options.discovery === 'boolean'
       ? true
