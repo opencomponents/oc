@@ -24,7 +24,7 @@ export default function components(
     results: GetComponentResult[] | undefined,
     res: Response
   ) => {
-    if (!results || results.length !== 1 || !results[0] || !res.set) {
+    if (results?.length !== 1 || !results[0] || !res.set) {
       return;
     }
     res.set(results[0].headers);
@@ -34,7 +34,7 @@ export default function components(
     results: GetComponentResult[] | undefined,
     res: Response
   ) => {
-    if (!results || results.length !== 1 || !results[0] || !res.cookie) {
+    if (results?.length !== 1 || !results[0] || !res.cookie) {
       return;
     }
     const cookies = results[0].cookies;
