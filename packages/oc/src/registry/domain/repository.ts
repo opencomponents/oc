@@ -154,6 +154,12 @@ export default function repository(conf: Config) {
       componentName: string,
       componentVersion?: string
     ): Promise<Component> {
+      if (!validator.validateComponentName(componentName)) {
+        throw {
+          code: strings.errors.registry.COMPONENT_NAME_NOT_VALID_CODE,
+          msg: strings.errors.registry.COMPONENT_NAME_NOT_VALID
+        };
+      }
       const allVersions = await repository.getComponentVersions(componentName);
 
       if (allVersions.length === 0) {
@@ -179,7 +185,7 @@ export default function repository(conf: Config) {
       const component = await repository
         .getComponentInfo(componentName, version)
         .catch((err) => {
-          throw `component not available: ${errorToString(err)}`;
+          throw 'component not available';
         });
 
       return Object.assign(component, { allVersions });
@@ -188,6 +194,12 @@ export default function repository(conf: Config) {
       componentName: string,
       componentVersion: string
     ): Promise<Component> {
+      if (!validator.validateComponentName(componentName)) {
+        return Promise.reject({
+          code: strings.errors.registry.COMPONENT_NAME_NOT_VALID_CODE,
+          msg: strings.errors.registry.COMPONENT_NAME_NOT_VALID
+        });
+      }
       if (conf.local) {
         let componentInfo: Component;
 
@@ -253,6 +265,12 @@ export default function repository(conf: Config) {
       content: string;
       filePath: string;
     }> {
+      if (!validator.validateComponentName(componentName)) {
+        throw {
+          code: strings.errors.registry.COMPONENT_NAME_NOT_VALID_CODE,
+          msg: strings.errors.registry.COMPONENT_NAME_NOT_VALID
+        };
+      }
       if (conf.local) {
         return local.getDataProvider(componentName);
       }
@@ -271,6 +289,12 @@ export default function repository(conf: Config) {
       componentName: string,
       componentVersion: string
     ): Promise<Record<string, string>> {
+      if (!validator.validateComponentName(componentName)) {
+        return Promise.reject({
+          code: strings.errors.registry.COMPONENT_NAME_NOT_VALID_CODE,
+          msg: strings.errors.registry.COMPONENT_NAME_NOT_VALID
+        });
+      }
       if (conf.local) {
         return local.getEnv(componentName);
       }
