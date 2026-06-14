@@ -13,13 +13,23 @@
 		"url": "https://github.com/opencomponents/oc/issues"
 	},
 	"homepage": "https://github.com/opencomponents/oc/tree/master/packages/oc-client-browser#readme",
-	"keywords": ["oc", "opencomponents"],
+	"keywords": [
+		"oc",
+		"opencomponents"
+	],
 	"author": {
 		"name": "Nick Balestra",
 		"email": "nick@balestra.ch"
 	},
 	"license": "MIT",
-	"files": ["tasks", "dist", "vendor", "src", "index.js", "index.d.ts"],
+	"files": [
+		"tasks",
+		"dist",
+		"vendor",
+		"src",
+		"index.js",
+		"index.d.ts"
+	],
 	"scripts": {
 		"start": "serve -l 5173",
 		"test": "npm run build && npx playwright test --reporter=html",
@@ -28,13 +38,13 @@
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.50.1",
-		"fs-extra": "10.0.0",
+		"fs-extra": "^11.3.5",
 		"serve": "^14.2.4"
 	},
 	"dependencies": {
 		"@rdevis/turbo-stream": "^2.4.1",
-		"esbuild": "^0.25.0",
+		"esbuild": "^0.28.1",
 		"uglify-js": "^3.14.2",
-		"universalify": "2.0.0"
+		"universalify": "^2.0.1"
 	}
 }

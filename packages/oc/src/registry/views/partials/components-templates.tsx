@@ -12,12 +12,14 @@ const ComponentsTemplates = (props: { templates: Templates }) => {
     url: string;
   }) => (
     <a safe href={url} target="_blank" rel="noreferrer">
-      {global}
+      {Array.isArray(global) ? global.join(', ') : global}
     </a>
   );
 
   const templateRow = ({ externals, type, version }: Template) => {
-    const externalLinks = externals.map(externalLink);
+    const externalLinks = externals.flatMap((external, i) =>
+      i === 0 ? [externalLink(external)] : [', ', externalLink(external)]
+    );
     const externalsLabel = externalLinks.length ? (
       <> (Externals: {externalLinks}) </>
     ) : null;
@@ -41,7 +43,11 @@ const ComponentsTemplates = (props: { templates: Templates }) => {
 
   return (
     <div id="components-templates" class="box">
-      {props.templates.map(templateRow)}
+      {props.templates.length ? (
+        props.templates.map(templateRow)
+      ) : (
+        <div class="empty-state">No templates registered</div>
+      )}
     </div>
   );
 };

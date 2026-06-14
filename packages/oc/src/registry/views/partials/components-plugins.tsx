@@ -17,7 +17,11 @@ const ComponentsPlugins = (props: {
 
   return (
     <div id="components-plugins" class="box">
-      {plugins.length ? plugins.map(pluginRow) : 'No plugins registered'}
+      {plugins.length ? (
+        plugins.map(pluginRow)
+      ) : (
+        <div class="empty-state">No plugins registered</div>
+      )}
     </div>
   );
 };

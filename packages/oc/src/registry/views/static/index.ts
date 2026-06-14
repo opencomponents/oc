@@ -54,19 +54,20 @@ oc.cmd.push(function() {
     }
 
     var totalShowing = componentsList.length - hidden,
-      result = 'Showing ' + totalShowing + ' components';
+      result = totalShowing + (totalShowing === 1 ? ' component' : ' components');
 
     if (s) {
-      result += ' matching search query: "' + s + '"';
+      result += ' matching "' + s + '"';
       if (a) {
         result += ' and';
       }
     }
     if (a) {
-      result += ' matching author query: "' + a + '"';
+      result += ' by author "' + a + '"';
     }
 
-    $('.componentRow.header .title').text(result);
+    $('#results-count').text(result);
+    $('#components-empty')[totalShowing === 0 ? 'removeClass' : 'addClass']('hide');
 
     return false;
   };
@@ -252,6 +253,23 @@ oc.cmd.push(function() {
   if (q) {
     $('.search').val(q);
   }
+
+  // Keyboard shortcuts: "/" focuses search, "Esc" clears the focused filter
+  $(document).on('keydown', function(e) {
+    var tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+    var typing = tag === 'input' || tag === 'textarea' || tag === 'select';
+
+    if (e.key === '/' && !typing) {
+      var $s = $('#search-filter');
+      if ($s.length) {
+        e.preventDefault();
+        $s.focus();
+      }
+    } else if (e.key === 'Escape' && typing && $(e.target).closest('#filter-components').length) {
+      $(e.target).val('');
+      componentsListChanged();
+    }
+  });
 
   // Focus the search input only on a fresh load (no tab hash, no in-page nav)
   if (!location.hash) {
