@@ -26,7 +26,11 @@ const ComponentsDependencies = (props: {
 
   return (
     <div id="components-dependencies" class="box">
-      {props.availableDependencies.map(dependencyRow)}
+      {props.availableDependencies.length ? (
+        props.availableDependencies.map(dependencyRow)
+      ) : (
+        <div class="empty-state">No dependencies registered</div>
+      )}
     </div>
   );
 };

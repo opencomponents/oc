@@ -4,6 +4,7 @@ import History from './partials/components-history';
 import List from './partials/components-list';
 import Plugins from './partials/components-plugins';
 import Templates from './partials/components-templates';
+import Icon from './partials/icon';
 import Layout from './partials/layout';
 import indexJS from './static/index';
 
@@ -37,7 +38,9 @@ ${indexJS}</script>`;
             'experimental'
           )} experimental, ${getCount('deprecated')} deprecated`}
         >
-          <span aria-hidden="true">📦</span>
+          <span class="section-icon" aria-hidden="true">
+            <Icon name="box" size={16} />
+          </span>
           {vm.components.length} Components ({getCount('experimental')}{' '}
           experimental, {getCount('deprecated')} deprecated)
         </output>
@@ -89,7 +92,7 @@ ${indexJS}</script>`;
         <aside class="sidebar">
           <div class="info-card">
             <h3 class="section-title" style="margin-bottom: 1.5rem;">
-              📋 Registry Info
+              <Icon name="info" size={15} /> Registry Info
             </h3>
             <div class="info-item">
               <span class="info-label">Base URL</span>

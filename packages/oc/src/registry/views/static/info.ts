@@ -101,6 +101,35 @@ oc.cmd.push(function() {
     return false;
   });
 
+  // Copy the component URL to the clipboard with inline feedback
+  $('.copy-href').click(function() {
+    var $btn = $(this);
+    var $label = $btn.find('.copy-href-label');
+    var value = $('#href').val();
+
+    var onDone = function() {
+      var prev = $label.text();
+      $label.text('Copied');
+      $btn.addClass('copied');
+      setTimeout(function() {
+        $label.text(prev || 'Copy');
+        $btn.removeClass('copied');
+      }, 1500);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(value).then(onDone).catch(function() {
+        $('#href').select();
+        try { document.execCommand('copy'); onDone(); } catch (e) {}
+      });
+    } else {
+      $('#href').select();
+      try { document.execCommand('copy'); onDone(); } catch (e) {}
+    }
+
+    return false;
+  });
+
   // Collapsible sections functionality
   function initCollapsibleSections() {
     // Check if we're on mobile (screen width <= 1024px)
