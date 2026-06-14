@@ -6,11 +6,14 @@ const { promisify } = require('node:util');
 const getPort = require('getport');
 
 const createStorageAdapter = require('./storage-adapter');
+const createAzuriteStorageAdapter = require('./azure-storage-adapter');
+const { startAzurite } = require('./azurite-server');
+const { generateAndUploadComponents } = require('./generate-components');
 const oc = require('../../dist');
 
 const getPortAsync = promisify(getPort);
 
-const DEFAULT_OUT_DIR = path.resolve('test/results/benchmarks');
+const DEFAULT_OUT_DIR = path.resolve(__dirname, '../../test/results/benchmarks');
 const DEFAULT_REPETITIONS = 5;
 const DEFAULT_HEADERS = ['Accept: application/json'];
 
@@ -29,6 +32,28 @@ const parseList = (value) =>
     .split(',')
     .map((entry) => entry.trim())
     .filter(Boolean);
+
+const buildBatchComponentBody = (firstComponentName, batchSize = 50) => {
+  const components = [];
+  const match = firstComponentName.match(/^(.*-)(\d+)$/);
+  const prefix = match ? match[1] : 'stress-component-';
+  const startIndex = match ? Number.parseInt(match[2], 10) : 1;
+
+  for (let i = 0; i < batchSize; i += 1) {
+    const index = startIndex + i;
+    const componentName = `${prefix}${String(index).padStart(3, '0')}`;
+    components.push({
+      name: componentName,
+      version: '1.0.0',
+      parameters: {
+        firstName: 'Jane',
+        lastName: 'Doe'
+      }
+    });
+  }
+
+  return JSON.stringify({ components });
+};
 
 const nowIsoCompact = () => new Date().toISOString().replace(/[:.]/g, '-');
 
@@ -53,20 +78,34 @@ const getResourceUsage = () => {
 const startResourceMonitoring = () => {
   const baseline = getResourceUsage();
   const startTime = process.hrtime.bigint();
-  
+  const peakMemory = { ...baseline.memory };
+
+  const sampleInterval = setInterval(() => {
+    const usage = process.memoryUsage();
+    peakMemory.heapUsed = Math.max(peakMemory.heapUsed, Math.round(usage.heapUsed / 1024 / 1024));
+    peakMemory.heapTotal = Math.max(peakMemory.heapTotal, Math.round(usage.heapTotal / 1024 / 1024));
+    peakMemory.rss = Math.max(peakMemory.rss, Math.round(usage.rss / 1024 / 1024));
+    peakMemory.external = Math.max(peakMemory.external, Math.round(usage.external / 1024 / 1024));
+  }, 500);
+
   return {
     baseline,
     startTime,
     getDelta: () => {
+      clearInterval(sampleInterval);
       const current = getResourceUsage();
       const endTime = process.hrtime.bigint();
       const elapsedMs = Number(endTime - startTime) / 1000000; // Convert to milliseconds
-      
+
       return {
         memory: {
           heapUsedDelta: current.memory.heapUsed - baseline.memory.heapUsed,
           heapTotalDelta: current.memory.heapTotal - baseline.memory.heapTotal,
-          rssDelta: current.memory.rss - baseline.memory.rss
+          rssDelta: current.memory.rss - baseline.memory.rss,
+          peakHeapUsed: peakMemory.heapUsed,
+          peakHeapTotal: peakMemory.heapTotal,
+          peakRss: peakMemory.rss,
+          peakExternal: peakMemory.external
         },
         cpu: {
           userTimeDelta: current.cpu.userTime - baseline.cpu.userTime,
@@ -164,6 +203,15 @@ const compareWithBaseline = (current, baseline) => {
           improved: scenario.resourceUsage.rssDelta.average < baselineScenario.resourceUsage.rssDelta.average
         }
       };
+
+      if (baseline.benchmarkVersion >= 3) {
+        comparison[scenario.key].memory.peakHeapUsed = {
+          current: scenario.resourceUsage.peakHeapUsed.average,
+          baseline: baselineScenario.resourceUsage.peakHeapUsed.average,
+          change: calculatePercentageChange(scenario.resourceUsage.peakHeapUsed.average, baselineScenario.resourceUsage.peakHeapUsed.average),
+          improved: scenario.resourceUsage.peakHeapUsed.average < baselineScenario.resourceUsage.peakHeapUsed.average
+        };
+      }
     }
   }
   
@@ -193,6 +241,10 @@ const printComparison = (comparison) => {
     if (metrics.memory) {
       const memoryStatus = metrics.memory.heapUsedDelta.improved ? '✅' : '❌';
       console.log(`  ${memoryStatus} Memory Delta: ${metrics.memory.heapUsedDelta.current.toFixed(2)}MB vs ${metrics.memory.heapUsedDelta.baseline.toFixed(2)}MB (${formatPercentageChange(metrics.memory.heapUsedDelta.change)})`);
+      if (metrics.memory.peakHeapUsed) {
+        const peakStatus = metrics.memory.peakHeapUsed.improved ? '✅' : '❌';
+        console.log(`  ${peakStatus} Peak Heap: ${metrics.memory.peakHeapUsed.current.toFixed(2)}MB vs ${metrics.memory.peakHeapUsed.baseline.toFixed(2)}MB (${formatPercentageChange(metrics.memory.peakHeapUsed.change)})`);
+      }
     }
   }
   
@@ -209,14 +261,21 @@ const prepareStorageFixtures = async () => {
     {
       name: 'welcome-with-plugin',
       packagePath: path.resolve(
-        'test/fixtures/benchmark-components/welcome-with-plugin/_package/package.json'
+        __dirname,
+        '../../test/fixtures/benchmark-components/welcome-with-plugin/_package/package.json'
       ),
-      source: path.resolve('test/fixtures/benchmark-components/welcome-with-plugin/_package')
+      source: path.resolve(
+        __dirname,
+        '../../test/fixtures/benchmark-components/welcome-with-plugin/_package'
+      )
     },
     {
       name: 'oc-client',
-      packagePath: path.resolve('dist/components/oc-client/_package/package.json'),
-      source: path.resolve('dist/components/oc-client/_package')
+      packagePath: path.resolve(
+        __dirname,
+        '../../dist/components/oc-client/_package/package.json'
+      ),
+      source: path.resolve(__dirname, '../../dist/components/oc-client/_package')
     }
   ];
 
@@ -261,8 +320,14 @@ const runBombardier = ({ url, options }) =>
     if (options.requests && options.requests > 0) {
       args.push('-n', String(options.requests));
     }
+    if (options.body) {
+      args.push('-b', options.body);
+    }
     for (const header of options.headers || []) {
       args.push('-H', header);
+    }
+    if (options.body && !options.headers?.some((h) => h.toLowerCase().startsWith('content-type'))) {
+      args.push('-H', 'Content-Type: application/json');
     }
     args.push(url);
 
@@ -393,12 +458,13 @@ const startRegistry = async (scenario, options) => {
 
   let registryOptions;
   let disposeFixtures = async () => {};
+  let generated;
   if (scenario === 'local-memory' || scenario === 'high-load-local') {
     registryOptions = {
       ...commonOptions,
       local: true,
       hotReloading: false,
-      path: path.resolve('test/fixtures/components')
+      path: path.resolve(__dirname, '../../test/fixtures/components')
     };
   } else if (scenario === 'storage-simulated' || scenario === 'high-load-storage') {
     const preparedFixtures = await prepareStorageFixtures();
@@ -425,6 +491,78 @@ const startRegistry = async (scenario, options) => {
       },
       dependencies: []
     };
+  } else if (
+    scenario.startsWith('azurite-')
+  ) {
+    const azurite = await startAzurite({
+      port: options.azuritePort,
+      inMemoryPersistence: options.azuriteInMemoryPersistence,
+      silent: true
+    });
+
+    const publicContainerName = 'oc-public';
+    const privateContainerName = 'oc-private';
+    const componentsDir = 'components';
+    const azuritePath = `//127.0.0.1:${azurite.port}/${azurite.accountName}/${publicContainerName}/`;
+
+    const storageAdapter = createAzuriteStorageAdapter({
+      endpoint: azurite.endpoint,
+      accountName: azurite.accountName,
+      accountKey: azurite.accountKey,
+      publicContainerName,
+      privateContainerName,
+      componentsDir,
+      maxConcurrentRequests: options.storageMaxConcurrentRequests
+    });
+
+    // Ensure containers exist before uploading.
+    await storageAdapter.getClient().publicClient.createIfNotExists({
+      access: 'blob'
+    });
+    await storageAdapter.getClient().privateClient.createIfNotExists();
+
+    const ocPackageInfo = JSON.parse(
+      await fs.promises.readFile(
+        path.join(__dirname, '..', '..', 'package.json'),
+        'utf8'
+      )
+    );
+    generated = await generateAndUploadComponents({
+      count: options.azuriteComponentCount,
+      storageAdapter,
+      componentsDir,
+      ocClientVersion: ocPackageInfo.version
+    });
+
+    disposeFixtures = async () => {
+      await generated.dispose().catch(() => {});
+      await azurite.stop().catch(() => {});
+    };
+
+    registryOptions = {
+      ...commonOptions,
+      local: false,
+      discovery: {
+        ui: false,
+        api: true,
+        experimental: false,
+        validate: false,
+        robots: true
+      },
+      storage: {
+        adapter: () => storageAdapter,
+        options: {
+          componentsDir,
+          path: azuritePath,
+          publicContainerName,
+          privateContainerName,
+          accountName: azurite.accountName,
+          accountKey: azurite.accountKey
+        }
+      },
+      dependencies: [],
+      pollingInterval: 60
+    };
   } else {
     throw new Error(`Unknown scenario: ${scenario}`);
   }
@@ -448,6 +586,7 @@ const startRegistry = async (scenario, options) => {
   return {
     registry,
     baseUrl,
+    firstComponentName: generated?.components?.[0]?.name,
     close: async () => {
       await new Promise((resolve, reject) => {
         registry.close((error) => {
@@ -482,8 +621,33 @@ const buildScenarios = () => [
     title: 'High load storage path + plugin execution',
     urlPath: '/welcome-with-plugin/1.0.0?firstName=Jane&lastName=Doe&suffix=-Bench',
     highLoad: true
+  },
+  {
+    key: 'azurite-retrieve-components',
+    title: 'Azurite-backed registry retrieving many components with full metadata',
+    urlPath: '/?meta=true',
+    azurite: true
+  },
+  {
+    key: 'azurite-return-component',
+    title: 'Azurite-backed registry returning a single component',
+    urlPath: '/{firstComponent}/1.0.0?firstName=Jane&lastName=Doe',
+    azurite: true
+  },
+  {
+    key: 'azurite-return-components-batch',
+    title: 'Azurite-backed registry returning a batch of components',
+    urlPath: '/',
+    method: 'POST',
+    body: 'batch',
+    azurite: true
   }
 ];
+
+// Azurite scenarios start an Azurite blob emulator, upload a configurable
+// number of components, then run bombardier against the registry.
+// Options: --azurite-component-count (default 500), --azurite-port (default random),
+// --azurite-in-memory-persistence (default true), --azurite-batch-size (default 50).
 
 const benchmarkScenario = async ({ scenario, options }) => {
   const scenarioResult = {
@@ -495,8 +659,17 @@ const benchmarkScenario = async ({ scenario, options }) => {
   };
 
   const server = await startRegistry(scenario.key, options);
-  const url = `${server.baseUrl.replace(/\/$/, '')}${scenario.urlPath}`;
+  const urlPath = scenario.urlPath.replace(
+    /\{firstComponent\}/g,
+    server.firstComponentName || 'stress-component-001'
+  );
+  const url = `${server.baseUrl.replace(/\/$/, '')}${urlPath}`;
   const resourceMeasurements = [];
+
+  const requestBody =
+    scenario.body === 'batch'
+      ? buildBatchComponentBody(server.firstComponentName, options.azuriteBatchSize)
+      : scenario.body;
 
   try {
     for (let attempt = 1; attempt <= options.repetitions; attempt += 1) {
@@ -508,11 +681,12 @@ const benchmarkScenario = async ({ scenario, options }) => {
           connections: options.connections,
           duration: options.duration,
           timeout: options.timeout,
-          method: 'GET',
+          method: scenario.method || 'GET',
           requests: options.requests,
           rate: options.rate,
           disableKeepAlives: options.disableKeepAlives,
-          headers: options.headers
+          headers: options.headers,
+          body: requestBody
         }
       });
       
@@ -533,9 +707,10 @@ const benchmarkScenario = async ({ scenario, options }) => {
       const rps = metrics.rpsMean.toFixed(2);
       const p95 = metrics.latencyP95Ms.toFixed(2);
       const mem = resourceDelta.memory.heapUsedDelta.toFixed(2);
+      const peakMem = resourceDelta.memory.peakHeapUsed.toFixed(2);
       const ok = (metrics.successRate * 100).toFixed(2);
       console.log(
-        `[${scenario.key}] run ${attempt}/${options.repetitions} | rps=${rps} | p95=${p95}ms | mem=${mem}MB | success=${ok}%`
+        `[${scenario.key}] run ${attempt}/${options.repetitions} | rps=${rps} | p95=${p95}ms | mem=${mem}MB | peak=${peakMem}MB | success=${ok}%`
       );
     }
   } finally {
@@ -558,6 +733,16 @@ const benchmarkScenario = async ({ scenario, options }) => {
       average: resourceMeasurements.reduce((sum, m) => sum + m.memory.rssDelta, 0) / resourceMeasurements.length,
       min: Math.min(...resourceMeasurements.map(m => m.memory.rssDelta)),
       max: Math.max(...resourceMeasurements.map(m => m.memory.rssDelta))
+    },
+    peakHeapUsed: {
+      average: resourceMeasurements.reduce((sum, m) => sum + m.memory.peakHeapUsed, 0) / resourceMeasurements.length,
+      min: Math.min(...resourceMeasurements.map(m => m.memory.peakHeapUsed)),
+      max: Math.max(...resourceMeasurements.map(m => m.memory.peakHeapUsed))
+    },
+    peakRss: {
+      average: resourceMeasurements.reduce((sum, m) => sum + m.memory.peakRss, 0) / resourceMeasurements.length,
+      min: Math.min(...resourceMeasurements.map(m => m.memory.peakRss)),
+      max: Math.max(...resourceMeasurements.map(m => m.memory.peakRss))
     },
     cpuUserTimeDelta: {
       average: resourceMeasurements.reduce((sum, m) => sum + m.cpu.userTimeDelta, 0) / resourceMeasurements.length,
@@ -591,8 +776,8 @@ const parseArguments = (argv) => {
 const selectScenarios = (selected) => {
   const all = buildScenarios();
   if (!selected || selected.length === 0) {
-    // By default, exclude high-load scenarios (they take longer)
-    return all.filter((scenario) => !scenario.highLoad);
+    // By default, exclude high-load and azurite scenarios (they take longer)
+    return all.filter((scenario) => !scenario.highLoad && !scenario.azurite);
   }
   const selectedSet = new Set(selected);
   return all.filter((scenario) => selectedSet.has(scenario.key));
@@ -629,7 +814,12 @@ const main = async () => {
     storageMaxConcurrentRequests: parseInteger(
       args['storage-max-concurrency'],
       128
-    )
+    ),
+    azuriteComponentCount: parseInteger(args['azurite-component-count'], 500),
+    azuriteBatchSize: parseInteger(args['azurite-batch-size'], 50),
+    azuritePort: parseInteger(args['azurite-port'], 0),
+    azuriteInMemoryPersistence:
+      args['azurite-in-memory-persistence'] !== 'false'
   };
 
   const getScenarioOptions = (scenario) => {
@@ -641,6 +831,12 @@ const main = async () => {
         repetitions: parseInteger(args['high-load-repetitions'], 2) // Reduced from 3 to 2
       };
     }
+    if (scenario.azurite) {
+      return {
+        ...baseOptions,
+        timeout: args.timeout || '30s'
+      };
+    }
     return baseOptions;
   };
 
@@ -650,7 +846,7 @@ const main = async () => {
     host: hostname,
     node: process.version,
     platform: `${process.platform}-${process.arch}`,
-    benchmarkVersion: 2,
+    benchmarkVersion: 3,
     options: {
       repetitions: baseOptions.repetitions,
       connections: baseOptions.connections,
@@ -662,7 +858,11 @@ const main = async () => {
       headers: baseOptions.headers,
       storageMinLatencyMs: baseOptions.storageMinLatencyMs,
       storageMaxLatencyMs: baseOptions.storageMaxLatencyMs,
-      storageMaxConcurrentRequests: baseOptions.storageMaxConcurrentRequests
+      storageMaxConcurrentRequests: baseOptions.storageMaxConcurrentRequests,
+      azuriteComponentCount: baseOptions.azuriteComponentCount,
+      azuriteBatchSize: baseOptions.azuriteBatchSize,
+      azuritePort: baseOptions.azuritePort,
+      azuriteInMemoryPersistence: baseOptions.azuriteInMemoryPersistence
     },
     scenarios: []
   };
@@ -711,7 +911,10 @@ const main = async () => {
     
     if (resourceUsage) {
       console.log(
-        `  Memory: heapUsed(avg/min/max)=${resourceUsage.heapUsedDelta.average.toFixed(2)}/${resourceUsage.heapUsedDelta.min.toFixed(2)}/${resourceUsage.heapUsedDelta.max.toFixed(2)}MB | rss(avg/min/max)=${resourceUsage.rssDelta.average.toFixed(2)}/${resourceUsage.rssDelta.min.toFixed(2)}/${resourceUsage.rssDelta.max.toFixed(2)}MB`
+        `  Memory delta: heapUsed(avg/min/max)=${resourceUsage.heapUsedDelta.average.toFixed(2)}/${resourceUsage.heapUsedDelta.min.toFixed(2)}/${resourceUsage.heapUsedDelta.max.toFixed(2)}MB | rss(avg/min/max)=${resourceUsage.rssDelta.average.toFixed(2)}/${resourceUsage.rssDelta.min.toFixed(2)}/${resourceUsage.rssDelta.max.toFixed(2)}MB`
+      );
+      console.log(
+        `  Memory peak: heapUsed(avg/min/max)=${resourceUsage.peakHeapUsed.average.toFixed(2)}/${resourceUsage.peakHeapUsed.min.toFixed(2)}/${resourceUsage.peakHeapUsed.max.toFixed(2)}MB | rss(avg/min/max)=${resourceUsage.peakRss.average.toFixed(2)}/${resourceUsage.peakRss.min.toFixed(2)}/${resourceUsage.peakRss.max.toFixed(2)}MB`
       );
       console.log(
         `  CPU: userTime(avg/min/max)=${resourceUsage.cpuUserTimeDelta.average.toFixed(2)}/${resourceUsage.cpuUserTimeDelta.min.toFixed(2)}/${resourceUsage.cpuUserTimeDelta.max.toFixed(2)}s | systemTime(avg/min/max)=${resourceUsage.cpuSystemTimeDelta.average.toFixed(2)}/${resourceUsage.cpuSystemTimeDelta.min.toFixed(2)}/${resourceUsage.cpuSystemTimeDelta.max.toFixed(2)}s`
