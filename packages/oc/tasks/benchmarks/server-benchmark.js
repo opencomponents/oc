@@ -161,6 +161,57 @@ const formatPercentageChange = (change) => {
   return `${sign}${change.toFixed(2)}%`;
 };
 
+const median = (values) => {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0
+    ? (sorted[middle - 1] + sorted[middle]) / 2
+    : sorted[middle];
+};
+
+const summarizeValues = (values) => {
+  values = values.filter((value) => Number.isFinite(value));
+  if (values.length === 0) {
+    return {
+      average: 0,
+      median: 0,
+      min: 0,
+      max: 0
+    };
+  }
+  const average =
+    values.reduce((sum, value) => sum + value, 0) / values.length;
+  return {
+    average,
+    median: median(values),
+    min: Math.min(...values),
+    max: Math.max(...values)
+  };
+};
+
+const getComparisonValue = (metric) =>
+  metric?.median ?? metric?.average ?? 0;
+
+const compareMetric = (currentMetric, baselineMetric, options = {}) => {
+  const current = getComparisonValue(currentMetric);
+  const baseline = getComparisonValue(baselineMetric);
+  const change = calculatePercentageChange(current, baseline);
+  const tolerance = options.tolerance ?? 0;
+  const higherIsBetter = options.higherIsBetter !== false;
+  const regression = higherIsBetter ? change < -tolerance : change > tolerance;
+  const improved = higherIsBetter ? change > tolerance : change < -tolerance;
+
+  return {
+    current,
+    baseline,
+    change,
+    tolerance,
+    improved,
+    regression
+  };
+};
+
 const compareWithBaseline = (current, baseline) => {
   if (!baseline) return null;
   
@@ -171,49 +222,57 @@ const compareWithBaseline = (current, baseline) => {
     if (!baselineScenario) continue;
     
     const currentAggregate = scenario.aggregate;
-    const baselineAggregate = baselineScenario.aggregate;
-    
-    comparison[scenario.key] = {
-      rps: {
-        current: currentAggregate.rps.average,
-        baseline: baselineAggregate.rps.average,
-        change: calculatePercentageChange(currentAggregate.rps.average, baselineAggregate.rps.average),
-        improved: currentAggregate.rps.average > baselineAggregate.rps.average
-      },
-      latencyP95Ms: {
-        current: currentAggregate.latencyP95Ms.average,
-        baseline: baselineAggregate.latencyP95Ms.average,
-        change: calculatePercentageChange(currentAggregate.latencyP95Ms.average, baselineAggregate.latencyP95Ms.average),
-        improved: currentAggregate.latencyP95Ms.average < baselineAggregate.latencyP95Ms.average
-      },
-      latencyMeanMs: {
-        current: currentAggregate.latencyMeanMs.average,
-        baseline: baselineAggregate.latencyMeanMs.average,
-        change: calculatePercentageChange(currentAggregate.latencyMeanMs.average, baselineAggregate.latencyMeanMs.average),
-        improved: currentAggregate.latencyMeanMs.average < baselineAggregate.latencyMeanMs.average
-      },
-      successRate: {
-        current: currentAggregate.successRate.average,
-        baseline: baselineAggregate.successRate.average,
-        change: calculatePercentageChange(currentAggregate.successRate.average, baselineAggregate.successRate.average),
-        improved: currentAggregate.successRate.average >= baselineAggregate.successRate.average
-      }
+    const baselineAggregate = {
+      ...baselineScenario.aggregate,
+      latencyP99Ms:
+        baselineScenario.aggregate.latencyP99Ms ||
+        aggregate(baselineScenario.runs || []).latencyP99Ms
     };
     
-    // Add resource comparison if available (only for benchmarkVersion >= 2)
+    const rpsTolerance = current.options?.rpsRegressionTolerancePct ?? 15;
+    const latencyTolerance =
+      current.options?.latencyRegressionTolerancePct ?? 20;
+    const successTolerance =
+      current.options?.successRegressionTolerancePct ?? 0;
+
+    comparison[scenario.key] = {
+      rps: compareMetric(currentAggregate.rps, baselineAggregate.rps, {
+        higherIsBetter: true,
+        tolerance: rpsTolerance
+      }),
+      latencyP95Ms: compareMetric(
+        currentAggregate.latencyP95Ms,
+        baselineAggregate.latencyP95Ms,
+        { higherIsBetter: false, tolerance: latencyTolerance }
+      ),
+      latencyP99Ms: compareMetric(
+        currentAggregate.latencyP99Ms,
+        baselineAggregate.latencyP99Ms,
+        { higherIsBetter: false, tolerance: latencyTolerance }
+      ),
+      latencyMeanMs: compareMetric(
+        currentAggregate.latencyMeanMs,
+        baselineAggregate.latencyMeanMs,
+        { higherIsBetter: false, tolerance: latencyTolerance }
+      ),
+      successRate: compareMetric(
+        currentAggregate.successRate,
+        baselineAggregate.successRate,
+        { higherIsBetter: true, tolerance: successTolerance }
+      )
+    };
+    
     if (scenario.resourceUsage && baselineScenario.resourceUsage && baseline.benchmarkVersion >= 2) {
       comparison[scenario.key].memory = {
         heapUsedDelta: {
           current: scenario.resourceUsage.heapUsedDelta.average,
           baseline: baselineScenario.resourceUsage.heapUsedDelta.average,
-          change: calculatePercentageChange(scenario.resourceUsage.heapUsedDelta.average, baselineScenario.resourceUsage.heapUsedDelta.average),
-          improved: scenario.resourceUsage.heapUsedDelta.average < baselineScenario.resourceUsage.heapUsedDelta.average
+          change: calculatePercentageChange(scenario.resourceUsage.heapUsedDelta.average, baselineScenario.resourceUsage.heapUsedDelta.average)
         },
         rssDelta: {
           current: scenario.resourceUsage.rssDelta.average,
           baseline: baselineScenario.resourceUsage.rssDelta.average,
-          change: calculatePercentageChange(scenario.resourceUsage.rssDelta.average, baselineScenario.resourceUsage.rssDelta.average),
-          improved: scenario.resourceUsage.rssDelta.average < baselineScenario.resourceUsage.rssDelta.average
+          change: calculatePercentageChange(scenario.resourceUsage.rssDelta.average, baselineScenario.resourceUsage.rssDelta.average)
         }
       };
 
@@ -221,8 +280,7 @@ const compareWithBaseline = (current, baseline) => {
         comparison[scenario.key].memory.peakHeapUsed = {
           current: scenario.resourceUsage.peakHeapUsed.average,
           baseline: baselineScenario.resourceUsage.peakHeapUsed.average,
-          change: calculatePercentageChange(scenario.resourceUsage.peakHeapUsed.average, baselineScenario.resourceUsage.peakHeapUsed.average),
-          improved: scenario.resourceUsage.peakHeapUsed.average < baselineScenario.resourceUsage.peakHeapUsed.average
+          change: calculatePercentageChange(scenario.resourceUsage.peakHeapUsed.average, baselineScenario.resourceUsage.peakHeapUsed.average)
         };
       }
     }
@@ -239,24 +297,23 @@ const printComparison = (comparison) => {
   
   console.log('\n📊 Performance Comparison vs Baseline:');
   console.log('─'.repeat(60));
+
+  const statusFor = (metric) =>
+    metric.regression ? '❌' : metric.improved ? '✅' : '≈';
   
   for (const [scenarioKey, metrics] of Object.entries(comparison)) {
     console.log(`\n${scenarioKey}:`);
     
-    const rpsStatus = metrics.rps.improved ? '✅' : '❌';
-    const latencyStatus = metrics.latencyP95Ms.improved ? '✅' : '❌';
-    
-    console.log(`  ${rpsStatus} RPS: ${metrics.rps.current.toFixed(2)} vs ${metrics.rps.baseline.toFixed(2)} (${formatPercentageChange(metrics.rps.change)})`);
-    console.log(`  ${latencyStatus} P95 Latency: ${metrics.latencyP95Ms.current.toFixed(2)}ms vs ${metrics.latencyP95Ms.baseline.toFixed(2)}ms (${formatPercentageChange(metrics.latencyP95Ms.change)})`);
-    console.log(`  P99 Latency: ${metrics.latencyMeanMs.current.toFixed(2)}ms vs ${metrics.latencyMeanMs.baseline.toFixed(2)}ms (${formatPercentageChange(metrics.latencyMeanMs.change)})`);
-    console.log(`  Success Rate: ${(metrics.successRate.current * 100).toFixed(2)}% vs ${(metrics.successRate.baseline * 100).toFixed(2)}% (${formatPercentageChange(metrics.successRate.change)})`);
+    console.log(`  ${statusFor(metrics.rps)} RPS median: ${metrics.rps.current.toFixed(2)} vs ${metrics.rps.baseline.toFixed(2)} (${formatPercentageChange(metrics.rps.change)}, tolerance ${metrics.rps.tolerance.toFixed(0)}%)`);
+    console.log(`  ${statusFor(metrics.latencyP95Ms)} P95 Latency median: ${metrics.latencyP95Ms.current.toFixed(2)}ms vs ${metrics.latencyP95Ms.baseline.toFixed(2)}ms (${formatPercentageChange(metrics.latencyP95Ms.change)}, tolerance ${metrics.latencyP95Ms.tolerance.toFixed(0)}%)`);
+    console.log(`  ${statusFor(metrics.latencyP99Ms)} P99 Latency median: ${metrics.latencyP99Ms.current.toFixed(2)}ms vs ${metrics.latencyP99Ms.baseline.toFixed(2)}ms (${formatPercentageChange(metrics.latencyP99Ms.change)}, tolerance ${metrics.latencyP99Ms.tolerance.toFixed(0)}%)`);
+    console.log(`  ${statusFor(metrics.latencyMeanMs)} Mean Latency median: ${metrics.latencyMeanMs.current.toFixed(2)}ms vs ${metrics.latencyMeanMs.baseline.toFixed(2)}ms (${formatPercentageChange(metrics.latencyMeanMs.change)}, tolerance ${metrics.latencyMeanMs.tolerance.toFixed(0)}%)`);
+    console.log(`  ${statusFor(metrics.successRate)} Success Rate median: ${(metrics.successRate.current * 100).toFixed(2)}% vs ${(metrics.successRate.baseline * 100).toFixed(2)}% (${formatPercentageChange(metrics.successRate.change)})`);
     
     if (metrics.memory) {
-      const memoryStatus = metrics.memory.heapUsedDelta.improved ? '✅' : '❌';
-      console.log(`  ${memoryStatus} Memory Delta: ${metrics.memory.heapUsedDelta.current.toFixed(2)}MB vs ${metrics.memory.heapUsedDelta.baseline.toFixed(2)}MB (${formatPercentageChange(metrics.memory.heapUsedDelta.change)})`);
+      console.log(`  Memory Delta (info): ${metrics.memory.heapUsedDelta.current.toFixed(2)}MB vs ${metrics.memory.heapUsedDelta.baseline.toFixed(2)}MB (${formatPercentageChange(metrics.memory.heapUsedDelta.change)})`);
       if (metrics.memory.peakHeapUsed) {
-        const peakStatus = metrics.memory.peakHeapUsed.improved ? '✅' : '❌';
-        console.log(`  ${peakStatus} Peak Heap: ${metrics.memory.peakHeapUsed.current.toFixed(2)}MB vs ${metrics.memory.peakHeapUsed.baseline.toFixed(2)}MB (${formatPercentageChange(metrics.memory.peakHeapUsed.change)})`);
+        console.log(`  Peak Heap (info): ${metrics.memory.peakHeapUsed.current.toFixed(2)}MB vs ${metrics.memory.peakHeapUsed.baseline.toFixed(2)}MB (${formatPercentageChange(metrics.memory.peakHeapUsed.change)})`);
       }
     }
   }
@@ -385,38 +442,20 @@ const runBombardier = ({ url, options }) =>
 
 const aggregate = (runs) => {
   const metric = (selector) => runs.map((run) => selector(run.metrics));
-  const average = (values) =>
-    values.reduce((sum, value) => sum + value, 0) / values.length;
-  const min = (values) => Math.min(...values);
-  const max = (values) => Math.max(...values);
 
   const rps = metric((m) => m.rpsMean);
   const latencyP95Ms = metric((m) => m.latencyP95Ms);
+  const latencyP99Ms = metric((m) => m.latencyP99Ms);
   const latencyMeanMs = metric((m) => m.latencyMeanMs);
   const successRate = metric((m) => m.successRate);
 
   return {
     samples: runs.length,
-    rps: {
-      average: average(rps),
-      min: min(rps),
-      max: max(rps)
-    },
-    latencyP95Ms: {
-      average: average(latencyP95Ms),
-      min: min(latencyP95Ms),
-      max: max(latencyP95Ms)
-    },
-    latencyMeanMs: {
-      average: average(latencyMeanMs),
-      min: min(latencyMeanMs),
-      max: max(latencyMeanMs)
-    },
-    successRate: {
-      average: average(successRate),
-      min: min(successRate),
-      max: max(successRate)
-    }
+    rps: summarizeValues(rps),
+    latencyP95Ms: summarizeValues(latencyP95Ms),
+    latencyP99Ms: summarizeValues(latencyP99Ms),
+    latencyMeanMs: summarizeValues(latencyMeanMs),
+    successRate: summarizeValues(successRate)
   };
 };
 
@@ -666,6 +705,7 @@ const benchmarkScenario = async ({ scenario, options }) => {
   const scenarioResult = {
     key: scenario.key,
     title: scenario.title,
+    warmupRuns: [],
     runs: [],
     aggregate: null,
     resourceUsage: null
@@ -691,6 +731,40 @@ const benchmarkScenario = async ({ scenario, options }) => {
       scenario.body === 'batch'
         ? buildBatchComponentBody(server.components, options.azuriteBatchSize)
         : scenario.body;
+
+    for (let attempt = 1; attempt <= options.warmupRepetitions; attempt += 1) {
+      const run = await runBombardier({
+        url,
+        options: {
+          connections: options.connections,
+          duration: options.warmupDuration,
+          timeout: options.timeout,
+          method: scenario.method || 'GET',
+          requests: options.requests,
+          rate: options.rate,
+          disableKeepAlives: options.disableKeepAlives,
+          headers: options.headers,
+          body: requestBody
+        }
+      });
+      const metrics = mapBombardierResult(run.raw.result);
+      const ok = (metrics.successRate * 100).toFixed(2);
+      scenarioResult.warmupRuns.push({
+        attempt,
+        command: `bombardier ${run.args.join(' ')}`,
+        metrics,
+        rawResult: run.raw.result
+      });
+      console.log(
+        `[${scenario.key}] warmup ${attempt}/${options.warmupRepetitions} | rps=${metrics.rpsMean.toFixed(2)} | p95=${metrics.latencyP95Ms.toFixed(2)}ms | success=${ok}%`
+      );
+
+      if (metrics.successRate < options.minSuccessRate) {
+        throw new Error(
+          `[${scenario.key}] warmup success rate ${ok}% is below required ${(options.minSuccessRate * 100).toFixed(2)}% (2xx=${metrics.req2xx}, 4xx=${metrics.req4xx}, 5xx=${metrics.req5xx})`
+        );
+      }
+    }
 
     for (let attempt = 1; attempt <= options.repetitions; attempt += 1) {
       const monitoring = startResourceMonitoring();
@@ -745,41 +819,13 @@ const benchmarkScenario = async ({ scenario, options }) => {
 
   // Aggregate resource usage
   const aggregateResourceUsage = {
-    heapUsedDelta: {
-      average: resourceMeasurements.reduce((sum, m) => sum + m.memory.heapUsedDelta, 0) / resourceMeasurements.length,
-      min: Math.min(...resourceMeasurements.map(m => m.memory.heapUsedDelta)),
-      max: Math.max(...resourceMeasurements.map(m => m.memory.heapUsedDelta))
-    },
-    heapTotalDelta: {
-      average: resourceMeasurements.reduce((sum, m) => sum + m.memory.heapTotalDelta, 0) / resourceMeasurements.length,
-      min: Math.min(...resourceMeasurements.map(m => m.memory.heapTotalDelta)),
-      max: Math.max(...resourceMeasurements.map(m => m.memory.heapTotalDelta))
-    },
-    rssDelta: {
-      average: resourceMeasurements.reduce((sum, m) => sum + m.memory.rssDelta, 0) / resourceMeasurements.length,
-      min: Math.min(...resourceMeasurements.map(m => m.memory.rssDelta)),
-      max: Math.max(...resourceMeasurements.map(m => m.memory.rssDelta))
-    },
-    peakHeapUsed: {
-      average: resourceMeasurements.reduce((sum, m) => sum + m.memory.peakHeapUsed, 0) / resourceMeasurements.length,
-      min: Math.min(...resourceMeasurements.map(m => m.memory.peakHeapUsed)),
-      max: Math.max(...resourceMeasurements.map(m => m.memory.peakHeapUsed))
-    },
-    peakRss: {
-      average: resourceMeasurements.reduce((sum, m) => sum + m.memory.peakRss, 0) / resourceMeasurements.length,
-      min: Math.min(...resourceMeasurements.map(m => m.memory.peakRss)),
-      max: Math.max(...resourceMeasurements.map(m => m.memory.peakRss))
-    },
-    cpuUserTimeDelta: {
-      average: resourceMeasurements.reduce((sum, m) => sum + m.cpu.userTimeDelta, 0) / resourceMeasurements.length,
-      min: Math.min(...resourceMeasurements.map(m => m.cpu.userTimeDelta)),
-      max: Math.max(...resourceMeasurements.map(m => m.cpu.userTimeDelta))
-    },
-    cpuSystemTimeDelta: {
-      average: resourceMeasurements.reduce((sum, m) => sum + m.cpu.systemTimeDelta, 0) / resourceMeasurements.length,
-      min: Math.min(...resourceMeasurements.map(m => m.cpu.systemTimeDelta)),
-      max: Math.max(...resourceMeasurements.map(m => m.cpu.systemTimeDelta))
-    }
+    heapUsedDelta: summarizeValues(resourceMeasurements.map(m => m.memory.heapUsedDelta)),
+    heapTotalDelta: summarizeValues(resourceMeasurements.map(m => m.memory.heapTotalDelta)),
+    rssDelta: summarizeValues(resourceMeasurements.map(m => m.memory.rssDelta)),
+    peakHeapUsed: summarizeValues(resourceMeasurements.map(m => m.memory.peakHeapUsed)),
+    peakRss: summarizeValues(resourceMeasurements.map(m => m.memory.peakRss)),
+    cpuUserTimeDelta: summarizeValues(resourceMeasurements.map(m => m.cpu.userTimeDelta)),
+    cpuSystemTimeDelta: summarizeValues(resourceMeasurements.map(m => m.cpu.systemTimeDelta))
   };
   
   scenarioResult.resourceUsage = aggregateResourceUsage;
@@ -830,6 +876,8 @@ const main = async () => {
     timeout: args.timeout || '5s',
     requests: parseInteger(args.requests, 0),
     rate: parseInteger(args.rate, 0),
+    warmupRepetitions: parseInteger(args['warmup-repetitions'], 1),
+    warmupDuration: args['warmup-duration'] || '5s',
     disableKeepAlives:
       args['disable-keep-alives'] === 'true' ||
       args['disable-keep-alives'] === '1',
@@ -851,7 +899,19 @@ const main = async () => {
     azuritePort: parseInteger(args['azurite-port'], 0),
     azuriteInMemoryPersistence:
       args['azurite-in-memory-persistence'] !== 'false',
-    minSuccessRate: parseNumber(args['min-success-rate'], 1)
+    minSuccessRate: parseNumber(args['min-success-rate'], 1),
+    rpsRegressionTolerancePct: parseNumber(
+      args['rps-regression-tolerance-pct'],
+      15
+    ),
+    latencyRegressionTolerancePct: parseNumber(
+      args['latency-regression-tolerance-pct'],
+      20
+    ),
+    successRegressionTolerancePct: parseNumber(
+      args['success-regression-tolerance-pct'],
+      0
+    )
   };
 
   const getScenarioOptions = (scenario) => {
@@ -881,7 +941,7 @@ const main = async () => {
     host: hostname,
     node: process.version,
     platform: `${process.platform}-${process.arch}`,
-    benchmarkVersion: 3,
+    benchmarkVersion: 4,
     options: {
       repetitions: baseOptions.repetitions,
       connections: baseOptions.connections,
@@ -889,6 +949,8 @@ const main = async () => {
       timeout: baseOptions.timeout,
       requests: baseOptions.requests,
       rate: baseOptions.rate,
+      warmupRepetitions: baseOptions.warmupRepetitions,
+      warmupDuration: baseOptions.warmupDuration,
       disableKeepAlives: baseOptions.disableKeepAlives,
       headers: baseOptions.headers,
       storageMinLatencyMs: baseOptions.storageMinLatencyMs,
@@ -901,7 +963,12 @@ const main = async () => {
         baseOptions.azuriteStorageMaxConcurrentRequests,
       azuritePort: baseOptions.azuritePort,
       azuriteInMemoryPersistence: baseOptions.azuriteInMemoryPersistence,
-      minSuccessRate: baseOptions.minSuccessRate
+      minSuccessRate: baseOptions.minSuccessRate,
+      rpsRegressionTolerancePct: baseOptions.rpsRegressionTolerancePct,
+      latencyRegressionTolerancePct:
+        baseOptions.latencyRegressionTolerancePct,
+      successRegressionTolerancePct:
+        baseOptions.successRegressionTolerancePct
     },
     scenarios: []
   };
@@ -941,11 +1008,12 @@ const main = async () => {
     const aggregateResult = scenario.aggregate;
     const rps = aggregateResult.rps;
     const p95 = aggregateResult.latencyP95Ms;
+    const p99 = aggregateResult.latencyP99Ms;
     const success = aggregateResult.successRate;
     const resourceUsage = scenario.resourceUsage;
     
     console.log(
-      `\n[${scenario.key}] samples=${aggregateResult.samples} | rps(avg/min/max)=${rps.average.toFixed(2)}/${rps.min.toFixed(2)}/${rps.max.toFixed(2)} | p95ms(avg/min/max)=${p95.average.toFixed(2)}/${p95.min.toFixed(2)}/${p95.max.toFixed(2)} | success(avg)=${(success.average * 100).toFixed(2)}%`
+      `\n[${scenario.key}] samples=${aggregateResult.samples} | rps(median/avg/min/max)=${rps.median.toFixed(2)}/${rps.average.toFixed(2)}/${rps.min.toFixed(2)}/${rps.max.toFixed(2)} | p95ms(median/avg/min/max)=${p95.median.toFixed(2)}/${p95.average.toFixed(2)}/${p95.min.toFixed(2)}/${p95.max.toFixed(2)} | p99ms(median/avg)=${p99.median.toFixed(2)}/${p99.average.toFixed(2)} | success(median)=${(success.median * 100).toFixed(2)}%`
     );
     
     if (resourceUsage) {
