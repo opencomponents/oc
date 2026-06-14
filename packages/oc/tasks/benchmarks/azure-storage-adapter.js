@@ -1,6 +1,5 @@
 // OC storage adapter that talks to a local Azurite blob service instead of
 // real Azure Blob Storage. Mirrors the interface of oc-azure-storage-adapter.
-const path = require('node:path');
 const {
   BlobServiceClient,
   StorageSharedKeyCredential
@@ -36,16 +35,49 @@ const createStorageAdapter = (options) => {
   const serviceClient = new BlobServiceClient(endpoint, credential);
   const publicClient = serviceClient.getContainerClient(publicContainerName);
   const privateClient = serviceClient.getContainerClient(privateContainerName);
+  const queue = [];
+  let activeRequests = 0;
+
+  const withConcurrencyLimit = (operation) =>
+    new Promise((resolve, reject) => {
+      const run = () => {
+        activeRequests += 1;
+        Promise.resolve()
+          .then(operation)
+          .then(resolve, reject)
+          .finally(() => {
+            activeRequests -= 1;
+            const next = queue.shift();
+            if (next) {
+              next();
+            }
+          });
+      };
+
+      if (activeRequests < maxConcurrentRequests) {
+        run();
+      } else {
+        queue.push(run);
+      }
+    });
 
   const normalisePath = (filePath) =>
     filePath.startsWith('/') ? filePath.slice(1) : filePath;
 
+  const joinUrl = (...segments) =>
+    segments
+      .map((segment) => String(segment).replace(/^\/+|\/+$/g, ''))
+      .filter(Boolean)
+      .join('/');
+
   const getFile = async (filePath) => {
     const blobClient = privateClient.getBlobClient(normalisePath(filePath));
     try {
-      const response = await blobClient.download();
-      const buffer = await streamToBuffer(response.readableStreamBody);
-      return buffer.toString();
+      return await withConcurrencyLimit(async () => {
+        const response = await blobClient.download();
+        const buffer = await streamToBuffer(response.readableStreamBody);
+        return buffer.toString();
+      });
     } catch (err) {
       if (err.statusCode === 404) {
         const notFoundError = new Error(
@@ -76,18 +108,20 @@ const createStorageAdapter = (options) => {
       : `${normalisePath(directoryPath)}/`;
 
     const subDirectories = [];
-    for await (const item of privateClient.listBlobsByHierarchy('/', {
-      prefix: normalisedPath
-    })) {
-      if (item.kind === 'prefix') {
-        const subDirectory = item.name
-          .replace(normalisedPath, '')
-          .replace(/\/$/, '');
-        if (subDirectory) {
-          subDirectories.push(subDirectory);
+    await withConcurrencyLimit(async () => {
+      for await (const item of privateClient.listBlobsByHierarchy('/', {
+        prefix: normalisedPath
+      })) {
+        if (item.kind === 'prefix') {
+          const subDirectory = item.name
+            .replace(normalisedPath, '')
+            .replace(/\/$/, '');
+          if (subDirectory) {
+            subDirectories.push(subDirectory);
+          }
         }
       }
-    }
+    });
     return subDirectories.sort();
   };
 
@@ -101,11 +135,13 @@ const createStorageAdapter = (options) => {
 
     const uploadToContainer = async (client) => {
       const blockBlobClient = client.getBlockBlobClient(normalisedName);
-      await blockBlobClient.uploadData(content, {
-        blobHTTPHeaders: {
-          blobCacheControl: 'public, max-age=31556926'
-        }
-      });
+      await withConcurrencyLimit(() =>
+        blockBlobClient.uploadData(content, {
+          blobHTTPHeaders: {
+            blobCacheControl: 'public, max-age=31556926'
+          }
+        })
+      );
     };
 
     await uploadToContainer(privateClient);
@@ -123,14 +159,14 @@ const createStorageAdapter = (options) => {
   };
 
   const getUrl = (componentName, version, fileName) =>
-    `${path.join(
+    joinUrl(
       endpoint,
       publicContainerName,
       options.componentsDir || 'components',
       componentName,
       version,
       fileName
-    )}`;
+    );
 
   return {
     adapterType: 'azure-blob-storage',

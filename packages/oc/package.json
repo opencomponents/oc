@@ -17,7 +17,7 @@
 		"bench:quick": "node tasks/benchmarks/server-benchmark.js --repetitions=3",
 		"bench:update-baseline": "node tasks/benchmarks/server-benchmark.js --repetitions=5 --update-baseline=true",
 		"bench:high-load": "node tasks/benchmarks/server-benchmark.js --scenarios=high-load-local,high-load-storage --high-load-repetitions=3",
-		"bench:azurite": "node tasks/benchmarks/server-benchmark.js --scenarios=azurite-retrieve-components,azurite-return-component,azurite-return-components-batch --repetitions=3"
+		"bench:azurite": "node tasks/benchmarks/server-benchmark.js --scenarios=azurite-return-component,azurite-return-components-batch --repetitions=3"
 	},
 	"engines": {
 		"node": ">=18"

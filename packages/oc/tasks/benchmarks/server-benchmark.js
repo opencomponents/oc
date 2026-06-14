@@ -33,18 +33,23 @@ const parseList = (value) =>
     .map((entry) => entry.trim())
     .filter(Boolean);
 
-const buildBatchComponentBody = (firstComponentName, batchSize = 50) => {
-  const components = [];
-  const match = firstComponentName.match(/^(.*-)(\d+)$/);
-  const prefix = match ? match[1] : 'stress-component-';
-  const startIndex = match ? Number.parseInt(match[2], 10) : 1;
+const buildBatchComponentBody = (availableComponents, batchSize = 50) => {
+  if (!availableComponents || availableComponents.length === 0) {
+    throw new Error('Cannot build Azurite batch request without generated components');
+  }
 
+  if (availableComponents.length < batchSize) {
+    throw new Error(
+      `Cannot build Azurite batch request for ${batchSize} components; only ${availableComponents.length} generated`
+    );
+  }
+
+  const components = [];
   for (let i = 0; i < batchSize; i += 1) {
-    const index = startIndex + i;
-    const componentName = `${prefix}${String(index).padStart(3, '0')}`;
+    const component = availableComponents[i];
     components.push({
-      name: componentName,
-      version: '1.0.0',
+      name: component.name,
+      version: component.version,
       parameters: {
         firstName: 'Jane',
         lastName: 'Doe'
@@ -53,6 +58,14 @@ const buildBatchComponentBody = (firstComponentName, batchSize = 50) => {
   }
 
   return JSON.stringify({ components });
+};
+
+const createRegistryAddress = async () => {
+  const port = await getPortAsync();
+  return {
+    baseUrl: `http://127.0.0.1:${port}/`,
+    port
+  };
 };
 
 const nowIsoCompact = () => new Date().toISOString().replace(/[:.]/g, '-');
@@ -445,21 +458,21 @@ const createPlugin = () => ({
 });
 
 const startRegistry = async (scenario, options) => {
-  const port = await getPortAsync();
-  const baseUrl = `http://127.0.0.1:${port}/`;
-
-  const commonOptions = {
-    baseUrl,
-    port,
-    prefix: '/',
-    discovery: false,
-    verbosity: 0
+  const createCommonOptions = async () => {
+    const address = await createRegistryAddress();
+    return {
+      ...address,
+      prefix: '/',
+      discovery: false,
+      verbosity: 0
+    };
   };
 
   let registryOptions;
   let disposeFixtures = async () => {};
   let generated;
   if (scenario === 'local-memory' || scenario === 'high-load-local') {
+    const commonOptions = await createCommonOptions();
     registryOptions = {
       ...commonOptions,
       local: true,
@@ -472,6 +485,7 @@ const startRegistry = async (scenario, options) => {
     const componentsDir = preparedFixtures.componentsDir;
     disposeFixtures = preparedFixtures.dispose;
 
+    const commonOptions = await createCommonOptions();
     registryOptions = {
       ...commonOptions,
       local: false,
@@ -499,11 +513,14 @@ const startRegistry = async (scenario, options) => {
       inMemoryPersistence: options.azuriteInMemoryPersistence,
       silent: true
     });
+    disposeFixtures = async () => {
+      await azurite.stop().catch(() => {});
+    };
 
     const publicContainerName = 'oc-public';
     const privateContainerName = 'oc-private';
     const componentsDir = 'components';
-    const azuritePath = `//127.0.0.1:${azurite.port}/${azurite.accountName}/${publicContainerName}/`;
+    const azuritePath = `http://127.0.0.1:${azurite.port}/${azurite.accountName}/${publicContainerName}/`;
 
     const storageAdapter = createAzuriteStorageAdapter({
       endpoint: azurite.endpoint,
@@ -539,6 +556,7 @@ const startRegistry = async (scenario, options) => {
       await azurite.stop().catch(() => {});
     };
 
+    const commonOptions = await createCommonOptions();
     registryOptions = {
       ...commonOptions,
       local: false,
@@ -585,7 +603,8 @@ const startRegistry = async (scenario, options) => {
 
   return {
     registry,
-    baseUrl,
+    baseUrl: registryOptions.baseUrl,
+    components: generated?.components || [],
     firstComponentName: generated?.components?.[0]?.name,
     close: async () => {
       await new Promise((resolve, reject) => {
@@ -623,12 +642,6 @@ const buildScenarios = () => [
     highLoad: true
   },
   {
-    key: 'azurite-retrieve-components',
-    title: 'Azurite-backed registry retrieving many components with full metadata',
-    urlPath: '/?meta=true',
-    azurite: true
-  },
-  {
     key: 'azurite-return-component',
     title: 'Azurite-backed registry returning a single component',
     urlPath: '/{firstComponent}/1.0.0?firstName=Jane&lastName=Doe',
@@ -659,19 +672,26 @@ const benchmarkScenario = async ({ scenario, options }) => {
   };
 
   const server = await startRegistry(scenario.key, options);
-  const urlPath = scenario.urlPath.replace(
-    /\{firstComponent\}/g,
-    server.firstComponentName || 'stress-component-001'
-  );
-  const url = `${server.baseUrl.replace(/\/$/, '')}${urlPath}`;
   const resourceMeasurements = [];
 
-  const requestBody =
-    scenario.body === 'batch'
-      ? buildBatchComponentBody(server.firstComponentName, options.azuriteBatchSize)
-      : scenario.body;
-
   try {
+    if (
+      scenario.urlPath.includes('{firstComponent}') &&
+      !server.firstComponentName
+    ) {
+      throw new Error('Cannot benchmark Azurite component route without generated components');
+    }
+
+    const urlPath = scenario.urlPath.replace(
+      /\{firstComponent\}/g,
+      server.firstComponentName
+    );
+    const url = `${server.baseUrl.replace(/\/$/, '')}${urlPath}`;
+    const requestBody =
+      scenario.body === 'batch'
+        ? buildBatchComponentBody(server.components, options.azuriteBatchSize)
+        : scenario.body;
+
     for (let attempt = 1; attempt <= options.repetitions; attempt += 1) {
       const monitoring = startResourceMonitoring();
       
@@ -712,6 +732,12 @@ const benchmarkScenario = async ({ scenario, options }) => {
       console.log(
         `[${scenario.key}] run ${attempt}/${options.repetitions} | rps=${rps} | p95=${p95}ms | mem=${mem}MB | peak=${peakMem}MB | success=${ok}%`
       );
+
+      if (metrics.successRate < options.minSuccessRate) {
+        throw new Error(
+          `[${scenario.key}] success rate ${ok}% is below required ${(options.minSuccessRate * 100).toFixed(2)}% (2xx=${metrics.req2xx}, 4xx=${metrics.req4xx}, 5xx=${metrics.req5xx})`
+        );
+      }
     }
   } finally {
     await server.close().catch(() => {});
@@ -817,9 +843,15 @@ const main = async () => {
     ),
     azuriteComponentCount: parseInteger(args['azurite-component-count'], 500),
     azuriteBatchSize: parseInteger(args['azurite-batch-size'], 50),
+    azuriteConnections: parseInteger(args['azurite-connections'], 10),
+    azuriteStorageMaxConcurrentRequests: parseInteger(
+      args['azurite-storage-max-concurrency'],
+      64
+    ),
     azuritePort: parseInteger(args['azurite-port'], 0),
     azuriteInMemoryPersistence:
-      args['azurite-in-memory-persistence'] !== 'false'
+      args['azurite-in-memory-persistence'] !== 'false',
+    minSuccessRate: parseNumber(args['min-success-rate'], 1)
   };
 
   const getScenarioOptions = (scenario) => {
@@ -834,6 +866,9 @@ const main = async () => {
     if (scenario.azurite) {
       return {
         ...baseOptions,
+        connections: baseOptions.azuriteConnections,
+        storageMaxConcurrentRequests:
+          baseOptions.azuriteStorageMaxConcurrentRequests,
         timeout: args.timeout || '30s'
       };
     }
@@ -861,8 +896,12 @@ const main = async () => {
       storageMaxConcurrentRequests: baseOptions.storageMaxConcurrentRequests,
       azuriteComponentCount: baseOptions.azuriteComponentCount,
       azuriteBatchSize: baseOptions.azuriteBatchSize,
+      azuriteConnections: baseOptions.azuriteConnections,
+      azuriteStorageMaxConcurrentRequests:
+        baseOptions.azuriteStorageMaxConcurrentRequests,
       azuritePort: baseOptions.azuritePort,
-      azuriteInMemoryPersistence: baseOptions.azuriteInMemoryPersistence
+      azuriteInMemoryPersistence: baseOptions.azuriteInMemoryPersistence,
+      minSuccessRate: baseOptions.minSuccessRate
     },
     scenarios: []
   };

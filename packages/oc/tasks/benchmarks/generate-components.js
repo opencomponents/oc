@@ -96,7 +96,7 @@ const uploadFixturesToAzurite = async ({
     await storageAdapter.putFileContent(
       content,
       `${componentsDir}/${blobPath}`,
-      true
+      false
     );
   };
 
