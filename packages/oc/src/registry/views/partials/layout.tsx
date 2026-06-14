@@ -23,7 +23,12 @@ const Layout = ({
     .replace('http://', '//')
     .replace('https://', '//');
 
-  const themeIcon = theme === 'light' ? '🌙' : '☀️';
+  const sunSvg =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>';
+  const moonSvg =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>';
+
+  const themeIcon = theme === 'light' ? moonSvg : sunSvg;
   const themeText = theme === 'light' ? 'Switch to Dark' : 'Switch to Light';
 
   return (
@@ -72,7 +77,7 @@ const Layout = ({
 
           <main class="container">{children}</main>
 
-          <div class="social">
+          <footer class="social container">
             <iframe
               id="gh_badge"
               title="GitHub"
@@ -81,12 +86,14 @@ const Layout = ({
               height="20"
               frameborder="0"
             />
-          </div>
+          </footer>
           <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.2/jquery.min.js" />
           <script src={`${normalizedHref}oc-client/client.js`} />
           <script>{`
             // Theme switching functionality
             (function() {
+              const sunSvg = ${JSON.stringify(sunSvg)};
+              const moonSvg = ${JSON.stringify(moonSvg)};
               const themeToggle = document.getElementById('theme-toggle');
               const themeIcon = themeToggle.querySelector('.theme-toggle-icon');
               const themeText = themeToggle.querySelector('span:last-child');
@@ -112,10 +119,10 @@ const Layout = ({
               function applyTheme(theme) {
                 document.documentElement.setAttribute('data-theme', theme);
                 if (theme === 'light') {
-                  themeIcon.textContent = '🌙';
+                  themeIcon.innerHTML = moonSvg;
                   themeText.textContent = 'Switch to Dark';
                 } else {
-                  themeIcon.textContent = '☀️';
+                  themeIcon.innerHTML = sunSvg;
                   themeText.textContent = 'Switch to Light';
                 }
               }

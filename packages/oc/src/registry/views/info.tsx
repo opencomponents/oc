@@ -5,6 +5,7 @@ import ComponentAuthor from './partials/component-author';
 import ComponentParameters from './partials/component-parameters';
 import getComponentState from './partials/component-state';
 import ComponentVersions from './partials/component-versions';
+import Icon from './partials/icon';
 import Layout from './partials/layout';
 import infoJS from './static/info';
 
@@ -85,7 +86,7 @@ function statsJs(name: string, componentDetail: ComponentDetail) {
             display: true,
             position: 'top',
             labels: {
-              color: '#ffffff',
+              color: '#9aa4b2',
               font: {
                 family: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
                 size: 14,
@@ -234,7 +235,9 @@ export default function Info(vm: Vm) {
     >
       <section class="hero">
         <nav class="breadcrumb">
-          <a href={href}>← All components</a>
+          <a href={href}>
+            <Icon name="arrow-left" size={14} /> All components
+          </a>
         </nav>
         <h1 class="component-title" safe>
           {component.name}
@@ -278,7 +281,9 @@ export default function Info(vm: Vm) {
                 class="section-header collapsible-header"
                 data-target="stats-content"
               >
-                <div class="section-icon">📈</div>
+                <div class="section-icon">
+                  <Icon name="chart" />
+                </div>
                 <h2 class="section-title">Package Size History</h2>
                 <button
                   type="button"
@@ -326,7 +331,9 @@ export default function Info(vm: Vm) {
           <section class="url-section">
             <div class="content-section">
               <div class="section-header">
-                <div class="section-icon">🔗</div>
+                <div class="section-icon">
+                  <Icon name="link" />
+                </div>
                 <h2 class="section-title">Component URL</h2>
               </div>
               <div class="section-content">
@@ -334,14 +341,23 @@ export default function Info(vm: Vm) {
                   You can edit the following area and then refresh or hit Enter
                   to apply the change into the preview window.
                 </p>
-                <input
-                  class="w-100"
-                  id="href"
-                  type="text"
-                  placeholder="Insert component href here"
-                  value={componentHref}
-                  style="width: 100%; font-family: 'Monaco', 'Menlo', monospace; font-size: 0.875rem; padding: 1rem 1.5rem; border-radius: 12px;"
-                />
+                <div class="url-input-group">
+                  <input
+                    class="w-100"
+                    id="href"
+                    type="text"
+                    placeholder="Insert component href here"
+                    value={componentHref}
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-secondary copy-href"
+                    aria-label="Copy component URL"
+                  >
+                    <Icon name="link" size={15} />
+                    <span class="copy-href-label">Copy</span>
+                  </button>
+                </div>
                 <div class="field" style="margin-top: 1rem;">
                   <p>Accept-Language header:</p>
                   <input
@@ -361,10 +377,10 @@ export default function Info(vm: Vm) {
               <h2 class="section-title">Live Preview</h2>
               <div class="preview-buttons">
                 <button type="submit" class="btn btn-primary refresh-preview">
-                  🔄 Refresh
+                  <Icon name="refresh" size={15} /> Refresh
                 </button>
                 <button type="submit" class="btn btn-secondary open-preview">
-                  🚀 Open in New Tab
+                  <Icon name="external" size={15} /> Open in New Tab
                 </button>
               </div>
             </div>
@@ -380,7 +396,7 @@ export default function Info(vm: Vm) {
         <aside class="sidebar">
           <div class="info-card">
             <h3 class="section-title" style="margin-bottom: 1.5rem;">
-              📋 Component Info
+              <Icon name="info" size={15} /> Component Info
             </h3>
             <div class="info-item">
               <span class="info-label">Author</span>
@@ -425,7 +441,7 @@ export default function Info(vm: Vm) {
           {repositoryUrl ? (
             <div class="info-card">
               <h3 class="section-title" style="margin-bottom: 1.5rem;">
-                🔗 Links
+                <Icon name="link" size={15} /> Links
               </h3>
               <div class="info-item">
                 <span class="info-label">Repository</span>
@@ -440,7 +456,7 @@ export default function Info(vm: Vm) {
 
           <div class="info-card">
             <h3 class="section-title" style="margin-bottom: 1.5rem;">
-              📦 Dependencies
+              <Icon name="package" size={15} /> Dependencies
             </h3>
             <div class="info-item">
               <span class="info-label">Node.js</span>

@@ -101,7 +101,7 @@ const ComponentsList = (props: {
             id="search-filter"
             type="text"
             aria-label="Filter by component name"
-            placeholder="Filter by component name"
+            placeholder="Filter by name…  ( press / )"
           />
           <input
             id="author-filter"
@@ -119,8 +119,11 @@ const ComponentsList = (props: {
           />
         </div>
       </form>
+      <div class="list-meta">
+        <span id="results-count">{props.components.length} components</span>
+      </div>
       <div class="row header componentRow table">
-        <div class="title" />
+        <div class="title">Component</div>
         <div class="author">Author</div>
         <div>Latest version</div>
         {isRemote && (
@@ -132,6 +135,9 @@ const ComponentsList = (props: {
         {sizeAvailable && <div>Size</div>}
       </div>
       {props.components.map(componentRow)}
+      <div id="components-empty" class="empty-state hide">
+        No components match your filters.
+      </div>
     </div>
   );
 };

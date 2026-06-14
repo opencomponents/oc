@@ -1,4 +1,5 @@
 import type { OcParameter } from '../../../types';
+import Icon from './icon';
 
 const componentParameters = ({
   parameters,
@@ -11,7 +12,9 @@ const componentParameters = ({
     return (
       <section class="content-section">
         <div class="section-header">
-          <div class="section-icon">⚙️</div>
+          <div class="section-icon">
+            <Icon name="settings" />
+          </div>
           <h2 class="section-title">Parameters</h2>
         </div>
         <div class="section-content">
@@ -116,7 +119,9 @@ const componentParameters = ({
         class="section-header collapsible-header"
         data-target="parameters-content"
       >
-        <div class="section-icon">⚙️</div>
+        <div class="section-icon">
+          <Icon name="settings" />
+        </div>
         <h2 class="section-title">Parameters</h2>
         <button
           type="button"
