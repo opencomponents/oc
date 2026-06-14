@@ -141,6 +141,14 @@ export default function getComponent(conf: Config, repository: Repository) {
   });
   const convertPlugins = pluginConverter(conf.plugins);
 
+  const parseAcceptLanguage = (header: string) => {
+    const cached = cache.get('accept-language', header);
+    if (cached !== undefined) return cached;
+    const parsed = acceptLanguageParser.parse(header);
+    cache.set('accept-language', header, parsed);
+    return parsed;
+  };
+
   const getEnv = async (
     component: Component
   ): Promise<Record<string, string>> => {
@@ -588,7 +596,9 @@ export default function getComponent(conf: Config, repository: Repository) {
               emptyResponseHandler.contextDecorator(returnComponent);
             const contextObj = {
               action: options.action,
-              acceptLanguage: acceptLanguageParser.parse(acceptLanguage!),
+              acceptLanguage: acceptLanguage
+                ? parseAcceptLanguage(acceptLanguage)
+                : [],
               baseUrl: conf.baseUrl,
               env: { ...conf.env, ...env },
               params,
