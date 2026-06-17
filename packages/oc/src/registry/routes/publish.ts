@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import fs from 'fs-extra';
 import strings from '../../resources/index';
 import eventsHandler from '../domain/events-handler';
 import extractPackage from '../domain/extract-package';
@@ -123,6 +124,11 @@ export default function publish(repository: Repository) {
           res.errorDetails = `Publish failed: ${errorMessage}`;
           res.status(500).json({ error: err });
         }
+      } finally {
+        await Promise.allSettled([
+          fs.remove(pkgDetails.packagePath),
+          fs.remove(pkgDetails.packageUntarOutput)
+        ]);
       }
     } catch (err) {
       res.errorDetails = `Package is not valid: ${err}`;

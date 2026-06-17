@@ -63,7 +63,9 @@ describe('registry : domain : extract-package', () => {
     it('should respond', () => {
       expect(response).to.eql({
         outputFolder: '/some-path/registry/temp/1478279453422/_package/',
-        packageJson: { package: 'hello' }
+        packageJson: { package: 'hello' },
+        packagePath: '/some-path/registry/temp/1478279453422.tar.gz',
+        packageUntarOutput: '/some-path/registry/temp/1478279453422/'
       });
     });
   });
