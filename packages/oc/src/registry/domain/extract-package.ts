@@ -15,6 +15,8 @@ export default async function extractPackage(
 ): Promise<{
   outputFolder: string;
   packageJson: Component;
+  packagePath: string;
+  packageUntarOutput: string;
 }> {
   const packageFile = (files as Express.Multer.File[])[0];
   const packagePath = path.resolve(packageFile.path);
@@ -40,6 +42,8 @@ export default async function extractPackage(
 
   return {
     outputFolder: packageOutput,
-    packageJson
+    packageJson,
+    packagePath,
+    packageUntarOutput
   };
 }
