@@ -172,7 +172,10 @@ const publish = ({
 
           await putComponentToRegistry({
             route: componentRoute,
-            path: compressedPackagePath
+            path: compressedPackagePath,
+            username: opts.username,
+            password: opts.password,
+            token: opts.token
           });
         }
         await local.cleanup(compressedPackagePath);
