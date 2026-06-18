@@ -1,5 +1,11 @@
 ## Change Log
 
+## 0.50.52
+
+### Patch Changes
+
+- Fix undici breaking change on v8
+
 ## 0.50.51
 
 ### Patch Changes
