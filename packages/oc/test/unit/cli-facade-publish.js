@@ -190,6 +190,30 @@ describe('cli : facade : publish', () => {
                 });
               });
 
+              it('should pass supplied credentials on the first publish attempt', (done) => {
+                const putComponentStub = sinon
+                  .stub(registry, 'putComponent')
+                  .resolves('ok');
+
+                execute(
+                  () => {
+                    registry.putComponent.restore();
+
+                    expect(putComponentStub.args[0][0]).to.include({
+                      username: 'myuser',
+                      password: 'password'
+                    });
+                    done();
+                  },
+                  {
+                    creds: {
+                      username: 'myuser',
+                      password: 'password'
+                    }
+                  }
+                );
+              });
+
               describe('when a generic error happens', () => {
                 beforeEach((done) => {
                   sinon
@@ -322,8 +346,13 @@ describe('cli : facade : publish', () => {
                 });
 
                 it('should not prompt for credentials', () => {
-                  expect(logSpy.ok.args[0][0]).to.equal(
-                    'Using specified credentials'
+                  expect(
+                    logSpy.warn.args.some(
+                      (args) => args[0] === 'Registry requires credentials.'
+                    )
+                  ).to.equal(false);
+                  expect(logSpy.err.args[0][0]).to.equal(
+                    'An error happened when publishing the component: Invalid credentials'
                   );
                 });
               });
