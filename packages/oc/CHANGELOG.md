@@ -1,5 +1,11 @@
 ## Change Log
 
+## 0.50.53
+
+### Patch Changes
+
+- Fix publish cli to not call twice
+
 ## 0.50.52
 
 ### Patch Changes
