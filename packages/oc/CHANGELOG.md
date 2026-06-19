@@ -1,5 +1,11 @@
 ## Change Log
 
+## 0.50.54
+
+### Patch Changes
+
+- fix client
+
 ## 0.50.53
 
 ### Patch Changes
