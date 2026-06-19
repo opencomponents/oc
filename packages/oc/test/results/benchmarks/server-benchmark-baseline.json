@@ -1,442 +1,1120 @@
 {
-  "createdAt": "2026-05-25T13:03:13.145Z",
+  "createdAt": "2026-06-14T17:38:14.886Z",
   "host": "ACCESS-PFQNV73L0V",
   "node": "v26.0.0",
   "platform": "darwin-arm64",
-  "benchmarkVersion": 2,
+  "benchmarkVersion": 4,
   "options": {
-    "repetitions": 2,
+    "repetitions": 5,
     "connections": 100,
     "duration": "15s",
     "timeout": "5s",
     "requests": 0,
     "rate": 0,
+    "warmupRepetitions": 1,
+    "warmupDuration": "5s",
     "disableKeepAlives": false,
     "headers": [
       "Accept: application/json"
     ],
     "storageMinLatencyMs": 8,
     "storageMaxLatencyMs": 30,
-    "storageMaxConcurrentRequests": 128
+    "storageMaxConcurrentRequests": 128,
+    "azuriteComponentCount": 500,
+    "azuriteBatchSize": 50,
+    "azuriteConnections": 10,
+    "azuriteStorageMaxConcurrentRequests": 64,
+    "azuritePort": 0,
+    "azuriteInMemoryPersistence": true,
+    "minSuccessRate": 1,
+    "rpsRegressionTolerancePct": 15,
+    "latencyRegressionTolerancePct": 20,
+    "successRegressionTolerancePct": 0
   },
   "scenarios": [
     {
-      "key": "local-memory",
-      "title": "Local memory path (warm cache)",
-      "runs": [
+      "key": "azurite-return-component",
+      "title": "Azurite-backed registry returning a single component",
+      "warmupRuns": [
         {
           "attempt": 1,
-          "command": "bombardier -o json -p result -l -c 100 -d 15s -t 5s -m GET -H Accept: application/json http://127.0.0.1:2000/welcome/1.0.0?firstName=Jane&lastName=Doe",
+          "command": "bombardier -o json -p result -l -c 10 -d 5s -t 30s -m GET -H Accept: application/json http://127.0.0.1:2001/stress-component-001/1.0.0?firstName=Jane&lastName=Doe",
           "metrics": {
-            "totalRequests": 24908,
-            "successRequests": 24908,
-            "req2xx": 24908,
+            "totalRequests": 12425,
+            "successRequests": 12425,
+            "req2xx": 12425,
             "req4xx": 0,
             "req5xx": 0,
-            "rpsMean": 1655.5989256780128,
-            "rpsMax": 4855.796607199844,
-            "latencyMeanMs": 60.26459221936727,
-            "latencyP95Ms": 70.676,
-            "latencyP99Ms": 81.323,
-            "latencyMaxMs": 761.073,
+            "rpsMean": 2483.3343773014612,
+            "rpsMax": 3147.822651072253,
+            "latencyMeanMs": 4.023397022132797,
+            "latencyP95Ms": 7.032,
+            "latencyP99Ms": 8.831,
+            "latencyMaxMs": 36.935,
             "successRate": 1
           },
           "rawResult": {
-            "bytesRead": 17111796,
-            "bytesWritten": 3213132,
-            "timeTakenSeconds": 15.021265833,
+            "bytesRead": 14313600,
+            "bytesWritten": 1764350,
+            "timeTakenSeconds": 5.004008333,
             "req1xx": 0,
-            "req2xx": 24908,
+            "req2xx": 12425,
             "req3xx": 0,
             "req4xx": 0,
             "req5xx": 0,
             "others": 0,
             "latency": {
-              "mean": 60264.592219367274,
-              "stddev": 21460.634099426483,
-              "max": 761073,
+              "mean": 4023.397022132797,
+              "stddev": 1413.3794567851312,
+              "max": 36935,
               "percentiles": {
-                "50": 58746,
-                "75": 60307,
-                "90": 64281,
-                "95": 70676,
-                "99": 81323
+                "50": 3548,
+                "75": 4956,
+                "90": 6146,
+                "95": 7032,
+                "99": 8831
               }
             },
             "rps": {
-              "mean": 1655.5989256780128,
-              "stddev": 1074.5560788909308,
-              "max": 4855.796607199844,
+              "mean": 2483.3343773014612,
+              "stddev": 351.95333574668547,
+              "max": 3147.822651072253,
               "percentiles": {
-                "50": 1497.946615,
-                "75": 2694.24106,
-                "90": 3198.933635,
-                "95": 3397.218527,
-                "99": 3948.165682
+                "50": 2503.797384,
+                "75": 2746.321028,
+                "90": 2851.378071,
+                "95": 2944.411801,
+                "99": 3055.67852
+              }
+            }
+          }
+        }
+      ],
+      "runs": [
+        {
+          "attempt": 1,
+          "command": "bombardier -o json -p result -l -c 10 -d 15s -t 30s -m GET -H Accept: application/json http://127.0.0.1:2001/stress-component-001/1.0.0?firstName=Jane&lastName=Doe",
+          "metrics": {
+            "totalRequests": 41491,
+            "successRequests": 41491,
+            "req2xx": 41491,
+            "req4xx": 0,
+            "req5xx": 0,
+            "rpsMean": 2765.3372823848667,
+            "rpsMax": 3496.314360217177,
+            "latencyMeanMs": 3.6143504133426525,
+            "latencyP95Ms": 6.26,
+            "latencyP99Ms": 7.935,
+            "latencyMaxMs": 16.62,
+            "successRate": 1
+          },
+          "rawResult": {
+            "bytesRead": 47797632,
+            "bytesWritten": 5891722,
+            "timeTakenSeconds": 15.005985084,
+            "req1xx": 0,
+            "req2xx": 41491,
+            "req3xx": 0,
+            "req4xx": 0,
+            "req5xx": 0,
+            "others": 0,
+            "latency": {
+              "mean": 3614.3504133426527,
+              "stddev": 897.0380506649923,
+              "max": 16620,
+              "percentiles": {
+                "50": 3154,
+                "75": 4479,
+                "90": 5537,
+                "95": 6260,
+                "99": 7935
+              }
+            },
+            "rps": {
+              "mean": 2765.3372823848667,
+              "stddev": 263.83595638900397,
+              "max": 3496.314360217177,
+              "percentiles": {
+                "50": 2795.294541,
+                "75": 2931.318997,
+                "90": 3073.757533,
+                "95": 3152.962524,
+                "99": 3295.996847
               }
             }
           },
           "resourceUsage": {
             "memory": {
-              "heapUsedDelta": 41,
-              "heapTotalDelta": 53,
-              "rssDelta": 62
+              "heapUsedDelta": 60,
+              "heapTotalDelta": 20,
+              "rssDelta": -29,
+              "peakHeapUsed": 165,
+              "peakHeapTotal": 223,
+              "peakRss": 362,
+              "peakExternal": 23
             },
             "cpu": {
-              "userTimeDelta": 4.970241,
-              "systemTimeDelta": 11.817836999999999,
-              "elapsedSeconds": 15.041194375
+              "userTimeDelta": 13.029777,
+              "systemTimeDelta": 1.1790540000000003,
+              "elapsedSeconds": 15.020105291
             },
             "current": {
               "memory": {
-                "heapUsed": 85,
-                "heapTotal": 121,
-                "rss": 204,
-                "external": 4
+                "heapUsed": 128,
+                "heapTotal": 190,
+                "rss": 327,
+                "external": 14
               },
               "cpu": {
-                "userTime": 5.515435,
-                "systemTime": 11.916644
+                "userTime": 19.871989,
+                "systemTime": 2.597173
               }
             }
           }
         },
         {
           "attempt": 2,
-          "command": "bombardier -o json -p result -l -c 100 -d 15s -t 5s -m GET -H Accept: application/json http://127.0.0.1:2000/welcome/1.0.0?firstName=Jane&lastName=Doe",
+          "command": "bombardier -o json -p result -l -c 10 -d 15s -t 30s -m GET -H Accept: application/json http://127.0.0.1:2001/stress-component-001/1.0.0?firstName=Jane&lastName=Doe",
           "metrics": {
-            "totalRequests": 25424,
-            "successRequests": 25424,
-            "req2xx": 25424,
+            "totalRequests": 42455,
+            "successRequests": 42455,
+            "req2xx": 42455,
             "req4xx": 0,
             "req5xx": 0,
-            "rpsMean": 1692.765848314139,
-            "rpsMax": 4157.778580056499,
-            "latencyMeanMs": 59.02852041378225,
-            "latencyP95Ms": 66.052,
-            "latencyP99Ms": 74.092,
-            "latencyMaxMs": 651.927,
+            "rpsMean": 2829.960599814864,
+            "rpsMax": 3451.445292716325,
+            "latencyMeanMs": 3.5318886114709693,
+            "latencyP95Ms": 6.085,
+            "latencyP99Ms": 7.657,
+            "latencyMaxMs": 16.207,
             "successRate": 1
           },
           "rawResult": {
-            "bytesRead": 17466288,
-            "bytesWritten": 3279696,
-            "timeTakenSeconds": 15.013133625,
+            "bytesRead": 48908160,
+            "bytesWritten": 6028610,
+            "timeTakenSeconds": 15.002481916,
             "req1xx": 0,
-            "req2xx": 25424,
+            "req2xx": 42455,
             "req3xx": 0,
             "req4xx": 0,
             "req5xx": 0,
             "others": 0,
             "latency": {
-              "mean": 59028.52041378225,
-              "stddev": 17360.38379294876,
-              "max": 651927,
+              "mean": 3531.8886114709694,
+              "stddev": 855.9637106759656,
+              "max": 16207,
               "percentiles": {
-                "50": 58360,
-                "75": 59963,
-                "90": 62676,
-                "95": 66052,
-                "99": 74092
+                "50": 3080,
+                "75": 4333,
+                "90": 5409,
+                "95": 6085,
+                "99": 7657
               }
             },
             "rps": {
-              "mean": 1692.765848314139,
-              "stddev": 1081.3231801665574,
-              "max": 4157.778580056499,
+              "mean": 2829.960599814864,
+              "stddev": 253.41611107661237,
+              "max": 3451.445292716325,
               "percentiles": {
-                "50": 1545.299739,
-                "75": 2605.553085,
-                "90": 3285.645835,
-                "95": 3647.864358,
-                "99": 3899.16324
+                "50": 2846.915794,
+                "75": 3000.881509,
+                "90": 3137.697559,
+                "95": 3200.69359,
+                "99": 3345.775958
               }
             }
           },
           "resourceUsage": {
             "memory": {
-              "heapUsedDelta": 23,
-              "heapTotalDelta": 31,
-              "rssDelta": 32
+              "heapUsedDelta": -71,
+              "heapTotalDelta": -4,
+              "rssDelta": 14,
+              "peakHeapUsed": 154,
+              "peakHeapTotal": 197,
+              "peakRss": 343,
+              "peakExternal": 22
             },
             "cpu": {
-              "userTimeDelta": 4.449186000000001,
-              "systemTimeDelta": 11.992292,
-              "elapsedSeconds": 15.025998167
+              "userTimeDelta": 12.597351,
+              "systemTimeDelta": 1.183027,
+              "elapsedSeconds": 15.022369833
             },
             "current": {
               "memory": {
-                "heapUsed": 108,
-                "heapTotal": 152,
-                "rss": 236,
-                "external": 4
+                "heapUsed": 57,
+                "heapTotal": 186,
+                "rss": 341,
+                "external": 9
               },
               "cpu": {
-                "userTime": 9.964828,
-                "systemTime": 23.908963
+                "userTime": 32.46946,
+                "systemTime": 3.780241
+              }
+            }
+          }
+        },
+        {
+          "attempt": 3,
+          "command": "bombardier -o json -p result -l -c 10 -d 15s -t 30s -m GET -H Accept: application/json http://127.0.0.1:2001/stress-component-001/1.0.0?firstName=Jane&lastName=Doe",
+          "metrics": {
+            "totalRequests": 43540,
+            "successRequests": 43540,
+            "req2xx": 43540,
+            "req4xx": 0,
+            "req5xx": 0,
+            "rpsMean": 2901.774961374956,
+            "rpsMax": 3553.8128858452237,
+            "latencyMeanMs": 3.4440889067524116,
+            "latencyP95Ms": 5.957,
+            "latencyP99Ms": 7.529,
+            "latencyMaxMs": 15.822,
+            "successRate": 1
+          },
+          "rawResult": {
+            "bytesRead": 50158080,
+            "bytesWritten": 6182680,
+            "timeTakenSeconds": 15.00577125,
+            "req1xx": 0,
+            "req2xx": 43540,
+            "req3xx": 0,
+            "req4xx": 0,
+            "req5xx": 0,
+            "others": 0,
+            "latency": {
+              "mean": 3444.0889067524117,
+              "stddev": 835.0103307775858,
+              "max": 15822,
+              "percentiles": {
+                "50": 2959,
+                "75": 4424,
+                "90": 5302,
+                "95": 5957,
+                "99": 7529
+              }
+            },
+            "rps": {
+              "mean": 2901.774961374956,
+              "stddev": 255.34274620331,
+              "max": 3553.8128858452237,
+              "percentiles": {
+                "50": 2902.60625,
+                "75": 3094.725968,
+                "90": 3200.533369,
+                "95": 3252.920798,
+                "99": 3397.501477
+              }
+            }
+          },
+          "resourceUsage": {
+            "memory": {
+              "heapUsedDelta": 31,
+              "heapTotalDelta": -4,
+              "rssDelta": -1,
+              "peakHeapUsed": 154,
+              "peakHeapTotal": 203,
+              "peakRss": 341,
+              "peakExternal": 20
+            },
+            "cpu": {
+              "userTimeDelta": 12.842654000000003,
+              "systemTimeDelta": 1.1667129999999997,
+              "elapsedSeconds": 15.02324225
+            },
+            "current": {
+              "memory": {
+                "heapUsed": 88,
+                "heapTotal": 182,
+                "rss": 340,
+                "external": 10
+              },
+              "cpu": {
+                "userTime": 45.312367,
+                "systemTime": 4.946992
+              }
+            }
+          }
+        },
+        {
+          "attempt": 4,
+          "command": "bombardier -o json -p result -l -c 10 -d 15s -t 30s -m GET -H Accept: application/json http://127.0.0.1:2001/stress-component-001/1.0.0?firstName=Jane&lastName=Doe",
+          "metrics": {
+            "totalRequests": 42650,
+            "successRequests": 42650,
+            "req2xx": 42650,
+            "req4xx": 0,
+            "req5xx": 0,
+            "rpsMean": 2842.791934362738,
+            "rpsMax": 3451.4884543959583,
+            "latencyMeanMs": 3.516016201641266,
+            "latencyP95Ms": 6.115,
+            "latencyP99Ms": 7.75,
+            "latencyMaxMs": 18.291,
+            "successRate": 1
+          },
+          "rawResult": {
+            "bytesRead": 49132800,
+            "bytesWritten": 6056300,
+            "timeTakenSeconds": 15.003977709,
+            "req1xx": 0,
+            "req2xx": 42650,
+            "req3xx": 0,
+            "req4xx": 0,
+            "req5xx": 0,
+            "others": 0,
+            "latency": {
+              "mean": 3516.016201641266,
+              "stddev": 890.6739313597765,
+              "max": 18291,
+              "percentiles": {
+                "50": 3051,
+                "75": 4431,
+                "90": 5396,
+                "95": 6115,
+                "99": 7750
+              }
+            },
+            "rps": {
+              "mean": 2842.791934362738,
+              "stddev": 268.3672190643749,
+              "max": 3451.4884543959583,
+              "percentiles": {
+                "50": 2851.265249,
+                "75": 3010.713171,
+                "90": 3149.717943,
+                "95": 3230.301781,
+                "99": 3359.46243
+              }
+            }
+          },
+          "resourceUsage": {
+            "memory": {
+              "heapUsedDelta": 48,
+              "heapTotalDelta": 3,
+              "rssDelta": -1,
+              "peakHeapUsed": 161,
+              "peakHeapTotal": 201,
+              "peakRss": 341,
+              "peakExternal": 22
+            },
+            "cpu": {
+              "userTimeDelta": 13.016573000000001,
+              "systemTimeDelta": 1.154388,
+              "elapsedSeconds": 15.020286500000001
+            },
+            "current": {
+              "memory": {
+                "heapUsed": 136,
+                "heapTotal": 185,
+                "rss": 339,
+                "external": 17
+              },
+              "cpu": {
+                "userTime": 58.329034,
+                "systemTime": 6.101423
+              }
+            }
+          }
+        },
+        {
+          "attempt": 5,
+          "command": "bombardier -o json -p result -l -c 10 -d 15s -t 30s -m GET -H Accept: application/json http://127.0.0.1:2001/stress-component-001/1.0.0?firstName=Jane&lastName=Doe",
+          "metrics": {
+            "totalRequests": 42568,
+            "successRequests": 42568,
+            "req2xx": 42568,
+            "req4xx": 0,
+            "req5xx": 0,
+            "rpsMean": 2837.38044038578,
+            "rpsMax": 3405.055490969615,
+            "latencyMeanMs": 3.522683635594813,
+            "latencyP95Ms": 6.082,
+            "latencyP99Ms": 7.683,
+            "latencyMaxMs": 14.99,
+            "successRate": 1
+          },
+          "rawResult": {
+            "bytesRead": 49038336,
+            "bytesWritten": 6044656,
+            "timeTakenSeconds": 15.003276125,
+            "req1xx": 0,
+            "req2xx": 42568,
+            "req3xx": 0,
+            "req4xx": 0,
+            "req5xx": 0,
+            "others": 0,
+            "latency": {
+              "mean": 3522.683635594813,
+              "stddev": 853.1722887719675,
+              "max": 14990,
+              "percentiles": {
+                "50": 3057,
+                "75": 4347,
+                "90": 5407,
+                "95": 6082,
+                "99": 7683
+              }
+            },
+            "rps": {
+              "mean": 2837.38044038578,
+              "stddev": 255.03627964900767,
+              "max": 3405.055490969615,
+              "percentiles": {
+                "50": 2849.750647,
+                "75": 3000.668849,
+                "90": 3147.730958,
+                "95": 3201.967929,
+                "99": 3346.931868
+              }
+            }
+          },
+          "resourceUsage": {
+            "memory": {
+              "heapUsedDelta": -66,
+              "heapTotalDelta": -1,
+              "rssDelta": -4,
+              "peakHeapUsed": 157,
+              "peakHeapTotal": 203,
+              "peakRss": 340,
+              "peakExternal": 22
+            },
+            "cpu": {
+              "userTimeDelta": 12.63666,
+              "systemTimeDelta": 1.1850489999999994,
+              "elapsedSeconds": 15.023385375
+            },
+            "current": {
+              "memory": {
+                "heapUsed": 70,
+                "heapTotal": 184,
+                "rss": 335,
+                "external": 12
+              },
+              "cpu": {
+                "userTime": 70.965796,
+                "systemTime": 7.286516
               }
             }
           }
         }
       ],
       "aggregate": {
-        "samples": 2,
+        "samples": 5,
         "rps": {
-          "average": 1674.1823869960758,
-          "min": 1655.5989256780128,
-          "max": 1692.765848314139
+          "average": 2835.449043664641,
+          "median": 2837.38044038578,
+          "min": 2765.3372823848667,
+          "max": 2901.774961374956
         },
         "latencyP95Ms": {
-          "average": 68.364,
-          "min": 66.052,
-          "max": 70.676
+          "average": 6.0998,
+          "median": 6.085,
+          "min": 5.957,
+          "max": 6.26
+        },
+        "latencyP99Ms": {
+          "average": 7.710800000000001,
+          "median": 7.683,
+          "min": 7.529,
+          "max": 7.935
         },
         "latencyMeanMs": {
-          "average": 59.64655631657476,
-          "min": 59.02852041378225,
-          "max": 60.26459221936727
+          "average": 3.525805553760422,
+          "median": 3.522683635594813,
+          "min": 3.4440889067524116,
+          "max": 3.6143504133426525
         },
         "successRate": {
           "average": 1,
+          "median": 1,
           "min": 1,
           "max": 1
         }
       },
       "resourceUsage": {
         "heapUsedDelta": {
-          "average": 32,
-          "min": 23,
-          "max": 41
+          "average": 0.4,
+          "median": 31,
+          "min": -71,
+          "max": 60
         },
         "heapTotalDelta": {
-          "average": 42,
-          "min": 31,
-          "max": 53
+          "average": 2.8,
+          "median": -1,
+          "min": -4,
+          "max": 20
         },
         "rssDelta": {
-          "average": 47,
-          "min": 32,
-          "max": 62
+          "average": -4.2,
+          "median": -1,
+          "min": -29,
+          "max": 14
+        },
+        "peakHeapUsed": {
+          "average": 158.2,
+          "median": 157,
+          "min": 154,
+          "max": 165
+        },
+        "peakRss": {
+          "average": 345.4,
+          "median": 341,
+          "min": 340,
+          "max": 362
         },
         "cpuUserTimeDelta": {
-          "average": 4.7097135,
-          "min": 4.449186000000001,
-          "max": 4.970241
+          "average": 12.824603000000002,
+          "median": 12.842654000000003,
+          "min": 12.597351,
+          "max": 13.029777
         },
         "cpuSystemTimeDelta": {
-          "average": 11.9050645,
-          "min": 11.817836999999999,
-          "max": 11.992292
+          "average": 1.1736461999999999,
+          "median": 1.1790540000000003,
+          "min": 1.154388,
+          "max": 1.1850489999999994
         }
       }
     },
     {
-      "key": "storage-simulated",
-      "title": "Simulated storage path + plugin execution",
-      "runs": [
+      "key": "azurite-return-components-batch",
+      "title": "Azurite-backed registry returning a batch of components",
+      "warmupRuns": [
         {
           "attempt": 1,
-          "command": "bombardier -o json -p result -l -c 100 -d 15s -t 5s -m GET -H Accept: application/json http://127.0.0.1:2000/welcome-with-plugin/1.0.0?firstName=Jane&lastName=Doe&suffix=-Bench",
+          "command": "bombardier -o json -p result -l -c 10 -d 5s -t 30s -m POST -b {\"components\":[{\"name\":\"stress-component-001\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-002\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-003\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-004\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-005\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-006\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-007\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-008\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-009\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-010\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-011\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-012\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-013\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-014\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-015\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-016\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-017\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-018\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-019\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-020\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-021\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-022\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-023\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-024\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-025\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-026\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-027\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-028\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-029\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-030\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-031\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-032\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-033\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-034\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-035\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-036\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-037\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-038\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-039\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-040\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-041\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-042\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-043\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-044\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-045\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-046\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-047\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-048\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-049\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-050\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}}]} -H Accept: application/json -H Content-Type: application/json http://127.0.0.1:2001/",
           "metrics": {
-            "totalRequests": 73534,
-            "successRequests": 73534,
-            "req2xx": 73534,
+            "totalRequests": 212,
+            "successRequests": 212,
+            "req2xx": 212,
             "req4xx": 0,
             "req5xx": 0,
-            "rpsMean": 4896.496140030795,
-            "rpsMax": 6501.345804177315,
-            "latencyMeanMs": 20.411392621100443,
-            "latencyP95Ms": 30.79,
-            "latencyP99Ms": 32.85,
-            "latencyMaxMs": 68.168,
+            "rpsMean": 40.90706153104512,
+            "rpsMax": 105.29132609529171,
+            "latencyMeanMs": 240.39193396226415,
+            "latencyP95Ms": 267.292,
+            "latencyP99Ms": 683.663,
+            "latencyMaxMs": 708.629,
             "successRate": 1
           },
           "rawResult": {
-            "bytesRead": 86843654,
-            "bytesWritten": 11397770,
-            "timeTakenSeconds": 15.028231625,
+            "bytesRead": 8169208,
+            "bytesWritten": 1104308,
+            "timeTakenSeconds": 5.178543541,
             "req1xx": 0,
-            "req2xx": 73534,
+            "req2xx": 212,
             "req3xx": 0,
             "req4xx": 0,
             "req5xx": 0,
             "others": 0,
             "latency": {
-              "mean": 20411.392621100444,
-              "stddev": 4303.373141411673,
-              "max": 68168,
+              "mean": 240391.93396226416,
+              "stddev": 92874.70326992571,
+              "max": 708629,
               "percentiles": {
-                "50": 20399,
-                "75": 26127,
-                "90": 29613,
-                "95": 30790,
-                "99": 32850
+                "50": 221450,
+                "75": 240440,
+                "90": 258632,
+                "95": 267292,
+                "99": 683663
               }
             },
             "rps": {
-              "mean": 4896.496140030795,
-              "stddev": 502.63417742044436,
-              "max": 6501.345804177315,
+              "mean": 40.90706153104512,
+              "stddev": 23.568657559506992,
+              "max": 105.29132609529171,
               "percentiles": {
-                "50": 4926.741837,
-                "75": 5190.171113,
-                "90": 5407.435223,
-                "95": 5560.982941,
-                "99": 5889.978227
+                "50": 49.971579,
+                "75": 51.397918,
+                "90": 99.24101,
+                "95": 103.563892,
+                "99": 104.964148
+              }
+            }
+          }
+        }
+      ],
+      "runs": [
+        {
+          "attempt": 1,
+          "command": "bombardier -o json -p result -l -c 10 -d 15s -t 30s -m POST -b {\"components\":[{\"name\":\"stress-component-001\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-002\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-003\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-004\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-005\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-006\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-007\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-008\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-009\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-010\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-011\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-012\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-013\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-014\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-015\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-016\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-017\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-018\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-019\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-020\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-021\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-022\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-023\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-024\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-025\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-026\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-027\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-028\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-029\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-030\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-031\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-032\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-033\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-034\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-035\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-036\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-037\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-038\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-039\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-040\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-041\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-042\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-043\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-044\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-045\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-046\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-047\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-048\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-049\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-050\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}}]} -H Accept: application/json -H Content-Type: application/json http://127.0.0.1:2001/",
+          "metrics": {
+            "totalRequests": 787,
+            "successRequests": 787,
+            "req2xx": 787,
+            "req4xx": 0,
+            "req5xx": 0,
+            "rpsMean": 52.073395245268316,
+            "rpsMax": 154.7382156919715,
+            "latencyMeanMs": 191.69264167725538,
+            "latencyP95Ms": 215.317,
+            "latencyP99Ms": 232.111,
+            "latencyMaxMs": 248.905,
+            "successRate": 1
+          },
+          "rawResult": {
+            "bytesRead": 30326258,
+            "bytesWritten": 4099483,
+            "timeTakenSeconds": 15.159263,
+            "req1xx": 0,
+            "req2xx": 787,
+            "req3xx": 0,
+            "req4xx": 0,
+            "req5xx": 0,
+            "others": 0,
+            "latency": {
+              "mean": 191692.6416772554,
+              "stddev": 16381.727755913607,
+              "max": 248905,
+              "percentiles": {
+                "50": 189854,
+                "75": 202110,
+                "90": 209604,
+                "95": 215317,
+                "99": 232111
+              }
+            },
+            "rps": {
+              "mean": 52.073395245268316,
+              "stddev": 20.88468312272126,
+              "max": 154.7382156919715,
+              "percentiles": {
+                "50": 50.066757,
+                "75": 52.012561,
+                "90": 100.088623,
+                "95": 102.436928,
+                "99": 104.789992
               }
             }
           },
           "resourceUsage": {
             "memory": {
-              "heapUsedDelta": -63,
-              "heapTotalDelta": -56,
-              "rssDelta": -37
+              "heapUsedDelta": 75,
+              "heapTotalDelta": 5,
+              "rssDelta": -118,
+              "peakHeapUsed": 226,
+              "peakHeapTotal": 258,
+              "peakRss": 529,
+              "peakExternal": 18
             },
             "cpu": {
-              "userTimeDelta": 10.578921000000001,
-              "systemTimeDelta": 6.835184000000002,
-              "elapsedSeconds": 15.047136708
+              "userTimeDelta": 12.963323000000003,
+              "systemTimeDelta": 0.9021019999999993,
+              "elapsedSeconds": 15.189808458
             },
             "current": {
               "memory": {
-                "heapUsed": 56,
-                "heapTotal": 108,
-                "rss": 212,
-                "external": 5
+                "heapUsed": 148,
+                "heapTotal": 236,
+                "rss": 411,
+                "external": 12
               },
               "cpu": {
-                "userTime": 20.74142,
-                "systemTime": 30.757172
+                "userTime": 89.995091,
+                "systemTime": 9.892977
               }
             }
           }
         },
         {
           "attempt": 2,
-          "command": "bombardier -o json -p result -l -c 100 -d 15s -t 5s -m GET -H Accept: application/json http://127.0.0.1:2000/welcome-with-plugin/1.0.0?firstName=Jane&lastName=Doe&suffix=-Bench",
+          "command": "bombardier -o json -p result -l -c 10 -d 15s -t 30s -m POST -b {\"components\":[{\"name\":\"stress-component-001\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-002\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-003\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-004\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-005\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-006\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-007\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-008\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-009\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-010\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-011\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-012\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-013\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-014\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-015\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-016\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-017\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-018\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-019\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-020\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-021\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-022\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-023\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-024\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-025\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-026\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-027\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-028\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-029\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-030\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-031\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-032\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-033\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-034\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-035\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-036\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-037\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-038\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-039\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-040\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-041\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-042\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-043\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-044\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-045\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-046\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-047\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-048\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-049\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-050\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}}]} -H Accept: application/json -H Content-Type: application/json http://127.0.0.1:2001/",
           "metrics": {
-            "totalRequests": 73080,
-            "successRequests": 73080,
-            "req2xx": 73080,
+            "totalRequests": 800,
+            "successRequests": 800,
+            "req2xx": 800,
             "req4xx": 0,
             "req5xx": 0,
-            "rpsMean": 4865.725614900515,
-            "rpsMax": 6057.395170894386,
-            "latencyMeanMs": 20.537520621237,
-            "latencyP95Ms": 30.877,
-            "latencyP99Ms": 33.27,
-            "latencyMaxMs": 53.899,
+            "rpsMean": 53.03737616891182,
+            "rpsMax": 154.32925189049476,
+            "latencyMeanMs": 188.54434875,
+            "latencyP95Ms": 210.367,
+            "latencyP99Ms": 223.088,
+            "latencyMaxMs": 234.511,
             "successRate": 1
           },
           "rawResult": {
-            "bytesRead": 86307480,
-            "bytesWritten": 11327400,
-            "timeTakenSeconds": 15.028404667,
+            "bytesRead": 30827200,
+            "bytesWritten": 4167200,
+            "timeTakenSeconds": 15.160835959,
             "req1xx": 0,
-            "req2xx": 73080,
+            "req2xx": 800,
             "req3xx": 0,
             "req4xx": 0,
             "req5xx": 0,
             "others": 0,
             "latency": {
-              "mean": 20537.520621237,
-              "stddev": 4216.483072258545,
-              "max": 53899,
+              "mean": 188544.34875,
+              "stddev": 15294.86961325098,
+              "max": 234511,
               "percentiles": {
-                "50": 20546,
-                "75": 26340,
-                "90": 29722,
-                "95": 30877,
-                "99": 33270
+                "50": 186492,
+                "75": 197191,
+                "90": 206065,
+                "95": 210367,
+                "99": 223088
               }
             },
             "rps": {
-              "mean": 4865.725614900515,
-              "stddev": 505.284557109766,
-              "max": 6057.395170894386,
+              "mean": 53.03737616891182,
+              "stddev": 21.94286042972109,
+              "max": 154.32925189049476,
               "percentiles": {
-                "50": 4903.861791,
-                "75": 5162.519109,
-                "90": 5434.918102,
-                "95": 5583.0994,
-                "99": 5918.128206
+                "50": 50.111081,
+                "75": 52.13402,
+                "90": 100.5857,
+                "95": 102.565418,
+                "99": 105.105041
               }
             }
           },
           "resourceUsage": {
             "memory": {
-              "heapUsedDelta": 3,
-              "heapTotalDelta": -1,
-              "rssDelta": -29
+              "heapUsedDelta": -92,
+              "heapTotalDelta": 2,
+              "rssDelta": 7,
+              "peakHeapUsed": 229,
+              "peakHeapTotal": 270,
+              "peakRss": 418,
+              "peakExternal": 18
             },
             "cpu": {
-              "userTimeDelta": 10.077275999999998,
-              "systemTimeDelta": 6.855706999999999,
-              "elapsedSeconds": 15.050753708
+              "userTimeDelta": 12.998965999999996,
+              "systemTimeDelta": 0.9019399999999997,
+              "elapsedSeconds": 15.185126333
             },
             "current": {
               "memory": {
-                "heapUsed": 59,
-                "heapTotal": 107,
-                "rss": 183,
-                "external": 5
+                "heapUsed": 56,
+                "heapTotal": 238,
+                "rss": 418,
+                "external": 9
               },
               "cpu": {
-                "userTime": 30.819062,
-                "systemTime": 37.612922
+                "userTime": 102.9943,
+                "systemTime": 10.794964
+              }
+            }
+          }
+        },
+        {
+          "attempt": 3,
+          "command": "bombardier -o json -p result -l -c 10 -d 15s -t 30s -m POST -b {\"components\":[{\"name\":\"stress-component-001\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-002\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-003\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-004\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-005\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-006\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-007\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-008\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-009\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-010\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-011\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-012\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-013\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-014\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-015\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-016\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-017\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-018\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-019\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-020\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-021\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-022\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-023\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-024\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-025\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-026\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-027\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-028\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-029\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-030\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-031\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-032\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-033\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-034\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-035\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-036\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-037\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-038\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-039\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-040\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-041\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-042\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-043\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-044\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-045\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-046\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-047\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-048\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-049\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-050\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}}]} -H Accept: application/json -H Content-Type: application/json http://127.0.0.1:2001/",
+          "metrics": {
+            "totalRequests": 721,
+            "successRequests": 721,
+            "req2xx": 721,
+            "req4xx": 0,
+            "req5xx": 0,
+            "rpsMean": 48.3910974010412,
+            "rpsMax": 111.13169517064993,
+            "latencyMeanMs": 209.26335783633843,
+            "latencyP95Ms": 322.917,
+            "latencyP99Ms": 575.163,
+            "latencyMaxMs": 735.469,
+            "successRate": 1
+          },
+          "rawResult": {
+            "bytesRead": 27783014,
+            "bytesWritten": 3755689,
+            "timeTakenSeconds": 15.171077667,
+            "req1xx": 0,
+            "req2xx": 721,
+            "req3xx": 0,
+            "req4xx": 0,
+            "req5xx": 0,
+            "others": 0,
+            "latency": {
+              "mean": 209263.35783633843,
+              "stddev": 75288.17143560991,
+              "max": 735469,
+              "percentiles": {
+                "50": 189857,
+                "75": 204322,
+                "90": 244412,
+                "95": 322917,
+                "99": 575163
+              }
+            },
+            "rps": {
+              "mean": 48.3910974010412,
+              "stddev": 22.504669378876656,
+              "max": 111.13169517064993,
+              "percentiles": {
+                "50": 49.997813,
+                "75": 52.225684,
+                "90": 100.527139,
+                "95": 103.737803,
+                "99": 109.759695
+              }
+            }
+          },
+          "resourceUsage": {
+            "memory": {
+              "heapUsedDelta": 170,
+              "heapTotalDelta": 28,
+              "rssDelta": -67,
+              "peakHeapUsed": 223,
+              "peakHeapTotal": 261,
+              "peakRss": 418,
+              "peakExternal": 18
+            },
+            "cpu": {
+              "userTimeDelta": 12.227511000000007,
+              "systemTimeDelta": 0.9764149999999994,
+              "elapsedSeconds": 32.355903500000004
+            },
+            "current": {
+              "memory": {
+                "heapUsed": 226,
+                "heapTotal": 266,
+                "rss": 351,
+                "external": 19
+              },
+              "cpu": {
+                "userTime": 115.222064,
+                "systemTime": 11.771429
+              }
+            }
+          }
+        },
+        {
+          "attempt": 4,
+          "command": "bombardier -o json -p result -l -c 10 -d 15s -t 30s -m POST -b {\"components\":[{\"name\":\"stress-component-001\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-002\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-003\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-004\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-005\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-006\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-007\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-008\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-009\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-010\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-011\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-012\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-013\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-014\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-015\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-016\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-017\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-018\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-019\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-020\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-021\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-022\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-023\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-024\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-025\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-026\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-027\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-028\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-029\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-030\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-031\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-032\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-033\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-034\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-035\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-036\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-037\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-038\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-039\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-040\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-041\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-042\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-043\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-044\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-045\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-046\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-047\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-048\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-049\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-050\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}}]} -H Accept: application/json -H Content-Type: application/json http://127.0.0.1:2001/",
+          "metrics": {
+            "totalRequests": 736,
+            "successRequests": 736,
+            "req2xx": 736,
+            "req4xx": 0,
+            "req5xx": 0,
+            "rpsMean": 48.950224248972894,
+            "rpsMax": 105.4463014709759,
+            "latencyMeanMs": 205.05868206521737,
+            "latencyP95Ms": 247.63,
+            "latencyP99Ms": 484.41,
+            "latencyMaxMs": 651.043,
+            "successRate": 1
+          },
+          "rawResult": {
+            "bytesRead": 28361024,
+            "bytesWritten": 3833824,
+            "timeTakenSeconds": 15.172459459,
+            "req1xx": 0,
+            "req2xx": 736,
+            "req3xx": 0,
+            "req4xx": 0,
+            "req5xx": 0,
+            "others": 0,
+            "latency": {
+              "mean": 205058.68206521738,
+              "stddev": 51228.26046488025,
+              "max": 651043,
+              "percentiles": {
+                "50": 197153,
+                "75": 208993,
+                "90": 221754,
+                "95": 247630,
+                "99": 484410
+              }
+            },
+            "rps": {
+              "mean": 48.950224248972894,
+              "stddev": 22.400239646116706,
+              "max": 105.4463014709759,
+              "percentiles": {
+                "50": 50.006876,
+                "75": 51.91131,
+                "90": 100.613324,
+                "95": 103.415958,
+                "99": 104.959097
+              }
+            }
+          },
+          "resourceUsage": {
+            "memory": {
+              "heapUsedDelta": -134,
+              "heapTotalDelta": -26,
+              "rssDelta": 23,
+              "peakHeapUsed": 228,
+              "peakHeapTotal": 271,
+              "peakRss": 371,
+              "peakExternal": 19
+            },
+            "cpu": {
+              "userTimeDelta": 12.604188000000008,
+              "systemTimeDelta": 0.8562879999999993,
+              "elapsedSeconds": 15.198606167
+            },
+            "current": {
+              "memory": {
+                "heapUsed": 92,
+                "heapTotal": 240,
+                "rss": 374,
+                "external": 15
+              },
+              "cpu": {
+                "userTime": 127.826537,
+                "systemTime": 12.627815
+              }
+            }
+          }
+        },
+        {
+          "attempt": 5,
+          "command": "bombardier -o json -p result -l -c 10 -d 15s -t 30s -m POST -b {\"components\":[{\"name\":\"stress-component-001\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-002\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-003\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-004\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-005\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-006\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-007\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-008\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-009\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-010\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-011\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-012\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-013\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-014\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-015\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-016\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-017\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-018\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-019\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-020\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-021\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-022\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-023\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-024\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-025\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-026\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-027\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-028\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-029\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-030\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-031\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-032\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-033\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-034\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-035\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-036\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-037\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-038\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-039\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-040\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-041\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-042\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-043\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-044\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-045\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-046\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-047\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-048\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-049\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}},{\"name\":\"stress-component-050\",\"version\":\"1.0.0\",\"parameters\":{\"firstName\":\"Jane\",\"lastName\":\"Doe\"}}]} -H Accept: application/json -H Content-Type: application/json http://127.0.0.1:2001/",
+          "metrics": {
+            "totalRequests": 810,
+            "successRequests": 810,
+            "req2xx": 810,
+            "req4xx": 0,
+            "req5xx": 0,
+            "rpsMean": 53.65617607661184,
+            "rpsMax": 156.00082930040855,
+            "latencyMeanMs": 186.37565802469138,
+            "latencyP95Ms": 209.893,
+            "latencyP99Ms": 220.685,
+            "latencyMaxMs": 233.801,
+            "successRate": 1
+          },
+          "rawResult": {
+            "bytesRead": 31212540,
+            "bytesWritten": 4219290,
+            "timeTakenSeconds": 15.166602166,
+            "req1xx": 0,
+            "req2xx": 810,
+            "req3xx": 0,
+            "req4xx": 0,
+            "req5xx": 0,
+            "others": 0,
+            "latency": {
+              "mean": 186375.65802469137,
+              "stddev": 15169.046304567797,
+              "max": 233801,
+              "percentiles": {
+                "50": 184338,
+                "75": 194832,
+                "90": 203987,
+                "95": 209893,
+                "99": 220685
+              }
+            },
+            "rps": {
+              "mean": 53.65617607661184,
+              "stddev": 22.1804044700028,
+              "max": 156.00082930040855,
+              "percentiles": {
+                "50": 50.12008,
+                "75": 52.11285,
+                "90": 100.858981,
+                "95": 103.641936,
+                "99": 105.152471
+              }
+            }
+          },
+          "resourceUsage": {
+            "memory": {
+              "heapUsedDelta": 122,
+              "heapTotalDelta": 7,
+              "rssDelta": -6,
+              "peakHeapUsed": 225,
+              "peakHeapTotal": 265,
+              "peakRss": 374,
+              "peakExternal": 18
+            },
+            "cpu": {
+              "userTimeDelta": 13.133595999999997,
+              "systemTimeDelta": 0.9083849999999991,
+              "elapsedSeconds": 15.194075083
+            },
+            "current": {
+              "memory": {
+                "heapUsed": 214,
+                "heapTotal": 247,
+                "rss": 368,
+                "external": 19
+              },
+              "cpu": {
+                "userTime": 140.960398,
+                "systemTime": 13.536237
               }
             }
           }
         }
       ],
       "aggregate": {
-        "samples": 2,
+        "samples": 5,
         "rps": {
-          "average": 4881.110877465655,
-          "min": 4865.725614900515,
-          "max": 4896.496140030795
+          "average": 51.22165382816122,
+          "median": 52.073395245268316,
+          "min": 48.3910974010412,
+          "max": 53.65617607661184
         },
         "latencyP95Ms": {
-          "average": 30.8335,
-          "min": 30.79,
-          "max": 30.877
+          "average": 241.22479999999996,
+          "median": 215.317,
+          "min": 209.893,
+          "max": 322.917
+        },
+        "latencyP99Ms": {
+          "average": 347.0914,
+          "median": 232.111,
+          "min": 220.685,
+          "max": 575.163
         },
         "latencyMeanMs": {
-          "average": 20.47445662116872,
-          "min": 20.411392621100443,
-          "max": 20.537520621237
+          "average": 196.1869376707005,
+          "median": 191.69264167725538,
+          "min": 186.37565802469138,
+          "max": 209.26335783633843
         },
         "successRate": {
           "average": 1,
+          "median": 1,
           "min": 1,
           "max": 1
         }
       },
       "resourceUsage": {
         "heapUsedDelta": {
-          "average": -30,
-          "min": -63,
-          "max": 3
+          "average": 28.2,
+          "median": 75,
+          "min": -134,
+          "max": 170
         },
         "heapTotalDelta": {
-          "average": -28.5,
-          "min": -56,
-          "max": -1
+          "average": 3.2,
+          "median": 5,
+          "min": -26,
+          "max": 28
         },
         "rssDelta": {
-          "average": -33,
-          "min": -37,
-          "max": -29
+          "average": -32.2,
+          "median": -6,
+          "min": -118,
+          "max": 23
+        },
+        "peakHeapUsed": {
+          "average": 226.2,
+          "median": 226,
+          "min": 223,
+          "max": 229
+        },
+        "peakRss": {
+          "average": 422,
+          "median": 418,
+          "min": 371,
+          "max": 529
         },
         "cpuUserTimeDelta": {
-          "average": 10.3280985,
-          "min": 10.077275999999998,
-          "max": 10.578921000000001
+          "average": 12.785516800000002,
+          "median": 12.963323000000003,
+          "min": 12.227511000000007,
+          "max": 13.133595999999997
         },
         "cpuSystemTimeDelta": {
-          "average": 6.8454455,
-          "min": 6.835184000000002,
-          "max": 6.855706999999999
+          "average": 0.9090259999999993,
+          "median": 0.9021019999999993,
+          "min": 0.8562879999999993,
+          "max": 0.9764149999999994
         }
       }
     }

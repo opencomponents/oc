@@ -16,7 +16,8 @@
 		"bench": "node tasks/benchmarks/server-benchmark.js --repetitions=5",
 		"bench:quick": "node tasks/benchmarks/server-benchmark.js --repetitions=3",
 		"bench:update-baseline": "node tasks/benchmarks/server-benchmark.js --repetitions=5 --update-baseline=true",
-		"bench:high-load": "node tasks/benchmarks/server-benchmark.js --scenarios=high-load-local,high-load-storage --high-load-repetitions=3"
+		"bench:high-load": "node tasks/benchmarks/server-benchmark.js --scenarios=high-load-local,high-load-storage --high-load-repetitions=3",
+		"bench:azurite": "node tasks/benchmarks/server-benchmark.js --scenarios=azurite-return-component,azurite-return-components-batch --repetitions=5"
 	},
 	"engines": {
 		"node": ">=18"
@@ -37,6 +38,7 @@
 		"oc"
 	],
 	"devDependencies": {
+		"@azure/storage-blob": "^12.24.0",
 		"@biomejs/biome": "^2.5.0",
 		"@types/accept-language-parser": "^1.5.8",
 		"@types/async": "^3.2.25",
@@ -56,6 +58,7 @@
 		"@types/semver": "^7.7.1",
 		"@types/targz": "^1.0.5",
 		"@types/yargs": "^17.0.35",
+		"azurite": "^3.33.0",
 		"chai": "^6.2.2",
 		"chalk": "^4.1.2",
 		"glob": "^7.2.3",
