@@ -99,7 +99,7 @@ describe('oc-azure-sql-metadata-adapter', () => {
       const ddl = queryStub.args[0][0];
       expect(ddl).to.contain("OBJECT_ID(N'dbo.oc_components', N'U')");
       expect(ddl).to.contain('CREATE TABLE [dbo].[oc_components]');
-      expect(ddl).to.contain('CONSTRAINT pk_oc_components PRIMARY KEY');
+      expect(ddl).to.contain('PRIMARY KEY (component_name, version)');
       expect(ddl).to.contain(
         'CREATE INDEX ix_oc_components_name ON [dbo].[oc_components] (component_name)'
       );
@@ -119,7 +119,7 @@ describe('oc-azure-sql-metadata-adapter', () => {
 
       expect(queryStub.calledOnce).to.be.true;
       expect(queryStub.args[0][0]).to.equal(
-        'SELECT TOP (0) component_name, version, publish_date, template_size FROM [custom_schema].[custom_components];'
+        'SELECT TOP (0) component_name, version, publish_date, template_size, created_at FROM [custom_schema].[custom_components];'
       );
     });
 

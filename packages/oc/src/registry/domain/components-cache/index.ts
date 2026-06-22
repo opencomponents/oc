@@ -116,6 +116,10 @@ export default function componentsCache(
       } catch (err) {
         return throwError('components_cache_refresh', err);
       }
+    },
+
+    close(): void {
+      clearTimeout(refreshLoop);
     }
   };
 }

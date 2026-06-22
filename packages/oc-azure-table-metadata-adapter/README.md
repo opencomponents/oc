@@ -104,6 +104,9 @@ metadata: {
 
 Authentication precedence when `connectionString` is absent: `accountName` +
 `accountKey` → `sasToken` → explicit `credential` → `DefaultAzureCredential`.
+In OC registry config, `manageSchema` can be set either in `metadata.options` or
+as top-level `metadata.manageSchema`; OC forwards the top-level value to the
+adapter.
 
 ## Entity model
 

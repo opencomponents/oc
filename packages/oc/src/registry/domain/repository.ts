@@ -31,6 +31,17 @@ const packageInfo = fs.readJsonSync(
   path.join(__dirname, '..', '..', '..', 'package.json')
 );
 
+const getMetadataAdapterOptions = (conf: Config): any => {
+  if (typeof conf.metadata?.manageSchema === 'undefined') {
+    return conf.metadata?.options;
+  }
+
+  return {
+    ...(conf.metadata.options || {}),
+    manageSchema: conf.metadata.manageSchema
+  };
+};
+
 export default function repository(conf: Config) {
   const cdn: StorageAdapter =
     !conf.local &&
@@ -41,7 +52,7 @@ export default function repository(conf: Config) {
     : cdn.adapterType + ' cdn';
   const metadataStore =
     !conf.local && conf.metadata
-      ? conf.metadata.adapter(conf.metadata.options)
+      ? conf.metadata.adapter(getMetadataAdapterOptions(conf))
       : undefined;
   const metadataIndex = metadataStore
     ? createMetadataIndex(metadataStore)
@@ -500,6 +511,8 @@ export default function repository(conf: Config) {
         .catch(() => undefined);
     },
     async close(): Promise<void> {
+      componentsCache.close?.();
+      componentsDetails.close?.();
       if (exportLegacyFilesLoop) {
         clearTimeout(exportLegacyFilesLoop);
         exportLegacyFilesLoop = undefined;

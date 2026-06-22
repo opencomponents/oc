@@ -114,7 +114,7 @@ BEGIN
     publish_date    BIGINT        NOT NULL,
     template_size   BIGINT        NULL,
     created_at      DATETIME2     NOT NULL DEFAULT SYSUTCDATETIME(),
-    CONSTRAINT pk_oc_components PRIMARY KEY (component_name, version)
+    PRIMARY KEY (component_name, version)
   );
 END;
 
@@ -130,7 +130,7 @@ END;
 `;
 
 const getVerifySchemaSql = (qualifiedTableName: string): string =>
-  `SELECT TOP (0) component_name, version, publish_date, template_size FROM ${qualifiedTableName};`;
+  `SELECT TOP (0) component_name, version, publish_date, template_size, created_at FROM ${qualifiedTableName};`;
 
 export default function azureSqlMetadataAdapter(
   options?: AzureSqlMetadataAdapterOptions

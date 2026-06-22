@@ -170,8 +170,13 @@ export default function componentsDetails(
     return cacheDataAndStartPolling(jsonDetails);
   };
 
+  const close = (): void => {
+    clearTimeout(refreshLoop);
+  };
+
   return {
     get,
-    refresh
+    refresh,
+    close
   };
 }

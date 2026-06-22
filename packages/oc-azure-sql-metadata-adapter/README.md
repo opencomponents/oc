@@ -55,7 +55,9 @@ metadata: {
 ```
 
 The adapter passes connection settings through to `mssql`, except for the
-adapter-specific options listed below.
+adapter-specific options listed below. In OC registry config, `manageSchema` can
+be set either in `metadata.options` or as top-level `metadata.manageSchema`; OC
+forwards the top-level value to the adapter.
 
 ### Managed identity (no secret)
 
@@ -102,7 +104,7 @@ BEGIN
     publish_date    BIGINT        NOT NULL,
     template_size   BIGINT        NULL,
     created_at      DATETIME2     NOT NULL DEFAULT SYSUTCDATETIME(),
-    CONSTRAINT pk_oc_components PRIMARY KEY (component_name, version)
+    PRIMARY KEY (component_name, version)
   );
 END;
 
@@ -130,17 +132,17 @@ metadata: {
   adapter: azureSqlMetadataAdapter,
   options: {
     connectionString: process.env.OC_METADATA_SQL_CONNECTION_STRING,
-    manageSchema: false,
     schemaName: 'registry',
     tableName: 'oc_components'
-  }
+  },
+  manageSchema: false
 }
 ```
 
 On startup the adapter verifies the table with:
 
 ```sql
-SELECT TOP (0) component_name, version, publish_date, template_size
+SELECT TOP (0) component_name, version, publish_date, template_size, created_at
 FROM [registry].[oc_components];
 ```
 

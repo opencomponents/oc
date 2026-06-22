@@ -63,11 +63,16 @@ registry.configure({
     options: {
       connectionString: process.env.OC_METADATA_SQL_CONNECTION_STRING
     },
+    manageSchema: true,
     reconcileFromStorage: false,
     exportLegacyFiles: false
   }
 });
 ```
+
+`metadata.manageSchema` defaults to `true`. Set it to `false` when operators
+manage the metadata schema/table separately; OC passes the value through to the
+configured metadata adapter during validation, startup, and migration.
 
 The registry initialises the metadata store during startup. If startup succeeds,
 reads are served from OC's in-memory cache, and cache polling refreshes from the
@@ -76,6 +81,14 @@ commits the metadata row. Duplicate metadata rows are treated as the existing
 "component version already exists" publish error. When the registry is shut
 down via `registry.close(callback)`, the metadata adapter's optional `close()`
 hook is invoked so the adapter can release its connection pool.
+
+Custom metadata adapters should implement the shared contract exported by
+`oc-metadata-adapters-utils`:
+
+```ts
+import type { ComponentRow, MetadataStore } from 'oc-metadata-adapters-utils';
+import { VERSION_ALREADY_EXISTS } from 'oc-metadata-adapters-utils';
+```
 
 ### Migrating existing registries
 

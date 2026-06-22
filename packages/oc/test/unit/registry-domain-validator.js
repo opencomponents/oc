@@ -1,5 +1,6 @@
 const expect = require('chai').expect;
 const injectr = require('injectr');
+const sinon = require('sinon');
 
 describe('registry : domain : validator', () => {
   const validator = require('../../dist/registry/domain/validators');
@@ -455,6 +456,46 @@ describe('registry : domain : validator', () => {
         it('should be valid', () => {
           expect(validate(conf).isValid).to.be.true;
         });
+      });
+
+      it('should pass top-level manageSchema to the metadata adapter', () => {
+        const adapter = sinon.stub().returns({
+          adapterType: 'test-metadata',
+          isValid: () => true
+        });
+        const conf = {
+          s3: baseS3Conf,
+          metadata: {
+            adapter,
+            options: { connectionString: 'sql' },
+            manageSchema: false
+          }
+        };
+
+        expect(validate(conf).isValid).to.be.true;
+        expect(adapter.args[0][0]).to.eql({
+          connectionString: 'sql',
+          manageSchema: false
+        });
+      });
+
+      it('should reject invalid export legacy files intervals', () => {
+        const conf = {
+          s3: baseS3Conf,
+          metadata: {
+            adapter: () => ({
+              adapterType: 'test-metadata',
+              isValid: () => true
+            }),
+            options: {},
+            exportLegacyFilesInterval: 0
+          }
+        };
+
+        expect(validate(conf).isValid).to.be.false;
+        expect(validate(conf).message).to.equal(
+          'Registry configuration is not valid: metadata.exportLegacyFilesInterval must be a positive number'
+        );
       });
     });
 

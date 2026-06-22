@@ -9,6 +9,10 @@ const configPath = path.join(
   __dirname,
   '../fixtures/metadata-migration-config.js'
 );
+const esmConfigPath = path.join(
+  __dirname,
+  '../fixtures/metadata-migration-config.mjs'
+);
 
 const execute = (facade, options) =>
   new Promise((resolve, reject) => {
@@ -25,10 +29,15 @@ describe('cli : facade : registry : migrate-metadata', () => {
       configPath,
       'module.exports = global.__ocMetadataMigrationConfig;'
     );
+    fs.writeFileSync(
+      esmConfigPath,
+      'export default global.__ocMetadataMigrationConfig;'
+    );
   });
 
   after(() => {
     fs.removeSync(configPath);
+    fs.removeSync(esmConfigPath);
     delete global.__ocMetadataMigrationConfig;
   });
 
@@ -96,6 +105,34 @@ describe('cli : facade : registry : migrate-metadata', () => {
       'Metadata migration completed: 1 scanned, 1 inserted, 0 skipped'
     );
     expect(metadataStore.close.calledOnce).to.be.true;
+  });
+
+  it('should load native ESM registry config modules', async () => {
+    const registryMigrateMetadata = RegistryMigrateMetadata({ logger });
+
+    const result = await execute(registryMigrateMetadata, {
+      configPath: esmConfigPath
+    });
+
+    expect(result).to.eql({ scanned: 1, inserted: 1, skipped: 0 });
+    expect(metadataStore.initialise.calledOnce).to.be.true;
+  });
+
+  it('should pass top-level manageSchema to the configured metadata adapter', async () => {
+    const adapter = sinon.stub().returns(metadataStore);
+    global.__ocMetadataMigrationConfig.metadata = {
+      adapter,
+      options: { connectionString: 'sql' },
+      manageSchema: false
+    };
+    const registryMigrateMetadata = RegistryMigrateMetadata({ logger });
+
+    await execute(registryMigrateMetadata, { configPath });
+
+    expect(adapter.args[0][0]).to.eql({
+      connectionString: 'sql',
+      manageSchema: false
+    });
   });
 
   it('should scan storage directories when components-details.json is missing', async () => {

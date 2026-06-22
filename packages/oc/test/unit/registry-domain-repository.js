@@ -21,12 +21,14 @@ describe('registry : domain : repository', () => {
   describe('when on cdn configuration', () => {
     const componentsCacheMock = {
       get: sinon.stub(),
-      refresh: sinon.stub()
+      refresh: sinon.stub(),
+      close: sinon.stub()
     };
 
     const componentsDetailsMock = {
       get: sinon.stub(),
-      refresh: sinon.stub()
+      refresh: sinon.stub(),
+      close: sinon.stub()
     };
 
     const metadataStoreMock = {
@@ -517,9 +519,11 @@ describe('registry : domain : repository', () => {
             componentsCacheMock.refresh = sinon
               .stub()
               .resolves(componentsCacheBaseResponse);
+            componentsCacheMock.close = sinon.stub();
             componentsDetailsMock.refresh = sinon
               .stub()
               .resolves(componentsDetailsBaseResponse);
+            componentsDetailsMock.close = sinon.stub();
             s3Mock.putDir = sinon.stub().resolves('done');
             s3Mock.putFileContent = sinon.stub().resolves();
             s3Mock.listSubDirectories = sinon.stub().resolves([]);
@@ -537,6 +541,24 @@ describe('registry : domain : repository', () => {
 
             expect(metadataStoreMock.initialise.calledOnce).to.be.true;
             expect(componentsCacheMock.load.calledOnce).to.be.true;
+          });
+
+          it('should pass top-level manageSchema to the metadata adapter', () => {
+            resetMetadataMocks();
+            const adapter = sinon.stub().returns(metadataStoreMock);
+            Repository({
+              ...cdnConfiguration,
+              metadata: {
+                adapter,
+                options: { connectionString: 'sql' },
+                manageSchema: false
+              }
+            });
+
+            expect(adapter.args[0][0]).to.eql({
+              connectionString: 'sql',
+              manageSchema: false
+            });
           });
 
           it('should not reconcile from storage by default', async () => {
@@ -876,14 +898,20 @@ describe('registry : domain : repository', () => {
           });
 
           describe('close()', () => {
-            it('should close the metadata store when present', async () => {
+            it('should stop cache polling before closing the metadata store', async () => {
               resetMetadataMocks();
               metadataStoreMock.close = sinon.stub().resolves();
               const repository = getRepositoryWithMetadata();
 
               await repository.close();
 
+              expect(componentsCacheMock.close.calledOnce).to.be.true;
+              expect(componentsDetailsMock.close.calledOnce).to.be.true;
               expect(metadataStoreMock.close.calledOnce).to.be.true;
+              expect(componentsCacheMock.close.calledBefore(metadataStoreMock.close))
+                .to.be.true;
+              expect(componentsDetailsMock.close.calledBefore(metadataStoreMock.close))
+                .to.be.true;
             });
 
             it('should resolve when the metadata store has no close hook', async () => {
