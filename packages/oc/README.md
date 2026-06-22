@@ -85,8 +85,85 @@ Use the CLI backfill command before enabling metadata mode in production:
 oc registry migrate-metadata ./registry.config.js
 ```
 
-The config module must include both `storage` and `metadata`. The command
-initialises the configured metadata adapter and backfills rows from
+The argument is a path to a module that exports the same registry config object you would pass to `registry.configure()`. It must include both `storage` and `metadata`, and it must pass registry config validation. The module can be CommonJS, an ES module `default` export, or an async function returning the config — all three are accepted:
+
+```js
+// registry.config.js — CommonJS
+const azureSqlMetadataAdapter = require('oc-azure-sql-metadata-adapter').default;
+const s3StorageAdapter = require('oc-s3-storage-adapter');
+
+module.exports = {
+  baseUrl: 'http://my-registry.example.com/',
+  storage: {
+    adapter: s3StorageAdapter,
+    options: {
+      bucket: 'my-bucket',
+      region: 'us-east-1',
+      componentsDir: 'components',
+      path: 'https://cdn.example.com/'
+    }
+  },
+  metadata: {
+    adapter: azureSqlMetadataAdapter,
+    options: {
+      connectionString: process.env.OC_METADATA_SQL_CONNECTION_STRING
+    }
+  }
+};
+```
+
+```ts
+// registry.config.ts — ES module (transpiled or run with a native ESM loader)
+import azureSqlMetadataAdapter from 'oc-azure-sql-metadata-adapter';
+import s3StorageAdapter from 'oc-s3-storage-adapter';
+
+export default {
+  baseUrl: 'http://my-registry.example.com/',
+  storage: {
+    adapter: s3StorageAdapter,
+    options: {
+      bucket: 'my-bucket',
+      region: 'us-east-1',
+      componentsDir: 'components',
+      path: 'https://cdn.example.com/'
+    }
+  },
+  metadata: {
+    adapter: azureSqlMetadataAdapter,
+    options: {
+      connectionString: process.env.OC_METADATA_SQL_CONNECTION_STRING
+    }
+  }
+};
+```
+
+```js
+// registry.config.js — async factory (e.g. to resolve secrets first)
+module.exports = async () => {
+  const azureSqlMetadataAdapter = require('oc-azure-sql-metadata-adapter').default;
+  const s3StorageAdapter = require('oc-s3-storage-adapter');
+  const connectionString = await getSecret('oc-metadata-sql');
+
+  return {
+    baseUrl: 'http://my-registry.example.com/',
+    storage: {
+      adapter: s3StorageAdapter,
+      options: {
+        bucket: 'my-bucket',
+        region: 'us-east-1',
+        componentsDir: 'components',
+        path: 'https://cdn.example.com/'
+      }
+    },
+    metadata: {
+      adapter: azureSqlMetadataAdapter,
+      options: { connectionString }
+    }
+  };
+};
+```
+
+The command initialises the configured metadata adapter and backfills rows from
 `${componentsDir}/components-details.json`. If that file is missing, it falls back
 to scanning `${componentsDir}/<component>/<version>/package.json`. Existing rows
 are skipped, so the command is idempotent.
