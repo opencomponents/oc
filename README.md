@@ -5,6 +5,9 @@ This repository is now set up as a monorepo foundation using npm workspaces, Tur
 Current workspace packages:
 
 - `packages/oc` (the existing `oc` package)
+- `packages/oc-client-browser`
+- `packages/oc-metadata-adapters-utils`
+- `packages/oc-azure-sql-metadata-adapter`
 
 ## Monorepo structure
 
@@ -14,11 +17,14 @@ Current workspace packages:
 ├── package.json        # monorepo root scripts (turbo + changesets)
 ├── turbo.json          # task pipeline
 └── packages/
-    └── oc/
-        ├── package.json
-        ├── src/
-        ├── test/
-        └── tasks/
+    ├── oc/
+    │   ├── package.json
+    │   ├── src/
+    │   ├── test/
+    │   └── tasks/
+    ├── oc-client-browser/
+    ├── oc-metadata-adapters-utils/
+    └── oc-azure-sql-metadata-adapter/
 ```
 
 ## Common commands (run from repo root)
@@ -33,6 +39,7 @@ Current workspace packages:
 ## Package documentation
 
 - Package docs: `packages/oc/README.md`
+- Azure SQL metadata adapter docs: `packages/oc-azure-sql-metadata-adapter/README.md`
 - Package changelog: `packages/oc/CHANGELOG.md`
 
 ## Contributing

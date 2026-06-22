@@ -47,6 +47,9 @@ packages/oc/test/fixtures/components/hello-world-custom-cookies/_package
 
 packages/oc/logintervals.md
 packages/oc/dist/
+packages/oc-azure-sql-metadata-adapter/dist/
+packages/oc-azure-table-metadata-adapter/dist/
+packages/oc-metadata-adapters-utils/dist/
 packages/oc-client-browser/dist/
 packages/oc/test-components/
 .turbo/

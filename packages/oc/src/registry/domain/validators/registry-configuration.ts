@@ -4,6 +4,19 @@ import * as auth from '../authentication';
 
 type ValidationResult = { isValid: true } | { isValid: false; message: string };
 
+const getMetadataAdapterOptions = (
+  conf: Partial<Omit<Config, 'discovery'>>
+) => {
+  if (typeof conf.metadata?.manageSchema === 'undefined') {
+    return conf.metadata?.options;
+  }
+
+  return {
+    ...(conf.metadata.options || {}),
+    manageSchema: conf.metadata.manageSchema
+  };
+};
+
 export default function registryConfiguration(
   conf: Partial<Omit<Config, 'discovery'>>
 ): ValidationResult {
@@ -118,6 +131,35 @@ export default function registryConfiguration(
           )
         );
       }
+    }
+  }
+
+  if (!conf.local && conf.metadata) {
+    if (!conf.metadata.adapter) {
+      return returnError(
+        strings.errors.registry.CONFIGURATION_METADATA_NOT_VALID('metadata')
+      );
+    }
+
+    if (
+      typeof conf.metadata.exportLegacyFilesInterval !== 'undefined' &&
+      (!Number.isFinite(conf.metadata.exportLegacyFilesInterval) ||
+        conf.metadata.exportLegacyFilesInterval <= 0)
+    ) {
+      return returnError(
+        strings.errors.registry.CONFIGURATION_METADATA_EXPORT_INTERVAL_NOT_VALID
+      );
+    }
+
+    const metadataStore = conf.metadata.adapter(
+      getMetadataAdapterOptions(conf)
+    );
+    if (!metadataStore.isValid()) {
+      return returnError(
+        strings.errors.registry.CONFIGURATION_METADATA_NOT_VALID(
+          metadataStore.adapterType
+        )
+      );
     }
   }
 

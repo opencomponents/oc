@@ -192,6 +192,15 @@ export default {
           description: 'Show oc registries added to the current project',
           usage: 'Usage: $0 registry ls'
         },
+        'migrate-metadata': {
+          cmd: 'migrate-metadata <configPath>',
+          example: {
+            cmd: '$0 registry migrate-metadata ./registry.config.js'
+          },
+          description:
+            'Backfill a configured metadata store from existing registry metadata files',
+          usage: 'Usage: $0 registry migrate-metadata <configPath>'
+        },
         remove: {
           cmd: 'remove <registryUrl>',
           example: {

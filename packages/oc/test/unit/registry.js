@@ -15,7 +15,8 @@ describe('registry', () => {
     './middleware': { bind: sinon.stub().returns({}) },
     './domain/plugins-initialiser': { init: sinon.stub() },
     './domain/repository': sinon.stub().returns({
-      init: repositoryInitStub
+      init: repositoryInitStub,
+      close: sinon.stub().resolves()
     }),
     './router': { create: sinon.stub() },
     './domain/options-sanitiser': sinon.stub(),
@@ -206,24 +207,96 @@ describe('registry', () => {
                   });
                 });
 
-                it('should return error', () => {
-                  expect(error).to.be.equal('I failed for some reason');
-                });
-
-                it('should emit an error event', () => {
-                  expect(deps['./domain/events-handler'].fire.args[0]).to.eql([
-                    'error',
-                    {
-                      code: 'EXPRESS_ERROR',
-                      message: 'I failed for some reason'
-                    }
-                  ]);
-                });
+              it('should return error', () => {
+                expect(error).to.be.equal('I failed for some reason');
               });
+
+              it('should emit an error event', () => {
+                expect(deps['./domain/events-handler'].fire.args[0]).to.eql([
+                  'error',
+                  {
+                    code: 'EXPRESS_ERROR',
+                    message: 'I failed for some reason'
+                  }
+                ]);
+              });
+            });
+          });
+        });
+      });
+
+      describe('when closing it', () => {
+        let repositoryCloseStub;
+
+        beforeEach(() => {
+          repositoryCloseStub = sinon.stub().resolves();
+          deps['./domain/repository'].returns({
+            init: repositoryInitStub,
+            close: repositoryCloseStub
+          });
+          deps['./domain/validators'].validateRegistryConfiguration.returns({
+            isValid: true
+          });
+          deps['./domain/options-sanitiser'].returns({ port: 3000 });
+        });
+
+        it('should close the repository when the server is not listening', (done) => {
+          const registry = Registry({});
+
+          registry.close((err) => {
+            expect(err).to.equal('not opened');
+            expect(repositoryCloseStub.calledOnce).to.be.true;
+            done();
+          });
+        });
+
+        it('should close the server then the repository when listening', (done) => {
+          const serverCloseStub = sinon
+            .stub()
+            .callsFake((cb) => cb(undefined));
+          deps['node:http'].createServer.returns({
+            listen: sinon.stub().yields(null, 'ok'),
+            on: sinon.stub(),
+            close: serverCloseStub,
+            listening: true
+          });
+
+          const registry = Registry({});
+          registry.start(() => {
+            registry.close((err) => {
+              expect(err).to.be.undefined;
+              expect(serverCloseStub.calledOnce).to.be.true;
+              expect(repositoryCloseStub.calledOnce).to.be.true;
+              expect(repositoryCloseStub.calledAfter(serverCloseStub)).to.be
+                .true;
+              done();
+            });
+          });
+        });
+
+        it('should still call the repository close when the server close errors', (done) => {
+          const serverError = new Error('close failed');
+          const serverCloseStub = sinon
+            .stub()
+            .callsFake((cb) => cb(serverError));
+          deps['node:http'].createServer.returns({
+            listen: sinon.stub().yields(null, 'ok'),
+            on: sinon.stub(),
+            close: serverCloseStub,
+            listening: true
+          });
+
+          const registry = Registry({});
+          registry.start(() => {
+            registry.close((err) => {
+              expect(err).to.equal(serverError);
+              expect(repositoryCloseStub.calledOnce).to.be.true;
+              done();
             });
           });
         });
       });
     });
   });
+});
 });

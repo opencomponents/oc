@@ -27,11 +27,20 @@ export default function registry<T = any>(inputOptions: RegistryOptions<T>) {
   let server: http.Server;
   const repository = Repository(options);
 
-  const close = (callback: (err?: Error | undefined | string) => void) => {
+  const close = (
+    callback: (err?: Error | undefined | string) => void
+  ): void => {
+    const closeMetadataStore = (): Promise<void> =>
+      Promise.resolve(repository.close?.()).catch(() => undefined);
+
     if (server?.listening) {
-      return server.close(callback);
+      server.close((err) => {
+        void closeMetadataStore().finally(() => callback(err));
+      });
+      return;
     }
-    return callback('not opened');
+
+    void closeMetadataStore().finally(() => callback('not opened'));
   };
 
   const register = <T = any>(

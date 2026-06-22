@@ -21,12 +21,26 @@ describe('registry : domain : repository', () => {
   describe('when on cdn configuration', () => {
     const componentsCacheMock = {
       get: sinon.stub(),
-      refresh: sinon.stub()
+      refresh: sinon.stub(),
+      close: sinon.stub()
     };
 
     const componentsDetailsMock = {
       get: sinon.stub(),
-      refresh: sinon.stub()
+      refresh: sinon.stub(),
+      close: sinon.stub()
+    };
+
+    const metadataStoreMock = {
+      adapterType: 'test-metadata',
+      isValid: sinon.stub().returns(true),
+      initialise: sinon.stub().resolves(),
+      getAllComponents: sinon.stub().resolves([]),
+      addVersion: sinon.stub().resolves(),
+      reserveVersion: sinon.stub().resolves({ token: 'publish-token' }),
+      commitVersion: sinon.stub().resolves(),
+      abortVersion: sinon.stub().resolves(),
+      close: sinon.stub().resolves()
     };
 
     const fsMock = {
@@ -44,6 +58,7 @@ describe('registry : domain : repository', () => {
       getJson: sinon.stub().resolves(),
       putDir: sinon.stub().resolves(),
       putFileContent: sinon.stub().resolves(),
+      maxConcurrentRequests: 10,
       adapterType: 's3'
     };
 
@@ -54,7 +69,12 @@ describe('registry : domain : repository', () => {
         './components-cache': () => componentsCacheMock,
         './components-details': () => componentsDetailsMock
       },
-      { __dirname: path.resolve(__dirname, '../../dist/registry/domain') }
+      {
+        __dirname: path.resolve(__dirname, '../../dist/registry/domain'),
+        // Resolve timers lazily so sinon fake timers (installed per-test) apply.
+        setTimeout: (...args) => setTimeout(...args),
+        clearTimeout: (...args) => clearTimeout(...args)
+      }
     ).default;
 
     const cdnConfiguration = {
@@ -461,6 +481,472 @@ describe('registry : domain : repository', () => {
             expect(s3Mock.putDir.args[0][1]).to.equal(
               'components/hello-world/1.0.1'
             );
+          });
+        });
+
+        describe('when metadata store is configured', () => {
+          const getPkg = (name = 'hello-world') => ({
+            packageJson: {
+              name,
+              author: 'blargh',
+              repository: 'asdfa',
+              oc: {
+                date: 1234567890,
+                files: { template: { size: 300 } }
+              }
+            },
+            outputFolder: '/path/to/component'
+          });
+
+          const getRepositoryWithMetadata = (metadataOptions = {}) =>
+            Repository({
+              ...cdnConfiguration,
+              metadata: {
+                adapter: () => metadataStoreMock,
+                options: {},
+                ...metadataOptions
+              }
+            });
+
+          const resetMetadataMocks = () => {
+            metadataStoreMock.initialise = sinon.stub().resolves();
+            metadataStoreMock.getAllComponents = sinon.stub().resolves([]);
+            metadataStoreMock.addVersion = sinon.stub().resolves();
+            metadataStoreMock.reserveVersion = sinon
+              .stub()
+              .resolves({ token: 'publish-token' });
+            metadataStoreMock.commitVersion = sinon.stub().resolves();
+            metadataStoreMock.abortVersion = sinon.stub().resolves();
+            metadataStoreMock.close = sinon.stub().resolves();
+            componentsCacheMock.get = sinon
+              .stub()
+              .returns(componentsCacheBaseResponse);
+            componentsCacheMock.load = sinon
+              .stub()
+              .resolves(componentsCacheBaseResponse);
+            componentsCacheMock.refresh = sinon
+              .stub()
+              .resolves(componentsCacheBaseResponse);
+            componentsCacheMock.close = sinon.stub();
+            componentsDetailsMock.refresh = sinon
+              .stub()
+              .resolves(componentsDetailsBaseResponse);
+            componentsDetailsMock.close = sinon.stub();
+            s3Mock.putDir = sinon.stub().resolves('done');
+            s3Mock.putFileContent = sinon.stub().resolves();
+            s3Mock.listSubDirectories = sinon.stub().resolves([]);
+            s3Mock.getJson = sinon.stub().resolves();
+          };
+
+          const waitForBackgroundTasks = () =>
+            new Promise((resolve) => setImmediate(resolve));
+
+          it('should initialise the metadata store before loading caches', async () => {
+            resetMetadataMocks();
+            const repository = getRepositoryWithMetadata();
+
+            await repository.init();
+
+            expect(metadataStoreMock.initialise.calledOnce).to.be.true;
+            expect(componentsCacheMock.load.calledOnce).to.be.true;
+          });
+
+          it('should pass top-level manageSchema to the metadata adapter', () => {
+            resetMetadataMocks();
+            const adapter = sinon.stub().returns(metadataStoreMock);
+            Repository({
+              ...cdnConfiguration,
+              metadata: {
+                adapter,
+                options: { connectionString: 'sql' },
+                manageSchema: false
+              }
+            });
+
+            expect(adapter.args[0][0]).to.eql({
+              connectionString: 'sql',
+              manageSchema: false
+            });
+          });
+
+          it('should not reconcile from storage by default', async () => {
+            resetMetadataMocks();
+            const repository = getRepositoryWithMetadata();
+
+            await repository.init();
+
+            expect(s3Mock.listSubDirectories.called).to.be.false;
+            expect(metadataStoreMock.addVersion.called).to.be.false;
+          });
+
+          it('should reconcile from storage before loading caches when enabled', async () => {
+            resetMetadataMocks();
+            s3Mock.listSubDirectories
+              .withArgs('components')
+              .resolves(['hello-world']);
+            s3Mock.listSubDirectories
+              .withArgs('components/hello-world')
+              .resolves(['1.0.0']);
+            s3Mock.getJson
+              .withArgs('components/hello-world/1.0.0/package.json', true)
+              .resolves({ oc: { date: 123, files: { template: { size: 10 } } } });
+            const repository = getRepositoryWithMetadata({
+              reconcileFromStorage: true
+            });
+
+            await repository.init();
+
+            expect(metadataStoreMock.addVersion.calledOnce).to.be.true;
+            expect(metadataStoreMock.addVersion.args[0][0]).to.eql({
+              name: 'hello-world',
+              version: '1.0.0',
+              publishDate: 123,
+              templateSize: 10
+            });
+            expect(metadataStoreMock.addVersion.calledBefore(componentsCacheMock.load))
+              .to.be.true;
+          });
+
+          it('should keep startup reconciliation idempotent', async () => {
+            resetMetadataMocks();
+            metadataStoreMock.addVersion = sinon
+              .stub()
+              .rejects({ code: 'VERSION_ALREADY_EXISTS' });
+            s3Mock.listSubDirectories
+              .withArgs('components')
+              .resolves(['hello-world']);
+            s3Mock.listSubDirectories
+              .withArgs('components/hello-world')
+              .resolves(['1.0.0']);
+            s3Mock.getJson
+              .withArgs('components/hello-world/1.0.0/package.json', true)
+              .resolves({ oc: { date: 123, files: { template: { size: 10 } } } });
+            const repository = getRepositoryWithMetadata({
+              reconcileFromStorage: true
+            });
+
+            await repository.init();
+
+            expect(metadataStoreMock.addVersion.calledOnce).to.be.true;
+            expect(componentsCacheMock.load.calledOnce).to.be.true;
+          });
+
+          it('should export legacy files after startup cache hydration when enabled', async () => {
+            resetMetadataMocks();
+            metadataStoreMock.getAllComponents = sinon.stub().resolves([
+              {
+                name: 'hello-world',
+                version: '1.0.0',
+                publishDate: 123,
+                templateSize: 10
+              }
+            ]);
+            const repository = getRepositoryWithMetadata({
+              exportLegacyFiles: true
+            });
+
+            await repository.init();
+            await waitForBackgroundTasks();
+
+            expect(s3Mock.putFileContent.calledTwice).to.be.true;
+            expect(s3Mock.putFileContent.args[0][1]).to.equal(
+              'components/components.json'
+            );
+            expect(s3Mock.putFileContent.args[1][1]).to.equal(
+              'components/components-details.json'
+            );
+            expect(s3Mock.putFileContent.calledAfter(componentsDetailsMock.refresh))
+              .to.be.true;
+          });
+
+          it('should fail startup when the metadata store is down', async () => {
+            resetMetadataMocks();
+            const dbError = new Error('database unavailable');
+            metadataStoreMock.initialise = sinon.stub().rejects(dbError);
+            const repository = getRepositoryWithMetadata();
+            let error;
+
+            try {
+              await repository.init();
+            } catch (err) {
+              error = err;
+            }
+
+            expect(error).to.equal(dbError);
+            expect(componentsCacheMock.load.called).to.be.false;
+          });
+
+          describe('when publishing succeeds', () => {
+            let pkgDetails;
+
+            before((done) => {
+              resetMetadataMocks();
+              pkgDetails = getPkg();
+              savePromiseResult(
+                getRepositoryWithMetadata().publishComponent({
+                  pkgDetails,
+                  componentName: 'hello-world',
+                  componentVersion: '1.0.2'
+                }),
+                done
+              );
+            });
+
+            it('should reserve, upload, then commit the version', () => {
+              expect(response.error).to.be.undefined;
+              expect(s3Mock.putDir.calledOnce).to.be.true;
+              expect(metadataStoreMock.reserveVersion.calledOnce).to.be.true;
+              expect(metadataStoreMock.reserveVersion.args[0][0]).to.eql({
+                name: 'hello-world',
+                version: '1.0.2',
+                publishDate: pkgDetails.packageJson.oc.date,
+                templateSize: 300
+              });
+              expect(metadataStoreMock.commitVersion.calledOnceWith(
+                'hello-world',
+                '1.0.2',
+                'publish-token'
+              )).to.be.true;
+              expect(metadataStoreMock.reserveVersion.calledBefore(s3Mock.putDir))
+                .to.be.true;
+              expect(s3Mock.putDir.calledBefore(metadataStoreMock.commitVersion))
+                .to.be.true;
+            });
+
+            it('should not refresh metadata caches from the store after publish', () => {
+              expect(metadataStoreMock.getAllComponents.called).to.be.false;
+              expect(componentsCacheMock.refresh.called).to.be.false;
+              expect(componentsDetailsMock.refresh.called).to.be.false;
+            });
+          });
+
+          it('should not export legacy files on publish (export is timer-driven)', async () => {
+            resetMetadataMocks();
+            const pkgDetails = getPkg();
+            metadataStoreMock.getAllComponents = sinon.stub().resolves([
+              {
+                name: 'hello-world',
+                version: '1.0.2',
+                publishDate: 123,
+                templateSize: 300
+              }
+            ]);
+            const repository = getRepositoryWithMetadata({
+              exportLegacyFiles: true
+            });
+
+            await repository.publishComponent({
+              pkgDetails,
+              componentName: 'hello-world',
+              componentVersion: '1.0.2'
+            });
+            await waitForBackgroundTasks();
+
+            expect(metadataStoreMock.commitVersion.calledOnce).to.be.true;
+            expect(s3Mock.putFileContent.called).to.be.false;
+          });
+
+          it('should export legacy files on the configured interval and stop after close', async () => {
+            resetMetadataMocks();
+            const clock = sinon.useFakeTimers();
+            try {
+              metadataStoreMock.getAllComponents = sinon.stub().resolves([
+                {
+                  name: 'hello-world',
+                  version: '1.0.0',
+                  publishDate: 123,
+                  templateSize: 10
+                }
+              ]);
+              const repository = getRepositoryWithMetadata({
+                exportLegacyFiles: true,
+                exportLegacyFilesInterval: 60
+              });
+
+              await repository.init();
+              await clock.tickAsync(0);
+              // one-shot export at startup
+              expect(s3Mock.putFileContent.callCount).to.equal(2);
+
+              // each interval triggers another export
+              await clock.tickAsync(60 * 1000);
+              expect(s3Mock.putFileContent.callCount).to.equal(4);
+
+              await repository.close();
+              await clock.tickAsync(60 * 1000);
+              // no further exports after close
+              expect(s3Mock.putFileContent.callCount).to.equal(4);
+            } finally {
+              clock.restore();
+            }
+          });
+
+          describe('when metadata store reports an existing version', () => {
+            before((done) => {
+              resetMetadataMocks();
+              metadataStoreMock.reserveVersion = sinon
+                .stub()
+                .rejects({ code: 'VERSION_ALREADY_EXISTS' });
+              savePromiseResult(
+                getRepositoryWithMetadata().publishComponent({
+                  pkgDetails: getPkg(),
+                  componentName: 'hello-world',
+                  componentVersion: '1.0.2'
+                }),
+                done
+              );
+            });
+
+            it('should return the existing registry duplicate-version error', () => {
+              expect(response.error.code).to.equal('already_exists');
+              expect(response.error.msg).to.equal(
+                `Component "hello-world" with version "1.0.2" can't be published ` +
+                  'to s3 cdn because a component with the same name and version already exists'
+              );
+            });
+          });
+
+          describe('when metadata store is down during publish', () => {
+            let dbError;
+
+            before((done) => {
+              resetMetadataMocks();
+              dbError = new Error('database unavailable');
+              metadataStoreMock.commitVersion = sinon.stub().rejects(dbError);
+              savePromiseResult(
+                getRepositoryWithMetadata().publishComponent({
+                  pkgDetails: getPkg(),
+                  componentName: 'hello-world',
+                  componentVersion: '1.0.2'
+                }),
+                done
+              );
+            });
+
+            it('should fail the publish after uploading statics and abort the reservation', () => {
+              expect(s3Mock.putDir.calledOnce).to.be.true;
+              expect(metadataStoreMock.commitVersion.calledOnce).to.be.true;
+              expect(metadataStoreMock.abortVersion.calledOnceWith(
+                'hello-world',
+                '1.0.2',
+                'publish-token'
+              )).to.be.true;
+              expect(response.error).to.equal(dbError);
+              expect(componentsCacheMock.refresh.called).to.be.false;
+              expect(componentsDetailsMock.refresh.called).to.be.false;
+            });
+          });
+
+          describe('when publishing the same version concurrently', () => {
+            it('should reserve one publish and reject the duplicate before storage upload', async () => {
+              resetMetadataMocks();
+              metadataStoreMock.reserveVersion = sinon
+                .stub()
+                .onFirstCall()
+                .resolves({ token: 'winner-token' })
+                .onSecondCall()
+                .rejects({ code: 'VERSION_PUBLISH_IN_PROGRESS' });
+              const repository = getRepositoryWithMetadata();
+
+              const results = await Promise.allSettled([
+                repository.publishComponent({
+                  pkgDetails: getPkg(),
+                  componentName: 'hello-world',
+                  componentVersion: '1.0.3'
+                }),
+                repository.publishComponent({
+                  pkgDetails: getPkg(),
+                  componentName: 'hello-world',
+                  componentVersion: '1.0.3'
+                })
+              ]);
+
+              expect(metadataStoreMock.reserveVersion.calledTwice).to.be.true;
+              expect(s3Mock.putDir.calledOnce).to.be.true;
+              expect(metadataStoreMock.commitVersion.calledOnceWith(
+                'hello-world',
+                '1.0.3',
+                'winner-token'
+              )).to.be.true;
+              expect(results.filter((result) => result.status === 'fulfilled'))
+                .to.have.length(1);
+              const rejected = results.filter(
+                (result) => result.status === 'rejected'
+              );
+              expect(rejected).to.have.length(1);
+              expect(rejected[0].reason.code).to.equal('already_exists');
+            });
+          });
+
+          describe('when publishing different versions concurrently', () => {
+            it('should commit both metadata rows', async () => {
+              resetMetadataMocks();
+              const repository = getRepositoryWithMetadata();
+
+              await Promise.all([
+                repository.publishComponent({
+                  pkgDetails: getPkg('hello-world'),
+                  componentName: 'hello-world',
+                  componentVersion: '1.0.3'
+                }),
+                repository.publishComponent({
+                  pkgDetails: getPkg('language'),
+                  componentName: 'language',
+                  componentVersion: '1.0.1'
+                })
+              ]);
+
+              const rows = metadataStoreMock.reserveVersion.args.map(
+                (args) => args[0]
+              );
+
+              expect(metadataStoreMock.reserveVersion.calledTwice).to.be.true;
+              expect(metadataStoreMock.commitVersion.calledTwice).to.be.true;
+              expect(
+                rows.some(
+                  (row) =>
+                    row.name === 'hello-world' &&
+                    row.version === '1.0.3' &&
+                    typeof row.publishDate === 'number' &&
+                    row.templateSize === 300
+                )
+              ).to.be.true;
+              expect(
+                rows.some(
+                  (row) =>
+                    row.name === 'language' &&
+                    row.version === '1.0.1' &&
+                    typeof row.publishDate === 'number' &&
+                    row.templateSize === 300
+                )
+              ).to.be.true;
+            });
+          });
+
+          describe('close()', () => {
+            it('should stop cache polling before closing the metadata store', async () => {
+              resetMetadataMocks();
+              metadataStoreMock.close = sinon.stub().resolves();
+              const repository = getRepositoryWithMetadata();
+
+              await repository.close();
+
+              expect(componentsCacheMock.close.calledOnce).to.be.true;
+              expect(componentsDetailsMock.close.calledOnce).to.be.true;
+              expect(metadataStoreMock.close.calledOnce).to.be.true;
+              expect(componentsCacheMock.close.calledBefore(metadataStoreMock.close))
+                .to.be.true;
+              expect(componentsDetailsMock.close.calledBefore(metadataStoreMock.close))
+                .to.be.true;
+            });
+
+            it('should resolve when the metadata store has no close hook', async () => {
+              resetMetadataMocks();
+              delete metadataStoreMock.close;
+              const repository = getRepositoryWithMetadata();
+
+              await repository.close();
+            });
           });
         });
 
