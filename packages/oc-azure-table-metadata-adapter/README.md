@@ -118,11 +118,15 @@ Each component version is stored as a single table entity:
 | `RowKey` | `row.version` | Component version — combined with `PartitionKey` forms the unique primary key. |
 | `publishDate` | `row.publishDate` | Unix timestamp (seconds). |
 | `templateSize` | `row.templateSize` | Template file size in bytes, or `null` if not set. |
+| `status` | adapter | `publishing` while reserved, `committed` once visible to reads. |
+| `publishToken` | adapter | Reservation token used to commit or abort only the publisher that reserved the row. |
 | `createdAt` | `Date.now()` | Insertion timestamp (milliseconds) — reserved for future delta cursor / audit. |
+| `updatedAt` | `Date.now()` | Last reservation status update timestamp (milliseconds). |
 
-The `PartitionKey + RowKey` uniqueness is the commit-point guarantee: concurrent
+The `PartitionKey + RowKey` uniqueness is the reservation guarantee: concurrent
 publishes of the same component version map the Azure Table Storage 409 Conflict
-to the shared `VERSION_ALREADY_EXISTS` error code.
+to the shared duplicate/in-progress metadata error codes before any storage
+upload.
 
 ## Managed schema
 
@@ -148,9 +152,9 @@ fast with a clear error.
   iterator, so all rows are returned regardless of registry size.
 - If polling fails after startup, OC keeps serving the previous in-memory cache
   and retries on the next poll.
-- Publish writes statics to storage first, then inserts the metadata entity. If
-  the insert fails, the publish fails and any uploaded statics are harmless
-  unreferenced bytes.
+- Publish reserves a `publishing` metadata entity first, uploads statics only
+  after reservation succeeds, then commits the entity. If upload or commit fails,
+  OC best-effort aborts the matching reservation.
 - When the registry is shut down via `registry.close(callback)`, the adapter's
   `close()` is called. Since Table Storage is HTTP-based with no connection
   pool, `close()` simply clears the internal client reference and is safe to

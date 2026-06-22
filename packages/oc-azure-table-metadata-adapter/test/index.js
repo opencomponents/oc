@@ -6,7 +6,9 @@ const createAdapter = ({
   createEntity,
   listEntities,
   createTable,
-  getEntity
+  getEntity,
+  updateEntity,
+  deleteEntity
 } = {}) => {
   const createdEntities = [];
   const createEntityStub =
@@ -37,6 +39,8 @@ const createAdapter = ({
 
   const createTableStub = createTable || sinon.stub().resolves();
   const getEntityStub = getEntity || sinon.stub().rejects({ statusCode: 404 });
+  const updateEntityStub = updateEntity || sinon.stub().resolves();
+  const deleteEntityStub = deleteEntity || sinon.stub().resolves();
 
   const tableClients = [];
   const serviceClients = [];
@@ -65,6 +69,8 @@ const createAdapter = ({
       this.createEntity = createEntityStub;
       this.listEntities = listEntitiesStub;
       this.getEntity = getEntityStub;
+      this.updateEntity = updateEntityStub;
+      this.deleteEntity = deleteEntityStub;
       tableClients.push(this);
     }
   }
@@ -116,6 +122,8 @@ const createAdapter = ({
     listEntitiesStub,
     createTableStub,
     getEntityStub,
+    updateEntityStub,
+    deleteEntityStub,
     createdEntities,
     tableClients,
     serviceClients,
@@ -383,7 +391,10 @@ describe('oc-azure-table-metadata-adapter', () => {
         rowKey: '1.0.0',
         publishDate: 123,
         templateSize: 456,
-        createdAt: createdEntities[0].createdAt
+        status: 'committed',
+        publishToken: null,
+        createdAt: createdEntities[0].createdAt,
+        updatedAt: createdEntities[0].updatedAt
       });
     });
 
@@ -446,6 +457,141 @@ describe('oc-azure-table-metadata-adapter', () => {
       }
 
       expect(error).to.equal(timeoutError);
+    });
+  });
+
+  describe('reservation lifecycle', () => {
+    it('should reserve a version as publishing and return a token', async () => {
+      const { adapter, createdEntities } = createAdapter();
+      const store = adapter({ connectionString: 'foo' });
+
+      const reservation = await store.reserveVersion({
+        name: 'hello-world',
+        version: '1.0.0',
+        publishDate: 123,
+        templateSize: 456
+      });
+
+      expect(reservation.token).to.be.a('string');
+      expect(createdEntities[0]).to.include({
+        partitionKey: 'hello-world',
+        rowKey: '1.0.0',
+        publishDate: 123,
+        templateSize: 456,
+        status: 'publishing',
+        publishToken: reservation.token
+      });
+    });
+
+    it('should map duplicate reservation to VERSION_PUBLISH_IN_PROGRESS', async () => {
+      const conflictError = Object.assign(new Error('Conflict'), {
+        statusCode: 409
+      });
+      const { adapter } = createAdapter({
+        createEntity: sinon.stub().rejects(conflictError)
+      });
+      const store = adapter({ connectionString: 'foo' });
+      let error;
+
+      try {
+        await store.reserveVersion({
+          name: 'hello-world',
+          version: '1.0.0',
+          publishDate: 123
+        });
+      } catch (err) {
+        error = err;
+      }
+
+      expect(error.code).to.equal('VERSION_PUBLISH_IN_PROGRESS');
+      expect(error.cause).to.equal(conflictError);
+    });
+
+    it('should commit a matching reservation', async () => {
+      const entity = {
+        partitionKey: 'hello-world',
+        rowKey: '1.0.0',
+        publishDate: 123,
+        status: 'publishing',
+        publishToken: 'publish-token',
+        etag: 'etag-1'
+      };
+      const { adapter, updateEntityStub } = createAdapter({
+        getEntity: sinon.stub().resolves(entity)
+      });
+      const store = adapter({ connectionString: 'foo' });
+
+      await store.commitVersion('hello-world', '1.0.0', 'publish-token');
+
+      expect(updateEntityStub.calledOnce).to.be.true;
+      expect(updateEntityStub.args[0][0]).to.include({
+        status: 'committed',
+        publishToken: null
+      });
+      expect(updateEntityStub.args[0][2]).to.eql({ etag: 'etag-1' });
+    });
+
+    it('should throw when commit sees a mismatched reservation token', async () => {
+      const { adapter, updateEntityStub } = createAdapter({
+        getEntity: sinon.stub().resolves({
+          status: 'publishing',
+          publishToken: 'other-token'
+        })
+      });
+      const store = adapter({ connectionString: 'foo' });
+      let error;
+
+      try {
+        await store.commitVersion('hello-world', '1.0.0', 'publish-token');
+      } catch (err) {
+        error = err;
+      }
+
+      expect(error.message).to.equal(
+        'Component version reservation could not be committed'
+      );
+      expect(updateEntityStub.called).to.be.false;
+    });
+
+    it('should abort a matching reservation', async () => {
+      const { adapter, deleteEntityStub } = createAdapter({
+        getEntity: sinon.stub().resolves({
+          status: 'publishing',
+          publishToken: 'publish-token',
+          etag: 'etag-1'
+        })
+      });
+      const store = adapter({ connectionString: 'foo' });
+
+      await store.abortVersion('hello-world', '1.0.0', 'publish-token');
+
+      expect(
+        deleteEntityStub.calledOnceWith('hello-world', '1.0.0', {
+          etag: 'etag-1'
+        })
+      ).to.be.true;
+    });
+
+    it('should throw when abort sees a mismatched reservation token', async () => {
+      const { adapter, deleteEntityStub } = createAdapter({
+        getEntity: sinon.stub().resolves({
+          status: 'publishing',
+          publishToken: 'other-token'
+        })
+      });
+      const store = adapter({ connectionString: 'foo' });
+      let error;
+
+      try {
+        await store.abortVersion('hello-world', '1.0.0', 'publish-token');
+      } catch (err) {
+        error = err;
+      }
+
+      expect(error.message).to.equal(
+        'Component version reservation could not be aborted'
+      );
+      expect(deleteEntityStub.called).to.be.false;
     });
   });
 

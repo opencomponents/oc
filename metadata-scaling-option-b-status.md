@@ -2,6 +2,11 @@
 
 ## Current status
 
+The same-version publish storage overwrite issue is addressed with a metadata
+reservation state machine: metadata-mode publish reserves `name@version` before
+uploading storage bytes, commits after upload, and best-effort aborts on failure.
+Public metadata reads return committed rows only.
+
 Core metadata-store support is implemented and verified, including the optional
 `close()` lifecycle hook wired into `registry.close()` and the
 `oc registry migrate-metadata` CLI. Two Azure metadata adapters are implemented:
@@ -58,14 +63,15 @@ integration tests still need a live Azure run to execute. The S3/GS
 - Repository initialises the metadata store before loading caches.
 - When `metadata.reconcileFromStorage` is enabled, repository startup scans storage and idempotently inserts missing metadata rows before cache hydration.
 - When `metadata.exportLegacyFiles` is enabled, repository startup writes DB-derived `components.json` and `components-details.json` projections to storage. The export is decoupled from the publish path; an optional `metadata.exportLegacyFilesInterval` (seconds) refreshes the projections on a non-overlapping background timer that is cleared on `registry.close()`. Publish never triggers the export, keeping publish an O(1) append.
-- Publish flow remains:
+- Publish flow now reserves metadata before touching object storage:
   1. validate publish
   2. write package json
-  3. upload statics to storage
-  4. commit metadata row with `metadataStore.addVersion()`
-- Duplicate metadata insert errors with code `VERSION_ALREADY_EXISTS` are mapped to the existing registry `already_exists` publish error.
+  3. reserve metadata row with `metadataStore.reserveVersion()`
+  4. upload statics to storage
+  5. commit metadata row with `metadataStore.commitVersion()`
+- Duplicate or in-progress metadata reservation errors with code `VERSION_ALREADY_EXISTS` / `VERSION_PUBLISH_IN_PROGRESS` are mapped to the existing registry `already_exists` publish error.
 - Metadata-store startup failures stop cache loading and fail `repository.init()`.
-- Metadata-store publish failures fail the publish after statics upload without refreshing caches.
+- Metadata-store publish failures fail the publish; failures after reservation best-effort abort the reservation before returning the error.
 - Existing storage-mode publish behavior remains unchanged.
 
 ### Metadata config validation

@@ -37,6 +37,9 @@ describe('registry : domain : repository', () => {
       initialise: sinon.stub().resolves(),
       getAllComponents: sinon.stub().resolves([]),
       addVersion: sinon.stub().resolves(),
+      reserveVersion: sinon.stub().resolves({ token: 'publish-token' }),
+      commitVersion: sinon.stub().resolves(),
+      abortVersion: sinon.stub().resolves(),
       close: sinon.stub().resolves()
     };
 
@@ -509,6 +512,11 @@ describe('registry : domain : repository', () => {
             metadataStoreMock.initialise = sinon.stub().resolves();
             metadataStoreMock.getAllComponents = sinon.stub().resolves([]);
             metadataStoreMock.addVersion = sinon.stub().resolves();
+            metadataStoreMock.reserveVersion = sinon
+              .stub()
+              .resolves({ token: 'publish-token' });
+            metadataStoreMock.commitVersion = sinon.stub().resolves();
+            metadataStoreMock.abortVersion = sinon.stub().resolves();
             metadataStoreMock.close = sinon.stub().resolves();
             componentsCacheMock.get = sinon
               .stub()
@@ -684,18 +692,25 @@ describe('registry : domain : repository', () => {
               );
             });
 
-            it('should add the version to the metadata store after uploading statics', () => {
+            it('should reserve, upload, then commit the version', () => {
               expect(response.error).to.be.undefined;
               expect(s3Mock.putDir.calledOnce).to.be.true;
-              expect(metadataStoreMock.addVersion.calledOnce).to.be.true;
-              expect(metadataStoreMock.addVersion.args[0][0]).to.eql({
+              expect(metadataStoreMock.reserveVersion.calledOnce).to.be.true;
+              expect(metadataStoreMock.reserveVersion.args[0][0]).to.eql({
                 name: 'hello-world',
                 version: '1.0.2',
                 publishDate: pkgDetails.packageJson.oc.date,
                 templateSize: 300
               });
-              expect(s3Mock.putDir.calledBefore(metadataStoreMock.addVersion)).to
-                .be.true;
+              expect(metadataStoreMock.commitVersion.calledOnceWith(
+                'hello-world',
+                '1.0.2',
+                'publish-token'
+              )).to.be.true;
+              expect(metadataStoreMock.reserveVersion.calledBefore(s3Mock.putDir))
+                .to.be.true;
+              expect(s3Mock.putDir.calledBefore(metadataStoreMock.commitVersion))
+                .to.be.true;
             });
 
             it('should not refresh metadata caches from the store after publish', () => {
@@ -727,7 +742,7 @@ describe('registry : domain : repository', () => {
             });
             await waitForBackgroundTasks();
 
-            expect(metadataStoreMock.addVersion.calledOnce).to.be.true;
+            expect(metadataStoreMock.commitVersion.calledOnce).to.be.true;
             expect(s3Mock.putFileContent.called).to.be.false;
           });
 
@@ -769,7 +784,7 @@ describe('registry : domain : repository', () => {
           describe('when metadata store reports an existing version', () => {
             before((done) => {
               resetMetadataMocks();
-              metadataStoreMock.addVersion = sinon
+              metadataStoreMock.reserveVersion = sinon
                 .stub()
                 .rejects({ code: 'VERSION_ALREADY_EXISTS' });
               savePromiseResult(
@@ -797,7 +812,7 @@ describe('registry : domain : repository', () => {
             before((done) => {
               resetMetadataMocks();
               dbError = new Error('database unavailable');
-              metadataStoreMock.addVersion = sinon.stub().rejects(dbError);
+              metadataStoreMock.commitVersion = sinon.stub().rejects(dbError);
               savePromiseResult(
                 getRepositoryWithMetadata().publishComponent({
                   pkgDetails: getPkg(),
@@ -808,9 +823,14 @@ describe('registry : domain : repository', () => {
               );
             });
 
-            it('should fail the publish after uploading statics', () => {
+            it('should fail the publish after uploading statics and abort the reservation', () => {
               expect(s3Mock.putDir.calledOnce).to.be.true;
-              expect(metadataStoreMock.addVersion.calledOnce).to.be.true;
+              expect(metadataStoreMock.commitVersion.calledOnce).to.be.true;
+              expect(metadataStoreMock.abortVersion.calledOnceWith(
+                'hello-world',
+                '1.0.2',
+                'publish-token'
+              )).to.be.true;
               expect(response.error).to.equal(dbError);
               expect(componentsCacheMock.refresh.called).to.be.false;
               expect(componentsDetailsMock.refresh.called).to.be.false;
@@ -818,14 +838,14 @@ describe('registry : domain : repository', () => {
           });
 
           describe('when publishing the same version concurrently', () => {
-            it('should let one insert win and reject the duplicate publish', async () => {
+            it('should reserve one publish and reject the duplicate before storage upload', async () => {
               resetMetadataMocks();
-              metadataStoreMock.addVersion = sinon
+              metadataStoreMock.reserveVersion = sinon
                 .stub()
                 .onFirstCall()
-                .resolves()
+                .resolves({ token: 'winner-token' })
                 .onSecondCall()
-                .rejects({ code: 'VERSION_ALREADY_EXISTS' });
+                .rejects({ code: 'VERSION_PUBLISH_IN_PROGRESS' });
               const repository = getRepositoryWithMetadata();
 
               const results = await Promise.allSettled([
@@ -841,8 +861,13 @@ describe('registry : domain : repository', () => {
                 })
               ]);
 
-              expect(metadataStoreMock.addVersion.calledTwice).to.be.true;
-              expect(s3Mock.putDir.calledTwice).to.be.true;
+              expect(metadataStoreMock.reserveVersion.calledTwice).to.be.true;
+              expect(s3Mock.putDir.calledOnce).to.be.true;
+              expect(metadataStoreMock.commitVersion.calledOnceWith(
+                'hello-world',
+                '1.0.3',
+                'winner-token'
+              )).to.be.true;
               expect(results.filter((result) => result.status === 'fulfilled'))
                 .to.have.length(1);
               const rejected = results.filter(
@@ -871,11 +896,12 @@ describe('registry : domain : repository', () => {
                 })
               ]);
 
-              const rows = metadataStoreMock.addVersion.args.map(
+              const rows = metadataStoreMock.reserveVersion.args.map(
                 (args) => args[0]
               );
 
-              expect(metadataStoreMock.addVersion.calledTwice).to.be.true;
+              expect(metadataStoreMock.reserveVersion.calledTwice).to.be.true;
+              expect(metadataStoreMock.commitVersion.calledTwice).to.be.true;
               expect(
                 rows.some(
                   (row) =>

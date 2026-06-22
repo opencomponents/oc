@@ -103,7 +103,10 @@ BEGIN
     version         NVARCHAR(64)  NOT NULL,
     publish_date    BIGINT        NOT NULL,
     template_size   BIGINT        NULL,
+    status          NVARCHAR(16)  NOT NULL DEFAULT N'committed',
+    publish_token   NVARCHAR(64)  NULL,
     created_at      DATETIME2     NOT NULL DEFAULT SYSUTCDATETIME(),
+    updated_at      DATETIME2     NOT NULL DEFAULT SYSUTCDATETIME(),
     PRIMARY KEY (component_name, version)
   );
 END;
@@ -119,9 +122,9 @@ BEGIN
 END;
 ```
 
-The primary key is the commit-point uniqueness guard. Concurrent publishes of the
+The primary key is the reservation uniqueness guard. Concurrent publishes of the
 same component version map SQL Server unique violations (`2627` / `2601`) to the
-shared `VERSION_ALREADY_EXISTS` error code.
+shared duplicate/in-progress metadata error codes before any storage upload.
 
 ## Operator-managed schema
 
@@ -142,7 +145,7 @@ metadata: {
 On startup the adapter verifies the table with:
 
 ```sql
-SELECT TOP (0) component_name, version, publish_date, template_size, created_at
+SELECT TOP (0) component_name, version, publish_date, template_size, status, publish_token, created_at, updated_at
 FROM [registry].[oc_components];
 ```
 
@@ -153,7 +156,7 @@ FROM [registry].[oc_components];
 - Reads are served from OC's in-memory cache; hot component reads do not hit SQL.
 - Polling re-hydrates the in-memory cache from `getAllComponents()`.
 - If polling fails after startup, OC keeps serving the previous in-memory cache and retries on the next poll.
-- Publish writes statics to storage first, then inserts the metadata row. If the insert fails, the publish fails and any uploaded statics are harmless unreferenced bytes.
+- Publish reserves a `publishing` metadata row first, uploads statics only after reservation succeeds, then commits the row. If upload or commit fails, OC best-effort aborts the matching reservation.
 - When the registry is shut down via `registry.close(callback)`, the adapter closes its connection pool. The `close()` hook is optional on the shared `MetadataStore` contract and is safe to call when no pool is open.
 
 ## Connection pool lifecycle

@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import {
   AzureNamedKeyCredential,
   AzureSASCredential,
@@ -10,11 +11,15 @@ import {
   type ComponentRow,
   type MetadataStore,
   VERSION_ALREADY_EXISTS,
+  VERSION_PUBLISH_IN_PROGRESS,
   type VersionAlreadyExistsError
 } from 'oc-metadata-adapters-utils';
 
 export type { ComponentRow, MetadataStore } from 'oc-metadata-adapters-utils';
-export { VERSION_ALREADY_EXISTS } from 'oc-metadata-adapters-utils';
+export {
+  VERSION_ALREADY_EXISTS,
+  VERSION_PUBLISH_IN_PROGRESS
+} from 'oc-metadata-adapters-utils';
 
 export interface AzureTableMetadataAdapterOptions {
   /** Storage account connection string. If present, used instead of endpoint + credentials. */
@@ -55,12 +60,17 @@ const isValidTableName = (value: string): boolean =>
   /^[A-Za-z][A-Za-z0-9]{2,62}$/.test(value);
 
 const getVersionAlreadyExistsError = (
-  error: unknown
+  error: unknown,
+  code:
+    | typeof VERSION_ALREADY_EXISTS
+    | typeof VERSION_PUBLISH_IN_PROGRESS = VERSION_ALREADY_EXISTS
 ): VersionAlreadyExistsError => {
   const err = new Error(
-    'Component version already exists'
+    code === VERSION_PUBLISH_IN_PROGRESS
+      ? 'Component version publish is in progress'
+      : 'Component version already exists'
   ) as VersionAlreadyExistsError;
-  err.code = VERSION_ALREADY_EXISTS;
+  err.code = code;
   err.cause = error;
   return err;
 };
@@ -206,7 +216,9 @@ export default function azureTableMetadataAdapter(
       const activeClient = createClient();
       const rows: ComponentRow[] = [];
 
-      for await (const entity of activeClient.listEntities<any>()) {
+      for await (const entity of activeClient.listEntities<any>({
+        queryOptions: { filter: `status eq 'committed'` }
+      })) {
         const row: ComponentRow = {
           name: entity.partitionKey,
           version: entity.rowKey,
@@ -231,7 +243,10 @@ export default function azureTableMetadataAdapter(
           rowKey: row.version,
           publishDate: row.publishDate,
           templateSize: row.templateSize ?? null,
-          createdAt: Date.now()
+          status: 'committed',
+          publishToken: null,
+          createdAt: Date.now(),
+          updatedAt: Date.now()
         });
       } catch (error) {
         if (isConflictError(error)) {
@@ -239,6 +254,70 @@ export default function azureTableMetadataAdapter(
         }
         throw error;
       }
+    },
+
+    async reserveVersion(row: ComponentRow): Promise<{ token: string }> {
+      const activeClient = createClient();
+      const token = randomUUID();
+      try {
+        await activeClient.createEntity({
+          partitionKey: row.name,
+          rowKey: row.version,
+          publishDate: row.publishDate,
+          templateSize: row.templateSize ?? null,
+          status: 'publishing',
+          publishToken: token,
+          createdAt: Date.now(),
+          updatedAt: Date.now()
+        });
+      } catch (error) {
+        if (isConflictError(error)) {
+          throw getVersionAlreadyExistsError(
+            error,
+            VERSION_PUBLISH_IN_PROGRESS
+          );
+        }
+        throw error;
+      }
+
+      return { token };
+    },
+
+    async commitVersion(
+      name: string,
+      version: string,
+      token: string
+    ): Promise<void> {
+      const activeClient = createClient();
+      const entity = await activeClient.getEntity<any>(name, version);
+      if (entity.status !== 'publishing' || entity.publishToken !== token) {
+        throw new Error('Component version reservation could not be committed');
+      }
+
+      await activeClient.updateEntity(
+        {
+          ...entity,
+          status: 'committed',
+          publishToken: null,
+          updatedAt: Date.now()
+        },
+        'Replace',
+        { etag: entity.etag }
+      );
+    },
+
+    async abortVersion(
+      name: string,
+      version: string,
+      token: string
+    ): Promise<void> {
+      const activeClient = createClient();
+      const entity = await activeClient.getEntity<any>(name, version);
+      if (entity.status !== 'publishing' || entity.publishToken !== token) {
+        throw new Error('Component version reservation could not be aborted');
+      }
+
+      await activeClient.deleteEntity(name, version, { etag: entity.etag });
     },
 
     async close(): Promise<void> {

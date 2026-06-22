@@ -2,7 +2,10 @@ import path from 'node:path';
 import dotenv from 'dotenv';
 import fs from 'fs-extra';
 import getUnixUtcTimestamp from 'oc-get-unix-utc-timestamp';
-import { VERSION_ALREADY_EXISTS } from 'oc-metadata-adapters-utils';
+import {
+  VERSION_ALREADY_EXISTS,
+  VERSION_PUBLISH_IN_PROGRESS
+} from 'oc-metadata-adapters-utils';
 
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import strings from '../../resources';
@@ -479,31 +482,51 @@ export default function repository(conf: Config) {
         pkgDetails.packageJson
       );
 
-      await cdn.putDir(
-        pkgDetails.outputFolder,
-        `${options!.componentsDir}/${componentName}/${componentVersion}`
-      );
-
       if (metadataStore) {
         const componentRow = getComponentRow(
           componentName,
           componentVersion,
           pkgDetails.packageJson
         );
-        await metadataStore.addVersion(componentRow).catch((err: any) => {
-          if (
-            err?.code === VERSION_ALREADY_EXISTS ||
-            err?.code ===
-              strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND_CODE
-          ) {
-            throwVersionAlreadyFound(componentName, componentVersion);
-          }
+        const { token } = await metadataStore
+          .reserveVersion(componentRow)
+          .catch((err: any) => {
+            if (
+              err?.code === VERSION_ALREADY_EXISTS ||
+              err?.code === VERSION_PUBLISH_IN_PROGRESS ||
+              err?.code ===
+                strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND_CODE
+            ) {
+              throwVersionAlreadyFound(componentName, componentVersion);
+            }
 
+            throw err;
+          });
+
+        try {
+          await cdn.putDir(
+            pkgDetails.outputFolder,
+            `${options!.componentsDir}/${componentName}/${componentVersion}`
+          );
+          await metadataStore.commitVersion(
+            componentName,
+            componentVersion,
+            token
+          );
+          metadataIndex!.add(componentRow);
+        } catch (err) {
+          await metadataStore
+            .abortVersion(componentName, componentVersion, token)
+            .catch(() => undefined);
           throw err;
-        });
-        metadataIndex!.add(componentRow);
+        }
         return;
       }
+
+      await cdn.putDir(
+        pkgDetails.outputFolder,
+        `${options!.componentsDir}/${componentName}/${componentVersion}`
+      );
 
       void componentsCache
         .refresh()

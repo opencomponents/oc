@@ -119,7 +119,7 @@ describe('oc-azure-sql-metadata-adapter', () => {
 
       expect(queryStub.calledOnce).to.be.true;
       expect(queryStub.args[0][0]).to.equal(
-        'SELECT TOP (0) component_name, version, publish_date, template_size, created_at FROM [custom_schema].[custom_components];'
+        'SELECT TOP (0) component_name, version, publish_date, template_size, status, publish_token, created_at, updated_at FROM [custom_schema].[custom_components];'
       );
     });
 
@@ -252,7 +252,7 @@ describe('oc-azure-sql-metadata-adapter', () => {
 
       expect(queryStub.calledOnce).to.be.true;
       expect(queryStub.args[0][0]).to.equal(
-        'SELECT component_name AS name, version, publish_date AS publishDate, template_size AS templateSize FROM [dbo].[oc_components];'
+        "SELECT component_name AS name, version, publish_date AS publishDate, template_size AS templateSize FROM [dbo].[oc_components] WHERE status = N'committed';"
       );
       expect(result).to.eql([
         {
@@ -298,10 +298,10 @@ describe('oc-azure-sql-metadata-adapter', () => {
       ]);
       expect(queryStub.calledOnce).to.be.true;
       expect(queryStub.args[0][0]).to.contain(
-        'INSERT INTO [dbo].[oc_components] (component_name, version, publish_date, template_size)'
+        'INSERT INTO [dbo].[oc_components] (component_name, version, publish_date, template_size, status, publish_token)'
       );
       expect(queryStub.args[0][0]).to.contain(
-        'VALUES (@componentName, @version, @publishDate, @templateSize);'
+        "VALUES (@componentName, @version, @publishDate, @templateSize, N'committed', NULL);"
       );
     });
 
@@ -386,6 +386,118 @@ describe('oc-azure-sql-metadata-adapter', () => {
       }
 
       expect(error).to.equal(originalError);
+    });
+  });
+
+  describe('reservation lifecycle', () => {
+    it('should reserve a version as publishing and return a token', async () => {
+      const { adapter, queryStub, requests } = createAdapter();
+      const store = adapter({ server: 'localhost', database: 'oc' });
+
+      const reservation = await store.reserveVersion({
+        name: 'hello-world',
+        version: '1.0.0',
+        publishDate: 123,
+        templateSize: 456
+      });
+
+      expect(reservation.token).to.be.a('string');
+      expect(requests[0].inputs).to.deep.include({
+        name: 'publishToken',
+        type: { type: 'NVarChar', length: 64 },
+        value: reservation.token
+      });
+      expect(queryStub.args[0][0]).to.contain("N'publishing'");
+    });
+
+    it('should map duplicate reservation to VERSION_PUBLISH_IN_PROGRESS', async () => {
+      const originalError = Object.assign(new Error('duplicate'), {
+        number: 2627
+      });
+      const { adapter } = createAdapter({
+        query: sinon.stub().rejects(originalError)
+      });
+      const store = adapter({ server: 'localhost', database: 'oc' });
+      let error;
+
+      try {
+        await store.reserveVersion({
+          name: 'hello-world',
+          version: '1.0.0',
+          publishDate: 123
+        });
+      } catch (err) {
+        error = err;
+      }
+
+      expect(error.code).to.equal('VERSION_PUBLISH_IN_PROGRESS');
+      expect(error.cause).to.equal(originalError);
+    });
+
+    it('should commit a matching reservation', async () => {
+      const { adapter, queryStub, requests } = createAdapter({
+        query: sinon.stub().resolves({ rowsAffected: [1] })
+      });
+      const store = adapter({ server: 'localhost', database: 'oc' });
+
+      await store.commitVersion('hello-world', '1.0.0', 'publish-token');
+
+      expect(requests[0].inputs).to.deep.include({
+        name: 'publishToken',
+        type: { type: 'NVarChar', length: 64 },
+        value: 'publish-token'
+      });
+      expect(queryStub.args[0][0]).to.contain("SET status = N'committed'");
+    });
+
+    it('should throw when commit does not affect a reservation', async () => {
+      const { adapter } = createAdapter({
+        query: sinon.stub().resolves({ rowsAffected: [0] })
+      });
+      const store = adapter({ server: 'localhost', database: 'oc' });
+      let error;
+
+      try {
+        await store.commitVersion('hello-world', '1.0.0', 'wrong-token');
+      } catch (err) {
+        error = err;
+      }
+
+      expect(error.message).to.equal(
+        'Component version reservation could not be committed'
+      );
+    });
+
+    it('should abort a matching reservation', async () => {
+      const { adapter, queryStub } = createAdapter({
+        query: sinon.stub().resolves({ rowsAffected: [1] })
+      });
+      const store = adapter({ server: 'localhost', database: 'oc' });
+
+      await store.abortVersion('hello-world', '1.0.0', 'publish-token');
+
+      expect(queryStub.args[0][0]).to.contain(
+        'DELETE FROM [dbo].[oc_components]'
+      );
+      expect(queryStub.args[0][0]).to.contain('publish_token = @publishToken');
+    });
+
+    it('should throw when abort does not affect a reservation', async () => {
+      const { adapter } = createAdapter({
+        query: sinon.stub().resolves({ rowsAffected: [0] })
+      });
+      const store = adapter({ server: 'localhost', database: 'oc' });
+      let error;
+
+      try {
+        await store.abortVersion('hello-world', '1.0.0', 'wrong-token');
+      } catch (err) {
+        error = err;
+      }
+
+      expect(error.message).to.equal(
+        'Component version reservation could not be aborted'
+      );
     });
   });
 

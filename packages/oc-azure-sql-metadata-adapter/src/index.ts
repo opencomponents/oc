@@ -1,13 +1,18 @@
+import { randomUUID } from 'node:crypto';
 import sql from 'mssql';
 import {
   type ComponentRow,
   type MetadataStore,
   VERSION_ALREADY_EXISTS,
+  VERSION_PUBLISH_IN_PROGRESS,
   type VersionAlreadyExistsError
 } from 'oc-metadata-adapters-utils';
 
 export type { ComponentRow, MetadataStore } from 'oc-metadata-adapters-utils';
-export { VERSION_ALREADY_EXISTS } from 'oc-metadata-adapters-utils';
+export {
+  VERSION_ALREADY_EXISTS,
+  VERSION_PUBLISH_IN_PROGRESS
+} from 'oc-metadata-adapters-utils';
 
 export interface AzureSqlMetadataAdapterOptions extends sql.config {
   connectionString?: string;
@@ -91,12 +96,17 @@ const isUniqueViolation = (error: unknown): boolean => {
 };
 
 const getVersionAlreadyExistsError = (
-  error: unknown
+  error: unknown,
+  code:
+    | typeof VERSION_ALREADY_EXISTS
+    | typeof VERSION_PUBLISH_IN_PROGRESS = VERSION_ALREADY_EXISTS
 ): VersionAlreadyExistsError => {
   const err = new Error(
-    'Component version already exists'
+    code === VERSION_PUBLISH_IN_PROGRESS
+      ? 'Component version publish is in progress'
+      : 'Component version already exists'
   ) as VersionAlreadyExistsError;
-  err.code = VERSION_ALREADY_EXISTS;
+  err.code = code;
   err.cause = error;
 
   return err;
@@ -113,7 +123,10 @@ BEGIN
     version         NVARCHAR(64)  NOT NULL,
     publish_date    BIGINT        NOT NULL,
     template_size   BIGINT        NULL,
+    status          NVARCHAR(16)  NOT NULL DEFAULT N'committed',
+    publish_token   NVARCHAR(64)  NULL,
     created_at      DATETIME2     NOT NULL DEFAULT SYSUTCDATETIME(),
+    updated_at      DATETIME2     NOT NULL DEFAULT SYSUTCDATETIME(),
     PRIMARY KEY (component_name, version)
   );
 END;
@@ -130,7 +143,16 @@ END;
 `;
 
 const getVerifySchemaSql = (qualifiedTableName: string): string =>
-  `SELECT TOP (0) component_name, version, publish_date, template_size, created_at FROM ${qualifiedTableName};`;
+  `SELECT TOP (0) component_name, version, publish_date, template_size, status, publish_token, created_at, updated_at FROM ${qualifiedTableName};`;
+
+const assertRowsAffected = (
+  result: { rowsAffected?: number[] },
+  message: string
+): void => {
+  if ((result.rowsAffected?.[0] ?? 0) === 0) {
+    throw new Error(message);
+  }
+};
 
 export default function azureSqlMetadataAdapter(
   options?: AzureSqlMetadataAdapterOptions
@@ -191,7 +213,7 @@ export default function azureSqlMetadataAdapter(
         publishDate: number | string;
         templateSize: number | string | null;
       }>(
-        `SELECT component_name AS name, version, publish_date AS publishDate, template_size AS templateSize FROM ${qualifiedTableName};`
+        `SELECT component_name AS name, version, publish_date AS publishDate, template_size AS templateSize FROM ${qualifiedTableName} WHERE status = N'committed';`
       );
 
       return result.recordset.map((row) => {
@@ -220,8 +242,8 @@ export default function azureSqlMetadataAdapter(
           .input('publishDate', sql.BigInt, row.publishDate)
           .input('templateSize', sql.BigInt, row.templateSize ?? null)
           .query(`
-            INSERT INTO ${qualifiedTableName} (component_name, version, publish_date, template_size)
-            VALUES (@componentName, @version, @publishDate, @templateSize);
+            INSERT INTO ${qualifiedTableName} (component_name, version, publish_date, template_size, status, publish_token)
+            VALUES (@componentName, @version, @publishDate, @templateSize, N'committed', NULL);
           `);
       } catch (error) {
         if (isUniqueViolation(error)) {
@@ -230,6 +252,81 @@ export default function azureSqlMetadataAdapter(
 
         throw error;
       }
+    },
+
+    async reserveVersion(row: ComponentRow): Promise<{ token: string }> {
+      const { qualifiedTableName } = getTableNames();
+      const activePool = await getPool();
+      const token = randomUUID();
+      try {
+        await activePool
+          .request()
+          .input('componentName', sql.NVarChar(255), row.name)
+          .input('version', sql.NVarChar(64), row.version)
+          .input('publishDate', sql.BigInt, row.publishDate)
+          .input('templateSize', sql.BigInt, row.templateSize ?? null)
+          .input('publishToken', sql.NVarChar(64), token)
+          .query(`
+            INSERT INTO ${qualifiedTableName} (component_name, version, publish_date, template_size, status, publish_token)
+            VALUES (@componentName, @version, @publishDate, @templateSize, N'publishing', @publishToken);
+          `);
+      } catch (error) {
+        if (isUniqueViolation(error)) {
+          throw getVersionAlreadyExistsError(
+            error,
+            VERSION_PUBLISH_IN_PROGRESS
+          );
+        }
+
+        throw error;
+      }
+
+      return { token };
+    },
+
+    async commitVersion(
+      name: string,
+      version: string,
+      token: string
+    ): Promise<void> {
+      const { qualifiedTableName } = getTableNames();
+      const activePool = await getPool();
+      const result = await activePool
+        .request()
+        .input('componentName', sql.NVarChar(255), name)
+        .input('version', sql.NVarChar(64), version)
+        .input('publishToken', sql.NVarChar(64), token)
+        .query(`
+          UPDATE ${qualifiedTableName}
+          SET status = N'committed', publish_token = NULL, updated_at = SYSUTCDATETIME()
+          WHERE component_name = @componentName AND version = @version AND status = N'publishing' AND publish_token = @publishToken;
+        `);
+      assertRowsAffected(
+        result,
+        'Component version reservation could not be committed'
+      );
+    },
+
+    async abortVersion(
+      name: string,
+      version: string,
+      token: string
+    ): Promise<void> {
+      const { qualifiedTableName } = getTableNames();
+      const activePool = await getPool();
+      const result = await activePool
+        .request()
+        .input('componentName', sql.NVarChar(255), name)
+        .input('version', sql.NVarChar(64), version)
+        .input('publishToken', sql.NVarChar(64), token)
+        .query(`
+          DELETE FROM ${qualifiedTableName}
+          WHERE component_name = @componentName AND version = @version AND status = N'publishing' AND publish_token = @publishToken;
+        `);
+      assertRowsAffected(
+        result,
+        'Component version reservation could not be aborted'
+      );
     },
 
     async close(): Promise<void> {
