@@ -55,6 +55,13 @@ export interface MetadataConfig<T = any> {
   manageSchema?: boolean;
   reconcileFromStorage?: boolean;
   exportLegacyFiles?: boolean;
+  /**
+   * Interval, in seconds, at which the DB→`components.json` legacy export runs
+   * in the background. Only used when `exportLegacyFiles` is true. When omitted,
+   * the export runs once at startup only (no background refresh). The export is
+   * never coupled to the publish path.
+   */
+  exportLegacyFilesInterval?: number;
 }
 
 export interface OcParameter {

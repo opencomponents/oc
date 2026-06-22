@@ -182,8 +182,13 @@ Two optional flags help run storage and metadata side by side during migration:
 - `metadata.reconcileFromStorage: true` scans storage on registry startup and
   inserts missing metadata rows before cache hydration. Existing rows are skipped.
 - `metadata.exportLegacyFiles: true` writes DB-derived `components.json` and
-  `components-details.json` projections to storage after startup and after
-  successful metadata-mode publishes.
+  `components-details.json` projections to storage once on registry startup. It
+  is **not** triggered per publish, so publishing stays an O(1) append rather
+  than a full-registry scan + blob rewrite.
+- `metadata.exportLegacyFilesInterval: <seconds>` additionally refreshes those
+  projections on a background timer (non-overlapping) when `exportLegacyFiles`
+  is enabled. Omit it to export at startup only. The timer is stopped on
+  `registry.close()`.
 
 These files are one-way projections from the metadata store. They can help with
 rollback to storage mode, but they do not replace the storage adapter because

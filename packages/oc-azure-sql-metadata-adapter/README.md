@@ -57,12 +57,34 @@ metadata: {
 The adapter passes connection settings through to `mssql`, except for the
 adapter-specific options listed below.
 
+### Managed identity (no secret)
+
+When no `connectionString`, `password` or explicit `authentication` is provided,
+the adapter defaults to Microsoft Entra ID
+(`azure-active-directory-default`), which uses the ambient managed identity /
+workload identity / `az login` credential. This lets the registry connect
+without any secret in config:
+
+```js
+metadata: {
+  adapter: azureSqlMetadataAdapter,
+  options: {
+    server: process.env.OC_METADATA_SQL_SERVER,
+    database: process.env.OC_METADATA_SQL_DATABASE,
+    // optional user-assigned managed identity:
+    // clientId: process.env.OC_METADATA_SQL_CLIENT_ID,
+    options: { encrypt: true }
+  }
+}
+```
+
 ## Adapter options
 
 | Option | Default | Description |
 | --- | --- | --- |
 | `connectionString` | none | SQL Server connection string. If present, it is used instead of object connection settings. |
 | `server` / `database` | none | Minimum object connection settings required when `connectionString` is not used. Other `mssql` options such as `user`, `password`, `pool`, and nested `options` are passed through. |
+| `clientId` | none | Client id of a user-assigned managed identity, used only when falling back to `azure-active-directory-default` auth (no password/connection string/explicit authentication). |
 | `manageSchema` | `true` | When `true`, the adapter creates the table/index if missing. When `false`, it verifies the expected columns with a zero-row select and fails fast if schema access is not valid. |
 | `schemaName` | `dbo` | SQL schema containing the metadata table. Must be a simple SQL identifier matching `/^[A-Za-z_][A-Za-z0-9_]*$/`. |
 | `tableName` | `oc_components` | Metadata table name. Must be a simple SQL identifier matching `/^[A-Za-z_][A-Za-z0-9_]*$/`. |

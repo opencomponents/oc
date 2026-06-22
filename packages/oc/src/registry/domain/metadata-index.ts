@@ -1,4 +1,3 @@
-import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import semver from 'semver';
 import type {
   Component,
@@ -8,6 +7,14 @@ import type {
   ComponentsList,
   MetadataStore
 } from '../../types';
+
+// Derive `lastEdit` from the data itself (the most recent publish) rather than
+// the wall-clock time the snapshot happened to be built. This keeps the value
+// semantically meaningful (it only advances when something is actually
+// published) so the poll's `data.lastEdit > cached.lastEdit` guard works and
+// the exported legacy `components.json` reflects the real last edit.
+const getLastEditFromRows = (rows: ComponentRow[]): number =>
+  rows.reduce((max, row) => (row.publishDate > max ? row.publishDate : max), 0);
 
 export const getComponentsListFromRows = (
   rows: ComponentRow[]
@@ -25,7 +32,7 @@ export const getComponentsListFromRows = (
   }
 
   return {
-    lastEdit: getUnixUTCTimestamp(),
+    lastEdit: getLastEditFromRows(rows),
     components
   };
 };
@@ -45,7 +52,7 @@ export const getComponentsDetailsFromRows = (
   }
 
   return {
-    lastEdit: getUnixUTCTimestamp(),
+    lastEdit: getLastEditFromRows(rows),
     components
   };
 };

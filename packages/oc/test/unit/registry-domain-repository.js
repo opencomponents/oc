@@ -64,7 +64,12 @@ describe('registry : domain : repository', () => {
         './components-cache': () => componentsCacheMock,
         './components-details': () => componentsDetailsMock
       },
-      { __dirname: path.resolve(__dirname, '../../dist/registry/domain') }
+      {
+        __dirname: path.resolve(__dirname, '../../dist/registry/domain'),
+        // Resolve timers lazily so sinon fake timers (installed per-test) apply.
+        setTimeout: (...args) => setTimeout(...args),
+        clearTimeout: (...args) => clearTimeout(...args)
+      }
     ).default;
 
     const cdnConfiguration = {
@@ -678,7 +683,7 @@ describe('registry : domain : repository', () => {
             });
           });
 
-          it('should export legacy files after successful metadata publish when enabled', async () => {
+          it('should not export legacy files on publish (export is timer-driven)', async () => {
             resetMetadataMocks();
             const pkgDetails = getPkg();
             metadataStoreMock.getAllComponents = sinon.stub().resolves([
@@ -701,13 +706,42 @@ describe('registry : domain : repository', () => {
             await waitForBackgroundTasks();
 
             expect(metadataStoreMock.addVersion.calledOnce).to.be.true;
-            expect(s3Mock.putFileContent.calledTwice).to.be.true;
-            expect(s3Mock.putFileContent.args[0][1]).to.equal(
-              'components/components.json'
-            );
-            expect(s3Mock.putFileContent.args[1][1]).to.equal(
-              'components/components-details.json'
-            );
+            expect(s3Mock.putFileContent.called).to.be.false;
+          });
+
+          it('should export legacy files on the configured interval and stop after close', async () => {
+            resetMetadataMocks();
+            const clock = sinon.useFakeTimers();
+            try {
+              metadataStoreMock.getAllComponents = sinon.stub().resolves([
+                {
+                  name: 'hello-world',
+                  version: '1.0.0',
+                  publishDate: 123,
+                  templateSize: 10
+                }
+              ]);
+              const repository = getRepositoryWithMetadata({
+                exportLegacyFiles: true,
+                exportLegacyFilesInterval: 60
+              });
+
+              await repository.init();
+              await clock.tickAsync(0);
+              // one-shot export at startup
+              expect(s3Mock.putFileContent.callCount).to.equal(2);
+
+              // each interval triggers another export
+              await clock.tickAsync(60 * 1000);
+              expect(s3Mock.putFileContent.callCount).to.equal(4);
+
+              await repository.close();
+              await clock.tickAsync(60 * 1000);
+              // no further exports after close
+              expect(s3Mock.putFileContent.callCount).to.equal(4);
+            } finally {
+              clock.restore();
+            }
           });
 
           describe('when metadata store reports an existing version', () => {

@@ -128,6 +128,7 @@ describe('oc-azure-sql-metadata-adapter', () => {
       const store = adapter({
         server: 'localhost',
         database: 'oc',
+        password: 'secret',
         manageSchema: false,
         schemaName: 'custom_schema',
         tableName: 'custom_components',
@@ -139,8 +140,68 @@ describe('oc-azure-sql-metadata-adapter', () => {
       expect(pools[0].config).to.eql({
         server: 'localhost',
         database: 'oc',
+        password: 'secret',
         options: { encrypt: true }
       });
+    });
+
+    it('should default to managed identity auth when no password is provided', async () => {
+      const { adapter, pools } = createAdapter();
+      const store = adapter({
+        server: 'localhost',
+        database: 'oc',
+        manageSchema: false
+      });
+
+      await store.initialise();
+
+      expect(pools[0].config.authentication).to.eql({
+        type: 'azure-active-directory-default',
+        options: {}
+      });
+    });
+
+    it('should pass clientId to managed identity auth when provided', async () => {
+      const { adapter, pools } = createAdapter();
+      const store = adapter({
+        server: 'localhost',
+        database: 'oc',
+        clientId: 'managed-identity-client-id',
+        manageSchema: false
+      });
+
+      await store.initialise();
+
+      expect(pools[0].config.authentication).to.eql({
+        type: 'azure-active-directory-default',
+        options: { clientId: 'managed-identity-client-id' }
+      });
+    });
+
+    it('should not inject managed identity auth when a password is provided', async () => {
+      const { adapter, pools } = createAdapter();
+      const store = adapter({
+        server: 'localhost',
+        database: 'oc',
+        password: 'secret',
+        manageSchema: false
+      });
+
+      await store.initialise();
+
+      expect(pools[0].config.authentication).to.be.undefined;
+    });
+
+    it('should not inject managed identity auth when using a connection string', async () => {
+      const { adapter, pools } = createAdapter();
+      const store = adapter({
+        connectionString: 'Server=localhost;Database=oc;',
+        manageSchema: false
+      });
+
+      await store.initialise();
+
+      expect(pools[0].config).to.equal('Server=localhost;Database=oc;');
     });
 
     it('should reject invalid identifiers before opening a pool', async () => {

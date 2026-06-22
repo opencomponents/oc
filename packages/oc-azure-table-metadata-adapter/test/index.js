@@ -38,6 +38,24 @@ const createAdapter = ({
   const createTableStub = createTable || sinon.stub().resolves();
   const getEntityStub = getEntity || sinon.stub().rejects({ statusCode: 404 });
 
+  const tableClients = [];
+  const serviceClients = [];
+
+  class AzureNamedKeyCredential {
+    constructor(name, key) {
+      this.kind = 'namedKey';
+      this.name = name;
+      this.key = key;
+    }
+  }
+
+  class AzureSASCredential {
+    constructor(signature) {
+      this.kind = 'sas';
+      this.signature = signature;
+    }
+  }
+
   class TableClient {
     constructor(url, tableName, credential, options) {
       this.url = url;
@@ -47,10 +65,7 @@ const createAdapter = ({
       this.createEntity = createEntityStub;
       this.listEntities = listEntitiesStub;
       this.getEntity = getEntityStub;
-    }
-
-    static fromConnectionString(_connectionString, tableName, options) {
-      return new TableClient('from-conn-string', tableName, null, options);
+      tableClients.push(this);
     }
   }
 
@@ -62,14 +77,12 @@ const createAdapter = ({
     );
 
   class TableServiceClient {
-    constructor(url, options) {
+    constructor(url, credential, options) {
       this.url = url;
+      this.credential = credential;
       this.options = options;
       this.createTable = createTableStub;
-    }
-
-    static fromConnectionString(connectionString, options) {
-      return new TableServiceClient(connectionString, options);
+      serviceClients.push(this);
     }
   }
 
@@ -77,11 +90,23 @@ const createAdapter = ({
     .stub()
     .callsFake(
       (connectionString, options) =>
-        new TableServiceClient(connectionString, options)
+        new TableServiceClient(connectionString, undefined, options)
     );
 
   const module = injectr('../dist/index.js', {
-    '@azure/data-tables': { TableClient, TableServiceClient }
+    '@azure/data-tables': {
+      TableClient,
+      TableServiceClient,
+      AzureNamedKeyCredential,
+      AzureSASCredential
+    },
+    '@azure/identity': {
+      DefaultAzureCredential: class DefaultAzureCredential {
+        constructor() {
+          this.kind = 'default';
+        }
+      }
+    }
   });
 
   return {
@@ -91,7 +116,10 @@ const createAdapter = ({
     listEntitiesStub,
     createTableStub,
     getEntityStub,
-    createdEntities
+    createdEntities,
+    tableClients,
+    serviceClients,
+    TableServiceClient
   };
 };
 
@@ -137,12 +165,19 @@ describe('oc-azure-table-metadata-adapter', () => {
       expect(adapter().isValid()).to.be.false;
     });
 
-    it('should reject endpoint without credentials', () => {
+    it('should accept endpoint without explicit credentials (managed identity)', () => {
       const { adapter } = createAdapter();
 
       expect(
         adapter({ endpoint: 'https://foo.table.core.windows.net' }).isValid()
-      ).to.be.false;
+      ).to.be.true;
+    });
+
+    it('should reject when neither connection string nor endpoint is provided', () => {
+      const { adapter } = createAdapter();
+
+      expect(adapter({ accountName: 'foo', accountKey: 'bar' }).isValid()).to.be
+        .false;
     });
 
     it('should reject invalid table names', () => {
@@ -192,10 +227,8 @@ describe('oc-azure-table-metadata-adapter', () => {
       expect(createTableStub.args[0][0]).to.equal('mycomponents');
     });
 
-    it('should verify the table when manageSchema is false', async () => {
-      const { adapter, getEntityStub } = createAdapter({
-        getEntity: sinon.stub().resolves({})
-      });
+    it('should verify the table by listing entities when manageSchema is false', async () => {
+      const { adapter, listEntitiesStub, createTableStub } = createAdapter();
       const store = adapter({
         connectionString: 'foo',
         manageSchema: false
@@ -203,7 +236,81 @@ describe('oc-azure-table-metadata-adapter', () => {
 
       await store.initialise();
 
-      expect(getEntityStub.calledOnce).to.be.true;
+      expect(listEntitiesStub.calledOnce).to.be.true;
+      expect(createTableStub.called).to.be.false;
+    });
+
+    it('should verify successfully against an existing empty table', async () => {
+      const { adapter } = createAdapter({
+        listEntities: sinon.stub().returns({
+          [Symbol.asyncIterator]: () => ({
+            next: () => Promise.resolve({ done: true, value: undefined })
+          })
+        })
+      });
+      const store = adapter({ connectionString: 'foo', manageSchema: false });
+
+      await store.initialise();
+    });
+
+    it('should fail fast when manageSchema is false and the table is missing', async () => {
+      const { adapter } = createAdapter({
+        listEntities: sinon.stub().returns({
+          [Symbol.asyncIterator]: () => ({
+            next: () =>
+              Promise.reject({ statusCode: 404, code: 'TableNotFound' })
+          })
+        })
+      });
+      const store = adapter({
+        endpoint: 'https://foo.table.core.windows.net',
+        accountName: 'foo',
+        accountKey: 'bar',
+        manageSchema: false
+      });
+      let error;
+
+      try {
+        await store.initialise();
+      } catch (err) {
+        error = err;
+      }
+
+      expect(error).to.be.an('error');
+      expect(error.message).to.contain('does not exist');
+    });
+
+    it('should create the table via the service client when using a SAS token', async () => {
+      const { adapter, createTableStub, serviceClients, TableServiceClient } =
+        createAdapter();
+      const store = adapter({
+        endpoint: 'https://foo.table.core.windows.net',
+        sasToken: 'sv=2020-08-04&sig=abc'
+      });
+
+      await store.initialise();
+
+      // The previous implementation synthesised a bogus connection string for
+      // SAS auth; it must now build the service client from the endpoint.
+      expect(TableServiceClient.fromConnectionString.called).to.be.false;
+      expect(createTableStub.calledOnce).to.be.true;
+      expect(serviceClients).to.have.length(1);
+      expect(serviceClients[0].url).to.equal(
+        'https://foo.table.core.windows.net'
+      );
+      expect(serviceClients[0].credential.kind).to.equal('sas');
+    });
+
+    it('should use a DefaultAzureCredential when only an endpoint is provided', async () => {
+      const { adapter, serviceClients } = createAdapter();
+      const store = adapter({
+        endpoint: 'https://foo.table.core.windows.net'
+      });
+
+      await store.initialise();
+
+      expect(serviceClients).to.have.length(1);
+      expect(serviceClients[0].credential.kind).to.equal('default');
     });
 
     it('should throw on invalid table name', async () => {

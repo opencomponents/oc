@@ -24,6 +24,7 @@ integration tests still need a live Azure run to execute. The S3/GS
 - Added row-to-cache transformations:
   - `ComponentRow[]` → `ComponentsList`
   - `ComponentRow[]` → `ComponentsDetails`
+  - `lastEdit` on both is derived from the data (max `publishDate` across rows) rather than wall-clock time, so it only advances on a real publish — keeping the poll's `data.lastEdit > cached.lastEdit` guard meaningful and the exported legacy files' `lastEdit` accurate.
 - Added `createMetadataIndex()` so DB mode uses a shared snapshot for list/details caches.
 - Refactored DB-mode cache lifecycle so startup and polling use one `getAllComponents()` query for both list and details data.
 - Prevented `components-details` from starting a second DB polling loop in metadata mode.
@@ -56,7 +57,7 @@ integration tests still need a live Azure run to execute. The S3/GS
 - Repository creates the metadata adapter when `conf.metadata` is present.
 - Repository initialises the metadata store before loading caches.
 - When `metadata.reconcileFromStorage` is enabled, repository startup scans storage and idempotently inserts missing metadata rows before cache hydration.
-- When `metadata.exportLegacyFiles` is enabled, repository startup and successful metadata-mode publish write DB-derived `components.json` and `components-details.json` projections to storage.
+- When `metadata.exportLegacyFiles` is enabled, repository startup writes DB-derived `components.json` and `components-details.json` projections to storage. The export is decoupled from the publish path; an optional `metadata.exportLegacyFilesInterval` (seconds) refreshes the projections on a non-overlapping background timer that is cleared on `registry.close()`. Publish never triggers the export, keeping publish an O(1) append.
 - Publish flow remains:
   1. validate publish
   2. write package json
@@ -82,8 +83,9 @@ integration tests still need a live Azure run to execute. The S3/GS
 - Added `@azure/data-tables` runtime dependency.
 - Implemented adapter using Azure Table Storage:
   - `adapterType = 'azure-table'`
-  - `isValid()` — validates connection string or endpoint + credentials, plus table name rules
-  - `initialise()` — `manageSchema !== false` creates the table (idempotent, `createTable` does not throw on conflict); `manageSchema === false` verifies table accessibility
+  - `isValid()` — validates connection string or endpoint (credentials optional; managed identity allowed), plus table name rules
+  - Auth precedence (no connection string): account name+key → SAS token → explicit `credential` → `DefaultAzureCredential` (managed identity / workload identity / `az login`), so the registry can run with no secret
+  - `initialise()` — `manageSchema !== false` creates the table via a service client built from the same credential (idempotent, `createTable` does not throw on conflict); `manageSchema === false` verifies by listing the first page of entities so a missing table fails fast (avoids the table-vs-entity 404 ambiguity of a single `getEntity`)
   - `getAllComponents()` — uses the SDK's paged async iterator (`for await ... listEntities()`), auto-paginates
   - `addVersion()` — `createEntity` with `PartitionKey = name`, `RowKey = version`; 409 Conflict → `VERSION_ALREADY_EXISTS`
   - `close()` — clears the internal client reference (HTTP-based, no connection pool)
@@ -100,6 +102,7 @@ integration tests still need a live Azure run to execute. The S3/GS
 - Implemented adapter skeleton:
   - `adapterType = 'azure-sql'`
   - `isValid()`
+  - managed identity: when no `connectionString`, `password` or explicit `authentication` is supplied, defaults to `azure-active-directory-default` (optional `clientId` for a user-assigned identity), so the registry can connect with no secret
   - connection pool creation
   - `initialise()`
   - `manageSchema !== false` auto-creates table/index
@@ -210,8 +213,8 @@ integration tests still need a live Azure run to execute. The S3/GS
    - Do not add noisy progress logging in this pass.
 5. Keep `metadata.reconcileFromStorage` startup-only.
    - Do not implement scheduled/background reconcile yet.
-6. Keep `metadata.exportLegacyFiles` on startup and successful metadata publish only.
-   - Do not implement scheduled/background export yet.
+6. `metadata.exportLegacyFiles` runs on startup and, when `metadata.exportLegacyFilesInterval` (seconds) is set, on a non-overlapping background timer cleared at `registry.close()`.
+   - It is decoupled from the publish path (a publish never triggers a full-registry export), so publish stays an O(1) append.
 7. Do not add implicit scheduling intervals.
    - If scheduled jobs are ever added, require explicit interval configuration.
 8. Keep metadata DB startup failure fail-closed for v1.

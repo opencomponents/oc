@@ -14,6 +14,12 @@ export interface AzureSqlMetadataAdapterOptions extends sql.config {
   manageSchema?: boolean;
   schemaName?: string;
   tableName?: string;
+  /**
+   * Optional client id of a user-assigned managed identity. Only used when no
+   * `password`, `connectionString` or explicit `authentication` is supplied and
+   * the adapter falls back to Microsoft Entra ID (`azure-active-directory-default`).
+   */
+  clientId?: string;
 }
 
 type SqlError = Error & { number?: number; code?: string };
@@ -53,13 +59,28 @@ const getSqlConfig = (
     manageSchema,
     schemaName,
     tableName,
+    clientId,
     ...connectionOptions
   } = options;
   void manageSchema;
   void schemaName;
   void tableName;
 
-  return connectionString || connectionOptions;
+  if (connectionString) {
+    return connectionString;
+  }
+
+  // Default to Microsoft Entra ID (managed identity / workload identity / az
+  // login / etc) when neither a password nor an explicit authentication mode is
+  // configured, so deployments can run without any secret in config.
+  if (!connectionOptions.password && !connectionOptions.authentication) {
+    connectionOptions.authentication = {
+      type: 'azure-active-directory-default',
+      options: clientId ? { clientId } : {}
+    };
+  }
+
+  return connectionOptions;
 };
 
 const isUniqueViolation = (error: unknown): boolean => {

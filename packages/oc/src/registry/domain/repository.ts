@@ -48,6 +48,7 @@ export default function repository(conf: Config) {
     : undefined;
   const componentsCache = ComponentsCache(conf, cdn, metadataIndex);
   const componentsDetails = getComponentsDetails(conf, cdn, metadataIndex);
+  let exportLegacyFilesLoop: NodeJS.Timeout | undefined;
 
   const getFilePath = (component: string, version: string, filePath: string) =>
     `${options!.componentsDir}/${component}/${version}/${filePath}`;
@@ -67,6 +68,26 @@ export default function repository(conf: Config) {
         message: err?.message || String(err)
       })
     );
+  };
+
+  // Run the DB→components.json export on a non-overlapping background timer
+  // instead of on the publish path, so a publish stays an O(1) append rather
+  // than triggering a full-registry scan + blob rewrite. The timer only runs
+  // when an interval is explicitly configured.
+  const scheduleLegacyFilesExport = () => {
+    const intervalSeconds = conf.metadata?.exportLegacyFilesInterval;
+    if (
+      !metadataStore ||
+      !conf.metadata?.exportLegacyFiles ||
+      !intervalSeconds
+    ) {
+      return;
+    }
+
+    exportLegacyFilesLoop = setTimeout(async () => {
+      await exportLegacyFiles();
+      scheduleLegacyFilesExport();
+    }, intervalSeconds * 1000);
   };
 
   const { templatesHash, templatesInfo } = registerTemplates(
@@ -371,6 +392,7 @@ export default function repository(conf: Config) {
       const details = await componentsDetails.refresh(componentsList);
 
       void exportLegacyFiles();
+      scheduleLegacyFilesExport();
 
       return details;
     },
@@ -469,7 +491,6 @@ export default function repository(conf: Config) {
           throw err;
         });
         metadataIndex!.add(componentRow);
-        void exportLegacyFiles();
         return;
       }
 
@@ -479,6 +500,10 @@ export default function repository(conf: Config) {
         .catch(() => undefined);
     },
     async close(): Promise<void> {
+      if (exportLegacyFilesLoop) {
+        clearTimeout(exportLegacyFilesLoop);
+        exportLegacyFilesLoop = undefined;
+      }
       if (metadataStore?.close) {
         await metadataStore.close();
       }

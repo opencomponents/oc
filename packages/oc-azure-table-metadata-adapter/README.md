@@ -58,6 +58,24 @@ metadata: {
 }
 ```
 
+### Managed identity (no secret)
+
+When you pass only an `endpoint` (no `connectionString`, `accountKey` or
+`sasToken`), the adapter authenticates with
+[`DefaultAzureCredential`](https://learn.microsoft.com/azure/developer/javascript/sdk/credential-chains#use-defaultazurecredential-for-flexibility)
+— managed identity, workload identity, `az login`, environment credentials,
+etc. This lets the registry run without any secret in config:
+
+```js
+metadata: {
+  adapter: azureTableMetadataAdapter,
+  options: {
+    endpoint: 'https://myaccount.table.core.windows.net'
+    // optionally: credential: new DefaultAzureCredential({ managedIdentityClientId })
+  }
+}
+```
+
 For local development with [Azurite](https://github.com/Azure/Azurite):
 
 ```js
@@ -79,9 +97,13 @@ metadata: {
 | `accountName` | none | Storage account name. Required with `accountKey` when `connectionString` is not used. |
 | `accountKey` | none | Storage account key. Required with `accountName` when `connectionString` is not used. |
 | `sasToken` | none | SAS token — alternative to `accountKey` for authentication. |
+| `credential` | none | Explicit `TokenCredential` (Microsoft Entra ID). When omitted with no key/SAS/connection string, a `DefaultAzureCredential` (managed identity) is used. |
 | `tableName` | `occomponents` | Azure Table name. Must be 3–63 chars, start with a letter, and contain only alphanumeric characters. |
-| `manageSchema` | `true` | When `true`, the adapter creates the table if missing (idempotent — `createTable` does not throw if the table already exists). When `false`, it verifies the table is accessible. |
+| `manageSchema` | `true` | When `true`, the adapter creates the table if missing (idempotent — `createTable` does not throw if the table already exists). When `false`, it verifies the table exists and fails fast if it does not. |
 | `allowInsecureConnection` | `false` | Allow HTTP (insecure) connections — for Azurite or local development. |
+
+Authentication precedence when `connectionString` is absent: `accountName` +
+`accountKey` → `sasToken` → explicit `credential` → `DefaultAzureCredential`.
 
 ## Entity model
 
@@ -106,8 +128,11 @@ startup. Azure Table Storage's `createTable` is idempotent — it does not throw
 if the table already exists.
 
 Use `manageSchema: false` when operators manage the table separately. On
-startup the adapter probes the table with a harmless entity read to verify it
-is accessible.
+startup the adapter reads the first page of entities to verify the table
+exists. Because Azure Table returns `404` both for a missing table and for a
+missing entity, the adapter uses a list (not a single-entity `getEntity`) so an
+existing-but-empty table verifies cleanly while a genuinely missing table fails
+fast with a clear error.
 
 ## Runtime behavior
 
