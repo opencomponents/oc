@@ -2,6 +2,7 @@ import path from 'node:path';
 import dotenv from 'dotenv';
 import fs from 'fs-extra';
 import getUnixUtcTimestamp from 'oc-get-unix-utc-timestamp';
+import { VERSION_ALREADY_EXISTS } from 'oc-metadata-adapters-utils';
 
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import strings from '../../resources';
@@ -15,6 +16,12 @@ import type {
 import errorToString from '../../utils/error-to-string';
 import ComponentsCache from './components-cache';
 import getComponentsDetails from './components-details';
+import eventsHandler from './events-handler';
+import { createMetadataIndex, getComponentRow } from './metadata-index';
+import {
+  exportLegacyMetadataFiles,
+  reconcileMetadataFromStorage
+} from './metadata-migration';
 import registerTemplates from './register-templates';
 import getPromiseBasedAdapter from './storage-adapter';
 import * as validator from './validators';
@@ -32,16 +39,54 @@ export default function repository(conf: Config) {
   const repositorySource = conf.local
     ? 'local repository'
     : cdn.adapterType + ' cdn';
-  const componentsCache = ComponentsCache(conf, cdn);
-  const componentsDetails = getComponentsDetails(conf, cdn);
+  const metadataStore =
+    !conf.local && conf.metadata
+      ? conf.metadata.adapter(conf.metadata.options)
+      : undefined;
+  const metadataIndex = metadataStore
+    ? createMetadataIndex(metadataStore)
+    : undefined;
+  const componentsCache = ComponentsCache(conf, cdn, metadataIndex);
+  const componentsDetails = getComponentsDetails(conf, cdn, metadataIndex);
 
   const getFilePath = (component: string, version: string, filePath: string) =>
     `${options!.componentsDir}/${component}/${version}/${filePath}`;
+
+  const exportLegacyFiles = () => {
+    if (!metadataStore || !conf.metadata?.exportLegacyFiles) {
+      return;
+    }
+
+    return exportLegacyMetadataFiles({
+      metadataStore,
+      cdn,
+      componentsDir: options!.componentsDir
+    }).catch((err: any) =>
+      eventsHandler.fire('error', {
+        code: 'metadata_legacy_files_export',
+        message: err?.message || String(err)
+      })
+    );
+  };
 
   const { templatesHash, templatesInfo } = registerTemplates(
     conf.templates,
     conf.local
   );
+
+  const throwVersionAlreadyFound = (
+    componentName: string,
+    componentVersion: string
+  ) => {
+    throw {
+      code: strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND_CODE,
+      msg: strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND(
+        componentName,
+        componentVersion,
+        repositorySource
+      )
+    };
+  };
 
   const local = {
     components: undefined as string[] | undefined,
@@ -311,9 +356,23 @@ export default function repository(conf: Config) {
         return;
       }
 
-      const componentsList = await componentsCache.load();
+      if (metadataStore) {
+        await metadataStore.initialise();
+        if (conf.metadata?.reconcileFromStorage) {
+          await reconcileMetadataFromStorage({
+            metadataStore,
+            cdn,
+            componentsDir: options!.componentsDir
+          });
+        }
+      }
 
-      return componentsDetails.refresh(componentsList);
+      const componentsList = await componentsCache.load();
+      const details = await componentsDetails.refresh(componentsList);
+
+      void exportLegacyFiles();
+
+      return details;
     },
     async publishComponent({
       componentName,
@@ -374,14 +433,7 @@ export default function repository(conf: Config) {
       if (
         !versionHandler.validateNewVersion(componentVersion, componentVersions)
       ) {
-        throw {
-          code: strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND_CODE,
-          msg: strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND(
-            componentName,
-            componentVersion,
-            repositorySource
-          )
-        };
+        throwVersionAlreadyFound(componentName, componentVersion);
       }
 
       pkgDetails.packageJson.oc.date = getUnixUtcTimestamp();
@@ -399,10 +451,37 @@ export default function repository(conf: Config) {
         `${options!.componentsDir}/${componentName}/${componentVersion}`
       );
 
+      if (metadataStore) {
+        const componentRow = getComponentRow(
+          componentName,
+          componentVersion,
+          pkgDetails.packageJson
+        );
+        await metadataStore.addVersion(componentRow).catch((err: any) => {
+          if (
+            err?.code === VERSION_ALREADY_EXISTS ||
+            err?.code ===
+              strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND_CODE
+          ) {
+            throwVersionAlreadyFound(componentName, componentVersion);
+          }
+
+          throw err;
+        });
+        metadataIndex!.add(componentRow);
+        void exportLegacyFiles();
+        return;
+      }
+
       void componentsCache
         .refresh()
         .then((componentsList) => componentsDetails.refresh(componentsList))
         .catch(() => undefined);
+    },
+    async close(): Promise<void> {
+      if (metadataStore?.close) {
+        await metadataStore.close();
+      }
     }
   };
 

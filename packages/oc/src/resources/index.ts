@@ -103,6 +103,8 @@ export default {
       CONFIGURATION_DEPENDENCIES_MUST_BE_ARRAY:
         'Registry configuration is not valid: dependencies must be an array',
       CONFIGURATION_EMPTY: 'Registry configuration is empty',
+      CONFIGURATION_METADATA_NOT_VALID: (adapterType: string): string =>
+        `Registry configuration is not valid: ${adapterType} is not a valid metadata adapter`,
       CONFIGURATION_ONREQUEST_MUST_BE_FUNCTION:
         "Registry configuration is not valid: registry.on's callback must be a function",
       CONFIGURATION_OFFREQUEST_MUST_BE_FUNCTION:

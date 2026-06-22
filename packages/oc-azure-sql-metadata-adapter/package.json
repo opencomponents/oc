@@ -1,0 +1,46 @@
+{
+  "name": "oc-azure-sql-metadata-adapter",
+  "version": "0.1.0",
+  "description": "Azure SQL metadata adapter for OpenComponents",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opencomponents/oc.git",
+    "directory": "packages/oc-azure-sql-metadata-adapter"
+  },
+  "bugs": {
+    "url": "https://github.com/opencomponents/oc/issues"
+  },
+  "homepage": "https://github.com/opencomponents/oc/tree/master/packages/oc-azure-sql-metadata-adapter#readme",
+  "keywords": [
+    "oc",
+    "opencomponents",
+    "metadata",
+    "azure-sql"
+  ],
+  "author": "Matteo Figus",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "npm run lint && tsc",
+    "lint": "npx @biomejs/biome check src test",
+    "test": "npm run build && mocha \"test/**/*.js\""
+  },
+  "dependencies": {
+    "mssql": "^12.1.0",
+    "oc-metadata-adapters-utils": "*"
+  },
+  "devDependencies": {
+    "@types/mssql": "^12.3.0",
+    "chai": "^6.2.2",
+    "injectr": "^0.5.1",
+    "mocha": "^11.7.6",
+    "rimraf": "^6.1.3",
+    "sinon": "^21.1.2",
+    "typescript": "^6.0.3"
+  }
+}

@@ -3,18 +3,28 @@ import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import { type StorageAdapter, strings } from 'oc-storage-adapters-utils';
 import type { ComponentsList, Config } from '../../../types';
 import eventsHandler from '../events-handler';
+import type { MetadataIndex } from '../metadata-index';
 import getComponentsList from './components-list';
 
-export default function componentsCache(conf: Config, cdn: StorageAdapter) {
+export default function componentsCache(
+  conf: Config,
+  cdn: StorageAdapter,
+  metadataIndex?: MetadataIndex
+) {
   let cachedComponentsList: ComponentsList;
   let refreshLoop: NodeJS.Timeout;
 
   const componentsList = getComponentsList(conf, cdn);
 
+  const getFromMetadataIndex = async (): Promise<ComponentsList> =>
+    (await metadataIndex!.refresh()).componentsList;
+
   const poll = () => {
     return setTimeout(async () => {
       try {
-        const data = await componentsList.getFromJson();
+        const data = metadataIndex
+          ? await getFromMetadataIndex()
+          : await componentsList.getFromJson();
 
         eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
 
@@ -45,6 +55,11 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
 
   return {
     get(): ComponentsList {
+      const metadataSnapshot = metadataIndex?.get();
+      if (metadataSnapshot) {
+        cachedComponentsList = metadataSnapshot.componentsList;
+      }
+
       if (!cachedComponentsList) {
         return throwError(
           'components_cache_empty',
@@ -56,6 +71,15 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
     },
 
     async load(): Promise<ComponentsList> {
+      if (metadataIndex) {
+        const components = await getFromMetadataIndex().catch((err) =>
+          throwError('components_list_get', err)
+        );
+        cacheDataAndStartPolling(components);
+
+        return components;
+      }
+
       const jsonComponents = await componentsList.getFromJson().catch((err) => {
         if (err?.code === strings.errors.STORAGE.FILE_NOT_FOUND_CODE)
           return null;
@@ -83,7 +107,9 @@ export default function componentsCache(conf: Config, cdn: StorageAdapter) {
       clearTimeout(refreshLoop);
       try {
         // Passing components that we know are fine, so it doesn't refresh invalid components
-        const components = await componentsList.refresh(cachedComponentsList);
+        const components = metadataIndex
+          ? await getFromMetadataIndex()
+          : await componentsList.refresh(cachedComponentsList);
         cacheDataAndStartPolling(components);
 
         return components;

@@ -121,6 +121,23 @@ export default function registryConfiguration(
     }
   }
 
+  if (!conf.local && conf.metadata) {
+    if (!conf.metadata.adapter) {
+      return returnError(
+        strings.errors.registry.CONFIGURATION_METADATA_NOT_VALID('metadata')
+      );
+    }
+
+    const metadataStore = conf.metadata.adapter(conf.metadata.options);
+    if (!metadataStore.isValid()) {
+      return returnError(
+        strings.errors.registry.CONFIGURATION_METADATA_NOT_VALID(
+          metadataStore.adapterType
+        )
+      );
+    }
+  }
+
   if (conf.customHeadersToSkipOnWeakVersion) {
     if (!Array.isArray(conf.customHeadersToSkipOnWeakVersion)) {
       return returnError(

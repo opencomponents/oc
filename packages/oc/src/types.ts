@@ -1,6 +1,9 @@
 import type { NextFunction, Request, Response } from 'express';
+import type { MetadataStore as MetadataStoreType } from 'oc-metadata-adapters-utils';
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import type { PackageJson } from 'type-fest';
+
+export type { ComponentRow, MetadataStore } from 'oc-metadata-adapters-utils';
 
 type Middleware = (req: Request, res: Response, next: NextFunction) => void;
 
@@ -44,6 +47,14 @@ export interface ComponentsDetails {
 export interface ComponentsList {
   components: Record<string, string[]>;
   lastEdit: number;
+}
+
+export interface MetadataConfig<T = any> {
+  adapter: (options: T) => MetadataStoreType;
+  options: T;
+  manageSchema?: boolean;
+  reconcileFromStorage?: boolean;
+  exportLegacyFiles?: boolean;
 }
 
 export interface OcParameter {
@@ -337,6 +348,7 @@ export interface Config<T = any> {
    * @default "/"
    */
   prefix: string;
+  metadata?: MetadataConfig;
   /**
    * Authentication strategy for component publishing.
    */

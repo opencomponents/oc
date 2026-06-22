@@ -10,8 +10,13 @@ import type {
 } from '../../types';
 import pLimit from '../../utils/pLimit';
 import eventsHandler from './events-handler';
+import type { MetadataIndex } from './metadata-index';
 
-export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
+export default function componentsDetails(
+  conf: Config,
+  cdn: StorageAdapter,
+  metadataIndex?: MetadataIndex
+) {
   let cachedComponentsDetails: ComponentsDetails | undefined;
   let refreshLoop: NodeJS.Timeout;
 
@@ -29,10 +34,15 @@ export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
   const getFromJson = (): Promise<ComponentsDetails> =>
     cdn.getJson(filePath(), true);
 
+  const getFromMetadataIndex = async (): Promise<ComponentsDetails> =>
+    (await metadataIndex!.getOrRefresh()).componentsDetails;
+
   const poll = () => {
     return setTimeout(async () => {
       try {
-        const data = await getFromJson();
+        const data = metadataIndex
+          ? await getFromMetadataIndex()
+          : await getFromJson();
 
         eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
 
@@ -54,7 +64,9 @@ export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
 
   const cacheDataAndStartPolling = (data: ComponentsDetails) => {
     cachedComponentsDetails = data;
-    refreshLoop = poll();
+    if (!metadataIndex) {
+      refreshLoop = poll();
+    }
 
     return data;
   };
@@ -112,6 +124,11 @@ export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
     cdn.putFileContent(JSON.stringify(data), filePath(), true);
 
   const get = async (): Promise<ComponentsDetails> => {
+    if (metadataIndex) {
+      cachedComponentsDetails = await getFromMetadataIndex();
+      return cachedComponentsDetails;
+    }
+
     if (cachedComponentsDetails) {
       return cachedComponentsDetails;
     }
@@ -125,6 +142,14 @@ export default function componentsDetails(conf: Config, cdn: StorageAdapter) {
     componentsList: ComponentsList
   ): Promise<ComponentsDetails> => {
     clearTimeout(refreshLoop);
+
+    if (metadataIndex) {
+      const details = await getFromMetadataIndex().catch((err) =>
+        returnError('components_details_get', err)
+      );
+
+      return cacheDataAndStartPolling(details);
+    }
 
     const jsonDetails = await getFromJson().catch(() => undefined);
     const dirDetails = await getFromDirectories({

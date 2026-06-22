@@ -405,6 +405,59 @@ describe('registry : domain : validator', () => {
       });
     });
 
+    describe('metadata', () => {
+      describe('when adapter is missing', () => {
+        const conf = {
+          s3: baseS3Conf,
+          metadata: { options: {} }
+        };
+
+        it('should not be valid', () => {
+          expect(validate(conf).isValid).to.be.false;
+          expect(validate(conf).message).to.equal(
+            'Registry configuration is not valid: metadata is not a valid metadata adapter'
+          );
+        });
+      });
+
+      describe('when adapter configuration is invalid', () => {
+        const conf = {
+          s3: baseS3Conf,
+          metadata: {
+            adapter: () => ({
+              adapterType: 'test-metadata',
+              isValid: () => false
+            }),
+            options: {}
+          }
+        };
+
+        it('should not be valid', () => {
+          expect(validate(conf).isValid).to.be.false;
+          expect(validate(conf).message).to.equal(
+            'Registry configuration is not valid: test-metadata is not a valid metadata adapter'
+          );
+        });
+      });
+
+      describe('when adapter configuration is valid', () => {
+        const conf = {
+          s3: baseS3Conf,
+          metadata: {
+            adapter: () => ({
+              adapterType: 'test-metadata',
+              isValid: () => true
+            }),
+            options: {}
+          }
+        };
+
+        it('should be valid', () => {
+          expect(validate(conf).isValid).to.be.true;
+        });
+      });
+    });
+
     describe('customHeadersToSkipOnWeakVersion', () => {
       describe('when customHeadersToSkipOnWeakVersion is not an array', () => {
         const conf = {

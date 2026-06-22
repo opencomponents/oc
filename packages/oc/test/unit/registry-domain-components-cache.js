@@ -31,7 +31,7 @@ describe('registry : domain : components-cache', () => {
 
   const getTimestamp = () => 12345678;
 
-  const initialise = () => {
+  const initialise = (metadataIndex) => {
     clearTimeoutStub = sinon.stub();
     setTimeoutStub = sinon.stub();
     eventsHandlerStub = { fire: sinon.stub() };
@@ -54,7 +54,7 @@ describe('registry : domain : components-cache', () => {
       }
     ).default;
 
-    componentsCache = ComponentsCache(baseOptions, mockedCdn);
+    componentsCache = ComponentsCache(baseOptions, mockedCdn, metadataIndex);
   };
 
   describe('when library does not contain components.json', () => {
@@ -322,6 +322,165 @@ describe('registry : domain : components-cache', () => {
           expect(data.components['hello-world'].length).to.equal(3);
         });
       });
+    });
+  });
+
+  describe('when metadata store is configured', () => {
+    let metadataIndex;
+
+    before((done) => {
+      mockedCdn.getJson = sinon.stub();
+      mockedCdn.listSubDirectories = sinon.stub();
+      mockedCdn.putFileContent = sinon.stub();
+      metadataIndex = {
+        get: sinon.stub().returns(undefined),
+        refresh: sinon.stub().resolves({
+          componentsList: {
+            lastEdit: 123,
+            components: {
+              'hello-world': ['1.0.0', '1.0.2'],
+              'new-component': ['2.0.0']
+            }
+          }
+        })
+      };
+      initialise(metadataIndex);
+      componentsCache.load().finally(done);
+    });
+
+    it('should hydrate the cache from the metadata store', () => {
+      expect(metadataIndex.refresh.calledOnce).to.be.true;
+      expect(componentsCache.get().components).to.eql({
+        'hello-world': ['1.0.0', '1.0.2'],
+        'new-component': ['2.0.0']
+      });
+      expect(componentsCache.get().lastEdit).to.be.a('number');
+    });
+
+    it('should read the latest metadata snapshot on get', () => {
+      metadataIndex.get.returns({
+        componentsList: {
+          lastEdit: 124,
+          components: {
+            'hello-world': ['1.0.0', '1.0.1', '1.0.2'],
+            'new-component': ['2.0.0']
+          }
+        }
+      });
+
+      expect(componentsCache.get().components).to.eql({
+        'hello-world': ['1.0.0', '1.0.1', '1.0.2'],
+        'new-component': ['2.0.0']
+      });
+    });
+
+    it('should not scan or write storage metadata files', () => {
+      expect(mockedCdn.getJson.called).to.be.false;
+      expect(mockedCdn.listSubDirectories.called).to.be.false;
+      expect(mockedCdn.putFileContent.called).to.be.false;
+    });
+
+    it('should keep serving cached metadata when polling fails', async () => {
+      const pollError = new Error('database unavailable');
+      metadataIndex = {
+        get: sinon.stub().returns(undefined),
+        refresh: sinon.stub()
+      };
+      metadataIndex.refresh.onFirstCall().resolves({
+        componentsList: {
+          lastEdit: 123,
+          components: {
+            'hello-world': ['1.0.0']
+          }
+        }
+      });
+      metadataIndex.refresh.onSecondCall().rejects(pollError);
+      initialise(metadataIndex);
+
+      await componentsCache.load();
+      await setTimeoutStub.args[0][0]();
+
+      expect(componentsCache.get().components).to.eql({
+        'hello-world': ['1.0.0']
+      });
+      expect(eventsHandlerStub.fire.args[0][0]).to.equal('error');
+      expect(eventsHandlerStub.fire.args[0][1]).to.eql({
+        code: 'components_list_get',
+        message: pollError.message
+      });
+    });
+  });
+});
+
+describe('registry : domain : metadata-index', () => {
+  const { createMetadataIndex } = require('../../dist/registry/domain/metadata-index');
+
+  it('should reuse the hydrated snapshot until refreshed', async () => {
+    const metadataStore = {
+      getAllComponents: sinon.stub().resolves([
+        {
+          name: 'hello-world',
+          version: '1.0.0',
+          publishDate: 123,
+          templateSize: 10
+        }
+      ])
+    };
+    const metadataIndex = createMetadataIndex(metadataStore);
+
+    const first = await metadataIndex.refresh();
+    const second = await metadataIndex.getOrRefresh();
+
+    expect(metadataStore.getAllComponents.calledOnce).to.be.true;
+    expect(second).to.equal(first);
+    expect(second.componentsList.components).to.eql({
+      'hello-world': ['1.0.0']
+    });
+    expect(second.componentsDetails.components).to.eql({
+      'hello-world': {
+        '1.0.0': { publishDate: 123, templateSize: 10 }
+      }
+    });
+  });
+
+  it('should update the hydrated snapshot when a row is added', async () => {
+    const metadataStore = {
+      getAllComponents: sinon.stub().resolves([
+        {
+          name: 'hello-world',
+          version: '1.0.0',
+          publishDate: 123,
+          templateSize: 10
+        },
+        {
+          name: 'hello-world',
+          version: '1.0.2',
+          publishDate: 125,
+          templateSize: 12
+        }
+      ])
+    };
+    const metadataIndex = createMetadataIndex(metadataStore);
+
+    await metadataIndex.refresh();
+    const snapshot = metadataIndex.add({
+      name: 'hello-world',
+      version: '1.0.1',
+      publishDate: 124,
+      templateSize: 11
+    });
+
+    expect(metadataStore.getAllComponents.calledOnce).to.be.true;
+    expect(metadataIndex.get()).to.equal(snapshot);
+    expect(snapshot.componentsList.components).to.eql({
+      'hello-world': ['1.0.0', '1.0.1', '1.0.2']
+    });
+    expect(snapshot.componentsDetails.components).to.eql({
+      'hello-world': {
+        '1.0.0': { publishDate: 123, templateSize: 10 },
+        '1.0.1': { publishDate: 124, templateSize: 11 },
+        '1.0.2': { publishDate: 125, templateSize: 12 }
+      }
     });
   });
 });

@@ -32,6 +32,86 @@ We have been using it for more than two years in production at OpenTable, for sh
 - [Troubleshooting](../../CONTRIBUTING.md#troubleshooting)
 - [Gitter chat](https://gitter.im/opentable/oc)
 
+## Registry metadata stores
+
+By default, an OC registry keeps its component index in storage files:
+`components.json` and `components-details.json`. A registry can instead read and
+write that index through a metadata adapter by adding a `metadata` block to the
+registry configuration.
+
+Storage is still required in metadata mode. The metadata store contains only the
+component name, version, publish date, and template size. Component static files
+and version `package.json` files continue to live in the configured storage
+adapter.
+
+```js
+const azureSqlMetadataAdapter = require('oc-azure-sql-metadata-adapter').default;
+const s3StorageAdapter = require('oc-s3-storage-adapter');
+
+registry.configure({
+  storage: {
+    adapter: s3StorageAdapter,
+    options: {
+      bucket: process.env.OC_STORAGE_BUCKET,
+      region: process.env.OC_STORAGE_REGION,
+      componentsDir: 'components',
+      path: process.env.OC_STORAGE_BASE_URL
+    }
+  },
+  metadata: {
+    adapter: azureSqlMetadataAdapter,
+    options: {
+      connectionString: process.env.OC_METADATA_SQL_CONNECTION_STRING
+    },
+    reconcileFromStorage: false,
+    exportLegacyFiles: false
+  }
+});
+```
+
+The registry initialises the metadata store during startup. If startup succeeds,
+reads are served from OC's in-memory cache, and cache polling refreshes from the
+metadata store. Publishing still uploads package files to storage first, then
+commits the metadata row. Duplicate metadata rows are treated as the existing
+"component version already exists" publish error. When the registry is shut
+down via `registry.close(callback)`, the metadata adapter's optional `close()`
+hook is invoked so the adapter can release its connection pool.
+
+### Migrating existing registries
+
+Use the CLI backfill command before enabling metadata mode in production:
+
+```sh
+oc registry migrate-metadata ./registry.config.js
+```
+
+The config module must include both `storage` and `metadata`. The command
+initialises the configured metadata adapter and backfills rows from
+`${componentsDir}/components-details.json`. If that file is missing, it falls back
+to scanning `${componentsDir}/<component>/<version>/package.json`. Existing rows
+are skipped, so the command is idempotent.
+
+A safe migration sequence is:
+
+1. Deploy the metadata adapter configuration to a non-serving environment.
+2. Run `oc registry migrate-metadata ./registry.config.js`.
+3. Start one registry instance with metadata mode enabled and verify reads.
+4. Roll out metadata mode to the remaining registry instances.
+
+### Bake-in and rollback options
+
+Two optional flags help run storage and metadata side by side during migration:
+
+- `metadata.reconcileFromStorage: true` scans storage on registry startup and
+  inserts missing metadata rows before cache hydration. Existing rows are skipped.
+- `metadata.exportLegacyFiles: true` writes DB-derived `components.json` and
+  `components-details.json` projections to storage after startup and after
+  successful metadata-mode publishes.
+
+These files are one-way projections from the metadata store. They can help with
+rollback to storage mode, but they do not replace the storage adapter because
+component statics remain in storage.
+
 ## Requirements and build status
 
 Disclaimer: This project is still under heavy development and the API is likely to change at any time. In case you would find any issues, check the [troubleshooting page](../../CONTRIBUTING.md#troubleshooting).
