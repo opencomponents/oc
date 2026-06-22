@@ -28,7 +28,7 @@ integration tests still need a live Azure run to execute. The S3/GS
 - Added `createMetadataIndex()` so DB mode uses a shared snapshot for list/details caches.
 - Refactored DB-mode cache lifecycle so startup and polling use one `getAllComponents()` query for both list and details data.
 - Prevented `components-details` from starting a second DB polling loop in metadata mode.
-- Added `MetadataIndex.add(row)` for immediate in-memory snapshot updates after successful metadata-mode publish.
+- Added `MetadataIndex.add(row)` for immediate in-memory snapshot updates after successful metadata-mode publish. The update is incremental — it rebuilds only the published component's version list/detail (O(versions-of-that-component)) and shares every other component entry by reference, producing a new snapshot object (no in-place mutation) so in-flight readers keep a consistent view. Duplicate `name@version` is a no-op and `lastEdit` never moves backwards.
 
 ### Components cache integration
 - `components-cache` now accepts an optional `MetadataIndex`.

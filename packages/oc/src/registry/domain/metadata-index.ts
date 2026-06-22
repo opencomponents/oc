@@ -96,29 +96,54 @@ export const createMetadataIndex = (
   };
 
   const add = (row: ComponentRow): MetadataSnapshot => {
-    const rows: ComponentRow[] = snapshot
-      ? Object.entries(snapshot.componentsDetails.components).flatMap(
-          ([name, versions]) =>
-            Object.entries(versions).map(([version, details]) => ({
-              name,
-              version,
-              publishDate: details.publishDate,
-              templateSize: details.templateSize
-            }))
-        )
-      : [];
+    // No snapshot yet: build one from the single row.
+    if (!snapshot) {
+      snapshot = {
+        componentsList: getComponentsListFromRows([row]),
+        componentsDetails: getComponentsDetailsFromRows([row])
+      };
 
-    if (
-      !rows.some(
-        ({ name, version }) => name === row.name && version === row.version
-      )
-    ) {
-      rows.push(row);
+      return snapshot;
     }
 
+    const { name, version } = row;
+    const prevList = snapshot.componentsList.components;
+    const prevDetails = snapshot.componentsDetails.components;
+
+    // Already present: keep the snapshot unchanged (mirrors the unique-constraint
+    // guarantee, so a duplicate publish doesn't disturb the cache).
+    if (prevDetails[name]?.[version]) {
+      return snapshot;
+    }
+
+    // Only the published component is rebuilt; every other component entry is
+    // shared by reference, so the cost is O(versions-of-this-component) rather
+    // than O(registry). New container objects are produced (rather than mutating
+    // in place) so in-flight readers keep a consistent view of the old snapshot.
+    const versions = [...(prevList[name] ?? []), version].sort(semver.compare);
+
+    const detail: ComponentDetail = {
+      ...(prevDetails[name] ?? ({} as ComponentDetail)),
+      [version]: { publishDate: row.publishDate }
+    };
+    if (row.templateSize !== undefined) {
+      detail[version].templateSize = row.templateSize;
+    }
+
+    const lastEdit = Math.max(
+      snapshot.componentsList.lastEdit,
+      row.publishDate
+    );
+
     snapshot = {
-      componentsList: getComponentsListFromRows(rows),
-      componentsDetails: getComponentsDetailsFromRows(rows)
+      componentsList: {
+        lastEdit,
+        components: { ...prevList, [name]: versions }
+      },
+      componentsDetails: {
+        lastEdit,
+        components: { ...prevDetails, [name]: detail }
+      }
     };
 
     return snapshot;
