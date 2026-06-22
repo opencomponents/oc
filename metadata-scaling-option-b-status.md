@@ -4,12 +4,12 @@
 
 Core metadata-store support is implemented and verified, including the optional
 `close()` lifecycle hook wired into `registry.close()` and the
-`oc registry migrate-metadata` CLI. The Azure SQL adapter implements `close()`
-and ships env-var-gated integration tests (`OC_METADATA_SQL_CONNECTION_STRING`);
-the integration tests still need a live SQL Server run (Docker CI or external)
-to execute. The S3/GS `listSubDirectories` pagination prerequisite is now fixed
-in the external `storage-adapters` repo. Remaining work is the
-deferred-by-decision items only.
+`oc registry migrate-metadata` CLI. Two Azure metadata adapters are implemented:
+Azure SQL (connection-pool based) and Azure Table Storage (HTTP-based, schemaless,
+same storage account as blobs). Both ship env-var-gated integration tests; the
+integration tests still need a live Azure run to execute. The S3/GS
+`listSubDirectories` pagination prerequisite is fixed in the external
+`storage-adapters` repo. Remaining work is the deferred-by-decision items only.
 
 ## Done
 
@@ -76,6 +76,22 @@ deferred-by-decision items only.
 - Moved shared `ComponentRow`, `MetadataStore`, and `VERSION_ALREADY_EXISTS` into the package.
 - Core `oc` metadata config/types now import and re-export the shared metadata contract.
 - Azure SQL adapter now imports the shared contract and re-exports it for adapter consumers.
+
+### Azure Table Storage metadata adapter package
+- Added workspace package: `packages/oc-azure-table-metadata-adapter`.
+- Added `@azure/data-tables` runtime dependency.
+- Implemented adapter using Azure Table Storage:
+  - `adapterType = 'azure-table'`
+  - `isValid()` — validates connection string or endpoint + credentials, plus table name rules
+  - `initialise()` — `manageSchema !== false` creates the table (idempotent, `createTable` does not throw on conflict); `manageSchema === false` verifies table accessibility
+  - `getAllComponents()` — uses the SDK's paged async iterator (`for await ... listEntities()`), auto-paginates
+  - `addVersion()` — `createEntity` with `PartitionKey = name`, `RowKey = version`; 409 Conflict → `VERSION_ALREADY_EXISTS`
+  - `close()` — clears the internal client reference (HTTP-based, no connection pool)
+  - Supports `connectionString`, `endpoint + accountName/accountKey`, `endpoint + sasToken`, `allowInsecureConnection` (for Azurite), and custom `tableName`
+- Added package to root Biome includes and `.gitignore`.
+- Added README covering registry configuration, adapter options, entity model, managed schema, runtime behavior, connection pool lifecycle, testing, and current limitations.
+- Added mocked unit tests (18 passing): `isValid()`, `initialise()`, `getAllComponents()`, `addVersion()` (insert + 409 mapping + non-conflict passthrough), `close()`.
+- Added env-var-gated integration tests (`OC_METADATA_TABLE_CONNECTION_STRING`), skipped without the env var, covering managed table creation, idempotent initialise, inserts, duplicate mapping, concurrent different-component inserts, custom table name, and `close()` lifecycle.
 
 ### Azure SQL metadata adapter package
 - Added workspace package: `packages/oc-azure-sql-metadata-adapter`.
@@ -259,6 +275,14 @@ deferred-by-decision items only.
 - `packages/oc-azure-sql-metadata-adapter/src/index.ts`
 - `packages/oc-azure-sql-metadata-adapter/test/index.js`
 - `packages/oc-azure-sql-metadata-adapter/test/integration.js`
+
+### Azure Table Storage adapter
+- `packages/oc-azure-table-metadata-adapter/README.md`
+- `packages/oc-azure-table-metadata-adapter/package.json`
+- `packages/oc-azure-table-metadata-adapter/tsconfig.json`
+- `packages/oc-azure-table-metadata-adapter/src/index.ts`
+- `packages/oc-azure-table-metadata-adapter/test/index.js`
+- `packages/oc-azure-table-metadata-adapter/test/integration.js`
 
 ### Metadata adapter utilities
 - `packages/oc-metadata-adapters-utils/package.json`
