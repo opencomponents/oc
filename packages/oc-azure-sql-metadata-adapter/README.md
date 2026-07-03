@@ -87,6 +87,7 @@ metadata: {
 | `connectionString` | none | SQL Server connection string. If present, it is used instead of object connection settings. |
 | `server` / `database` | none | Minimum object connection settings required when `connectionString` is not used. Other `mssql` options such as `user`, `password`, `pool`, and nested `options` are passed through. |
 | `clientId` | none | Client id of a user-assigned managed identity, used only when falling back to `azure-active-directory-default` auth (no password/connection string/explicit authentication). |
+| `reservationTtlSeconds` | `3600` | Age after which a `publishing` reservation is considered abandoned and can be reclaimed by a new publish or healed by storage reconciliation. |
 | `manageSchema` | `true` | When `true`, the adapter creates the table/index if missing. When `false`, it verifies the expected columns with a zero-row select and fails fast if schema access is not valid. |
 | `schemaName` | `dbo` | SQL schema containing the metadata table. Must be a simple SQL identifier matching `/^[A-Za-z_][A-Za-z0-9_]*$/`. |
 | `tableName` | `oc_components` | Metadata table name. Must be a simple SQL identifier matching `/^[A-Za-z_][A-Za-z0-9_]*$/`. |
@@ -154,9 +155,16 @@ FROM [registry].[oc_components];
 - The registry initialises the metadata store before loading caches.
 - Startup fails if the database cannot be initialised or queried.
 - Reads are served from OC's in-memory cache; hot component reads do not hit SQL.
-- Polling re-hydrates the in-memory cache from `getAllComponents()`.
+- Polling first checks a cheap aggregate change token (`COUNT_BIG` +
+  `MAX(publish_date)`) and only re-hydrates the in-memory cache from
+  `getAllComponents()` when that token changes, with a periodic full refresh
+  safety net in OC core.
 - If polling fails after startup, OC keeps serving the previous in-memory cache and retries on the next poll.
 - Publish reserves a `publishing` metadata row first, uploads statics only after reservation succeeds, then commits the row. If upload or commit fails, OC best-effort aborts the matching reservation.
+- If a publisher dies, stale `publishing` rows older than
+  `reservationTtlSeconds` are reclaimed on the next same-version publish; storage
+  reconciliation can also commit a stale reservation when the component files
+  already exist in storage.
 - When the registry is shut down via `registry.close(callback)`, the adapter closes its connection pool. The `close()` hook is optional on the shared `MetadataStore` contract and is safe to call when no pool is open.
 
 ## Connection pool lifecycle

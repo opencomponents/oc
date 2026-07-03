@@ -80,17 +80,39 @@ export interface MetadataIndex {
   getOrRefresh(): Promise<MetadataSnapshot>;
 }
 
+const FORCED_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+
+const buildSnapshot = (rows: ComponentRow[]): MetadataSnapshot => ({
+  componentsList: getComponentsListFromRows(rows),
+  componentsDetails: getComponentsDetailsFromRows(rows)
+});
+
 export const createMetadataIndex = (
   metadataStore: MetadataStore
 ): MetadataIndex => {
   let snapshot: MetadataSnapshot | undefined;
+  let lastChangeToken: string | undefined;
+  let lastForcedRefreshAt = 0;
 
   const refresh = async (): Promise<MetadataSnapshot> => {
+    const changeToken = metadataStore.getChangeToken
+      ? await metadataStore.getChangeToken()
+      : undefined;
+    const now = Date.now();
+
+    if (
+      snapshot &&
+      changeToken !== undefined &&
+      changeToken === lastChangeToken &&
+      now - lastForcedRefreshAt < FORCED_REFRESH_INTERVAL_MS
+    ) {
+      return snapshot;
+    }
+
     const rows = await metadataStore.getAllComponents();
-    snapshot = {
-      componentsList: getComponentsListFromRows(rows),
-      componentsDetails: getComponentsDetailsFromRows(rows)
-    };
+    snapshot = buildSnapshot(rows);
+    lastChangeToken = changeToken;
+    lastForcedRefreshAt = now;
 
     return snapshot;
   };
@@ -98,10 +120,7 @@ export const createMetadataIndex = (
   const add = (row: ComponentRow): MetadataSnapshot => {
     // No snapshot yet: build one from the single row.
     if (!snapshot) {
-      snapshot = {
-        componentsList: getComponentsListFromRows([row]),
-        componentsDetails: getComponentsDetailsFromRows([row])
-      };
+      snapshot = buildSnapshot([row]);
 
       return snapshot;
     }

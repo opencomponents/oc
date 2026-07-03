@@ -45,6 +45,8 @@ export interface AzureTableMetadataAdapterOptions {
   manageSchema?: boolean;
   /** Allow insecure (HTTP) connections — for Azurite / local development. */
   allowInsecureConnection?: boolean;
+  /** Seconds before an uncommitted publish reservation can be reclaimed. */
+  reservationTtlSeconds?: number;
 }
 
 type TableError = Error & {
@@ -53,8 +55,23 @@ type TableError = Error & {
   response?: { status?: number };
 };
 
+type ComponentEntity = {
+  partitionKey: string;
+  rowKey: string;
+  publishDate: number;
+  status: 'committed' | 'publishing';
+  createdAt: number;
+  updatedAt: number;
+  templateSize?: number;
+  publishToken?: string;
+};
+
 const CONFLICT_STATUS = 409;
 const NOT_FOUND_STATUS = 404;
+const PRECONDITION_FAILED_STATUS = 412;
+const DEFAULT_RESERVATION_TTL_SECONDS = 60 * 60;
+const CURSOR_PARTITION_KEY = 'oc.metadata';
+const CURSOR_ROW_KEY = 'cursor';
 
 const isValidTableName = (value: string): boolean =>
   /^[A-Za-z][A-Za-z0-9]{2,62}$/.test(value);
@@ -83,6 +100,63 @@ const isConflictError = (error: unknown): boolean => {
   );
 };
 
+const isNotFoundError = (error: unknown): boolean => {
+  const err = error as TableError;
+  return (
+    err?.statusCode === NOT_FOUND_STATUS ||
+    err?.response?.status === NOT_FOUND_STATUS
+  );
+};
+
+const isPreconditionFailedError = (error: unknown): boolean => {
+  const err = error as TableError;
+  return (
+    err?.statusCode === PRECONDITION_FAILED_STATUS ||
+    err?.response?.status === PRECONDITION_FAILED_STATUS
+  );
+};
+
+const getReservationTtlMs = (value: unknown): number =>
+  (typeof value === 'number' && Number.isFinite(value) && value > 0
+    ? value
+    : DEFAULT_RESERVATION_TTL_SECONDS) * 1000;
+
+const isStalePublishingEntity = (entity: any, ttlMs: number): boolean =>
+  entity?.status === 'publishing' &&
+  Number(entity.updatedAt) < Date.now() - ttlMs;
+
+const getEntityAlreadyExistsError = (
+  entity: any,
+  error: unknown
+): VersionAlreadyExistsError =>
+  getVersionAlreadyExistsError(
+    error,
+    entity?.status === 'publishing'
+      ? VERSION_PUBLISH_IN_PROGRESS
+      : VERSION_ALREADY_EXISTS
+  );
+
+const getComponentEntity = (
+  row: ComponentRow,
+  status: 'committed' | 'publishing'
+): ComponentEntity => {
+  const now = Date.now();
+  const entity: ComponentEntity = {
+    partitionKey: row.name,
+    rowKey: row.version,
+    publishDate: row.publishDate,
+    status,
+    createdAt: now,
+    updatedAt: now
+  };
+
+  if (row.templateSize !== undefined) {
+    entity.templateSize = row.templateSize;
+  }
+
+  return entity;
+};
+
 export default function azureTableMetadataAdapter(
   options?: AzureTableMetadataAdapterOptions
 ): MetadataStore {
@@ -90,6 +164,7 @@ export default function azureTableMetadataAdapter(
   const opts = options || ({} as AzureTableMetadataAdapterOptions);
   const manageSchema = opts.manageSchema !== false;
   const tableName = opts.tableName || 'occomponents';
+  const reservationTtlMs = getReservationTtlMs(opts.reservationTtlSeconds);
   let client: TableClient | undefined;
 
   const clientOptions: TableServiceClientOptions = {
@@ -162,6 +237,99 @@ export default function azureTableMetadataAdapter(
       getCredential() as TokenCredential,
       clientOptions
     );
+  };
+
+  const bumpChangeToken = async (): Promise<void> => {
+    const activeClient = createClient();
+    await activeClient.upsertEntity(
+      {
+        partitionKey: CURSOR_PARTITION_KEY,
+        rowKey: CURSOR_ROW_KEY,
+        status: 'cursor',
+        updatedAt: Date.now()
+      },
+      'Replace'
+    );
+  };
+
+  const bumpChangeTokenBestEffort = async (): Promise<void> => {
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        await bumpChangeToken();
+        return;
+      } catch {
+        // Best-effort signal only: the core forced refresh bounds staleness.
+      }
+    }
+  };
+
+  const getExistingEntity = async (
+    name: string,
+    version: string
+  ): Promise<any | undefined> => {
+    try {
+      return await createClient().getEntity<any>(name, version);
+    } catch (error) {
+      if (isNotFoundError(error)) {
+        return undefined;
+      }
+      throw error;
+    }
+  };
+
+  const deleteStaleReservation = async (
+    name: string,
+    version: string,
+    entity?: any
+  ): Promise<boolean> => {
+    const existing = entity ?? (await getExistingEntity(name, version));
+    if (!isStalePublishingEntity(existing, reservationTtlMs)) {
+      return false;
+    }
+
+    try {
+      await createClient().deleteEntity(name, version, { etag: existing.etag });
+      return true;
+    } catch (error) {
+      if (isNotFoundError(error) || isPreconditionFailedError(error)) {
+        return false;
+      }
+      throw error;
+    }
+  };
+
+  const commitStaleReservation = async (
+    row: ComponentRow
+  ): Promise<boolean> => {
+    const activeClient = createClient();
+    const entity = await getExistingEntity(row.name, row.version);
+    if (!isStalePublishingEntity(entity, reservationTtlMs)) {
+      return false;
+    }
+
+    const committedEntity = {
+      ...entity,
+      ...getComponentEntity(row, 'committed'),
+      createdAt: entity.createdAt,
+      updatedAt: Date.now()
+    };
+    if (row.templateSize === undefined) {
+      delete committedEntity.templateSize;
+    }
+    delete committedEntity.publishToken;
+
+    try {
+      await activeClient.updateEntity(committedEntity, 'Replace', {
+        etag: entity.etag
+      });
+      await bumpChangeTokenBestEffort();
+      return true;
+    } catch (error) {
+      if (isPreconditionFailedError(error) || isNotFoundError(error)) {
+        return false;
+      }
+      throw error;
+    }
   };
 
   return {
@@ -237,20 +405,18 @@ export default function azureTableMetadataAdapter(
 
     async addVersion(row: ComponentRow): Promise<void> {
       const activeClient = createClient();
+
       try {
-        await activeClient.createEntity({
-          partitionKey: row.name,
-          rowKey: row.version,
-          publishDate: row.publishDate,
-          templateSize: row.templateSize ?? null,
-          status: 'committed',
-          publishToken: null,
-          createdAt: Date.now(),
-          updatedAt: Date.now()
-        });
+        await activeClient.createEntity(getComponentEntity(row, 'committed'));
+        await bumpChangeTokenBestEffort();
       } catch (error) {
         if (isConflictError(error)) {
-          throw getVersionAlreadyExistsError(error);
+          if (await commitStaleReservation(row)) {
+            return;
+          }
+
+          const entity = await getExistingEntity(row.name, row.version);
+          throw getEntityAlreadyExistsError(entity, error);
         }
         throw error;
       }
@@ -259,23 +425,35 @@ export default function azureTableMetadataAdapter(
     async reserveVersion(row: ComponentRow): Promise<{ token: string }> {
       const activeClient = createClient();
       const token = randomUUID();
+
       try {
         await activeClient.createEntity({
-          partitionKey: row.name,
-          rowKey: row.version,
-          publishDate: row.publishDate,
-          templateSize: row.templateSize ?? null,
-          status: 'publishing',
-          publishToken: token,
-          createdAt: Date.now(),
-          updatedAt: Date.now()
+          ...getComponentEntity(row, 'publishing'),
+          publishToken: token
         });
       } catch (error) {
         if (isConflictError(error)) {
-          throw getVersionAlreadyExistsError(
-            error,
-            VERSION_PUBLISH_IN_PROGRESS
-          );
+          const entity = await getExistingEntity(row.name, row.version);
+          if (await deleteStaleReservation(row.name, row.version, entity)) {
+            try {
+              await activeClient.createEntity({
+                ...getComponentEntity(row, 'publishing'),
+                publishToken: token
+              });
+              return { token };
+            } catch (retryError) {
+              if (!isConflictError(retryError)) {
+                throw retryError;
+              }
+              const currentEntity = await getExistingEntity(
+                row.name,
+                row.version
+              );
+              throw getEntityAlreadyExistsError(currentEntity, retryError);
+            }
+          }
+
+          throw getEntityAlreadyExistsError(entity, error);
         }
         throw error;
       }
@@ -294,16 +472,17 @@ export default function azureTableMetadataAdapter(
         throw new Error('Component version reservation could not be committed');
       }
 
-      await activeClient.updateEntity(
-        {
-          ...entity,
-          status: 'committed',
-          publishToken: null,
-          updatedAt: Date.now()
-        },
-        'Replace',
-        { etag: entity.etag }
-      );
+      const committedEntity = {
+        ...entity,
+        status: 'committed',
+        updatedAt: Date.now()
+      };
+      delete committedEntity.publishToken;
+
+      await activeClient.updateEntity(committedEntity, 'Replace', {
+        etag: entity.etag
+      });
+      await bumpChangeTokenBestEffort();
     },
 
     async abortVersion(
@@ -318,6 +497,21 @@ export default function azureTableMetadataAdapter(
       }
 
       await activeClient.deleteEntity(name, version, { etag: entity.etag });
+    },
+
+    async getChangeToken(): Promise<string> {
+      try {
+        const cursor = await createClient().getEntity<any>(
+          CURSOR_PARTITION_KEY,
+          CURSOR_ROW_KEY
+        );
+        return cursor.etag || String(cursor.updatedAt || '');
+      } catch (error) {
+        if (isNotFoundError(error)) {
+          return '';
+        }
+        throw error;
+      }
     },
 
     async close(): Promise<void> {

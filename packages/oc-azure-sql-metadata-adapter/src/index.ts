@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import sql from 'mssql';
 import {
   type ComponentRow,
+  type MetadataStatus,
   type MetadataStore,
   VERSION_ALREADY_EXISTS,
   VERSION_PUBLISH_IN_PROGRESS,
@@ -25,11 +26,14 @@ export interface AzureSqlMetadataAdapterOptions extends sql.config {
    * the adapter falls back to Microsoft Entra ID (`azure-active-directory-default`).
    */
   clientId?: string;
+  /** Seconds before an uncommitted publish reservation can be reclaimed. */
+  reservationTtlSeconds?: number;
 }
 
 type SqlError = Error & { number?: number; code?: string };
 
 const UNIQUE_VIOLATION_NUMBERS = new Set([2627, 2601]);
+const DEFAULT_RESERVATION_TTL_SECONDS = 60 * 60;
 
 const isValidIdentifier = (value: string): boolean =>
   /^[A-Za-z_][A-Za-z0-9_]*$/.test(value);
@@ -65,11 +69,13 @@ const getSqlConfig = (
     schemaName,
     tableName,
     clientId,
+    reservationTtlSeconds,
     ...connectionOptions
   } = options;
   void manageSchema;
   void schemaName;
   void tableName;
+  void reservationTtlSeconds;
 
   if (connectionString) {
     return connectionString;
@@ -94,6 +100,11 @@ const isUniqueViolation = (error: unknown): boolean => {
     typeof err?.number === 'number' && UNIQUE_VIOLATION_NUMBERS.has(err.number)
   );
 };
+
+const getReservationTtlSeconds = (value: unknown): number =>
+  typeof value === 'number' && Number.isFinite(value) && value > 0
+    ? Math.max(1, Math.floor(value))
+    : DEFAULT_RESERVATION_TTL_SECONDS;
 
 const getVersionAlreadyExistsError = (
   error: unknown,
@@ -154,6 +165,16 @@ const assertRowsAffected = (
   }
 };
 
+const addComponentRowInputs = (
+  request: sql.Request,
+  row: ComponentRow
+): sql.Request =>
+  request
+    .input('componentName', sql.NVarChar(255), row.name)
+    .input('version', sql.NVarChar(64), row.version)
+    .input('publishDate', sql.BigInt, row.publishDate)
+    .input('templateSize', sql.BigInt, row.templateSize ?? null);
+
 export default function azureSqlMetadataAdapter(
   options?: AzureSqlMetadataAdapterOptions
 ): MetadataStore {
@@ -162,6 +183,9 @@ export default function azureSqlMetadataAdapter(
   const manageSchema = metadataOptions.manageSchema !== false;
   const schemaName = metadataOptions.schemaName || 'dbo';
   const tableName = metadataOptions.tableName || 'oc_components';
+  const reservationTtlSeconds = getReservationTtlSeconds(
+    metadataOptions.reservationTtlSeconds
+  );
   const connectionOptions = getSqlConfig(metadataOptions);
   let pool: sql.ConnectionPool | undefined;
 
@@ -178,6 +202,103 @@ export default function azureSqlMetadataAdapter(
 
     pool = await new sql.ConnectionPool(connectionOptions).connect();
     return pool;
+  };
+
+  const getExistingVersionStatus = async (
+    name: string,
+    version: string
+  ): Promise<MetadataStatus | undefined> => {
+    const { qualifiedTableName } = getTableNames();
+    const activePool = await getPool();
+    const result = await activePool
+      .request()
+      .input('componentName', sql.NVarChar(255), name)
+      .input('version', sql.NVarChar(64), version)
+      .query<{ status: MetadataStatus }>(`
+        SELECT status
+        FROM ${qualifiedTableName}
+        WHERE component_name = @componentName AND version = @version;
+      `);
+
+    return result.recordset[0]?.status;
+  };
+
+  const getReserveConflictCode = async (
+    name: string,
+    version: string
+  ): Promise<
+    typeof VERSION_ALREADY_EXISTS | typeof VERSION_PUBLISH_IN_PROGRESS
+  > =>
+    (await getExistingVersionStatus(name, version)) === 'publishing'
+      ? VERSION_PUBLISH_IN_PROGRESS
+      : VERSION_ALREADY_EXISTS;
+
+  const deleteStaleReservation = async (
+    name: string,
+    version: string
+  ): Promise<boolean> => {
+    const { qualifiedTableName } = getTableNames();
+    const activePool = await getPool();
+    const result = await activePool
+      .request()
+      .input('componentName', sql.NVarChar(255), name)
+      .input('version', sql.NVarChar(64), version)
+      .query(`
+        DELETE FROM ${qualifiedTableName}
+        WHERE component_name = @componentName
+          AND version = @version
+          AND status = N'publishing'
+          AND updated_at < DATEADD(SECOND, -${reservationTtlSeconds}, SYSUTCDATETIME());
+      `);
+
+    return (result.rowsAffected?.[0] ?? 0) > 0;
+  };
+
+  const commitStaleReservation = async (
+    row: ComponentRow
+  ): Promise<boolean> => {
+    const { qualifiedTableName } = getTableNames();
+    const activePool = await getPool();
+    const result = await addComponentRowInputs(
+      activePool.request(),
+      row
+    ).query(`
+      UPDATE ${qualifiedTableName}
+      SET publish_date = @publishDate,
+          template_size = @templateSize,
+          status = N'committed',
+          publish_token = NULL,
+          updated_at = SYSUTCDATETIME()
+      WHERE component_name = @componentName
+        AND version = @version
+        AND status = N'publishing'
+        AND updated_at < DATEADD(SECOND, -${reservationTtlSeconds}, SYSUTCDATETIME());
+    `);
+
+    return (result.rowsAffected?.[0] ?? 0) > 0;
+  };
+
+  const insertCommittedVersion = async (row: ComponentRow): Promise<void> => {
+    const { qualifiedTableName } = getTableNames();
+    const activePool = await getPool();
+    await addComponentRowInputs(activePool.request(), row).query(`
+      INSERT INTO ${qualifiedTableName} (component_name, version, publish_date, template_size, status, publish_token)
+      VALUES (@componentName, @version, @publishDate, @templateSize, N'committed', NULL);
+    `);
+  };
+
+  const insertReservation = async (
+    row: ComponentRow,
+    token: string
+  ): Promise<void> => {
+    const { qualifiedTableName } = getTableNames();
+    const activePool = await getPool();
+    await addComponentRowInputs(activePool.request(), row)
+      .input('publishToken', sql.NVarChar(64), token)
+      .query(`
+        INSERT INTO ${qualifiedTableName} (component_name, version, publish_date, template_size, status, publish_token)
+        VALUES (@componentName, @version, @publishDate, @templateSize, N'publishing', @publishToken);
+      `);
   };
 
   return {
@@ -232,22 +353,18 @@ export default function azureSqlMetadataAdapter(
     },
 
     async addVersion(row: ComponentRow): Promise<void> {
-      const { qualifiedTableName } = getTableNames();
-      const activePool = await getPool();
       try {
-        await activePool
-          .request()
-          .input('componentName', sql.NVarChar(255), row.name)
-          .input('version', sql.NVarChar(64), row.version)
-          .input('publishDate', sql.BigInt, row.publishDate)
-          .input('templateSize', sql.BigInt, row.templateSize ?? null)
-          .query(`
-            INSERT INTO ${qualifiedTableName} (component_name, version, publish_date, template_size, status, publish_token)
-            VALUES (@componentName, @version, @publishDate, @templateSize, N'committed', NULL);
-          `);
+        await insertCommittedVersion(row);
       } catch (error) {
         if (isUniqueViolation(error)) {
-          throw getVersionAlreadyExistsError(error);
+          if (await commitStaleReservation(row)) {
+            return;
+          }
+
+          throw getVersionAlreadyExistsError(
+            error,
+            await getReserveConflictCode(row.name, row.version)
+          );
         }
 
         throw error;
@@ -255,26 +372,25 @@ export default function azureSqlMetadataAdapter(
     },
 
     async reserveVersion(row: ComponentRow): Promise<{ token: string }> {
-      const { qualifiedTableName } = getTableNames();
-      const activePool = await getPool();
       const token = randomUUID();
       try {
-        await activePool
-          .request()
-          .input('componentName', sql.NVarChar(255), row.name)
-          .input('version', sql.NVarChar(64), row.version)
-          .input('publishDate', sql.BigInt, row.publishDate)
-          .input('templateSize', sql.BigInt, row.templateSize ?? null)
-          .input('publishToken', sql.NVarChar(64), token)
-          .query(`
-            INSERT INTO ${qualifiedTableName} (component_name, version, publish_date, template_size, status, publish_token)
-            VALUES (@componentName, @version, @publishDate, @templateSize, N'publishing', @publishToken);
-          `);
+        await insertReservation(row, token);
       } catch (error) {
         if (isUniqueViolation(error)) {
+          if (await deleteStaleReservation(row.name, row.version)) {
+            try {
+              await insertReservation(row, token);
+              return { token };
+            } catch (retryError) {
+              if (!isUniqueViolation(retryError)) {
+                throw retryError;
+              }
+            }
+          }
+
           throw getVersionAlreadyExistsError(
             error,
-            VERSION_PUBLISH_IN_PROGRESS
+            await getReserveConflictCode(row.name, row.version)
           );
         }
 
@@ -327,6 +443,22 @@ export default function azureSqlMetadataAdapter(
         result,
         'Component version reservation could not be aborted'
       );
+    },
+
+    async getChangeToken(): Promise<string> {
+      const { qualifiedTableName } = getTableNames();
+      const activePool = await getPool();
+      const result = await activePool.request().query<{
+        maxPublishDate: number | string | null;
+        total: number | string;
+      }>(`
+        SELECT MAX(publish_date) AS maxPublishDate, COUNT_BIG(1) AS total
+        FROM ${qualifiedTableName}
+        WHERE status = N'committed';
+      `);
+      const row = result.recordset[0];
+
+      return `${row?.total ?? 0}:${row?.maxPublishDate ?? 0}`;
     },
 
     async close(): Promise<void> {

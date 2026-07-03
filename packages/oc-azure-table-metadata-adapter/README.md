@@ -101,6 +101,7 @@ metadata: {
 | `tableName` | `occomponents` | Azure Table name. Must be 3–63 chars, start with a letter, and contain only alphanumeric characters. |
 | `manageSchema` | `true` | When `true`, the adapter creates the table if missing (idempotent — `createTable` does not throw if the table already exists). When `false`, it verifies the table exists and fails fast if it does not. |
 | `allowInsecureConnection` | `false` | Allow HTTP (insecure) connections — for Azurite or local development. |
+| `reservationTtlSeconds` | `3600` | Age after which a `publishing` reservation is considered abandoned and can be reclaimed by a new publish or healed by storage reconciliation. |
 
 Authentication precedence when `connectionString` is absent: `accountName` +
 `accountKey` → `sasToken` → explicit `credential` → `DefaultAzureCredential`.
@@ -117,7 +118,7 @@ Each component version is stored as a single table entity:
 | `PartitionKey` | `row.name` | Component name — gives partition-level isolation between components. |
 | `RowKey` | `row.version` | Component version — combined with `PartitionKey` forms the unique primary key. |
 | `publishDate` | `row.publishDate` | Unix timestamp (seconds). |
-| `templateSize` | `row.templateSize` | Template file size in bytes, or `null` if not set. |
+| `templateSize` | `row.templateSize` | Template file size in bytes. Omitted when not set. |
 | `status` | adapter | `publishing` while reserved, `committed` once visible to reads. |
 | `publishToken` | adapter | Reservation token used to commit or abort only the publisher that reserved the row. |
 | `createdAt` | `Date.now()` | Insertion timestamp (milliseconds) — reserved for future delta cursor / audit. |
@@ -147,14 +148,23 @@ fast with a clear error.
 - Startup fails if the table cannot be created or accessed.
 - Reads are served from OC's in-memory cache; hot component reads do not hit
   Table Storage.
-- Polling re-hydrates the in-memory cache from `getAllComponents()`. The
-  `@azure/data-tables` SDK auto-paginates the entity query via its paged async
-  iterator, so all rows are returned regardless of registry size.
+- Polling first checks a point-read cursor entity and only re-hydrates when that
+  cursor changes, with a periodic full refresh safety net in OC core.
+  Rehydration uses `getAllComponents()`; the `@azure/data-tables` SDK
+  auto-paginates the entity query via its paged async iterator, so all rows are
+  returned regardless of registry size.
 - If polling fails after startup, OC keeps serving the previous in-memory cache
   and retries on the next poll.
 - Publish reserves a `publishing` metadata entity first, uploads statics only
   after reservation succeeds, then commits the entity. If upload or commit fails,
   OC best-effort aborts the matching reservation.
+- Successful commits update a best-effort cursor entity at `PartitionKey =
+  'oc.metadata'`, `RowKey = 'cursor'`. This key cannot collide with component
+  rows because OC component names reject dots.
+- If a publisher dies, stale `publishing` entities older than
+  `reservationTtlSeconds` are reclaimed on the next same-version publish; storage
+  reconciliation can also commit a stale reservation when the component files
+  already exist in storage.
 - When the registry is shut down via `registry.close(callback)`, the adapter's
   `close()` is called. Since Table Storage is HTTP-based with no connection
   pool, `close()` simply clears the internal client reference and is safe to

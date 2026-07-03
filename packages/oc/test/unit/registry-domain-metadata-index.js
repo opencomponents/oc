@@ -111,6 +111,68 @@ describe('registry : domain : metadata-index', () => {
         expect(store.getAllComponents.calledOnce).to.be.true;
         expect(second).to.equal(first);
       });
+
+      it('should skip full rehydration when the metadata change token is unchanged', async () => {
+        const store = {
+          getAllComponents: sinon.stub().resolves(rows),
+          getChangeToken: sinon.stub().resolves('token-1')
+        };
+        const index = createMetadataIndex(store);
+
+        const first = await index.refresh();
+        const second = await index.refresh();
+
+        expect(store.getChangeToken.calledTwice).to.be.true;
+        expect(store.getAllComponents.calledOnce).to.be.true;
+        expect(second).to.equal(first);
+      });
+
+      it('should rehydrate when the metadata change token changes', async () => {
+        const store = {
+          getAllComponents: sinon
+            .stub()
+            .onFirstCall()
+            .resolves(rows)
+            .onSecondCall()
+            .resolves([
+              ...rows,
+              { name: 'fresh', version: '1.0.0', publishDate: 200 }
+            ]),
+          getChangeToken: sinon
+            .stub()
+            .onFirstCall()
+            .resolves('token-1')
+            .onSecondCall()
+            .resolves('token-2')
+        };
+        const index = createMetadataIndex(store);
+
+        await index.refresh();
+        const second = await index.refresh();
+
+        expect(store.getAllComponents.calledTwice).to.be.true;
+        expect(second.componentsList.components.fresh).to.eql(['1.0.0']);
+      });
+
+      it('should force a periodic full rehydration even when the token is unchanged', async () => {
+        const now = sinon.stub(Date, 'now');
+        now.onFirstCall().returns(0);
+        now.onSecondCall().returns(5 * 60 * 1000 + 1);
+        const store = {
+          getAllComponents: sinon.stub().resolves(rows),
+          getChangeToken: sinon.stub().resolves('token-1')
+        };
+        const index = createMetadataIndex(store);
+
+        try {
+          await index.refresh();
+          await index.refresh();
+        } finally {
+          now.restore();
+        }
+
+        expect(store.getAllComponents.calledTwice).to.be.true;
+      });
     });
 
     describe('add()', () => {

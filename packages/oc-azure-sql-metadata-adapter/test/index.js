@@ -343,8 +343,12 @@ describe('oc-azure-sql-metadata-adapter', () => {
     for (const number of [2627, 2601]) {
       it(`should map SQL Server unique violation ${number} to VERSION_ALREADY_EXISTS`, async () => {
         const originalError = Object.assign(new Error('duplicate'), { number });
+        const query = sinon.stub();
+        query.onFirstCall().rejects(originalError);
+        query.onSecondCall().resolves({ rowsAffected: [0] });
+        query.onThirdCall().resolves({ recordset: [{ status: 'committed' }] });
         const { adapter, VERSION_ALREADY_EXISTS } = createAdapter({
-          query: sinon.stub().rejects(originalError)
+          query
         });
         const store = adapter({ server: 'localhost', database: 'oc' });
         let error;
@@ -414,8 +418,12 @@ describe('oc-azure-sql-metadata-adapter', () => {
       const originalError = Object.assign(new Error('duplicate'), {
         number: 2627
       });
+      const query = sinon.stub();
+      query.onFirstCall().rejects(originalError);
+      query.onSecondCall().resolves({ rowsAffected: [0] });
+      query.onThirdCall().resolves({ recordset: [{ status: 'publishing' }] });
       const { adapter } = createAdapter({
-        query: sinon.stub().rejects(originalError)
+        query
       });
       const store = adapter({ server: 'localhost', database: 'oc' });
       let error;
@@ -432,6 +440,86 @@ describe('oc-azure-sql-metadata-adapter', () => {
 
       expect(error.code).to.equal('VERSION_PUBLISH_IN_PROGRESS');
       expect(error.cause).to.equal(originalError);
+    });
+
+    it('should map duplicate reservation on committed rows to VERSION_ALREADY_EXISTS', async () => {
+      const originalError = Object.assign(new Error('duplicate'), {
+        number: 2627
+      });
+      const query = sinon.stub();
+      query.onFirstCall().rejects(originalError);
+      query.onSecondCall().resolves({ rowsAffected: [0] });
+      query.onThirdCall().resolves({ recordset: [{ status: 'committed' }] });
+      const { adapter } = createAdapter({ query });
+      const store = adapter({ server: 'localhost', database: 'oc' });
+      let error;
+
+      try {
+        await store.reserveVersion({
+          name: 'hello-world',
+          version: '1.0.0',
+          publishDate: 123
+        });
+      } catch (err) {
+        error = err;
+      }
+
+      expect(error.code).to.equal('VERSION_ALREADY_EXISTS');
+      expect(error.cause).to.equal(originalError);
+    });
+
+    it('should reclaim stale reservations before retrying reserve', async () => {
+      const originalError = Object.assign(new Error('duplicate'), {
+        number: 2627
+      });
+      const query = sinon.stub();
+      query.onFirstCall().rejects(originalError);
+      query.onSecondCall().resolves({ rowsAffected: [1] });
+      query.onThirdCall().resolves({ rowsAffected: [1] });
+      const { adapter, requests } = createAdapter({ query });
+      const store = adapter({ server: 'localhost', database: 'oc' });
+
+      const reservation = await store.reserveVersion({
+        name: 'hello-world',
+        version: '1.0.0',
+        publishDate: 123
+      });
+
+      expect(reservation.token).to.be.a('string');
+      expect(query.calledThrice).to.be.true;
+      expect(query.args[1][0]).to.contain(
+        'updated_at < DATEADD(SECOND, -3600, SYSUTCDATETIME())'
+      );
+      expect(requests[2].inputs).to.deep.include({
+        name: 'publishToken',
+        type: { type: 'NVarChar', length: 64 },
+        value: reservation.token
+      });
+    });
+
+    it('should commit stale reservations during backfill addVersion', async () => {
+      const originalError = Object.assign(new Error('duplicate'), {
+        number: 2627
+      });
+      const query = sinon.stub();
+      query.onFirstCall().rejects(originalError);
+      query.onSecondCall().resolves({ rowsAffected: [1] });
+      const { adapter } = createAdapter({ query });
+      const store = adapter({ server: 'localhost', database: 'oc' });
+
+      await store.addVersion({
+        name: 'hello-world',
+        version: '1.0.0',
+        publishDate: 123,
+        templateSize: 456
+      });
+
+      expect(query.calledTwice).to.be.true;
+      expect(query.args[1][0]).to.contain('SET publish_date = @publishDate');
+      expect(query.args[1][0]).to.contain("status = N'committed'");
+      expect(query.args[1][0]).to.contain(
+        'updated_at < DATEADD(SECOND, -3600, SYSUTCDATETIME())'
+      );
     });
 
     it('should commit a matching reservation', async () => {
@@ -498,6 +586,23 @@ describe('oc-azure-sql-metadata-adapter', () => {
       expect(error.message).to.equal(
         'Component version reservation could not be aborted'
       );
+    });
+
+    it('should return an aggregate change token for committed rows', async () => {
+      const { adapter, queryStub } = createAdapter({
+        query: sinon
+          .stub()
+          .resolves({ recordset: [{ maxPublishDate: '123', total: '2' }] })
+      });
+      const store = adapter({ server: 'localhost', database: 'oc' });
+
+      const token = await store.getChangeToken();
+
+      expect(token).to.equal('2:123');
+      expect(queryStub.args[0][0]).to.contain(
+        'SELECT MAX(publish_date) AS maxPublishDate, COUNT_BIG(1) AS total'
+      );
+      expect(queryStub.args[0][0]).to.contain("WHERE status = N'committed'");
     });
   });
 

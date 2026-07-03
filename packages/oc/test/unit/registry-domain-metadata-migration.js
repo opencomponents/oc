@@ -73,6 +73,18 @@ describe('registry : domain : metadata-migration', () => {
       expect(result).to.eql({ scanned: 2, inserted: 1, skipped: 1 });
     });
 
+    it('should treat active metadata reservations as skipped', async () => {
+      const metadataStore = {
+        addVersion: sinon.stub().rejects({ code: 'VERSION_PUBLISH_IN_PROGRESS' })
+      };
+
+      const result = await backfillMetadataRows(metadataStore, [
+        { name: 'hello-world', version: '1.0.0', publishDate: 123 }
+      ]);
+
+      expect(result).to.eql({ scanned: 1, inserted: 0, skipped: 1 });
+    });
+
     it('should rethrow non-idempotent metadata insert errors', async () => {
       const error = new Error('database unavailable');
       const metadataStore = { addVersion: sinon.stub().rejects(error) };

@@ -21,6 +21,7 @@ export interface MetadataStore {
   reserveVersion(row: ComponentRow): Promise<{ token: string }>;
   commitVersion(name: string, version: string, token: string): Promise<void>;
   abortVersion(name: string, version: string, token: string): Promise<void>;
+  getChangeToken?(): Promise<string>;
   close?(): Promise<void>;
   removeVersion?(name: string, version: string): Promise<void>;
   changesSince?(cursor: string): Promise<{

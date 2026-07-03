@@ -1,4 +1,7 @@
-import { VERSION_ALREADY_EXISTS } from 'oc-metadata-adapters-utils';
+import {
+  VERSION_ALREADY_EXISTS,
+  VERSION_PUBLISH_IN_PROGRESS
+} from 'oc-metadata-adapters-utils';
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import type {
   Component,
@@ -70,7 +73,10 @@ export const backfillMetadataRows = async (
       await metadataStore.addVersion(row);
       result.inserted += 1;
     } catch (err: any) {
-      if (err?.code === VERSION_ALREADY_EXISTS) {
+      if (
+        err?.code === VERSION_ALREADY_EXISTS ||
+        err?.code === VERSION_PUBLISH_IN_PROGRESS
+      ) {
         result.skipped += 1;
       } else {
         throw err;

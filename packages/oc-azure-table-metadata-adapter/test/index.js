@@ -8,9 +8,11 @@ const createAdapter = ({
   createTable,
   getEntity,
   updateEntity,
-  deleteEntity
+  deleteEntity,
+  upsertEntity
 } = {}) => {
   const createdEntities = [];
+  const upsertedEntities = [];
   const createEntityStub =
     createEntity ||
     sinon.stub().callsFake((entity) => {
@@ -41,6 +43,12 @@ const createAdapter = ({
   const getEntityStub = getEntity || sinon.stub().rejects({ statusCode: 404 });
   const updateEntityStub = updateEntity || sinon.stub().resolves();
   const deleteEntityStub = deleteEntity || sinon.stub().resolves();
+  const upsertEntityStub =
+    upsertEntity ||
+    sinon.stub().callsFake((entity) => {
+      upsertedEntities.push(entity);
+      return Promise.resolve();
+    });
 
   const tableClients = [];
   const serviceClients = [];
@@ -71,6 +79,7 @@ const createAdapter = ({
       this.getEntity = getEntityStub;
       this.updateEntity = updateEntityStub;
       this.deleteEntity = deleteEntityStub;
+      this.upsertEntity = upsertEntityStub;
       tableClients.push(this);
     }
   }
@@ -124,7 +133,9 @@ const createAdapter = ({
     getEntityStub,
     updateEntityStub,
     deleteEntityStub,
+    upsertEntityStub,
     createdEntities,
+    upsertedEntities,
     tableClients,
     serviceClients,
     TableServiceClient
@@ -375,7 +386,8 @@ describe('oc-azure-table-metadata-adapter', () => {
 
   describe('addVersion()', () => {
     it('should insert an entity with partitionKey and rowKey', async () => {
-      const { adapter, createEntityStub, createdEntities } = createAdapter();
+      const { adapter, createEntityStub, createdEntities, upsertEntityStub } =
+        createAdapter();
       const store = adapter({ connectionString: 'foo' });
 
       await store.addVersion({
@@ -392,13 +404,14 @@ describe('oc-azure-table-metadata-adapter', () => {
         publishDate: 123,
         templateSize: 456,
         status: 'committed',
-        publishToken: null,
         createdAt: createdEntities[0].createdAt,
         updatedAt: createdEntities[0].updatedAt
       });
+      expect(createdEntities[0]).to.not.have.property('publishToken');
+      expect(upsertEntityStub.calledOnce).to.be.true;
     });
 
-    it('should insert null templateSize when omitted', async () => {
+    it('should omit templateSize when omitted', async () => {
       const { adapter, createdEntities } = createAdapter();
       const store = adapter({ connectionString: 'foo' });
 
@@ -408,7 +421,7 @@ describe('oc-azure-table-metadata-adapter', () => {
         publishDate: 123
       });
 
-      expect(createdEntities[0].templateSize).to.be.null;
+      expect(createdEntities[0]).to.not.have.property('templateSize');
     });
 
     it('should map 409 conflict to VERSION_ALREADY_EXISTS', async () => {
@@ -416,7 +429,8 @@ describe('oc-azure-table-metadata-adapter', () => {
         statusCode: 409
       });
       const { adapter, VERSION_ALREADY_EXISTS } = createAdapter({
-        createEntity: sinon.stub().rejects(conflictError)
+        createEntity: sinon.stub().rejects(conflictError),
+        getEntity: sinon.stub().resolves({ status: 'committed' })
       });
       const store = adapter({ connectionString: 'foo' });
       let error;
@@ -434,6 +448,50 @@ describe('oc-azure-table-metadata-adapter', () => {
       expect(error.message).to.equal('Component version already exists');
       expect(error.code).to.equal(VERSION_ALREADY_EXISTS);
       expect(error.cause).to.equal(conflictError);
+    });
+
+    it('should commit stale reservations during backfill addVersion', async () => {
+      const conflictError = Object.assign(new Error('Conflict'), {
+        statusCode: 409
+      });
+      const oldNow = Date.now() - 10_000;
+      const staleEntity = {
+        partitionKey: 'hello-world',
+        rowKey: '1.0.0',
+        publishDate: 1,
+        templateSize: 2,
+        status: 'publishing',
+        publishToken: 'stale-token',
+        createdAt: oldNow,
+        updatedAt: oldNow,
+        etag: 'etag-1'
+      };
+      const { adapter, updateEntityStub } = createAdapter({
+        createEntity: sinon.stub().rejects(conflictError),
+        getEntity: sinon.stub().resolves(staleEntity)
+      });
+      const store = adapter({
+        connectionString: 'foo',
+        reservationTtlSeconds: 1
+      });
+
+      await store.addVersion({
+        name: 'hello-world',
+        version: '1.0.0',
+        publishDate: 123,
+        templateSize: 456
+      });
+
+      expect(updateEntityStub.calledOnce).to.be.true;
+      expect(updateEntityStub.args[0][0]).to.include({
+        partitionKey: 'hello-world',
+        rowKey: '1.0.0',
+        publishDate: 123,
+        templateSize: 456,
+        status: 'committed'
+      });
+      expect(updateEntityStub.args[0][0]).to.not.have.property('publishToken');
+      expect(updateEntityStub.args[0][2]).to.eql({ etag: 'etag-1' });
     });
 
     it('should rethrow non-conflict errors', async () => {
@@ -488,7 +546,8 @@ describe('oc-azure-table-metadata-adapter', () => {
         statusCode: 409
       });
       const { adapter } = createAdapter({
-        createEntity: sinon.stub().rejects(conflictError)
+        createEntity: sinon.stub().rejects(conflictError),
+        getEntity: sinon.stub().resolves({ status: 'publishing' })
       });
       const store = adapter({ connectionString: 'foo' });
       let error;
@@ -507,6 +566,74 @@ describe('oc-azure-table-metadata-adapter', () => {
       expect(error.cause).to.equal(conflictError);
     });
 
+    it('should map duplicate reservation on committed rows to VERSION_ALREADY_EXISTS', async () => {
+      const conflictError = Object.assign(new Error('Conflict'), {
+        statusCode: 409
+      });
+      const { adapter } = createAdapter({
+        createEntity: sinon.stub().rejects(conflictError),
+        getEntity: sinon.stub().resolves({ status: 'committed' })
+      });
+      const store = adapter({ connectionString: 'foo' });
+      let error;
+
+      try {
+        await store.reserveVersion({
+          name: 'hello-world',
+          version: '1.0.0',
+          publishDate: 123
+        });
+      } catch (err) {
+        error = err;
+      }
+
+      expect(error.code).to.equal('VERSION_ALREADY_EXISTS');
+      expect(error.cause).to.equal(conflictError);
+    });
+
+    it('should reclaim stale reservations before retrying reserve', async () => {
+      const conflictError = Object.assign(new Error('Conflict'), {
+        statusCode: 409
+      });
+      const createEntity = sinon.stub();
+      createEntity.onFirstCall().rejects(conflictError);
+      createEntity.onSecondCall().resolves();
+      const oldNow = Date.now() - 10_000;
+      const { adapter, deleteEntityStub } = createAdapter({
+        createEntity,
+        getEntity: sinon.stub().resolves({
+          status: 'publishing',
+          publishToken: 'stale-token',
+          updatedAt: oldNow,
+          etag: 'etag-1'
+        })
+      });
+      const store = adapter({
+        connectionString: 'foo',
+        reservationTtlSeconds: 1
+      });
+
+      const reservation = await store.reserveVersion({
+        name: 'hello-world',
+        version: '1.0.0',
+        publishDate: 123
+      });
+
+      expect(reservation.token).to.be.a('string');
+      expect(
+        deleteEntityStub.calledOnceWith('hello-world', '1.0.0', {
+          etag: 'etag-1'
+        })
+      ).to.be.true;
+      expect(createEntity.calledTwice).to.be.true;
+      expect(createEntity.args[1][0]).to.include({
+        partitionKey: 'hello-world',
+        rowKey: '1.0.0',
+        status: 'publishing',
+        publishToken: reservation.token
+      });
+    });
+
     it('should commit a matching reservation', async () => {
       const entity = {
         partitionKey: 'hello-world',
@@ -516,7 +643,7 @@ describe('oc-azure-table-metadata-adapter', () => {
         publishToken: 'publish-token',
         etag: 'etag-1'
       };
-      const { adapter, updateEntityStub } = createAdapter({
+      const { adapter, updateEntityStub, upsertEntityStub } = createAdapter({
         getEntity: sinon.stub().resolves(entity)
       });
       const store = adapter({ connectionString: 'foo' });
@@ -525,10 +652,11 @@ describe('oc-azure-table-metadata-adapter', () => {
 
       expect(updateEntityStub.calledOnce).to.be.true;
       expect(updateEntityStub.args[0][0]).to.include({
-        status: 'committed',
-        publishToken: null
+        status: 'committed'
       });
+      expect(updateEntityStub.args[0][0]).to.not.have.property('publishToken');
       expect(updateEntityStub.args[0][2]).to.eql({ etag: 'etag-1' });
+      expect(upsertEntityStub.calledOnce).to.be.true;
     });
 
     it('should throw when commit sees a mismatched reservation token', async () => {
@@ -592,6 +720,28 @@ describe('oc-azure-table-metadata-adapter', () => {
         'Component version reservation could not be aborted'
       );
       expect(deleteEntityStub.called).to.be.false;
+    });
+
+    it('should return the cursor etag as the change token', async () => {
+      const { adapter } = createAdapter({
+        getEntity: sinon.stub().resolves({ etag: 'etag-cursor' })
+      });
+      const store = adapter({ connectionString: 'foo' });
+
+      const token = await store.getChangeToken();
+
+      expect(token).to.equal('etag-cursor');
+    });
+
+    it('should return an empty change token before the cursor exists', async () => {
+      const { adapter } = createAdapter({
+        getEntity: sinon.stub().rejects({ statusCode: 404 })
+      });
+      const store = adapter({ connectionString: 'foo' });
+
+      const token = await store.getChangeToken();
+
+      expect(token).to.equal('');
     });
   });
 
