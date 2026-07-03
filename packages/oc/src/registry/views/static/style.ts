@@ -1145,6 +1145,11 @@ select {
   border-top: 1px solid var(--color-border);
 }
 
+.pagination-top {
+  border-top: none;
+  border-bottom: 1px solid var(--color-border);
+}
+
 .pagination-btn {
   min-width: 2.25rem;
   padding: 0.4rem 0.6rem;

@@ -24,9 +24,10 @@ oc.cmd.push(function() {
   var currentPage = 1;
 
   var renderComponentsPagination = function(totalMatching, totalPages) {
-    var container = $('#components-pagination');
+    // Rendered into both the top and bottom containers so they stay in sync.
+    var containers = $('.components-pagination');
     if (!paginationEnabled || totalMatching <= COMPONENTS_PAGE_SIZE) {
-      container.addClass('hide').empty();
+      containers.addClass('hide').empty();
       return;
     }
 
@@ -77,7 +78,7 @@ oc.cmd.push(function() {
       (currentPage >= totalPages ? ' disabled' : '') +
       '>Next</button>';
 
-    container.html(html).removeClass('hide');
+    containers.html(html).removeClass('hide');
   };
 
   var applyComponentsView = function() {
@@ -357,7 +358,9 @@ oc.cmd.push(function() {
     .keyup(debounce(componentsListChanged, 80));
   $('#filter-components input[type=checkbox]').change(componentsListChanged);
 
-  $('#components-pagination').on('click', '.pagination-btn', function() {
+  // Delegated from the stable list container so both the top and bottom
+  // pagination bars work. No auto-scroll, so repeated clicks stay put.
+  $('#components-list').on('click', '.pagination-btn', function() {
     var $btn = $(this);
     if ($btn.is('[disabled]')) {
       return;
@@ -368,11 +371,6 @@ oc.cmd.push(function() {
     }
     currentPage = page;
     applyComponentsView();
-    // Bring the top of the list back into view after switching pages.
-    var listEl = document.getElementById('components-list');
-    if (listEl && listEl.scrollIntoView) {
-      listEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
   });
 
   if (q) {
