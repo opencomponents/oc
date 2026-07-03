@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "mssql": "^12.1.0",
-    "oc-metadata-adapters-utils": "*"
+    "oc-metadata-adapters-utils": "^0.1.0"
   },
   "devDependencies": {
     "@types/mssql": "^12.3.0",
