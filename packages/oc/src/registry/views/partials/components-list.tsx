@@ -122,6 +122,11 @@ const ComponentsList = (props: {
       <div class="list-meta">
         <span id="results-count">{props.components.length} components</span>
       </div>
+      <nav
+        id="components-pagination-top"
+        class="pagination components-pagination pagination-top hide"
+        aria-label="Components pagination"
+      />
       <div class="row header componentRow table">
         <div class="title">Component</div>
         <div class="author">Author</div>
@@ -138,6 +143,11 @@ const ComponentsList = (props: {
       <div id="components-empty" class="empty-state hide">
         No components match your filters.
       </div>
+      <nav
+        id="components-pagination-bottom"
+        class="pagination components-pagination hide"
+        aria-label="Components pagination"
+      />
     </div>
   );
 };
