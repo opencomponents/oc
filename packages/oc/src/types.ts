@@ -52,8 +52,28 @@ export interface ComponentsList {
 export interface MetadataConfig<T = any> {
   adapter: (options: T) => MetadataStoreType;
   options: T;
+  /**
+   * Controls whether OC asks the metadata adapter to manage its schema/table.
+   * When omitted, OC behaves as `true` and passes that default to adapter
+   * validation/startup/migration paths.
+   *
+   * @default true
+   */
   manageSchema?: boolean;
+  /**
+   * When true, startup scans storage and inserts any missing metadata rows
+   * before cache hydration. Existing rows are skipped.
+   *
+   * @default false
+   */
   reconcileFromStorage?: boolean;
+  /**
+   * When true, startup exports DB-derived `components.json` and
+   * `components-details.json` projections to storage. This is a one-way export
+   * from metadata to storage and is not triggered on each publish.
+   *
+   * @default false
+   */
   exportLegacyFiles?: boolean;
   /**
    * Interval, in seconds, at which the DB→`components.json` legacy export runs
