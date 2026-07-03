@@ -63,6 +63,7 @@ export default function repository(conf: Config) {
   const componentsCache = ComponentsCache(conf, cdn, metadataIndex);
   const componentsDetails = getComponentsDetails(conf, cdn, metadataIndex);
   let exportLegacyFilesLoop: NodeJS.Timeout | undefined;
+  let closed = false;
 
   const getFilePath = (component: string, version: string, filePath: string) =>
     `${options!.componentsDir}/${component}/${version}/${filePath}`;
@@ -91,6 +92,7 @@ export default function repository(conf: Config) {
   const scheduleLegacyFilesExport = () => {
     const intervalSeconds = conf.metadata?.exportLegacyFilesInterval;
     if (
+      closed ||
       !metadataStore ||
       !conf.metadata?.exportLegacyFiles ||
       !intervalSeconds
@@ -100,7 +102,9 @@ export default function repository(conf: Config) {
 
     exportLegacyFilesLoop = setTimeout(async () => {
       await exportLegacyFiles();
-      scheduleLegacyFilesExport();
+      if (!closed) {
+        scheduleLegacyFilesExport();
+      }
     }, intervalSeconds * 1000);
   };
 
@@ -534,6 +538,7 @@ export default function repository(conf: Config) {
         .catch(() => undefined);
     },
     async close(): Promise<void> {
+      closed = true;
       componentsCache.close?.();
       componentsDetails.close?.();
       if (exportLegacyFilesLoop) {

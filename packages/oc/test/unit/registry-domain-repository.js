@@ -781,6 +781,49 @@ describe('registry : domain : repository', () => {
             }
           });
 
+          it('should not reschedule legacy export when closed while an export is running', async () => {
+            resetMetadataMocks();
+            const clock = sinon.useFakeTimers();
+            let resolveIntervalRows;
+            const row = {
+              name: 'hello-world',
+              version: '1.0.0',
+              publishDate: 123,
+              templateSize: 10
+            };
+            try {
+              metadataStoreMock.getAllComponents = sinon
+                .stub()
+                .onFirstCall()
+                .resolves([row])
+                .onSecondCall()
+                .returns(
+                  new Promise((resolve) => {
+                    resolveIntervalRows = resolve;
+                  })
+                );
+              const repository = getRepositoryWithMetadata({
+                exportLegacyFiles: true,
+                exportLegacyFilesInterval: 60
+              });
+
+              await repository.init();
+              await clock.tickAsync(0);
+              expect(s3Mock.putFileContent.callCount).to.equal(2);
+
+              await clock.tickAsync(60 * 1000);
+              await repository.close();
+              resolveIntervalRows([row]);
+              await clock.tickAsync(0);
+              expect(s3Mock.putFileContent.callCount).to.equal(4);
+
+              await clock.tickAsync(60 * 1000);
+              expect(s3Mock.putFileContent.callCount).to.equal(4);
+            } finally {
+              clock.restore();
+            }
+          });
+
           describe('when metadata store reports an existing version', () => {
             before((done) => {
               resetMetadataMocks();

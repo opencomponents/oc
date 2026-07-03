@@ -93,8 +93,10 @@ export const createMetadataIndex = (
   let snapshot: MetadataSnapshot | undefined;
   let lastChangeToken: string | undefined;
   let lastForcedRefreshAt = 0;
+  let localAddGeneration = 0;
 
   const refresh = async (): Promise<MetadataSnapshot> => {
+    const refreshGeneration = localAddGeneration;
     const changeToken = metadataStore.getChangeToken
       ? await metadataStore.getChangeToken()
       : undefined;
@@ -110,6 +112,10 @@ export const createMetadataIndex = (
     }
 
     const rows = await metadataStore.getAllComponents();
+    if (snapshot && refreshGeneration !== localAddGeneration) {
+      return snapshot;
+    }
+
     snapshot = buildSnapshot(rows);
     lastChangeToken = changeToken;
     lastForcedRefreshAt = now;
@@ -121,6 +127,7 @@ export const createMetadataIndex = (
     // No snapshot yet: build one from the single row.
     if (!snapshot) {
       snapshot = buildSnapshot([row]);
+      localAddGeneration += 1;
 
       return snapshot;
     }
@@ -164,6 +171,7 @@ export const createMetadataIndex = (
         components: { ...prevDetails, [name]: detail }
       }
     };
+    localAddGeneration += 1;
 
     return snapshot;
   };

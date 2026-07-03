@@ -13,6 +13,7 @@ export default function componentsCache(
 ) {
   let cachedComponentsList: ComponentsList;
   let refreshLoop: NodeJS.Timeout;
+  let closed = false;
 
   const componentsList = getComponentsList(conf, cdn);
 
@@ -37,13 +38,17 @@ export default function componentsCache(
           message: err?.message || String(err)
         });
       }
-      refreshLoop = poll();
+      if (!closed) {
+        refreshLoop = poll();
+      }
     }, conf.pollingInterval * 1000);
   };
 
   const cacheDataAndStartPolling = (data: ComponentsList) => {
     cachedComponentsList = data;
-    refreshLoop = poll();
+    if (!closed) {
+      refreshLoop = poll();
+    }
 
     return data;
   };
@@ -119,6 +124,7 @@ export default function componentsCache(
     },
 
     close(): void {
+      closed = true;
       clearTimeout(refreshLoop);
     }
   };

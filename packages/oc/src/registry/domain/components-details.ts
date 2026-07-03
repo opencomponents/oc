@@ -19,6 +19,7 @@ export default function componentsDetails(
 ) {
   let cachedComponentsDetails: ComponentsDetails | undefined;
   let refreshLoop: NodeJS.Timeout;
+  let closed = false;
 
   const returnError = (code: string, message: string | Error) => {
     eventsHandler.fire('error', {
@@ -58,13 +59,15 @@ export default function componentsDetails(
           message: err?.message || String(err)
         });
       }
-      refreshLoop = poll();
+      if (!closed) {
+        refreshLoop = poll();
+      }
     }, conf.pollingInterval * 1000);
   };
 
   const cacheDataAndStartPolling = (data: ComponentsDetails) => {
     cachedComponentsDetails = data;
-    if (!metadataIndex) {
+    if (!metadataIndex && !closed) {
       refreshLoop = poll();
     }
 
@@ -171,6 +174,7 @@ export default function componentsDetails(
   };
 
   const close = (): void => {
+    closed = true;
     clearTimeout(refreshLoop);
   };
 

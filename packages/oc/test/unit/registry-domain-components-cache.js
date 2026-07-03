@@ -409,6 +409,45 @@ describe('registry : domain : components-cache', () => {
         message: pollError.message
       });
     });
+
+    it('should not restart the polling loop when closed during a poll', async () => {
+      let resolvePoll;
+      metadataIndex = {
+        get: sinon.stub().returns(undefined),
+        refresh: sinon.stub()
+      };
+      metadataIndex.refresh.onFirstCall().resolves({
+        componentsList: {
+          lastEdit: 123,
+          components: {
+            'hello-world': ['1.0.0']
+          }
+        }
+      });
+      metadataIndex.refresh.onSecondCall().returns(
+        new Promise((resolve) => {
+          resolvePoll = resolve;
+        })
+      );
+      initialise(metadataIndex);
+
+      await componentsCache.load();
+      const poll = setTimeoutStub.args[0][0];
+      setTimeoutStub.resetHistory();
+      const pollPromise = poll();
+      componentsCache.close();
+      resolvePoll({
+        componentsList: {
+          lastEdit: 124,
+          components: {
+            'hello-world': ['1.0.0', '1.0.1']
+          }
+        }
+      });
+      await pollPromise;
+
+      expect(setTimeoutStub.called).to.be.false;
+    });
   });
 });
 

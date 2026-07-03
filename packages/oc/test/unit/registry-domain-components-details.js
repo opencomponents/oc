@@ -583,6 +583,24 @@ describe('registry : domain : components-details', () => {
       expect(setTimeoutStub.calledTwice).to.be.true;
     });
 
+    it('should not restart the polling loop when closed during a poll', async () => {
+      let resolvePoll;
+      const poll = setTimeoutStub.args[0][0];
+      stubs.getJson.returns(
+        new Promise((resolve) => {
+          resolvePoll = resolve;
+        })
+      );
+      setTimeoutStub.resetHistory();
+
+      const pollPromise = poll();
+      componentsDetails.close();
+      resolvePoll(newerDetails);
+      await pollPromise;
+
+      expect(setTimeoutStub.called).to.be.false;
+    });
+
     it('should update the cache when the polled data is newer', async () => {
       const poll = setTimeoutStub.args[0][0];
       stubs.getJson.resolves(newerDetails);

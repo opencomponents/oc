@@ -173,6 +173,36 @@ describe('registry : domain : metadata-index', () => {
 
         expect(store.getAllComponents.calledTwice).to.be.true;
       });
+
+      it('should ignore a stale refresh result when a local add lands while it is in flight', async () => {
+        let resolveRefresh;
+        const staleRefresh = new Promise((resolve) => {
+          resolveRefresh = resolve;
+        });
+        const store = {
+          getAllComponents: sinon
+            .stub()
+            .onFirstCall()
+            .resolves(rows)
+            .onSecondCall()
+            .returns(staleRefresh)
+        };
+        const index = createMetadataIndex(store);
+
+        await index.refresh();
+        const refresh = index.refresh();
+        const added = index.add({
+          name: 'fresh',
+          version: '1.0.0',
+          publishDate: 200,
+          templateSize: 5
+        });
+        resolveRefresh(rows);
+        const refreshed = await refresh;
+
+        expect(refreshed).to.equal(added);
+        expect(index.get().componentsList.components.fresh).to.eql(['1.0.0']);
+      });
     });
 
     describe('add()', () => {
