@@ -1,5 +1,11 @@
 ## Change Log
 
+## 0.50.55
+
+### Patch Changes
+
+- Add pagination on components
+
 ## 0.50.54
 
 ### Patch Changes
