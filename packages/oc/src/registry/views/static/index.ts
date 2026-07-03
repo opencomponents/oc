@@ -16,28 +16,91 @@ oc.cmd.push(function() {
     }
   };
 
-  var componentsListChanged = function() {
-    $('.componentRow').removeClass('hide');
+  // Client-side pagination for the components list. Enabled only once the
+  // registry has more components than a single page so smaller registries keep
+  // the simple single-page view.
+  var COMPONENTS_PAGE_SIZE = 50;
+  var paginationEnabled = componentsList.length > COMPONENTS_PAGE_SIZE;
+  var currentPage = 1;
+
+  var renderComponentsPagination = function(totalMatching, totalPages) {
+    var container = $('#components-pagination');
+    if (!paginationEnabled || totalMatching <= COMPONENTS_PAGE_SIZE) {
+      container.addClass('hide').empty();
+      return;
+    }
+
+    // Build a compact list of page numbers: first, last, and a window around
+    // the current page, with ellipses for the gaps.
+    var pages = [];
+    var windowSize = 1;
+    var start = Math.max(2, currentPage - windowSize);
+    var end = Math.min(totalPages - 1, currentPage + windowSize);
+    pages.push(1);
+    if (start > 2) {
+      pages.push('...');
+    }
+    for (var p = start; p <= end; p++) {
+      pages.push(p);
+    }
+    if (end < totalPages - 1) {
+      pages.push('...');
+    }
+    if (totalPages > 1) {
+      pages.push(totalPages);
+    }
+
+    var html =
+      '<button type="button" class="pagination-btn pagination-prev" data-page="' +
+      (currentPage - 1) +
+      '"' +
+      (currentPage <= 1 ? ' disabled' : '') +
+      '>Prev</button>';
+    for (var k = 0; k < pages.length; k++) {
+      if (pages[k] === '...') {
+        html += '<span class="pagination-ellipsis">…</span>';
+      } else {
+        html +=
+          '<button type="button" class="pagination-btn pagination-page' +
+          (pages[k] === currentPage ? ' active' : '') +
+          '" data-page="' +
+          pages[k] +
+          '">' +
+          pages[k] +
+          '</button>';
+      }
+    }
+    html +=
+      '<button type="button" class="pagination-btn pagination-next" data-page="' +
+      (currentPage + 1) +
+      '"' +
+      (currentPage >= totalPages ? ' disabled' : '') +
+      '>Next</button>';
+
+    container.html(html).removeClass('hide');
+  };
+
+  var applyComponentsView = function() {
     var s = $('#search-filter').val(),
       a = $('#author-filter').val(),
       r = safeRegExp(s, ''),
       ar = safeRegExp(a, 'i'),
       selectedCheckboxes = $('input[type=checkbox]:checked'),
       hiddenStates = [],
-      hidden = 0,
+      matchingNames = [],
       i;
 
     for (i = 0; i < selectedCheckboxes.length; i++) {
       hiddenStates.push($(selectedCheckboxes[i]).attr('name'));
     }
 
+    // First pass: figure out which components match the current filters.
     for (i = 0; i < componentsList.length; i++) {
       var matches = !s || !!componentsList[i].name.match(r),
         matchesAuthor =
           !a ||
           (componentsList[i].author.name &&
             !!componentsList[i].author.name.match(ar)),
-        selector = $('#component-' + componentsList[i].name),
         isHidden = false;
 
       for (var j = 0; j < hiddenStates.length; j++) {
@@ -46,15 +109,41 @@ oc.cmd.push(function() {
         }
       }
 
-      var show = matches && matchesAuthor && !isHidden;
-      selector[show ? 'removeClass' : 'addClass']('hide');
-      if (!show) {
-        hidden += 1;
+      if (matches && matchesAuthor && !isHidden) {
+        matchingNames.push(componentsList[i].name);
       }
     }
 
-    var totalShowing = componentsList.length - hidden,
-      result = totalShowing + (totalShowing === 1 ? ' component' : ' components');
+    var totalMatching = matchingNames.length;
+    var totalPages = paginationEnabled
+      ? Math.max(1, Math.ceil(totalMatching / COMPONENTS_PAGE_SIZE))
+      : 1;
+    if (currentPage > totalPages) {
+      currentPage = totalPages;
+    }
+    if (currentPage < 1) {
+      currentPage = 1;
+    }
+
+    var startIdx = paginationEnabled
+      ? (currentPage - 1) * COMPONENTS_PAGE_SIZE
+      : 0;
+    var endIdx = paginationEnabled ? startIdx + COMPONENTS_PAGE_SIZE : totalMatching;
+    var visibleNames = {};
+    for (i = startIdx; i < endIdx && i < totalMatching; i++) {
+      visibleNames[matchingNames[i]] = true;
+    }
+
+    // Second pass: only rows that match the filters AND fall on the current
+    // page are shown.
+    for (i = 0; i < componentsList.length; i++) {
+      var name = componentsList[i].name,
+        show = visibleNames[name] === true;
+      $('#component-' + name)[show ? 'removeClass' : 'addClass']('hide');
+    }
+
+    var result =
+      totalMatching + (totalMatching === 1 ? ' component' : ' components');
 
     if (s) {
       result += ' matching "' + s + '"';
@@ -65,11 +154,29 @@ oc.cmd.push(function() {
     if (a) {
       result += ' by author "' + a + '"';
     }
+    if (paginationEnabled && totalMatching > COMPONENTS_PAGE_SIZE) {
+      result +=
+        ' (showing ' +
+        (startIdx + 1) +
+        '–' +
+        Math.min(endIdx, totalMatching) +
+        ')';
+    }
 
     $('#results-count').text(result);
-    $('#components-empty')[totalShowing === 0 ? 'removeClass' : 'addClass']('hide');
+    $('#components-empty')[totalMatching === 0 ? 'removeClass' : 'addClass'](
+      'hide'
+    );
+
+    renderComponentsPagination(totalMatching, totalPages);
 
     return false;
+  };
+
+  var componentsListChanged = function() {
+    // Any filter change resets back to the first page.
+    currentPage = 1;
+    return applyComponentsView();
   };
 
   var historyData = [];
@@ -249,6 +356,24 @@ oc.cmd.push(function() {
     .submit(componentsListChanged)
     .keyup(debounce(componentsListChanged, 80));
   $('#filter-components input[type=checkbox]').change(componentsListChanged);
+
+  $('#components-pagination').on('click', '.pagination-btn', function() {
+    var $btn = $(this);
+    if ($btn.is('[disabled]')) {
+      return;
+    }
+    var page = parseInt($btn.attr('data-page'), 10);
+    if (isNaN(page)) {
+      return;
+    }
+    currentPage = page;
+    applyComponentsView();
+    // Bring the top of the list back into view after switching pages.
+    var listEl = document.getElementById('components-list');
+    if (listEl && listEl.scrollIntoView) {
+      listEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
 
   if (q) {
     $('.search').val(q);

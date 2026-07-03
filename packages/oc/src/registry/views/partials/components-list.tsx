@@ -138,6 +138,11 @@ const ComponentsList = (props: {
       <div id="components-empty" class="empty-state hide">
         No components match your filters.
       </div>
+      <nav
+        id="components-pagination"
+        class="pagination hide"
+        aria-label="Components pagination"
+      />
     </div>
   );
 };
