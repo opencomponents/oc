@@ -2,6 +2,10 @@ import path from 'node:path';
 import dotenv from 'dotenv';
 import fs from 'fs-extra';
 import getUnixUtcTimestamp from 'oc-get-unix-utc-timestamp';
+import {
+  VERSION_ALREADY_EXISTS,
+  VERSION_PUBLISH_IN_PROGRESS
+} from 'oc-metadata-adapters-utils';
 
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import strings from '../../resources';
@@ -15,6 +19,13 @@ import type {
 import errorToString from '../../utils/error-to-string';
 import ComponentsCache from './components-cache';
 import getComponentsDetails from './components-details';
+import eventsHandler from './events-handler';
+import getMetadataAdapterOptions from './metadata-adapter-options';
+import { createMetadataIndex, getComponentRow } from './metadata-index';
+import {
+  exportLegacyMetadataFiles,
+  reconcileMetadataFromStorage
+} from './metadata-migration';
 import registerTemplates from './register-templates';
 import getPromiseBasedAdapter from './storage-adapter';
 import * as validator from './validators';
@@ -32,16 +43,79 @@ export default function repository(conf: Config) {
   const repositorySource = conf.local
     ? 'local repository'
     : cdn.adapterType + ' cdn';
-  const componentsCache = ComponentsCache(conf, cdn);
-  const componentsDetails = getComponentsDetails(conf, cdn);
+  const metadataStore =
+    !conf.local && conf.metadata
+      ? conf.metadata.adapter(getMetadataAdapterOptions(conf))
+      : undefined;
+  const metadataIndex = metadataStore
+    ? createMetadataIndex(metadataStore)
+    : undefined;
+  const componentsCache = ComponentsCache(conf, cdn, metadataIndex);
+  const componentsDetails = getComponentsDetails(conf, cdn, metadataIndex);
+  let exportLegacyFilesLoop: NodeJS.Timeout | undefined;
+  let closed = false;
 
   const getFilePath = (component: string, version: string, filePath: string) =>
     `${options!.componentsDir}/${component}/${version}/${filePath}`;
+
+  const exportLegacyFiles = () => {
+    if (!metadataStore || !conf.metadata?.exportLegacyFiles) {
+      return;
+    }
+
+    return exportLegacyMetadataFiles({
+      metadataStore,
+      cdn,
+      componentsDir: options!.componentsDir
+    }).catch((err: any) =>
+      eventsHandler.fire('error', {
+        code: 'metadata_legacy_files_export',
+        message: err?.message || String(err)
+      })
+    );
+  };
+
+  // Run the DB→components.json export on a non-overlapping background timer
+  // instead of on the publish path, so a publish stays an O(1) append rather
+  // than triggering a full-registry scan + blob rewrite. The timer only runs
+  // when an interval is explicitly configured.
+  const scheduleLegacyFilesExport = () => {
+    const intervalSeconds = conf.metadata?.exportLegacyFilesInterval;
+    if (
+      closed ||
+      !metadataStore ||
+      !conf.metadata?.exportLegacyFiles ||
+      !intervalSeconds
+    ) {
+      return;
+    }
+
+    exportLegacyFilesLoop = setTimeout(async () => {
+      await exportLegacyFiles();
+      if (!closed) {
+        scheduleLegacyFilesExport();
+      }
+    }, intervalSeconds * 1000);
+  };
 
   const { templatesHash, templatesInfo } = registerTemplates(
     conf.templates,
     conf.local
   );
+
+  const throwVersionAlreadyFound = (
+    componentName: string,
+    componentVersion: string
+  ) => {
+    throw {
+      code: strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND_CODE,
+      msg: strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND(
+        componentName,
+        componentVersion,
+        repositorySource
+      )
+    };
+  };
 
   const local = {
     components: undefined as string[] | undefined,
@@ -311,9 +385,24 @@ export default function repository(conf: Config) {
         return;
       }
 
-      const componentsList = await componentsCache.load();
+      if (metadataStore) {
+        await metadataStore.initialise();
+        if (conf.metadata?.reconcileFromStorage) {
+          await reconcileMetadataFromStorage({
+            metadataStore,
+            cdn,
+            componentsDir: options!.componentsDir
+          });
+        }
+      }
 
-      return componentsDetails.refresh(componentsList);
+      const componentsList = await componentsCache.load();
+      const details = await componentsDetails.refresh(componentsList);
+
+      void exportLegacyFiles();
+      scheduleLegacyFilesExport();
+
+      return details;
     },
     async publishComponent({
       componentName,
@@ -374,14 +463,7 @@ export default function repository(conf: Config) {
       if (
         !versionHandler.validateNewVersion(componentVersion, componentVersions)
       ) {
-        throw {
-          code: strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND_CODE,
-          msg: strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND(
-            componentName,
-            componentVersion,
-            repositorySource
-          )
-        };
+        throwVersionAlreadyFound(componentName, componentVersion);
       }
 
       pkgDetails.packageJson.oc.date = getUnixUtcTimestamp();
@@ -394,6 +476,47 @@ export default function repository(conf: Config) {
         pkgDetails.packageJson
       );
 
+      if (metadataStore) {
+        const componentRow = getComponentRow(
+          componentName,
+          componentVersion,
+          pkgDetails.packageJson
+        );
+        const { token } = await metadataStore
+          .reserveVersion(componentRow)
+          .catch((err: any) => {
+            if (
+              err?.code === VERSION_ALREADY_EXISTS ||
+              err?.code === VERSION_PUBLISH_IN_PROGRESS ||
+              err?.code ===
+                strings.errors.registry.COMPONENT_VERSION_ALREADY_FOUND_CODE
+            ) {
+              throwVersionAlreadyFound(componentName, componentVersion);
+            }
+
+            throw err;
+          });
+
+        try {
+          await cdn.putDir(
+            pkgDetails.outputFolder,
+            `${options!.componentsDir}/${componentName}/${componentVersion}`
+          );
+          await metadataStore.commitVersion(
+            componentName,
+            componentVersion,
+            token
+          );
+          metadataIndex!.add(componentRow);
+        } catch (err) {
+          await metadataStore
+            .abortVersion(componentName, componentVersion, token)
+            .catch(() => undefined);
+          throw err;
+        }
+        return;
+      }
+
       await cdn.putDir(
         pkgDetails.outputFolder,
         `${options!.componentsDir}/${componentName}/${componentVersion}`
@@ -403,6 +526,18 @@ export default function repository(conf: Config) {
         .refresh()
         .then((componentsList) => componentsDetails.refresh(componentsList))
         .catch(() => undefined);
+    },
+    async close(): Promise<void> {
+      closed = true;
+      componentsCache.close?.();
+      componentsDetails.close?.();
+      if (exportLegacyFilesLoop) {
+        clearTimeout(exportLegacyFilesLoop);
+        exportLegacyFilesLoop = undefined;
+      }
+      if (metadataStore?.close) {
+        await metadataStore.close();
+      }
     }
   };
 

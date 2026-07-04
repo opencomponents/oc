@@ -1,6 +1,7 @@
 import strings from '../../../resources';
 import type { Config } from '../../../types';
 import * as auth from '../authentication';
+import getMetadataAdapterOptions from '../metadata-adapter-options';
 
 type ValidationResult = { isValid: true } | { isValid: false; message: string };
 
@@ -118,6 +119,44 @@ export default function registryConfiguration(
           )
         );
       }
+    }
+  }
+
+  if (!conf.local && conf.metadata) {
+    if (!conf.metadata.adapter) {
+      return returnError(
+        strings.errors.registry.CONFIGURATION_METADATA_NOT_VALID('metadata')
+      );
+    }
+
+    if (typeof conf.metadata.exportLegacyFilesInterval !== 'undefined') {
+      if (
+        !Number.isFinite(conf.metadata.exportLegacyFilesInterval) ||
+        conf.metadata.exportLegacyFilesInterval <= 0
+      ) {
+        return returnError(
+          strings.errors.registry
+            .CONFIGURATION_METADATA_EXPORT_INTERVAL_NOT_VALID
+        );
+      }
+
+      if (conf.metadata.exportLegacyFiles !== true) {
+        return returnError(
+          strings.errors.registry
+            .CONFIGURATION_METADATA_EXPORT_INTERVAL_WITHOUT_EXPORT_NOT_VALID
+        );
+      }
+    }
+
+    const metadataStore = conf.metadata.adapter(
+      getMetadataAdapterOptions(conf)
+    );
+    if (!metadataStore.isValid()) {
+      return returnError(
+        strings.errors.registry.CONFIGURATION_METADATA_NOT_VALID(
+          metadataStore.adapterType
+        )
+      );
     }
   }
 

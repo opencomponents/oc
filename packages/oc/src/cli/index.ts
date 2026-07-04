@@ -14,6 +14,7 @@ import publish from './facade/publish';
 import registry from './facade/registry';
 import registryAdd from './facade/registry-add';
 import registryLs from './facade/registry-ls';
+import registryMigrateMetadata from './facade/registry-migrate-metadata';
 import registryRemove from './facade/registry-remove';
 import validate from './facade/validate';
 import logger from './logger';
@@ -30,6 +31,7 @@ const cliFunctions = {
   registry,
   'registry-add': registryAdd,
   'registry-ls': registryLs,
+  'registry-migrate-metadata': registryMigrateMetadata,
   'registry-remove': registryRemove,
   validate
 };

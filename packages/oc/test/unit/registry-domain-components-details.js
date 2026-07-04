@@ -583,6 +583,24 @@ describe('registry : domain : components-details', () => {
       expect(setTimeoutStub.calledTwice).to.be.true;
     });
 
+    it('should not restart the polling loop when closed during a poll', async () => {
+      let resolvePoll;
+      const poll = setTimeoutStub.args[0][0];
+      stubs.getJson.returns(
+        new Promise((resolve) => {
+          resolvePoll = resolve;
+        })
+      );
+      setTimeoutStub.resetHistory();
+
+      const pollPromise = poll();
+      componentsDetails.close();
+      resolvePoll(newerDetails);
+      await pollPromise;
+
+      expect(setTimeoutStub.called).to.be.false;
+    });
+
     it('should update the cache when the polled data is newer', async () => {
       const poll = setTimeoutStub.args[0][0];
       stubs.getJson.resolves(newerDetails);
@@ -615,6 +633,61 @@ describe('registry : domain : components-details', () => {
         code: 'components_details_get',
         message: 'poll failed'
       });
+    });
+  });
+
+  describe('when metadata store is configured', () => {
+    let metadataIndex;
+    let stubs;
+
+    before((done) => {
+      setTimeoutStub.reset();
+      clearTimeoutStub.reset();
+      metadataIndex = {
+        getOrRefresh: sinon.stub().resolves({
+          componentsDetails: {
+            lastEdit: 123,
+            components: {
+              'hello-world': {
+                '1.0.0': { publishDate: 123, templateSize: 10 },
+                '1.0.1': { publishDate: 124 }
+              }
+            }
+          }
+        })
+      };
+      stubs = {
+        getJson: sinon.stub(),
+        putFileContent: sinon.stub(),
+        maxConcurrentRequests: 20
+      };
+      const componentsDetails = ComponentsDetails(conf, stubs, metadataIndex);
+      next(
+        componentsDetails.refresh({
+          lastEdit: 123,
+          components: { 'hello-world': ['1.0.0', '1.0.1'] }
+        }),
+        done
+      );
+    });
+
+    it('should hydrate the details from the metadata store', () => {
+      expect(result.components).to.eql({
+        'hello-world': {
+          '1.0.0': { publishDate: 123, templateSize: 10 },
+          '1.0.1': { publishDate: 124 }
+        }
+      });
+      expect(result.lastEdit).to.be.a('number');
+    });
+
+    it('should not read or write storage metadata files', () => {
+      expect(stubs.getJson.called).to.be.false;
+      expect(stubs.putFileContent.called).to.be.false;
+    });
+
+    it('should not start a second polling loop', () => {
+      expect(setTimeoutStub.called).to.be.false;
     });
   });
 });

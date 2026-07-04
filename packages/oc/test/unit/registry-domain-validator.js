@@ -1,5 +1,6 @@
 const expect = require('chai').expect;
 const injectr = require('injectr');
+const sinon = require('sinon');
 
 describe('registry : domain : validator', () => {
   const validator = require('../../dist/registry/domain/validators');
@@ -402,6 +403,135 @@ describe('registry : domain : validator', () => {
             );
           });
         });
+      });
+    });
+
+    describe('metadata', () => {
+      describe('when adapter is missing', () => {
+        const conf = {
+          s3: baseS3Conf,
+          metadata: { options: {} }
+        };
+
+        it('should not be valid', () => {
+          expect(validate(conf).isValid).to.be.false;
+          expect(validate(conf).message).to.equal(
+            'Registry configuration is not valid: metadata is not a valid metadata adapter'
+          );
+        });
+      });
+
+      describe('when adapter configuration is invalid', () => {
+        const conf = {
+          s3: baseS3Conf,
+          metadata: {
+            adapter: () => ({
+              adapterType: 'test-metadata',
+              isValid: () => false
+            }),
+            options: {}
+          }
+        };
+
+        it('should not be valid', () => {
+          expect(validate(conf).isValid).to.be.false;
+          expect(validate(conf).message).to.equal(
+            'Registry configuration is not valid: test-metadata is not a valid metadata adapter'
+          );
+        });
+      });
+
+      describe('when adapter configuration is valid', () => {
+        const conf = {
+          s3: baseS3Conf,
+          metadata: {
+            adapter: () => ({
+              adapterType: 'test-metadata',
+              isValid: () => true
+            }),
+            options: {}
+          }
+        };
+
+        it('should be valid', () => {
+          expect(validate(conf).isValid).to.be.true;
+        });
+      });
+
+      it('should pass top-level manageSchema to the metadata adapter', () => {
+        const adapter = sinon.stub().returns({
+          adapterType: 'test-metadata',
+          isValid: () => true
+        });
+        const conf = {
+          s3: baseS3Conf,
+          metadata: {
+            adapter,
+            options: { connectionString: 'sql' },
+            manageSchema: false
+          }
+        };
+
+        expect(validate(conf).isValid).to.be.true;
+        expect(adapter.args[0][0]).to.eql({
+          connectionString: 'sql',
+          manageSchema: false
+        });
+      });
+
+      it('should reject invalid export legacy files intervals', () => {
+        const conf = {
+          s3: baseS3Conf,
+          metadata: {
+            adapter: () => ({
+              adapterType: 'test-metadata',
+              isValid: () => true
+            }),
+            options: {},
+            exportLegacyFilesInterval: 0
+          }
+        };
+
+        expect(validate(conf).isValid).to.be.false;
+        expect(validate(conf).message).to.equal(
+          'Registry configuration is not valid: metadata.exportLegacyFilesInterval must be a positive number'
+        );
+      });
+
+      it('should reject export legacy files interval without export legacy files enabled', () => {
+        const conf = {
+          s3: baseS3Conf,
+          metadata: {
+            adapter: () => ({
+              adapterType: 'test-metadata',
+              isValid: () => true
+            }),
+            options: {},
+            exportLegacyFilesInterval: 60
+          }
+        };
+
+        expect(validate(conf).isValid).to.be.false;
+        expect(validate(conf).message).to.equal(
+          'Registry configuration is not valid: metadata.exportLegacyFilesInterval requires metadata.exportLegacyFiles to be true'
+        );
+      });
+
+      it('should accept export legacy files interval when export legacy files is enabled', () => {
+        const conf = {
+          s3: baseS3Conf,
+          metadata: {
+            adapter: () => ({
+              adapterType: 'test-metadata',
+              isValid: () => true
+            }),
+            options: {},
+            exportLegacyFiles: true,
+            exportLegacyFilesInterval: 60
+          }
+        };
+
+        expect(validate(conf).isValid).to.be.true;
       });
     });
 

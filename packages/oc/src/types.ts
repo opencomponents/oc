@@ -1,6 +1,9 @@
 import type { NextFunction, Request, Response } from 'express';
+import type { MetadataStore as MetadataStoreType } from 'oc-metadata-adapters-utils';
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import type { PackageJson } from 'type-fest';
+
+export type { ComponentRow, MetadataStore } from 'oc-metadata-adapters-utils';
 
 type Middleware = (req: Request, res: Response, next: NextFunction) => void;
 
@@ -44,6 +47,45 @@ export interface ComponentsDetails {
 export interface ComponentsList {
   components: Record<string, string[]>;
   lastEdit: number;
+}
+
+export interface MetadataConfig<T = any> {
+  /**
+   * Factory for the metadata store. It must be side-effect free because config
+   * validation may instantiate a throwaway store before registry startup.
+   */
+  adapter: (options: T) => MetadataStoreType;
+  options: T;
+  /**
+   * Controls whether OC asks the metadata adapter to manage its schema/table.
+   * When omitted, OC behaves as `true` and passes that default to adapter
+   * validation/startup/migration paths.
+   *
+   * @default true
+   */
+  manageSchema?: boolean;
+  /**
+   * When true, startup scans storage and inserts any missing metadata rows
+   * before cache hydration. Existing rows are skipped.
+   *
+   * @default false
+   */
+  reconcileFromStorage?: boolean;
+  /**
+   * When true, startup exports DB-derived `components.json` and
+   * `components-details.json` projections to storage. This is a one-way export
+   * from metadata to storage and is not triggered on each publish.
+   *
+   * @default false
+   */
+  exportLegacyFiles?: boolean;
+  /**
+   * Interval, in seconds, at which the DB→`components.json` legacy export runs
+   * in the background. Only used when `exportLegacyFiles` is true. When omitted,
+   * the export runs once at startup only (no background refresh). The export is
+   * never coupled to the publish path.
+   */
+  exportLegacyFilesInterval?: number;
 }
 
 export interface OcParameter {
@@ -337,6 +379,7 @@ export interface Config<T = any> {
    * @default "/"
    */
   prefix: string;
+  metadata?: MetadataConfig;
   /**
    * Authentication strategy for component publishing.
    */
