@@ -73,6 +73,34 @@ describe('registry : domain : metadata-migration', () => {
       expect(result).to.eql({ scanned: 2, inserted: 1, skipped: 1 });
     });
 
+    it('should insert rows concurrently with a bounded limit', async () => {
+      let active = 0;
+      let maxActive = 0;
+      const metadataStore = {
+        addVersion: sinon.stub().callsFake(
+          () =>
+            new Promise((resolve) => {
+              active += 1;
+              maxActive = Math.max(maxActive, active);
+              setTimeout(() => {
+                active -= 1;
+                resolve();
+              }, 1);
+            })
+        )
+      };
+      const rows = Array.from({ length: 25 }, (_, index) => ({
+        name: 'hello-world',
+        version: `1.0.${index}`,
+        publishDate: 123 + index
+      }));
+
+      const result = await backfillMetadataRows(metadataStore, rows);
+
+      expect(result).to.eql({ scanned: 25, inserted: 25, skipped: 0 });
+      expect(maxActive).to.equal(10);
+    });
+
     it('should treat active metadata reservations as skipped', async () => {
       const metadataStore = {
         addVersion: sinon.stub().rejects({ code: 'VERSION_PUBLISH_IN_PROGRESS' })

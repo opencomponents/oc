@@ -18,6 +18,11 @@ export interface MetadataStore {
   initialise(): Promise<void>;
   getAllComponents(): Promise<ComponentRow[]>;
   addVersion(row: ComponentRow): Promise<void>;
+  /**
+   * Reserve/commit/abort implement the metadata-mode publish state machine.
+   * Adapter factories must be side-effect free; open connections in initialise()
+   * or on first operation, because validation may instantiate throwaway stores.
+   */
   reserveVersion(row: ComponentRow): Promise<{ token: string }>;
   commitVersion(name: string, version: string, token: string): Promise<void>;
   abortVersion(name: string, version: string, token: string): Promise<void>;

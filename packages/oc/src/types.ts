@@ -50,6 +50,10 @@ export interface ComponentsList {
 }
 
 export interface MetadataConfig<T = any> {
+  /**
+   * Factory for the metadata store. It must be side-effect free because config
+   * validation may instantiate a throwaway store before registry startup.
+   */
   adapter: (options: T) => MetadataStoreType;
   options: T;
   /**

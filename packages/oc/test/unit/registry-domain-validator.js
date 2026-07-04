@@ -497,6 +497,42 @@ describe('registry : domain : validator', () => {
           'Registry configuration is not valid: metadata.exportLegacyFilesInterval must be a positive number'
         );
       });
+
+      it('should reject export legacy files interval without export legacy files enabled', () => {
+        const conf = {
+          s3: baseS3Conf,
+          metadata: {
+            adapter: () => ({
+              adapterType: 'test-metadata',
+              isValid: () => true
+            }),
+            options: {},
+            exportLegacyFilesInterval: 60
+          }
+        };
+
+        expect(validate(conf).isValid).to.be.false;
+        expect(validate(conf).message).to.equal(
+          'Registry configuration is not valid: metadata.exportLegacyFilesInterval requires metadata.exportLegacyFiles to be true'
+        );
+      });
+
+      it('should accept export legacy files interval when export legacy files is enabled', () => {
+        const conf = {
+          s3: baseS3Conf,
+          metadata: {
+            adapter: () => ({
+              adapterType: 'test-metadata',
+              isValid: () => true
+            }),
+            options: {},
+            exportLegacyFiles: true,
+            exportLegacyFilesInterval: 60
+          }
+        };
+
+        expect(validate(conf).isValid).to.be.true;
+      });
     });
 
     describe('customHeadersToSkipOnWeakVersion', () => {

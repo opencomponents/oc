@@ -40,13 +40,13 @@ in **O(changes)** and turns publish into an **O(1)** atomic append.
 | # | Decision |
 | --- | --- |
 | Abstraction | **Pluggable metadata adapter**, injected like `storage.adapter`. Core takes zero DB deps. Generic SQL; **Azure SQL (SQL Server / T-SQL)** is the first official adapter; Postgres/MySQL follow. |
-| Read model | **In-memory cache stays.** DB is touched only at startup (hydrate), poll (re-hydrate), and publish (insert). Hot reads never hit the DB. |
+| Read model | **In-memory cache stays.** DB is touched only at startup (hydrate), poll (change-token check and sometimes re-hydrate), and publish (reserve/commit). Hot reads never hit the DB. |
 | Source of truth | In DB mode the **DB is authoritative** for "what exists"; storage holds only the bytes. The directory scan is **abandoned**. |
-| Write path | Statics to storage **first**, then **`INSERT` row = commit point**. A version is published iff its row exists. |
-| Concurrency | `PRIMARY KEY (component_name, version)`; concurrent same-version publish → one wins, other gets `VERSION_ALREADY_EXISTS`. Different components never contend. |
-| Partial failure | Orphan-tolerant on the safe side: statics-ok/insert-failed → publish errors, statics are harmless unreferenced bytes, re-publish is idempotent. Insert-ok/statics-missing is structurally impossible (DB last). |
+| Write path | Metadata-mode publish **reserves** `name@version` first, uploads statics, then **commits** the reservation. A row is visible only after `status='committed'`. This deliberately trades the original upload-then-insert simplicity for same-version overwrite protection. |
+| Concurrency | `PRIMARY KEY (component_name, version)`; concurrent same-version publish → one wins, the other gets `VERSION_PUBLISH_IN_PROGRESS` while a reservation is active or `VERSION_ALREADY_EXISTS` after commit. Different components never contend. |
+| Partial failure | `publishing` rows are hidden from reads and protected by adapter TTL/reclaim logic. A failed upload best-effort aborts the reservation; stale reservations can later be reclaimed or committed during storage reconciliation when bytes exist. |
 | Deletes | **Append-only now.** `removeVersion` reserved for future version-level deletes; delete flow mirrors publish in reverse (remove row first, then best-effort `removeDir`). |
-| Poll | **Full re-hydration** (parity with today's whole-`components.json` poll; always correct; delete-friendly). `changesSince(cursor)` is a reserved future optimization; tombstones + delta-poll are a coupled future pair. |
+| Poll | Adapters may expose `getChangeToken()` so steady-state polls perform an O(1) change check and only rehydrate when metadata changed, with a periodic forced full refresh as a safety net. Adapters without a cheap token keep full re-hydration. `changesSince(cursor)` is a reserved future optimization; tombstones + delta-poll are a coupled future pair. |
 | Schema mgmt | **Auto-create by default** (`manageSchema`), opt-out for locked-down DBs; always verify + fail fast with the exact DDL. |
 | Config | **Presence-based enable** (`metadata` block, sibling to `storage`); storage still required. Explicit bake-in toggles. |
 | Migration | **Gradual with bake-in:** idempotent backfill + storage→DB reconcile + DB→`components.json` exporter; lossless rollback. |
@@ -64,12 +64,20 @@ type ComponentRow = {
 };
 
 interface MetadataStore {
-  adapterType: string;                 // 'azure-sql' | 'postgres' | 'mysql' | ...
+  adapterType: string;                 // 'azure-sql' | 'azure-table' | 'postgres' | ...
   isValid(): boolean;                  // config sanity (sync, like StorageAdapter.isValid)
-  initialise(): Promise<void>;         // open pool; ensure/verify schema (manageSchema)
+  initialise(): Promise<void>;         // open pool/client; ensure/verify schema (manageSchema)
 
   getAllComponents(): Promise<ComponentRow[]>;   // hydration — feeds BOTH caches
-  addVersion(row: ComponentRow): Promise<void>;  // commit point; throws VERSION_ALREADY_EXISTS
+  getChangeToken?(): Promise<string>;            // optional O(1) poll change detector
+  addVersion(row: ComponentRow): Promise<void>;  // idempotent migration/backfill insert
+
+  // publish state machine used by core metadata mode:
+  reserveVersion(row: ComponentRow): Promise<{ token: string }>;
+  commitVersion(name: string, version: string, token: string): Promise<void>;
+  abortVersion(name: string, version: string, token: string): Promise<void>;
+
+  close?(): Promise<void>;                       // optional lifecycle cleanup
 
   // reserved, not implemented now:
   removeVersion?(name: string, version: string): Promise<void>;
@@ -81,9 +89,17 @@ interface MetadataStore {
   `semver`-sorted in memory) and `ComponentsDetails`
   (`name → version → {publishDate, templateSize}`). The cached `get()` paths are
   unchanged.
+- `reserveVersion` / `commitVersion` / `abortVersion` are required for metadata
+  mode so core can reserve before upload and avoid same-version storage
+  overwrites. Simple future adapters still need to implement the state machine,
+  but can do so with one table and a TTL on `publishing` rows.
+- Adapter factories must be side-effect free. Validation may instantiate a
+  throwaway store, so network connections/pools should open in `initialise()` or
+  lazily on first operation.
 - Each adapter maps its driver's unique-violation (SQL Server 2627/2601,
-  Postgres 23505, MySQL 1062) to the shared `VERSION_ALREADY_EXISTS` code in a new
-  **`oc-metadata-adapters-utils`** package (mirrors `oc-storage-adapters-utils`).
+  Postgres 23505, MySQL 1062) to the shared `VERSION_ALREADY_EXISTS` code, and
+  active reservation conflicts to `VERSION_PUBLISH_IN_PROGRESS`, in
+  **`oc-metadata-adapters-utils`** (mirrors `oc-storage-adapters-utils`).
 
 ## 4. The schema
 
@@ -91,28 +107,36 @@ interface MetadataStore {
 -- Azure SQL / SQL Server dialect; each adapter ships its own
 CREATE TABLE oc_components (
   component_name  NVARCHAR(255) NOT NULL,
-  version         NVARCHAR(64)  NOT NULL,
+  version         NVARCHAR(128) NOT NULL,
   publish_date    BIGINT        NOT NULL,                          -- unix seconds
   template_size   BIGINT        NULL,
+  status          NVARCHAR(16)  NOT NULL DEFAULT N'committed',
+  publish_token   NVARCHAR(64)  NULL,
   created_at      DATETIME2     NOT NULL DEFAULT SYSUTCDATETIME(), -- DB clock; reserved for future delta cursor
+  updated_at      DATETIME2     NOT NULL DEFAULT SYSUTCDATETIME(), -- stale reservation TTL
   CONSTRAINT pk_oc_components PRIMARY KEY (component_name, version)
 );
 CREATE INDEX ix_oc_components_name ON oc_components (component_name);
 ```
 
 - PK gives uniqueness + the concurrency guarantee in one constraint.
+- `status`, `publish_token`, and `updated_at` implement reserve/commit/abort and
+  stale-reservation recovery. Reads filter to `status='committed'`.
 - **Lean:** stores only what the in-memory caches need; the full `package.json`
   stays in storage (`getComponentInfo` still fetches it). Richer query columns are
   an additive `ALTER TABLE` later — YAGNI now.
 - `created_at` on the DB clock is free now, future-proofs the delta cursor + audit.
+- SQL Server stores `version` as `NVARCHAR(128)`, wide enough for long
+  prerelease/build labels while keeping the `(component_name, version)` key under
+  SQL Server's indexed-key limit; longer versions are rejected before SQL execution.
 
 ## 5. Integration points
 
 | Today | DB mode | File |
 | --- | --- | --- |
 | `componentsCache.load()` full scan | `getAllComponents()` → group in memory | `components-cache/index.ts` |
-| `poll()` re-reads `components.json` | `getAllComponents()` (full re-hydration) | `components-cache/index.ts` |
-| `publishComponent` → `componentsCache.refresh()` scan | `metadata.addVersion(row)` from in-hand `pkgDetails.packageJson` (zero extra reads) | `registry/domain/repository.ts` (~L402) |
+| `poll()` re-reads `components.json` | `getChangeToken()` O(1) check when available; `getAllComponents()` only when changed/forced | `metadata-index.ts` / `components-cache/index.ts` |
+| `publishComponent` → `componentsCache.refresh()` scan | `reserveVersion(row)` before statics, `commitVersion()` after statics, then in-memory `metadataIndex.add(row)` | `registry/domain/repository.ts` |
 | `componentsDetails` second scan | same hydration rows, no per-version `getJson` | `components-details.ts` |
 | `validateNewVersion` vs storage listing | cache pre-check + authoritative unique constraint | `repository.ts` / `version-handler.ts` |
 
@@ -130,6 +154,7 @@ metadata?: {
   manageSchema?: boolean;                   // default true; false = operator-managed DDL
   reconcileFromStorage?: boolean;           // bake-in: import storage rows missing in DB
   exportLegacyFiles?: boolean;              // bake-in + permanent DR: regenerate components.json from DB
+  exportLegacyFilesInterval?: number;       // seconds; requires exportLegacyFiles:true
 };
 ```
 
@@ -138,8 +163,11 @@ metadata?: {
 - Bake-in phases are just config: cutover ships both toggles `true`; steady state
   flips `reconcileFromStorage:false` and keeps `exportLegacyFiles:true` (permanent
   DR snapshot).
-- Packaged as `oc-azure-sql-metadata-adapter` + `oc-metadata-adapters-utils`. Core
-  gains **zero** runtime deps.
+- `exportLegacyFilesInterval` is valid only with `exportLegacyFiles:true`; otherwise
+  it is a no-op footgun and config validation rejects it.
+- Packaged as `oc-azure-sql-metadata-adapter`,
+  `oc-azure-table-metadata-adapter`, and `oc-metadata-adapters-utils`. Core gains
+  **zero** metadata adapter runtime deps.
 
 ## 7. Migration (gradual with bake-in)
 
@@ -199,18 +227,23 @@ reconcile.
 1. `oc-metadata-adapters-utils` (types + shared error codes).
 2. `MetadataStore` seam in core (`components-cache` / `components-details` /
    `repository.publishComponent`), storage path unchanged when `metadata` absent.
-3. `oc-azure-sql-metadata-adapter` (pool, `manageSchema` DDL, `addVersion`,
-   `getAllComponents`, unique-violation mapping).
-4. Migration command + auto-on-empty backfill.
-5. Bake-in machinery: storage→DB reconcile + DB→json exporter (config-gated).
-6. Fix `listSubDirectories` pagination.
-7. Docs + a Postgres adapter to validate the interface stays dialect-neutral.
+3. `oc-azure-sql-metadata-adapter` (pool, `manageSchema` DDL,
+   `getAllComponents`, `addVersion`, reserve/commit/abort, change-token polling,
+   unique-violation mapping).
+4. `oc-azure-table-metadata-adapter` (Table client, reservation state machine,
+   sentinel change token, managed-identity support).
+5. Migration command + auto-on-empty backfill.
+6. Bake-in machinery: storage→DB reconcile + DB→json exporter (config-gated).
+7. Fix `listSubDirectories` pagination.
+8. Docs + a Postgres adapter to validate the interface stays dialect-neutral.
 
 ## 12. Testing
 - Unit: `addVersion` insert + unique-violation → `VERSION_ALREADY_EXISTS`;
-  `getAllComponents` → correct `ComponentsList` + `ComponentsDetails` grouping.
+  reserve conflict status mapping; reserve/commit/abort lifecycle;
+  `getChangeToken`; `getAllComponents` → correct `ComponentsList` +
+  `ComponentsDetails` grouping.
 - Concurrency: two nodes, different components (both land) and same version (one
-  wins, one rejected).
+  reservation wins, the other is rejected as in progress/already exists).
 - Migration: backfill idempotency (re-run = no-op); reconcile heals a storage-only
   publish; exporter round-trips DB → `components.json`.
 - Failure injection: DB down at startup (not-ready), during poll (serves cache),

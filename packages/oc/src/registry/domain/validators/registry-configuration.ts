@@ -1,21 +1,9 @@
 import strings from '../../../resources';
 import type { Config } from '../../../types';
 import * as auth from '../authentication';
+import getMetadataAdapterOptions from '../metadata-adapter-options';
 
 type ValidationResult = { isValid: true } | { isValid: false; message: string };
-
-const getMetadataAdapterOptions = (
-  conf: Partial<Omit<Config, 'discovery'>>
-) => {
-  if (typeof conf.metadata?.manageSchema === 'undefined') {
-    return conf.metadata?.options;
-  }
-
-  return {
-    ...(conf.metadata.options || {}),
-    manageSchema: conf.metadata.manageSchema
-  };
-};
 
 export default function registryConfiguration(
   conf: Partial<Omit<Config, 'discovery'>>
@@ -141,14 +129,23 @@ export default function registryConfiguration(
       );
     }
 
-    if (
-      typeof conf.metadata.exportLegacyFilesInterval !== 'undefined' &&
-      (!Number.isFinite(conf.metadata.exportLegacyFilesInterval) ||
-        conf.metadata.exportLegacyFilesInterval <= 0)
-    ) {
-      return returnError(
-        strings.errors.registry.CONFIGURATION_METADATA_EXPORT_INTERVAL_NOT_VALID
-      );
+    if (typeof conf.metadata.exportLegacyFilesInterval !== 'undefined') {
+      if (
+        !Number.isFinite(conf.metadata.exportLegacyFilesInterval) ||
+        conf.metadata.exportLegacyFilesInterval <= 0
+      ) {
+        return returnError(
+          strings.errors.registry
+            .CONFIGURATION_METADATA_EXPORT_INTERVAL_NOT_VALID
+        );
+      }
+
+      if (conf.metadata.exportLegacyFiles !== true) {
+        return returnError(
+          strings.errors.registry
+            .CONFIGURATION_METADATA_EXPORT_INTERVAL_WITHOUT_EXPORT_NOT_VALID
+        );
+      }
     }
 
     const metadataStore = conf.metadata.adapter(

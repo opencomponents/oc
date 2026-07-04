@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { fromPromise } from 'universalify';
+import getMetadataAdapterOptions from '../../registry/domain/metadata-adapter-options';
 import { backfillMetadataFromStorageDetails } from '../../registry/domain/metadata-migration';
 import sanitiseOptions, {
   type RegistryOptions
@@ -8,17 +9,6 @@ import sanitiseOptions, {
 import getPromiseBasedAdapter from '../../registry/domain/storage-adapter';
 import * as validator from '../../registry/domain/validators';
 import type { Logger } from '../logger';
-
-const getMetadataAdapterOptions = (conf: RegistryOptions) => {
-  if (typeof conf.metadata?.manageSchema === 'undefined') {
-    return conf.metadata?.options;
-  }
-
-  return {
-    ...(conf.metadata.options || {}),
-    manageSchema: conf.metadata.manageSchema
-  };
-};
 
 const dynamicImport = new Function('specifier', 'return import(specifier)') as (
   specifier: string

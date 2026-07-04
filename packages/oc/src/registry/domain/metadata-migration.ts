@@ -67,22 +67,27 @@ export const backfillMetadataRows = async (
     inserted: 0,
     skipped: 0
   };
+  const limit = pLimit(10);
 
-  for (const row of rows) {
-    try {
-      await metadataStore.addVersion(row);
-      result.inserted += 1;
-    } catch (err: any) {
-      if (
-        err?.code === VERSION_ALREADY_EXISTS ||
-        err?.code === VERSION_PUBLISH_IN_PROGRESS
-      ) {
-        result.skipped += 1;
-      } else {
-        throw err;
-      }
-    }
-  }
+  await Promise.all(
+    rows.map((row) =>
+      limit(async () => {
+        try {
+          await metadataStore.addVersion(row);
+          result.inserted += 1;
+        } catch (err: any) {
+          if (
+            err?.code === VERSION_ALREADY_EXISTS ||
+            err?.code === VERSION_PUBLISH_IN_PROGRESS
+          ) {
+            result.skipped += 1;
+          } else {
+            throw err;
+          }
+        }
+      })
+    )
+  );
 
   return result;
 };

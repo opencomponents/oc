@@ -107,6 +107,8 @@ export default {
         `Registry configuration is not valid: ${adapterType} is not a valid metadata adapter`,
       CONFIGURATION_METADATA_EXPORT_INTERVAL_NOT_VALID:
         'Registry configuration is not valid: metadata.exportLegacyFilesInterval must be a positive number',
+      CONFIGURATION_METADATA_EXPORT_INTERVAL_WITHOUT_EXPORT_NOT_VALID:
+        'Registry configuration is not valid: metadata.exportLegacyFilesInterval requires metadata.exportLegacyFiles to be true',
       CONFIGURATION_ONREQUEST_MUST_BE_FUNCTION:
         "Registry configuration is not valid: registry.on's callback must be a function",
       CONFIGURATION_OFFREQUEST_MUST_BE_FUNCTION:

@@ -34,6 +34,7 @@ type SqlError = Error & { number?: number; code?: string };
 
 const UNIQUE_VIOLATION_NUMBERS = new Set([2627, 2601]);
 const DEFAULT_RESERVATION_TTL_SECONDS = 60 * 60;
+const VERSION_MAX_LENGTH = 128;
 
 const isValidIdentifier = (value: string): boolean =>
   /^[A-Za-z_][A-Za-z0-9_]*$/.test(value);
@@ -44,6 +45,14 @@ const assertIdentifier = (value: string, label: string): string => {
   }
 
   return value;
+};
+
+const assertVersionLength = (version: string): void => {
+  if (version.length > VERSION_MAX_LENGTH) {
+    throw new Error(
+      `Component version must be ${VERSION_MAX_LENGTH} characters or fewer for Azure SQL metadata storage`
+    );
+  }
 };
 
 const getQualifiedTableName = (schemaName: string, tableName: string): string =>
@@ -131,7 +140,7 @@ IF OBJECT_ID(N'${objectName}', N'U') IS NULL
 BEGIN
   CREATE TABLE ${qualifiedTableName} (
     component_name  NVARCHAR(255) NOT NULL,
-    version         NVARCHAR(64)  NOT NULL,
+    version         NVARCHAR(128) NOT NULL,
     publish_date    BIGINT        NOT NULL,
     template_size   BIGINT        NULL,
     status          NVARCHAR(16)  NOT NULL DEFAULT N'committed',
@@ -168,12 +177,15 @@ const assertRowsAffected = (
 const addComponentRowInputs = (
   request: sql.Request,
   row: ComponentRow
-): sql.Request =>
-  request
+): sql.Request => {
+  assertVersionLength(row.version);
+
+  return request
     .input('componentName', sql.NVarChar(255), row.name)
-    .input('version', sql.NVarChar(64), row.version)
+    .input('version', sql.NVarChar(VERSION_MAX_LENGTH), row.version)
     .input('publishDate', sql.BigInt, row.publishDate)
     .input('templateSize', sql.BigInt, row.templateSize ?? null);
+};
 
 export default function azureSqlMetadataAdapter(
   options?: AzureSqlMetadataAdapterOptions
@@ -208,12 +220,13 @@ export default function azureSqlMetadataAdapter(
     name: string,
     version: string
   ): Promise<MetadataStatus | undefined> => {
+    assertVersionLength(version);
     const { qualifiedTableName } = getTableNames();
     const activePool = await getPool();
     const result = await activePool
       .request()
       .input('componentName', sql.NVarChar(255), name)
-      .input('version', sql.NVarChar(64), version)
+      .input('version', sql.NVarChar(VERSION_MAX_LENGTH), version)
       .query<{ status: MetadataStatus }>(`
         SELECT status
         FROM ${qualifiedTableName}
@@ -237,12 +250,13 @@ export default function azureSqlMetadataAdapter(
     name: string,
     version: string
   ): Promise<boolean> => {
+    assertVersionLength(version);
     const { qualifiedTableName } = getTableNames();
     const activePool = await getPool();
     const result = await activePool
       .request()
       .input('componentName', sql.NVarChar(255), name)
-      .input('version', sql.NVarChar(64), version)
+      .input('version', sql.NVarChar(VERSION_MAX_LENGTH), version)
       .query(`
         DELETE FROM ${qualifiedTableName}
         WHERE component_name = @componentName
@@ -405,12 +419,13 @@ export default function azureSqlMetadataAdapter(
       version: string,
       token: string
     ): Promise<void> {
+      assertVersionLength(version);
       const { qualifiedTableName } = getTableNames();
       const activePool = await getPool();
       const result = await activePool
         .request()
         .input('componentName', sql.NVarChar(255), name)
-        .input('version', sql.NVarChar(64), version)
+        .input('version', sql.NVarChar(VERSION_MAX_LENGTH), version)
         .input('publishToken', sql.NVarChar(64), token)
         .query(`
           UPDATE ${qualifiedTableName}
@@ -428,12 +443,13 @@ export default function azureSqlMetadataAdapter(
       version: string,
       token: string
     ): Promise<void> {
+      assertVersionLength(version);
       const { qualifiedTableName } = getTableNames();
       const activePool = await getPool();
       const result = await activePool
         .request()
         .input('componentName', sql.NVarChar(255), name)
-        .input('version', sql.NVarChar(64), version)
+        .input('version', sql.NVarChar(VERSION_MAX_LENGTH), version)
         .input('publishToken', sql.NVarChar(64), token)
         .query(`
           DELETE FROM ${qualifiedTableName}

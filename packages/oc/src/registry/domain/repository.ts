@@ -20,6 +20,7 @@ import errorToString from '../../utils/error-to-string';
 import ComponentsCache from './components-cache';
 import getComponentsDetails from './components-details';
 import eventsHandler from './events-handler';
+import getMetadataAdapterOptions from './metadata-adapter-options';
 import { createMetadataIndex, getComponentRow } from './metadata-index';
 import {
   exportLegacyMetadataFiles,
@@ -33,17 +34,6 @@ import * as versionHandler from './version-handler';
 const packageInfo = fs.readJsonSync(
   path.join(__dirname, '..', '..', '..', 'package.json')
 );
-
-const getMetadataAdapterOptions = (conf: Config): any => {
-  if (typeof conf.metadata?.manageSchema === 'undefined') {
-    return conf.metadata?.options;
-  }
-
-  return {
-    ...(conf.metadata.options || {}),
-    manageSchema: conf.metadata.manageSchema
-  };
-};
 
 export default function repository(conf: Config) {
   const cdn: StorageAdapter =

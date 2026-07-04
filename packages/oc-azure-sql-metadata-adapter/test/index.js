@@ -99,6 +99,7 @@ describe('oc-azure-sql-metadata-adapter', () => {
       const ddl = queryStub.args[0][0];
       expect(ddl).to.contain("OBJECT_ID(N'dbo.oc_components', N'U')");
       expect(ddl).to.contain('CREATE TABLE [dbo].[oc_components]');
+      expect(ddl).to.contain('version         NVARCHAR(128) NOT NULL');
       expect(ddl).to.contain('PRIMARY KEY (component_name, version)');
       expect(ddl).to.contain(
         'CREATE INDEX ix_oc_components_name ON [dbo].[oc_components] (component_name)'
@@ -290,7 +291,7 @@ describe('oc-azure-sql-metadata-adapter', () => {
         },
         {
           name: 'version',
-          type: { type: 'NVarChar', length: 64 },
+          type: { type: 'NVarChar', length: 128 },
           value: '1.0.0'
         },
         { name: 'publishDate', type: { type: 'BigInt' }, value: 123 },
@@ -320,6 +321,27 @@ describe('oc-azure-sql-metadata-adapter', () => {
         type: { type: 'BigInt' },
         value: null
       });
+    });
+
+    it('should reject versions too long for the SQL key before executing SQL', async () => {
+      const { adapter, queryStub } = createAdapter();
+      const store = adapter({ server: 'localhost', database: 'oc' });
+      let error;
+
+      try {
+        await store.addVersion({
+          name: 'hello-world',
+          version: `1.0.0-${'a'.repeat(128)}`,
+          publishDate: 123
+        });
+      } catch (err) {
+        error = err;
+      }
+
+      expect(error.message).to.equal(
+        'Component version must be 128 characters or fewer for Azure SQL metadata storage'
+      );
+      expect(queryStub.called).to.be.false;
     });
 
     it('should reuse the same pool across calls', async () => {

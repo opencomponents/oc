@@ -92,6 +92,8 @@ metadata: {
 | `schemaName` | `dbo` | SQL schema containing the metadata table. Must be a simple SQL identifier matching `/^[A-Za-z_][A-Za-z0-9_]*$/`. |
 | `tableName` | `oc_components` | Metadata table name. Must be a simple SQL identifier matching `/^[A-Za-z_][A-Za-z0-9_]*$/`. |
 
+Component versions are stored as `NVARCHAR(128)` to allow long semver prerelease/build labels while staying within SQL Server's indexed key size with the component-name column. Versions longer than 128 characters are rejected before SQL execution with a clear adapter error.
+
 ## Managed schema
 
 With the default `manageSchema: true`, the adapter runs DDL equivalent to:
@@ -101,7 +103,7 @@ IF OBJECT_ID(N'dbo.oc_components', N'U') IS NULL
 BEGIN
   CREATE TABLE [dbo].[oc_components] (
     component_name  NVARCHAR(255) NOT NULL,
-    version         NVARCHAR(64)  NOT NULL,
+    version         NVARCHAR(128) NOT NULL,
     publish_date    BIGINT        NOT NULL,
     template_size   BIGINT        NULL,
     status          NVARCHAR(16)  NOT NULL DEFAULT N'committed',

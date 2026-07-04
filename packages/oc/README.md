@@ -204,8 +204,9 @@ Two optional flags help run storage and metadata side by side during migration:
   than a full-registry scan + blob rewrite.
 - `metadata.exportLegacyFilesInterval: <seconds>` additionally refreshes those
   projections on a background timer (non-overlapping) when `exportLegacyFiles`
-  is enabled. Omit it to export at startup only. The timer is stopped on
-  `registry.close()`.
+  is enabled. Config validation rejects setting an interval without
+  `metadata.exportLegacyFiles: true`. Omit it to export at startup only. The
+  timer is stopped on `registry.close()`.
 
 These files are one-way projections from the metadata store. They can help with
 rollback to storage mode, but they do not replace the storage adapter because

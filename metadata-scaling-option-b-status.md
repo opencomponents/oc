@@ -245,7 +245,6 @@ integration tests still need a live Azure run to execute. The S3/GS
 ### Deferred by decision
 - Do not expand migration result shape beyond `{ scanned, inserted, skipped }` now.
 - Do not implement scheduled/background `reconcileFromStorage` now.
-- Do not implement scheduled/background `exportLegacyFiles` now.
 - Do not implement degraded DB-down cold start now.
 - Do not add new readiness signaling now unless an existing health/readiness mechanism is found during implementation.
 - Do not publish external docs-site updates unless explicitly requested.
