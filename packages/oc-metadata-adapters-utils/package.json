@@ -1,6 +1,6 @@
 {
 	"name": "oc-metadata-adapters-utils",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Common metadata adapter types and utilities for OpenComponents",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",

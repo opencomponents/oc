@@ -13,9 +13,8 @@
     "preview": "turbo run preview --filter=oc",
     "changeset:add": "changeset add",
     "changeset:version": "changeset version",
-    "changeset:publish": "changeset publish",
     "release:prepare": "npm run test-silent && npm run changeset:version",
-    "release:publish": "npm run build && npm run changeset:publish",
+    "release:publish": "npm run build && changeset publish",
     "release": "npm run release:prepare && npm run release:publish",
     "prepare": "lefthook install"
   },

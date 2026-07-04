@@ -1,6 +1,6 @@
 {
   "name": "oc-azure-sql-metadata-adapter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Azure SQL metadata adapter for OpenComponents",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "mssql": "^12.1.0",
-    "oc-metadata-adapters-utils": "^0.1.0"
+    "oc-metadata-adapters-utils": "^0.1.1"
   },
   "devDependencies": {
     "@types/mssql": "^12.3.0",

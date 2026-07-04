@@ -1,6 +1,6 @@
 {
   "name": "oc-azure-table-metadata-adapter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Azure Table Storage metadata adapter for OpenComponents",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -34,7 +34,7 @@
   "dependencies": {
     "@azure/data-tables": "^13.3.2",
     "@azure/identity": "^4.13.1",
-    "oc-metadata-adapters-utils": "^0.1.0"
+    "oc-metadata-adapters-utils": "^0.1.1"
   },
   "devDependencies": {
     "chai": "^6.2.2",

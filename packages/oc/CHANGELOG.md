@@ -1,5 +1,13 @@
 ## Change Log
 
+## 0.50.56
+
+### Patch Changes
+
+- Add storage metadata adapter
+- Updated dependencies
+  - oc-metadata-adapters-utils@0.1.1
+
 ## 0.50.55
 
 ### Patch Changes
