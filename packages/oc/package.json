@@ -99,7 +99,7 @@
 		"oc-empty-response-handler": "^1.0.2",
 		"oc-get-unix-utc-timestamp": "^1.0.6",
 		"oc-metadata-adapters-utils": "^0.1.0",
-		"oc-s3-storage-adapter": "^2.2.2",
+		"oc-s3-storage-adapter": "^2.2.3",
 		"oc-storage-adapters-utils": "^2.1.2",
 		"oc-template-es6": "^2.0.0",
 		"oc-template-es6-compiler": "^7.1.4",
