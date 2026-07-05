@@ -14,7 +14,7 @@
     "changeset:add": "changeset add",
     "changeset:version": "changeset version",
     "release:prepare": "npm run test-silent && npm run changeset:version",
-    "release:publish": "npm run build && changeset publish",
+    "release:publish": "npm run build && changeset publish && changeset tag",
     "release": "npm run release:prepare && npm run release:publish",
     "prepare": "lefthook install"
   },
