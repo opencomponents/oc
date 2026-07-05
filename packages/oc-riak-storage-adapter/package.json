@@ -1,0 +1,46 @@
+{
+	"name": "oc-riak-storage-adapter",
+	"version": "0.4.0",
+	"description": "RiakCS storage adapter for OC",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/opencomponents/oc.git",
+		"directory": "packages/oc-riak-storage-adapter"
+	},
+	"bugs": {
+		"url": "https://github.com/opencomponents/oc/issues"
+	},
+	"homepage": "https://github.com/opencomponents/oc/tree/master/packages/oc-riak-storage-adapter#readme",
+	"keywords": [
+		"oc",
+		"opencomponents",
+		"s3",
+		"riakcs",
+		"storage"
+	],
+	"author": {
+		"name": "John Parnefjord"
+	},
+	"license": "MIT",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"prebuild": "rimraf dist",
+		"build": "npm run lint && tsc",
+		"lint": "npx @biomejs/biome check src",
+		"test": "npm run build",
+		"test-silent": "npm run build"
+	},
+	"dependencies": {
+		"oc-s3-storage-adapter": "*"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.5.0",
+		"@types/node": "^25.9.3",
+		"rimraf": "^6.1.3",
+		"typescript": "^6.0.3"
+	}
+}

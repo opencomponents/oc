@@ -22,11 +22,26 @@
 			"packages/oc-metadata-adapters-utils/**/*",
 			"!packages/oc-metadata-adapters-utils/dist/**/*",
 			"!packages/oc-metadata-adapters-utils/node_modules/**/*",
-			"packages/oc-client-browser/**/*",
-			"!packages/oc-client-browser/dist/**/*",
-			"!packages/oc-client-browser/vendor/**/*",
-			"!packages/oc-client-browser/node_modules/**/*"
-		]
+		"packages/oc-client-browser/**/*",
+		"!packages/oc-client-browser/dist/**/*",
+		"!packages/oc-client-browser/vendor/**/*",
+		"!packages/oc-client-browser/node_modules/**/*",
+		"packages/oc-storage-adapters-utils/**/*",
+		"!packages/oc-storage-adapters-utils/dist/**/*",
+		"!packages/oc-storage-adapters-utils/node_modules/**/*",
+		"packages/oc-s3-storage-adapter/**/*",
+		"!packages/oc-s3-storage-adapter/dist/**/*",
+		"!packages/oc-s3-storage-adapter/node_modules/**/*",
+		"packages/oc-azure-storage-adapter/**/*",
+		"!packages/oc-azure-storage-adapter/dist/**/*",
+		"!packages/oc-azure-storage-adapter/node_modules/**/*",
+		"packages/oc-gs-storage-adapter/**/*",
+		"!packages/oc-gs-storage-adapter/dist/**/*",
+		"!packages/oc-gs-storage-adapter/node_modules/**/*",
+		"packages/oc-riak-storage-adapter/**/*",
+		"!packages/oc-riak-storage-adapter/dist/**/*",
+		"!packages/oc-riak-storage-adapter/node_modules/**/*"
+	]
 	},
 	"formatter": {
 		"enabled": true,
