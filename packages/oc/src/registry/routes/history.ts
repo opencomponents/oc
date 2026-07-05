@@ -8,7 +8,7 @@ export default function history(repository: Repository) {
       if (res.conf.discovery.ui && !res.conf.local) {
         const details = await repository.getComponentsDetails();
         const componentsHistory = getComponentsHistory(details);
-        res.setHeader('Cache-Control', 'public, max-age=600');
+        res.set('Cache-Control', 'public, max-age=600');
         res.status(200).json({ componentsHistory });
       } else {
         res.status(401);

@@ -6,16 +6,20 @@ import * as storageUtils from 'oc-storage-adapters-utils';
 import type { Repository } from '../domain/repository';
 import compress from '../middleware/compression';
 
-export default function staticRedirector(repository: Repository) {
+export type StaticRedirectorRouteId =
+  | 'client'
+  | 'dev-client'
+  | 'client-map'
+  | 'local-static';
+
+export default function staticRedirector(
+  repository: Repository,
+  routeId: StaticRedirectorRouteId
+) {
   return (req: Request, res: Response): void => {
     let filePath: string;
-    const clientPath = `${res.conf.prefix || '/'}oc-client/client.js`;
-    const devClientPath = `${res.conf.prefix || '/'}oc-client/client.dev.js`;
-    const clientMapPath = `${
-      res.conf.prefix || '/'
-    }oc-client/oc-client.min.map`;
 
-    if (req.route.path === clientPath || req.route.path === devClientPath) {
+    if (routeId === 'client' || routeId === 'dev-client') {
       if (res.conf.local) {
         if (res.conf.compiledClient) {
           res.type('application/javascript');
@@ -29,7 +33,7 @@ export default function staticRedirector(repository: Repository) {
       } else {
         if (res.conf.compiledClient) {
           res.type('application/javascript');
-          if (req.route.path === clientPath) {
+          if (routeId === 'client') {
             compress(
               {
                 uncompressed: res.conf.compiledClient.code.minified,
@@ -44,12 +48,10 @@ export default function staticRedirector(repository: Repository) {
           }
           return;
         }
-        res.redirect(
-          repository.getStaticClientPath(req.route.path === devClientPath)
-        );
+        res.redirect(repository.getStaticClientPath(routeId === 'dev-client'));
         return;
       }
-    } else if (req.route.path === clientMapPath) {
+    } else if (routeId === 'client-map') {
       if (res.conf.local) {
         filePath = path.join(
           __dirname,

@@ -22,7 +22,12 @@ export function create(app: Express, conf: Config, repository: Repository) {
     componentPreview: ComponentPreviewRoute(conf, repository),
     index: IndexRoute(repository),
     publish: PublishRoute(repository),
-    staticRedirector: StaticRedirectorRoute(repository),
+    staticRedirector: {
+      client: StaticRedirectorRoute(repository, 'client'),
+      devClient: StaticRedirectorRoute(repository, 'dev-client'),
+      clientMap: StaticRedirectorRoute(repository, 'client-map'),
+      localStatic: StaticRedirectorRoute(repository, 'local-static')
+    },
     plugins: PluginsRoute(conf),
     dependencies: DependenciesRoute(conf),
     history: HistoryRoute(repository),
@@ -38,9 +43,15 @@ export function create(app: Express, conf: Config, repository: Repository) {
     app.get(prefix.substring(0, prefix.length - 1), routes.index);
   }
 
-  app.get(`${prefix}oc-client/client.js`, routes.staticRedirector);
-  app.get(`${prefix}oc-client/client.dev.js`, routes.staticRedirector);
-  app.get(`${prefix}oc-client/oc-client.min.map`, routes.staticRedirector);
+  app.get(`${prefix}oc-client/client.js`, routes.staticRedirector.client);
+  app.get(
+    `${prefix}oc-client/client.dev.js`,
+    routes.staticRedirector.devClient
+  );
+  app.get(
+    `${prefix}oc-client/oc-client.min.map`,
+    routes.staticRedirector.clientMap
+  );
 
   app.get(`${prefix}~registry/plugins`, routes.plugins);
   app.get(`${prefix}~registry/dependencies`, routes.dependencies);
@@ -52,7 +63,7 @@ export function create(app: Express, conf: Config, repository: Repository) {
   if (conf.local) {
     app.get(
       `${prefix}:componentName/:componentVersion/${settings.registry.localStaticRedirectorPath}*splat`,
-      routes.staticRedirector
+      routes.staticRedirector.localStatic
     );
   } else {
     app.put(

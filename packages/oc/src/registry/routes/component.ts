@@ -70,7 +70,7 @@ export default function component(
               res.status(500).end(String(err));
             });
 
-            res.setHeader('Content-Type', 'x-text/stream');
+            res.set('Content-Type', 'x-text/stream');
 
             nodeStream.pipe(res).on('finish', () => {
               res.end();
