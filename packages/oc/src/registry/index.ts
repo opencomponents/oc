@@ -78,7 +78,7 @@ export default function registry<T = any>(inputOptions: RegistryOptions<T>) {
 
         if (options.verbosity) {
           ok(
-            `Registry started at port http://localhost:${app.get('port')}${options.prefix}`
+            `Registry started at port http://localhost:${options.port}${options.prefix}`
           );
 
           if (componentsInfo) {

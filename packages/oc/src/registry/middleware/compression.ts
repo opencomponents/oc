@@ -15,7 +15,7 @@ export default function compress(
     return;
   }
 
-  res.setHeader('Content-Encoding', encoding);
+  res.set('Content-Encoding', encoding);
   const compressed = encoding === 'br' ? data.brotli : data.gzip;
 
   res.send(compressed);

@@ -6,13 +6,13 @@ export default function cors(
   next: NextFunction
 ): void {
   res.removeHeader('X-Powered-By');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header(
+  res.set('Access-Control-Allow-Credentials', 'true');
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept, traceparent'
   );
-  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS, PUT, POST');
+  res.set('Access-Control-Allow-Methods', 'GET, OPTIONS, PUT, POST');
 
   next();
 }
