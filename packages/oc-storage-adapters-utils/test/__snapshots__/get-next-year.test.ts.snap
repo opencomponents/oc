@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Get next year 1`] = `2018-01-01T00:00:00.000Z`;
