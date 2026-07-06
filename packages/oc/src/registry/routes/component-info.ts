@@ -1,7 +1,11 @@
-import type { Request, Response } from 'express';
 import parseAuthor from 'parse-author';
 import { fromPromise } from 'universalify';
 import type { Component, ComponentDetail, Config } from '../../types';
+import type {
+  OcHandler,
+  OcRequest,
+  OcResponse
+} from '../domain/http-server/types';
 import type { Repository } from '../domain/repository';
 import * as urlBuilder from '../domain/url-builder';
 import infoView from '../views/info';
@@ -43,8 +47,8 @@ interface InfoError {
 
 function componentInfo(
   err: InfoError | string | null,
-  req: Request,
-  res: Response,
+  req: OcRequest,
+  res: OcResponse,
   component?: Component,
   componentDetail?: ComponentDetail
 ): void {
@@ -73,7 +77,7 @@ function componentInfo(
       }
 
       // Get theme from cookie or default to dark
-      const theme = req.cookies?.['oc-theme'] || 'dark';
+      const theme = req.cookies?.['oc-theme'] === 'light' ? 'light' : 'dark';
 
       res.send(
         infoView({
@@ -104,8 +108,8 @@ function componentInfo(
 export default function componentInfoRoute(
   conf: Config,
   repository: Repository
-) {
-  async function handler(req: Request, res: Response): Promise<void> {
+): OcHandler {
+  async function handler(req: OcRequest, res: OcResponse): Promise<void> {
     try {
       const history = await repository
         .getComponentsDetails()

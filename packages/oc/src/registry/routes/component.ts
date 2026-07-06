@@ -1,19 +1,19 @@
 import { Readable } from 'node:stream';
 import { encode } from '@rdevis/turbo-stream';
-import type { CookieOptions, Request, RequestHandler, Response } from 'express';
 import { serializeError } from 'serialize-error';
 import strings from '../../resources';
 import type { Config } from '../../types';
+import type { CookieOptions, OcHandler } from '../domain/http-server/types';
 import type { Repository } from '../domain/repository';
 import GetComponentHelper, { stream } from './helpers/get-component';
 
 export default function component(
   conf: Config,
   repository: Repository
-): RequestHandler {
+): OcHandler {
   const getComponent = GetComponentHelper(conf, repository);
 
-  return (req: Request, res: Response): void => {
+  return (req, res): void => {
     let parameters = req.query as Record<string, string>;
     if (req.method === 'POST') {
       parameters = {
@@ -45,7 +45,7 @@ export default function component(
         }
 
         try {
-          if (Object.keys(result.headers ?? {}).length) {
+          if (result.headers && Object.keys(result.headers).length) {
             res.set(result.headers);
           }
 
@@ -72,9 +72,7 @@ export default function component(
 
             res.set('Content-Type', 'x-text/stream');
 
-            nodeStream.pipe(res).on('finish', () => {
-              res.end();
-            });
+            res.stream(nodeStream);
           } else {
             res.status(result.status).json(result.response);
           }

@@ -1,14 +1,14 @@
-import type { Request, Response } from 'express';
 import fs from 'fs-extra';
 import strings from '../../resources/index';
 import eventsHandler from '../domain/events-handler';
 import extractPackage from '../domain/extract-package';
+import type { OcHandler } from '../domain/http-server/types';
 import type { Repository } from '../domain/repository';
 import * as validator from '../domain/validators';
 import { validateTemplateOcVersion } from '../domain/validators';
 
-export default function publish(repository: Repository) {
-  return async (req: Request, res: Response): Promise<void> => {
+export default function publish(repository: Repository): OcHandler {
+  return async (req, res): Promise<void> => {
     if (!req.params['componentName'] || !req.params['componentVersion']) {
       res.errorDetails = 'malformed request';
       res.status(409).json({ error: res.errorDetails });

@@ -105,7 +105,7 @@ class ExpressHttpServerAdapter implements HttpServerAdapter {
   }
 
   use(handler: OcHandler): void {
-    this.app.use(this.toExpressHandler(handler));
+    this.app.use(this.toExpressHandler(handler, true));
   }
 
   route(method: Method, path: string, id: string, handlers: OcHandler[]): void {
@@ -177,7 +177,10 @@ class ExpressHttpServerAdapter implements HttpServerAdapter {
     return this.server;
   }
 
-  private toExpressHandler(handler: OcHandler): ExpressMiddleware {
+  private toExpressHandler(
+    handler: OcHandler,
+    continueWhenNotSent = false
+  ): ExpressMiddleware {
     const native = (handler as WrappedOcHandler)[expressMiddleware];
     if (native) {
       return native;
@@ -191,7 +194,7 @@ class ExpressHttpServerAdapter implements HttpServerAdapter {
         )
       )
         .then(() => {
-          if (!(res as Response).headersSent) {
+          if (continueWhenNotSent && !(res as Response).headersSent) {
             next();
           }
         })
@@ -200,7 +203,14 @@ class ExpressHttpServerAdapter implements HttpServerAdapter {
   }
 
   private toOcRequest(req: Request): OcRequest {
+    const rawParams = req.params ?? {};
+    const params = { ...rawParams } as Record<string, string>;
+    if (Array.isArray(rawParams['splat'])) {
+      params['splat'] = rawParams['splat'].join('/');
+    }
+
     return Object.assign(req, {
+      params,
       raw: req,
       routeId: (req as unknown as { routeId?: string }).routeId ?? ''
     }) as unknown as OcRequest;

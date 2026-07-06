@@ -12,12 +12,9 @@ export const bind = (
   adapter: HttpServerAdapter,
   options: Config
 ): HttpServerAdapter => {
-  adapter.use(
-    adapter.fromConnect((_req, res, next) => {
-      res.conf = options;
-      next();
-    })
-  );
+  adapter.use((_req, res) => {
+    res.conf = options;
+  });
 
   adapter.enableRequestTiming((req, res, time) => {
     const data: RequestData = {
@@ -44,7 +41,7 @@ export const bind = (
   });
   adapter.enableCookies();
   adapter.enableBodyParser({ limit: options.postRequestPayloadSize });
-  adapter.use(adapter.fromConnect(cors));
+  adapter.use(cors);
   if (!options.local) {
     adapter.enableFileUploads({
       tempDir: options.tempDir,
@@ -52,8 +49,8 @@ export const bind = (
         `${normaliseFileName(originalName)}-${Date.now()}.tar.gz`
     });
   }
-  adapter.use(adapter.fromConnect(baseUrlHandler));
-  adapter.use(adapter.fromConnect(discoveryHandler));
+  adapter.use(baseUrlHandler);
+  adapter.use(discoveryHandler);
 
   if (options.verbosity) {
     adapter.enableLogging({

@@ -1,10 +1,6 @@
-import type { NextFunction, Request, Response } from 'express';
+import type { OcHandler } from '../domain/http-server/types';
 
-export default function cors(
-  _req: Request,
-  res: Response,
-  next: NextFunction
-): void {
+const cors: OcHandler = (_req, res) => {
   res.removeHeader('X-Powered-By');
   res.set('Access-Control-Allow-Credentials', 'true');
   res.set('Access-Control-Allow-Origin', '*');
@@ -13,6 +9,6 @@ export default function cors(
     'Origin, X-Requested-With, Content-Type, Accept, traceparent'
   );
   res.set('Access-Control-Allow-Methods', 'GET, OPTIONS, PUT, POST');
+};
 
-  next();
-}
+export default cors;

@@ -1,10 +1,6 @@
-import type { NextFunction, Request, Response } from 'express';
+import type { OcHandler } from '../domain/http-server/types';
 
-export default function discoveryHandler(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
+const discoveryHandler: OcHandler = (req, res) => {
   res.conf.discoveryFunc =
     res.conf.discoveryFunc ||
     (typeof res.conf.discovery === 'function' ? res.conf.discovery : undefined);
@@ -15,6 +11,6 @@ export default function discoveryHandler(
       secure: req.secure
     });
   }
+};
 
-  next();
-}
+export default discoveryHandler;

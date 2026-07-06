@@ -1,16 +1,12 @@
-import type { NextFunction, Request, Response } from 'express';
+import type { OcHandler } from '../domain/http-server/types';
 
-export default function baseUrlHandler(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
+const baseUrlHandler: OcHandler = (req, res) => {
   if (res.conf.baseUrlFunc) {
     res.conf.baseUrl = res.conf.baseUrlFunc({
       host: req.headers.host,
       secure: req.secure
     });
   }
+};
 
-  next();
-}
+export default baseUrlHandler;

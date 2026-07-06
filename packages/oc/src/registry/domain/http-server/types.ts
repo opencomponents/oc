@@ -1,7 +1,9 @@
 import type http from 'node:http';
 import type { IncomingHttpHeaders } from 'node:http';
-import type { CookieOptions } from 'express';
+import type { CookieOptions as ExpressCookieOptions } from 'express';
 import type { Config } from '../../../types';
+
+export type CookieOptions = ExpressCookieOptions;
 
 export type Method = 'get' | 'post' | 'put' | 'patch' | 'head' | 'delete';
 
@@ -16,9 +18,9 @@ export interface OcRequest {
   secure: boolean;
   ip: string;
   headers: IncomingHttpHeaders;
-  params: Record<string, string | string[]>;
+  params: Record<string, string>;
   query: Record<string, unknown>;
-  body: unknown;
+  body: any;
   cookies: Record<string, string>;
   files?: UploadedFile[] | Record<string, UploadedFile[]>;
   user?: string;
