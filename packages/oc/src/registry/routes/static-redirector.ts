@@ -74,7 +74,7 @@ export default function staticRedirector(
       filePath =
         path.join(res.conf.path, req.params['componentName']) +
         '/_package/' +
-        (req.params['splat'] as any as string[]).join('/');
+        req.params['splat'];
     }
 
     if (!fs.existsSync(filePath)) {
