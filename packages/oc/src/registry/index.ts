@@ -1,10 +1,11 @@
-import http from 'node:http';
+import type http from 'node:http';
 import colors from 'colors/safe';
-import express from 'express';
+import type express from 'express';
 
 import type { Plugin } from '../types';
 import appStart from './app-start';
 import eventsHandler from './domain/events-handler';
+import createExpressAdapter from './domain/http-server/express-adapter';
 import sanitiseOptions, { RegistryOptions } from './domain/options-sanitiser';
 import * as pluginsInitialiser from './domain/plugins-initialiser';
 import Repository from './domain/repository';
@@ -23,8 +24,8 @@ export default function registry<T = any>(inputOptions: RegistryOptions<T>) {
   const options = sanitiseOptions(inputOptions);
 
   const plugins: Plugin[] = [];
-  const app = middleware.bind(express(), options);
-  let server: http.Server;
+  const adapter = middleware.bind(createExpressAdapter(options.port), options);
+  const app = adapter.native() as express.Express;
   const repository = Repository(options);
 
   const close = (
@@ -33,8 +34,8 @@ export default function registry<T = any>(inputOptions: RegistryOptions<T>) {
     const closeMetadataStore = (): Promise<void> =>
       Promise.resolve(repository.close?.()).catch(() => undefined);
 
-    if (server?.listening) {
-      server.close((err) => {
+    if (adapter.isListening()) {
+      adapter.close((err) => {
         void closeMetadataStore().finally(() => callback(err));
       });
       return;
@@ -60,48 +61,49 @@ export default function registry<T = any>(inputOptions: RegistryOptions<T>) {
 
     try {
       options.plugins = await pluginsInitialiser.init(plugins);
-      createRouter(app, options, repository);
+      createRouter(adapter, options, repository);
       const componentsInfo = await repository.init();
       await appStart(repository, options);
 
-      server = http.createServer(app);
-      server.timeout = options.timeout;
-      if (options.keepAliveTimeout) {
-        server.keepAliveTimeout = options.keepAliveTimeout;
-      }
-
-      server.listen(options.port, (err?: any) => {
-        if (err) {
-          return callback(err);
-        }
-        eventsHandler.fire('start', {});
-
-        if (options.verbosity) {
-          ok(
-            `Registry started at port http://localhost:${options.port}${options.prefix}`
-          );
-
-          if (componentsInfo) {
-            const componentsNumber = Object.keys(
-              componentsInfo.components
-            ).length;
-            const componentsReleases = Object.values(
-              componentsInfo.components
-            ).reduce(
-              (acc, component) => acc + Object.keys(component).length,
-              0
-            );
-
-            ok(
-              `Registry serving ${componentsNumber} components for a total of ${componentsReleases} releases.`
-            );
+      adapter.listen(
+        {
+          port: options.port,
+          timeout: options.timeout,
+          keepAliveTimeout: options.keepAliveTimeout
+        },
+        (err?: Error) => {
+          if (err) {
+            return callback(err);
           }
+          eventsHandler.fire('start', {});
+
+          if (options.verbosity) {
+            ok(
+              `Registry started at port http://localhost:${options.port}${options.prefix}`
+            );
+
+            if (componentsInfo) {
+              const componentsNumber = Object.keys(
+                componentsInfo.components
+              ).length;
+              const componentsReleases = Object.values(
+                componentsInfo.components
+              ).reduce(
+                (acc, component) => acc + Object.keys(component).length,
+                0
+              );
+
+              ok(
+                `Registry serving ${componentsNumber} components for a total of ${componentsReleases} releases.`
+              );
+            }
+          }
+
+          callback(null, { app, server: adapter.httpServer() });
         }
+      );
 
-        callback(null, { app, server });
-      });
-
-      server.on('error', (error) => {
+      adapter.onServerError((error) => {
         eventsHandler.fire('error', {
           code: 'EXPRESS_ERROR',
           message: error?.message ?? String(error)

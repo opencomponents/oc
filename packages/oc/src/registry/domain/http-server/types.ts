@@ -53,8 +53,8 @@ export type OcHandler = (
 ) => void | Promise<void>;
 
 export type ExpressMiddleware = (
-  req: unknown,
-  res: unknown,
+  req: any,
+  res: any,
   next: (err?: unknown) => void
 ) => void;
 

@@ -1,66 +1,74 @@
-import cookieParser from 'cookie-parser';
-import errorhandler from 'errorhandler';
-import express, { type Express } from 'express';
-import morgan from 'morgan';
-
 import type { Config } from '../../types';
+import eventsHandler, { type RequestData } from '../domain/events-handler';
+import type { HttpServerAdapter } from '../domain/http-server/types';
 import baseUrlHandler from './base-url-handler';
 import cors from './cors';
 import discoveryHandler from './discovery-handler';
-import fileUploads from './file-uploads';
-import requestHandler from './request-handler';
 
-const bodyParserJsonArgument: { inflate: boolean; limit?: number } = {
-  inflate: true
-};
-const bodyParserUrlEncodedArgument: { extended: boolean; limit?: number } = {
-  extended: true
-};
+const normaliseFileName = (x: string) =>
+  x.replace('.tar.gz', '').replace(/\W+/g, '-').toLowerCase();
 
-export const bind = (app: Express, options: Config): Express => {
-  app.set('port', options.port);
-  app.set('json spaces', 0);
-  app.set('etag', 'strong');
+export const bind = (
+  adapter: HttpServerAdapter,
+  options: Config
+): HttpServerAdapter => {
+  adapter.use(
+    adapter.fromConnect((_req, res, next) => {
+      res.conf = options;
+      next();
+    })
+  );
 
-  app.use((_req, res, next) => {
-    res.conf = options;
-    next();
+  adapter.enableRequestTiming((req, res, time) => {
+    const data: RequestData = {
+      body: req.body,
+      duration: time,
+      headers: req.headers,
+      method: req.method,
+      path: req.path,
+      relativeUrl: req.originalUrl,
+      query: req.query,
+      url: req.protocol + '://' + req.get('host') + req.originalUrl,
+      statusCode: res.statusCode
+    };
+
+    if (res.errorDetails) {
+      data.errorDetails = res.errorDetails;
+    }
+
+    if (res.errorCode) {
+      data.errorCode = res.errorCode;
+    }
+
+    eventsHandler.fire('request', data);
   });
-
-  app.use(requestHandler());
-  app.use(cookieParser());
-
-  if (options.postRequestPayloadSize) {
-    // Type is incorrect since limit can be a string like '50mb'
-    bodyParserJsonArgument.limit = options.postRequestPayloadSize as number;
-    bodyParserUrlEncodedArgument.limit =
-      options.postRequestPayloadSize as number;
+  adapter.enableCookies();
+  adapter.enableBodyParser({ limit: options.postRequestPayloadSize });
+  adapter.use(adapter.fromConnect(cors));
+  if (!options.local) {
+    adapter.enableFileUploads({
+      tempDir: options.tempDir,
+      filename: (originalName) =>
+        `${normaliseFileName(originalName)}-${Date.now()}.tar.gz`
+    });
   }
-
-  app.use(express.json(bodyParserJsonArgument));
-  app.use(express.urlencoded(bodyParserUrlEncodedArgument));
-
-  app.use(cors);
-  app.use(fileUploads);
-  app.use(baseUrlHandler);
-  app.use(discoveryHandler);
+  adapter.use(adapter.fromConnect(baseUrlHandler));
+  adapter.use(adapter.fromConnect(discoveryHandler));
 
   if (options.verbosity) {
-    app.use(
-      morgan('dev', {
-        skip: (req, res) => {
-          // Hide logging development console calls
-          return req.url.startsWith(
-            `${res.conf.prefix}~actions/$$__oc__server___console__$$`
-          );
-        }
-      })
-    );
+    adapter.enableLogging({
+      skip: (req, res) => {
+        // Hide logging development console calls
+        return req.url.startsWith(
+          `${res.conf.prefix}~actions/$$__oc__server___console__$$`
+        );
+      }
+    });
   }
 
   if (options.local) {
-    app.use(errorhandler());
+    adapter.enableErrorHandler();
   }
 
-  return app;
+  return adapter;
 };

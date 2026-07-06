@@ -1,7 +1,11 @@
-import type { Express } from 'express';
 import type { Repository } from '../registry/domain/repository';
 import settings from '../resources/settings';
 import type { Config } from '../types';
+import type {
+  ExpressMiddleware,
+  HttpServerAdapter,
+  Method
+} from './domain/http-server/types';
 import IndexRoute from './routes';
 import ComponentRoute from './routes/component';
 import ComponentInfoRoute from './routes/component-info';
@@ -14,7 +18,19 @@ import PublishRoute from './routes/publish';
 import StaticRedirectorRoute from './routes/static-redirector';
 import ValidateRoute from './routes/validate';
 
-export function create(app: Express, conf: Config, repository: Repository) {
+export function create(
+  adapter: HttpServerAdapter,
+  conf: Config,
+  repository: Repository
+) {
+  const handler = (expressHandler: ExpressMiddleware) =>
+    adapter.fromConnect(expressHandler);
+  const route = (
+    method: Method,
+    path: string,
+    id: string,
+    ...handlers: ExpressMiddleware[]
+  ) => adapter.route(method, path, id, handlers.map(handler));
   const routes = {
     component: ComponentRoute(conf, repository),
     components: ComponentsRoute(conf, repository),
@@ -39,85 +55,126 @@ export function create(app: Express, conf: Config, repository: Repository) {
   const definedBaseRoute = conf.routes?.find((route) => route.route === '/');
 
   if (prefix !== '/' && !definedBaseRoute) {
-    app.get('/', (_req, res) => res.redirect(prefix));
-    app.get(prefix.substring(0, prefix.length - 1), routes.index);
+    route('get', '/', 'root-redirect', (_req, res) => res.redirect(prefix));
+    route(
+      'get',
+      prefix.substring(0, prefix.length - 1),
+      'prefix-index',
+      routes.index
+    );
   }
 
-  app.get(`${prefix}oc-client/client.js`, routes.staticRedirector.client);
-  app.get(
+  route(
+    'get',
+    `${prefix}oc-client/client.js`,
+    'client',
+    routes.staticRedirector.client
+  );
+  route(
+    'get',
     `${prefix}oc-client/client.dev.js`,
+    'dev-client',
     routes.staticRedirector.devClient
   );
-  app.get(
+  route(
+    'get',
     `${prefix}oc-client/oc-client.min.map`,
+    'client-map',
     routes.staticRedirector.clientMap
   );
 
-  app.get(`${prefix}~registry/plugins`, routes.plugins);
-  app.get(`${prefix}~registry/dependencies`, routes.dependencies);
-  app.get(`${prefix}~registry/history`, routes.history);
+  route('get', `${prefix}~registry/plugins`, 'plugins', routes.plugins);
+  route(
+    'get',
+    `${prefix}~registry/dependencies`,
+    'dependencies',
+    routes.dependencies
+  );
+  route('get', `${prefix}~registry/history`, 'history', routes.history);
   if (conf.discovery.validate) {
-    app.post(`${prefix}~registry/validate`, routes.validate);
+    route('post', `${prefix}~registry/validate`, 'validate', routes.validate);
   }
 
   if (conf.local) {
-    app.get(
+    route(
+      'get',
       `${prefix}:componentName/:componentVersion/${settings.registry.localStaticRedirectorPath}*splat`,
+      'local-static',
       routes.staticRedirector.localStatic
     );
   } else {
-    app.put(
+    route(
+      'put',
       `${prefix}:componentName/:componentVersion`,
+      'publish',
       conf.beforePublish,
       routes.publish
     );
   }
 
-  app.get(prefix, routes.index);
-  app.post(prefix, routes.components);
+  route('get', prefix, 'index', routes.index);
+  route('post', prefix, 'components', routes.components);
 
-  app.get(
+  route(
+    'get',
     `${prefix}:componentName/:componentVersion${settings.registry.componentInfoPath}`,
+    'component-version-info',
     routes.componentInfo
   );
-  app.get(
+  route(
+    'get',
     `${prefix}:componentName${settings.registry.componentInfoPath}`,
+    'component-info',
     routes.componentInfo
   );
 
-  app.get(
+  route(
+    'get',
     `${prefix}:componentName/:componentVersion${settings.registry.componentPreviewPath}`,
+    'component-version-preview',
     routes.componentPreview
   );
-  app.get(
+  route(
+    'get',
     `${prefix}:componentName${settings.registry.componentPreviewPath}`,
+    'component-preview',
     routes.componentPreview
   );
 
-  app.get(`${prefix}:componentName/:componentVersion`, routes.component);
-  app.get(`${prefix}:componentName`, routes.component);
-
-  app.post(
-    `${prefix}~actions/:action/:componentName/:componentVersion`,
+  route(
+    'get',
+    `${prefix}:componentName/:componentVersion`,
+    'component-version',
     routes.component
   );
-  app.post(`${prefix}~actions/:action/:componentName`, routes.component);
+  route('get', `${prefix}:componentName`, 'component', routes.component);
+
+  route(
+    'post',
+    `${prefix}~actions/:action/:componentName/:componentVersion`,
+    'component-version-action',
+    routes.component
+  );
+  route(
+    'post',
+    `${prefix}~actions/:action/:componentName`,
+    'component-action',
+    routes.component
+  );
 
   if (conf.routes) {
-    for (const route of conf.routes) {
+    for (const routeConfig of conf.routes) {
       // Ensure handler is a function (should be converted by options-sanitiser)
-      if (typeof route.handler === 'function') {
-        app[
-          route.method.toLowerCase() as
-            | 'get'
-            | 'post'
-            | 'put'
-            | 'patch'
-            | 'head'
-        ](route.route, route.handler);
+      if (typeof routeConfig.handler === 'function') {
+        route(
+          routeConfig.method.toLowerCase() as Method,
+          routeConfig.route,
+          routeConfig.route,
+          routeConfig.handler as ExpressMiddleware
+        );
       } else {
         console.warn(
-          `Warning: Route handler for "${route.route}" is not a function. Skipping route.`
+          `Warning: Route handler for "${routeConfig.route}" is not a function. Skipping route.`
         );
       }
     }
