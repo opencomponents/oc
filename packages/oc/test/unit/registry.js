@@ -4,15 +4,29 @@ const sinon = require('sinon');
 
 describe('registry', () => {
   const repositoryInitStub = sinon.stub();
+  let adapter;
+
+  const createAdapter = () => ({
+    native: sinon.stub().returns('express instance'),
+    listen: sinon.stub(),
+    onServerError: sinon.stub(),
+    httpServer: sinon.stub().returns('server instance'),
+    isListening: sinon.stub().returns(false),
+    close: sinon.stub()
+  });
 
   const deps = {
     './app-start': sinon.stub(),
     './domain/events-handler': { fire: sinon.stub() },
-    express: sinon.stub(),
-    'node:http': {
-      createServer: sinon.stub()
+    './domain/http-server/express-adapter': sinon.stub().callsFake(() => {
+      adapter = createAdapter();
+      return adapter;
+    }),
+    './middleware': {
+      bind: sinon
+        .stub()
+        .callsFake((httpServerAdapter) => httpServerAdapter)
     },
-    './middleware': { bind: sinon.stub().returns({}) },
     './domain/plugins-initialiser': { init: sinon.stub() },
     './domain/repository': sinon.stub().returns({
       init: repositoryInitStub,
@@ -51,20 +65,20 @@ describe('registry', () => {
         deps['./domain/validators'].validateRegistryConfiguration.returns({
           isValid: true
         });
-        deps.express.returns('express instance');
         deps['./domain/options-sanitiser'].returns({ port: 3000 });
         registry = Registry({});
       });
 
-      it('should instantiate express', () => {
-        expect(deps.express.called).to.be.true;
+      it('should instantiate the HTTP server adapter', () => {
+        expect(deps['./domain/http-server/express-adapter'].calledWith(3000)).to
+          .be.true;
       });
 
       it('should bind the middleware', () => {
         const bind = deps['./middleware'].bind;
         expect(bind.called).to.be.true;
-        expect(bind.args[0][0]).to.equal('express instance');
-        expect(bind.args[0][1]).to.eql({ port: 3000 });
+        expect(bind.lastCall.args[0]).to.equal(adapter);
+        expect(bind.lastCall.args[1]).to.eql({ port: 3000 });
       });
 
       it('should instanciate the repository', () => {
@@ -134,10 +148,9 @@ describe('registry', () => {
                   repositoryInitStub.resolves('ok');
                   deps['./app-start'].resolves('ok');
 
-                  deps['node:http'].createServer.returns({
-                    listen: sinon.stub().yields('Port is already used'),
-                    on: sinon.stub()
-                  });
+                  adapter.listen.callsFake((_opts, cb) =>
+                    cb('Port is already used')
+                  );
 
                   registry.start((err) => {
                     error = err;
@@ -159,10 +172,7 @@ describe('registry', () => {
                   deps['./app-start'].resolves('ok');
                   deps['./domain/events-handler'].fire = sinon.stub();
 
-                  deps['node:http'].createServer.returns({
-                    listen: sinon.stub().yields(null, 'ok'),
-                    on: sinon.stub()
-                  });
+                  adapter.listen.callsFake((_opts, cb) => cb(null));
 
                   registry.start((err, res) => {
                     error = err;
@@ -196,10 +206,10 @@ describe('registry', () => {
                   deps['./app-start'].resolves('ok');
                   deps['./domain/events-handler'].fire = sinon.stub();
 
-                  deps['node:http'].createServer.returns({
-                    listen: sinon.stub(),
-                    on: sinon.stub().yields('I failed for some reason')
-                  });
+                  adapter.listen.callsFake(() => undefined);
+                  adapter.onServerError.callsFake((cb) =>
+                    cb('I failed for some reason')
+                  );
 
                   registry.start((err) => {
                     error = err;
@@ -251,24 +261,17 @@ describe('registry', () => {
         });
 
         it('should close the server then the repository when listening', (done) => {
-          const serverCloseStub = sinon
-            .stub()
-            .callsFake((cb) => cb(undefined));
-          deps['node:http'].createServer.returns({
-            listen: sinon.stub().yields(null, 'ok'),
-            on: sinon.stub(),
-            close: serverCloseStub,
-            listening: true
-          });
-
           const registry = Registry({});
+          adapter.listen.callsFake((_opts, cb) => cb(null));
+          adapter.isListening.returns(true);
+          adapter.close.callsFake((cb) => cb(undefined));
+
           registry.start(() => {
             registry.close((err) => {
               expect(err).to.be.undefined;
-              expect(serverCloseStub.calledOnce).to.be.true;
+              expect(adapter.close.calledOnce).to.be.true;
               expect(repositoryCloseStub.calledOnce).to.be.true;
-              expect(repositoryCloseStub.calledAfter(serverCloseStub)).to.be
-                .true;
+              expect(repositoryCloseStub.calledAfter(adapter.close)).to.be.true;
               done();
             });
           });
@@ -276,17 +279,11 @@ describe('registry', () => {
 
         it('should still call the repository close when the server close errors', (done) => {
           const serverError = new Error('close failed');
-          const serverCloseStub = sinon
-            .stub()
-            .callsFake((cb) => cb(serverError));
-          deps['node:http'].createServer.returns({
-            listen: sinon.stub().yields(null, 'ok'),
-            on: sinon.stub(),
-            close: serverCloseStub,
-            listening: true
-          });
-
           const registry = Registry({});
+          adapter.listen.callsFake((_opts, cb) => cb(null));
+          adapter.isListening.returns(true);
+          adapter.close.callsFake((cb) => cb(serverError));
+
           registry.start(() => {
             registry.close((err) => {
               expect(err).to.equal(serverError);
