@@ -30,6 +30,7 @@
 		"prebuild": "rimraf dist",
 		"build": "npm run lint && tsc",
 		"lint": "npx @biomejs/biome check src test",
+		"lint:apply": "npx @biomejs/biome check --write src test",
 		"test": "jest --runInBand && npm run test:integration",
 		"test-silent": "jest --runInBand --silent && npm run test:integration",
 		"test:integration": "tsc --project tsconfig.test.json && node dist/test/registry-node.js"
