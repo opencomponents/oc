@@ -1,8 +1,7 @@
 import path from 'node:path';
-import type { Request, Response } from 'express';
 import fs from 'fs-extra';
-
 import * as storageUtils from 'oc-storage-adapters-utils';
+import type { OcHandler } from '../domain/http-server/types';
 import type { Repository } from '../domain/repository';
 import compress from '../middleware/compression';
 
@@ -15,8 +14,8 @@ export type StaticRedirectorRouteId =
 export default function staticRedirector(
   repository: Repository,
   routeId: StaticRedirectorRouteId
-) {
-  return (req: Request, res: Response): void => {
+): OcHandler {
+  return (req, res): void => {
     let filePath: string;
 
     if (routeId === 'client' || routeId === 'dev-client') {
@@ -69,14 +68,13 @@ export default function staticRedirector(
     } else if (req.params['componentName'] === 'oc-client') {
       filePath = path.join(
         __dirname,
-        '../../components/oc-client/_package/' +
-          (req.params['splat'] as any as string[]).join('/')
+        '../../components/oc-client/_package/' + req.params['splat']
       );
     } else {
       filePath =
         path.join(res.conf.path, req.params['componentName']) +
         '/_package/' +
-        (req.params['splat'] as any as string[]).join('/');
+        req.params['splat'];
     }
 
     if (!fs.existsSync(filePath)) {
@@ -104,7 +102,7 @@ export default function staticRedirector(
     }
 
     fileStream.on('open', () => {
-      fileStream.pipe(res);
+      res.stream(fileStream);
     });
   };
 }

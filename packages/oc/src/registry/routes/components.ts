@@ -1,8 +1,11 @@
 import async from 'async';
-
-import type { CookieOptions, Request, RequestHandler, Response } from 'express';
 import strings from '../../resources';
 import type { Config } from '../../types';
+import type {
+  CookieOptions,
+  OcHandler,
+  OcResponse
+} from '../domain/http-server/types';
 import type { Repository } from '../domain/repository';
 import GetComponentHelper, {
   type GetComponentResult
@@ -18,21 +21,23 @@ type Component = {
 export default function components(
   conf: Config,
   repository: Repository
-): RequestHandler {
+): OcHandler {
   const getComponent = GetComponentHelper(conf, repository);
   const setHeaders = (
     results: GetComponentResult[] | undefined,
-    res: Response
+    res: OcResponse
   ) => {
     if (results?.length !== 1 || !results[0] || !res.set) {
       return;
     }
-    res.set(results[0].headers);
+    if (results[0].headers) {
+      res.set(results[0].headers);
+    }
   };
 
   const setCookies = (
     results: GetComponentResult[] | undefined,
-    res: Response
+    res: OcResponse
   ) => {
     if (results?.length !== 1 || !results[0] || !res.cookie) {
       return;
@@ -47,7 +52,7 @@ export default function components(
     }
   };
 
-  return (req: Request, res: Response) => {
+  return (req, res) => {
     const components = req.body.components as Component[];
     const registryErrors = strings.errors.registry;
 

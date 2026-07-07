@@ -9,9 +9,9 @@ import getAvailableDependencies from './helpers/get-available-dependencies';
 import urlBuilder = require('../domain/url-builder');
 
 import type { IncomingHttpHeaders } from 'node:http';
-import type { Request, Response } from 'express';
 import type { PackageJson } from 'type-fest';
 import type { Author, Component, ParsedComponent } from '../../types';
+import type { OcHandler } from '../domain/http-server/types';
 import type { Repository } from '../domain/repository';
 
 const packageInfo: PackageJson = fs.readJsonSync(
@@ -31,8 +31,8 @@ const isHtmlRequest = (headers: IncomingHttpHeaders) =>
 
 const excludedMeta = ['dependencies', 'devDependencies'];
 
-export default function (repository: Repository) {
-  return async (req: Request, res: Response): Promise<void> => {
+export default function (repository: Repository): OcHandler {
+  return async (req, res): Promise<void> => {
     let componentNames: string[];
     try {
       componentNames = await repository.getComponents();

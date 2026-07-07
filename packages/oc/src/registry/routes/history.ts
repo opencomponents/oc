@@ -1,9 +1,9 @@
-import type { Request, Response } from 'express';
+import type { OcHandler } from '../domain/http-server/types';
 import type { Repository } from '../domain/repository';
 import getComponentsHistory from './helpers/get-components-history';
 
-export default function history(repository: Repository) {
-  return async (_req: Request, res: Response): Promise<void> => {
+export default function history(repository: Repository): OcHandler {
+  return async (_req, res): Promise<void> => {
     try {
       if (res.conf.discovery.ui && !res.conf.local) {
         const details = await repository.getComponentsDetails();

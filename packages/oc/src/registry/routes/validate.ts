@@ -1,10 +1,10 @@
-import type { Request, Response } from 'express';
 import strings from '../../resources/index';
+import type { OcHandler } from '../domain/http-server/types';
 import * as validator from '../domain/validators';
 import { validateTemplateOcVersion } from '../domain/validators';
 
-export default function validate() {
-  return async (req: Request, res: Response): Promise<void> => {
+export default function validate(): OcHandler {
+  return async (req, res): Promise<void> => {
     // Validate that request has a JSON body with package.json
     if (!req.body?.packageJson) {
       res.status(400).json({

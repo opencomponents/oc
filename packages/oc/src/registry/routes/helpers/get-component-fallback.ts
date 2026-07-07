@@ -1,7 +1,7 @@
 import type { IncomingHttpHeaders } from 'node:http';
-import type { Request, Response } from 'express';
 import { type Dispatcher, request } from 'undici';
 import type { Component, Config } from '../../../types';
+import type { OcRequest, OcResponse } from '../../domain/http-server/types';
 import * as urlBuilder from '../../domain/url-builder';
 import type { GetComponentResult } from './get-component';
 
@@ -20,8 +20,8 @@ function getComponentFallbackForViewType(
     baseUrl: string
   ) => string,
   conf: Config,
-  req: Request,
-  res: Response,
+  req: OcRequest,
+  res: OcResponse,
   registryError: string | null,
   callback: ComponentCallback
 ) {
@@ -128,8 +128,8 @@ export function getComponent(
 
 export function getComponentPreview(
   conf: Config,
-  req: Request,
-  res: Response,
+  req: OcRequest,
+  res: OcResponse,
   registryError: string | null,
   callback: ComponentCallback
 ): void {
@@ -145,8 +145,8 @@ export function getComponentPreview(
 
 export function getComponentInfo(
   conf: Config,
-  req: Request,
-  res: Response,
+  req: OcRequest,
+  res: OcResponse,
   registryError: string | null,
   callback: ComponentCallback
 ): void {

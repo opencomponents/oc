@@ -1,9 +1,9 @@
-import type { Request, Response } from 'express';
+import type { OcRequest, OcResponse } from '../domain/http-server/types';
 
 export default function compress(
   data: { uncompressed: string; brotli: Buffer; gzip: Buffer },
-  req: Request,
-  res: Response
+  req: OcRequest,
+  res: OcResponse
 ) {
   const accept = req.headers['accept-encoding'];
   const encoding =

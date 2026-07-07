@@ -4,7 +4,8 @@ import type { Config } from '../types';
 import type {
   ExpressMiddleware,
   HttpServerAdapter,
-  Method
+  Method,
+  OcHandler
 } from './domain/http-server/types';
 import IndexRoute from './routes';
 import ComponentRoute from './routes/component';
@@ -23,14 +24,12 @@ export function create(
   conf: Config,
   repository: Repository
 ) {
-  const handler = (expressHandler: ExpressMiddleware) =>
-    adapter.fromConnect(expressHandler);
   const route = (
     method: Method,
     path: string,
     id: string,
-    ...handlers: ExpressMiddleware[]
-  ) => adapter.route(method, path, id, handlers.map(handler));
+    ...handlers: OcHandler[]
+  ) => adapter.route(method, path, id, handlers);
   const routes = {
     component: ComponentRoute(conf, repository),
     components: ComponentsRoute(conf, repository),
@@ -107,7 +106,7 @@ export function create(
       'put',
       `${prefix}:componentName/:componentVersion`,
       'publish',
-      conf.beforePublish,
+      adapter.fromConnect(conf.beforePublish),
       routes.publish
     );
   }
@@ -170,7 +169,7 @@ export function create(
           routeConfig.method.toLowerCase() as Method,
           routeConfig.route,
           routeConfig.route,
-          routeConfig.handler as ExpressMiddleware
+          adapter.fromConnect(routeConfig.handler as ExpressMiddleware)
         );
       } else {
         console.warn(

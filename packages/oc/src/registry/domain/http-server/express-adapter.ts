@@ -16,10 +16,29 @@ import type {
 } from './types';
 
 const expressMiddleware = Symbol('expressMiddleware');
+const ocResponseSym = Symbol('ocResponse');
+const ocParamsSym = Symbol('ocParams');
 
 type WrappedOcHandler = OcHandler & {
   [expressMiddleware]?: ExpressMiddleware;
 };
+
+interface ParamsMemo {
+  source: object;
+}
+
+function stream(this: OcResponse, readable: NodeJS.ReadableStream): void {
+  readable.pipe(this.raw);
+}
+
+function normaliseParams(raw: Record<string, unknown>): Record<string, string> {
+  const params: Record<string, string> = { ...(raw as Record<string, string>) };
+  const splat = raw['splat'];
+  if (Array.isArray(splat)) {
+    params['splat'] = splat.join('/');
+  }
+  return params;
+}
 
 export default function createExpressAdapter(
   port?: number | string
@@ -105,7 +124,7 @@ class ExpressHttpServerAdapter implements HttpServerAdapter {
   }
 
   use(handler: OcHandler): void {
-    this.app.use(this.toExpressHandler(handler));
+    this.app.use(this.toExpressHandler(handler, true));
   }
 
   route(method: Method, path: string, id: string, handlers: OcHandler[]): void {
@@ -177,41 +196,80 @@ class ExpressHttpServerAdapter implements HttpServerAdapter {
     return this.server;
   }
 
-  private toExpressHandler(handler: OcHandler): ExpressMiddleware {
+  private toExpressHandler(
+    handler: OcHandler,
+    continueWhenNotSent = false
+  ): ExpressMiddleware {
     const native = (handler as WrappedOcHandler)[expressMiddleware];
     if (native) {
       return native;
     }
 
     return (req, res, next) => {
-      Promise.resolve(
-        handler(
+      let result: unknown;
+      try {
+        result = handler(
           this.toOcRequest(req as Request),
           this.toOcResponse(res as Response)
-        )
-      )
-        .then(() => {
-          if (!(res as Response).headersSent) {
-            next();
-          }
-        })
-        .catch(next);
+        );
+      } catch (err) {
+        next(err);
+        return;
+      }
+
+      if (result && typeof (result as Promise<void>).then === 'function') {
+        (result as Promise<void>)
+          .then(() => {
+            if (continueWhenNotSent && !(res as Response).headersSent) {
+              next();
+            }
+          })
+          .catch(next);
+      } else if (continueWhenNotSent && !(res as Response).headersSent) {
+        next();
+      }
     };
   }
 
   private toOcRequest(req: Request): OcRequest {
-    return Object.assign(req, {
-      raw: req,
-      routeId: (req as unknown as { routeId?: string }).routeId ?? ''
-    }) as unknown as OcRequest;
+    const memo = (req as unknown as { [ocParamsSym]?: ParamsMemo })[
+      ocParamsSym
+    ];
+    const current = (req.params ?? {}) as object;
+    if (memo && memo.source === current) {
+      return req as unknown as OcRequest;
+    }
+
+    if (!memo) {
+      Object.assign(req, {
+        raw: req,
+        routeId: (req as unknown as { routeId?: string }).routeId ?? ''
+      });
+    }
+
+    const normalized = normaliseParams(current as Record<string, unknown>);
+    Object.assign(req, { params: normalized });
+    (req as unknown as { [ocParamsSym]: ParamsMemo })[ocParamsSym] = {
+      source: normalized
+    };
+
+    return req as unknown as OcRequest;
   }
 
   private toOcResponse(res: Response): OcResponse {
-    return Object.assign(res, {
+    const cached = (res as unknown as { [ocResponseSym]?: OcResponse })[
+      ocResponseSym
+    ];
+    if (cached) {
+      return cached;
+    }
+
+    const ocRes = Object.assign(res, {
       raw: res,
-      stream: (readable: NodeJS.ReadableStream) => {
-        readable.pipe(res);
-      }
+      stream
     }) as unknown as OcResponse;
+
+    (res as unknown as { [ocResponseSym]: OcResponse })[ocResponseSym] = ocRes;
+    return ocRes;
   }
 }

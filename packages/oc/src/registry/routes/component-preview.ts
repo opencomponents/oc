@@ -1,7 +1,11 @@
-import type { Request, Response } from 'express';
 import { fromPromise } from 'universalify';
 import { getOcConfig } from '../../cli/domain/ocConfig';
 import type { Component, Config, TemplateInfo } from '../../types';
+import type {
+  OcHandler,
+  OcRequest,
+  OcResponse
+} from '../domain/http-server/types';
 import type { Repository } from '../domain/repository';
 import * as urlBuilder from '../domain/url-builder';
 import previewView from '../views/preview';
@@ -9,8 +13,8 @@ import * as getComponentFallback from './helpers/get-component-fallback';
 
 function componentPreview(
   err: any,
-  req: Request,
-  res: Response,
+  req: OcRequest,
+  res: OcResponse,
   component: Component,
   templates: TemplateInfo[]
 ) {
@@ -59,8 +63,8 @@ function componentPreview(
 export default function componentPreviewRoute(
   conf: Config,
   repository: Repository
-) {
-  return (req: Request, res: Response): void => {
+): OcHandler {
+  return (req, res): void => {
     fromPromise(repository.getComponent)(
       req.params['componentName'],
       req.params['componentVersion'],
