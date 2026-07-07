@@ -205,11 +205,11 @@ export default function optionsSanitiser(input: RegistryOptions): Config {
     };
   }
 
-  if (options.server && !options.server.adapter) {
+  if (!options.server.adapter) {
     options.server.adapter = createExpressAdapter;
   }
 
-  if (options.server && typeof options.server.options === 'undefined') {
+  if (typeof options.server.options === 'undefined') {
     options.server.options = { port: options.port };
   }
 
