@@ -1099,4 +1099,39 @@ describe('registry', () => {
       });
     });
   });
+
+  describe('GET /:componentName/:componentVersion/static/*splat (local-mode static route)', () => {
+    describe('when requesting an existing packaged file', () => {
+      before((done) => {
+        next(
+          request('http://localhost:3030/hello-world/1.0.0/static/package.json'),
+          done
+        );
+      });
+
+      it('should respond with 200', () => {
+        expect(status).to.equal(200);
+      });
+
+      it('should respond with the packaged file contents', () => {
+        expect(result.name).to.equal('hello-world');
+        expect(result.version).to.equal('1.0.0');
+      });
+    });
+
+    describe('when requesting a missing file', () => {
+      before((done) => {
+        next(
+          request(
+            'http://localhost:3030/hello-world/1.0.0/static/does-not-exist.txt'
+          ),
+          done
+        );
+      });
+
+      it('should respond with 404', () => {
+        expect(status).to.equal(404);
+      });
+    });
+  });
 });
