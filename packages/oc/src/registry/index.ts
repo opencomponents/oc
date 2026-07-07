@@ -5,10 +5,10 @@ import type express from 'express';
 import type { Plugin } from '../types';
 import appStart from './app-start';
 import eventsHandler from './domain/events-handler';
-import createExpressAdapter from './domain/http-server/express-adapter';
 import sanitiseOptions, { RegistryOptions } from './domain/options-sanitiser';
 import * as pluginsInitialiser from './domain/plugins-initialiser';
 import Repository from './domain/repository';
+import getHttpServerAdapter from './domain/server-adapter';
 import * as validator from './domain/validators';
 import * as middleware from './middleware';
 import { create as createRouter } from './router';
@@ -24,7 +24,10 @@ export default function registry<T = any>(inputOptions: RegistryOptions<T>) {
   const options = sanitiseOptions(inputOptions);
 
   const plugins: Plugin[] = [];
-  const adapter = middleware.bind(createExpressAdapter(options.port), options);
+  const adapter = middleware.bind(
+    getHttpServerAdapter(options.server.adapter, options.server.options),
+    options
+  );
   const app = adapter.native() as express.Express;
   const repository = Repository(options);
 

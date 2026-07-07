@@ -41,9 +41,16 @@ function normaliseParams(raw: Record<string, unknown>): Record<string, string> {
 }
 
 export default function createExpressAdapter(
-  port?: number | string
+  options?: unknown
 ): HttpServerAdapter {
-  return new ExpressHttpServerAdapter(port);
+  const adapterOptions = options as
+    | { port?: number | string }
+    | number
+    | string
+    | undefined;
+  return new ExpressHttpServerAdapter(
+    typeof adapterOptions === 'object' ? adapterOptions.port : adapterOptions
+  );
 }
 
 class ExpressHttpServerAdapter implements HttpServerAdapter {

@@ -3,6 +3,7 @@ import { compileSync } from 'oc-client-browser';
 import settings from '../../resources/settings';
 import type { Config } from '../../types';
 import * as auth from './authentication';
+import createExpressAdapter from './http-server/express-adapter';
 
 const DEFAULT_NODE_KEEPALIVE_MS = 5000;
 
@@ -196,6 +197,21 @@ export default function optionsSanitiser(input: RegistryOptions): Config {
   options.timeout = options.timeout || 1000 * 60 * 2;
   options.keepAliveTimeout =
     options.keepAliveTimeout || DEFAULT_NODE_KEEPALIVE_MS;
+
+  if (!options.server) {
+    options.server = {
+      adapter: createExpressAdapter,
+      options: { port: options.port }
+    };
+  }
+
+  if (!options.server.adapter) {
+    options.server.adapter = createExpressAdapter;
+  }
+
+  if (typeof options.server.options === 'undefined') {
+    options.server.options = { port: options.port };
+  }
 
   if (options.s3) {
     options.storage = {

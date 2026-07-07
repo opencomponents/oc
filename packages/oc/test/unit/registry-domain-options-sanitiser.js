@@ -20,6 +20,52 @@ describe('registry : domain : options-sanitiser', () => {
         expect(sanitise(options)[property]).to.eql(value);
       });
     }
+
+    it('should default to the Express HTTP server adapter', () => {
+      expect(sanitise(options).server.adapter).to.equal(
+        require('../../dist/registry/domain/http-server/express-adapter').default
+      );
+      expect(sanitise(options).server.options).to.eql({ port: 3000 });
+    });
+  });
+
+  describe('server adapter configuration', () => {
+    describe('when no server adapter is provided', () => {
+      const options = { server: {}, port: 1234, baseUrl: 'dummy' };
+
+      it('should default to the Express HTTP server adapter', () => {
+        expect(sanitise(options).server.adapter).to.equal(
+          require('../../dist/registry/domain/http-server/express-adapter')
+            .default
+        );
+      });
+    });
+
+    describe('when no server options are provided', () => {
+      const serverAdapter = () => ({});
+      const options = {
+        server: { adapter: serverAdapter },
+        port: 1234,
+        baseUrl: 'dummy'
+      };
+
+      it('should pass the port to the server options', () => {
+        expect(sanitise(options).server.options).to.eql({ port: 1234 });
+      });
+    });
+
+    describe('when server options are provided', () => {
+      const serverAdapter = () => ({});
+      const options = {
+        server: { adapter: serverAdapter, options: { custom: true } },
+        port: 1234,
+        baseUrl: 'dummy'
+      };
+
+      it('should leave them untouched', () => {
+        expect(sanitise(options).server.options).to.eql({ custom: true });
+      });
+    });
   });
 
   describe('when verbosity is provided', () => {
