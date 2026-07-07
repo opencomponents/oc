@@ -2,6 +2,7 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { Readable } from 'node:stream';
+import { gzipSync } from 'node:zlib';
 import type { FastifyInstance } from 'fastify';
 import type { HttpServerAdapter } from 'oc';
 import createFastifyAdapter from '../src';
@@ -144,6 +145,130 @@ test('normalises cookies, wildcard params, connect middleware, and streams', asy
   expect(response.headers['x-cookie-session']).toBe('abc123');
   expect(response.headers['x-user']).toBe('publisher');
   expect(response.body).toBe('path/to/file.js');
+
+  await closeAdapter(adapter);
+});
+
+test('translates Express cookie options to Fastify cookie options', async () => {
+  const adapter = createFastifyAdapter();
+  const app = asFastify(adapter);
+
+  adapter.enableCookies();
+  adapter.route('get', '/cookies', 'cookies', [
+    (_req, res) => {
+      res.cookie('session', 'abc', { maxAge: 60000, sameSite: 'lax' });
+      res.send('ok');
+    }
+  ]);
+
+  await app.ready();
+
+  const response = await app.inject('/cookies');
+  const setCookie = String(response.headers['set-cookie']);
+
+  expect(response.statusCode).toBe(200);
+  expect(setCookie).toContain('session=abc');
+  expect(setCookie).toContain('Max-Age=60');
+  expect(setCookie).toContain('Path=/');
+  expect(setCookie).toContain('SameSite=Lax');
+  expect(setCookie).not.toContain('Max-Age=60000');
+
+  await closeAdapter(adapter);
+});
+
+test('inflates compressed JSON request bodies', async () => {
+  const adapter = createFastifyAdapter();
+  const app = asFastify(adapter);
+
+  adapter.enableBodyParser({ limit: '1mb' });
+  adapter.route('post', '/json', 'json', [
+    (req, res) => {
+      res.json(req.body);
+    }
+  ]);
+
+  await app.ready();
+
+  const response = await app.inject({
+    headers: {
+      'content-encoding': 'gzip',
+      'content-type': 'application/json'
+    },
+    method: 'POST',
+    payload: gzipSync(JSON.stringify({ ok: true })),
+    url: '/json'
+  });
+
+  expect(response.statusCode).toBe(200);
+  expect(response.json()).toEqual({ ok: true });
+
+  await closeAdapter(adapter);
+});
+
+test('defaults listen host to all interfaces and reports invalid ports via callback', async () => {
+  const adapter = createFastifyAdapter();
+
+  await listen(adapter);
+
+  const address = adapter.httpServer().address();
+  expect(address && typeof address !== 'string' ? address.address : '').toBe(
+    '0.0.0.0'
+  );
+
+  await closeAdapter(adapter);
+
+  const invalidAdapter = createFastifyAdapter();
+  await new Promise<void>((resolve, reject) => {
+    try {
+      invalidAdapter.listen({ port: 'not-a-port', timeout: 120000 }, (err) => {
+        try {
+          expect(err).toBeInstanceOf(Error);
+          expect(err?.message).toContain('numeric port');
+          resolve();
+        } catch (assertionErr) {
+          reject(assertionErr);
+        }
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+
+  await closeAdapter(invalidAdapter);
+});
+
+test('returns 404 for empty handler arrays and scopes allow headers to matching routes', async () => {
+  const adapter = createFastifyAdapter();
+  const app = asFastify(adapter);
+
+  adapter.route('get', '/empty', 'empty', []);
+  adapter.route('get', '/get-only', 'get-only', [
+    (_req, res) => {
+      res.send('ok');
+    }
+  ]);
+  adapter.route('post', '/post-only', 'post-only', [
+    (_req, res) => {
+      res.send('ok');
+    }
+  ]);
+
+  await listen(adapter);
+
+  const empty = await app.inject('/empty');
+  const getOnlyOptions = await app.inject({
+    method: 'OPTIONS',
+    url: '/get-only'
+  });
+  const postOnlyOptions = await app.inject({
+    method: 'OPTIONS',
+    url: '/post-only'
+  });
+
+  expect(empty.statusCode).toBe(404);
+  expect(empty.headers['content-type']).toBeUndefined();
+  expect(getOnlyOptions.headers.allow).toBe('GET, HEAD, OPTIONS');
+  expect(postOnlyOptions.headers.allow).toBe('POST, OPTIONS');
 
   await closeAdapter(adapter);
 });

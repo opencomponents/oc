@@ -1,13 +1,36 @@
 import type http from 'node:http';
 import type { IncomingHttpHeaders } from 'node:http';
-import type { CookieOptions as ExpressCookieOptions } from 'express';
 import type { Config } from '../../../types';
 
-export type CookieOptions = ExpressCookieOptions;
+export interface CookieOptions {
+  domain?: string;
+  encode?: (value: string) => string;
+  expires?: Date;
+  httpOnly?: boolean;
+  maxAge?: number;
+  partitioned?: boolean;
+  path?: string;
+  priority?: 'low' | 'medium' | 'high';
+  sameSite?: boolean | 'lax' | 'strict' | 'none';
+  secure?: boolean;
+  signed?: boolean;
+}
 
 export type Method = 'get' | 'post' | 'put' | 'patch' | 'head' | 'delete';
 
-export type UploadedFile = Express.Multer.File;
+export interface UploadedFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  destination: string;
+  filename: string;
+  path: string;
+  buffer?: Buffer;
+  stream?: NodeJS.ReadableStream;
+  truncated?: boolean;
+}
 
 export interface OcRequest {
   method: string;

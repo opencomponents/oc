@@ -3,6 +3,7 @@ export { default as cli } from './cli/programmatic-api';
 export { default as Registry, RegistryOptions } from './registry';
 
 export type {
+  CookieOptions,
   ExpressMiddleware,
   HttpServerAdapter,
   Method,

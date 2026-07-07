@@ -4,6 +4,7 @@ import type http from 'node:http';
 import path from 'node:path';
 import { parse as parseQueryString } from 'node:querystring';
 import { pipeline } from 'node:stream/promises';
+import { createBrotliDecompress, createGunzip, createInflate } from 'node:zlib';
 import cookie from '@fastify/cookie';
 import etag from '@fastify/etag';
 import formbody from '@fastify/formbody';
@@ -15,6 +16,7 @@ import fastify, {
   type HTTPMethods
 } from 'fastify';
 import type {
+  CookieOptions,
   ExpressMiddleware,
   HttpServerAdapter,
   Method,
@@ -26,6 +28,7 @@ import type {
 import { parse as parseQs } from 'qs';
 
 export interface FastifyServerAdapterOptions {
+  host?: string;
   port?: number | string;
   trustProxy?: boolean | string | string[] | number;
 }
@@ -65,11 +68,14 @@ class FastifyHttpServerAdapter implements HttpServerAdapter {
   name = 'fastify';
 
   private app: FastifyInstance;
+  private bodyInflationRegistered = false;
   private bodyLimit = defaultBodyLimit;
+  private host?: string;
   private routes: Array<{ method: Method; path: string }> = [];
   private optionsRoutesRegistered = false;
 
   constructor(options: FastifyServerAdapterOptions = {}) {
+    this.host = options.host;
     this.app = fastify({
       bodyLimit: this.bodyLimit,
       exposeHeadRoutes: true,
@@ -86,6 +92,7 @@ class FastifyHttpServerAdapter implements HttpServerAdapter {
 
   enableBodyParser(opts: { limit?: number | string }): void {
     this.bodyLimit = parseBodyLimit(opts.limit);
+    this.registerBodyInflation();
     this.app.register(formbody, {
       bodyLimit: this.bodyLimit,
       parser: (body) => parseQs(body) as Record<string, unknown>
@@ -148,6 +155,9 @@ class FastifyHttpServerAdapter implements HttpServerAdapter {
             truncated: (part.file as { truncated?: boolean }).truncated
           } as UploadedFile);
         } else {
+          if (part.valueTruncated) {
+            throw fastifyMultipartFieldLimitError(part.fieldname);
+          }
           assignBodyField(body, part.fieldname, part.value);
         }
       }
@@ -181,7 +191,13 @@ class FastifyHttpServerAdapter implements HttpServerAdapter {
     this.app.addHook('onResponse', (request, reply, done) => {
       const req = this.toOcRequest(request as FastifyRequestWithState);
       const res = this.toOcResponse(reply);
-      if (!opts.skip(req, res)) {
+      let skip = false;
+      try {
+        skip = opts.skip(req, res);
+      } catch {
+        skip = false;
+      }
+      if (!skip) {
         console.log(
           `${req.method} ${req.url} ${res.statusCode} - ${Math.round(
             reply.elapsedTime
@@ -290,7 +306,15 @@ class FastifyHttpServerAdapter implements HttpServerAdapter {
       this.app.server.keepAliveTimeout = opts.keepAliveTimeout;
     }
 
-    this.app.listen({ port: normalisePort(opts.port) }, (err) =>
+    let port: number;
+    try {
+      port = normalisePort(opts.port);
+    } catch (err) {
+      cb(err instanceof Error ? err : new Error(String(err)));
+      return;
+    }
+
+    this.app.listen({ host: this.host ?? '0.0.0.0', port }, (err) =>
       cb(err ?? undefined)
     );
   }
@@ -320,12 +344,48 @@ class FastifyHttpServerAdapter implements HttpServerAdapter {
     req: OcRequest,
     res: OcResponse
   ): Promise<void> {
+    if (handlers.length === 0) {
+      res.status(404).end();
+      return;
+    }
+
     for (const handler of handlers) {
       await handler(req, res);
       if (isResponseSent(res)) {
         return;
       }
     }
+  }
+
+  private registerBodyInflation(): void {
+    if (this.bodyInflationRegistered) {
+      return;
+    }
+
+    this.bodyInflationRegistered = true;
+    this.app.addHook('preParsing', (request, _reply, payload, done) => {
+      const encoding = String(
+        request.headers['content-encoding'] || ''
+      ).toLowerCase();
+      const decoder =
+        encoding === 'gzip'
+          ? createGunzip()
+          : encoding === 'deflate'
+            ? createInflate()
+            : encoding === 'br'
+              ? createBrotliDecompress()
+              : undefined;
+
+      if (!decoder) {
+        done(null, payload);
+        return;
+      }
+
+      Object.defineProperty(decoder, 'receivedEncodedLength', {
+        get: () => decoder.bytesWritten
+      });
+      done(null, payload.pipe(decoder));
+    });
   }
 
   private toOcRequest(
@@ -395,17 +455,21 @@ class FastifyHttpServerAdapter implements HttpServerAdapter {
     }
 
     this.optionsRoutesRegistered = true;
-    const handler = (_request: FastifyRequest, reply: FastifyReply) => {
-      reply.header('Allow', this.getAllowHeader()).send('');
+    const handler = (request: FastifyRequest, reply: FastifyReply) => {
+      reply.header('Allow', this.getAllowHeader(getPath(request.url))).send('');
     };
 
     this.app.route({ method: 'OPTIONS', url: '/', handler });
     this.app.route({ method: 'OPTIONS', url: '/*', handler });
   }
 
-  private getAllowHeader(): string {
+  private getAllowHeader(pathname: string): string {
+    const matchingRoutes = this.routes.filter((route) =>
+      routePathMatches(route.path, pathname)
+    );
+    const routes = matchingRoutes.length > 0 ? matchingRoutes : this.routes;
     const methods = new Set<string>(['OPTIONS']);
-    for (const route of this.routes) {
+    for (const route of routes) {
       methods.add(route.method.toUpperCase());
       if (route.method === 'get') {
         methods.add('HEAD');
@@ -423,6 +487,7 @@ class FastifyOcResponse implements OcResponse {
   errorCode?: string;
   errorDetails?: string;
   raw: http.ServerResponse;
+  private hasSent = false;
 
   constructor(private reply: FastifyReply) {
     this.raw = reply.raw;
@@ -437,7 +502,7 @@ class FastifyOcResponse implements OcResponse {
   }
 
   get sent(): boolean {
-    return this.reply.sent || this.raw.writableEnded;
+    return this.hasSent || this.reply.sent || this.raw.writableEnded;
   }
 
   status(code: number): this {
@@ -446,6 +511,7 @@ class FastifyOcResponse implements OcResponse {
   }
 
   json(body: unknown): void {
+    this.hasSent = true;
     this.reply.type('application/json; charset=utf-8').send(body);
   }
 
@@ -454,6 +520,7 @@ class FastifyOcResponse implements OcResponse {
       this.reply.type('text/html; charset=utf-8');
     }
 
+    this.hasSent = true;
     this.reply.send(body);
   }
 
@@ -484,21 +551,23 @@ class FastifyOcResponse implements OcResponse {
     return this;
   }
 
-  cookie(
-    name: string,
-    value: string,
-    opts?: Parameters<OcResponse['cookie']>[2]
-  ): this {
-    this.reply.cookie(name, String(value), opts as never);
+  cookie(name: string, value: string, opts?: CookieOptions): this {
+    this.reply.cookie(
+      name,
+      String(value),
+      toFastifyCookieOptions(opts) as never
+    );
     return this;
   }
 
   redirect(url: string): void {
+    this.hasSent = true;
     this.reply.redirect(url);
   }
 
   end(chunk?: unknown): void {
-    this.reply.send(chunk ?? '');
+    this.hasSent = true;
+    this.reply.send(chunk);
   }
 
   stream(readable: NodeJS.ReadableStream): void {
@@ -509,8 +578,35 @@ class FastifyOcResponse implements OcResponse {
         this.status(500).end(String(err));
       }
     });
+    this.hasSent = true;
     this.reply.send(readable);
   }
+}
+
+function toFastifyCookieOptions(opts?: CookieOptions): CookieOptions {
+  if (opts?.signed) {
+    throw new Error('Signed cookies require a Fastify cookie secret');
+  }
+
+  const next: CookieOptions = { path: '/', ...opts };
+  if (typeof opts?.maxAge === 'number') {
+    next.maxAge = Math.floor(opts.maxAge / 1000);
+    if (!opts.expires) {
+      next.expires = new Date(Date.now() + opts.maxAge);
+    }
+  }
+
+  return next;
+}
+
+function fastifyMultipartFieldLimitError(fieldname: string): Error {
+  const err = new Error(`Field value too long: ${fieldname}`) as Error & {
+    code?: string;
+    statusCode?: number;
+  };
+  err.code = 'LIMIT_FIELD_VALUE';
+  err.statusCode = 413;
+  return err;
 }
 
 function parseBodyLimit(limit?: number | string): number {
@@ -558,6 +654,31 @@ function toFastifyRoutePath(routePath: string): string {
   return routePath.replace(/\*[A-Za-z0-9_]+/g, '*');
 }
 
+function routePathMatches(routePath: string, pathname: string): boolean {
+  if (routePath === pathname) {
+    return true;
+  }
+
+  const pattern = routePath
+    .split('/')
+    .map((segment) => {
+      if (segment === '*') {
+        return '.*';
+      }
+      if (segment.startsWith(':')) {
+        return '[^/]+';
+      }
+      return escapeRegExp(segment);
+    })
+    .join('/');
+
+  return new RegExp(`^${pattern}$`).test(pathname);
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 function normaliseParams(raw: Record<string, unknown>): Record<string, string> {
   const params: Record<string, string> = {};
   for (const [key, value] of Object.entries(raw || {})) {
@@ -570,8 +691,12 @@ function normaliseParams(raw: Record<string, unknown>): Record<string, string> {
     }
   }
 
-  if (typeof raw['*'] === 'string') {
-    params['splat'] = raw['*'];
+  const splat = raw['*'];
+  if (typeof splat === 'string') {
+    params['splat'] = splat;
+    delete params['*'];
+  } else if (Array.isArray(splat)) {
+    params['splat'] = splat.join('/');
     delete params['*'];
   }
 

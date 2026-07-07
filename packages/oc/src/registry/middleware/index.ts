@@ -57,7 +57,7 @@ export const bind = (
       skip: (req, res) => {
         // Hide logging development console calls
         return req.url.startsWith(
-          `${res.conf.prefix}~actions/$$__oc__server___console__$$`
+          `${res.conf?.prefix ?? ''}~actions/$$__oc__server___console__$$`
         );
       }
     });
