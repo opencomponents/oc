@@ -15,10 +15,12 @@ describe('registry', () => {
     close: sinon.stub()
   });
 
+  const serverAdapterFactory = sinon.stub();
+
   const deps = {
     './app-start': sinon.stub(),
     './domain/events-handler': { fire: sinon.stub() },
-    './domain/http-server/express-adapter': sinon.stub().callsFake(() => {
+    './domain/server-adapter': sinon.stub().callsFake(() => {
       adapter = createAdapter();
       return adapter;
     }),
@@ -65,20 +67,29 @@ describe('registry', () => {
         deps['./domain/validators'].validateRegistryConfiguration.returns({
           isValid: true
         });
-        deps['./domain/options-sanitiser'].returns({ port: 3000 });
+        deps['./domain/options-sanitiser'].returns({
+          port: 3000,
+          server: { adapter: serverAdapterFactory, options: { port: 3000 } }
+        });
         registry = Registry({});
       });
 
       it('should instantiate the HTTP server adapter', () => {
-        expect(deps['./domain/http-server/express-adapter'].calledWith(3000)).to
-          .be.true;
+        expect(
+          deps['./domain/server-adapter'].calledWith(serverAdapterFactory, {
+            port: 3000
+          })
+        ).to.be.true;
       });
 
       it('should bind the middleware', () => {
         const bind = deps['./middleware'].bind;
         expect(bind.called).to.be.true;
         expect(bind.lastCall.args[0]).to.equal(adapter);
-        expect(bind.lastCall.args[1]).to.eql({ port: 3000 });
+        expect(bind.lastCall.args[1]).to.eql({
+          port: 3000,
+          server: { adapter: serverAdapterFactory, options: { port: 3000 } }
+        });
       });
 
       it('should instanciate the repository', () => {
@@ -247,7 +258,10 @@ describe('registry', () => {
           deps['./domain/validators'].validateRegistryConfiguration.returns({
             isValid: true
           });
-          deps['./domain/options-sanitiser'].returns({ port: 3000 });
+          deps['./domain/options-sanitiser'].returns({
+            port: 3000,
+            server: { adapter: serverAdapterFactory, options: { port: 3000 } }
+          });
         });
 
         it('should close the repository when the server is not listening', (done) => {

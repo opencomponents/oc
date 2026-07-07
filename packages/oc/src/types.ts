@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 import type { MetadataStore as MetadataStoreType } from 'oc-metadata-adapters-utils';
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import type { PackageJson } from 'type-fest';
+import type { HttpServerAdapter } from './registry/domain/http-server/types';
 
 export type { ComponentRow, MetadataStore } from 'oc-metadata-adapters-utils';
 
@@ -425,6 +426,13 @@ export interface Config<T = any> {
   storage: {
     adapter: (options: T) => StorageAdapter;
     options: T & { componentsDir: string };
+  };
+  /**
+   * Low-level HTTP server adapter used by the registry.
+   */
+  server: {
+    adapter: (options?: unknown) => HttpServerAdapter;
+    options?: unknown;
   };
   /**
    * Directory used by the registry for temporary files.
