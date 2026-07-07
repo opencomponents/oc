@@ -685,7 +685,7 @@ function toFastifyCookieOptions(opts?: CookieOptions): CookieOptions {
     throw new Error('Signed cookies require a Fastify cookie secret');
   }
 
-  const next: CookieOptions = { path: '/', ...opts };
+const next: CookieOptions = { ...(opts ?? {}), path: opts?.path ?? '/' };
   if (typeof opts?.maxAge === 'number') {
     next.maxAge = Math.floor(opts.maxAge / 1000);
     if (!opts.expires) {
