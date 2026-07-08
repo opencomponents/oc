@@ -24,6 +24,20 @@
       ],
       "outputs": []
     },
+    "oc-fastify-server-adapter#test": {
+      "dependsOn": [
+        "build",
+        "oc#build"
+      ],
+      "outputs": []
+    },
+    "oc-fastify-server-adapter#test-silent": {
+      "dependsOn": [
+        "build",
+        "oc#build"
+      ],
+      "outputs": []
+    },
     "lint": {
       "outputs": []
     },
