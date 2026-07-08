@@ -4,7 +4,7 @@ import path from 'node:path';
 import { Readable } from 'node:stream';
 import { gzipSync } from 'node:zlib';
 import type { FastifyInstance } from 'fastify';
-import type { HttpServerAdapter } from 'oc';
+import type { HttpServerAdapter } from '../src';
 import createFastifyAdapter from '../src';
 
 const asFastify = (adapter: HttpServerAdapter): FastifyInstance =>

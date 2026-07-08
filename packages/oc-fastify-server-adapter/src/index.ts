@@ -95,7 +95,7 @@ type ExpressMiddleware = (
   next: (err?: unknown) => void
 ) => void;
 
-type HttpServerAdapter = {
+export type HttpServerAdapter = {
   name: string;
   enableBodyParser(opts: { limit?: number | string }): void;
   enableCookies(): void;
