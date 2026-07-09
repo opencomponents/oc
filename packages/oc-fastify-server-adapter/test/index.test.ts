@@ -237,6 +237,70 @@ test('defaults listen host to all interfaces and reports invalid ports via callb
   await closeAdapter(invalidAdapter);
 });
 
+test('ignores trailing slashes like Express strict routing off', async () => {
+  const adapter = createFastifyAdapter();
+  const app = asFastify(adapter);
+
+  adapter.route(
+    'get',
+    '/registry/:componentName/:componentVersion/~preview',
+    'preview',
+    [
+      (req, res) => {
+        res.json({ params: req.params });
+      }
+    ]
+  );
+
+  await app.ready();
+
+  const withoutSlash = await app.inject(
+    '/registry/a11y-widget/4.0.66/~preview?userId=1'
+  );
+  const withSlash = await app.inject(
+    '/registry/a11y-widget/4.0.66/~preview/?userId=1'
+  );
+
+  expect(withoutSlash.statusCode).toBe(200);
+  expect(withoutSlash.json()).toEqual({
+    params: { componentName: 'a11y-widget', componentVersion: '4.0.66' }
+  });
+  expect(withSlash.statusCode).toBe(200);
+  expect(withSlash.json()).toEqual({
+    params: { componentName: 'a11y-widget', componentVersion: '4.0.66' }
+  });
+
+  await closeAdapter(adapter);
+});
+
+test('deduplicates trailing-slash variants to avoid Fastify duplicate route errors', async () => {
+  const adapter = createFastifyAdapter();
+  const app = asFastify(adapter);
+
+  adapter.route('get', '/components', 'prefix-index', [
+    (_req, res) => {
+      res.send('index');
+    }
+  ]);
+  adapter.route('get', '/components/', 'index', [
+    (_req, res) => {
+      res.send('index');
+    }
+  ]);
+
+  await app.ready();
+
+  const withoutSlash = await app.inject('/components');
+  const withSlash = await app.inject('/components/');
+
+  expect(withoutSlash.statusCode).toBe(200);
+  expect(withSlash.statusCode).toBe(200);
+  expect(withoutSlash.body).toBe('index');
+  expect(withSlash.body).toBe('index');
+
+  await closeAdapter(adapter);
+});
+
 test('returns 404 for empty handler arrays and scopes allow headers to matching routes', async () => {
   const adapter = createFastifyAdapter();
   const app = asFastify(adapter);

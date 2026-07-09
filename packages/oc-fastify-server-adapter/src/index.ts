@@ -176,6 +176,7 @@ class FastifyHttpServerAdapter implements HttpServerAdapter<FastifyInstance> {
   private bodyInflationRegistered = false;
   private bodyLimit = defaultBodyLimit;
   private host?: string;
+  private registeredRoutes: Set<string> = new Set();
   private routes: Array<{ method: Method; path: string }> = [];
   private optionsRoutesRegistered = false;
 
@@ -186,6 +187,7 @@ class FastifyHttpServerAdapter implements HttpServerAdapter<FastifyInstance> {
       exposeHeadRoutes: true,
       logger: false,
       routerOptions: {
+        ignoreTrailingSlash: true,
         querystringParser: (str) =>
           parseQueryString(str) as Record<string, unknown>
       },
@@ -340,6 +342,13 @@ class FastifyHttpServerAdapter implements HttpServerAdapter<FastifyInstance> {
 
   route(method: Method, routePath: string, id: string, handlers: OcHandler[]) {
     const url = toFastifyRoutePath(routePath);
+    const routeKey = `${method}:${stripTrailingSlash(url)}`;
+
+    if (this.registeredRoutes.has(routeKey)) {
+      return;
+    }
+
+    this.registeredRoutes.add(routeKey);
     this.routes.push({ method, path: url });
 
     this.app.route({
@@ -803,15 +812,25 @@ function toFastifyRoutePath(routePath: string): string {
   return routePath.replace(/\*[A-Za-z0-9_]+/g, '*');
 }
 
+function stripTrailingSlash(value: string): string {
+  return value !== '/' && value.endsWith('/') ? value.slice(0, -1) : value;
+}
+
 function routePathMatches(routePath: string, pathname: string): boolean {
-  if (routePath === pathname) {
+  const normalizedRoute = stripTrailingSlash(routePath);
+  const normalizedPath = stripTrailingSlash(pathname);
+
+  if (normalizedRoute === normalizedPath) {
     return true;
   }
 
-  const pattern = routePath
-    .split('/')
-    .map((segment) => {
+  const segments = normalizedRoute.split('/');
+  const pattern = segments
+    .map((segment, index) => {
       if (segment === '*') {
+        if (index === segments.length - 1) {
+          return '(/.*)?';
+        }
         return '.*';
       }
       if (segment.startsWith(':')) {
@@ -821,7 +840,8 @@ function routePathMatches(routePath: string, pathname: string): boolean {
     })
     .join('/');
 
-  return new RegExp(`^${pattern}$`).test(pathname);
+  const regex = new RegExp(`^${pattern}$`);
+  return regex.test(normalizedPath) || regex.test(`${normalizedPath}/`);
 }
 
 function escapeRegExp(value: string): string {
