@@ -1,5 +1,11 @@
 # oc-fastify-server-adapter
 
+## 0.1.3
+
+### Patch Changes
+
+- a86d969: fix instance types
+
 ## 0.1.2
 
 ### Patch Changes
