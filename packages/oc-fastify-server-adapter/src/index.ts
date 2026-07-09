@@ -151,14 +151,9 @@ type MutableOcRequest = OcRequest & {
 };
 
 export default function createFastifyAdapter(
-  options?: FastifyServerAdapterOptions | number | string
+  options?: unknown
 ): HttpServerAdapter {
-  const adapterOptions =
-    typeof options === 'object' && options !== null
-      ? options
-      : { port: options };
-
-  return new FastifyHttpServerAdapter(adapterOptions);
+  return new FastifyHttpServerAdapter(toFastifyAdapterOptions(options));
 }
 
 class FastifyHttpServerAdapter implements HttpServerAdapter {
@@ -734,6 +729,14 @@ function parseBodyLimit(limit?: number | string): number {
   return Math.floor(value * multiplier);
 }
 
+function toFastifyAdapterOptions(
+  options?: unknown
+): FastifyServerAdapterOptions {
+  return typeof options === 'object' && options !== null
+    ? (options as FastifyServerAdapterOptions)
+    : { port: options as number | string | undefined };
+}
+
 function normalisePort(port: number | string): number {
   if (typeof port === 'number') {
     return port;
@@ -850,3 +853,5 @@ function isResponseSent(res: OcResponse): boolean {
     ? res.sent
     : res.raw.writableEnded || res.raw.headersSent;
 }
+
+module.exports = createFastifyAdapter;
