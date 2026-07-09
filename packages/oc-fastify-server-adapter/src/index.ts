@@ -150,11 +150,20 @@ type MutableOcRequest = OcRequest & {
   files?: UploadedFile[] | Record<string, UploadedFile[]>;
 };
 
-export default function createFastifyAdapter(
-  options?: unknown
-): HttpServerAdapter {
-  return new FastifyHttpServerAdapter(toFastifyAdapterOptions(options));
-}
+type FastifyServerAdapterFactory = {
+  (options?: unknown): HttpServerAdapter;
+  readonly __serverAdapterOptions?:
+    | FastifyServerAdapterOptions
+    | number
+    | string;
+};
+
+const createFastifyAdapter = ((options?: unknown): HttpServerAdapter =>
+  new FastifyHttpServerAdapter(
+    toFastifyAdapterOptions(options)
+  )) as FastifyServerAdapterFactory;
+
+export default createFastifyAdapter;
 
 class FastifyHttpServerAdapter implements HttpServerAdapter {
   name = 'fastify';
@@ -729,14 +738,6 @@ function parseBodyLimit(limit?: number | string): number {
   return Math.floor(value * multiplier);
 }
 
-function toFastifyAdapterOptions(
-  options?: unknown
-): FastifyServerAdapterOptions {
-  return typeof options === 'object' && options !== null
-    ? (options as FastifyServerAdapterOptions)
-    : { port: options as number | string | undefined };
-}
-
 function normalisePort(port: number | string): number {
   if (typeof port === 'number') {
     return port;
@@ -748,6 +749,50 @@ function normalisePort(port: number | string): number {
   }
 
   return parsed;
+}
+
+function toFastifyAdapterOptions(
+  options?: unknown
+): FastifyServerAdapterOptions {
+  if (
+    typeof options === 'undefined' ||
+    typeof options === 'number' ||
+    typeof options === 'string'
+  ) {
+    return { port: options };
+  }
+
+  if (isFastifyAdapterOptions(options)) {
+    return options;
+  }
+
+  throw new Error('Invalid Fastify server adapter options');
+}
+
+function isFastifyAdapterOptions(
+  options: unknown
+): options is FastifyServerAdapterOptions {
+  if (!options || typeof options !== 'object') {
+    return false;
+  }
+
+  const candidate = options as FastifyServerAdapterOptions;
+  const port = candidate.port;
+  const host = candidate.host;
+  const trustProxy = candidate.trustProxy;
+
+  return (
+    (typeof port === 'undefined' ||
+      typeof port === 'number' ||
+      typeof port === 'string') &&
+    (typeof host === 'undefined' || typeof host === 'string') &&
+    (typeof trustProxy === 'undefined' ||
+      typeof trustProxy === 'boolean' ||
+      typeof trustProxy === 'string' ||
+      typeof trustProxy === 'number' ||
+      (Array.isArray(trustProxy) &&
+        trustProxy.every((item) => typeof item === 'string')))
+  );
 }
 
 function toFastifyRoutePath(routePath: string): string {

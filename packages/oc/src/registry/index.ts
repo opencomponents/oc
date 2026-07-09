@@ -5,6 +5,7 @@ import type express from 'express';
 import type { Plugin } from '../types';
 import appStart from './app-start';
 import eventsHandler from './domain/events-handler';
+import type { HttpServerAdapterFactory } from './domain/http-server/types';
 import sanitiseOptions, { RegistryOptions } from './domain/options-sanitiser';
 import * as pluginsInitialiser from './domain/plugins-initialiser';
 import Repository from './domain/repository';
@@ -15,7 +16,10 @@ import { create as createRouter } from './router';
 
 export { RegistryOptions };
 
-export default function registry<T = any>(inputOptions: RegistryOptions<T>) {
+export default function registry<
+  T = any,
+  TServerAdapter extends HttpServerAdapterFactory = HttpServerAdapterFactory
+>(inputOptions: RegistryOptions<T, TServerAdapter>) {
   const validationResult =
     validator.validateRegistryConfiguration(inputOptions);
   if (!validationResult.isValid) {

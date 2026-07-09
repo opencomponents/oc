@@ -13,6 +13,7 @@ import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
+import type { RegistryOptions } from '../../oc/dist/registry';
 import createFastifyAdapter from '..';
 
 type RegistryFactory = typeof import('../../oc/dist/registry').default;
@@ -42,6 +43,16 @@ type FileStorageOptions = {
   path: string;
   root: string;
 };
+
+const inferRegistryOptions = <T, U>(options: RegistryOptions<T, U>) => options;
+const fastifyRegistryOptions = inferRegistryOptions({
+  baseUrl: 'http://localhost:3000/',
+  server: {
+    adapter: createFastifyAdapter,
+    options: { host: '127.0.0.1', trustProxy: true }
+  }
+});
+void fastifyRegistryOptions;
 
 const storagePath = (root: string, filePath: string): string =>
   path.join(root, filePath);

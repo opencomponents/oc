@@ -4,6 +4,7 @@ import settings from '../../resources/settings';
 import type { Config } from '../../types';
 import * as auth from './authentication';
 import createExpressAdapter from './http-server/express-adapter';
+import type { HttpServerAdapterFactory } from './http-server/types';
 
 const DEFAULT_NODE_KEEPALIVE_MS = 5000;
 
@@ -12,8 +13,12 @@ type CompileOptions = Omit<
   'templates'
 >;
 
-export interface RegistryOptions<T = any>
-  extends Partial<Omit<Config<T>, 'beforePublish' | 'discovery' | 'plugins'>> {
+export interface RegistryOptions<
+  T = any,
+  TServerAdapter extends HttpServerAdapterFactory = HttpServerAdapterFactory
+> extends Partial<
+    Omit<Config<T, TServerAdapter>, 'beforePublish' | 'discovery' | 'plugins'>
+  > {
   /**
    * Configuration object to enable/disable the HTML discovery page and the API
    *
@@ -43,8 +48,11 @@ export interface RegistryOptions<T = any>
   compileClient?: boolean | CompileOptions;
 }
 
-export default function optionsSanitiser(input: RegistryOptions): Config {
-  const options = { ...input };
+export default function optionsSanitiser<
+  T = any,
+  TServerAdapter extends HttpServerAdapterFactory = HttpServerAdapterFactory
+>(input: RegistryOptions<T, TServerAdapter>): Config {
+  const options = { ...input } as unknown as Config & RegistryOptions;
 
   if (!options.publishAuth) {
     (options as Config).beforePublish = (_req, _res, next) => next();

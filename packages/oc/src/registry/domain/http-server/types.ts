@@ -83,6 +83,19 @@ export type ExpressMiddleware = (
   next: (err?: unknown) => void
 ) => void;
 
+export type HttpServerAdapterFactory<TOptions = unknown> = {
+  (options?: unknown): HttpServerAdapter;
+  readonly __serverAdapterOptions?: TOptions;
+};
+
+export type HttpServerAdapterOptions<TAdapter> = TAdapter extends {
+  readonly __serverAdapterOptions?: infer TOptions;
+}
+  ? TOptions
+  : TAdapter extends (options?: infer TOptions) => HttpServerAdapter
+    ? TOptions
+    : unknown;
+
 export interface HttpServerAdapter {
   name: string;
   enableBodyParser(opts: { limit?: number | string }): void;

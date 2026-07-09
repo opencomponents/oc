@@ -2,7 +2,10 @@ import type { NextFunction, Request, Response } from 'express';
 import type { MetadataStore as MetadataStoreType } from 'oc-metadata-adapters-utils';
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import type { PackageJson } from 'type-fest';
-import type { HttpServerAdapter } from './registry/domain/http-server/types';
+import type {
+  HttpServerAdapterFactory,
+  HttpServerAdapterOptions
+} from './registry/domain/http-server/types';
 
 export type { ComponentRow, MetadataStore } from 'oc-metadata-adapters-utils';
 
@@ -195,7 +198,10 @@ export type PublishAuthConfig =
     }
   | ({ type: string | Authentication } & Record<string, any>);
 
-export interface Config<T = any> {
+export interface Config<
+  T = any,
+  TServerAdapter extends HttpServerAdapterFactory = HttpServerAdapterFactory
+> {
   /**
    * Public base URL where the registry is reachable by consumers.
    *
@@ -431,8 +437,8 @@ export interface Config<T = any> {
    * Low-level HTTP server adapter used by the registry.
    */
   server: {
-    adapter: (options?: unknown) => HttpServerAdapter;
-    options?: unknown;
+    adapter: TServerAdapter;
+    options?: HttpServerAdapterOptions<TServerAdapter>;
   };
   /**
    * Directory used by the registry for temporary files.
