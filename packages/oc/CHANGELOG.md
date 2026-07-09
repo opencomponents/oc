@@ -1,5 +1,11 @@
 ## Change Log
 
+## 0.50.57
+
+### Patch Changes
+
+- e3dce96: export types for http adapters
+
 ## 0.50.56
 
 ### Patch Changes
