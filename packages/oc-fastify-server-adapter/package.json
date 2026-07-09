@@ -1,6 +1,6 @@
 {
 	"name": "oc-fastify-server-adapter",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"description": "Fastify HTTP server adapter for OC",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
