@@ -1,6 +1,6 @@
 {
 	"name": "oc-fastify-server-adapter",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Fastify HTTP server adapter for OC",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
@@ -38,7 +38,9 @@
 	"jest": {
 		"preset": "ts-jest",
 		"testEnvironment": "node",
-		"testPathIgnorePatterns": ["/dist/"]
+		"testPathIgnorePatterns": [
+			"/dist/"
+		]
 	},
 	"dependencies": {
 		"@fastify/cookie": "^11.0.2",
