@@ -56,6 +56,7 @@ packages/oc-s3-storage-adapter/dist/
 packages/oc-azure-storage-adapter/dist/
 packages/oc-gs-storage-adapter/dist/
 packages/oc-riak-storage-adapter/dist/
+packages/oc-fastify-server-adapter/dist/
 packages/oc/test-components/
 packages/oc-client-browser/playwright-report/
 packages/oc-client-browser/test-results/

@@ -1,10 +1,12 @@
+import type { UploadedFile } from '../http-server/types';
+
 type ValidationResponse =
   | {
       isValid: true;
       files:
-        | Express.Multer.File[]
+        | UploadedFile[]
         | {
-            [fieldname: string]: Express.Multer.File[];
+            [fieldname: string]: UploadedFile[];
           };
     }
   | {
@@ -14,9 +16,9 @@ type ValidationResponse =
 
 export default function uploadedPackage(
   input?:
-    | Express.Multer.File[]
+    | UploadedFile[]
     | {
-        [fieldname: string]: Express.Multer.File[];
+        [fieldname: string]: UploadedFile[];
       }
 ): ValidationResponse {
   const returnError = (message?: string): ValidationResponse => ({
@@ -32,7 +34,7 @@ export default function uploadedPackage(
     return returnError('not_valid');
   }
 
-  const file: Express.Multer.File = (input as Express.Multer.File[])[0];
+  const file: UploadedFile = (input as UploadedFile[])[0];
   const validTypes = ['application/gzip', 'application/octet-stream'];
 
   if (

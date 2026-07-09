@@ -4,12 +4,13 @@ import targz from 'targz';
 
 import type { Component } from '../../types';
 import getPackageJsonFromTempDir from './get-package-json-from-temp-dir';
+import type { UploadedFile } from './http-server/types';
 
 export default async function extractPackage(
   files:
-    | Express.Multer.File[]
+    | UploadedFile[]
     | {
-        [fieldname: string]: Express.Multer.File[];
+        [fieldname: string]: UploadedFile[];
       },
   tarExtractMode: number
 ): Promise<{
@@ -18,7 +19,7 @@ export default async function extractPackage(
   packagePath: string;
   packageUntarOutput: string;
 }> {
-  const packageFile = (files as Express.Multer.File[])[0];
+  const packageFile = (files as UploadedFile[])[0];
   const packagePath = path.resolve(packageFile.path);
   const packageUntarOutput = path.resolve(
     packageFile.path,
