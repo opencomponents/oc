@@ -95,7 +95,7 @@ type ExpressMiddleware = (
   next: (err?: unknown) => void
 ) => void;
 
-export type HttpServerAdapter = {
+export type HttpServerAdapter<TNative = unknown> = {
   name: string;
   enableBodyParser(opts: { limit?: number | string }): void;
   enableCookies(): void;
@@ -120,7 +120,7 @@ export type HttpServerAdapter = {
   onServerError(cb: (err: Error) => void): void;
   close(cb: (err?: Error) => void): void;
   isListening(): boolean;
-  native(): unknown;
+  native(): TNative;
   httpServer(): http.Server;
 };
 
@@ -150,22 +150,26 @@ type MutableOcRequest = OcRequest & {
   files?: UploadedFile[] | Record<string, UploadedFile[]>;
 };
 
-type FastifyServerAdapterFactory = {
-  (options?: unknown): HttpServerAdapter;
-  readonly __serverAdapterOptions?:
-    | FastifyServerAdapterOptions
-    | number
-    | string;
+export type HttpServerAdapterFactory<TOptions = unknown, TNative = unknown> = {
+  (options?: unknown): HttpServerAdapter<TNative>;
+  readonly __serverAdapterOptions?: TOptions;
 };
 
-const createFastifyAdapter = ((options?: unknown): HttpServerAdapter =>
+type FastifyServerAdapterFactory = HttpServerAdapterFactory<
+  FastifyServerAdapterOptions | number | string,
+  FastifyInstance
+>;
+
+const createFastifyAdapter = ((
+  options?: unknown
+): HttpServerAdapter<FastifyInstance> =>
   new FastifyHttpServerAdapter(
     toFastifyAdapterOptions(options)
   )) as FastifyServerAdapterFactory;
 
 export default createFastifyAdapter;
 
-class FastifyHttpServerAdapter implements HttpServerAdapter {
+class FastifyHttpServerAdapter implements HttpServerAdapter<FastifyInstance> {
   name = 'fastify';
 
   private app: FastifyInstance;

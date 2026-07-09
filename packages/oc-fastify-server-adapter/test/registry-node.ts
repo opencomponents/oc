@@ -9,19 +9,22 @@ import {
   stat,
   writeFile
 } from 'node:fs/promises';
+import type http from 'node:http';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
+import type { FastifyInstance } from 'fastify';
 import type { RegistryOptions } from '../../oc/dist/registry';
+import type { HttpServerAdapterFactory } from '../../oc/dist/registry/domain/http-server/types';
 import createFastifyAdapter from '..';
 
 type RegistryFactory = typeof import('../../oc/dist/registry').default;
 type StartedRegistry = ReturnType<RegistryFactory>;
 
 type StartedData = {
-  app: unknown;
-  server: { address(): string | { port: number } | null };
+  app: FastifyInstance;
+  server: http.Server;
 };
 
 const Registry = require(path.resolve(__dirname, '../../../oc/dist/registry'))
@@ -44,7 +47,9 @@ type FileStorageOptions = {
   root: string;
 };
 
-const inferRegistryOptions = <T, U>(options: RegistryOptions<T, U>) => options;
+const inferRegistryOptions = <T, U extends HttpServerAdapterFactory>(
+  options: RegistryOptions<T, U>
+) => options;
 const fastifyRegistryOptions = inferRegistryOptions({
   baseUrl: 'http://localhost:3000/',
   server: {
@@ -199,7 +204,7 @@ const startRegistry = async (
     },
     verbosity: 0,
     ...options
-  } as never);
+  });
 
   const data = await new Promise<StartedData>((resolve, reject) => {
     registry.start((err, startData) => {

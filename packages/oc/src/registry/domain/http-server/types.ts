@@ -1,5 +1,6 @@
 import type http from 'node:http';
 import type { IncomingHttpHeaders } from 'node:http';
+import type express from 'express';
 import type { Config } from '../../../types';
 
 export interface CookieOptions {
@@ -83,8 +84,8 @@ export type ExpressMiddleware = (
   next: (err?: unknown) => void
 ) => void;
 
-export type HttpServerAdapterFactory<TOptions = unknown> = {
-  (options?: unknown): HttpServerAdapter;
+export type HttpServerAdapterFactory<TOptions = unknown, TNative = unknown> = {
+  (options?: unknown): HttpServerAdapter<TNative>;
   readonly __serverAdapterOptions?: TOptions;
 };
 
@@ -96,7 +97,19 @@ export type HttpServerAdapterOptions<TAdapter> = TAdapter extends {
     ? TOptions
     : unknown;
 
-export interface HttpServerAdapter {
+export type NativeApp<TAdapter> = TAdapter extends (
+  ...args: any[]
+) => HttpServerAdapter<infer TNative>
+  ? unknown extends TNative
+    ? express.Express
+    : TNative
+  : TAdapter extends HttpServerAdapter<infer TNative>
+    ? unknown extends TNative
+      ? express.Express
+      : TNative
+    : express.Express;
+
+export interface HttpServerAdapter<TNative = unknown> {
   name: string;
   enableBodyParser(opts: { limit?: number | string }): void;
   enableCookies(): void;
@@ -121,6 +134,6 @@ export interface HttpServerAdapter {
   onServerError(cb: (err: Error) => void): void;
   close(cb: (err?: Error) => void): void;
   isListening(): boolean;
-  native(): unknown;
+  native(): TNative;
   httpServer(): http.Server;
 }

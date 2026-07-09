@@ -42,7 +42,7 @@ function normaliseParams(raw: Record<string, unknown>): Record<string, string> {
 
 export default function createExpressAdapter(
   options?: unknown
-): HttpServerAdapter {
+): HttpServerAdapter<Express> {
   const adapterOptions = options as
     | { port?: number | string }
     | number
@@ -53,7 +53,7 @@ export default function createExpressAdapter(
   );
 }
 
-class ExpressHttpServerAdapter implements HttpServerAdapter {
+class ExpressHttpServerAdapter implements HttpServerAdapter<Express> {
   name = 'express';
 
   private app: Express;

@@ -1,11 +1,13 @@
 import type http from 'node:http';
 import colors from 'colors/safe';
-import type express from 'express';
 
 import type { Plugin } from '../types';
 import appStart from './app-start';
 import eventsHandler from './domain/events-handler';
-import type { HttpServerAdapterFactory } from './domain/http-server/types';
+import type {
+  HttpServerAdapterFactory,
+  NativeApp
+} from './domain/http-server/types';
 import sanitiseOptions, { RegistryOptions } from './domain/options-sanitiser';
 import * as pluginsInitialiser from './domain/plugins-initialiser';
 import Repository from './domain/repository';
@@ -16,10 +18,24 @@ import { create as createRouter } from './router';
 
 export { RegistryOptions };
 
+export interface RegistryType<TApp = NativeApp<HttpServerAdapterFactory>> {
+  close: (callback: (err?: Error | undefined | string) => void) => void;
+  on: typeof eventsHandler.on;
+  register: <T = any>(
+    plugin: Plugin<T>,
+    callback?: (...args: any[]) => void
+  ) => void;
+  start: (
+    callback: (err: unknown, data?: { app: TApp; server: http.Server }) => void
+  ) => Promise<void>;
+  app: TApp;
+}
+
 export default function registry<
   T = any,
-  TServerAdapter extends HttpServerAdapterFactory = HttpServerAdapterFactory
->(inputOptions: RegistryOptions<T, TServerAdapter>) {
+  TServerAdapter extends HttpServerAdapterFactory = HttpServerAdapterFactory,
+  TApp = NativeApp<TServerAdapter>
+>(inputOptions: RegistryOptions<T, TServerAdapter>): RegistryType<TApp> {
   const validationResult =
     validator.validateRegistryConfiguration(inputOptions);
   if (!validationResult.isValid) {
@@ -32,7 +48,7 @@ export default function registry<
     getHttpServerAdapter(options.server.adapter, options.server.options),
     options
   );
-  const app = adapter.native() as express.Express;
+  const app = adapter.native() as TApp;
   const repository = Repository(options);
 
   const close = (
@@ -59,10 +75,7 @@ export default function registry<
   };
 
   const start = async (
-    callback: (
-      err: unknown,
-      data?: { app: express.Express; server: http.Server }
-    ) => void
+    callback: (err: unknown, data?: { app: TApp; server: http.Server }) => void
   ) => {
     const ok = (msg: string) => console.log(colors.green(msg));
 
