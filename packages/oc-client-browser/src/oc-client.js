@@ -744,21 +744,27 @@ export function createOc(oc) {
         disconnectedCallback() {
           if (this.#connected) {
             this.#connected = false;
-            const id = this.getAttribute('id');
-            if (id) {
-              oc.events.fire('oc:unrendered', {
-                element: this,
-                id
-              });
-            }
-            const shouldUnmount =
-              this.#manageLifecycle &&
-              this.unmount &&
-              this.getAttribute('data-rendered') == 'true';
-            if (shouldUnmount) {
-              this.unmount();
-              this.removeAttribute('data-rendered');
-            }
+            timeout(() => {
+              if (this.isConnected) {
+                return;
+              }
+
+              const id = this.getAttribute('id');
+              if (id) {
+                oc.events.fire('oc:unrendered', {
+                  element: this,
+                  id
+                });
+              }
+              const shouldUnmount =
+                this.#manageLifecycle &&
+                this.unmount &&
+                this.getAttribute('data-rendered') == 'true';
+              if (shouldUnmount) {
+                this.unmount();
+                this.removeAttribute('data-rendered');
+              }
+            }, 0);
           }
         }
       }
