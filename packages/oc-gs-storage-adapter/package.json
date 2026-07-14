@@ -45,7 +45,7 @@
 		"lodash": "^4.17.4",
 		"nice-cache": "^0.0.5",
 		"node-dir": "^0.1.17",
-		"oc-storage-adapters-utils": "*",
+		"oc-storage-adapters-utils": "^2.1.2",
 		"tmp": "0.1.0"
 	},
 	"devDependencies": {

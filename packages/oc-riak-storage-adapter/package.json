@@ -35,7 +35,7 @@
 		"test-silent": "npm run build"
 	},
 	"dependencies": {
-		"oc-s3-storage-adapter": "*"
+		"oc-s3-storage-adapter": "^2.2.3"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.0",
