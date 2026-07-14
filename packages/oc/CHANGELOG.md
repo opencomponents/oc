@@ -1,5 +1,11 @@
 ## Change Log
 
+## 0.50.58
+
+### Patch Changes
+
+- 7a8173d: update oc-client-browser
+
 ## 0.50.57
 
 ### Patch Changes
