@@ -1,5 +1,11 @@
 # oc-fastify-server-adapter
 
+## 0.1.5
+
+### Patch Changes
+
+- c086ec2: fix trailing slash
+
 ## 0.1.4
 
 ### Patch Changes
