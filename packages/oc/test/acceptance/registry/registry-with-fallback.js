@@ -37,14 +37,14 @@ describe('registry', () => {
     before((done) => {
       registry = oc.Registry(
         retrieveRegistryConfiguration(
-          3030,
+          49130,
           'test/fixtures/components',
-          'http://localhost:3031'
+          'http://localhost:49131'
         )
       );
       fallbackRegistry = oc.Registry(
         retrieveRegistryConfiguration(
-          3031,
+          49131,
           'test/fixtures/fallback-registry-components'
         )
       );
@@ -61,11 +61,11 @@ describe('registry', () => {
 
     describe('GET /welcome', () => {
       before((done) => {
-        next(request('http://localhost:3030/welcome'), done);
+        next(request('http://localhost:49130/welcome'), done);
       });
 
       it('should respond with the local registry url', () => {
-        expect(result.href).to.eql('http://localhost:3030/welcome');
+        expect(result.href).to.eql('http://localhost:49130/welcome');
       });
 
       it('should respond the `Hello world!` html', () => {
@@ -75,12 +75,12 @@ describe('registry', () => {
 
     describe('GET /fallback-hello-world', () => {
       before((done) => {
-        next(request('http://localhost:3030/fallback-hello-world'), done);
+        next(request('http://localhost:49130/fallback-hello-world'), done);
       });
 
       it('should respond with the fallback registry url', () => {
         expect(result.href).to.eql(
-          'http://localhost:3031/fallback-hello-world'
+          'http://localhost:49131/fallback-hello-world'
         );
       });
 
@@ -93,7 +93,7 @@ describe('registry', () => {
       before((done) => {
         next(
           request(
-            'http://localhost:3030/fallback-welcome-with-optional-parameters/~info'
+            'http://localhost:49130/fallback-welcome-with-optional-parameters/~info'
           ),
           done
         );
@@ -112,7 +112,7 @@ describe('registry', () => {
       before((done) => {
         next(
           request(
-            'http://localhost:3030/fallback-welcome-with-optional-parameters/~preview'
+            'http://localhost:49130/fallback-welcome-with-optional-parameters/~preview'
           ),
           done
         );

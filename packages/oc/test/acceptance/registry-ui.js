@@ -24,8 +24,8 @@ describe('registry (ui interface)', () => {
   const conf = {
     local: true,
     path: path.resolve('test/fixtures/components'),
-    port: 3030,
-    baseUrl: 'http://localhost:3030/',
+    port: 49130,
+    baseUrl: 'http://localhost:49130/',
     env: { name: 'local' },
     verbosity: 0,
     dependencies: ['lodash.isequal'],
@@ -44,7 +44,7 @@ describe('registry (ui interface)', () => {
   describe('GET / with Accept: text/html', () => {
     before((done) => {
       next(
-        request('http://localhost:3030', {
+        request('http://localhost:49130', {
           headers: { accept: 'text/html' }
         }),
         done
@@ -66,7 +66,7 @@ describe('registry (ui interface)', () => {
   describe('GET /oc-client/~info with Accept: text/html', () => {
     before((done) => {
       next(
-        request('http://localhost:3030/oc-client/~info', {
+        request('http://localhost:49130/oc-client/~info', {
           headers: { accept: 'text/html' }
         }),
         done
@@ -89,7 +89,7 @@ describe('registry (ui interface)', () => {
     before((done) => {
       next(
         request(
-          'http://localhost:3030/welcome-with-optional-parameters/~info',
+          'http://localhost:49130/welcome-with-optional-parameters/~info',
           {
             headers: { accept: 'text/html' }
           }

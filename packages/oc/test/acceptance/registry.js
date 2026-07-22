@@ -24,8 +24,8 @@ describe('registry', () => {
   const getDefaultTestConfiguration = () => ({
     local: true,
     path: path.resolve('test/fixtures/components'),
-    port: 3030,
-    baseUrl: 'http://localhost:3030/',
+    port: 49130,
+    baseUrl: 'http://localhost:49130/',
     env: { name: 'local' },
     verbosity: 0,
     dependencies: ['lodash.isequal']
@@ -58,7 +58,7 @@ describe('registry', () => {
     describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and strong version 1.0.0', () => {
       before((done) => {
         next(
-          request('http://localhost:3030/hello-world-custom-headers/1.0.0'),
+          request('http://localhost:49130/hello-world-custom-headers/1.0.0'),
           done
         );
       });
@@ -78,7 +78,7 @@ describe('registry', () => {
     describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and weak version 1.x.x', () => {
       before((done) => {
         next(
-          request('http://localhost:3030/hello-world-custom-headers/1.x.x'),
+          request('http://localhost:49130/hello-world-custom-headers/1.x.x'),
           done
         );
       });
@@ -117,7 +117,7 @@ describe('registry', () => {
       describe('when strong version is requested 1.0.0', () => {
         before((done) => {
           next(
-            request('http://localhost:3030/hello-world-custom-headers/1.0.0'),
+            request('http://localhost:49130/hello-world-custom-headers/1.0.0'),
             done
           );
         });
@@ -137,7 +137,7 @@ describe('registry', () => {
       describe('when weak version is requested 1.x.x', () => {
         before((done) => {
           next(
-            request('http://localhost:3030/hello-world-custom-headers/1.x.x'),
+            request('http://localhost:49130/hello-world-custom-headers/1.x.x'),
             done
           );
         });
@@ -157,7 +157,7 @@ describe('registry', () => {
     describe('with the default configuration and strong version 1.0.0', () => {
       before((done) => {
         next(
-          request('http://localhost:3030/hello-world-custom-cookies/1.0.0'),
+          request('http://localhost:49130/hello-world-custom-cookies/1.0.0'),
           done
         );
       });
@@ -178,7 +178,7 @@ describe('registry', () => {
     describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and strong version 1.0.0', () => {
       before((done) => {
         next(
-          request('http://localhost:3030', {
+          request('http://localhost:49130', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -214,7 +214,7 @@ describe('registry', () => {
     describe('request with two components', () => {
       before((done) => {
         next(
-          request('http://localhost:3030', {
+          request('http://localhost:49130', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -244,7 +244,7 @@ describe('registry', () => {
     describe('with the default configuration (no customHeadersToSkipOnWeakVersion defined) and weak version 1.x.x', () => {
       before((done) => {
         next(
-          request('http://localhost:3030', {
+          request('http://localhost:49130', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -299,7 +299,7 @@ describe('registry', () => {
       describe('when strong version is requested 1.0.0', () => {
         before((done) => {
           next(
-            request('http://localhost:3030', {
+            request('http://localhost:49130', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -337,7 +337,7 @@ describe('registry', () => {
       describe('when weak version is requested 1.x.x', () => {
         before((done) => {
           next(
-            request('http://localhost:3030', {
+            request('http://localhost:49130', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -376,7 +376,7 @@ describe('registry', () => {
     describe('with the default configuration and strong version 1.0.0', () => {
       before((done) => {
         next(
-          request('http://localhost:3030', {
+          request('http://localhost:49130', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -411,30 +411,30 @@ describe('registry', () => {
 
   describe('GET /', () => {
     before((done) => {
-      next(request('http://localhost:3030'), done);
+      next(request('http://localhost:49130'), done);
     });
 
     it('should respond with the correct href', () => {
-      expect(result.href).to.equal('http://localhost:3030/');
+      expect(result.href).to.equal('http://localhost:49130/');
     });
 
     it('should list the components', () => {
       expect(result.components).to.eql([
-        'http://localhost:3030/circular-json-error',
-        'http://localhost:3030/container-with-multiple-nested',
-        'http://localhost:3030/container-with-nested',
-        'http://localhost:3030/empty',
-        'http://localhost:3030/handlebars3-component',
-        'http://localhost:3030/hello-world',
-        'http://localhost:3030/hello-world-custom-cookies',
-        'http://localhost:3030/hello-world-custom-headers',
-        'http://localhost:3030/jade-filters',
-        'http://localhost:3030/language',
-        'http://localhost:3030/lodash-component',
-        'http://localhost:3030/no-containers',
-        'http://localhost:3030/welcome',
-        'http://localhost:3030/welcome-with-optional-parameters',
-        'http://localhost:3030/oc-client'
+        'http://localhost:49130/circular-json-error',
+        'http://localhost:49130/container-with-multiple-nested',
+        'http://localhost:49130/container-with-nested',
+        'http://localhost:49130/empty',
+        'http://localhost:49130/handlebars3-component',
+        'http://localhost:49130/hello-world',
+        'http://localhost:49130/hello-world-custom-cookies',
+        'http://localhost:49130/hello-world-custom-headers',
+        'http://localhost:49130/jade-filters',
+        'http://localhost:49130/language',
+        'http://localhost:49130/lodash-component',
+        'http://localhost:49130/no-containers',
+        'http://localhost:49130/welcome',
+        'http://localhost:49130/welcome-with-optional-parameters',
+        'http://localhost:49130/oc-client'
       ]);
     });
   });
@@ -442,7 +442,7 @@ describe('registry', () => {
   describe('POST / (with circular-json)', () => {
     before((done) => {
       next(
-        request('http://localhost:3030/', {
+        request('http://localhost:49130/', {
           method: 'POST',
           headers: {
             accept: 'application/vnd.oc.unrendered+json',
@@ -471,7 +471,7 @@ describe('registry', () => {
   describe('GET /circular-json-error', () => {
     before((done) => {
       next(
-        request('http://localhost:3030/circular-json-error', {
+        request('http://localhost:49130/circular-json-error', {
           headers: { accept: 'application/vnd.oc.unrendered+json' },
           throwHttpErrors: false
         }),
@@ -493,7 +493,7 @@ describe('registry', () => {
   describe('GET /handlebars3-component', () => {
     before((done) => {
       next(
-        request('http://localhost:3030/handlebars3-component', {
+        request('http://localhost:49130/handlebars3-component', {
           throwHttpErrors: false
         }),
         done
@@ -513,7 +513,7 @@ describe('registry', () => {
 
   describe('GET /jade-filters', () => {
     before((done) => {
-      next(request('http://localhost:3030/jade-filters'), done);
+      next(request('http://localhost:49130/jade-filters'), done);
     });
 
     it('should respond with 200 status code', () => {
@@ -524,11 +524,11 @@ describe('registry', () => {
   describe('GET /hello-world', () => {
     describe('when Accept header not specified', () => {
       before((done) => {
-        next(request('http://localhost:3030/hello-world'), done);
+        next(request('http://localhost:49130/hello-world'), done);
       });
 
       it('should respond with the correct href', () => {
-        expect(result.href).to.eql('http://localhost:3030/hello-world');
+        expect(result.href).to.eql('http://localhost:49130/hello-world');
       });
 
       it('should respond with requested version', () => {
@@ -558,7 +558,7 @@ describe('registry', () => {
     describe('when Accept header set to application/vnd.oc.unrendered+json', () => {
       before((done) => {
         next(
-          request('http://localhost:3030/hello-world', {
+          request('http://localhost:49130/hello-world', {
             headers: { Accept: 'application/vnd.oc.unrendered+json' }
           }),
           done
@@ -566,7 +566,7 @@ describe('registry', () => {
       });
 
       it('should respond with the correct href', () => {
-        expect(result.href).to.eql('http://localhost:3030/hello-world');
+        expect(result.href).to.eql('http://localhost:49130/hello-world');
       });
 
       it('should respond with requested version', () => {
@@ -593,11 +593,11 @@ describe('registry', () => {
 
   describe('GET /container-with-nested', () => {
     before((done) => {
-      next(request('http://localhost:3030/container-with-nested'), done);
+      next(request('http://localhost:49130/container-with-nested'), done);
     });
 
     it('should respond with the correct href', () => {
-      expect(result.href).to.eql('http://localhost:3030/container-with-nested');
+      expect(result.href).to.eql('http://localhost:49130/container-with-nested');
     });
 
     it('should respond with the rendered template including the nested rendered component', () => {
@@ -614,14 +614,14 @@ describe('registry', () => {
   describe('GET /container-with-multiple-nested', () => {
     before((done) => {
       next(
-        request('http://localhost:3030/container-with-multiple-nested'),
+        request('http://localhost:49130/container-with-multiple-nested'),
         done
       );
     });
 
     it('should respond with the correct href', () => {
       expect(result.href).to.eql(
-        'http://localhost:3030/container-with-multiple-nested'
+        'http://localhost:49130/container-with-multiple-nested'
       );
     });
 
@@ -639,11 +639,11 @@ describe('registry', () => {
   describe('GET /no-containers', () => {
     describe('when Accept header not specified', () => {
       before((done) => {
-        next(request('http://localhost:3030/no-containers'), done);
+        next(request('http://localhost:49130/no-containers'), done);
       });
 
       it('should respond with the correct href', () => {
-        expect(result.href).to.eql('http://localhost:3030/no-containers');
+        expect(result.href).to.eql('http://localhost:49130/no-containers');
       });
 
       it('should respond with the rendered template without the outer container and without render info script', () => {
@@ -661,7 +661,7 @@ describe('registry', () => {
     describe('when Accept-Language: en-US', () => {
       before((done) => {
         next(
-          request('http://localhost:3030/language', {
+          request('http://localhost:49130/language', {
             headers: { 'accept-language': 'en-US' }
           }),
           done
@@ -669,7 +669,7 @@ describe('registry', () => {
       });
 
       it('should respond with correct href', () => {
-        expect(result.href).to.equal('http://localhost:3030/language');
+        expect(result.href).to.equal('http://localhost:49130/language');
       });
 
       it('should contain english language', () => {
@@ -680,7 +680,7 @@ describe('registry', () => {
     describe('when Accept-Language: ja-JP', () => {
       before((done) => {
         next(
-          request('http://localhost:3030/language', {
+          request('http://localhost:49130/language', {
             headers: { 'accept-language': 'ja-JP' }
           }),
           done
@@ -688,7 +688,7 @@ describe('registry', () => {
       });
 
       it('should respond with correct href', () => {
-        expect(result.href).to.equal('http://localhost:3030/language');
+        expect(result.href).to.equal('http://localhost:49130/language');
       });
 
       it('should contain japanese language', () => {
@@ -699,7 +699,7 @@ describe('registry', () => {
     describe('when Accept-Language: ja-JP but __ocAcceptLanguage overrides with en-US (client-side failover)', () => {
       before((done) => {
         next(
-          request('http://localhost:3030/language/?__ocAcceptLanguage=en-US', {
+          request('http://localhost:49130/language/?__ocAcceptLanguage=en-US', {
             headers: { 'accept-language': 'ja-JP' }
           }),
           done
@@ -707,7 +707,7 @@ describe('registry', () => {
       });
 
       it('should respond with correct href', () => {
-        expect(result.href).to.equal('http://localhost:3030/language');
+        expect(result.href).to.equal('http://localhost:49130/language');
       });
 
       it('should contain japanese language', () => {
@@ -718,11 +718,11 @@ describe('registry', () => {
 
   describe('GET /lodash-component', () => {
     before((done) => {
-      next(request('http://localhost:3030/lodash-component'), done);
+      next(request('http://localhost:49130/lodash-component'), done);
     });
 
     it('should respond with the correct href', () => {
-      expect(result.href).to.eql('http://localhost:3030/lodash-component');
+      expect(result.href).to.eql('http://localhost:49130/lodash-component');
     });
 
     it('should respond correctly after using lodash server dependency', () => {
@@ -733,11 +733,11 @@ describe('registry', () => {
   describe('GET /empty', () => {
     describe('rendered', () => {
       before((done) => {
-        next(request('http://localhost:3030/empty'), done);
+        next(request('http://localhost:49130/empty'), done);
       });
 
       it('should respond with the correct href', () => {
-        expect(result.href).to.eql('http://localhost:3030/empty');
+        expect(result.href).to.eql('http://localhost:49130/empty');
       });
 
       it('should respond with an empty response', () => {
@@ -748,7 +748,7 @@ describe('registry', () => {
     describe('unrendered', () => {
       before((done) => {
         next(
-          request('http://localhost:3030/empty', {
+          request('http://localhost:49130/empty', {
             headers: { Accept: 'application/vnd.oc.unrendered+json' }
           }),
           done
@@ -756,7 +756,7 @@ describe('registry', () => {
       });
 
       it('should respond with the correct href', () => {
-        expect(result.href).to.eql('http://localhost:3030/empty');
+        expect(result.href).to.eql('http://localhost:49130/empty');
       });
 
       it('should respond with a minimal empty view-model', () => {
@@ -771,7 +771,7 @@ describe('registry', () => {
     describe('when body is malformed', () => {
       before((done) => {
         next(
-          request('http://localhost:3030/', {
+          request('http://localhost:49130/', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -798,7 +798,7 @@ describe('registry', () => {
       describe('when Accept header not specified', () => {
         before((done) => {
           next(
-            request('http://localhost:3030/', {
+            request('http://localhost:49130/', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -830,7 +830,7 @@ describe('registry', () => {
         describe('when getting rendered components', () => {
           before((done) => {
             next(
-              request('http://localhost:3030/', {
+              request('http://localhost:49130/', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json'
@@ -856,7 +856,7 @@ describe('registry', () => {
         describe('when getting unrendered components', () => {
           before((done) => {
             next(
-              request('http://localhost:3030/', {
+              request('http://localhost:49130/', {
                 method: 'POST',
                 headers: {
                   Accept: 'application/vnd.oc.unrendered+json',
@@ -884,7 +884,7 @@ describe('registry', () => {
       describe('when Accept header set to application/vnd.oc.unrendered+json', () => {
         before((done) => {
           next(
-            request('http://localhost:3030/', {
+            request('http://localhost:49130/', {
               method: 'POST',
               headers: {
                 Accept: 'application/vnd.oc.unrendered+json',
@@ -910,7 +910,7 @@ describe('registry', () => {
         describe('when each component requires different params', () => {
           before((done) => {
             next(
-              request('http://localhost:3030/', {
+              request('http://localhost:49130/', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json'
@@ -934,10 +934,10 @@ describe('registry', () => {
 
           it('should render components with expected parameters', () => {
             expect(result[0].response.href).to.equal(
-              'http://localhost:3030/welcome?firstName=Mickey&lastName=Mouse'
+              'http://localhost:49130/welcome?firstName=Mickey&lastName=Mouse'
             );
             expect(result[1].response.href).to.equal(
-              'http://localhost:3030/welcome?firstName=Donald&lastName=Duck'
+              'http://localhost:49130/welcome?firstName=Donald&lastName=Duck'
             );
           });
         });
@@ -945,7 +945,7 @@ describe('registry', () => {
         describe('when components require same parameters', () => {
           before((done) => {
             next(
-              request('http://localhost:3030/', {
+              request('http://localhost:49130/', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json'
@@ -961,10 +961,10 @@ describe('registry', () => {
 
           it('should render components with expected parameters', () => {
             expect(result[0].response.href).to.equal(
-              'http://localhost:3030/welcome?firstName=Donald&lastName=Duck'
+              'http://localhost:49130/welcome?firstName=Donald&lastName=Duck'
             );
             expect(result[1].response.href).to.equal(
-              'http://localhost:3030/welcome?firstName=Donald&lastName=Duck'
+              'http://localhost:49130/welcome?firstName=Donald&lastName=Duck'
             );
           });
         });
@@ -972,7 +972,7 @@ describe('registry', () => {
         describe('when components have some common parameters and some different', () => {
           before((done) => {
             next(
-              request('http://localhost:3030/', {
+              request('http://localhost:49130/', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json'
@@ -991,10 +991,10 @@ describe('registry', () => {
 
           it('should render components with expected parameters', () => {
             expect(result[0].response.href).to.equal(
-              'http://localhost:3030/welcome?firstName=Donald&lastName=Mouse'
+              'http://localhost:49130/welcome?firstName=Donald&lastName=Mouse'
             );
             expect(result[1].response.href).to.equal(
-              'http://localhost:3030/welcome?firstName=Donald&lastName=Duck'
+              'http://localhost:49130/welcome?firstName=Donald&lastName=Duck'
             );
           });
         });
@@ -1002,7 +1002,7 @@ describe('registry', () => {
         describe('when components have global parameters with local overrides', () => {
           before((done) => {
             next(
-              request('http://localhost:3030/', {
+              request('http://localhost:49130/', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json'
@@ -1021,10 +1021,10 @@ describe('registry', () => {
 
           it('should render components with expected parameters', () => {
             expect(result[0].response.href).to.equal(
-              'http://localhost:3030/welcome?firstName=Donald&lastName=Mouse'
+              'http://localhost:49130/welcome?firstName=Donald&lastName=Mouse'
             );
             expect(result[1].response.href).to.equal(
-              'http://localhost:3030/welcome?firstName=Donald&lastName=Duck'
+              'http://localhost:49130/welcome?firstName=Donald&lastName=Duck'
             );
           });
         });
@@ -1032,7 +1032,7 @@ describe('registry', () => {
         describe('when components accept optional parameters', () => {
           before((done) => {
             next(
-              request('http://localhost:3030/', {
+              request('http://localhost:49130/', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json'
@@ -1068,7 +1068,7 @@ describe('registry', () => {
               '<span>hi John Smith (smithy)</span>'
             );
             expect(result[0].response.href).to.equal(
-              'http://localhost:3030/welcome-with-optional-parameters?firstName=John&lastName=Smith&nick=smithy'
+              'http://localhost:49130/welcome-with-optional-parameters?firstName=John&lastName=Smith&nick=smithy'
             );
           });
 
@@ -1077,13 +1077,13 @@ describe('registry', () => {
               '<span>hi John Smith (Johnny)</span>'
             );
             expect(result[1].response.href).to.equal(
-              'http://localhost:3030/welcome-with-optional-parameters?firstName=John&lastName=Smith&nick=Johnny'
+              'http://localhost:49130/welcome-with-optional-parameters?firstName=John&lastName=Smith&nick=Johnny'
             );
             expect(result[2].response.html).to.equal(
               '<span>hi John Smith (Johnny)</span>'
             );
             expect(result[2].response.href).to.equal(
-              'http://localhost:3030/welcome-with-optional-parameters?firstName=John&lastName=Smith&nick=Johnny'
+              'http://localhost:49130/welcome-with-optional-parameters?firstName=John&lastName=Smith&nick=Johnny'
             );
           });
 
@@ -1092,7 +1092,7 @@ describe('registry', () => {
               '<span>hi John  (smithy)</span>'
             );
             expect(result[3].response.href).to.equal(
-              'http://localhost:3030/welcome-with-optional-parameters?firstName=John&nick=smithy'
+              'http://localhost:49130/welcome-with-optional-parameters?firstName=John&nick=smithy'
             );
           });
         });
@@ -1104,7 +1104,7 @@ describe('registry', () => {
     describe('when requesting an existing packaged file', () => {
       before((done) => {
         next(
-          request('http://localhost:3030/hello-world/1.0.0/static/package.json'),
+          request('http://localhost:49130/hello-world/1.0.0/static/package.json'),
           done
         );
       });
@@ -1123,7 +1123,7 @@ describe('registry', () => {
       before((done) => {
         next(
           request(
-            'http://localhost:3030/hello-world/1.0.0/static/does-not-exist.txt'
+            'http://localhost:49130/hello-world/1.0.0/static/does-not-exist.txt'
           ),
           done
         );
