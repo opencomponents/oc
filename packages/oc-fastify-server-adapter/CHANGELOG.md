@@ -1,5 +1,12 @@
 # oc-fastify-server-adapter
 
+## 0.1.6
+
+### Patch Changes
+
+- d9f9a39: support Azure named pipe listen addresses
+- db9b49a: fix string ports
+
 ## 0.1.5
 
 ### Patch Changes
