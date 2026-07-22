@@ -224,7 +224,9 @@ async function testRegistryComponentResponses(): Promise<void> {
 
   try {
     const address = data.server.address();
-    const response = await fetch(`${baseUrl}/hello-world/1.0.0`);
+    const response = await fetch(`${baseUrl}/handlebars3-component/1.0.0`, {
+      headers: { accept: 'application/vnd.oc.unrendered+json' }
+    });
     const body = await readJson<Record<string, unknown>>(
       response,
       'component response'
@@ -234,7 +236,7 @@ async function testRegistryComponentResponses(): Promise<void> {
     assert.ok(data.app && typeof data.app === 'object' && 'server' in data.app);
     assert.ok(address && typeof address !== 'string');
     assert.equal(response.status, 200);
-    assert.equal(body['name'], 'hello-world');
+    assert.equal(body['name'], 'handlebars3-component');
     assert.equal(body['version'], '1.0.0');
   } finally {
     await closeRegistry(registry);

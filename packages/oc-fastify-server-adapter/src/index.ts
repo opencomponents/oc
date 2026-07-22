@@ -11,6 +11,7 @@ import formbody from '@fastify/formbody';
 import multipart from '@fastify/multipart';
 import fastify, {
   type FastifyInstance,
+  type FastifyListenOptions,
   type FastifyReply,
   type FastifyRequest,
   type HTTPMethods
@@ -420,15 +421,7 @@ class FastifyHttpServerAdapter implements HttpServerAdapter<FastifyInstance> {
       this.app.server.keepAliveTimeout = opts.keepAliveTimeout;
     }
 
-    let port: number;
-    try {
-      port = normalisePort(opts.port);
-    } catch (err) {
-      cb(err instanceof Error ? err : new Error(String(err)));
-      return;
-    }
-
-    this.app.listen({ host: this.host ?? '0.0.0.0', port }, (err) =>
+    this.app.listen(normaliseListenOptions(opts.port, this.host), (err) =>
       cb(err ?? undefined)
     );
   }
@@ -751,17 +744,18 @@ function parseBodyLimit(limit?: number | string): number {
   return Math.floor(value * multiplier);
 }
 
-function normalisePort(port: number | string): number {
+function normaliseListenOptions(
+  port: number | string,
+  host?: string
+): FastifyListenOptions {
   if (typeof port === 'number') {
-    return port;
+    return { host: host ?? '0.0.0.0', port };
   }
 
   const parsed = Number(port);
-  if (!Number.isInteger(parsed)) {
-    throw new Error(`Fastify adapter requires a numeric port, got "${port}"`);
-  }
-
-  return parsed;
+  return Number.isInteger(parsed)
+    ? { host: host ?? '0.0.0.0', port: parsed }
+    : { path: port };
 }
 
 function toFastifyAdapterOptions(
