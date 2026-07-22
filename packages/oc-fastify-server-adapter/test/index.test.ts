@@ -15,9 +15,12 @@ const closeAdapter = (adapter: HttpServerAdapter): Promise<void> =>
     adapter.close((err) => (err ? reject(err) : resolve()));
   });
 
-const listen = (adapter: HttpServerAdapter): Promise<void> =>
+const listen = (
+  adapter: HttpServerAdapter,
+  port: number | string = 0
+): Promise<void> =>
   new Promise((resolve, reject) => {
-    adapter.listen({ port: 0, timeout: 120000 }, (err) =>
+    adapter.listen({ port, timeout: 120000 }, (err) =>
       err ? reject(err) : resolve()
     );
   });
@@ -205,7 +208,7 @@ test('inflates compressed JSON request bodies', async () => {
   await closeAdapter(adapter);
 });
 
-test('defaults listen host to all interfaces and reports invalid ports via callback', async () => {
+test('defaults listen host to all interfaces', async () => {
   const adapter = createFastifyAdapter();
 
   await listen(adapter);
@@ -216,25 +219,22 @@ test('defaults listen host to all interfaces and reports invalid ports via callb
   );
 
   await closeAdapter(adapter);
+});
 
-  const invalidAdapter = createFastifyAdapter();
-  await new Promise<void>((resolve, reject) => {
-    try {
-      invalidAdapter.listen({ port: 'not-a-port', timeout: 120000 }, (err) => {
-        try {
-          expect(err).toBeInstanceOf(Error);
-          expect(err?.message).toContain('numeric port');
-          resolve();
-        } catch (assertionErr) {
-          reject(assertionErr);
-        }
-      });
-    } catch (err) {
-      reject(err);
-    }
-  });
+test('listens on Azure named pipes', async () => {
+  const adapter = createFastifyAdapter();
+  const app = asFastify(adapter);
+  const pipe = String.raw`\\.\pipe\cdfd043b-d3a4-4c5d-bb08-c17a644a30ab`;
+  const listenSpy = jest
+    .spyOn(app, 'listen')
+    .mockImplementation(((
+      _options: unknown,
+      callback: (err: Error | null) => void
+    ) => callback(null)) as never);
 
-  await closeAdapter(invalidAdapter);
+  await listen(adapter, pipe);
+
+  expect(listenSpy).toHaveBeenCalledWith({ path: pipe }, expect.any(Function));
 });
 
 test('ignores trailing slashes like Express strict routing off', async () => {
