@@ -340,16 +340,11 @@ export function createOc(oc) {
     isRequired('baseUrl', options.baseUrl);
     isRequired('name', options.name);
 
-    let withFinalSlash = (s) => {
-      if (!s) return '';
-
-      return s.match(/\/$/) ? s : s + '/';
-    };
-
     let href =
-      withFinalSlash(options.baseUrl) +
-      withFinalSlash(options.name) +
-      withFinalSlash(options.version);
+      options.baseUrl.replace(/\/$/, '') +
+      '/' +
+      options.name +
+      (options.version ? '/' + options.version : '');
 
     if (options.parameters) {
       href += '?';
