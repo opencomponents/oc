@@ -31,6 +31,14 @@ describe('registry : domain : version-handler', () => {
         expect(get('hello!', availableVersions)).to.be.undefined;
       });
 
+      it('should return an exact existing version', () => {
+        expect(get('1.0.1', availableVersions)).to.equal('1.0.1');
+      });
+
+      it('should return undefined for a missing exact version', () => {
+        expect(get('9.9.9', availableVersions)).to.be.undefined;
+      });
+
       it('should return the latest when latest version specified', () => {
         expect(get('', availableVersions)).to.equal('2.0.0');
       });

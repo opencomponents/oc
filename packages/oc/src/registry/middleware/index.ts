@@ -17,6 +17,10 @@ export const bind = (
   });
 
   adapter.enableRequestTiming((req, res, time) => {
+    if (!eventsHandler.hasListeners('request')) {
+      return;
+    }
+
     const data: RequestData = {
       body: req.body,
       duration: time,

@@ -1,6 +1,7 @@
 import strings from '../../resources';
 import settings from '../../resources/settings';
 import type { Config } from '../../types';
+import pLimit from '../../utils/pLimit';
 import type {
   GetComponentResult,
   RendererOptions
@@ -65,23 +66,26 @@ export default function nestedRenderer(
         );
       }
 
+      const limit = pLimit(10);
       return Promise.all(
-        components.map((component) => {
-          return renderer({
-            conf: conf,
-            headers: {
-              ...options.headers,
-              accept: settings.registry.acceptRenderedHeader
-            },
-            ip: component.ip || '',
-            name: component.name!,
-            parameters: {
-              ...options.parameters,
-              ...component.parameters
-            },
-            version: component.version || ''
-          }).catch((err) => new Error(err));
-        })
+        components.map((component) =>
+          limit(() =>
+            renderer({
+              conf: conf,
+              headers: {
+                ...options.headers,
+                accept: settings.registry.acceptRenderedHeader
+              },
+              ip: component.ip || '',
+              name: component.name!,
+              parameters: {
+                ...options.parameters,
+                ...component.parameters
+              },
+              version: component.version || ''
+            }).catch((err) => new Error(err))
+          )
+        )
       );
     }
   };

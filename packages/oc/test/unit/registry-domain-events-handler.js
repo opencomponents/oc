@@ -53,6 +53,28 @@ describe('registry : domain : events-handler', () => {
     });
   });
 
+  describe('when checking for subscribers', () => {
+    const listener = () => {};
+
+    afterEach(() => {
+      eventsHandler.reset();
+    });
+
+    it('should reflect on, off, and reset changes', () => {
+      expect(eventsHandler.hasListeners('request')).to.be.false;
+
+      eventsHandler.on('request', listener);
+      expect(eventsHandler.hasListeners('request')).to.be.true;
+
+      eventsHandler.off('request', listener);
+      expect(eventsHandler.hasListeners('request')).to.be.false;
+
+      eventsHandler.on('request', listener);
+      eventsHandler.reset();
+      expect(eventsHandler.hasListeners('request')).to.be.false;
+    });
+  });
+
   describe('when subscribing a request event using a not valid handler', () => {
     const execute = () => {
       eventsHandler.on('request', 'this is not a function');

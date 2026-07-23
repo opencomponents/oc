@@ -180,6 +180,33 @@ describe('registry : routes : helpers : nested-renderer', () => {
   });
 
   describe('when rendering nested components', () => {
+    describe('when limiting concurrency', () => {
+      it('should preserve order and run at most ten renders at once', async () => {
+        let active = 0;
+        let maxActive = 0;
+        renderer = sinon.stub().callsFake((options, callback) => {
+          active++;
+          maxActive = Math.max(maxActive, active);
+          setTimeout(() => {
+            active--;
+            callback({
+              status: 200,
+              response: { html: options.name }
+            });
+          }, 12 - Number(options.name));
+        });
+        nestedRenderer = NestedRenderer(renderer, {});
+        const components = Array.from({ length: 12 }, (_, index) => ({
+          name: String(index)
+        }));
+
+        const result = await nestedRenderer.renderComponents(components);
+
+        expect(maxActive).to.equal(10);
+        expect(result).to.eql(components.map((component) => component.name));
+      });
+    });
+
     describe('when req is not valid', () => {
       describe('when components not valid', () => {
         beforeEach(() => {

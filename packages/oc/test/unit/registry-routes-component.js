@@ -703,10 +703,11 @@ describe('registry : routes : component', () => {
     });
 
     it('should return "response-headers-component" name for the first component\'s name and request version', () => {
-      expect(resJsonStub.args[0][0].name).to.equal(
-        'another-response-headers-component'
-      );
-      expect(resJsonStub.args[0][0].requestVersion).to.equal('1.X.X');
+      const response = resJsonStub.args
+        .map(([result]) => result)
+        .find((result) => result.name === 'another-response-headers-component');
+      expect(response.name).to.equal('another-response-headers-component');
+      expect(response.requestVersion).to.equal('1.X.X');
     });
 
     it('should set response headers for the first component', () => {
@@ -722,8 +723,11 @@ describe('registry : routes : component', () => {
     });
 
     it('should return "simple-component" name for the second component\'s name and request version', () => {
-      expect(resJsonStub.args[1][0].name).to.equal('simple-component');
-      expect(resJsonStub.args[1][0].requestVersion).to.equal('1.X.X');
+      const response = resJsonStub.args
+        .map(([result]) => result)
+        .find((result) => result.name === 'simple-component');
+      expect(response.name).to.equal('simple-component');
+      expect(response.requestVersion).to.equal('1.X.X');
     });
 
     it('should not set custom response for the second component', () => {

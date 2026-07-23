@@ -5,16 +5,19 @@ export function getAvailableVersion(
   requestedVersion: string | undefined,
   availableVersions: string[]
 ): string | undefined {
-  if (typeof requestedVersion === 'undefined') {
-    requestedVersion = '';
+  if (!requestedVersion) {
+    return (
+      semver.maxSatisfying(availableVersions, '') ||
+      semverExtra.max(availableVersions) ||
+      undefined
+    );
   }
 
-  const version =
-    semver.maxSatisfying(availableVersions, requestedVersion) || undefined;
-  const max = semverExtra.max(availableVersions);
-  const isLatest = requestedVersion === '';
+  if (availableVersions.includes(requestedVersion)) {
+    return requestedVersion;
+  }
 
-  return version || (isLatest && max) || undefined;
+  return semver.maxSatisfying(availableVersions, requestedVersion) || undefined;
 }
 
 export function validateNewVersion(

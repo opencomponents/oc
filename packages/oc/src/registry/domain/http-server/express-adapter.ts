@@ -102,7 +102,13 @@ class ExpressHttpServerAdapter implements HttpServerAdapter<Express> {
       })
     });
 
-    this.app.use(upload.any());
+    const parseUpload = upload.any();
+    this.app.use((req, res, next) => {
+      if (req.method !== 'PUT') {
+        return next();
+      }
+      parseUpload(req, res, next);
+    });
   }
 
   enableRequestTiming(

@@ -13,6 +13,16 @@ const getPortAsync = promisify(getPort);
 const DEFAULT_OUT_DIR = path.resolve('test/results/benchmarks');
 const DEFAULT_REPETITIONS = 5;
 const DEFAULT_HEADERS = ['Accept: application/json'];
+const BATCH_SOURCE_COMPONENTS = [
+  'hello-world',
+  'no-containers',
+  'empty',
+  'language',
+  'lodash-component'
+];
+const BATCH_COMPONENT_NAMES = BATCH_SOURCE_COMPONENTS.flatMap((name) =>
+  Array.from({ length: 4 }, (_, index) => `${name}-benchmark-${index + 1}`)
+);
 
 const parseInteger = (value, fallback) => {
   const parsed = Number.parseInt(String(value), 10);
@@ -99,6 +109,21 @@ const copyDirectory = async (source, destination) => {
 const readJson = async (filePath) =>
   JSON.parse(await fs.promises.readFile(filePath, 'utf8'));
 
+const ensurePackaged = async (componentPath) => {
+  const packagePath = path.join(componentPath, '_package', 'package.json');
+  try {
+    await fs.promises.access(packagePath);
+  } catch {
+    await new Promise((resolve, reject) => {
+      oc.cli.package({ componentPath, compress: false }, (error) => {
+        if (error) return reject(error);
+        resolve();
+      });
+    });
+  }
+  return path.join(componentPath, '_package');
+};
+
 const calculatePercentageChange = (current, baseline) => {
   if (baseline === 0) return current > 0 ? 100 : 0;
   return ((current - baseline) / baseline) * 100;
@@ -134,11 +159,24 @@ const compareWithBaseline = (current, baseline) => {
         change: calculatePercentageChange(currentAggregate.latencyP95Ms.average, baselineAggregate.latencyP95Ms.average),
         improved: currentAggregate.latencyP95Ms.average < baselineAggregate.latencyP95Ms.average
       },
-      latencyMeanMs: {
-        current: currentAggregate.latencyMeanMs.average,
-        baseline: baselineAggregate.latencyMeanMs.average,
-        change: calculatePercentageChange(currentAggregate.latencyMeanMs.average, baselineAggregate.latencyMeanMs.average),
-        improved: currentAggregate.latencyMeanMs.average < baselineAggregate.latencyMeanMs.average
+      latencyP99Ms: {
+        current:
+          currentAggregate.latencyP99Ms?.average ??
+          currentAggregate.latencyMeanMs.average,
+        baseline:
+          baselineAggregate.latencyP99Ms?.average ??
+          baselineAggregate.latencyMeanMs.average,
+        change: calculatePercentageChange(
+          currentAggregate.latencyP99Ms?.average ??
+            currentAggregate.latencyMeanMs.average,
+          baselineAggregate.latencyP99Ms?.average ??
+            baselineAggregate.latencyMeanMs.average
+        ),
+        improved:
+          (currentAggregate.latencyP99Ms?.average ??
+            currentAggregate.latencyMeanMs.average) <
+          (baselineAggregate.latencyP99Ms?.average ??
+            baselineAggregate.latencyMeanMs.average)
       },
       successRate: {
         current: currentAggregate.successRate.average,
@@ -187,7 +225,7 @@ const printComparison = (comparison) => {
     
     console.log(`  ${rpsStatus} RPS: ${metrics.rps.current.toFixed(2)} vs ${metrics.rps.baseline.toFixed(2)} (${formatPercentageChange(metrics.rps.change)})`);
     console.log(`  ${latencyStatus} P95 Latency: ${metrics.latencyP95Ms.current.toFixed(2)}ms vs ${metrics.latencyP95Ms.baseline.toFixed(2)}ms (${formatPercentageChange(metrics.latencyP95Ms.change)})`);
-    console.log(`  P99 Latency: ${metrics.latencyMeanMs.current.toFixed(2)}ms vs ${metrics.latencyMeanMs.baseline.toFixed(2)}ms (${formatPercentageChange(metrics.latencyMeanMs.change)})`);
+    console.log(`  P99 Latency: ${metrics.latencyP99Ms.current.toFixed(2)}ms vs ${metrics.latencyP99Ms.baseline.toFixed(2)}ms (${formatPercentageChange(metrics.latencyP99Ms.change)})`);
     console.log(`  Success Rate: ${(metrics.successRate.current * 100).toFixed(2)}% vs ${(metrics.successRate.baseline * 100).toFixed(2)}% (${formatPercentageChange(metrics.successRate.change)})`);
     
     if (metrics.memory) {
@@ -205,26 +243,42 @@ const prepareStorageFixtures = async () => {
   );
   const componentsDir = path.join(root, 'components');
 
+  const batchSources = new Map();
+  for (const name of BATCH_SOURCE_COMPONENTS) {
+    const componentPath = path.resolve('test/fixtures/components', name);
+    batchSources.set(name, await ensurePackaged(componentPath));
+  }
+
   const componentsToCopy = [
     {
       name: 'welcome-with-plugin',
-      packagePath: path.resolve(
-        'test/fixtures/benchmark-components/welcome-with-plugin/_package/package.json'
-      ),
-      source: path.resolve('test/fixtures/benchmark-components/welcome-with-plugin/_package')
+      source: path.resolve(
+        'test/fixtures/benchmark-components/welcome-with-plugin/_package'
+      )
     },
+    ...BATCH_COMPONENT_NAMES.map((name) => {
+      const sourceName = BATCH_SOURCE_COMPONENTS.find((candidate) =>
+        name.startsWith(`${candidate}-benchmark-`)
+      );
+      return { name, source: batchSources.get(sourceName), rewriteName: true };
+    }),
     {
       name: 'oc-client',
-      packagePath: path.resolve('dist/components/oc-client/_package/package.json'),
       source: path.resolve('dist/components/oc-client/_package')
     }
   ];
 
   for (const component of componentsToCopy) {
-    const pkg = await readJson(component.packagePath);
+    const pkg = await readJson(path.join(component.source, 'package.json'));
     const version = pkg.version;
     const destination = path.join(componentsDir, component.name, version);
     await copyDirectory(component.source, destination);
+    if (component.rewriteName) {
+      await writeJson(path.join(destination, 'package.json'), {
+        ...pkg,
+        name: component.name
+      });
+    }
   }
 
   return {
@@ -263,6 +317,9 @@ const runBombardier = ({ url, options }) =>
     }
     for (const header of options.headers || []) {
       args.push('-H', header);
+    }
+    if (options.body) {
+      args.push('-b', options.body);
     }
     args.push(url);
 
@@ -314,6 +371,7 @@ const aggregate = (runs) => {
 
   const rps = metric((m) => m.rpsMean);
   const latencyP95Ms = metric((m) => m.latencyP95Ms);
+  const latencyP99Ms = metric((m) => m.latencyP99Ms);
   const latencyMeanMs = metric((m) => m.latencyMeanMs);
   const successRate = metric((m) => m.successRate);
 
@@ -328,6 +386,11 @@ const aggregate = (runs) => {
       average: average(latencyP95Ms),
       min: min(latencyP95Ms),
       max: max(latencyP95Ms)
+    },
+    latencyP99Ms: {
+      average: average(latencyP99Ms),
+      min: min(latencyP99Ms),
+      max: max(latencyP99Ms)
     },
     latencyMeanMs: {
       average: average(latencyMeanMs),
@@ -392,6 +455,7 @@ const startRegistry = async (scenario, options) => {
   };
 
   let registryOptions;
+  let storageAdapter;
   let disposeFixtures = async () => {};
   if (scenario === 'local-memory' || scenario === 'high-load-local') {
     registryOptions = {
@@ -400,7 +464,11 @@ const startRegistry = async (scenario, options) => {
       hotReloading: false,
       path: path.resolve('test/fixtures/components')
     };
-  } else if (scenario === 'storage-simulated' || scenario === 'high-load-storage') {
+  } else if (
+    scenario === 'storage-simulated' ||
+    scenario === 'high-load-storage' ||
+    scenario === 'batch-storage'
+  ) {
     const preparedFixtures = await prepareStorageFixtures();
     const fixturesRoot = preparedFixtures.root;
     const componentsDir = preparedFixtures.componentsDir;
@@ -410,20 +478,22 @@ const startRegistry = async (scenario, options) => {
       ...commonOptions,
       local: false,
       storage: {
-        adapter: (storageOptions) =>
-          createStorageAdapter({
+        adapter: (storageOptions) => {
+          storageAdapter = createStorageAdapter({
             ...storageOptions,
             fixturesRoot,
             minLatencyMs: options.storageMinLatencyMs,
             maxLatencyMs: options.storageMaxLatencyMs,
             maxConcurrentRequests: options.storageMaxConcurrentRequests
-          }),
+          });
+          return storageAdapter;
+        },
         options: {
           componentsDir,
           fixturesRoot
         }
       },
-      dependencies: []
+      dependencies: ['lodash.isequal']
     };
   } else {
     throw new Error(`Unknown scenario: ${scenario}`);
@@ -448,6 +518,8 @@ const startRegistry = async (scenario, options) => {
   return {
     registry,
     baseUrl,
+    getStorageMetrics: () => storageAdapter?.getMetrics(),
+    resetStorageMetrics: () => storageAdapter?.resetMetrics(),
     close: async () => {
       await new Promise((resolve, reject) => {
         registry.close((error) => {
@@ -470,6 +542,19 @@ const buildScenarios = () => [
     key: 'storage-simulated',
     title: 'Simulated storage path + plugin execution',
     urlPath: '/welcome-with-plugin/1.0.0?firstName=Jane&lastName=Doe&suffix=-Bench'
+  },
+  {
+    key: 'batch-storage',
+    title: 'Batch route fan-out (simulated storage)',
+    urlPath: '/',
+    method: 'POST',
+    headers: ['Content-Type: application/json'],
+    body: JSON.stringify({
+      components: BATCH_COMPONENT_NAMES.map((name) => ({
+        name,
+        version: '1.0.0'
+      }))
+    })
   },
   {
     key: 'high-load-local',
@@ -497,45 +582,77 @@ const benchmarkScenario = async ({ scenario, options }) => {
   const server = await startRegistry(scenario.key, options);
   const url = `${server.baseUrl.replace(/\/$/, '')}${scenario.urlPath}`;
   const resourceMeasurements = [];
+  const storageMeasurements = [];
 
   try {
+    if (scenario.body) {
+      const response = await fetch(url, {
+        method: scenario.method,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: scenario.body
+      });
+      const results = await response.json();
+      if (
+        !response.ok ||
+        !Array.isArray(results) ||
+        results.length !== BATCH_COMPONENT_NAMES.length ||
+        results.some((result) => result.status !== 200)
+      ) {
+        throw new Error(
+          `Batch fixture preflight failed: HTTP ${response.status} ${JSON.stringify(results)}`
+        );
+      }
+      console.log(
+        `[${scenario.key}] preflight: ${results.length} distinct components returned 200`
+      );
+    }
     for (let attempt = 1; attempt <= options.repetitions; attempt += 1) {
+      server.resetStorageMetrics();
       const monitoring = startResourceMonitoring();
-      
+
       const run = await runBombardier({
         url,
         options: {
           connections: options.connections,
           duration: options.duration,
           timeout: options.timeout,
-          method: 'GET',
+          method: scenario.method || 'GET',
+          body: scenario.body,
           requests: options.requests,
           rate: options.rate,
           disableKeepAlives: options.disableKeepAlives,
-          headers: options.headers
+          headers: [...options.headers, ...(scenario.headers || [])]
         }
       });
       
       const resourceDelta = monitoring.getDelta();
+      const storageMetrics = server.getStorageMetrics();
       resourceMeasurements.push(resourceDelta);
-      
+      if (storageMetrics) storageMeasurements.push(storageMetrics);
+
       const metrics = mapBombardierResult(run.raw.result);
       const runResult = {
         attempt,
         command: `bombardier ${run.args.join(' ')}`,
         metrics,
         rawResult: run.raw.result,
-        resourceUsage: resourceDelta
+        resourceUsage: resourceDelta,
+        storageMetrics
       };
 
       scenarioResult.runs.push(runResult);
 
       const rps = metrics.rpsMean.toFixed(2);
       const p95 = metrics.latencyP95Ms.toFixed(2);
+      const p99 = metrics.latencyP99Ms.toFixed(2);
       const mem = resourceDelta.memory.heapUsedDelta.toFixed(2);
       const ok = (metrics.successRate * 100).toFixed(2);
+      const storagePeak = storageMetrics?.peakConcurrentReads ?? 'n/a';
       console.log(
-        `[${scenario.key}] run ${attempt}/${options.repetitions} | rps=${rps} | p95=${p95}ms | mem=${mem}MB | success=${ok}%`
+        `[${scenario.key}] run ${attempt}/${options.repetitions} | rps=${rps} | p95=${p95}ms | p99=${p99}ms | mem=${mem}MB | storagePeak=${storagePeak} | success=${ok}%`
       );
     }
   } finally {
@@ -572,6 +689,16 @@ const benchmarkScenario = async ({ scenario, options }) => {
   };
   
   scenarioResult.resourceUsage = aggregateResourceUsage;
+  if (storageMeasurements.length) {
+    const peaks = storageMeasurements.map((metrics) =>
+      metrics.peakConcurrentReads
+    );
+    scenarioResult.storageConcurrency = {
+      average: peaks.reduce((sum, value) => sum + value, 0) / peaks.length,
+      min: Math.min(...peaks),
+      max: Math.max(...peaks)
+    };
+  }
   scenarioResult.aggregate = aggregate(scenarioResult.runs);
   return scenarioResult;
 };
@@ -702,13 +829,21 @@ const main = async () => {
     const aggregateResult = scenario.aggregate;
     const rps = aggregateResult.rps;
     const p95 = aggregateResult.latencyP95Ms;
+    const p99 = aggregateResult.latencyP99Ms;
     const success = aggregateResult.successRate;
     const resourceUsage = scenario.resourceUsage;
     
     console.log(
-      `\n[${scenario.key}] samples=${aggregateResult.samples} | rps(avg/min/max)=${rps.average.toFixed(2)}/${rps.min.toFixed(2)}/${rps.max.toFixed(2)} | p95ms(avg/min/max)=${p95.average.toFixed(2)}/${p95.min.toFixed(2)}/${p95.max.toFixed(2)} | success(avg)=${(success.average * 100).toFixed(2)}%`
+      `\n[${scenario.key}] samples=${aggregateResult.samples} | rps(avg/min/max)=${rps.average.toFixed(2)}/${rps.min.toFixed(2)}/${rps.max.toFixed(2)} | p95ms(avg/min/max)=${p95.average.toFixed(2)}/${p95.min.toFixed(2)}/${p95.max.toFixed(2)} | p99ms(avg/min/max)=${p99.average.toFixed(2)}/${p99.min.toFixed(2)}/${p99.max.toFixed(2)} | success(avg)=${(success.average * 100).toFixed(2)}%`
     );
     
+    if (scenario.storageConcurrency) {
+      const storage = scenario.storageConcurrency;
+      console.log(
+        `  Storage peak concurrency(avg/min/max)=${storage.average.toFixed(2)}/${storage.min}/${storage.max}`
+      );
+    }
+
     if (resourceUsage) {
       console.log(
         `  Memory: heapUsed(avg/min/max)=${resourceUsage.heapUsedDelta.average.toFixed(2)}/${resourceUsage.heapUsedDelta.min.toFixed(2)}/${resourceUsage.heapUsedDelta.max.toFixed(2)}MB | rss(avg/min/max)=${resourceUsage.rssDelta.average.toFixed(2)}/${resourceUsage.rssDelta.min.toFixed(2)}/${resourceUsage.rssDelta.max.toFixed(2)}MB`

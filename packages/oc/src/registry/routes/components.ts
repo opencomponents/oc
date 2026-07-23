@@ -1,6 +1,6 @@
-import async from 'async';
 import strings from '../../resources';
 import type { Config } from '../../types';
+import pLimit from '../../utils/pLimit';
 import type {
   CookieOptions,
   OcHandler,
@@ -86,47 +86,55 @@ export default function components(
       }
     }
 
-    async.map(
-      components,
-      (component, callback) => {
-        getComponent(
-          {
-            conf: res.conf,
-            action: component.action,
-            name: component.name,
-            headers: req.headers,
-            ip: req.ip!,
-            omitHref: !!req.body.omitHref,
-            parameters: { ...req.body.parameters, ...component.parameters },
-            version: component.version
-          },
-          (result) => callback(null, result)
-        );
-      },
-      // @ts-expect-error
-      (_err: any, results: GetComponentResult[]) => {
-        try {
-          setHeaders(results, res);
-          setCookies(results, res);
-          res.status(200).json(results);
-        } catch (e) {
-          // @ts-expect-error I think this will never reach (how can setHeaders throw?)
-          if (results.code && results.error) {
-            // @ts-expect-error
-            res.status(500).json({ code: results.code, error: results.error });
-          } else {
-            res.status(500).json({
-              code: 'RENDER_ERROR',
-              error: strings.errors.registry.RENDER_ERROR(
-                results
-                  .map((x) => `${x.response.name}@${x.response.version}`)
-                  .join(', '),
-                String(e)
-              )
-            });
-          }
-        }
+    const limit = pLimit(10);
+    Promise.all(
+      components.map((component) =>
+        limit(
+          () =>
+            new Promise<GetComponentResult>((resolve) => {
+              getComponent(
+                {
+                  conf: res.conf,
+                  action: component.action,
+                  name: component.name,
+                  headers: req.headers,
+                  ip: req.ip!,
+                  omitHref: !!req.body.omitHref,
+                  parameters: {
+                    ...req.body.parameters,
+                    ...component.parameters
+                  },
+                  version: component.version
+                },
+                resolve
+              );
+            })
+        )
+      )
+    ).then((results) => {
+      try {
+        setHeaders(results, res);
+        setCookies(results, res);
+        res
+          .status(200)
+          .json(
+            results.map((result) =>
+              result.response.renderMode && !result.headers
+                ? { ...result, headers: {} }
+                : result
+            )
+          );
+      } catch (e) {
+        res.status(500).json({
+          code: 'RENDER_ERROR',
+          error: strings.errors.registry.RENDER_ERROR(
+            results
+              .map((x) => `${x.response.name}@${x.response.version}`)
+              .join(', '),
+            String(e)
+          )
+        });
       }
-    );
+    });
   };
 }

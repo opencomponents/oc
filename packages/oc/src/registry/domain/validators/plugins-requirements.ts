@@ -12,18 +12,19 @@ export default function pluginsRequirements(
     | string[]
     | null
     | undefined,
-  registryPlugins: Config['plugins']
+  registryPlugins: Config['plugins'] | ReadonlySet<string>
 ): ValidationResult {
   const missing: string[] = [];
   const requiredPlugins = Array.isArray(componentRequirements)
     ? componentRequirements
     : Object.keys(componentRequirements || {});
+  const registryPluginNames =
+    registryPlugins instanceof Set
+      ? registryPlugins
+      : new Set(Object.keys(registryPlugins || {}));
 
   for (const requiredPlugin of requiredPlugins) {
-    if (
-      !registryPlugins ||
-      !Object.keys(registryPlugins).includes(requiredPlugin)
-    ) {
+    if (!registryPluginNames.has(requiredPlugin)) {
       missing.push(requiredPlugin);
     }
   }

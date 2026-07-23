@@ -21,10 +21,18 @@ const createStorageAdapter = (options) => {
   const maxLatencyMs = options.maxLatencyMs ?? 25;
   const maxConcurrentRequests = options.maxConcurrentRequests ?? 128;
   const fixtureRoot = path.resolve(options.fixturesRoot);
+  let activeReads = 0;
+  let peakConcurrentReads = 0;
 
   const withLatency = async (fn) => {
-    await wait(randomLatency(minLatencyMs, maxLatencyMs));
-    return fn();
+    activeReads++;
+    peakConcurrentReads = Math.max(peakConcurrentReads, activeReads);
+    try {
+      await wait(randomLatency(minLatencyMs, maxLatencyMs));
+      return await fn();
+    } finally {
+      activeReads--;
+    }
   };
 
   const readTextFile = async (relativePath) =>
@@ -45,6 +53,12 @@ const createStorageAdapter = (options) => {
   return {
     adapterType: 'benchmark-memory',
     maxConcurrentRequests,
+    getMetrics() {
+      return { activeReads, peakConcurrentReads };
+    },
+    resetMetrics() {
+      peakConcurrentReads = activeReads;
+    },
     async getFile(filePath) {
       return readTextFile(filePath);
     },
