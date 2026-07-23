@@ -225,6 +225,7 @@ class FastifyHttpServerAdapter implements HttpServerAdapter<FastifyInstance> {
     this.app.addHook('preHandler', async (request) => {
       const req = request as FastifyRequestWithState;
       if (
+        req.method !== 'PUT' ||
         req[multipartParsedSym] ||
         typeof req.isMultipart !== 'function' ||
         !req.isMultipart()

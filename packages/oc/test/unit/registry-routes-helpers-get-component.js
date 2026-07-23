@@ -33,7 +33,7 @@ describe('registry : routes : helpers : get-component', () => {
           };
         }
       },
-      { console, Buffer, setTimeout }
+      { console, Buffer, clearTimeout, setTimeout }
     ).default;
 
     mockedRepository = {
@@ -428,6 +428,81 @@ describe('registry : routes : helpers : get-component', () => {
           );
         });
       });
+    });
+  });
+
+  describe('when concurrent cold renders request the same component', () => {
+    const renderTwice = (done) => {
+      const simpleComponent = mockedComponents['simple-component'];
+      initialise({
+        ...simpleComponent,
+        package: {
+          ...simpleComponent.package,
+          name: 'single-flight-component',
+          version: '9.9.9'
+        }
+      });
+      const getComponent = GetComponent({}, mockedRepository);
+      let completed = 0;
+      const callback = () => {
+        completed++;
+        if (completed === 2) done();
+      };
+      const options = {
+        name: 'simple-component',
+        headers: {},
+        parameters: {},
+        version: '1.0.0',
+        conf: { baseUrl: 'http://components.com/' }
+      };
+
+      getComponent(options, callback);
+      getComponent(options, callback);
+    };
+
+    it('should load and compile server.js and the template once', (done) => {
+      renderTwice(() => {
+        try {
+          expect(mockedRepository.getDataProvider.calledOnce).to.be.true;
+          expect(mockedRepository.getCompiledView.calledOnce).to.be.true;
+          done();
+        } catch (error) {
+          done(error);
+        }
+      });
+    });
+  });
+
+  describe('when a provider completes before its execution timeout', () => {
+    it('should clear the pending timeout', (done) => {
+      const clock = sinon.useFakeTimers();
+      initialise(mockedComponents['simple-component']);
+      const getComponent = GetComponent({}, mockedRepository);
+
+      getComponent(
+        {
+          name: 'simple-component',
+          headers: {},
+          parameters: {},
+          version: '1.0.0',
+          conf: {
+            baseUrl: 'http://components.com/',
+            executionTimeout: 1
+          }
+        },
+        (result) => {
+          try {
+            expect(result.status).to.equal(200);
+            expect(clock.countTimers()).to.equal(0);
+            expect(result).not.to.have.property('headers');
+            clock.restore();
+            done();
+          } catch (error) {
+            clock.restore();
+            done(error);
+          }
+        }
+      );
     });
   });
 });

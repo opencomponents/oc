@@ -337,6 +337,32 @@ test('returns 404 for empty handler arrays and scopes allow headers to matching 
   await closeAdapter(adapter);
 });
 
+test('skips multipart parsing for non-publish methods', async () => {
+  const adapter = createFastifyAdapter();
+  const app = asFastify(adapter);
+  const tempDir = await mkdtemp(path.join(tmpdir(), 'oc-fastify-adapter-'));
+  const filename = jest.fn((originalName: string) => originalName);
+
+  adapter.enableFileUploads({ filename, tempDir });
+  adapter.route('post', '/components', 'components', [
+    (_req, res) => res.json({})
+  ]);
+  await app.ready();
+
+  const response = await app.inject({
+    headers: { 'content-type': 'multipart/form-data; boundary=unused' },
+    method: 'POST',
+    payload: '--unused--\r\n',
+    url: '/components'
+  });
+
+  expect(response.statusCode).toBe(200);
+  expect(filename).not.toHaveBeenCalled();
+
+  await closeAdapter(adapter);
+  await rm(tempDir, { force: true, recursive: true });
+});
+
 test('normalises multipart uploads into OC files and body fields', async () => {
   const adapter = createFastifyAdapter();
   const app = asFastify(adapter);

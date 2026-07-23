@@ -50,6 +50,7 @@ type Events = {
 
 type EventsHandler = {
   fire<T extends keyof Events>(eventName: T, data: Events[T]): void;
+  hasListeners<T extends keyof Events>(eventName: T): boolean;
   on<T extends keyof Events>(
     eventName: T,
     listener: Subscription<Events[T]>
@@ -68,6 +69,10 @@ const eventsHandler: EventsHandler = {
         callback(eventData);
       }
     }
+  },
+
+  hasListeners(eventName: string): boolean {
+    return Boolean(subscriptions[eventName]?.length);
   },
 
   on(eventName: string, callback: Subscription): void {
