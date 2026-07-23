@@ -1,9 +1,9 @@
 import zlib from 'node:zlib';
 import { compileSync } from 'oc-client-browser';
+import createExpressAdapter from 'oc-express-server-adapter';
 import settings from '../../resources/settings';
 import type { Config } from '../../types';
 import * as auth from './authentication';
-import createExpressAdapter from './http-server/express-adapter';
 import type { HttpServerAdapterFactory } from './http-server/types';
 
 const DEFAULT_NODE_KEEPALIVE_MS = 5000;

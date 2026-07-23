@@ -23,7 +23,7 @@ describe('registry : domain : options-sanitiser', () => {
 
     it('should default to the Express HTTP server adapter', () => {
       expect(sanitise(options).server.adapter).to.equal(
-        require('../../dist/registry/domain/http-server/express-adapter').default
+        require('oc-express-server-adapter').default
       );
       expect(sanitise(options).server.options).to.eql({ port: 3000 });
     });
@@ -35,8 +35,7 @@ describe('registry : domain : options-sanitiser', () => {
 
       it('should default to the Express HTTP server adapter', () => {
         expect(sanitise(options).server.adapter).to.equal(
-          require('../../dist/registry/domain/http-server/express-adapter')
-            .default
+          require('oc-express-server-adapter').default
         );
       });
     });
