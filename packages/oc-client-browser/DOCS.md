@@ -84,7 +84,7 @@ var html = oc.build({
   }
 });
 
-// html => <oc-component href="https://my-registry.com/components/my-component/~2.3.4/?age=23&hello=world"></oc-component>
+// html => <oc-component href="https://my-registry.com/components/my-component/~2.3.4?age=23&hello=world"></oc-component>
 ```
 
 ### oc.events.on(eventName, callback);
