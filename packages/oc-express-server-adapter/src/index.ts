@@ -6,14 +6,126 @@ import morgan from 'morgan';
 import multer from 'multer';
 import responseTime from 'response-time';
 
-import type {
-  ExpressMiddleware,
-  HttpServerAdapter,
-  Method,
-  OcHandler,
-  OcRequest,
-  OcResponse
-} from './types';
+type CookieOptions = {
+  domain?: string;
+  encode?: (value: string) => string;
+  expires?: Date;
+  httpOnly?: boolean;
+  maxAge?: number;
+  partitioned?: boolean;
+  path?: string;
+  priority?: 'low' | 'medium' | 'high';
+  sameSite?: boolean | 'lax' | 'strict' | 'none';
+  secure?: boolean;
+  signed?: boolean;
+};
+
+type Method = 'get' | 'post' | 'put' | 'patch' | 'head' | 'delete';
+
+type UploadedFile = {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  destination: string;
+  filename: string;
+  path: string;
+  buffer?: Buffer;
+  stream?: NodeJS.ReadableStream;
+  truncated?: boolean;
+};
+
+type OcRequest = {
+  method: string;
+  url: string;
+  path: string;
+  originalUrl: string;
+  protocol: string;
+  secure: boolean;
+  ip: string;
+  headers: http.IncomingHttpHeaders;
+  params: Record<string, string>;
+  query: Record<string, unknown>;
+  body: unknown;
+  cookies: Record<string, string>;
+  files?: UploadedFile[] | Record<string, UploadedFile[]>;
+  user?: string;
+  routeId: string;
+  get(header: string): string | undefined;
+  raw: http.IncomingMessage;
+};
+
+type OcResponse = {
+  conf: any;
+  errorCode?: string;
+  errorDetails?: string;
+  statusCode: number;
+  status(code: number): OcResponse;
+  json(body: unknown): void;
+  send(body: unknown): void;
+  set(field: string | Record<string, string>, value?: string): OcResponse;
+  header(name: string, value: string): OcResponse;
+  setHeader(name: string, value: string): OcResponse;
+  removeHeader(name: string): OcResponse;
+  type(mime: string): OcResponse;
+  cookie(name: string, value: string, opts?: CookieOptions): OcResponse;
+  redirect(url: string): void;
+  end(chunk?: unknown): void;
+  stream(readable: NodeJS.ReadableStream): void;
+  raw: http.ServerResponse;
+};
+
+type OcHandler = (req: OcRequest, res: OcResponse) => void | Promise<void>;
+
+type ExpressMiddleware = (
+  req: any,
+  res: any,
+  next: (err?: unknown) => void
+) => void;
+
+export type HttpServerAdapter<TNative = unknown> = {
+  name: string;
+  enableBodyParser(opts: { limit?: number | string }): void;
+  enableCookies(): void;
+  enableFileUploads(opts: {
+    tempDir: string;
+    filename: (originalName: string) => string;
+  }): void;
+  enableRequestTiming(
+    onDone: (req: OcRequest, res: OcResponse, ms: number) => void
+  ): void;
+  enableLogging(opts: {
+    skip: (req: OcRequest, res: OcResponse) => boolean;
+  }): void;
+  enableErrorHandler(): void;
+  use(handler: OcHandler): void;
+  route(method: Method, path: string, id: string, handlers: OcHandler[]): void;
+  fromConnect(handler: ExpressMiddleware): OcHandler;
+  listen(
+    opts: { port: number | string; timeout: number; keepAliveTimeout?: number },
+    cb: (err?: Error) => void
+  ): void;
+  onServerError(cb: (err: Error) => void): void;
+  close(cb: (err?: Error) => void): void;
+  isListening(): boolean;
+  native(): TNative;
+  httpServer(): http.Server;
+};
+
+export interface ExpressServerAdapterOptions {
+  port?: number | string;
+}
+
+export type HttpServerAdapterFactory<TOptions = unknown, TNative = unknown> = {
+  (options?: unknown): HttpServerAdapter<TNative>;
+  readonly __serverAdapterOptions?: TOptions;
+};
+
+type ExpressServerAdapterFactory = HttpServerAdapterFactory<
+  ExpressServerAdapterOptions | number | string,
+  Express
+>;
 
 const expressMiddleware = Symbol('expressMiddleware');
 const ocResponseSym = Symbol('ocResponse');
@@ -40,18 +152,24 @@ function normaliseParams(raw: Record<string, unknown>): Record<string, string> {
   return params;
 }
 
-export default function createExpressAdapter(
+function toExpressAdapterOptions(
   options?: unknown
-): HttpServerAdapter<Express> {
-  const adapterOptions = options as
-    | { port?: number | string }
-    | number
-    | string
-    | undefined;
-  return new ExpressHttpServerAdapter(
-    typeof adapterOptions === 'object' ? adapterOptions.port : adapterOptions
-  );
+): ExpressServerAdapterOptions {
+  if (typeof options === 'number' || typeof options === 'string') {
+    return { port: options };
+  }
+  if (options && typeof options === 'object') {
+    return options as ExpressServerAdapterOptions;
+  }
+  return {};
 }
+
+const createExpressAdapter = ((options?: unknown): HttpServerAdapter<Express> =>
+  new ExpressHttpServerAdapter(
+    toExpressAdapterOptions(options).port
+  )) as ExpressServerAdapterFactory;
+
+export default createExpressAdapter;
 
 class ExpressHttpServerAdapter implements HttpServerAdapter<Express> {
   name = 'express';
