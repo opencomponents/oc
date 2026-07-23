@@ -1,5 +1,13 @@
 ## Change Log
 
+## 0.50.59
+
+### Patch Changes
+
+- adae2e2: remove final slash on oc.build
+- Updated dependencies [adae2e2]
+  - oc-client-browser@2.1.12
+
 ## 0.50.58
 
 ### Patch Changes

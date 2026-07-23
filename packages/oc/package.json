@@ -1,6 +1,6 @@
 {
 	"name": "oc",
-	"version": "0.50.58",
+	"version": "0.50.59",
 	"description": "A framework for developing and distributing html components",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
@@ -95,7 +95,7 @@
 		"multer": "^2.0.2",
 		"nice-cache": "^0.0.5",
 		"oc-client": "^4.0.3",
-		"oc-client-browser": "^2.1.11",
+		"oc-client-browser": "^2.1.12",
 		"oc-empty-response-handler": "^1.0.2",
 		"oc-get-unix-utc-timestamp": "^1.0.6",
 		"oc-metadata-adapters-utils": "^0.1.1",
