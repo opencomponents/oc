@@ -42,7 +42,6 @@
 	"dependencies": {
 		"@azure/identity": "^4.2.1",
 		"@azure/storage-blob": "12.24.0",
-		"azure-storage": "^2.8.1",
 		"fs-extra": "8.1.0",
 		"lodash": "^4.17.4",
 		"nice-cache": "^0.0.5",
