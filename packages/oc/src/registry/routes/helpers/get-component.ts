@@ -3,7 +3,7 @@ import Domain from 'node:domain';
 import type { IncomingHttpHeaders } from 'node:http';
 import vm from 'node:vm';
 import acceptLanguageParser from 'accept-language-parser';
-import { LRUCache } from 'lru-cache';
+import * as LRUCacheModule from 'lru-cache';
 import Client from 'oc-client';
 import emptyResponseHandler from 'oc-empty-response-handler';
 import { fromPromise } from 'universalify';
@@ -136,7 +136,12 @@ function pluginConverter(plugins: Plugins = {}) {
 
 export default function getComponent(conf: Config, repository: Repository) {
   const client = Client({ templates: conf.templates });
-  const cache = new LRUCache<string, any>({
+  // lru-cache v10 exports { LRUCache }; older/CJS shapes may be default or the ctor itself
+  const LRUCacheCtor =
+    (LRUCacheModule as any).LRUCache ||
+    (LRUCacheModule as any).default ||
+    LRUCacheModule;
+  const cache = new LRUCacheCtor({
     max: conf.cacheMaxSize ?? 100
   });
   const convertPlugins = pluginConverter(conf.plugins);
