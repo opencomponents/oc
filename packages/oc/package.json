@@ -92,7 +92,7 @@
 		"livereload": "^0.10.3",
 		"lodash.isequal": "^4.5.0",
 		"morgan": "^1.11.0",
-		"multer": "^2.0.2",
+		"multer": "^2.2.0",
 		"nice-cache": "^0.0.5",
 		"oc-client": "^4.0.3",
 		"oc-client-browser": "^2.1.12",
