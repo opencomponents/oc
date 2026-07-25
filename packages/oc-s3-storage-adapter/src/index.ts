@@ -6,7 +6,7 @@ import { S3, type S3ClientConfig } from '@aws-sdk/client-s3';
 import {
   NodeHttpHandler,
   type NodeHttpHandlerOptions
-} from '@aws-sdk/node-http-handler';
+} from '@smithy/node-http-handler';
 import fs from 'fs-extra';
 import _ from 'lodash';
 import Cache from 'nice-cache';

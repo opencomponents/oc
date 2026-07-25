@@ -1,4 +1,4 @@
-const azure = jest.genMockFromModule('azure-storage');
+const azure = {};
 const stream = require('node:stream');
 
 jest.mock('fs-extra', () => {
