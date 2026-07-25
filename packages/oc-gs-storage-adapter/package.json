@@ -46,7 +46,7 @@
 		"nice-cache": "^0.0.5",
 		"node-dir": "^0.1.17",
 		"oc-storage-adapters-utils": "^2.1.2",
-		"tmp": "0.1.0"
+		"tmp": "0.2.7"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.0",
