@@ -3,7 +3,7 @@ import Domain from 'node:domain';
 import type { IncomingHttpHeaders } from 'node:http';
 import vm from 'node:vm';
 import acceptLanguageParser from 'accept-language-parser';
-import Cache from 'nice-cache';
+import * as LRUCacheModule from 'lru-cache';
 import Client from 'oc-client';
 import emptyResponseHandler from 'oc-empty-response-handler';
 import { fromPromise } from 'universalify';
@@ -136,9 +136,13 @@ function pluginConverter(plugins: Plugins = {}) {
 
 export default function getComponent(conf: Config, repository: Repository) {
   const client = Client({ templates: conf.templates });
-  const cache = new Cache({
-    verbose: !!conf.verbosity,
-    refreshInterval: conf.refreshInterval
+  // lru-cache v10 exports { LRUCache }; older/CJS shapes may be default or the ctor itself
+  const LRUCacheCtor =
+    (LRUCacheModule as any).LRUCache ||
+    (LRUCacheModule as any).default ||
+    LRUCacheModule;
+  const cache = new LRUCacheCtor({
+    max: conf.cacheMaxSize ?? 100
   });
   const convertPlugins = pluginConverter(conf.plugins);
   const customHeadersByConfig = new WeakMap<Config, Set<string> | undefined>();
@@ -180,8 +184,8 @@ export default function getComponent(conf: Config, repository: Repository) {
   const getEnv = async (
     component: Component
   ): Promise<Record<string, string>> => {
-    const cacheKey = `${component.name}/${component.version}/.env`;
-    const cached = cache.get('file-contents', cacheKey);
+    const cacheKey = `file-contents:${component.name}/${component.version}/.env`;
+    const cached = cache.get(cacheKey);
 
     if (cached) return cached;
 
@@ -189,7 +193,7 @@ export default function getComponent(conf: Config, repository: Repository) {
       const env = component.oc.files.env
         ? await repository.getEnv(component.name, component.version)
         : {};
-      cache.set('file-contents', cacheKey, env);
+      cache.set(cacheKey, env);
       return env;
     });
   };
@@ -538,8 +542,8 @@ export default function getComponent(conf: Config, repository: Repository) {
               })
             });
           } else {
-            const cacheKey = `${component.name}/${component.version}/template.js`;
-            const cached = cache.get('file-contents', cacheKey);
+            const cacheKey = `file-contents:${component.name}/${component.version}/template.js`;
+            const cached = cache.get(cacheKey);
             const key = component.oc.files.template.hashKey;
             const id = randomUUID();
             const renderOptions = {
@@ -591,7 +595,7 @@ export default function getComponent(conf: Config, repository: Repository) {
                   templateText,
                   key
                 );
-                cache.set('file-contents', cacheKey, template);
+                cache.set(cacheKey, template);
                 return template;
               };
               const templatePromise = conf.hotReloading
@@ -635,8 +639,8 @@ export default function getComponent(conf: Config, repository: Repository) {
               });
             }
 
-            const cacheKey = `${component.name}/${component.version}/server.js`;
-            const cached = cache.get('file-contents', cacheKey);
+            const cacheKey = `file-contents:${component.name}/${component.version}/server.js`;
+            const cached = cache.get(cacheKey);
             const domain = Domain.create();
             const setEmptyResponse =
               emptyResponseHandler.contextDecorator(returnComponent);
@@ -791,7 +795,7 @@ export default function getComponent(conf: Config, repository: Repository) {
                 vm.runInNewContext(dataProvider.content, context, vmOptions);
                 const processData =
                   context.module.exports['data'] || context.exports['data'];
-                cache.set('file-contents', cacheKey, processData);
+                cache.set(cacheKey, processData);
                 return processData;
               };
 
