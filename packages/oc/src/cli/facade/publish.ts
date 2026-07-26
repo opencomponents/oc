@@ -1,11 +1,11 @@
 import path from 'node:path';
 import { promisify } from 'node:util';
-import colors from 'colors/safe';
 import fs from 'fs-extra';
 import readCb from 'read';
 import { fromPromise } from 'universalify';
 import strings from '../../resources/index';
 import type { Component } from '../../types';
+import colors from '../../utils/colors';
 import handleDependencies from '../domain/handle-dependencies';
 import type { Local } from '../domain/local';
 import type { RegistryCli } from '../domain/registry';

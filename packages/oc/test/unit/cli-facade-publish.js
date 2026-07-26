@@ -1,4 +1,4 @@
-const colors = require('colors/safe');
+const colors = require('../../dist/utils/colors').default;
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const path = require('node:path');

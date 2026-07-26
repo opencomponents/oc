@@ -1,7 +1,6 @@
 import type http from 'node:http';
-import colors from 'colors/safe';
-
 import type { Plugin } from '../types';
+import colors from '../utils/colors';
 import appStart from './app-start';
 import eventsHandler from './domain/events-handler';
 import type {

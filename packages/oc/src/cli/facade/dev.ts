@@ -1,12 +1,11 @@
 import path from 'node:path';
 import { promisify } from 'node:util';
-import colors from 'colors/safe';
 import getPortCb from 'getport';
 import livereload from 'livereload';
 import { fromPromise } from 'universalify';
-
 import * as oc from '../../index';
 import strings from '../../resources/index';
+import colors from '../../utils/colors';
 import getMockedPlugins from '../domain/get-mocked-plugins';
 import handleDependencies from '../domain/handle-dependencies';
 import type { Local } from '../domain/local';

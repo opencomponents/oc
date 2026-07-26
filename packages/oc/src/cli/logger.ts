@@ -1,16 +1,6 @@
-import colors from 'colors/safe';
+import colors from '../utils/colors';
 
-type Color =
-  | 'black'
-  | 'red'
-  | 'green'
-  | 'yellow'
-  | 'blue'
-  | 'magenta'
-  | 'cyan'
-  | 'white'
-  | 'gray'
-  | 'grey';
+type Color = keyof typeof colors;
 
 const logFns = {
   writeLn: console.log,
