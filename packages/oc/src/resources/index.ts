@@ -1,4 +1,4 @@
-import { green, yellow } from 'colors/safe';
+import { green, yellow } from '../utils/colors';
 
 // Kind of long multi-string messages and functions
 

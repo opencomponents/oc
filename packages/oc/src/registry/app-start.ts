@@ -1,7 +1,7 @@
 import path from 'node:path';
-import colors from 'colors/safe';
 import fs from 'fs-extra';
 import type { Config } from '../types';
+import colors from '../utils/colors';
 import type { Repository } from './domain/repository';
 
 const packageInfo = fs.readJsonSync(
