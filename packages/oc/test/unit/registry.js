@@ -16,6 +16,7 @@ describe('registry', () => {
   });
 
   const serverAdapterFactory = sinon.stub();
+  const deprecateStub = sinon.stub();
 
   const deps = {
     './app-start': sinon.stub(),
@@ -38,7 +39,8 @@ describe('registry', () => {
     './domain/options-sanitiser': sinon.stub(),
     './domain/validators': {
       validateRegistryConfiguration: sinon.stub()
-    }
+    },
+    '../utils/deprecate': { __esModule: true, default: deprecateStub }
   };
 
   const Registry = injectr('../../dist/registry/index.js', deps).default;
@@ -246,6 +248,77 @@ describe('registry', () => {
         });
       });
 
+      describe('when starting it with the promise API', () => {
+        beforeEach(() => {
+          deprecateStub.resetHistory();
+          deps['./domain/plugins-initialiser'].init.resolves('ok');
+          repositoryInitStub.resolves('ok');
+          deps['./app-start'].resolves('ok');
+          deps['./domain/events-handler'].fire = sinon.stub();
+        });
+
+        it('should resolve with { app, server }', (done) => {
+          adapter.listen.callsFake((_opts, cb) => cb(null));
+
+          registry.start().then((result) => {
+            expect(result).to.include({
+              app: 'express instance',
+              server: 'server instance'
+            });
+            done();
+          });
+        });
+
+        it('should reject with an Error when startup fails', (done) => {
+          deps['./app-start'].rejects(new Error('nope'));
+
+          registry
+            .start()
+            .then(() => done(new Error('should have rejected')))
+            .catch((err) => {
+              expect(err).to.be.an.instanceOf(Error);
+              expect(err.message).to.equal('nope');
+              done();
+            });
+        });
+
+        it('should still invoke a callback passed alongside the promise', (done) => {
+          adapter.listen.callsFake((_opts, cb) => cb(null));
+
+          let callbackResult;
+          const promise = registry.start((err, res) => {
+            callbackResult = { err, res };
+          });
+
+          promise.then(() => {
+            expect(callbackResult.err).to.be.null;
+            expect(callbackResult.res.app).to.equal('express instance');
+            done();
+          });
+        });
+
+        it('should emit a single deprecation notice when a callback is used', (done) => {
+          adapter.listen.callsFake((_opts, cb) => cb(null));
+
+          registry.start(() => {}).then(() => {
+            expect(deprecateStub.calledOnce).to.be.true;
+            expect(deprecateStub.args[0][0]).to.include({
+              id: 'registry-callback-api'
+            });
+            done();
+          });
+        });
+
+        it('should not emit a deprecation notice when no callback is used', (done) => {
+          adapter.listen.callsFake((_opts, cb) => cb(null));
+
+          registry.start().then(() => {
+            expect(deprecateStub.called).to.be.false;
+            done();
+          });
+        });
+      });
+
       describe('when closing it', () => {
         let repositoryCloseStub;
 
@@ -304,6 +377,57 @@ describe('registry', () => {
               expect(repositoryCloseStub.calledOnce).to.be.true;
               done();
             });
+          });
+        });
+
+        it('should resolve when closing with the promise API', (done) => {
+          deprecateStub.resetHistory();
+          const registry = Registry({});
+          adapter.isListening.returns(false);
+
+          registry.close().then(() => {
+            expect(repositoryCloseStub.calledOnce).to.be.true;
+            done();
+          });
+        });
+
+        it('should emit a deprecation notice when closing with a callback', (done) => {
+          deprecateStub.resetHistory();
+          const registry = Registry({});
+          adapter.isListening.returns(false);
+
+          registry.close(() => {
+            expect(deprecateStub.calledOnce).to.be.true;
+            expect(deprecateStub.args[0][0]).to.include({
+              id: 'registry-callback-api'
+            });
+            done();
+          });
+        });
+      });
+
+      describe('when registering a plugin', () => {
+        beforeEach(() => {
+          deprecateStub.resetHistory();
+        });
+
+        it('should resolve with the promise API', (done) => {
+          registry
+            .register({})
+            .then(() => {
+              expect(deprecateStub.called).to.be.false;
+              done();
+            })
+            .catch(done);
+        });
+
+        it('should emit a deprecation notice when a callback is used', (done) => {
+          registry.register({}, () => {}).then(() => {
+            expect(deprecateStub.calledOnce).to.be.true;
+            expect(deprecateStub.args[0][0]).to.include({
+              id: 'registry-callback-api'
+            });
+            done();
           });
         });
       });
