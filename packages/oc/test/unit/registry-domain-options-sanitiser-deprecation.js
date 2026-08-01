@@ -44,6 +44,33 @@ describe('registry : domain : options-sanitiser : deprecations', () => {
         id: 'registry-config-refreshInterval'
       });
     });
+
+    it('emits a deprecation notice even when the value is falsy', () => {
+      const { sanitise, deprecate } = initialise();
+
+      sanitise({
+        refreshInterval: 0,
+        storage: {},
+        baseUrl: 'dummy'
+      });
+
+      expect(deprecate.calledOnce).to.be.true;
+      expect(deprecate.args[0][0]).to.include({
+        id: 'registry-config-refreshInterval'
+      });
+    });
+
+    it('forwards the value into storage.options, initialising it if missing', () => {
+      const { sanitise, deprecate } = initialise();
+
+      const options = sanitise({
+        refreshInterval: 0,
+        storage: {},
+        baseUrl: 'dummy'
+      });
+
+      expect(options.storage.options.refreshInterval).to.equal(0);
+    });
   });
 
   describe('when "discovery" is a boolean', () => {

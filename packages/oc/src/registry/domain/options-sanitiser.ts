@@ -246,12 +246,13 @@ export default function optionsSanitiser<
     options.storage.adapter = require('oc-s3-storage-adapter');
   }
 
-  if (options.refreshInterval && options.storage) {
+  if (typeof options.refreshInterval !== 'undefined' && options.storage) {
     deprecate({
       id: 'registry-config-refreshInterval',
       subject: 'The `refreshInterval` option',
       replacement: '`pollingInterval`'
     });
+    options.storage.options = options.storage.options || {};
     options.storage.options['refreshInterval'] = options.refreshInterval;
   }
 
