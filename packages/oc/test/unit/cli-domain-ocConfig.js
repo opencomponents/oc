@@ -20,17 +20,20 @@ const initialise = () => {
     join: (...args) => args.join('/')
   };
 
+  const deprecate = sinon.stub();
+
   const ocConfig = injectr(
     '../../dist/cli/domain/ocConfig.js',
     {
       'node:fs': fsMock,
       'node:path': pathMock,
-      '../../resources/settings': settingsMock
+      '../../resources/settings': settingsMock,
+      '../../utils/deprecate': { __esModule: true, default: deprecate }
     },
     { __dirname: '' }
   );
 
-  return { ocConfig, fs: fsMock, settings: settingsMock };
+  return { ocConfig, fs: fsMock, settings: settingsMock, deprecate };
 };
 
 describe('cli : domain : ocConfig', () => {
@@ -133,6 +136,12 @@ describe('cli : domain : ocConfig', () => {
           oldDynamic: './old.js'
         });
       });
+
+      it('should emit a deprecation notice for the `mocks` block', () => {
+        data.ocConfig.getOcConfig();
+        expect(data.deprecate.calledOnce).to.be.true;
+        expect(data.deprecate.args[0][0]).to.include({ id: 'oc-json-mocks' });
+      });
     });
 
     describe('when config has both mocks and development plugins', () => {
@@ -178,6 +187,11 @@ describe('cli : domain : ocConfig', () => {
       it('should return empty registries array', () => {
         const result = data.ocConfig.getOcConfig();
         expect(result.registries).to.eql([]);
+      });
+
+      it('should not emit a deprecation notice', () => {
+        data.ocConfig.getOcConfig();
+        expect(data.deprecate.called).to.be.false;
       });
     });
 

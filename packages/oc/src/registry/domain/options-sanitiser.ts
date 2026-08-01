@@ -2,6 +2,7 @@ import zlib from 'node:zlib';
 import { compileSync } from 'oc-client-browser';
 import settings from '../../resources/settings';
 import type { Config } from '../../types';
+import deprecate from '../../utils/deprecate';
 import * as auth from './authentication';
 import createExpressAdapter from './http-server/express-adapter';
 import type { HttpServerAdapterFactory } from './http-server/types';
@@ -85,6 +86,14 @@ export default function optionsSanitiser<
 
   if (!options.verbosity) {
     options.verbosity = 0;
+  }
+
+  if (typeof options.discovery === 'boolean') {
+    deprecate({
+      id: 'registry-config-discovery-boolean',
+      subject: 'The boolean form of the `discovery` option',
+      replacement: 'the object form (`discovery: { ui, api, ... }`)'
+    });
   }
 
   const showApi =
@@ -222,6 +231,11 @@ export default function optionsSanitiser<
   }
 
   if (options.s3) {
+    deprecate({
+      id: 'registry-config-s3',
+      subject: 'The `s3` config shortcut',
+      replacement: 'explicit `storage.adapter`/`storage.options`'
+    });
     options.storage = {
       adapter: require('oc-s3-storage-adapter'),
       options: options.s3
@@ -232,7 +246,13 @@ export default function optionsSanitiser<
     options.storage.adapter = require('oc-s3-storage-adapter');
   }
 
-  if (options.refreshInterval && options.storage) {
+  if (typeof options.refreshInterval !== 'undefined' && options.storage) {
+    deprecate({
+      id: 'registry-config-refreshInterval',
+      subject: 'The `refreshInterval` option',
+      replacement: '`pollingInterval`'
+    });
+    options.storage.options = options.storage.options || {};
     options.storage.options['refreshInterval'] = options.refreshInterval;
   }
 

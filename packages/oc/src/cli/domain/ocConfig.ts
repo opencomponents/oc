@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import settings from '../../resources/settings';
+import deprecate from '../../utils/deprecate';
 
 export interface OpenComponentsConfig {
   /** JSON schema specification reference */
@@ -99,6 +100,14 @@ const findPath = (
 };
 
 function parseConfig(config: OpenComponentsConfig): ParsedConfig {
+  if (config.mocks) {
+    deprecate({
+      id: 'oc-json-mocks',
+      subject: 'The `mocks` block in `oc.json`',
+      replacement: '`development.plugins`'
+    });
+  }
+
   const plugins = {
     ...(config.mocks?.plugins || {}),
     ...(config.development?.plugins || {})
