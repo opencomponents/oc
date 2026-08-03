@@ -1,5 +1,16 @@
 ## Change Log
 
+## 0.50.60
+
+### Patch Changes
+
+- fdf60ac: add option to disable data providers
+- b2decf6: Replace unmaintained `colors` with `picocolors` via a central color helper, and remove unused `async` / `@types/async` dependencies.
+- f9b1c68: Add a central deprecation-warning utility and wire it into config options that will be removed in v1: the `s3` storage shortcut, `refreshInterval`, the boolean form of `discovery`, and the `oc.json` `mocks` block. Each notice fires once per process via `process.emitWarning('...', 'DeprecationWarning')` and names the deprecated option and its replacement. No behavior changes - deprecated options keep working exactly as before.
+- 80ce0f4: Security-focused dependency upgrades: bump multer, AWS SDK v3, Google Cloud Storage to v7, tmp; remove unused legacy azure-storage; migrate S3 http handler to @smithy/node-http-handler.
+- Updated dependencies [80ce0f4]
+  - oc-s3-storage-adapter@2.2.4
+
 ## 0.50.59
 
 ### Patch Changes

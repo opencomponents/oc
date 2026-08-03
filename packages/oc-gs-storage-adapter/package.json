@@ -1,6 +1,6 @@
 {
 	"name": "oc-gs-storage-adapter",
-	"version": "2.2.2",
+	"version": "2.2.3",
 	"description": "Google storage adapter for OC",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
