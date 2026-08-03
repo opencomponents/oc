@@ -95,6 +95,62 @@ describe('registry : routes : component', () => {
     });
   });
 
+  describe('when the data provider is disabled in the registry configuration', () => {
+    let response;
+    before((done) => {
+      initialise(mockedComponents['simple-component']);
+      componentRoute = ComponentRoute({}, mockedRepository);
+
+      componentRoute(
+        {
+          headers: {
+            accept: 'application/vnd.oc.unrendered+json'
+          },
+          params: {
+            componentName: 'simple-component',
+            componentVersion: '1.X.X'
+          },
+          query: { hello: 'world' }
+        },
+        {
+          conf: {
+            baseUrl: 'http://component.com/',
+            dataProvider: { enabled: false }
+          },
+          status: (code) => ({
+            json: (json) => {
+              response = { code, json };
+              done();
+            }
+          }),
+          set: sinon.stub()
+        }
+      );
+    });
+
+    it('should return 200 status code', () => {
+      expect(response.code).to.be.equal(200);
+    });
+
+    it('should not fetch the data provider from the storage', () => {
+      expect(mockedRepository.getDataProvider.called).to.be.false;
+    });
+
+    it('should use the request parameters as the view model', () => {
+      expect(response.json.data).to.eql({
+        component: {
+          props: {
+            hello: 'world',
+            _staticPath: '//my-cdn.com/files/',
+            _baseUrl: 'http://component.com/',
+            _componentName: 'simple-component',
+            _componentVersion: '1.0.0'
+          }
+        }
+      });
+    });
+  });
+
   describe('when getting a component with a server.js that returns undefined data', () => {
     before(() => {
       initialise(mockedComponents['undefined-component']);

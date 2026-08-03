@@ -254,6 +254,23 @@ export interface Config<
    */
   dependencies: string[];
   /**
+   * Configuration for the data provider step, i.e. the component's `server.js`
+   * that produces the model consumed by the view.
+   */
+  dataProvider: {
+    /**
+     * Executes the component's own data provider (`server.js`) when it has one.
+     *
+     * When `false` the registry never fetches nor runs a component's data
+     * provider, even if one exists in the storage: every component is served
+     * through the same path used by components that ship no `server.js`, i.e.
+     * the request parameters are passed straight through as the view model.
+     *
+     * @default true
+     */
+    enabled: boolean;
+  };
+  /**
    * Configuration object to enable/disable the HTML discovery page and the API
    */
   discovery: {

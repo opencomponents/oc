@@ -613,7 +613,9 @@ export default function getComponent(conf: Config, repository: Repository) {
           .getStaticFilePath(component.name, component.version, '')
           .replace(/^https:/, '');
 
-        if (!component.oc.files.dataProvider) {
+        const dataProviderDisabled = conf.dataProvider?.enabled === false;
+
+        if (dataProviderDisabled || !component.oc.files.dataProvider) {
           const { __oc_Retry, ...props } = params;
           props['_staticPath'] = staticPath;
           props['_baseUrl'] = conf.baseUrl;

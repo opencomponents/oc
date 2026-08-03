@@ -18,8 +18,24 @@ export interface RegistryOptions<
   T = any,
   TServerAdapter extends HttpServerAdapterFactory = HttpServerAdapterFactory
 > extends Partial<
-    Omit<Config<T, TServerAdapter>, 'beforePublish' | 'discovery' | 'plugins'>
+    Omit<
+      Config<T, TServerAdapter>,
+      'beforePublish' | 'dataProvider' | 'discovery' | 'plugins'
+    >
   > {
+  /**
+   * Configuration for the data provider step, i.e. the component's `server.js`
+   * that produces the model consumed by the view.
+   */
+  dataProvider?: {
+    /**
+     * Executes the component's own data provider (`server.js`) when it has one.
+     * Set to `false` to serve every component as if it shipped no `server.js`.
+     *
+     * @default true
+     */
+    enabled?: boolean;
+  };
   /**
    * Configuration object to enable/disable the HTML discovery page and the API
    *
@@ -87,6 +103,11 @@ export default function optionsSanitiser<
   if (!options.verbosity) {
     options.verbosity = 0;
   }
+
+  options.dataProvider = {
+    ...options.dataProvider,
+    enabled: options.dataProvider?.enabled !== false
+  };
 
   if (typeof options.discovery === 'boolean') {
     deprecate({
