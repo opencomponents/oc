@@ -12,7 +12,8 @@ describe('registry : domain : options-sanitiser', () => {
       hotReloading: false,
       verbosity: 0,
       customHeadersToSkipOnWeakVersion: [],
-      timeout: 120000
+      timeout: 120000,
+      dataProvider: { enabled: true }
     };
 
     for (const [property, value] of Object.entries(defaults)) {
@@ -26,6 +27,23 @@ describe('registry : domain : options-sanitiser', () => {
         require('../../dist/registry/domain/http-server/express-adapter').default
       );
       expect(sanitise(options).server.options).to.eql({ port: 3000 });
+    });
+  });
+
+  describe('dataProvider configuration', () => {
+    it('should keep dataProvider.enabled when explicitly disabled', () => {
+      const options = {
+        baseUrl: 'http://my-registry.com',
+        dataProvider: { enabled: false }
+      };
+
+      expect(sanitise(options).dataProvider).to.eql({ enabled: false });
+    });
+
+    it('should default dataProvider.enabled to true when the object is partial', () => {
+      const options = { baseUrl: 'http://my-registry.com', dataProvider: {} };
+
+      expect(sanitise(options).dataProvider).to.eql({ enabled: true });
     });
   });
 

@@ -6,7 +6,7 @@ import getMetadataAdapterOptions from '../metadata-adapter-options';
 type ValidationResult = { isValid: true } | { isValid: false; message: string };
 
 export default function registryConfiguration(
-  conf: Partial<Omit<Config, 'discovery'>>
+  conf: Partial<Omit<Config, 'dataProvider' | 'discovery'>>
 ): ValidationResult {
   const returnError = (message: string): ValidationResult => {
     return {
