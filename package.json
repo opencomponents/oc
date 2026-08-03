@@ -22,5 +22,8 @@
     "@changesets/cli": "^2.31.0",
     "lefthook": "^1.13.0",
     "turbo": "^2.5.8"
+  },
+  "overrides": {
+    "brace-expansion": "1.1.17"
   }
 }
