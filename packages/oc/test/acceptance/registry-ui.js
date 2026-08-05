@@ -39,7 +39,9 @@ describe('registry (ui interface)', () => {
 
   before((done) => initializeRegistry(conf, done));
 
-  after((done) => registry.close(done));
+  after((done) => {
+    registry.close(done);
+  });
 
   describe('GET / with Accept: text/html', () => {
     before((done) => {

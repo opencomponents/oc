@@ -96,6 +96,32 @@ describe('registry', () => {
         expect(deps['./domain/repository'].called).to.be.true;
       });
 
+      it('should register a plugin using a promise', async () => {
+        await registry.register({ name: 'test-plugin' });
+
+        deps['./domain/plugins-initialiser'].init.resolves({});
+        repositoryInitStub.resolves();
+        deps['./app-start'].resolves();
+        adapter.listen.callsFake((_opts, cb) => cb(null));
+
+        await registry.start();
+
+        expect(
+          deps['./domain/plugins-initialiser'].init.lastCall.args[0][0].name
+        ).to.equal('test-plugin');
+      });
+
+      it('should emit one deprecation warning for callback forms', () => {
+        const emitWarning = sinon.stub(process, 'emitWarning');
+
+        registry.register({ name: 'first-plugin' }, () => {});
+        registry.register({ name: 'second-plugin' }, () => {});
+
+        expect(emitWarning.calledOnce).to.be.true;
+        expect(emitWarning.firstCall.args[1]).to.equal('DeprecationWarning');
+        emitWarning.restore();
+      });
+
       describe('when starting it', () => {
         describe('when plugins initialiser fails', () => {
           let error;
@@ -110,6 +136,20 @@ describe('registry', () => {
           });
 
           it('should fail with error', () => {
+            expect(error.message).to.equal('error!');
+          });
+
+          it('should reject the promise with an Error', async () => {
+            const newRegistry = Registry({});
+
+            let error;
+            try {
+              await newRegistry.start();
+            } catch (err) {
+              error = err;
+            }
+
+            expect(error.name).to.equal('Error');
             expect(error.message).to.equal('error!');
           });
         });
@@ -147,7 +187,8 @@ describe('registry', () => {
               });
 
               it('should fail with error', () => {
-                expect(error).to.equal('I got a problem');
+                expect(error.name).to.equal('Error');
+                expect(error.message).to.equal('I got a problem');
               });
             });
 
@@ -170,7 +211,8 @@ describe('registry', () => {
                 });
 
                 it('should fail with error', () => {
-                  expect(error).to.equal('Port is already used');
+                  expect(error.name).to.equal('Error');
+                  expect(error.message).to.equal('Port is already used');
                 });
               });
 
@@ -207,6 +249,45 @@ describe('registry', () => {
                     {}
                   ]);
                 });
+
+                it('should resolve with the app and server', async () => {
+                  const newRegistry = Registry({});
+                  adapter.listen.callsFake((_opts, cb) => cb(null));
+
+                  const result = await newRegistry.start();
+
+                  expect(result).to.eql({
+                    app: 'express instance',
+                    server: 'server instance'
+                  });
+                });
+
+                it('should invoke a callback once when its promise is awaited', async () => {
+                  const newRegistry = Registry({});
+                  const callback = sinon.spy();
+                  adapter.listen.callsFake((_opts, cb) => cb(null));
+
+                  const result = await newRegistry.start(callback);
+
+                  expect(callback.calledOnce).to.be.true;
+                  expect(callback.calledWith(null, result)).to.be.true;
+                });
+
+                it('should reject the returned promise when the callback throws', async () => {
+                  const newRegistry = Registry({});
+                  adapter.listen.callsFake((_opts, cb) => cb(null));
+
+                  let error;
+                  try {
+                    await newRegistry.start(() => {
+                      throw new Error('callback failed');
+                    });
+                  } catch (err) {
+                    error = err;
+                  }
+
+                  expect(error.message).to.equal('callback failed');
+                });
               });
 
               describe('when http listener emits an error before the listener to start', () => {
@@ -229,7 +310,8 @@ describe('registry', () => {
                 });
 
               it('should return error', () => {
-                expect(error).to.be.equal('I failed for some reason');
+                expect(error.name).to.equal('Error');
+                expect(error.message).to.equal('I failed for some reason');
               });
 
               it('should emit an error event', () => {
@@ -289,6 +371,49 @@ describe('registry', () => {
               done();
             });
           });
+        });
+
+        it('should resolve after the server and repository close', async () => {
+          let resolveRepositoryClose;
+          repositoryCloseStub.callsFake(
+            () =>
+              new Promise((resolve) => {
+                resolveRepositoryClose = resolve;
+              })
+          );
+          const registry = Registry({});
+          adapter.isListening.returns(true);
+          adapter.close.callsFake((cb) => cb(undefined));
+
+          let closed = false;
+          const closePromise = registry.close().then(() => {
+            closed = true;
+          });
+          await Promise.resolve();
+
+          expect(adapter.close.calledOnce).to.be.true;
+          expect(repositoryCloseStub.calledOnce).to.be.true;
+          expect(repositoryCloseStub.calledAfter(adapter.close)).to.be.true;
+          expect(closed).to.be.false;
+
+          resolveRepositoryClose();
+          await closePromise;
+
+          expect(closed).to.be.true;
+        });
+
+        it('should reject when the server was not opened', async () => {
+          const registry = Registry({});
+
+          let error;
+          try {
+            await registry.close();
+          } catch (err) {
+            error = err;
+          }
+
+          expect(error).to.equal('not opened');
+          expect(repositoryCloseStub.calledOnce).to.be.true;
         });
 
         it('should still call the repository close when the server close errors', (done) => {
