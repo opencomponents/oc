@@ -20,7 +20,7 @@ module.exports = {
       }
     }
   },
-  data: '"use strict";module.exports.data=function (ctx, cb){cb(null,{ mySecret:ctx.env.secret, contextUseCdn:ctx.env.useCdn, processUseCdn:process.env.useCdn});};',
+  data: '"use strict";module.exports.data=function (ctx, cb){cb(null,{ mySecret:ctx.env.secret, contextBoolean:ctx.env.booleanValue, processBoolean:process.env.booleanValue});};',
   view:
     'var oc=oc||{};oc.components=oc.components||{},oc.components["8c1fbd954f2b0d8cd5cf11c885fed4805225749f"]' +
     '=function(){var o=[];return o.push("<div>hello</div>"),o.join("")};'

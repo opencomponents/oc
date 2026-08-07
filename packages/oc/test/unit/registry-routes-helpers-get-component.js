@@ -90,7 +90,7 @@ describe('registry : routes : helpers : get-component', () => {
           parameters: {},
           version: '1.X.X',
           conf: {
-            env: { registry: 'REGISTRYVALUE', useCdn: false },
+            env: { registry: 'REGISTRYVALUE', booleanValue: false },
             baseUrl: 'http://components.com/'
           }
         },
@@ -101,8 +101,8 @@ describe('registry : routes : helpers : get-component', () => {
     it('should put the env data as part of the context, available to the server', () => {
       expect(callBack.args[0][0].response.data).to.deep.equal({
         mySecret: 'secretvalue',
-        contextUseCdn: false,
-        processUseCdn: false
+        contextBoolean: false,
+        processBoolean: false
       });
     });
   });
