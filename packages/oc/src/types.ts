@@ -312,7 +312,7 @@ export interface Config<
    *
    * @default {}
    */
-  env: Record<string, string | boolean>;
+  env: Record<string, any>;
   /**
    * Maximum execution time of a component’s server-side logic, expressed in
    * seconds. When the timeout elapses the registry returns a 500 error.
