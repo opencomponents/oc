@@ -307,11 +307,12 @@ export interface Config<
    */
   discoveryFunc?: (opts: { host?: string; secure: boolean }) => boolean;
   /**
-   * Environment variables passed to components in `context.env`.
+   * Environment values passed to components in `context.env` and the data
+   * provider's `process.env` shim.
    *
    * @default {}
    */
-  env: Record<string, string>;
+  env: Record<string, string | boolean>;
   /**
    * Maximum execution time of a component’s server-side logic, expressed in
    * seconds. When the timeout elapses the registry returns a 500 error.
