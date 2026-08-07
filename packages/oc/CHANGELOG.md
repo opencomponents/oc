@@ -1,5 +1,11 @@
 ## Change Log
 
+## 0.50.61
+
+### Patch Changes
+
+- 7c1d7bf: Allow registry environment values passed to component `context.env` to use arbitrary JavaScript value types.
+
 ## 0.50.60
 
 ### Patch Changes
