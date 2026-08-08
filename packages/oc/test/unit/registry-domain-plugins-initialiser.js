@@ -167,6 +167,48 @@ describe('registry : domain : plugins-initialiser', () => {
     });
   });
 
+  describe('when initialising promise-based plugins', () => {
+    it('awaits their registration and exposes their handlers', async () => {
+      let registered = false;
+      const result = await pluginsInitialiser.init([
+        {
+          name: 'asyncPlugin',
+          register: {
+            register: async () => {
+              await Promise.resolve();
+              registered = true;
+            },
+            execute: () => registered
+          }
+        }
+      ]);
+
+      expect(result.asyncPlugin.handler()).to.equal(true);
+    });
+
+    it('rejects when async registration fails', async () => {
+      let error;
+
+      try {
+        await pluginsInitialiser.init([
+          {
+            name: 'failingAsyncPlugin',
+            register: {
+              register: async () => {
+                throw new Error('async registration failed');
+              },
+              execute: () => {}
+            }
+          }
+        ]);
+      } catch (err) {
+        error = err;
+      }
+
+      expect(error.message).to.equal('async registration failed');
+    });
+  });
+
   describe('when plugin specifies dependencies', () => {
     let passedDeps;
     let flag;

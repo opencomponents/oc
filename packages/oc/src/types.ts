@@ -506,16 +506,16 @@ export interface Template {
   render: (options: any, cb: (err: Error | null, data: string) => void) => void;
 }
 
+export type PluginRegistration<T = any> =
+  | ((options: T, dependencies: any) => Promise<void>)
+  | ((options: T, dependencies: any, next: (error?: Error) => void) => void);
+
 interface BasePLugin<T = any> {
   description?: string;
   name: string;
   options?: T;
   register: {
-    register: (
-      options: T,
-      dependencies: any,
-      next: (error?: Error) => void
-    ) => void;
+    register: PluginRegistration<T>;
     dependencies?: string[];
   };
 }
@@ -543,11 +543,7 @@ export type Plugin<T = any> = BasePLugin<T> &
          */
         context?: false | undefined;
         register: {
-          register: (
-            options: T,
-            dependencies: any,
-            next: (error?: Error) => void
-          ) => void;
+          register: PluginRegistration<T>;
           execute: (...args: any[]) => any;
           dependencies?: string[];
         };
@@ -567,11 +563,7 @@ export type Plugin<T = any> = BasePLugin<T> &
          */
         context: true;
         register: {
-          register: (
-            options: T,
-            dependencies: any,
-            next: (error?: Error) => void
-          ) => void;
+          register: PluginRegistration<T>;
           execute: (context: PluginContext) => (params: any) => any;
           dependencies?: string[];
         };
