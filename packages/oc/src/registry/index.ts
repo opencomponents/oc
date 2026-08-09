@@ -84,13 +84,7 @@ export default function registry<
         return;
       }
 
-      adapter.close((err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
+      Promise.resolve(adapter.close()).then(resolve, reject);
     });
 
     return closeServer.finally(closeMetadataStore);
@@ -134,46 +128,7 @@ export default function registry<
       const componentsInfo = await repository.init();
       await appStart(repository, options);
 
-      return await new Promise<RegistryStartResult<TApp>>((resolve, reject) => {
-        adapter.listen(
-          {
-            port: options.port,
-            timeout: options.timeout,
-            keepAliveTimeout: options.keepAliveTimeout
-          },
-          (err?: Error) => {
-            if (err) {
-              reject(toError(err));
-              return;
-            }
-            eventsHandler.fire('start', {});
-
-            if (options.verbosity) {
-              ok(
-                `Registry started at port http://localhost:${options.port}${options.prefix}`
-              );
-
-              if (componentsInfo) {
-                const componentsNumber = Object.keys(
-                  componentsInfo.components
-                ).length;
-                const componentsReleases = Object.values(
-                  componentsInfo.components
-                ).reduce(
-                  (acc, component) => acc + Object.keys(component).length,
-                  0
-                );
-
-                ok(
-                  `Registry serving ${componentsNumber} components for a total of ${componentsReleases} releases.`
-                );
-              }
-            }
-
-            resolve({ app, server: adapter.httpServer() });
-          }
-        );
-
+      const serverError = new Promise<never>((_resolve, reject) => {
         adapter.onServerError((error) => {
           eventsHandler.fire('error', {
             code: 'EXPRESS_ERROR',
@@ -182,6 +137,36 @@ export default function registry<
           reject(toError(error));
         });
       });
+      void serverError.catch(() => undefined);
+      const listenPromise = adapter.listen({
+        port: options.port,
+        timeout: options.timeout,
+        keepAliveTimeout: options.keepAliveTimeout
+      });
+
+      await Promise.race([listenPromise, serverError]);
+      eventsHandler.fire('start', {});
+
+      if (options.verbosity) {
+        ok(
+          `Registry started at port http://localhost:${options.port}${options.prefix}`
+        );
+
+        if (componentsInfo) {
+          const componentsNumber = Object.keys(
+            componentsInfo.components
+          ).length;
+          const componentsReleases = Object.values(
+            componentsInfo.components
+          ).reduce((acc, component) => acc + Object.keys(component).length, 0);
+
+          ok(
+            `Registry serving ${componentsNumber} components for a total of ${componentsReleases} releases.`
+          );
+        }
+      }
+
+      return { app, server: adapter.httpServer() };
     } catch (err) {
       throw toError(err);
     }

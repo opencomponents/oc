@@ -84,6 +84,12 @@ export type ExpressMiddleware = (
   next: (err?: unknown) => void
 ) => void;
 
+export interface HttpServerListenOptions {
+  port: number | string;
+  timeout: number;
+  keepAliveTimeout?: number;
+}
+
 export type HttpServerAdapterFactory<TOptions = unknown, TNative = unknown> = {
   (options?: unknown): HttpServerAdapter<TNative>;
   readonly __serverAdapterOptions?: TOptions;
@@ -127,11 +133,10 @@ export interface HttpServerAdapter<TNative = unknown> {
   use(handler: OcHandler): void;
   route(method: Method, path: string, id: string, handlers: OcHandler[]): void;
   fromConnect(handler: ExpressMiddleware): OcHandler;
-  listen(
-    opts: { port: number | string; timeout: number; keepAliveTimeout?: number },
-    cb: (err?: Error) => void
-  ): void;
+  listen(opts: HttpServerListenOptions): Promise<void>;
+  listen(opts: HttpServerListenOptions, cb: (err?: Error) => void): void;
   onServerError(cb: (err: Error) => void): void;
+  close(): Promise<void>;
   close(cb: (err?: Error) => void): void;
   isListening(): boolean;
   native(): TNative;
