@@ -262,11 +262,6 @@ export default {
         version: string
       ): string =>
         `${green('✔')} Installed ${compiler} [${template} v${version}]`,
-      legacyTemplateDeprecationWarning: (
-        legacyType: string,
-        newType: string
-      ): string =>
-        `Template-type "${legacyType}" has been deprecated and is now replaced by "${newType}"`,
       CHANGES_DETECTED: (file: string): string =>
         `Changes detected on file: ${file}`,
       CHECKING_DEPENDENCIES: 'Ensuring dependencies are loaded...',
