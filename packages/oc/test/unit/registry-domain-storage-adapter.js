@@ -65,6 +65,18 @@ describe('registry : domain : storage adapter', () => {
     restore();
   });
 
+  it('does not misclassify an unmarked promise adapter with optional arguments', async () => {
+    const { parser, emitWarning, restore } = getParser();
+    const adapter = mockPromiseAdapter();
+    delete adapter.adapterApi;
+    adapter.getFile = (filePath, _force = false) =>
+      Promise.resolve(`file:${filePath}`);
+
+    expect(await parser(adapter).getFile('path')).to.equal('file:path');
+    expect(emitWarning.called).to.be.false;
+    restore();
+  });
+
   it('converts a callback adapter and preserves all adapter properties', async () => {
     const { parser, emitWarning, restore } = getParser();
     const adapter = mockLegacyAdapter('azure-blob-storage');

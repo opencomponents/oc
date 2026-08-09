@@ -47,12 +47,38 @@ const createLegacyStore = () => ({
   close: sinon.stub().yields(null)
 });
 
+const createUnmarkedPromiseStore = () => {
+  const store = createPromiseStore();
+  delete store.adapterApi;
+  return store;
+};
+
+const createUnmarkedRestCallbackStore = () => ({
+  adapterType: 'legacy-rest-metadata',
+  isValid: sinon.stub().returns(true),
+  initialise: (...args) => args.at(-1)(null),
+  getAllComponents: (...args) => args.at(-1)(null, []),
+  addVersion: (...args) => args.at(-1)(null),
+  reserveVersion: (...args) => args.at(-1)(null, { token: 'token' }),
+  commitVersion: (...args) => args.at(-1)(null),
+  abortVersion: (...args) => args.at(-1)(null)
+});
+
 describe('registry : domain : metadata adapter', () => {
   it('returns a promise metadata store unchanged', () => {
     const { parser, emitWarning } = getParser();
     const store = createPromiseStore();
 
     expect(parser(store)).to.equal(store);
+    expect(emitWarning.called).to.be.false;
+  });
+
+  it('supports unmarked promise stores', async () => {
+    const { parser, emitWarning } = getParser();
+
+    expect(await parser(createUnmarkedPromiseStore()).getAllComponents()).to.eql(
+      []
+    );
     expect(emitWarning.called).to.be.false;
   });
 
@@ -91,5 +117,13 @@ describe('registry : domain : metadata adapter', () => {
       expect(rows).to.eql([]);
       done();
     });
+  });
+
+  it('supports unmarked callback stores with rest-parameter methods', async () => {
+    const { parser, emitWarning } = getParser();
+    const parsed = parser(createUnmarkedRestCallbackStore());
+
+    expect(await parsed.getAllComponents()).to.eql([]);
+    expect(emitWarning.calledOnce).to.be.true;
   });
 });

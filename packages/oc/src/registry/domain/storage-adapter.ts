@@ -30,12 +30,6 @@ const isPromiseBased = (adapter: StorageAdapterInput): boolean => {
     return true;
   }
 
-  // Old adapters require a callback in their method signature. Avoid probing
-  // those methods without one, since the probe itself could start I/O.
-  if (adapter.getFile.length > 1) {
-    return false;
-  }
-
   try {
     const result = (adapter as StorageAdapter).getFile('');
     if (result && typeof result.then === 'function') {

@@ -6,30 +6,12 @@ import type {
 import { fromCallback } from 'universalify';
 import deprecate from '../../utils/deprecate';
 
-const isPromiseBased = (adapter: MetadataStoreInput): boolean => {
-  if (adapter.adapterApi) {
-    return adapter.adapterApi === 'promise';
-  }
-
-  if (typeof adapter.initialise !== 'function') {
-    return true;
-  }
-
-  // Promise methods have no trailing callback parameter. Check the required
-  // methods without invoking them so validation remains side-effect free.
-  const methods: Array<[unknown, number]> = [
-    [adapter.initialise, 0],
-    [adapter.getAllComponents, 0],
-    [adapter.addVersion, 1],
-    [adapter.reserveVersion, 1],
-    [adapter.commitVersion, 3],
-    [adapter.abortVersion, 3]
-  ];
-
-  return !methods.some(
-    ([method, promiseArity]) =>
-      typeof method === 'function' && method.length > promiseArity
-  );
+const warnAboutLegacyAdapter = (): void => {
+  deprecate({
+    id: 'metadata-adapter-callback:custom',
+    subject: 'Callback-based metadata adapters',
+    replacement: 'a promise-returning metadata adapter'
+  });
 };
 
 const convertMethod = (adapter: LegacyMetadataStore, method: string) => {
@@ -56,24 +38,102 @@ const convertLegacyAdapter = (adapter: LegacyMetadataStore): MetadataStore =>
     isValid: adapter.isValid.bind(adapter)
   }) as MetadataStore;
 
+const callUnmarkedMethod = <ReturnValue>(
+  adapter: MetadataStoreInput,
+  method: (...args: any[]) => unknown,
+  args: unknown[]
+): Promise<ReturnValue> =>
+  new Promise<ReturnValue>((resolve, reject) => {
+    let settled = false;
+    const callback = (error: unknown, value?: ReturnValue) => {
+      warnAboutLegacyAdapter();
+      if (settled) {
+        return;
+      }
+      settled = true;
+      if (error != null) {
+        reject(error);
+      } else {
+        resolve(value as ReturnValue);
+      }
+    };
+
+    let result: unknown;
+    try {
+      result = method.apply(adapter, [...args, callback]);
+    } catch (error) {
+      reject(error);
+      return;
+    }
+
+    if (result && typeof (result as Promise<unknown>).then === 'function') {
+      Promise.resolve(result).then(
+        (value) => {
+          if (!settled) {
+            settled = true;
+            resolve(value as ReturnValue);
+          }
+        },
+        (error) => {
+          if (!settled) {
+            settled = true;
+            reject(error);
+          }
+        }
+      );
+    }
+  });
+
+const convertUnmarkedAdapter = (adapter: MetadataStoreInput): MetadataStore => {
+  const method = (name: keyof MetadataStore) => {
+    const implementation = adapter[name];
+    return typeof implementation === 'function'
+      ? (...args: any[]) =>
+          callUnmarkedMethod(
+            adapter,
+            implementation as (...args: any[]) => unknown,
+            args
+          )
+      : implementation;
+  };
+
+  return {
+    ...adapter,
+    adapterApi: 'promise',
+    initialise: method('initialise'),
+    getAllComponents: method('getAllComponents'),
+    addVersion: method('addVersion'),
+    reserveVersion: method('reserveVersion'),
+    commitVersion: method('commitVersion'),
+    abortVersion: method('abortVersion'),
+    getChangeToken: method('getChangeToken'),
+    close: method('close'),
+    removeVersion: method('removeVersion'),
+    changesSince: method('changesSince'),
+    isValid: adapter.isValid.bind(adapter)
+  } as MetadataStore;
+};
+
 /**
  * Returns the promise-first metadata contract used by registry internals.
- * Metadata adapters are not probed because validation must remain side-effect
- * free; callback-only custom adapters opt into the legacy shape through their
- * callback methods and are converted at this boundary.
+ * Explicitly marked adapters take the fast path. Unmarked custom adapters are
+ * wrapped lazily so either promise or callback implementations remain usable.
  */
 export default function getPromiseBasedMetadataAdapter(
   adapter: MetadataStoreInput
 ): MetadataStore {
-  if (isPromiseBased(adapter)) {
+  if (adapter.adapterApi === 'promise') {
     return adapter as MetadataStore;
   }
 
-  deprecate({
-    id: 'metadata-adapter-callback:custom',
-    subject: 'Callback-based metadata adapters',
-    replacement: 'a promise-returning metadata adapter'
-  });
+  if (adapter.adapterApi === 'callback') {
+    warnAboutLegacyAdapter();
+    return convertLegacyAdapter(adapter as LegacyMetadataStore);
+  }
 
-  return convertLegacyAdapter(adapter as LegacyMetadataStore);
+  if (typeof adapter.initialise !== 'function') {
+    return adapter as MetadataStore;
+  }
+
+  return convertUnmarkedAdapter(adapter);
 }
