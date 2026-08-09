@@ -84,7 +84,10 @@ const cors: OcHandler = (_req, res) => {
   const options = normaliseCorsConfig(res.conf?.cors);
 
   res.removeHeader('X-Powered-By');
-  res.set('Access-Control-Allow-Credentials', String(options.credentials));
+  res.removeHeader('Access-Control-Allow-Credentials');
+  if (options.credentials) {
+    res.set('Access-Control-Allow-Credentials', 'true');
+  }
   res.set('Access-Control-Allow-Origin', options.origin);
   res.set('Access-Control-Allow-Headers', options.allowedHeaders);
   res.set('Access-Control-Allow-Methods', options.methods);

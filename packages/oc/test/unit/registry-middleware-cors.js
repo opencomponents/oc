@@ -104,9 +104,7 @@ describe('registry : middleware : cors', () => {
       const response = await request(port, 'OPTIONS');
 
       expect(response.statusCode).to.equal(200);
-      expect(response.headers['access-control-allow-credentials']).to.equal(
-        'false'
-      );
+      expect(response.headers['access-control-allow-credentials']).to.be.undefined;
       expect(response.headers['access-control-allow-origin']).to.equal(
         'https://app.example.com'
       );
