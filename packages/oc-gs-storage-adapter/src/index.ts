@@ -6,9 +6,10 @@ import Cache from 'nice-cache';
 import nodeDir, { type PathsResult } from 'node-dir';
 import {
   getFileInfo,
-  type StorageAdapter,
   type StorageAdapterBaseConfig,
-  strings
+  type StorageAdapterWithCallbacks,
+  strings,
+  withCallbacks
 } from 'oc-storage-adapters-utils';
 import tmp from 'tmp';
 
@@ -32,7 +33,7 @@ export interface GsConfig extends StorageAdapterBaseConfig {
   maxAge?: boolean;
 }
 
-export default function gsAdapter(conf: GsConfig): StorageAdapter {
+export default function gsAdapter(conf: GsConfig): StorageAdapterWithCallbacks {
   const isValid = () => {
     if (!conf.bucket || !conf.projectId || !conf.path) {
       return false;
@@ -332,19 +333,44 @@ export default function gsAdapter(conf: GsConfig): StorageAdapter {
   };
 
   return {
-    getFile,
-    getJson,
+    adapterApi: 'promise',
+    getFile: withCallbacks(
+      getFile,
+      'oc-gs-storage-adapter'
+    ) as StorageAdapterWithCallbacks['getFile'],
+    getJson: withCallbacks(
+      getJson,
+      'oc-gs-storage-adapter'
+    ) as StorageAdapterWithCallbacks['getJson'],
     getUrl,
-    listSubDirectories,
+    listSubDirectories: withCallbacks(
+      listSubDirectories,
+      'oc-gs-storage-adapter'
+    ) as StorageAdapterWithCallbacks['listSubDirectories'],
     maxConcurrentRequests: 20,
-    putDir,
-    putFile,
-    putFileContent,
-    removeDir,
-    removeFile,
+    putDir: withCallbacks(
+      putDir,
+      'oc-gs-storage-adapter'
+    ) as StorageAdapterWithCallbacks['putDir'],
+    putFile: withCallbacks(
+      putFile,
+      'oc-gs-storage-adapter'
+    ) as StorageAdapterWithCallbacks['putFile'],
+    putFileContent: withCallbacks(
+      putFileContent,
+      'oc-gs-storage-adapter'
+    ) as StorageAdapterWithCallbacks['putFileContent'],
+    removeDir: withCallbacks(
+      removeDir,
+      'oc-gs-storage-adapter'
+    ) as StorageAdapterWithCallbacks['removeDir'],
+    removeFile: withCallbacks(
+      removeFile,
+      'oc-gs-storage-adapter'
+    ) as StorageAdapterWithCallbacks['removeFile'],
     adapterType: 'gs',
     isValid
-  };
+  } as StorageAdapterWithCallbacks;
 }
 
 module.exports = gsAdapter;

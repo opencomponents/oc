@@ -14,9 +14,10 @@ import nodeDir, { type PathsResult } from 'node-dir';
 import {
   getFileInfo,
   getNextYear,
-  type StorageAdapter,
   type StorageAdapterBaseConfig,
-  strings
+  type StorageAdapterWithCallbacks,
+  strings,
+  withCallbacks
 } from 'oc-storage-adapters-utils';
 
 const getPaths: (path: string) => Promise<PathsResult> = promisify(
@@ -64,7 +65,7 @@ const streamToString = (stream: NodeJS.ReadableStream) =>
     stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
   });
 
-export default function s3Adapter(conf: S3Config): StorageAdapter {
+export default function s3Adapter(conf: S3Config): StorageAdapterWithCallbacks {
   const isValid = () => {
     if (
       !conf.bucket ||
@@ -356,19 +357,44 @@ export default function s3Adapter(conf: S3Config): StorageAdapter {
   };
 
   return {
-    getFile,
-    getJson,
+    adapterApi: 'promise',
+    getFile: withCallbacks(
+      getFile,
+      'oc-s3-storage-adapter'
+    ) as StorageAdapterWithCallbacks['getFile'],
+    getJson: withCallbacks(
+      getJson,
+      'oc-s3-storage-adapter'
+    ) as StorageAdapterWithCallbacks['getJson'],
     getUrl,
-    listSubDirectories,
+    listSubDirectories: withCallbacks(
+      listSubDirectories,
+      'oc-s3-storage-adapter'
+    ) as StorageAdapterWithCallbacks['listSubDirectories'],
     maxConcurrentRequests: 20,
-    putDir,
-    putFile,
-    putFileContent,
-    removeFile,
-    removeDir,
+    putDir: withCallbacks(
+      putDir,
+      'oc-s3-storage-adapter'
+    ) as StorageAdapterWithCallbacks['putDir'],
+    putFile: withCallbacks(
+      putFile,
+      'oc-s3-storage-adapter'
+    ) as StorageAdapterWithCallbacks['putFile'],
+    putFileContent: withCallbacks(
+      putFileContent,
+      'oc-s3-storage-adapter'
+    ) as StorageAdapterWithCallbacks['putFileContent'],
+    removeFile: withCallbacks(
+      removeFile,
+      'oc-s3-storage-adapter'
+    ) as StorageAdapterWithCallbacks['removeFile'],
+    removeDir: withCallbacks(
+      removeDir,
+      'oc-s3-storage-adapter'
+    ) as StorageAdapterWithCallbacks['removeDir'],
     adapterType: 's3',
     isValid
-  };
+  } as StorageAdapterWithCallbacks;
 }
 
 module.exports = s3Adapter;

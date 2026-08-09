@@ -223,6 +223,21 @@ describe('oc-azure-table-metadata-adapter', () => {
     });
   });
 
+  it('should support the legacy callback form', (done) => {
+    const { adapter } = createAdapter({
+      listEntities: sinon.stub().returns({
+        async *[Symbol.asyncIterator]() {}
+      })
+    });
+    const store = adapter({ connectionString: 'foo' });
+
+    store.getAllComponents((error, rows) => {
+      expect(error).to.equal(null);
+      expect(rows).to.eql([]);
+      done();
+    });
+  });
+
   describe('initialise()', () => {
     it('should create the table by default', async () => {
       const { adapter, createTableStub } = createAdapter();

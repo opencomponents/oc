@@ -53,6 +53,16 @@ test('should expose the correct methods', () => {
   });
 });
 
+test('should support the legacy callback form', (done) => {
+  const client = gs(validOptions);
+
+  client.getFile('path/test.txt', (error, value) => {
+    expect(error).toBeNull();
+    expect(value).toBe('Hello!');
+    done();
+  });
+});
+
 test('validate valid conf', () => {
   const client = gs(validOptions);
   expect(client.isValid()).toBe(true);
@@ -118,7 +128,7 @@ test('validate missing path conf', () => {
   test(`test getFile ${scenario.src}`, async () => {
     const client = gs(validOptions);
     const operation = () =>
-      client[scenario.src.match(/\.json$/) ? 'getJson' : 'getFile'](
+      (client as any)[scenario.src.match(/\.json$/) ? 'getJson' : 'getFile'](
         scenario.src,
         false
       );

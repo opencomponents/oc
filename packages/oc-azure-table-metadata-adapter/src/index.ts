@@ -9,10 +9,11 @@ import {
 import { DefaultAzureCredential, type TokenCredential } from '@azure/identity';
 import {
   type ComponentRow,
-  type MetadataStore,
+  type MetadataStoreWithCallbacks,
   VERSION_ALREADY_EXISTS,
   VERSION_PUBLISH_IN_PROGRESS,
-  type VersionAlreadyExistsError
+  type VersionAlreadyExistsError,
+  withCallbacks
 } from 'oc-metadata-adapters-utils';
 
 export type { ComponentRow, MetadataStore } from 'oc-metadata-adapters-utils';
@@ -159,7 +160,7 @@ const getComponentEntity = (
 
 export default function azureTableMetadataAdapter(
   options?: AzureTableMetadataAdapterOptions
-): MetadataStore {
+): MetadataStoreWithCallbacks {
   const adapterType = 'azure-table';
   const opts = options || ({} as AzureTableMetadataAdapterOptions);
   const manageSchema = opts.manageSchema !== false;
@@ -332,7 +333,8 @@ export default function azureTableMetadataAdapter(
     }
   };
 
-  return {
+  const adapter = {
+    adapterApi: 'promise' as const,
     adapterType,
 
     isValid(): boolean {
@@ -518,4 +520,37 @@ export default function azureTableMetadataAdapter(
       client = undefined;
     }
   };
+
+  return {
+    ...adapter,
+    initialise: withCallbacks(
+      adapter.initialise,
+      'oc-azure-table-metadata-adapter'
+    ),
+    getAllComponents: withCallbacks(
+      adapter.getAllComponents,
+      'oc-azure-table-metadata-adapter'
+    ),
+    addVersion: withCallbacks(
+      adapter.addVersion,
+      'oc-azure-table-metadata-adapter'
+    ),
+    reserveVersion: withCallbacks(
+      adapter.reserveVersion,
+      'oc-azure-table-metadata-adapter'
+    ),
+    commitVersion: withCallbacks(
+      adapter.commitVersion,
+      'oc-azure-table-metadata-adapter'
+    ),
+    abortVersion: withCallbacks(
+      adapter.abortVersion,
+      'oc-azure-table-metadata-adapter'
+    ),
+    getChangeToken: withCallbacks(
+      adapter.getChangeToken,
+      'oc-azure-table-metadata-adapter'
+    ),
+    close: withCallbacks(adapter.close, 'oc-azure-table-metadata-adapter')
+  } as MetadataStoreWithCallbacks;
 }

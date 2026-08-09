@@ -1,6 +1,7 @@
 import strings from '../../../resources';
 import type { Config } from '../../../types';
 import * as auth from '../authentication';
+import getPromiseBasedMetadataAdapter from '../metadata-adapter';
 import getMetadataAdapterOptions from '../metadata-adapter-options';
 
 type ValidationResult = { isValid: true } | { isValid: false; message: string };
@@ -148,8 +149,8 @@ export default function registryConfiguration(
       }
     }
 
-    const metadataStore = conf.metadata.adapter(
-      getMetadataAdapterOptions(conf)
+    const metadataStore = getPromiseBasedMetadataAdapter(
+      conf.metadata.adapter(getMetadataAdapterOptions(conf))
     );
     if (!metadataStore.isValid()) {
       return returnError(
