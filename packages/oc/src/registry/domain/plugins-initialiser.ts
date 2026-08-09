@@ -1,7 +1,7 @@
-import { promisify } from 'node:util';
 import { DepGraph } from 'dependency-graph';
 import strings from '../../resources';
 import type { Plugin, Plugins } from '../../types';
+import deprecate from '../../utils/deprecate';
 import pLimit from '../../utils/pLimit';
 
 type PluginWithCallback = Plugin & {
@@ -50,6 +50,56 @@ function checkDependencies(plugins: Plugin[]) {
 
 let deferredLoads: Plugin[] = [];
 
+const isPromiseLike = (value: unknown): value is PromiseLike<void> =>
+  typeof (value as PromiseLike<void> | undefined)?.then === 'function';
+
+const registerPlugin = (
+  plugin: Plugin,
+  dependencies: Record<string, unknown>
+): Promise<void> => {
+  const register = plugin.register.register as (
+    options: unknown,
+    dependencies: Record<string, unknown>,
+    next: (error?: Error) => void
+  ) => unknown;
+
+  return new Promise((resolve, reject) => {
+    let callbackCalled = false;
+    let callbackError: Error | undefined;
+    let useCallback = false;
+    let result: unknown;
+
+    try {
+      result = register(plugin.options || {}, dependencies, (error?: Error) => {
+        callbackCalled = true;
+        callbackError = error;
+
+        if (useCallback) {
+          error ? reject(error) : resolve();
+        }
+      });
+    } catch (error) {
+      reject(error);
+      return;
+    }
+
+    if (isPromiseLike(result)) {
+      void result.then(resolve, reject);
+    } else {
+      useCallback = true;
+      deprecate({
+        id: 'plugin-register-callback',
+        subject: 'Plugin register callbacks',
+        replacement: 'an async register(options, dependencies) function'
+      });
+
+      if (callbackCalled) {
+        callbackError ? reject(callbackError) : resolve();
+      }
+    }
+  });
+};
+
 export async function init(pluginsToRegister: unknown[]): Promise<Plugins> {
   const registered: Plugins = {};
 
@@ -91,10 +141,8 @@ export async function init(pluginsToRegister: unknown[]): Promise<Plugins> {
       )
     );
 
-    const register = promisify(plugin.register.register);
-
     const pluginCallback = plugin.callback || (() => {});
-    await register(plugin.options || {}, dependencies).catch((err) => {
+    await registerPlugin(plugin, dependencies).catch((err) => {
       pluginCallback(err);
       throw err;
     });

@@ -10,7 +10,7 @@
 		"lint:apply": "npx @biomejs/biome check --write preview src test tasks",
 		"preview": "bun run preview/uiPreview.ts",
 		"prebuild": "rimraf dist",
-		"build": "npm run lint && tsc && node tasks/build.js",
+		"build": "npm run lint && tsc && tsc --project tsconfig.types.json && node tasks/build.js",
 		"test": "node tasks/mochaTest.js",
 		"test-silent": "node tasks/mochaTest.js --silent",
 		"bench": "node tasks/benchmarks/server-benchmark.js --repetitions=5",
