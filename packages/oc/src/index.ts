@@ -8,11 +8,18 @@ export type {
   ExpressMiddleware,
   HttpServerAdapter,
   HttpServerAdapterFactory,
+  HttpServerListenOptions,
   Method,
   NativeApp,
   OcHandler,
   OcRequest,
   OcResponse,
+  PromiseHttpServerAdapter,
   UploadedFile
 } from './registry/domain/http-server/types';
-export type { Plugin, PluginContext } from './types';
+export type {
+  CorsConfig,
+  CorsOptions,
+  Plugin,
+  PluginContext
+} from './types';

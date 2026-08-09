@@ -399,4 +399,55 @@ describe('registry : domain : plugins-initialiser', () => {
       expect(result.doSomething.handler()).to.eql(true);
     });
   });
+
+  it('should keep deferred plugins isolated across concurrent initialisations', async () => {
+    let resolveBaseRegistration;
+    let signalBaseRegistrationStarted;
+    const baseRegistrationStarted = new Promise((resolve) => {
+      signalBaseRegistrationStarted = resolve;
+    });
+
+    const firstBasePlugin = {
+      name: 'base',
+      register: {
+        register: () =>
+          new Promise((resolve) => {
+            resolveBaseRegistration = resolve;
+            signalBaseRegistrationStarted();
+          }),
+        execute: () => 'first'
+      }
+    };
+    const firstDependentPlugin = {
+      name: 'firstDependent',
+      register: {
+        register: async () => {},
+        execute: () => 'dependent',
+        dependencies: ['base']
+      }
+    };
+
+    const firstInitialisation = pluginsInitialiser.init([
+      firstDependentPlugin,
+      firstBasePlugin
+    ]);
+    await baseRegistrationStarted;
+
+    const secondInitialisation = pluginsInitialiser.init([
+      {
+        name: 'base',
+        register: {
+          register: async () => {},
+          execute: () => 'second'
+        }
+      }
+    ]);
+
+    const secondResult = await secondInitialisation;
+    resolveBaseRegistration();
+    const firstResult = await firstInitialisation;
+
+    expect(secondResult).to.not.have.property('firstDependent');
+    expect(firstResult).to.have.all.keys('base', 'firstDependent');
+  });
 });

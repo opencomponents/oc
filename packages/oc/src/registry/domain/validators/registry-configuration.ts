@@ -1,13 +1,17 @@
 import strings from '../../../resources';
-import type { Config } from '../../../types';
+import type { Config, CorsOptions } from '../../../types';
+import { validateCorsConfig } from '../../middleware/cors';
 import * as auth from '../authentication';
 import getPromiseBasedMetadataAdapter from '../metadata-adapter';
 import getMetadataAdapterOptions from '../metadata-adapter-options';
 
 type ValidationResult = { isValid: true } | { isValid: false; message: string };
+type RegistryConfiguration = Partial<
+  Omit<Config, 'dataProvider' | 'discovery' | 'cors'>
+> & { cors?: CorsOptions };
 
 export default function registryConfiguration(
-  conf: Partial<Omit<Config, 'dataProvider' | 'discovery'>>
+  conf: RegistryConfiguration
 ): ValidationResult {
   const returnError = (message: string): ValidationResult => {
     return {
@@ -34,6 +38,11 @@ export default function registryConfiguration(
         strings.errors.registry.CONFIGURATION_PREFIX_DOES_NOT_END_WITH_SLASH
       );
     }
+  }
+
+  const corsError = validateCorsConfig(conf.cors);
+  if (corsError) {
+    return returnError(corsError);
   }
 
   const publishAuth = conf.publishAuth;
