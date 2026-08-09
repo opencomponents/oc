@@ -212,6 +212,22 @@ These files are one-way projections from the metadata store. They can help with
 rollback to storage mode, but they do not replace the storage adapter because
 component statics remain in storage.
 
+## Registry events
+
+The registry emits an `error` event with the stable payload shape
+`{ code: string, message: string }`:
+
+```js
+registry.on('error', ({ code, message }) => {
+  console.error(code, message);
+});
+```
+
+Errors raised by the configured server adapter use the adapter-neutral code
+`SERVER_ERROR`. The message is preserved from the adapter error, and the existing
+`start` callback and promise rejection behavior is unchanged. The public
+TypeScript payload is exported as `RegistryErrorEvent`.
+
 ## Requirements and build status
 
 Disclaimer: This project is still under heavy development and the API is likely to change at any time. In case you would find any issues, check the [troubleshooting page](../../CONTRIBUTING.md#troubleshooting).

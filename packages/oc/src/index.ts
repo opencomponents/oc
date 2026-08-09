@@ -21,5 +21,6 @@ export type {
   CorsConfig,
   CorsOptions,
   Plugin,
-  PluginContext
+  PluginContext,
+  RegistryErrorEvent
 } from './types';

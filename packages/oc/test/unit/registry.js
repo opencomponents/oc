@@ -338,11 +338,43 @@ describe('registry', () => {
                 expect(deps['./domain/events-handler'].fire.args[0]).to.eql([
                   'error',
                   {
-                    code: 'EXPRESS_ERROR',
+                    code: 'SERVER_ERROR',
                     message: 'I failed for some reason'
                   }
                 ]);
               });
+            });
+
+            describe('when the configured HTTP server adapter emits an error', () => {
+              for (const adapterName of ['express', 'fastify', 'future']) {
+                it(`should emit the same error event for ${adapterName}`, async () => {
+                  deps['./domain/plugins-initialiser'].init.resolves('ok');
+                  repositoryInitStub.resolves('ok');
+                  deps['./app-start'].resolves('ok');
+                  deps['./domain/events-handler'].fire = sinon.stub();
+
+                  const newRegistry = Registry({});
+                  const serverError = new Error(`${adapterName} failed`);
+                  adapter.listen.callsFake(() => new Promise(() => {}));
+                  adapter.onServerError.callsFake((cb) => cb(serverError));
+
+                  let rejectedError;
+                  try {
+                    await newRegistry.start();
+                  } catch (error) {
+                    rejectedError = error;
+                  }
+
+                  expect(rejectedError.name).to.equal('Error');
+                  expect(rejectedError.message).to.equal(`${adapterName} failed`);
+                  expect(
+                    deps['./domain/events-handler'].fire.calledWith('error', {
+                      code: 'SERVER_ERROR',
+                      message: `${adapterName} failed`
+                    })
+                  ).to.be.true;
+                });
+              }
             });
           });
         });

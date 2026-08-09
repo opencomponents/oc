@@ -11,6 +11,16 @@ export type { ComponentRow, MetadataStore } from 'oc-metadata-adapters-utils';
 
 type Middleware = (req: Request, res: Response, next: NextFunction) => void;
 
+export interface RegistryErrorEvent {
+  /**
+   * Stable registry error category. Server adapter failures use
+   * `SERVER_ERROR`, regardless of the configured adapter.
+   */
+  code: string;
+  /** The original error message reported by the failing registry operation. */
+  message: string;
+}
+
 export interface CorsConfig {
   origin: string;
   credentials: boolean;
