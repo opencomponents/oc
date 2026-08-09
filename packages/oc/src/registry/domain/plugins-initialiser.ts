@@ -64,14 +64,18 @@ const registerPlugin = (
   ) => unknown;
 
   return new Promise((resolve, reject) => {
+    let callbackCalled = false;
+    let callbackError: Error | undefined;
+    let useCallback = false;
     let result: unknown;
 
     try {
       result = register(plugin.options || {}, dependencies, (error?: Error) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve();
+        callbackCalled = true;
+        callbackError = error;
+
+        if (useCallback) {
+          error ? reject(error) : resolve();
         }
       });
     } catch (error) {
@@ -82,11 +86,16 @@ const registerPlugin = (
     if (isPromiseLike(result)) {
       void result.then(resolve, reject);
     } else {
+      useCallback = true;
       deprecate({
         id: 'plugin-register-callback',
         subject: 'Plugin register callbacks',
         replacement: 'an async register(options, dependencies) function'
       });
+
+      if (callbackCalled) {
+        callbackError ? reject(callbackError) : resolve();
+      }
     }
   });
 };

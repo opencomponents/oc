@@ -506,9 +506,11 @@ export interface Template {
   render: (options: any, cb: (err: Error | null, data: string) => void) => void;
 }
 
-export type PluginRegistration<T = any> =
-  | ((options: T, dependencies: any) => Promise<void>)
-  | ((options: T, dependencies: any, next: (error?: Error) => void) => void);
+export type PluginRegistration<T = any> = (
+  options: T,
+  dependencies: any,
+  next: (error?: Error) => void
+) => void | Promise<void>;
 
 interface BasePLugin<T = any> {
   description?: string;

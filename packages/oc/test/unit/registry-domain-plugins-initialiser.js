@@ -207,6 +207,29 @@ describe('registry : domain : plugins-initialiser', () => {
 
       expect(error.message).to.equal('async registration failed');
     });
+
+    it('uses the returned promise when the callback also completes', async () => {
+      let error;
+
+      try {
+        await pluginsInitialiser.init([
+          {
+            name: 'hybridPlugin',
+            register: {
+              register: (_options, _dependencies, next) => {
+                next();
+                return Promise.reject(new Error('promise registration failed'));
+              },
+              execute: () => {}
+            }
+          }
+        ]);
+      } catch (err) {
+        error = err;
+      }
+
+      expect(error.message).to.equal('promise registration failed');
+    });
   });
 
   describe('when plugin specifies dependencies', () => {
