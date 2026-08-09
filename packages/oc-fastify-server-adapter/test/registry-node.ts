@@ -179,9 +179,7 @@ const getPort = (): Promise<number> =>
   });
 
 const closeRegistry = (registry: StartedRegistry): Promise<void> =>
-  new Promise((resolve, reject) => {
-    registry.close((err) => (err instanceof Error ? reject(err) : resolve()));
-  });
+  registry.close();
 
 const startRegistry = async (
   options: Record<string, unknown> = {}
@@ -206,15 +204,7 @@ const startRegistry = async (
     ...options
   });
 
-  const data = await new Promise<StartedData>((resolve, reject) => {
-    registry.start((err, startData) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(startData as StartedData);
-      }
-    });
-  });
+  const data = (await registry.start()) as StartedData;
 
   return { baseUrl: `http://localhost:${port}`, data, registry };
 };
@@ -401,9 +391,7 @@ async function testRegistryNonLocalPublishWithAuth(): Promise<void> {
   };
 
   try {
-    await new Promise<void>((resolve, reject) => {
-      registry.start((err) => (err ? reject(err) : resolve()));
-    });
+    await registry.start();
 
     const unauthorized = await fetch(
       `http://localhost:${port}/published-fastify/1.0.0`,

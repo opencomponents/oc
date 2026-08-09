@@ -96,7 +96,13 @@ type ExpressMiddleware = (
   next: (err?: unknown) => void
 ) => void;
 
-export type HttpServerAdapter<TNative = unknown> = {
+type HttpServerListenOptions = {
+  port: number | string;
+  timeout: number;
+  keepAliveTimeout?: number;
+};
+
+type HttpServerAdapterBase<TNative> = {
   name: string;
   enableBodyParser(opts: { limit?: number | string }): void;
   enableCookies(): void;
@@ -114,16 +120,32 @@ export type HttpServerAdapter<TNative = unknown> = {
   use(handler: OcHandler): void;
   route(method: Method, path: string, id: string, handlers: OcHandler[]): void;
   fromConnect(handler: ExpressMiddleware): OcHandler;
-  listen(
-    opts: { port: number | string; timeout: number; keepAliveTimeout?: number },
-    cb: (err?: Error) => void
-  ): void;
   onServerError(cb: (err: Error) => void): void;
-  close(cb: (err?: Error) => void): void;
   isListening(): boolean;
   native(): TNative;
   httpServer(): http.Server;
 };
+
+type PromiseHttpServerAdapterLifecycle = {
+  readonly supportsPromiseLifecycle: true;
+  listen(opts: HttpServerListenOptions): Promise<void>;
+  listen(opts: HttpServerListenOptions, cb: (err?: Error) => void): void;
+  close(): Promise<void>;
+  close(cb: (err?: Error) => void): void;
+};
+
+type CallbackHttpServerAdapterLifecycle = {
+  readonly supportsPromiseLifecycle?: false | undefined;
+  listen(opts: HttpServerListenOptions, cb: (err?: Error) => void): void;
+  close(cb: (err?: Error) => void): void;
+};
+
+export type PromiseHttpServerAdapter<TNative = unknown> =
+  HttpServerAdapterBase<TNative> & PromiseHttpServerAdapterLifecycle;
+
+export type HttpServerAdapter<TNative = unknown> =
+  | PromiseHttpServerAdapter<TNative>
+  | (HttpServerAdapterBase<TNative> & CallbackHttpServerAdapterLifecycle);
 
 export interface FastifyServerAdapterOptions {
   host?: string;
@@ -136,6 +158,20 @@ const ocResponseSym = Symbol('ocResponse');
 const timingStartSym = Symbol('timingStart');
 const multipartParsedSym = Symbol('multipartParsed');
 const defaultBodyLimit = 100 * 1024;
+const warnedDeprecations = new Set<string>();
+
+const warnAboutCallback = () => {
+  const id = 'http-server-adapter-callbacks';
+  if (warnedDeprecations.has(id)) {
+    return;
+  }
+
+  warnedDeprecations.add(id);
+  process.emitWarning(
+    'The HTTP server adapter callback API is deprecated and will be removed in OpenComponents v1 - use the returned promises instead.',
+    'DeprecationWarning'
+  );
+};
 
 type FastifyRequestWithState = FastifyRequest & {
   [ocRequestSym]?: MutableOcRequest;
@@ -156,22 +192,28 @@ export type HttpServerAdapterFactory<TOptions = unknown, TNative = unknown> = {
   readonly __serverAdapterOptions?: TOptions;
 };
 
-type FastifyServerAdapterFactory = HttpServerAdapterFactory<
-  FastifyServerAdapterOptions | number | string,
-  FastifyInstance
->;
+type FastifyServerAdapterFactory = {
+  (options?: unknown): PromiseHttpServerAdapter<FastifyInstance>;
+  readonly __serverAdapterOptions?:
+    | FastifyServerAdapterOptions
+    | number
+    | string;
+};
 
 const createFastifyAdapter = ((
   options?: unknown
-): HttpServerAdapter<FastifyInstance> =>
+): PromiseHttpServerAdapter<FastifyInstance> =>
   new FastifyHttpServerAdapter(
     toFastifyAdapterOptions(options)
   )) as FastifyServerAdapterFactory;
 
 export default createFastifyAdapter;
 
-class FastifyHttpServerAdapter implements HttpServerAdapter<FastifyInstance> {
+class FastifyHttpServerAdapter
+  implements Omit<HttpServerAdapter<FastifyInstance>, 'listen' | 'close'>
+{
   name = 'fastify';
+  readonly supportsPromiseLifecycle = true;
 
   private app: FastifyInstance;
   private bodyInflationRegistered = false;
@@ -411,10 +453,12 @@ class FastifyHttpServerAdapter implements HttpServerAdapter<FastifyInstance> {
       });
   }
 
+  listen(opts: HttpServerListenOptions): Promise<void>;
+  listen(opts: HttpServerListenOptions, cb: (err?: Error) => void): void;
   listen(
-    opts: { port: number | string; timeout: number; keepAliveTimeout?: number },
-    cb: (err?: Error) => void
-  ): void {
+    opts: HttpServerListenOptions,
+    cb?: (err?: Error) => void
+  ): void | Promise<void> {
     this.registerOptionsRoutes();
 
     this.app.server.timeout = opts.timeout;
@@ -422,17 +466,33 @@ class FastifyHttpServerAdapter implements HttpServerAdapter<FastifyInstance> {
       this.app.server.keepAliveTimeout = opts.keepAliveTimeout;
     }
 
-    this.app.listen(normaliseListenOptions(opts.port, this.host), (err) =>
-      cb(err ?? undefined)
-    );
+    if (cb) {
+      warnAboutCallback();
+      this.app.listen(normaliseListenOptions(opts.port, this.host), (err) =>
+        cb(err ?? undefined)
+      );
+      return;
+    }
+
+    return this.app
+      .listen(normaliseListenOptions(opts.port, this.host))
+      .then(() => undefined);
   }
 
   onServerError(cb: (err: Error) => void): void {
     this.app.server.on('error', cb);
   }
 
-  close(cb: (err?: Error) => void): void {
-    this.app.close().then(() => cb(), cb);
+  close(): Promise<void>;
+  close(cb: (err?: Error) => void): void;
+  close(cb?: (err?: Error) => void): void | Promise<void> {
+    if (cb) {
+      warnAboutCallback();
+      this.app.close().then(() => cb(), cb);
+      return;
+    }
+
+    return this.app.close();
   }
 
   isListening(): boolean {

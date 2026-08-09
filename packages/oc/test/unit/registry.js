@@ -8,6 +8,7 @@ describe('registry', () => {
 
   const createAdapter = () => ({
     native: sinon.stub().returns('express instance'),
+    supportsPromiseLifecycle: true,
     listen: sinon.stub(),
     onServerError: sinon.stub(),
     httpServer: sinon.stub().returns('server instance'),
@@ -102,7 +103,7 @@ describe('registry', () => {
         deps['./domain/plugins-initialiser'].init.resolves({});
         repositoryInitStub.resolves();
         deps['./app-start'].resolves();
-        adapter.listen.callsFake((_opts, cb) => cb(null));
+        adapter.listen.resolves();
 
         await registry.start();
 
@@ -200,9 +201,7 @@ describe('registry', () => {
                   repositoryInitStub.resolves('ok');
                   deps['./app-start'].resolves('ok');
 
-                  adapter.listen.callsFake((_opts, cb) =>
-                    cb('Port is already used')
-                  );
+                  adapter.listen.rejects(new Error('Port is already used'));
 
                   registry.start((err) => {
                     error = err;
@@ -225,7 +224,7 @@ describe('registry', () => {
                   deps['./app-start'].resolves('ok');
                   deps['./domain/events-handler'].fire = sinon.stub();
 
-                  adapter.listen.callsFake((_opts, cb) => cb(null));
+                  adapter.listen.resolves();
 
                   registry.start((err, res) => {
                     error = err;
@@ -252,7 +251,7 @@ describe('registry', () => {
 
                 it('should resolve with the app and server', async () => {
                   const newRegistry = Registry({});
-                  adapter.listen.callsFake((_opts, cb) => cb(null));
+                  adapter.listen.resolves();
 
                   const result = await newRegistry.start();
 
@@ -265,7 +264,7 @@ describe('registry', () => {
                 it('should invoke a callback once when its promise is awaited', async () => {
                   const newRegistry = Registry({});
                   const callback = sinon.spy();
-                  adapter.listen.callsFake((_opts, cb) => cb(null));
+                  adapter.listen.resolves();
 
                   const result = await newRegistry.start(callback);
 
@@ -275,7 +274,7 @@ describe('registry', () => {
 
                 it('should reject the returned promise when the callback throws', async () => {
                   const newRegistry = Registry({});
-                  adapter.listen.callsFake((_opts, cb) => cb(null));
+                  adapter.listen.resolves();
 
                   let error;
                   try {
@@ -288,6 +287,27 @@ describe('registry', () => {
 
                   expect(error.message).to.equal('callback failed');
                 });
+
+                it('should support callback-only adapters through the promise API', async () => {
+                  const newRegistry = Registry({});
+                  adapter.supportsPromiseLifecycle = false;
+                  let finishListen;
+                  adapter.listen.callsFake((_opts, cb) => {
+                    finishListen = cb;
+                  });
+
+                  const startPromise = newRegistry.start();
+                  await new Promise((resolve) => setImmediate(resolve));
+
+                  expect(finishListen).to.be.a('function');
+                  finishListen();
+                  const result = await startPromise;
+
+                  expect(result).to.eql({
+                    app: 'express instance',
+                    server: 'server instance'
+                  });
+                });
               });
 
               describe('when http listener emits an error before the listener to start', () => {
@@ -298,7 +318,7 @@ describe('registry', () => {
                   deps['./app-start'].resolves('ok');
                   deps['./domain/events-handler'].fire = sinon.stub();
 
-                  adapter.listen.callsFake(() => undefined);
+                  adapter.listen.callsFake(() => new Promise(() => {}));
                   adapter.onServerError.callsFake((cb) =>
                     cb('I failed for some reason')
                   );
@@ -358,9 +378,9 @@ describe('registry', () => {
 
         it('should close the server then the repository when listening', (done) => {
           const registry = Registry({});
-          adapter.listen.callsFake((_opts, cb) => cb(null));
+          adapter.listen.resolves();
           adapter.isListening.returns(true);
-          adapter.close.callsFake((cb) => cb(undefined));
+          adapter.close.resolves();
 
           registry.start(() => {
             registry.close((err) => {
@@ -383,13 +403,13 @@ describe('registry', () => {
           );
           const registry = Registry({});
           adapter.isListening.returns(true);
-          adapter.close.callsFake((cb) => cb(undefined));
+          adapter.close.resolves();
 
           let closed = false;
           const closePromise = registry.close().then(() => {
             closed = true;
           });
-          await Promise.resolve();
+          await new Promise((resolve) => setImmediate(resolve));
 
           expect(adapter.close.calledOnce).to.be.true;
           expect(repositoryCloseStub.calledOnce).to.be.true;
@@ -419,9 +439,9 @@ describe('registry', () => {
         it('should still call the repository close when the server close errors', (done) => {
           const serverError = new Error('close failed');
           const registry = Registry({});
-          adapter.listen.callsFake((_opts, cb) => cb(null));
+          adapter.listen.resolves();
           adapter.isListening.returns(true);
-          adapter.close.callsFake((cb) => cb(serverError));
+          adapter.close.rejects(serverError);
 
           registry.start(() => {
             registry.close((err) => {
@@ -430,6 +450,27 @@ describe('registry', () => {
               done();
             });
           });
+        });
+
+        it('should support callback-only adapters when closing through the promise API', async () => {
+          const registry = Registry({});
+          adapter.supportsPromiseLifecycle = false;
+          adapter.isListening.returns(true);
+          let finishClose;
+          adapter.close.callsFake((cb) => {
+            finishClose = cb;
+          });
+
+          const closePromise = registry.close();
+          await new Promise((resolve) => setImmediate(resolve));
+
+          expect(adapter.close.calledOnce).to.be.true;
+          expect(repositoryCloseStub.called).to.be.false;
+
+          finishClose();
+          await closePromise;
+
+          expect(repositoryCloseStub.calledOnce).to.be.true;
         });
       });
     });

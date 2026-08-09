@@ -6,6 +6,7 @@ import appStart from './app-start';
 import eventsHandler from './domain/events-handler';
 import type {
   HttpServerAdapterFactory,
+  HttpServerListenOptions,
   NativeApp
 } from './domain/http-server/types';
 import sanitiseOptions, { RegistryOptions } from './domain/options-sanitiser';
@@ -74,6 +75,40 @@ export default function registry<
   const app = adapter.native() as TApp;
   const repository = Repository(options);
 
+  const listenAdapter = (
+    serverOptions: HttpServerListenOptions
+  ): Promise<void> => {
+    if (adapter.supportsPromiseLifecycle) {
+      return adapter.listen(serverOptions);
+    }
+
+    return new Promise<void>((resolve, reject) => {
+      adapter.listen(serverOptions, (err?: Error) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  };
+
+  const closeAdapter = (): Promise<void> => {
+    if (adapter.supportsPromiseLifecycle) {
+      return adapter.close();
+    }
+
+    return new Promise<void>((resolve, reject) => {
+      adapter.close((err?: Error) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  };
+
   const closePromise = (): Promise<void> => {
     const closeMetadataStore = (): Promise<void> =>
       Promise.resolve(repository.close?.()).catch(() => undefined);
@@ -84,13 +119,7 @@ export default function registry<
         return;
       }
 
-      adapter.close((err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
+      closeAdapter().then(resolve, reject);
     });
 
     return closeServer.finally(closeMetadataStore);
@@ -134,46 +163,12 @@ export default function registry<
       const componentsInfo = await repository.init();
       await appStart(repository, options);
 
-      return await new Promise<RegistryStartResult<TApp>>((resolve, reject) => {
-        adapter.listen(
-          {
-            port: options.port,
-            timeout: options.timeout,
-            keepAliveTimeout: options.keepAliveTimeout
-          },
-          (err?: Error) => {
-            if (err) {
-              reject(toError(err));
-              return;
-            }
-            eventsHandler.fire('start', {});
-
-            if (options.verbosity) {
-              ok(
-                `Registry started at port http://localhost:${options.port}${options.prefix}`
-              );
-
-              if (componentsInfo) {
-                const componentsNumber = Object.keys(
-                  componentsInfo.components
-                ).length;
-                const componentsReleases = Object.values(
-                  componentsInfo.components
-                ).reduce(
-                  (acc, component) => acc + Object.keys(component).length,
-                  0
-                );
-
-                ok(
-                  `Registry serving ${componentsNumber} components for a total of ${componentsReleases} releases.`
-                );
-              }
-            }
-
-            resolve({ app, server: adapter.httpServer() });
-          }
-        );
-
+      const listenPromise = listenAdapter({
+        port: options.port,
+        timeout: options.timeout,
+        keepAliveTimeout: options.keepAliveTimeout
+      });
+      const serverError = new Promise<never>((_resolve, reject) => {
         adapter.onServerError((error) => {
           eventsHandler.fire('error', {
             code: 'EXPRESS_ERROR',
@@ -182,6 +177,31 @@ export default function registry<
           reject(toError(error));
         });
       });
+      void serverError.catch(() => undefined);
+
+      await Promise.race([listenPromise, serverError]);
+      eventsHandler.fire('start', {});
+
+      if (options.verbosity) {
+        ok(
+          `Registry started at port http://localhost:${options.port}${options.prefix}`
+        );
+
+        if (componentsInfo) {
+          const componentsNumber = Object.keys(
+            componentsInfo.components
+          ).length;
+          const componentsReleases = Object.values(
+            componentsInfo.components
+          ).reduce((acc, component) => acc + Object.keys(component).length, 0);
+
+          ok(
+            `Registry serving ${componentsNumber} components for a total of ${componentsReleases} releases.`
+          );
+        }
+      }
+
+      return { app, server: adapter.httpServer() };
     } catch (err) {
       throw toError(err);
     }

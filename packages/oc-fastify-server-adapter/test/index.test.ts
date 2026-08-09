@@ -4,26 +4,41 @@ import path from 'node:path';
 import { Readable } from 'node:stream';
 import { gzipSync } from 'node:zlib';
 import type { FastifyInstance } from 'fastify';
-import type { HttpServerAdapter } from '../src';
+import type { PromiseHttpServerAdapter } from '../src';
 import createFastifyAdapter from '../src';
 
-const asFastify = (adapter: HttpServerAdapter): FastifyInstance =>
+const asFastify = (adapter: PromiseHttpServerAdapter): FastifyInstance =>
   adapter.native() as FastifyInstance;
 
-const closeAdapter = (adapter: HttpServerAdapter): Promise<void> =>
-  new Promise((resolve, reject) => {
-    adapter.close((err) => (err ? reject(err) : resolve()));
-  });
+const closeAdapter = (adapter: PromiseHttpServerAdapter): Promise<void> =>
+  adapter.close();
 
 const listen = (
-  adapter: HttpServerAdapter,
+  adapter: PromiseHttpServerAdapter,
   port: number | string = 0
-): Promise<void> =>
-  new Promise((resolve, reject) => {
-    adapter.listen({ port, timeout: 120000 }, (err) =>
-      err ? reject(err) : resolve()
-    );
+): Promise<void> => adapter.listen({ port, timeout: 120000 });
+
+test('preserves callback-based listen and close with a deprecation warning', (done) => {
+  const emitWarning = jest
+    .spyOn(process, 'emitWarning')
+    .mockImplementation(() => true);
+  const adapter = createFastifyAdapter();
+
+  adapter.listen({ port: 0, timeout: 120000 }, (listenError) => {
+    expect(listenError).toBeUndefined();
+
+    adapter.close((closeError) => {
+      expect(closeError).toBeUndefined();
+      expect(emitWarning).toHaveBeenCalledTimes(1);
+      expect(emitWarning).toHaveBeenCalledWith(
+        expect.stringContaining('HTTP server adapter callback API'),
+        'DeprecationWarning'
+      );
+      emitWarning.mockRestore();
+      done();
+    });
   });
+});
 
 test('returns strong etags and honours conditional requests', async () => {
   const adapter = createFastifyAdapter();
@@ -227,14 +242,11 @@ test('listens on Azure named pipes', async () => {
   const pipe = String.raw`\\.\pipe\cdfd043b-d3a4-4c5d-bb08-c17a644a30ab`;
   const listenSpy = jest
     .spyOn(app, 'listen')
-    .mockImplementation(((
-      _options: unknown,
-      callback: (err: Error | null) => void
-    ) => callback(null)) as never);
+    .mockImplementation((() => Promise.resolve()) as never);
 
   await listen(adapter, pipe);
 
-  expect(listenSpy).toHaveBeenCalledWith({ path: pipe }, expect.any(Function));
+  expect(listenSpy).toHaveBeenCalledWith({ path: pipe });
 });
 
 test('ignores trailing slashes like Express strict routing off', async () => {
