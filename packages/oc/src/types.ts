@@ -11,6 +11,20 @@ export type { ComponentRow, MetadataStore } from 'oc-metadata-adapters-utils';
 
 type Middleware = (req: Request, res: Response, next: NextFunction) => void;
 
+export interface CorsConfig {
+  origin: string;
+  credentials: boolean;
+  allowedHeaders: string;
+  methods: string;
+}
+
+export interface CorsOptions {
+  origin?: string;
+  credentials?: boolean;
+  allowedHeaders?: string | string[];
+  methods?: string | string[];
+}
+
 export interface Author {
   email?: string;
   name?: string;
@@ -213,6 +227,12 @@ export interface Config<
    * @example "https://components.mycompany.com/"
    */
   baseUrl: string;
+  /**
+   * CORS response headers sent by the registry.
+   *
+   * @default Existing registry CORS headers
+   */
+  cors?: CorsConfig;
   /**
    * Pre-compiled version of the `oc-client` library generated automatically
    * at runtime when `compileClient` is enabled (default).

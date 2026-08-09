@@ -15,4 +15,9 @@ export type {
   OcResponse,
   UploadedFile
 } from './registry/domain/http-server/types';
-export type { Plugin, PluginContext } from './types';
+export type {
+  CorsConfig,
+  CorsOptions,
+  Plugin,
+  PluginContext
+} from './types';
