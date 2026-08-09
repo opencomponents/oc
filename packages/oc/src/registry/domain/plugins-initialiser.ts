@@ -48,8 +48,6 @@ function checkDependencies(plugins: Plugin[]) {
   return graph.overallOrder();
 }
 
-let deferredLoads: Plugin[] = [];
-
 const isPromiseLike = (value: unknown): value is PromiseLike<void> =>
   typeof (value as PromiseLike<void> | undefined)?.then === 'function';
 
@@ -102,6 +100,7 @@ const registerPlugin = (
 
 export async function init(pluginsToRegister: unknown[]): Promise<Plugins> {
   const registered: Plugins = {};
+  const deferredLoads: Plugin[] = [];
 
   validatePlugins(pluginsToRegister);
   checkDependencies(pluginsToRegister);
@@ -157,7 +156,7 @@ export async function init(pluginsToRegister: unknown[]): Promise<Plugins> {
   const terminator = async (): Promise<Plugins> => {
     if (deferredLoads.length > 0) {
       const deferredPlugins = [...deferredLoads];
-      deferredLoads = [];
+      deferredLoads.length = 0;
 
       await Promise.all(
         deferredPlugins.map((plugin) => onSeries(() => loadPlugin(plugin)))
