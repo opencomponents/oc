@@ -1,6 +1,6 @@
 import type { IncomingHttpHeaders } from 'node:http';
 import strings from '../../resources';
-import type { Component } from '../../types';
+import type { Component, RegistryErrorEvent } from '../../types';
 
 type Subscription<T = any> = (data: T) => void;
 let subscriptions: Record<string, Array<Subscription>> = {};
@@ -20,7 +20,7 @@ export interface RequestData {
 }
 
 type Events = {
-  error: { code: string; message: string };
+  error: RegistryErrorEvent;
   start: unknown;
   'cache-poll': number;
   request: RequestData;

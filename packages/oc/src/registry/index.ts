@@ -21,6 +21,7 @@ export { RegistryOptions };
 
 type RegistryStartResult<TApp> = { app: TApp; server: http.Server };
 type RegistryCallback<T> = (err: unknown, data?: T) => void;
+const SERVER_ERROR_CODE = 'SERVER_ERROR';
 
 export interface RegistryType<TApp = NativeApp<HttpServerAdapterFactory>> {
   close(): Promise<void>;
@@ -171,7 +172,7 @@ export default function registry<
       const serverError = new Promise<never>((_resolve, reject) => {
         adapter.onServerError((error) => {
           eventsHandler.fire('error', {
-            code: 'EXPRESS_ERROR',
+            code: SERVER_ERROR_CODE,
             message: error?.message ?? String(error)
           });
           reject(toError(error));
