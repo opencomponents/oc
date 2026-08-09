@@ -8,6 +8,7 @@ describe('registry', () => {
 
   const createAdapter = () => ({
     native: sinon.stub().returns('express instance'),
+    supportsPromiseLifecycle: true,
     listen: sinon.stub(),
     onServerError: sinon.stub(),
     httpServer: sinon.stub().returns('server instance'),
@@ -286,6 +287,27 @@ describe('registry', () => {
 
                   expect(error.message).to.equal('callback failed');
                 });
+
+                it('should support callback-only adapters through the promise API', async () => {
+                  const newRegistry = Registry({});
+                  adapter.supportsPromiseLifecycle = false;
+                  let finishListen;
+                  adapter.listen.callsFake((_opts, cb) => {
+                    finishListen = cb;
+                  });
+
+                  const startPromise = newRegistry.start();
+                  await new Promise((resolve) => setImmediate(resolve));
+
+                  expect(finishListen).to.be.a('function');
+                  finishListen();
+                  const result = await startPromise;
+
+                  expect(result).to.eql({
+                    app: 'express instance',
+                    server: 'server instance'
+                  });
+                });
               });
 
               describe('when http listener emits an error before the listener to start', () => {
@@ -428,6 +450,27 @@ describe('registry', () => {
               done();
             });
           });
+        });
+
+        it('should support callback-only adapters when closing through the promise API', async () => {
+          const registry = Registry({});
+          adapter.supportsPromiseLifecycle = false;
+          adapter.isListening.returns(true);
+          let finishClose;
+          adapter.close.callsFake((cb) => {
+            finishClose = cb;
+          });
+
+          const closePromise = registry.close();
+          await new Promise((resolve) => setImmediate(resolve));
+
+          expect(adapter.close.calledOnce).to.be.true;
+          expect(repositoryCloseStub.called).to.be.false;
+
+          finishClose();
+          await closePromise;
+
+          expect(repositoryCloseStub.calledOnce).to.be.true;
         });
       });
     });

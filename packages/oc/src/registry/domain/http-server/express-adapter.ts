@@ -14,7 +14,8 @@ import type {
   Method,
   OcHandler,
   OcRequest,
-  OcResponse
+  OcResponse,
+  PromiseHttpServerAdapter
 } from './types';
 
 const expressMiddleware = Symbol('expressMiddleware');
@@ -51,7 +52,7 @@ function normaliseParams(raw: Record<string, unknown>): Record<string, string> {
 
 export default function createExpressAdapter(
   options?: unknown
-): HttpServerAdapter<Express> {
+): PromiseHttpServerAdapter<Express> {
   const adapterOptions = options as
     | { port?: number | string }
     | number
@@ -62,8 +63,11 @@ export default function createExpressAdapter(
   );
 }
 
-class ExpressHttpServerAdapter implements HttpServerAdapter<Express> {
+class ExpressHttpServerAdapter
+  implements Omit<HttpServerAdapter<Express>, 'listen' | 'close'>
+{
   name = 'express';
+  readonly supportsPromiseLifecycle = true;
 
   private app: Express;
   private server?: http.Server;

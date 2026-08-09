@@ -102,7 +102,7 @@ type HttpServerListenOptions = {
   keepAliveTimeout?: number;
 };
 
-export type HttpServerAdapter<TNative = unknown> = {
+type HttpServerAdapterBase<TNative> = {
   name: string;
   enableBodyParser(opts: { limit?: number | string }): void;
   enableCookies(): void;
@@ -120,15 +120,32 @@ export type HttpServerAdapter<TNative = unknown> = {
   use(handler: OcHandler): void;
   route(method: Method, path: string, id: string, handlers: OcHandler[]): void;
   fromConnect(handler: ExpressMiddleware): OcHandler;
-  listen(opts: HttpServerListenOptions): Promise<void>;
-  listen(opts: HttpServerListenOptions, cb: (err?: Error) => void): void;
   onServerError(cb: (err: Error) => void): void;
-  close(): Promise<void>;
-  close(cb: (err?: Error) => void): void;
   isListening(): boolean;
   native(): TNative;
   httpServer(): http.Server;
 };
+
+type PromiseHttpServerAdapterLifecycle = {
+  readonly supportsPromiseLifecycle: true;
+  listen(opts: HttpServerListenOptions): Promise<void>;
+  listen(opts: HttpServerListenOptions, cb: (err?: Error) => void): void;
+  close(): Promise<void>;
+  close(cb: (err?: Error) => void): void;
+};
+
+type CallbackHttpServerAdapterLifecycle = {
+  readonly supportsPromiseLifecycle?: false | undefined;
+  listen(opts: HttpServerListenOptions, cb: (err?: Error) => void): void;
+  close(cb: (err?: Error) => void): void;
+};
+
+export type PromiseHttpServerAdapter<TNative = unknown> =
+  HttpServerAdapterBase<TNative> & PromiseHttpServerAdapterLifecycle;
+
+export type HttpServerAdapter<TNative = unknown> =
+  | PromiseHttpServerAdapter<TNative>
+  | (HttpServerAdapterBase<TNative> & CallbackHttpServerAdapterLifecycle);
 
 export interface FastifyServerAdapterOptions {
   host?: string;
@@ -175,22 +192,28 @@ export type HttpServerAdapterFactory<TOptions = unknown, TNative = unknown> = {
   readonly __serverAdapterOptions?: TOptions;
 };
 
-type FastifyServerAdapterFactory = HttpServerAdapterFactory<
-  FastifyServerAdapterOptions | number | string,
-  FastifyInstance
->;
+type FastifyServerAdapterFactory = {
+  (options?: unknown): PromiseHttpServerAdapter<FastifyInstance>;
+  readonly __serverAdapterOptions?:
+    | FastifyServerAdapterOptions
+    | number
+    | string;
+};
 
 const createFastifyAdapter = ((
   options?: unknown
-): HttpServerAdapter<FastifyInstance> =>
+): PromiseHttpServerAdapter<FastifyInstance> =>
   new FastifyHttpServerAdapter(
     toFastifyAdapterOptions(options)
   )) as FastifyServerAdapterFactory;
 
 export default createFastifyAdapter;
 
-class FastifyHttpServerAdapter implements HttpServerAdapter<FastifyInstance> {
+class FastifyHttpServerAdapter
+  implements Omit<HttpServerAdapter<FastifyInstance>, 'listen' | 'close'>
+{
   name = 'fastify';
+  readonly supportsPromiseLifecycle = true;
 
   private app: FastifyInstance;
   private bodyInflationRegistered = false;
