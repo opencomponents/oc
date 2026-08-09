@@ -6,9 +6,11 @@ import morgan from 'morgan';
 import multer from 'multer';
 import responseTime from 'response-time';
 
+import deprecate from '../../../utils/deprecate';
 import type {
   ExpressMiddleware,
   HttpServerAdapter,
+  HttpServerListenOptions,
   Method,
   OcHandler,
   OcRequest,
@@ -18,6 +20,13 @@ import type {
 const expressMiddleware = Symbol('expressMiddleware');
 const ocResponseSym = Symbol('ocResponse');
 const ocParamsSym = Symbol('ocParams');
+
+const warnAboutCallback = () =>
+  deprecate({
+    id: 'http-server-adapter-callbacks',
+    subject: 'The HTTP server adapter callback API',
+    replacement: 'the returned promises'
+  });
 
 type WrappedOcHandler = OcHandler & {
   [expressMiddleware]?: ExpressMiddleware;
@@ -169,10 +178,12 @@ class ExpressHttpServerAdapter implements HttpServerAdapter<Express> {
     return wrapped;
   }
 
+  listen(opts: HttpServerListenOptions): Promise<void>;
+  listen(opts: HttpServerListenOptions, cb: (err?: Error) => void): void;
   listen(
-    opts: { port: number | string; timeout: number; keepAliveTimeout?: number },
-    cb: (err?: Error) => void
-  ): void {
+    opts: HttpServerListenOptions,
+    cb?: (err?: Error) => void
+  ): void | Promise<void> {
     this.server = http.createServer(this.app);
     this.server.timeout = opts.timeout;
     if (opts.keepAliveTimeout) {
@@ -181,7 +192,31 @@ class ExpressHttpServerAdapter implements HttpServerAdapter<Express> {
     for (const handler of this.serverErrorHandlers) {
       this.server.on('error', handler);
     }
-    this.server.listen(opts.port, cb as () => void);
+
+    if (cb) {
+      warnAboutCallback();
+      this.server.listen(opts.port, cb as () => void);
+      return;
+    }
+
+    return new Promise<void>((resolve, reject) => {
+      const onListening = () => {
+        cleanup();
+        resolve();
+      };
+      const onError = (err: Error) => {
+        cleanup();
+        reject(err);
+      };
+      const cleanup = () => {
+        this.server?.off('listening', onListening);
+        this.server?.off('error', onError);
+      };
+
+      this.server?.once('listening', onListening);
+      this.server?.once('error', onError);
+      this.server?.listen(opts.port);
+    });
   }
 
   onServerError(cb: (err: Error) => void): void {
@@ -189,8 +224,28 @@ class ExpressHttpServerAdapter implements HttpServerAdapter<Express> {
     this.server?.on('error', cb);
   }
 
-  close(cb: (err?: Error) => void): void {
-    this.server?.close(cb);
+  close(): Promise<void>;
+  close(cb: (err?: Error) => void): void;
+  close(cb?: (err?: Error) => void): void | Promise<void> {
+    if (cb) {
+      warnAboutCallback();
+      this.server?.close(cb);
+      return;
+    }
+
+    if (!this.server) {
+      return Promise.resolve();
+    }
+
+    return new Promise<void>((resolve, reject) => {
+      this.server?.close((err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
   }
 
   isListening(): boolean {

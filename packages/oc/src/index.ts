@@ -8,6 +8,7 @@ export type {
   ExpressMiddleware,
   HttpServerAdapter,
   HttpServerAdapterFactory,
+  HttpServerListenOptions,
   Method,
   NativeApp,
   OcHandler,
