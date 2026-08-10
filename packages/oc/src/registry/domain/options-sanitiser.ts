@@ -1,8 +1,9 @@
 import zlib from 'node:zlib';
 import { compileSync } from 'oc-client-browser';
 import settings from '../../resources/settings';
-import type { Config } from '../../types';
+import type { Config, CorsOptions } from '../../types';
 import deprecate from '../../utils/deprecate';
+import { normaliseCorsConfig } from '../middleware/cors';
 import * as auth from './authentication';
 import createExpressAdapter from './http-server/express-adapter';
 import type { HttpServerAdapterFactory } from './http-server/types';
@@ -20,7 +21,7 @@ export interface RegistryOptions<
 > extends Partial<
     Omit<
       Config<T, TServerAdapter>,
-      'beforePublish' | 'dataProvider' | 'discovery' | 'plugins'
+      'beforePublish' | 'cors' | 'dataProvider' | 'discovery' | 'plugins'
     >
   > {
   /**
@@ -50,6 +51,12 @@ export interface RegistryOptions<
         robots?: boolean;
       }
     | boolean;
+  /**
+   * CORS response headers sent by the registry.
+   *
+   * @default Existing registry CORS headers
+   */
+  cors?: CorsOptions;
   /**
    * Public base URL where the registry will be accessible by consumers.
    * It **must** already include the chosen {@link Config.prefix} and end with a trailing slash.
@@ -108,6 +115,8 @@ export default function optionsSanitiser<
     ...options.dataProvider,
     enabled: options.dataProvider?.enabled !== false
   };
+
+  options.cors = normaliseCorsConfig(options.cors);
 
   if (typeof options.discovery === 'boolean') {
     deprecate({

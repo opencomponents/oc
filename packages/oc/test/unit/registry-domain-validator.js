@@ -196,6 +196,69 @@ describe('registry : domain : validator', () => {
       });
     });
 
+    describe('cors', () => {
+      it('should accept partial CORS configuration', () => {
+        expect(
+          validate({ cors: { origin: 'https://app.example.com' }, s3: baseS3Conf })
+            .isValid
+        ).to.be.true;
+      });
+
+      it('should reject a non-object CORS configuration', () => {
+        const result = validate({ cors: 'all', s3: baseS3Conf });
+
+        expect(result.isValid).to.be.false;
+        expect(result.message).to.equal(
+          'Registry configuration is not valid: cors must be an object'
+        );
+      });
+
+      it('should reject an invalid credentials value', () => {
+        const result = validate({
+          cors: { credentials: 'true' },
+          s3: baseS3Conf
+        });
+
+        expect(result.isValid).to.be.false;
+        expect(result.message).to.equal(
+          'Registry configuration is not valid: cors.credentials must be a boolean'
+        );
+      });
+
+      it('should reject an empty origin', () => {
+        const result = validate({ cors: { origin: '' }, s3: baseS3Conf });
+
+        expect(result.isValid).to.be.false;
+        expect(result.message).to.equal(
+          'Registry configuration is not valid: cors.origin must be a non-empty string'
+        );
+      });
+
+      it('should reject non-string allowed headers', () => {
+        const result = validate({
+          cors: { allowedHeaders: ['Content-Type', 42] },
+          s3: baseS3Conf
+        });
+
+        expect(result.isValid).to.be.false;
+        expect(result.message).to.equal(
+          'Registry configuration is not valid: cors.allowedHeaders must be a string or an array of strings'
+        );
+      });
+
+      it('should reject non-string methods', () => {
+        const result = validate({
+          cors: { methods: ['GET', false] },
+          s3: baseS3Conf
+        });
+
+        expect(result.isValid).to.be.false;
+        expect(result.message).to.equal(
+          'Registry configuration is not valid: cors.methods must be a string or an array of strings'
+        );
+      });
+    });
+
     describe('s3', () => {
       describe('when local=true', () => {
         const conf = { local: true };

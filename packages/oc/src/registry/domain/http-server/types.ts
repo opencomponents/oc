@@ -91,7 +91,7 @@ export interface HttpServerListenOptions {
 }
 
 export type HttpServerAdapterFactory<TOptions = unknown, TNative = unknown> = {
-  (options?: unknown): HttpServerAdapterLike<TNative>;
+  (options?: unknown): HttpServerAdapter<TNative>;
   readonly __serverAdapterOptions?: TOptions;
 };
 
@@ -99,23 +99,23 @@ export type HttpServerAdapterOptions<TAdapter> = TAdapter extends {
   readonly __serverAdapterOptions?: infer TOptions;
 }
   ? TOptions
-  : TAdapter extends (options?: infer TOptions) => HttpServerAdapterLike
+  : TAdapter extends (options?: infer TOptions) => HttpServerAdapter
     ? TOptions
     : unknown;
 
 export type NativeApp<TAdapter> = TAdapter extends (
   ...args: any[]
-) => HttpServerAdapterLike<infer TNative>
+) => HttpServerAdapter<infer TNative>
   ? unknown extends TNative
     ? express.Express
     : TNative
-  : TAdapter extends HttpServerAdapterLike<infer TNative>
+  : TAdapter extends HttpServerAdapter<infer TNative>
     ? unknown extends TNative
       ? express.Express
       : TNative
     : express.Express;
 
-interface HttpServerAdapterCommon<TNative = unknown> {
+interface HttpServerAdapterBase<TNative> {
   name: string;
   enableBodyParser(opts: { limit?: number | string }): void;
   enableCookies(): void;
@@ -133,33 +133,35 @@ interface HttpServerAdapterCommon<TNative = unknown> {
   use(handler: OcHandler): void;
   route(method: Method, path: string, id: string, handlers: OcHandler[]): void;
   fromConnect(handler: ExpressMiddleware): OcHandler;
-  supportsPromiseLifecycle?: boolean;
+  onServerError(cb: (err: Error) => void): void;
   isListening(): boolean;
   native(): TNative;
   httpServer(): http.Server;
 }
 
-export interface HttpServerAdapter<TNative = unknown>
-  extends HttpServerAdapterCommon<TNative> {
+export interface PromiseHttpServerAdapterLifecycle {
+  readonly supportsPromiseLifecycle: true;
   listen(opts: HttpServerListenOptions): Promise<void>;
   listen(opts: HttpServerListenOptions, cb: (err?: Error) => void): void;
-  onServerError(cb: (err: Error) => void): void;
   close(): Promise<void>;
   close(cb: (err?: Error) => void): void;
 }
 
-/**
- * Callback-only adapter shape accepted by 0.x. The registry wraps this shape
- * before invoking it so its own lifecycle is promise-based without changing
- * callback adapters supplied by existing operators.
- */
-export interface LegacyHttpServerAdapter<TNative = unknown>
-  extends HttpServerAdapterCommon<TNative> {
+interface CallbackHttpServerAdapterLifecycle {
+  readonly supportsPromiseLifecycle?: false | undefined;
   listen(opts: HttpServerListenOptions, cb: (err?: Error) => void): void;
-  onServerError(cb: (err: Error) => void): void;
   close(cb: (err?: Error) => void): void;
 }
 
-export type HttpServerAdapterLike<TNative = unknown> =
-  | HttpServerAdapter<TNative>
+export type PromiseHttpServerAdapter<TNative = unknown> =
+  HttpServerAdapterBase<TNative> & PromiseHttpServerAdapterLifecycle;
+
+export type LegacyHttpServerAdapter<TNative = unknown> =
+  HttpServerAdapterBase<TNative> & CallbackHttpServerAdapterLifecycle;
+
+export type HttpServerAdapter<TNative = unknown> =
+  | PromiseHttpServerAdapter<TNative>
   | LegacyHttpServerAdapter<TNative>;
+
+export type HttpServerAdapterLike<TNative = unknown> =
+  HttpServerAdapter<TNative>;

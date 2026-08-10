@@ -12,6 +12,13 @@ describe('registry : domain : options-sanitiser', () => {
       hotReloading: false,
       verbosity: 0,
       customHeadersToSkipOnWeakVersion: [],
+      cors: {
+        origin: '*',
+        credentials: true,
+        allowedHeaders:
+          'Origin, X-Requested-With, Content-Type, Accept, traceparent',
+        methods: 'GET, OPTIONS, PUT, POST'
+      },
       timeout: 120000,
       dataProvider: { enabled: true }
     };
@@ -107,6 +114,27 @@ describe('registry : domain : options-sanitiser', () => {
           'header-two',
           'header3'
         ]);
+      });
+    });
+  });
+
+  describe('cors configuration', () => {
+    it('should normalize partial custom values', () => {
+      const options = sanitise({
+        baseUrl: 'http://my-registry.com',
+        cors: {
+          origin: 'https://app.example.com',
+          credentials: false,
+          allowedHeaders: ['Content-Type', 'X-Request-Id'],
+          methods: ['GET', 'OPTIONS']
+        }
+      });
+
+      expect(options.cors).to.eql({
+        origin: 'https://app.example.com',
+        credentials: false,
+        allowedHeaders: 'Content-Type, X-Request-Id',
+        methods: 'GET, OPTIONS'
       });
     });
   });

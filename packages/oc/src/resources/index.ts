@@ -102,6 +102,16 @@ export default {
         'context.setCookie parameters are not valid',
       CONFIGURATION_DEPENDENCIES_MUST_BE_ARRAY:
         'Registry configuration is not valid: dependencies must be an array',
+      CONFIGURATION_CORS_MUST_BE_OBJECT:
+        'Registry configuration is not valid: cors must be an object',
+      CONFIGURATION_CORS_ORIGIN_MUST_BE_STRING:
+        'Registry configuration is not valid: cors.origin must be a non-empty string',
+      CONFIGURATION_CORS_CREDENTIALS_MUST_BE_BOOLEAN:
+        'Registry configuration is not valid: cors.credentials must be a boolean',
+      CONFIGURATION_CORS_ALLOWED_HEADERS_MUST_BE_STRING_ARRAY:
+        'Registry configuration is not valid: cors.allowedHeaders must be a string or an array of strings',
+      CONFIGURATION_CORS_METHODS_MUST_BE_STRING_ARRAY:
+        'Registry configuration is not valid: cors.methods must be a string or an array of strings',
       CONFIGURATION_EMPTY: 'Registry configuration is empty',
       CONFIGURATION_METADATA_NOT_VALID: (adapterType: string): string =>
         `Registry configuration is not valid: ${adapterType} is not a valid metadata adapter`,
@@ -252,11 +262,6 @@ export default {
         version: string
       ): string =>
         `${green('✔')} Installed ${compiler} [${template} v${version}]`,
-      legacyTemplateDeprecationWarning: (
-        legacyType: string,
-        newType: string
-      ): string =>
-        `Template-type "${legacyType}" has been deprecated and is now replaced by "${newType}"`,
       CHANGES_DETECTED: (file: string): string =>
         `Changes detected on file: ${file}`,
       CHECKING_DEPENDENCIES: 'Ensuring dependencies are loaded...',

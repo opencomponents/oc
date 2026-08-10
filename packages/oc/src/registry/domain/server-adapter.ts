@@ -3,7 +3,8 @@ import type {
   HttpServerAdapter,
   HttpServerAdapterFactory,
   HttpServerAdapterLike,
-  LegacyHttpServerAdapter
+  LegacyHttpServerAdapter,
+  PromiseHttpServerAdapter
 } from './http-server/types';
 
 const isPromiseLike = (value: unknown): value is PromiseLike<unknown> =>
@@ -78,17 +79,20 @@ const toPromise = (
 
 const normaliseAdapter = (
   adapter: HttpServerAdapterLike
-): HttpServerAdapter => {
+): PromiseHttpServerAdapter => {
   if (
     adapter.supportsPromiseLifecycle === true ||
     (adapter.supportsPromiseLifecycle !== false &&
       typeof (adapter as any).close !== 'function')
   ) {
-    return adapter as HttpServerAdapter;
+    return adapter as PromiseHttpServerAdapter;
   }
 
   return new Proxy(adapter, {
     get(target, property) {
+      if (property === 'supportsPromiseLifecycle') {
+        return true;
+      }
       if (property === 'listen') {
         return (options: unknown, callback?: (error?: Error) => void) => {
           if (callback) {
@@ -122,13 +126,13 @@ const normaliseAdapter = (
       const value = Reflect.get(target, property, target);
       return typeof value === 'function' ? value.bind(target) : value;
     }
-  }) as HttpServerAdapter;
+  }) as unknown as PromiseHttpServerAdapter;
 };
 
 export default function getHttpServerAdapter<T = unknown>(
   adapter: HttpServerAdapterLike | HttpServerAdapterFactory<T>,
   options?: T
-): HttpServerAdapter {
+): PromiseHttpServerAdapter {
   if (isHttpServerAdapter(adapter)) {
     return normaliseAdapter(adapter);
   }

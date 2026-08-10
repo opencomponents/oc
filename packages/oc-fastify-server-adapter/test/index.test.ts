@@ -4,17 +4,17 @@ import path from 'node:path';
 import { Readable } from 'node:stream';
 import { gzipSync } from 'node:zlib';
 import type { FastifyInstance } from 'fastify';
-import type { HttpServerAdapter } from '../src';
+import type { PromiseHttpServerAdapter } from '../src';
 import createFastifyAdapter from '../src';
 
-const asFastify = (adapter: HttpServerAdapter): FastifyInstance =>
+const asFastify = (adapter: PromiseHttpServerAdapter): FastifyInstance =>
   adapter.native() as FastifyInstance;
 
-const closeAdapter = (adapter: HttpServerAdapter): Promise<void> =>
+const closeAdapter = (adapter: PromiseHttpServerAdapter): Promise<void> =>
   adapter.close();
 
 const listen = (
-  adapter: HttpServerAdapter,
+  adapter: PromiseHttpServerAdapter,
   port: number | string = 0
 ): Promise<void> => adapter.listen({ port, timeout: 120000 });
 

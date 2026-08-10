@@ -79,6 +79,7 @@ describe('registry : domain : server-adapter', () => {
 
     const parsed = getHttpServerAdapter(factory);
 
+    expect(parsed.supportsPromiseLifecycle).to.be.true;
     await parsed.listen({ port: 0, timeout: 1000 });
     await parsed.close();
 

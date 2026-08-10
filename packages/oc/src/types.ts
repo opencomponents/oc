@@ -18,6 +18,30 @@ export type {
 
 type Middleware = (req: Request, res: Response, next: NextFunction) => void;
 
+export interface RegistryErrorEvent {
+  /**
+   * Stable registry error category. Server adapter failures use
+   * `SERVER_ERROR`, regardless of the configured adapter.
+   */
+  code: string;
+  /** The original error message reported by the failing registry operation. */
+  message: string;
+}
+
+export interface CorsConfig {
+  origin: string;
+  credentials: boolean;
+  allowedHeaders: string;
+  methods: string;
+}
+
+export interface CorsOptions {
+  origin?: string;
+  credentials?: boolean;
+  allowedHeaders?: string | string[];
+  methods?: string | string[];
+}
+
 export interface Author {
   email?: string;
   name?: string;
@@ -220,6 +244,12 @@ export interface Config<
    * @example "https://components.mycompany.com/"
    */
   baseUrl: string;
+  /**
+   * CORS response headers sent by the registry.
+   *
+   * @default Existing registry CORS headers
+   */
+  cors?: CorsConfig;
   /**
    * Pre-compiled version of the `oc-client` library generated automatically
    * at runtime when `compileClient` is enabled (default).
