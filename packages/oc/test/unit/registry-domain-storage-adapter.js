@@ -24,19 +24,54 @@ function mockLegacyAdapter() {
     putDir: sinon.stub().yields(),
     putFile: sinon.stub().yields(),
     putFileContent: sinon.stub().yields(),
+    removeDir: sinon.stub().yields(),
+    removeFile: sinon.stub().yields(),
     getUrl: sinon.stub().returns(''),
     maxConcurrentRequests: 20,
-    adapterType: 's3'
+    adapterType: 's3',
+    isValid: sinon.stub().returns(true)
   };
 }
 
 let process;
 
-function initialise(adapter) {
+function initialiseWithRealAdapter(adapter) {
   process = { emitWarning: sinon.stub() };
   const adapterParser = injectr(
     '../../dist/registry/domain/storage-adapter.js',
-    { universalify: { fromCallback: sinon.stub().returns('promisified') } },
+    {
+      universalify: require('universalify'),
+      '../../utils/deprecate': {
+        __esModule: true,
+        default: ({ subject, replacement }) =>
+          process.emitWarning(
+            `${subject} is deprecated and will be removed in OpenComponents v1 - use ${replacement} instead.`,
+            'DeprecationWarning'
+          )
+      }
+    },
+    { process }
+  ).default;
+
+  return adapterParser(adapter);
+}
+
+function initialise(adapter, warningProcess, deprecate) {
+  process = warningProcess || { emitWarning: sinon.stub() };
+  deprecate = deprecate || sinon.stub().callsFake(({ id, subject, replacement }) => {
+    process.emitWarning(
+      `${subject} is deprecated and will be removed in OpenComponents v1 - use ${replacement} instead.`,
+      'DeprecationWarning'
+    );
+    deprecate.ids = deprecate.ids || [];
+    deprecate.ids.push(id);
+  });
+  const adapterParser = injectr(
+    '../../dist/registry/domain/storage-adapter.js',
+    {
+      universalify: { fromCallback: sinon.stub().returns('promisified') },
+      '../../utils/deprecate': { __esModule: true, default: deprecate }
+    },
     { process }
   ).default;
 
@@ -75,7 +110,7 @@ describe('registry : domain : adapter', () => {
         });
         expect(process.emitWarning.called).to.be.true;
         expect(process.emitWarning.args[0][0]).to.contain(
-          'Your adapter is using the old interface of working with callbacks. Consider upgrading it to work with promises, as the previous one will be deprecated.'
+          'Storage adapter callbacks'
         );
         expect(process.emitWarning.args[0][1]).to.contain('DeprecationWarning');
       });
@@ -92,6 +127,60 @@ describe('registry : domain : adapter', () => {
       expect(parsed.putDir).to.be.equal('promisified');
       expect(parsed.putFile).to.be.equal('promisified');
       expect(parsed.putFileContent).to.be.equal('promisified');
+      expect(parsed.removeDir).to.be.equal('promisified');
+      expect(parsed.removeFile).to.be.equal('promisified');
+      expect(parsed.isValid()).to.equal(true);
     });
+
+  it('only warns once for repeated legacy adapter construction', () => {
+    const warningProcess = { emitWarning: sinon.stub() };
+    const warned = new Set();
+    const deprecate = sinon.stub().callsFake(({ id, subject, replacement }) => {
+      if (warned.has(id)) {
+        return;
+      }
+      warned.add(id);
+      warningProcess.emitWarning(
+        `${subject} is deprecated and will be removed in OpenComponents v1 - use ${replacement} instead.`,
+        'DeprecationWarning'
+      );
+    });
+    initialise(mockLegacyAdapter(), warningProcess, deprecate);
+    initialise(mockLegacyAdapter(), warningProcess, deprecate);
+
+    expect(warningProcess.emitWarning.calledOnce).to.be.true;
+    });
+
+  it('preserves callback results through the promise adapter', async () => {
+    const adapter = initialiseWithRealAdapter({
+      ...mockLegacyAdapter(),
+      getFile: sinon.stub().yields(null, 'file contents')
+    });
+
+    const result = await adapter.getFile('path');
+
+    expect(result).to.equal('file contents');
   });
+
+  it('preserves the legacy adapter receiver', async () => {
+    const legacyAdapter = {
+      ...mockLegacyAdapter(),
+      prefix: 'stored',
+      getFile(filePath, callback) {
+        callback(null, `${this.prefix}:${filePath}`);
+      },
+      getUrl() {
+        return this.prefix;
+      },
+      isValid() {
+        return this.prefix === 'stored';
+      }
+    };
+    const adapter = initialiseWithRealAdapter(legacyAdapter);
+
+    expect(await adapter.getFile('path')).to.equal('stored:path');
+    expect(adapter.getUrl()).to.equal('stored');
+    expect(adapter.isValid()).to.be.true;
+  });
+});
 });

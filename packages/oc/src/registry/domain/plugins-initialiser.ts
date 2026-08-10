@@ -67,10 +67,24 @@ const registerPlugin = (
     let callbackCalled = false;
     let callbackError: Error | undefined;
     let useCallback = false;
+    let callbackWarningEmitted = false;
     let result: unknown;
+
+    const warnAboutCallback = () => {
+      if (callbackWarningEmitted) {
+        return;
+      }
+      callbackWarningEmitted = true;
+      deprecate({
+        id: 'plugin-register-callback',
+        subject: 'Plugin register callbacks',
+        replacement: 'an async register(options, dependencies) function'
+      });
+    };
 
     try {
       result = register(plugin.options || {}, dependencies, (error?: Error) => {
+        warnAboutCallback();
         callbackCalled = true;
         callbackError = error;
 
@@ -87,11 +101,7 @@ const registerPlugin = (
       void result.then(resolve, reject);
     } else {
       useCallback = true;
-      deprecate({
-        id: 'plugin-register-callback',
-        subject: 'Plugin register callbacks',
-        replacement: 'an async register(options, dependencies) function'
-      });
+      warnAboutCallback();
 
       if (callbackCalled) {
         callbackError ? reject(callbackError) : resolve();

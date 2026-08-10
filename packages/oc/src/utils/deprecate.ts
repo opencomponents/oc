@@ -1,6 +1,17 @@
-const warned = new Set<string>();
+const warningStoreKey = Symbol.for('opencomponents.deprecation-warnings');
+const processWithWarningStore = process as typeof process & {
+  [key: symbol]: unknown;
+};
+let warned = processWithWarningStore[warningStoreKey] as
+  | Set<string>
+  | undefined;
+if (!warned) {
+  warned = new Set<string>();
+  processWithWarningStore[warningStoreKey] = warned;
+}
+const warnedSet = warned;
 
-interface DeprecationNotice {
+export interface DeprecationNotice {
   /** Stable identifier used to only warn once per process for this deprecation. */
   id: string;
   /** The option/API being removed. */
@@ -24,11 +35,11 @@ export default function deprecate({
   subject,
   replacement
 }: DeprecationNotice): void {
-  if (warned.has(id)) {
+  if (warnedSet.has(id)) {
     return;
   }
 
-  warned.add(id);
+  warnedSet.add(id);
 
   process.emitWarning(
     `${subject} is deprecated and will be removed in OpenComponents v1 - use ${replacement} instead.`,

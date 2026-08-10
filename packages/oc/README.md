@@ -80,8 +80,9 @@ metadata store. Publishing reserves the metadata row first, uploads package file
 to storage only after the reservation succeeds, then commits the row. Duplicate
 or in-progress metadata rows are treated as the existing "component version
 already exists" publish error. When the registry is shut down via
-`registry.close(callback)`, the metadata adapter's optional `close()` hook is
-invoked so the adapter can release its connection pool.
+`await registry.close()`, the metadata adapter's optional `close()` hook is
+invoked so the adapter can release its connection pool. The callback form remains
+available on 0.x but is deprecated.
 
 Custom metadata adapters should implement the shared contract exported by
 `oc-metadata-adapters-utils`:

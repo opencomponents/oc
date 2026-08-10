@@ -35,6 +35,22 @@ export interface MetadataStore {
   }>;
 }
 
+/** A promise- or callback-based metadata store accepted on the 0.x line. */
+export type MetadataStoreLike = {
+  adapterType: string;
+  isValid(): boolean;
+  initialise: (...args: any[]) => unknown;
+  getAllComponents: (...args: any[]) => unknown;
+  addVersion: (...args: any[]) => unknown;
+  reserveVersion: (...args: any[]) => unknown;
+  commitVersion: (...args: any[]) => unknown;
+  abortVersion: (...args: any[]) => unknown;
+  getChangeToken?: (...args: any[]) => unknown;
+  close?: (...args: any[]) => unknown;
+  removeVersion?: (...args: any[]) => unknown;
+  changesSince?: (...args: any[]) => unknown;
+};
+
 export interface VersionAlreadyExistsError extends Error {
   code: typeof VERSION_ALREADY_EXISTS | typeof VERSION_PUBLISH_IN_PROGRESS;
   cause?: unknown;

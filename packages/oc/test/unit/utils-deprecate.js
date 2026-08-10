@@ -48,4 +48,24 @@ describe('utils : deprecate', () => {
 
     expect(emitWarning.calledTwice).to.be.true;
   });
+
+  it('shares warning identity across separately loaded utility modules', () => {
+    const emitWarning = sinon.stub();
+    const processMock = { emitWarning };
+    const first = injectr(
+      '../../dist/utils/deprecate.js',
+      {},
+      { process: processMock }
+    ).default;
+    const second = injectr(
+      '../../dist/utils/deprecate.js',
+      {},
+      { process: processMock }
+    ).default;
+
+    first({ id: 'shared-id', subject: 'X', replacement: 'Y' });
+    second({ id: 'shared-id', subject: 'X', replacement: 'Y' });
+
+    expect(emitWarning.calledOnce).to.be.true;
+  });
 });

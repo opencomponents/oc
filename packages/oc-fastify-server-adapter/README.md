@@ -8,7 +8,7 @@ Fastify HTTP server adapter for the OC registry. The adapter is opt-in and imple
 npm install oc-fastify-server-adapter fastify
 ```
 
-`oc` is a peer dependency. Use this adapter with an OC version that exports the HTTP server adapter types (`>=0.50.56`).
+Use this adapter with an OC version that supports the HTTP server adapter contract (`>=0.50.56`).
 
 ## Usage
 

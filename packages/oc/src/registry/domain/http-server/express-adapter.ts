@@ -64,6 +64,7 @@ export default function createExpressAdapter(
 
 class ExpressHttpServerAdapter implements HttpServerAdapter<Express> {
   name = 'express';
+  supportsPromiseLifecycle = true as const;
 
   private app: Express;
   private server?: http.Server;

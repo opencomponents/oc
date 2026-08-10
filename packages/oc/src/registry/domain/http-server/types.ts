@@ -91,7 +91,7 @@ export interface HttpServerListenOptions {
 }
 
 export type HttpServerAdapterFactory<TOptions = unknown, TNative = unknown> = {
-  (options?: unknown): HttpServerAdapter<TNative>;
+  (options?: unknown): HttpServerAdapterLike<TNative>;
   readonly __serverAdapterOptions?: TOptions;
 };
 
@@ -99,23 +99,23 @@ export type HttpServerAdapterOptions<TAdapter> = TAdapter extends {
   readonly __serverAdapterOptions?: infer TOptions;
 }
   ? TOptions
-  : TAdapter extends (options?: infer TOptions) => HttpServerAdapter
+  : TAdapter extends (options?: infer TOptions) => HttpServerAdapterLike
     ? TOptions
     : unknown;
 
 export type NativeApp<TAdapter> = TAdapter extends (
   ...args: any[]
-) => HttpServerAdapter<infer TNative>
+) => HttpServerAdapterLike<infer TNative>
   ? unknown extends TNative
     ? express.Express
     : TNative
-  : TAdapter extends HttpServerAdapter<infer TNative>
+  : TAdapter extends HttpServerAdapterLike<infer TNative>
     ? unknown extends TNative
       ? express.Express
       : TNative
     : express.Express;
 
-export interface HttpServerAdapter<TNative = unknown> {
+interface HttpServerAdapterCommon<TNative = unknown> {
   name: string;
   enableBodyParser(opts: { limit?: number | string }): void;
   enableCookies(): void;
@@ -133,12 +133,33 @@ export interface HttpServerAdapter<TNative = unknown> {
   use(handler: OcHandler): void;
   route(method: Method, path: string, id: string, handlers: OcHandler[]): void;
   fromConnect(handler: ExpressMiddleware): OcHandler;
+  supportsPromiseLifecycle?: boolean;
+  isListening(): boolean;
+  native(): TNative;
+  httpServer(): http.Server;
+}
+
+export interface HttpServerAdapter<TNative = unknown>
+  extends HttpServerAdapterCommon<TNative> {
   listen(opts: HttpServerListenOptions): Promise<void>;
   listen(opts: HttpServerListenOptions, cb: (err?: Error) => void): void;
   onServerError(cb: (err: Error) => void): void;
   close(): Promise<void>;
   close(cb: (err?: Error) => void): void;
-  isListening(): boolean;
-  native(): TNative;
-  httpServer(): http.Server;
 }
+
+/**
+ * Callback-only adapter shape accepted by 0.x. The registry wraps this shape
+ * before invoking it so its own lifecycle is promise-based without changing
+ * callback adapters supplied by existing operators.
+ */
+export interface LegacyHttpServerAdapter<TNative = unknown>
+  extends HttpServerAdapterCommon<TNative> {
+  listen(opts: HttpServerListenOptions, cb: (err?: Error) => void): void;
+  onServerError(cb: (err: Error) => void): void;
+  close(cb: (err?: Error) => void): void;
+}
+
+export type HttpServerAdapterLike<TNative = unknown> =
+  | HttpServerAdapter<TNative>
+  | LegacyHttpServerAdapter<TNative>;

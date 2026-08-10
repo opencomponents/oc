@@ -12,8 +12,10 @@ describe('registry : routes : helpers : get-component', () => {
     'oc-template-jade': require('oc-template-jade'),
     'oc-template-handlebars': require('oc-template-handlebars')
   };
-  const initialise = (params) => {
+  let deprecateStub;
+  const initialise = (params, clientFactory) => {
     fireStub = sinon.stub();
+    deprecateStub = sinon.stub();
     GetComponent = injectr(
       '../../dist/registry/routes/helpers/get-component.js',
       {
@@ -21,16 +23,27 @@ describe('registry : routes : helpers : get-component', () => {
           on: () => {},
           fire: fireStub
         },
-        'oc-client': () => {
-          const client = Client();
-          return {
-            renderTemplate: (template, data, renderOptions, cb) => {
-              if (renderOptions.templateType === 'oc-template-supported') {
-                renderOptions.templateType = 'oc-template-jade';
+        'oc-client':
+          clientFactory ||
+          (() => {
+            const client = Client();
+            return {
+              renderTemplate: (template, data, renderOptions, cb) => {
+                if (renderOptions.templateType === 'oc-template-supported') {
+                  renderOptions.templateType = 'oc-template-jade';
+                }
+                return client.renderTemplate(
+                  template,
+                  data,
+                  renderOptions,
+                  cb
+                );
               }
-              return client.renderTemplate(template, data, renderOptions, cb);
-            }
-          };
+            };
+          }),
+        '../../../utils/deprecate': {
+          __esModule: true,
+          default: deprecateStub
         }
       },
       { console, Buffer, clearTimeout, setTimeout }
@@ -187,6 +200,108 @@ describe('registry : routes : helpers : get-component', () => {
       expect(eventData.duration).to.be.above(0);
       expect(eventData.status).to.equal(500);
     });
+  });
+
+  describe('when using the legacy node oc-client renderTemplate API', () => {
+    it('emits one deprecation notice while preserving rendering', (done) => {
+      initialise(mockedComponents['async-error2-component']);
+      const getComponent = GetComponent({}, mockedRepository);
+
+      getComponent(
+        {
+          name: 'async-error2-component',
+          headers: {},
+          parameters: {},
+          version: '1.X.X',
+          conf: { baseUrl: 'http://components.com/' }
+        },
+        () => {
+          expect(deprecateStub.calledOnce).to.be.true;
+          expect(deprecateStub.firstCall.args[0]).to.include({
+            id: 'node-oc-client-callback-api'
+          });
+          done();
+        }
+      );
+    });
+  });
+
+  describe('when using the promise node oc-client renderTemplate API', () => {
+    it('renders without a deprecation notice', (done) => {
+      initialise(mockedComponents['async-error2-component'], () => ({
+        supportsPromiseApi: true,
+        renderTemplate: sinon.stub().resolves('<p>promise result</p>')
+      }));
+      const getComponent = GetComponent({}, mockedRepository);
+
+      getComponent(
+        {
+          name: 'async-error2-component',
+          headers: {},
+          parameters: {},
+          version: '1.X.X',
+          conf: { baseUrl: 'http://components.com/' }
+        },
+        (result) => {
+          expect(result.status).to.equal(200);
+          expect(result.response.html).to.equal('<p>promise result</p>');
+          expect(deprecateStub.called).to.be.false;
+          done();
+        }
+      );
+    });
+
+    it('turns promise and synchronous failures into server errors', async () => {
+      const error = new Error('render failed');
+      for (const renderTemplate of [
+        sinon.stub().rejects(error),
+        sinon.stub().throws(error)
+      ]) {
+        initialise(mockedComponents['async-error2-component'], () => ({
+          supportsPromiseApi: true,
+          renderTemplate
+        }));
+        const getComponent = GetComponent({}, mockedRepository);
+        const result = await new Promise((resolve) =>
+          getComponent(
+            {
+              name: 'async-error2-component',
+              headers: {},
+              parameters: {},
+              version: '1.X.X',
+              conf: { baseUrl: 'http://components.com/' }
+            },
+            resolve
+          )
+        );
+
+        expect(result.status).to.equal(500);
+        expect(result.response.error).to.equal(error);
+      }
+    });
+  });
+
+  it('keeps unmarked rest-parameter clients on the callback path', (done) => {
+    initialise(mockedComponents['async-error2-component'], () => ({
+      renderTemplate: (...args) => args.at(-1)(null, '<p>legacy result</p>')
+    }));
+    const getComponent = GetComponent({}, mockedRepository);
+
+    getComponent(
+      {
+        name: 'async-error2-component',
+        headers: {},
+        parameters: {},
+        version: '1.X.X',
+        conf: { baseUrl: 'http://components.com/' }
+      },
+      (result) => {
+        expect(result.status).to.equal(200);
+        expect(result.response.html).to.equal('<p>legacy result</p>');
+        expect(deprecateStub.calledOnce).to.be.true;
+        done();
+      }
+    );
   });
 
   describe('when the component sends a custom status code', () => {

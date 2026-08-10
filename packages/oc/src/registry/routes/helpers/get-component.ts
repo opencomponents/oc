@@ -10,6 +10,7 @@ import { fromPromise } from 'universalify';
 import strings from '../../../resources';
 import settings from '../../../resources/settings';
 import type { Component, Config, PluginContext, Plugins } from '../../../types';
+import deprecate from '../../../utils/deprecate';
 import isTemplateLegacy from '../../../utils/is-template-legacy';
 import eventsHandler from '../../domain/events-handler';
 import type { CookieOptions } from '../../domain/http-server/types';
@@ -555,26 +556,50 @@ export default function getComponent(conf: Config, repository: Repository) {
             data.id = id;
 
             const returnResult = (template: any) => {
+              const renderSuccess = (html: string) =>
+                callback({
+                  status: 200,
+                  ...(responseHeaders ? { headers: responseHeaders } : {}),
+                  response: Object.assign(response, { html })
+                });
+              const renderFailure = (err: Error) =>
+                callback({
+                  status: 500,
+                  response: {
+                    code: 'INTERNAL_SERVER_ERROR',
+                    error: err
+                  }
+                });
+
+              if ((client as any).supportsPromiseApi === true) {
+                Promise.resolve()
+                  .then(() =>
+                    (client as any).renderTemplate(
+                      template,
+                      data,
+                      renderOptions
+                    )
+                  )
+                  .then(renderSuccess, renderFailure);
+                return;
+              }
+
+              deprecate({
+                id: 'node-oc-client-callback-api',
+                subject: 'The callback API of the Node.js oc-client',
+                replacement: 'the promise-based oc-client API'
+              });
               client.renderTemplate(
                 template,
                 data,
                 renderOptions,
                 (err: Error, html: string) => {
                   if (err) {
-                    return callback({
-                      status: 500,
-                      response: {
-                        code: 'INTERNAL_SERVER_ERROR',
-                        error: err
-                      }
-                    });
+                    renderFailure(err);
+                    return;
                   }
 
-                  callback({
-                    status: 200,
-                    ...(responseHeaders ? { headers: responseHeaders } : {}),
-                    response: Object.assign(response, { html })
-                  });
+                  renderSuccess(html);
                 }
               );
             };

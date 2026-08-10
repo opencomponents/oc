@@ -1,5 +1,6 @@
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import { fromCallback } from 'universalify';
+import deprecate from '../../utils/deprecate';
 
 type RemovePromiseOverload<T> = T extends {
   (...args: infer B): void;
@@ -48,35 +49,50 @@ function isLegacyAdapter(
 }
 
 function convertLegacyAdapter(adapter: LegacyStorageAdapter): StorageAdapter {
+  const toPromise = (method: unknown) =>
+    typeof method === 'function'
+      ? fromCallback((method as (...args: any[]) => void).bind(adapter))
+      : method;
+
   return {
-    getFile: fromCallback(adapter.getFile as any),
-    getJson: fromCallback(adapter.getJson as any),
-    listSubDirectories: fromCallback(adapter.listSubDirectories as any),
-    putDir: fromCallback(adapter.putDir as any),
-    putFile: fromCallback(adapter.putFile as any),
-    putFileContent: fromCallback(adapter.putFileContent as any),
-    getUrl: adapter.getUrl,
+    getFile: toPromise(adapter.getFile),
+    getJson: toPromise(adapter.getJson),
+    listSubDirectories: toPromise(adapter.listSubDirectories),
+    putDir: toPromise(adapter.putDir),
+    putFile: toPromise(adapter.putFile),
+    putFileContent: toPromise(adapter.putFileContent),
+    removeDir: toPromise(adapter.removeDir),
+    removeFile: toPromise(adapter.removeFile),
+    getUrl: adapter.getUrl.bind(adapter),
     maxConcurrentRequests: adapter.maxConcurrentRequests,
-    adapterType: adapter.adapterType
+    adapterType: adapter.adapterType,
+    isValid: adapter.isValid?.bind(adapter)
   } as any;
 }
+
+const warnAboutCallbacks = (adapter: LegacyStorageAdapter) => {
+  if (isOfficialAdapter(adapter)) {
+    const pkg = officialAdapters[adapter.adapterType];
+    deprecate({
+      id: `storage-adapter-callbacks-${adapter.adapterType}`,
+      subject: `The callback API of ${pkg.name}`,
+      replacement: `the promise API from ${pkg.name}@${pkg.firstPromiseBasedVersion} or newer`
+    });
+    return;
+  }
+
+  deprecate({
+    id: 'storage-adapter-callbacks',
+    subject: 'Storage adapter callbacks',
+    replacement: 'promise-based storage adapter methods'
+  });
+};
 
 export default function getPromiseBasedAdapter(
   adapter: StorageAdapter | LegacyStorageAdapter
 ): StorageAdapter {
   if (isLegacyAdapter(adapter)) {
-    if (isOfficialAdapter(adapter)) {
-      const pkg = officialAdapters[adapter.adapterType];
-      process.emitWarning(
-        `Adapters now should work with promises. Consider upgrading your package ${pkg.name} to at least version ${pkg.firstPromiseBasedVersion}`,
-        'DeprecationWarning'
-      );
-    } else {
-      process.emitWarning(
-        'Your adapter is using the old interface of working with callbacks. Consider upgrading it to work with promises, as the previous one will be deprecated.',
-        'DeprecationWarning'
-      );
-    }
+    warnAboutCallbacks(adapter);
 
     return convertLegacyAdapter(adapter);
   }

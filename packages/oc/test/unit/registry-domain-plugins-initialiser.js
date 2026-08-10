@@ -1,7 +1,25 @@
 const expect = require('chai').expect;
+const injectr = require('injectr');
+const sinon = require('sinon');
 
 describe('registry : domain : plugins-initialiser', () => {
   const pluginsInitialiser = require('../../dist/registry/domain/plugins-initialiser');
+  const emitWarning = sinon.stub();
+  const warned = new Set();
+  const deprecate = sinon.stub().callsFake(({ id, subject, replacement }) => {
+    if (warned.has(id)) {
+      return;
+    }
+    warned.add(id);
+    emitWarning(
+      `${subject} is deprecated and will be removed in OpenComponents v1 - use ${replacement} instead.`,
+      'DeprecationWarning'
+    );
+  });
+  const pluginsInitialiserWithWarning = injectr(
+    '../../dist/registry/domain/plugins-initialiser.js',
+    { '../../utils/deprecate': { __esModule: true, default: deprecate } }
+  );
 
   describe('when initialising not valid plugins', () => {
     describe('when plugin not registered correctly', () => {
@@ -229,6 +247,54 @@ describe('registry : domain : plugins-initialiser', () => {
       }
 
       expect(error.message).to.equal('promise registration failed');
+    });
+  });
+
+  describe('when initialising callback-based plugins', () => {
+    beforeEach(() => {
+      deprecate.resetHistory();
+      emitWarning.resetHistory();
+      warned.clear();
+    });
+
+    it('warns once while preserving callback registration', async () => {
+      const result = await pluginsInitialiserWithWarning.init([
+        {
+          name: 'callbackPluginA',
+          register: {
+            register: (_options, _dependencies, next) => next(),
+            execute: () => 'a'
+          }
+        },
+        {
+          name: 'callbackPluginB',
+          register: {
+            register: (_options, _dependencies, next) => next(),
+            execute: () => 'b'
+          }
+        }
+      ]);
+
+      expect(result.callbackPluginA.handler()).to.equal('a');
+      expect(result.callbackPluginB.handler()).to.equal('b');
+      expect(emitWarning.calledOnce).to.be.true;
+      expect(emitWarning.firstCall.args[0]).to.contain(
+        'Plugin register callbacks'
+      );
+    });
+
+    it('does not warn for promise-based registration', async () => {
+      await pluginsInitialiserWithWarning.init([
+        {
+          name: 'promisePlugin',
+          register: {
+            register: async () => {},
+            execute: () => 'promise'
+          }
+        }
+      ]);
+
+      expect(deprecate.called).to.be.false;
     });
   });
 
