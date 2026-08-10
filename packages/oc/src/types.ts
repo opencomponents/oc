@@ -1,5 +1,8 @@
 import type { NextFunction, Request, Response } from 'express';
-import type { MetadataStore as MetadataStoreType } from 'oc-metadata-adapters-utils';
+import type {
+  MetadataStoreLike,
+  MetadataStore as MetadataStoreType
+} from 'oc-metadata-adapters-utils';
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import type { PackageJson } from 'type-fest';
 import type {
@@ -7,7 +10,11 @@ import type {
   HttpServerAdapterOptions
 } from './registry/domain/http-server/types';
 
-export type { ComponentRow, MetadataStore } from 'oc-metadata-adapters-utils';
+export type {
+  ComponentRow,
+  MetadataStore,
+  MetadataStoreLike
+} from 'oc-metadata-adapters-utils';
 
 type Middleware = (req: Request, res: Response, next: NextFunction) => void;
 
@@ -82,7 +89,7 @@ export interface MetadataConfig<T = any> {
    * Factory for the metadata store. It must be side-effect free because config
    * validation may instantiate a throwaway store before registry startup.
    */
-  adapter: (options: T) => MetadataStoreType;
+  adapter: (options: T) => MetadataStoreType | MetadataStoreLike;
   options: T;
   /**
    * Controls whether OC asks the metadata adapter to manage its schema/table.

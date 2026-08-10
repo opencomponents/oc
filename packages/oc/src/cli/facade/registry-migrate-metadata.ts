@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { fromPromise } from 'universalify';
+import getPromiseBasedMetadataAdapter from '../../registry/domain/metadata-adapter';
 import getMetadataAdapterOptions from '../../registry/domain/metadata-adapter-options';
 import { backfillMetadataFromStorageDetails } from '../../registry/domain/metadata-migration';
 import sanitiseOptions, {
@@ -69,8 +70,8 @@ const registryMigrateMetadata = ({ logger }: { logger: Logger }) =>
           throw new Error('Registry config must include metadata options');
         }
 
-        const metadataStore = conf.metadata.adapter(
-          getMetadataAdapterOptions(conf)
+        const metadataStore = getPromiseBasedMetadataAdapter(
+          conf.metadata.adapter(getMetadataAdapterOptions(conf))
         );
         const cdn = getPromiseBasedAdapter(
           conf.storage.adapter(conf.storage.options)

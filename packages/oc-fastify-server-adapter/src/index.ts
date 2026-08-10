@@ -158,15 +158,25 @@ const ocResponseSym = Symbol('ocResponse');
 const timingStartSym = Symbol('timingStart');
 const multipartParsedSym = Symbol('multipartParsed');
 const defaultBodyLimit = 100 * 1024;
-const warnedDeprecations = new Set<string>();
+const warningStoreKey = Symbol.for('opencomponents.deprecation-warnings');
+const callbackWarningId = 'http-server-adapter-callbacks';
 
 const warnAboutCallback = () => {
-  const id = 'http-server-adapter-callbacks';
-  if (warnedDeprecations.has(id)) {
+  const processWithWarningStore = process as typeof process & {
+    [key: symbol]: unknown;
+  };
+  let warned = processWithWarningStore[warningStoreKey] as
+    | Set<string>
+    | undefined;
+  if (!warned) {
+    warned = new Set<string>();
+    processWithWarningStore[warningStoreKey] = warned;
+  }
+  if (warned.has(callbackWarningId)) {
     return;
   }
 
-  warnedDeprecations.add(id);
+  warned.add(callbackWarningId);
   process.emitWarning(
     'The HTTP server adapter callback API is deprecated and will be removed in OpenComponents v1 - use the returned promises instead.',
     'DeprecationWarning'

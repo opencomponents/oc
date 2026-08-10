@@ -156,6 +156,12 @@ interface CallbackHttpServerAdapterLifecycle {
 export type PromiseHttpServerAdapter<TNative = unknown> =
   HttpServerAdapterBase<TNative> & PromiseHttpServerAdapterLifecycle;
 
+export type LegacyHttpServerAdapter<TNative = unknown> =
+  HttpServerAdapterBase<TNative> & CallbackHttpServerAdapterLifecycle;
+
 export type HttpServerAdapter<TNative = unknown> =
   | PromiseHttpServerAdapter<TNative>
-  | (HttpServerAdapterBase<TNative> & CallbackHttpServerAdapterLifecycle);
+  | LegacyHttpServerAdapter<TNative>;
+
+export type HttpServerAdapterLike<TNative = unknown> =
+  HttpServerAdapter<TNative>;

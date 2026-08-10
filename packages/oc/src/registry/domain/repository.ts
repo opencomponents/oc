@@ -20,6 +20,7 @@ import errorToString from '../../utils/error-to-string';
 import ComponentsCache from './components-cache';
 import getComponentsDetails from './components-details';
 import eventsHandler from './events-handler';
+import getPromiseBasedMetadataAdapter from './metadata-adapter';
 import getMetadataAdapterOptions from './metadata-adapter-options';
 import { createMetadataIndex, getComponentRow } from './metadata-index';
 import {
@@ -45,7 +46,9 @@ export default function repository(conf: Config) {
     : cdn.adapterType + ' cdn';
   const metadataStore =
     !conf.local && conf.metadata
-      ? conf.metadata.adapter(getMetadataAdapterOptions(conf))
+      ? getPromiseBasedMetadataAdapter(
+          conf.metadata.adapter(getMetadataAdapterOptions(conf))
+        )
       : undefined;
   const metadataIndex = metadataStore
     ? createMetadataIndex(metadataStore)
