@@ -3,13 +3,13 @@ import Domain from 'node:domain';
 import type { IncomingHttpHeaders } from 'node:http';
 import vm from 'node:vm';
 import acceptLanguageParser from 'accept-language-parser';
-import Cache from 'nice-cache';
 import Client from 'oc-client';
 import emptyResponseHandler from 'oc-empty-response-handler';
 import { fromPromise } from 'universalify';
 import strings from '../../../resources';
 import settings from '../../../resources/settings';
 import type { Component, Config, PluginContext, Plugins } from '../../../types';
+import BoundedCache from '../../../utils/bounded-cache';
 import isTemplateLegacy from '../../../utils/is-template-legacy';
 import eventsHandler from '../../domain/events-handler';
 import type { CookieOptions } from '../../domain/http-server/types';
@@ -64,7 +64,13 @@ export interface GetComponentResult {
   };
 }
 
+export type RenderComponent = (
+  options: RendererOptions,
+  cb: (result: GetComponentResult) => void
+) => void;
+
 export const stream = Symbol('stream');
+const MAX_ARTIFACT_CACHE_ENTRIES = 1000;
 const noop = () => {};
 const noopConsole = Object.fromEntries(
   Object.keys(console).map((key) => [key, noop])
@@ -134,12 +140,12 @@ function pluginConverter(plugins: Plugins = {}) {
   };
 }
 
-export default function getComponent(conf: Config, repository: Repository) {
+export default function getComponent(
+  conf: Config,
+  repository: Repository
+): RenderComponent {
   const client = Client({ templates: conf.templates });
-  const cache = new Cache({
-    verbose: !!conf.verbosity,
-    refreshInterval: conf.refreshInterval
-  });
+  const cache = new BoundedCache(MAX_ARTIFACT_CACHE_ENTRIES);
   const convertPlugins = pluginConverter(conf.plugins);
   const customHeadersByConfig = new WeakMap<Config, Set<string> | undefined>();
   const pluginNamesByConfig = new WeakMap<Config, Set<string>>();
@@ -181,9 +187,9 @@ export default function getComponent(conf: Config, repository: Repository) {
     component: Component
   ): Promise<Record<string, string>> => {
     const cacheKey = `${component.name}/${component.version}/.env`;
-    const cached = cache.get('file-contents', cacheKey);
+    const cached = cache.get<Record<string, string>>('file-contents', cacheKey);
 
-    if (cached) return cached;
+    if (cached !== undefined) return cached;
 
     return singleFlight(cacheKey, async () => {
       const env = component.oc.files.env
@@ -579,7 +585,7 @@ export default function getComponent(conf: Config, repository: Repository) {
               );
             };
 
-            if (cached && !conf.hotReloading) {
+            if (cached !== undefined && !conf.hotReloading) {
               returnResult(cached);
             } else {
               const loadTemplate = async () => {
@@ -638,7 +644,10 @@ export default function getComponent(conf: Config, repository: Repository) {
             }
 
             const cacheKey = `${component.name}/${component.version}/server.js`;
-            const cached = cache.get('file-contents', cacheKey);
+            const cached = cache.get<(...args: any[]) => any>(
+              'file-contents',
+              cacheKey
+            );
             const domain = Domain.create();
             const setEmptyResponse =
               emptyResponseHandler.contextDecorator(returnComponent);
@@ -705,7 +714,7 @@ export default function getComponent(conf: Config, repository: Repository) {
               }
             };
 
-            if (cached && !conf.hotReloading) {
+            if (cached !== undefined && !conf.hotReloading) {
               domain.on('error', returnComponent);
 
               try {
