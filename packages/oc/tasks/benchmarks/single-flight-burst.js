@@ -1,4 +1,5 @@
 const { spawnSync } = require('node:child_process');
+const createStorageAdapter = require('./storage-adapter');
 
 const WORKER_ENV = 'OC_SINGLE_FLIGHT_BURST_WORKER_N';
 const BURST_SIZES = [50, 200];
@@ -78,31 +79,12 @@ const runWorker = async (n) => {
   const GetComponentHelper = require(
     '../../dist/registry/routes/helpers/get-component.js'
   ).default;
-  const jadeTemplate = require('oc-template-jade');
+  const Repository = require(
+    '../../dist/registry/domain/repository.js'
+  ).default;
   const componentName = 'single-flight-burst-component';
   const componentVersion = '1.0.0';
   const templateHash = 'single-flight-burst-template';
-  const component = {
-    name: componentName,
-    version: componentVersion,
-    oc: {
-      container: false,
-      renderInfo: false,
-      files: {
-        template: {
-          type: 'jade',
-          hashKey: templateHash,
-          src: 'template.js'
-        },
-        dataProvider: {
-          type: 'node.js',
-          hashKey: 'single-flight-burst-provider',
-          src: 'server.js'
-        },
-        env: '.env'
-      }
-    }
-  };
   const dataProviderSource = [
     '"use strict";',
     'module.exports.data = function data(context, callback) {',
@@ -116,57 +98,105 @@ const runWorker = async (n) => {
     '  return "<div>" + data.envValue + "</div>";',
     '};'
   ].join('\n');
-  const calls = {
-    getDataProvider: 0,
-    getCompiledView: 0,
-    getEnv: 0
-  };
-  let downstreamInFlight = 0;
-  let peakConcurrentDownstreamReads = 0;
-  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-  const downstreamRead = async (method, createResult) => {
-    calls[method]++;
-    downstreamInFlight++;
-    peakConcurrentDownstreamReads = Math.max(
-      peakConcurrentDownstreamReads,
-      downstreamInFlight
-    );
-    try {
-      await wait(DOWNSTREAM_LATENCY_MS);
-      return createResult();
-    } finally {
-      downstreamInFlight--;
+  const component = {
+    name: componentName,
+    version: componentVersion,
+    oc: {
+      container: false,
+      date: 0,
+      files: {
+        template: {
+          type: 'jade',
+          hashKey: templateHash,
+          src: 'template.js',
+          version: '7.0.6',
+          size: Buffer.byteLength(compiledViewSource)
+        },
+        dataProvider: {
+          type: 'node.js',
+          hashKey: 'single-flight-burst-provider',
+          src: 'server.js',
+          size: Buffer.byteLength(dataProviderSource)
+        },
+        static: [],
+        env: '.env'
+      },
+      packaged: true,
+      parameters: {},
+      plugins: [],
+      renderInfo: false,
+      version: '0.50.61'
     }
   };
-  const repository = {
-    getComponent: async () => component,
-    getEnv: async () =>
-      downstreamRead('getEnv', () => ({ BURST_ENV: ENV_VALUE })),
-    getDataProvider: async () =>
-      downstreamRead('getDataProvider', () => ({
-        content: dataProviderSource,
-        filePath: `/${componentName}/${componentVersion}/server.js`
-      })),
-    getCompiledView: async () =>
-      downstreamRead('getCompiledView', () => compiledViewSource),
-    getTemplate: (type) =>
-      type === 'jade' || type === 'oc-template-jade' ? jadeTemplate : undefined,
-    getTemplatesInfo: () => [
-      { type: 'oc-template-jade', version: '7.0.6', externals: [] }
-    ],
-    getStaticFilePath: (_name, _version, filePath) =>
-      `//benchmark.invalid/${componentName}/${componentVersion}/${filePath}`
-  };
+  const componentRoot = `components/${componentName}/${componentVersion}`;
+  const storageAdapter = createStorageAdapter({
+    minLatencyMs: DOWNSTREAM_LATENCY_MS,
+    maxLatencyMs: DOWNSTREAM_LATENCY_MS,
+    maxConcurrentRequests: 256,
+    files: new Map([
+      [
+        'components/components.json',
+        JSON.stringify({
+          lastEdit: 1,
+          components: { [componentName]: [componentVersion] }
+        })
+      ],
+      [
+        'components/components-details.json',
+        JSON.stringify({
+          lastEdit: 1,
+          components: {
+            [componentName]: {
+              [componentVersion]: {
+                publishDate: 0,
+                templateSize: Buffer.byteLength(compiledViewSource)
+              }
+            }
+          }
+        })
+      ],
+      [`${componentRoot}/package.json`, JSON.stringify(component)],
+      [`${componentRoot}/.env`, `BURST_ENV=${ENV_VALUE}\n`],
+      [`${componentRoot}/server.js`, dataProviderSource],
+      [`${componentRoot}/template.js`, compiledViewSource]
+    ]),
+    directories: new Map([
+      ['components', [componentName]],
+      [`components/${componentName}`, [componentVersion]]
+    ])
+  });
   const conf = {
     baseUrl: 'http://benchmark.invalid/',
+    customHeadersToSkipOnWeakVersion: [],
+    dataProvider: { enabled: true },
     dependencies: [],
     env: {},
+    fallbackRegistryUrl: '',
     hotReloading: false,
     local: false,
     plugins: {},
+    pollingInterval: 3600,
     refreshInterval: 0,
-    templates: []
+    storage: {
+      adapter: () => storageAdapter,
+      options: {
+        componentsDir: 'components',
+        path: '//benchmark.invalid/'
+      }
+    },
+    templates: [],
+    verbosity: 0
   };
+  const repository = Repository(conf);
+  await repository.init();
+  await storageAdapter.waitForIdle();
+  const startupStorageMetrics = storageAdapter.getMetrics();
+  if (startupStorageMetrics.activeReads !== 0) {
+    throw new Error(
+      `startup storage reads did not settle: ${startupStorageMetrics.activeReads}`
+    );
+  }
+  storageAdapter.resetMetrics();
   const getComponent = GetComponentHelper(conf, repository);
   const renderOne = () =>
     new Promise((resolve, reject) => {
@@ -194,73 +224,113 @@ const runWorker = async (n) => {
         }
       );
     });
-  const baselineMemory = memorySnapshot();
-  const peakMemory = { ...baselineMemory };
-  const baselineResourceUsage = process.resourceUsage();
-  const sampleMemory = () => {
-    const current = memorySnapshot();
-    peakMemory.rssBytes = Math.max(peakMemory.rssBytes, current.rssBytes);
-    peakMemory.heapUsedBytes = Math.max(
-      peakMemory.heapUsedBytes,
-      current.heapUsedBytes
-    );
-  };
-  const sampler = setInterval(sampleMemory, MEMORY_SAMPLE_INTERVAL_MS);
-  sampler.unref();
-  const startedAt = process.hrtime.bigint();
-  let results;
   try {
-    results = await Promise.all(Array.from({ length: n }, () => renderOne()));
-  } finally {
-    sampleMemory();
-    clearInterval(sampler);
-  }
-  const endedAt = process.hrtime.bigint();
-  const finalResourceUsage = process.resourceUsage();
-  const expectedHtml = `<div>${ENV_VALUE}</div>`;
-  if (!results.every((result) => result.response.html === expectedHtml)) {
-    throw new Error(`env coverage failed: expected every render to return ${expectedHtml}`);
-  }
-  if (downstreamInFlight !== 0) {
-    throw new Error(
-      `downstream in-flight counter did not return to zero: ${downstreamInFlight}`
-    );
-  }
-
-  return {
-    n,
-    pid: process.pid,
-    hotReloading: conf.hotReloading,
-    completedRenders: results.length,
-    downstreamCalls: calls,
-    peakConcurrentDownstreamReads,
-    wallTimeMs: Number(endedAt - startedAt) / 1e6,
-    memory: {
-      baseline: {
-        rssMb: toMb(baselineMemory.rssBytes),
-        heapUsedMb: toMb(baselineMemory.heapUsedBytes)
-      },
-      peak: {
-        rssMb: toMb(peakMemory.rssBytes),
-        heapUsedMb: toMb(peakMemory.heapUsedBytes)
-      },
-      peakDelta: {
-        rssMb: toMb(peakMemory.rssBytes - baselineMemory.rssBytes),
-        heapUsedMb: toMb(
-          peakMemory.heapUsedBytes - baselineMemory.heapUsedBytes
-        )
-      }
-    },
-    cpu: {
-      userTimeMs:
-        (finalResourceUsage.userCPUTime - baselineResourceUsage.userCPUTime) /
-        1000,
-      systemTimeMs:
-        (finalResourceUsage.systemCPUTime -
-          baselineResourceUsage.systemCPUTime) /
-        1000
+    const baselineMemory = memorySnapshot();
+    const peakMemory = { ...baselineMemory };
+    const baselineResourceUsage = process.resourceUsage();
+    const sampleMemory = () => {
+      const current = memorySnapshot();
+      peakMemory.rssBytes = Math.max(peakMemory.rssBytes, current.rssBytes);
+      peakMemory.heapUsedBytes = Math.max(
+        peakMemory.heapUsedBytes,
+        current.heapUsedBytes
+      );
+    };
+    const sampler = setInterval(sampleMemory, MEMORY_SAMPLE_INTERVAL_MS);
+    sampler.unref();
+    const startedAt = process.hrtime.bigint();
+    let results;
+    try {
+      results = await Promise.all(Array.from({ length: n }, () => renderOne()));
+    } finally {
+      sampleMemory();
+      clearInterval(sampler);
     }
-  };
+    const endedAt = process.hrtime.bigint();
+    const finalResourceUsage = process.resourceUsage();
+    const expectedHtml = `<div>${ENV_VALUE}</div>`;
+    if (!results.every((result) => result.response.html === expectedHtml)) {
+      throw new Error(
+        `env coverage failed: expected every render to return ${expectedHtml}`
+      );
+    }
+
+    const storageMetrics = storageAdapter.getMetrics();
+    const callsFor = (filePath, operation) =>
+      storageMetrics.completedOperations.byPath[filePath]?.byOperation[
+        operation
+      ] || 0;
+    const manifestReads = callsFor(`${componentRoot}/package.json`, 'getJson');
+    const envReads = callsFor(`${componentRoot}/.env`, 'getFile');
+    const providerReads = callsFor(`${componentRoot}/server.js`, 'getFile');
+    const templateReads = callsFor(`${componentRoot}/template.js`, 'getFile');
+    if (manifestReads <= 1) {
+      throw new Error(
+        `manifest work baseline changed: expected more than one read, got ${manifestReads}`
+      );
+    }
+    for (const [artifact, reads] of Object.entries({
+      env: envReads,
+      provider: providerReads,
+      template: templateReads
+    })) {
+      if (reads !== 1) {
+        throw new Error(
+          `${artifact} single-flight baseline changed: expected 1 read, got ${reads}`
+        );
+      }
+    }
+    if (storageMetrics.activeReads !== 0) {
+      throw new Error(
+        `storage reads did not return to zero: ${storageMetrics.activeReads}`
+      );
+    }
+
+    const report = {
+      n,
+      pid: process.pid,
+      hotReloading: conf.hotReloading,
+      completedRenders: results.length,
+      storageWork: {
+        manifestReads,
+        envReads,
+        providerReads,
+        templateReads
+      },
+      storageMetrics,
+      startupStorageMetrics,
+      wallTimeMs: Number(endedAt - startedAt) / 1e6,
+      memory: {
+        baseline: {
+          rssMb: toMb(baselineMemory.rssBytes),
+          heapUsedMb: toMb(baselineMemory.heapUsedBytes)
+        },
+        peak: {
+          rssMb: toMb(peakMemory.rssBytes),
+          heapUsedMb: toMb(peakMemory.heapUsedBytes)
+        },
+        peakDelta: {
+          rssMb: toMb(peakMemory.rssBytes - baselineMemory.rssBytes),
+          heapUsedMb: toMb(
+            peakMemory.heapUsedBytes - baselineMemory.heapUsedBytes
+          )
+        }
+      },
+      cpu: {
+        userTimeMs:
+          (finalResourceUsage.userCPUTime - baselineResourceUsage.userCPUTime) /
+          1000,
+        systemTimeMs:
+          (finalResourceUsage.systemCPUTime -
+            baselineResourceUsage.systemCPUTime) /
+          1000
+      }
+    };
+    JSON.stringify(report);
+    return report;
+  } finally {
+    await repository.close();
+  }
 };
 
 const workerN = process.env[WORKER_ENV];

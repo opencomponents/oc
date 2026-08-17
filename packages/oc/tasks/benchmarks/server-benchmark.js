@@ -5,6 +5,9 @@ const { spawn } = require('node:child_process');
 const { promisify } = require('node:util');
 const getPort = require('getport');
 
+const {
+  applyBenchmarkAssertions
+} = require('./benchmark-assertions');
 const createStorageAdapter = require('./storage-adapter');
 const oc = require('../../dist');
 
@@ -39,6 +42,27 @@ const parseList = (value) =>
     .split(',')
     .map((entry) => entry.trim())
     .filter(Boolean);
+
+const parseOptionalNonnegativeNumber = (value, label) => {
+  if (value === undefined) return undefined;
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    throw new Error(`${label} must be a nonnegative number`);
+  }
+  return parsed;
+};
+
+const parseExpectedPackageReads = (value) => {
+  if (value === undefined) return undefined;
+  const entries = String(value).split(',');
+  if (
+    entries.length === 0 ||
+    entries.some((entry) => !/^\d+$/.test(entry.trim()))
+  ) {
+    throw new Error('expect-package-reads must contain comma-separated integers');
+  }
+  return entries.map((entry) => Number(entry.trim()));
+};
 
 const nowIsoCompact = () => new Date().toISOString().replace(/[:.]/g, '-');
 
@@ -433,6 +457,105 @@ const mapBombardierResult = (result) => {
   };
 };
 
+const summarizeStorageWork = (storageMetrics, successfulRequests) => {
+  const operations = storageMetrics.completedOperations;
+  const byOperation = { ...operations.byOperation };
+  const raw = {
+    publicReads: operations.total,
+    byOperation,
+    packageManifestReads: 0,
+    providerReads: 0,
+    templateReads: 0,
+    envReads: 0
+  };
+  for (const [filePath, counts] of Object.entries(operations.byPath)) {
+    const fileName = path.posix.basename(filePath);
+    if (fileName === 'package.json') {
+      raw.packageManifestReads += counts.byOperation.getJson;
+    } else if (fileName === 'server.js') {
+      raw.providerReads += counts.byOperation.getFile;
+    } else if (fileName === 'template.js') {
+      raw.templateReads += counts.byOperation.getFile;
+    } else if (fileName === '.env') {
+      raw.envReads += counts.byOperation.getFile;
+    }
+  }
+  const normalize = (value) =>
+    successfulRequests > 0 ? value / successfulRequests : null;
+  return {
+    successfulRequests,
+    raw,
+    perSuccessfulRequest: {
+      publicReads: normalize(raw.publicReads),
+      byOperation: Object.fromEntries(
+        Object.entries(byOperation).map(([operation, count]) => [
+          operation,
+          normalize(count)
+        ])
+      ),
+      packageManifestReads: normalize(raw.packageManifestReads),
+      providerReads: normalize(raw.providerReads),
+      templateReads: normalize(raw.templateReads),
+      envReads: normalize(raw.envReads)
+    },
+    peakConcurrentReads: storageMetrics.peakConcurrentReads
+  };
+};
+
+const aggregateStorageWork = (runs) => {
+  const measured = runs.filter((run) => run.storageWork);
+  if (measured.length === 0) return null;
+  const byOperation = {
+    getFile: 0,
+    getJson: 0,
+    listSubDirectories: 0
+  };
+  const raw = {
+    successfulRequests: 0,
+    publicReads: 0,
+    byOperation,
+    packageManifestReads: 0,
+    providerReads: 0,
+    templateReads: 0,
+    envReads: 0
+  };
+  for (const run of measured) {
+    raw.successfulRequests += run.storageWork.successfulRequests;
+    raw.publicReads += run.storageWork.raw.publicReads;
+    raw.packageManifestReads += run.storageWork.raw.packageManifestReads;
+    raw.providerReads += run.storageWork.raw.providerReads;
+    raw.templateReads += run.storageWork.raw.templateReads;
+    raw.envReads += run.storageWork.raw.envReads;
+    for (const operation of Object.keys(byOperation)) {
+      byOperation[operation] += run.storageWork.raw.byOperation[operation];
+    }
+  }
+  const normalize = (value) =>
+    raw.successfulRequests > 0 ? value / raw.successfulRequests : null;
+  const peaks = measured.map((run) => run.storageWork.peakConcurrentReads);
+  return {
+    rawTotals: raw,
+    perSuccessfulRequest: {
+      publicReads: normalize(raw.publicReads),
+      byOperation: Object.fromEntries(
+        Object.entries(byOperation).map(([operation, count]) => [
+          operation,
+          normalize(count)
+        ])
+      ),
+      packageManifestReads: normalize(raw.packageManifestReads),
+      providerReads: normalize(raw.providerReads),
+      templateReads: normalize(raw.templateReads),
+      envReads: normalize(raw.envReads)
+    },
+    peakConcurrentReads: {
+      average: peaks.reduce((sum, value) => sum + value, 0) / peaks.length,
+      min: Math.min(...peaks),
+      max: Math.max(...peaks)
+    }
+  };
+};
+
 const createPlugin = () => ({
   name: 'appendSuffix',
   description: 'Benchmark plugin used to emulate plugin execution in requests',
@@ -574,6 +697,25 @@ const benchmarkScenario = async ({ scenario, options }) => {
   const scenarioResult = {
     key: scenario.key,
     title: scenario.title,
+    workload: {
+      repetitions: options.repetitions,
+      connections: options.connections,
+      duration: options.duration,
+      timeout: options.timeout,
+      requests: options.requests,
+      rate: options.rate,
+      disableKeepAlives: options.disableKeepAlives,
+      headers: [...options.headers, ...(scenario.headers || [])],
+      request: {
+        method: scenario.method || 'GET',
+        body: scenario.body ?? null
+      },
+      storage: {
+        minLatencyMs: options.storageMinLatencyMs,
+        maxLatencyMs: options.storageMaxLatencyMs,
+        maxConcurrentRequests: options.storageMaxConcurrentRequests
+      }
+    },
     runs: [],
     aggregate: null,
     resourceUsage: null
@@ -630,17 +772,21 @@ const benchmarkScenario = async ({ scenario, options }) => {
       
       const resourceDelta = monitoring.getDelta();
       const storageMetrics = server.getStorageMetrics();
+      const metrics = mapBombardierResult(run.raw.result);
+      const storageWork = storageMetrics
+        ? summarizeStorageWork(storageMetrics, metrics.successRequests)
+        : null;
       resourceMeasurements.push(resourceDelta);
       if (storageMetrics) storageMeasurements.push(storageMetrics);
 
-      const metrics = mapBombardierResult(run.raw.result);
       const runResult = {
         attempt,
         command: `bombardier ${run.args.join(' ')}`,
         metrics,
         rawResult: run.raw.result,
         resourceUsage: resourceDelta,
-        storageMetrics
+        storageMetrics,
+        storageWork
       };
 
       scenarioResult.runs.push(runResult);
@@ -699,6 +845,7 @@ const benchmarkScenario = async ({ scenario, options }) => {
       max: Math.max(...peaks)
     };
   }
+  scenarioResult.storageWork = aggregateStorageWork(scenarioResult.runs);
   scenarioResult.aggregate = aggregate(scenarioResult.runs);
   return scenarioResult;
 };
@@ -707,9 +854,12 @@ const parseArguments = (argv) => {
   const args = {};
   for (const entry of argv) {
     if (!entry.startsWith('--')) continue;
-    const [rawKey, rawValue] = entry.replace(/^--/, '').split('=');
+    const argument = entry.replace(/^--/, '');
+    const separator = argument.indexOf('=');
+    const rawKey = separator === -1 ? argument : argument.slice(0, separator);
+    const rawValue = separator === -1 ? 'true' : argument.slice(separator + 1);
     if (!rawKey) continue;
-    args[rawKey] = rawValue ?? 'true';
+    args[rawKey] = rawValue;
   }
 
   return args;
@@ -725,13 +875,67 @@ const selectScenarios = (selected) => {
   return all.filter((scenario) => selectedSet.has(scenario.key));
 };
 
+const getAssertionOptions = (args) => ({
+  expectedPackageReads: parseExpectedPackageReads(
+    args['expect-package-reads']
+  ),
+  expectedSuccessRate: parseOptionalNonnegativeNumber(
+    args['expect-success-rate'],
+    'expect-success-rate'
+  ),
+  maxRpsRegressionPercent: parseOptionalNonnegativeNumber(
+    args['max-rps-regression-percent'],
+    'max-rps-regression-percent'
+  ),
+  maxP95RegressionPercent: parseOptionalNonnegativeNumber(
+    args['max-p95-regression-percent'],
+    'max-p95-regression-percent'
+  )
+});
+
+const getResultScenarioKeys = (result, requestedKeys) => {
+  const available = new Set(result.scenarios?.map((scenario) => scenario.key));
+  const selected = requestedKeys.length
+    ? requestedKeys
+    : result.scenarios?.map((scenario) => scenario.key) || [];
+  const unknown = selected.filter((key) => !available.has(key));
+  if (unknown.length) {
+    throw new Error(`Unknown result scenarios: ${unknown.join(', ')}`);
+  }
+  return selected;
+};
+
 const main = async () => {
   const args = parseArguments(process.argv.slice(2));
-  const parsedHeaders = parseList(args.headers);
+  const assertionOptions = getAssertionOptions(args);
   const selectedScenarioKeys = parseList(args.scenarios);
-  const scenarios = selectScenarios(selectedScenarioKeys);
+  if (args['verify-result-file']) {
+    const current = await readJson(path.resolve(args['verify-result-file']));
+    const previousBaseline = args['baseline-file']
+      ? await readJson(path.resolve(args['baseline-file']))
+      : null;
+    const scenarioKeys = getResultScenarioKeys(current, selectedScenarioKeys);
+    applyBenchmarkAssertions({
+      current,
+      baseline: previousBaseline,
+      scenarioKeys,
+      ...assertionOptions
+    });
+    printComparison(compareWithBaseline(current, previousBaseline));
+    console.log(`\nVerified benchmark result: ${path.resolve(args['verify-result-file'])}`);
+    return;
+  }
 
-  if (scenarios.length === 0) {
+  const parsedHeaders = parseList(args.headers);
+  const scenarios = selectScenarios(selectedScenarioKeys);
+  const availableScenarioKeys = new Set(
+    buildScenarios().map((scenario) => scenario.key)
+  );
+  const unknownScenarios = selectedScenarioKeys.filter(
+    (key) => !availableScenarioKeys.has(key)
+  );
+
+  if (scenarios.length === 0 || unknownScenarios.length) {
     throw new Error(
       `No valid scenarios selected. Available scenarios: ${buildScenarios()
         .map((scenario) => scenario.key)
@@ -758,6 +962,23 @@ const main = async () => {
       128
     )
   };
+  const explicitResultPath = args['result-file']
+    ? path.resolve(args['result-file'])
+    : null;
+  const explicitBaselinePath = args['baseline-file']
+    ? path.resolve(args['baseline-file'])
+    : null;
+  if (
+    explicitResultPath &&
+    explicitBaselinePath &&
+    explicitResultPath === explicitBaselinePath
+  ) {
+    throw new Error('result-file and baseline-file must be different paths');
+  }
+  // Load previous baseline for comparison
+  const previousBaseline = explicitBaselinePath
+    ? await readJson(explicitBaselinePath)
+    : null; // No previous baseline exists
 
   const getScenarioOptions = (scenario) => {
     if (scenario.highLoad) {
@@ -777,7 +998,7 @@ const main = async () => {
     host: hostname,
     node: process.version,
     platform: `${process.platform}-${process.arch}`,
-    benchmarkVersion: 2,
+    benchmarkVersion: 3,
     options: {
       repetitions: baseOptions.repetitions,
       connections: baseOptions.connections,
@@ -808,17 +1029,22 @@ const main = async () => {
 
   const latestPath = path.join(baseOptions.outDir, 'server-benchmark-latest.json');
   await writeJson(latestPath, baseline);
+  if (explicitResultPath) await writeJson(explicitResultPath, baseline);
 
-  console.log(`\nSaved benchmark baseline:\n- ${outputPath}\n- ${latestPath}`);
+  console.log(
+    `\nSaved benchmark baseline:\n- ${outputPath}\n- ${latestPath}${
+      explicitResultPath ? `\n- ${explicitResultPath}` : ''
+    }`
+  );
 
-  // Load previous baseline for comparison
   const previousBaselinePath = path.join(baseOptions.outDir, 'server-benchmark-baseline.json');
-  let previousBaseline = null;
-  try {
-    previousBaseline = await readJson(previousBaselinePath);
-  } catch (error) {
-    // No previous baseline exists
-  }
+
+  applyBenchmarkAssertions({
+    current: baseline,
+    baseline: previousBaseline,
+    scenarioKeys: baseline.scenarios.map((scenario) => scenario.key),
+    ...assertionOptions
+  });
 
   // Compare with previous baseline
   const comparison = compareWithBaseline(baseline, previousBaseline);
@@ -841,6 +1067,16 @@ const main = async () => {
       const storage = scenario.storageConcurrency;
       console.log(
         `  Storage peak concurrency(avg/min/max)=${storage.average.toFixed(2)}/${storage.min}/${storage.max}`
+      );
+    }
+
+    if (scenario.storageWork) {
+      const raw = scenario.storageWork.rawTotals;
+      const normalized = scenario.storageWork.perSuccessfulRequest;
+      const formatNormalized = (value) =>
+        value === null ? 'n/a' : value.toFixed(6);
+      console.log(
+        `  Storage work total/per-success: public=${raw.publicReads}/${formatNormalized(normalized.publicReads)} | package=${raw.packageManifestReads}/${formatNormalized(normalized.packageManifestReads)} | provider=${raw.providerReads}/${formatNormalized(normalized.providerReads)} | template=${raw.templateReads}/${formatNormalized(normalized.templateReads)} | env=${raw.envReads}/${formatNormalized(normalized.envReads)}`
       );
     }
 
