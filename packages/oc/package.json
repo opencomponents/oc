@@ -14,6 +14,7 @@
 		"test": "node tasks/mochaTest.js",
 		"test-silent": "node tasks/mochaTest.js --silent",
 		"bench": "node tasks/benchmarks/server-benchmark.js --repetitions=5",
+		"bench:burst": "node tasks/benchmarks/single-flight-burst.js",
 		"bench:quick": "node tasks/benchmarks/server-benchmark.js --repetitions=3",
 		"bench:update-baseline": "node tasks/benchmarks/server-benchmark.js --repetitions=5 --update-baseline=true",
 		"bench:high-load": "node tasks/benchmarks/server-benchmark.js --scenarios=high-load-local,high-load-storage --high-load-repetitions=3"
