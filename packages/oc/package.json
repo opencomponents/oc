@@ -89,6 +89,7 @@
 		"getport": "^0.1.0",
 		"livereload": "^0.10.3",
 		"lodash.isequal": "^4.5.0",
+		"lru-cache": "^10.4.3",
 		"morgan": "^1.11.0",
 		"multer": "^2.2.0",
 		"oc-client": "^4.0.3",
