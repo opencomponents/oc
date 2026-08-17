@@ -8,7 +8,8 @@ import type {
 } from '../domain/http-server/types';
 import type { Repository } from '../domain/repository';
 import GetComponentHelper, {
-  type GetComponentResult
+  type GetComponentResult,
+  type RenderComponent
 } from './helpers/get-component';
 
 type Component = {
@@ -20,9 +21,9 @@ type Component = {
 
 export default function components(
   conf: Config,
-  repository: Repository
+  repository: Repository,
+  getComponent: RenderComponent = GetComponentHelper(conf, repository)
 ): OcHandler {
-  const getComponent = GetComponentHelper(conf, repository);
   const setHeaders = (
     results: GetComponentResult[] | undefined,
     res: OcResponse

@@ -5,14 +5,16 @@ import strings from '../../resources';
 import type { Config } from '../../types';
 import type { CookieOptions, OcHandler } from '../domain/http-server/types';
 import type { Repository } from '../domain/repository';
-import GetComponentHelper, { stream } from './helpers/get-component';
+import GetComponentHelper, {
+  type RenderComponent,
+  stream
+} from './helpers/get-component';
 
 export default function component(
   conf: Config,
-  repository: Repository
+  repository: Repository,
+  getComponent: RenderComponent = GetComponentHelper(conf, repository)
 ): OcHandler {
-  const getComponent = GetComponentHelper(conf, repository);
-
   return (req, res): void => {
     let parameters = req.query as Record<string, string>;
     if (req.method === 'POST') {

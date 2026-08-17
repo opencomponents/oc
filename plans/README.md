@@ -9,7 +9,7 @@ Generated on 2026-07-23 and extended on 2026-08-17. Each numbered plan is intend
 | 001 | Improve high-traffic component route performance without long-lived metadata caching | P1 | L | - | DONE |
 | 002 | Prove/disprove Plan 001's burst and batch wins with targeted benchmark scenarios | P2 | M | 001 | DONE |
 | 003 | Make repository work counts a performance regression gate | P1 | M | - | DONE |
-| 004 | Replace `nice-cache` with a bounded registry-scoped artifact cache | P1 | L | 003 | TODO |
+| 004 | Replace `nice-cache` with a bounded registry-scoped artifact cache | P1 | L | 003 | DONE |
 | 005 | Cache immutable component manifests after version resolution | P1 | L | 004 | TODO |
 | 006 | Keep the successful render path synchronous and allocation-light | P1 | M | 005 | TODO |
 | 007 | Compile component parameter schemas and add an empty-schema fast lane | P2 | M | 006 | TODO |

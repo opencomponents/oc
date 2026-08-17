@@ -13,6 +13,7 @@ import ComponentInfoRoute from './routes/component-info';
 import ComponentPreviewRoute from './routes/component-preview';
 import ComponentsRoute from './routes/components';
 import DependenciesRoute from './routes/dependencies';
+import GetComponentHelper from './routes/helpers/get-component';
 import HistoryRoute from './routes/history';
 import PluginsRoute from './routes/plugins';
 import PublishRoute from './routes/publish';
@@ -30,9 +31,10 @@ export function create(
     id: string,
     ...handlers: OcHandler[]
   ) => adapter.route(method, path, id, handlers);
+  const renderComponent = GetComponentHelper(conf, repository);
   const routes = {
-    component: ComponentRoute(conf, repository),
-    components: ComponentsRoute(conf, repository),
+    component: ComponentRoute(conf, repository, renderComponent),
+    components: ComponentsRoute(conf, repository, renderComponent),
     componentInfo: ComponentInfoRoute(conf, repository),
     componentPreview: ComponentPreviewRoute(conf, repository),
     index: IndexRoute(repository),

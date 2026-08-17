@@ -1,6 +1,6 @@
 # Plan 004: Replace `nice-cache` with a bounded registry-scoped artifact cache
 
-> **Executor instructions**: Implement this plan as one infrastructure PR. Follow the steps exactly and stop on any condition below. Do not add a third-party cache dependency. Update `plans/README.md` when complete unless a reviewer maintains the index.
+> **Executor instructions**: Implement this plan as one infrastructure PR. Follow the steps exactly and stop on any condition below. Use the established `lru-cache` package for eviction rather than maintaining a custom LRU implementation. Update `plans/README.md` when complete unless a reviewer maintains the index.
 >
 > **Drift check (run first)**: `git diff --stat 0564f540..HEAD -- packages/oc/src/utils/bounded-cache.ts packages/oc/src/registry/routes/helpers/get-component.ts packages/oc/src/registry/routes/component.ts packages/oc/src/registry/routes/components.ts packages/oc/src/registry/router.ts packages/oc/test/unit packages/oc/package.json package-lock.json plans/README.md`
 > Compare changed in-scope files with the excerpts below. If Plan 003 has landed, its `packages/oc/package.json` benchmark-script addition and `plans/README.md` status change are expected; other in-scope drift is not.
@@ -16,7 +16,7 @@
 
 ## Why this matters
 
-`nice-cache` is a process-wide singleton with no bounded eviction. Artifact entries therefore outlive individual registry instances, can collide when multiple registries serve the same component/version from different stores, and grow with every rendered version. This PR replaces it with a small internal bounded LRU owned by one render service and shares that service across GET and batch routes, preserving existing caching and single-flight behavior without global state.
+`nice-cache` is a process-wide singleton with no bounded eviction. Artifact entries therefore outlive individual registry instances, can collide when multiple registries serve the same component/version from different stores, and grow with every rendered version. This PR replaces it with a small namespaced wrapper around the established `lru-cache` package, owned by one render service, and shares that service across GET and batch routes, preserving existing caching and single-flight behavior without global state.
 
 ## Current state
 
@@ -53,7 +53,7 @@ Run from repository root.
 
 | Purpose | Command | Expected on success |
 |---|---|---|
-| Remove dependency | `npm uninstall nice-cache --workspace packages/oc` | exit 0; manifest and lockfile updated |
+| Replace dependency | `npm uninstall nice-cache --workspace packages/oc && npm install lru-cache@10.4.3 --workspace packages/oc` | exit 0; manifest and lockfile updated |
 | Build | `npm --workspace packages/oc run build` | exit 0 |
 | Tests | `npm --workspace packages/oc run test-silent` | exit 0 |
 | Burst | `npm --workspace packages/oc run bench:burst` | exit 0; artifact calls remain one each |
@@ -81,7 +81,7 @@ Run from repository root.
 - Public cache-size configuration.
 - Changing hot-reload semantics.
 - Sharing request state such as parameters, domains, headers, cookies, response objects, or provider contexts.
-- Adding another cache package.
+- Adding cache packages other than `lru-cache`.
 
 ## Git workflow
 
@@ -100,7 +100,7 @@ After building Plan 003 and before changing production source, run the Capture b
 
 ### Step 1: Add a bounded LRU utility
 
-Create `packages/oc/src/utils/bounded-cache.ts` with a compact Map-backed implementation.
+Create `packages/oc/src/utils/bounded-cache.ts` as a compact namespaced wrapper around `lru-cache@10.4.3`. Keep the dependency on v10 so the package remains compatible with the registry's Node 18 minimum.
 
 Required API:
 
@@ -194,9 +194,9 @@ Assert:
 
 **Verify**: `npm --workspace packages/oc run test-silent` → exit 0.
 
-### Step 5: Remove the direct dependency and benchmark
+### Step 5: Replace the direct dependency and benchmark
 
-Run the workspace uninstall command. Confirm `packages/oc/package.json` no longer lists `nice-cache`. It may remain transitively in the lockfile for other packages; do not force-remove transitive consumers.
+Run the workspace dependency replacement command. Confirm `packages/oc/package.json` no longer lists `nice-cache` and directly lists `lru-cache@^10.4.3`. `nice-cache` may remain transitively in the lockfile for other packages; do not force-remove transitive consumers.
 
 Run burst and the Compare benchmark command. Plan 003's checker must enforce the 5% RPS/p95 thresholds against `/tmp/oc-plan004-before.json`; env/provider/template cold loads must remain one each. Do not tune capacity to the benchmark fixture to force a pass.
 
@@ -209,11 +209,11 @@ Run burst and the Compare benchmark command. Plan 003's checker must enforce the
 - Add mixed GET/batch cold single-flight coverage.
 - Add two-registry isolation coverage using identical logical keys and different values.
 - Assert bounded size and real LRU promotion.
-- Run burst work-count assertions after dependency removal.
+- Run burst work-count assertions after dependency replacement.
 
 ## Done criteria
 
-- [ ] No direct `nice-cache` import or dependency remains in `packages/oc`.
+- [ ] No direct `nice-cache` import or dependency remains in `packages/oc`; `lru-cache@^10.4.3` provides bounded eviction.
 - [ ] Artifact cache is bounded to 1000 entries per render service and supports exact namespaced invalidation.
 - [ ] Separate registry instances cannot share cached artifacts.
 - [ ] GET and batch routes use one render helper per registry.
