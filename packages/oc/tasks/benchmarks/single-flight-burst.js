@@ -260,13 +260,16 @@ const runWorker = async (n) => {
       storageMetrics.completedOperations.byPath[filePath]?.byOperation[
         operation
       ] || 0;
-    const manifestReads = callsFor(`${componentRoot}/package.json`, 'getJson');
+    const packageJsonReads = callsFor(
+      `${componentRoot}/package.json`,
+      'getJson'
+    );
     const envReads = callsFor(`${componentRoot}/.env`, 'getFile');
     const providerReads = callsFor(`${componentRoot}/server.js`, 'getFile');
     const templateReads = callsFor(`${componentRoot}/template.js`, 'getFile');
-    if (manifestReads <= 1) {
+    if (packageJsonReads !== 1) {
       throw new Error(
-        `manifest work baseline changed: expected more than one read, got ${manifestReads}`
+        `package.json single-flight changed: expected 1 read, got ${packageJsonReads}`
       );
     }
     for (const [artifact, reads] of Object.entries({
@@ -292,7 +295,7 @@ const runWorker = async (n) => {
       hotReloading: conf.hotReloading,
       completedRenders: results.length,
       storageWork: {
-        manifestReads,
+        packageJsonReads,
         envReads,
         providerReads,
         templateReads

@@ -23,8 +23,16 @@ const getParsedAuthor = (author?: Author | string): Author => {
   return typeof author === 'string' ? parseAuthor(author) : author;
 };
 
-const mapComponentDetails = (component: Component): ParsedComponent =>
-  Object.assign(component, { author: getParsedAuthor(component.author) });
+const mapComponentDetails = (component: Component): ParsedComponent => ({
+  ...component,
+  author: getParsedAuthor(component.author),
+  oc: component.oc.date
+    ? {
+        ...component.oc,
+        stringifiedDate: dateStringified(new Date(component.oc.date))
+      }
+    : component.oc
+});
 
 const isHtmlRequest = (headers: IncomingHttpHeaders) =>
   !!headers.accept && headers.accept.indexOf('text/html') >= 0;
@@ -55,16 +63,8 @@ export default function (repository: Repository): OcHandler {
     );
 
     if (isHtmlRequest(req.headers) && res.conf.discovery.ui) {
-      const processedComponents: ParsedComponent[] = componentDetails.map(
-        (component) => {
-          if (component.oc?.date) {
-            component.oc.stringifiedDate = dateStringified(
-              new Date(component.oc.date)
-            );
-          }
-          return mapComponentDetails(component);
-        }
-      );
+      const processedComponents: ParsedComponent[] =
+        componentDetails.map(mapComponentDetails);
 
       const totalReleases = componentDetails.reduce(
         (sum, component) => sum + component.allVersions.length,

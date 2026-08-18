@@ -16,6 +16,7 @@ import type {
   Config,
   TemplateInfo
 } from '../../types';
+import BoundedCache from '../../utils/bounded-cache';
 import errorToString from '../../utils/error-to-string';
 import ComponentsCache from './components-cache';
 import getComponentsDetails from './components-details';
@@ -35,6 +36,22 @@ const packageInfo = fs.readJsonSync(
   path.join(__dirname, '..', '..', '..', 'package.json')
 );
 
+type ComponentInfoLoad = {
+  promise: Promise<Component>;
+  invalidated: boolean;
+};
+
+const freezeComponentInfo = <T>(value: T): T => {
+  if (value && typeof value === 'object') {
+    for (const nestedValue of Object.values(value)) {
+      freezeComponentInfo(nestedValue);
+    }
+    if (!Object.isFrozen(value)) Object.freeze(value);
+  }
+
+  return value;
+};
+
 export default function repository(conf: Config) {
   const cdn: StorageAdapter =
     !conf.local &&
@@ -52,11 +69,36 @@ export default function repository(conf: Config) {
     : undefined;
   const componentsCache = ComponentsCache(conf, cdn, metadataIndex);
   const componentsDetails = getComponentsDetails(conf, cdn, metadataIndex);
+  const componentInfoCache = new BoundedCache(1000);
+  const componentInfoLoads = new Map<string, ComponentInfoLoad>();
+  const localVersions = new Map<string, string>();
+  const localVersionLoads = new Map<string, Promise<string[]>>();
   let exportLegacyFilesLoop: NodeJS.Timeout | undefined;
   let closed = false;
 
   const getFilePath = (component: string, version: string, filePath: string) =>
     `${options!.componentsDir}/${component}/${version}/${filePath}`;
+
+  const getComponentInfoKey = (
+    componentName: string,
+    componentVersion: string
+  ) => JSON.stringify([componentName, componentVersion]);
+
+  const invalidateComponentInfo = (
+    componentName: string,
+    componentVersion: string
+  ) => {
+    const key = getComponentInfoKey(componentName, componentVersion);
+    componentInfoCache.delete('component-info', key);
+
+    const entry = componentInfoLoads.get(key);
+    if (entry) {
+      entry.invalidated = true;
+      if (componentInfoLoads.get(key) === entry) {
+        componentInfoLoads.delete(key);
+      }
+    }
+  };
 
   const exportLegacyFiles = () => {
     if (!metadataStore || !conf.metadata?.exportLegacyFiles) {
@@ -165,15 +207,8 @@ export default function repository(conf: Config) {
       return components;
     },
     getComponentVersions(componentName: string): Promise<string[]> {
-      if (componentName === 'oc-client') {
-        return Promise.all([
-          fs
-            .readJson(path.join(__dirname, '../../../package.json'))
-            .then((x) => x.version)
-        ]);
-      }
-
-      if (!local.getComponents().includes(componentName)) {
+      const isOcClient = componentName === 'oc-client';
+      if (!isOcClient && !local.getComponents().includes(componentName)) {
         return Promise.reject(
           strings.errors.registry.COMPONENT_NOT_FOUND(
             componentName,
@@ -182,11 +217,39 @@ export default function repository(conf: Config) {
         );
       }
 
-      return Promise.all([
+      const readVersion = () =>
         fs
-          .readJson(path.join(conf.path, `${componentName}/package.json`))
-          .then((x) => x.version)
-      ]);
+          .readJson(
+            isOcClient
+              ? path.join(__dirname, '../../../package.json')
+              : path.join(conf.path, `${componentName}/package.json`)
+          )
+          .then((componentInfo) => componentInfo.version as string);
+
+      if (conf.hotReloading !== false) {
+        return readVersion().then((version) => [version]);
+      }
+
+      const cachedVersion = localVersions.get(componentName);
+      if (cachedVersion !== undefined) {
+        return Promise.resolve([cachedVersion]);
+      }
+
+      const activeLoad = localVersionLoads.get(componentName);
+      if (activeLoad) return activeLoad;
+
+      const load = readVersion()
+        .then((version) => {
+          localVersions.set(componentName, version);
+          return [version];
+        })
+        .finally(() => {
+          if (localVersionLoads.get(componentName) === load) {
+            localVersionLoads.delete(componentName);
+          }
+        });
+      localVersionLoads.set(componentName, load);
+      return load;
     },
     getDataProvider(componentName: string) {
       const ocClientServerPath =
@@ -250,13 +313,52 @@ export default function repository(conf: Config) {
         );
       }
 
-      const component = await repository
-        .getComponentInfo(componentName, version)
-        .catch((err) => {
-          throw `component not available: ${errorToString(err)}`;
-        });
+      let component: Component;
+      if (conf.local && conf.hotReloading) {
+        component = await repository
+          .getComponentInfo(componentName, version)
+          .catch((err) => {
+            throw `component not available: ${errorToString(err)}`;
+          });
+      } else {
+        const key = getComponentInfoKey(componentName, version);
+        const cached = componentInfoCache.get<Component>('component-info', key);
+        if (cached) {
+          component = cached;
+        } else {
+          let entry = componentInfoLoads.get(key);
+          if (!entry) {
+            let currentEntry: ComponentInfoLoad;
+            const promise = Promise.resolve()
+              .then(() => repository.getComponentInfo(componentName, version))
+              .then((loadedComponent) => {
+                const frozenComponent = freezeComponentInfo(loadedComponent);
+                if (!currentEntry.invalidated) {
+                  componentInfoCache.set(
+                    'component-info',
+                    key,
+                    frozenComponent
+                  );
+                }
+                return frozenComponent;
+              })
+              .finally(() => {
+                if (componentInfoLoads.get(key) === currentEntry) {
+                  componentInfoLoads.delete(key);
+                }
+              });
+            currentEntry = { invalidated: false, promise };
+            entry = currentEntry;
+            componentInfoLoads.set(key, currentEntry);
+          }
 
-      return Object.assign(component, { allVersions });
+          component = await entry.promise.catch((err) => {
+            throw `component not available: ${errorToString(err)}`;
+          });
+        }
+      }
+
+      return { ...component, allVersions: [...allVersions] };
     },
     getComponentInfo(
       componentName: string,
@@ -507,6 +609,7 @@ export default function repository(conf: Config) {
             componentVersion,
             token
           );
+          invalidateComponentInfo(componentName, componentVersion);
           metadataIndex!.add(componentRow);
         } catch (err) {
           await metadataStore
@@ -521,6 +624,8 @@ export default function repository(conf: Config) {
         pkgDetails.outputFolder,
         `${options!.componentsDir}/${componentName}/${componentVersion}`
       );
+
+      invalidateComponentInfo(componentName, componentVersion);
 
       void componentsCache
         .refresh()

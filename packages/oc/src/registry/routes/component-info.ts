@@ -95,11 +95,10 @@ function componentInfo(
       );
     });
   } else if (res.conf.discovery.api) {
-    res.status(200).json(
-      Object.assign(component, {
-        requestVersion: req.params['componentVersion'] || ''
-      })
-    );
+    res.status(200).json({
+      ...component,
+      requestVersion: req.params['componentVersion'] || ''
+    });
   } else {
     res.status(401);
   }
