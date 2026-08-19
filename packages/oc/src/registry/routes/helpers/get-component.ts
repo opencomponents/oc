@@ -772,6 +772,7 @@ export default function getComponent(
                   exports: {} as Record<string, (...args: any[]) => any>,
                   console: conf.local ? console : noopConsole,
                   setTimeout,
+                  clearTimeout,
                   Buffer,
                   Error,
                   AbortController: globalThis?.AbortController,
