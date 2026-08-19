@@ -1,5 +1,11 @@
 # oc-fastify-server-adapter
 
+## 0.1.7
+
+### Patch Changes
+
+- 704890d: Add promise-based `listen` and `close` methods to the HTTP server adapters while retaining callback compatibility with deprecation warnings.
+
 ## 0.1.6
 
 ### Patch Changes

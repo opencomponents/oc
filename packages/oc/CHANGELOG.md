@@ -1,5 +1,12 @@
 ## Change Log
 
+## 0.50.62
+
+### Patch Changes
+
+- c826175: Add `clearTimeout` to allowed globals for component execution, complementing the existing `setTimeout` global to allow proper timer management.
+- 704890d: Add promise-based `listen` and `close` methods to the HTTP server adapters while retaining callback compatibility with deprecation warnings.
+
 ## 0.50.61
 
 ### Patch Changes
