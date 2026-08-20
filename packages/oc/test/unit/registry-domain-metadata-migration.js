@@ -41,7 +41,10 @@ describe('registry : domain : metadata-migration', () => {
 
   describe('backfillMetadataRows()', () => {
     it('should insert rows into the metadata store', async () => {
-      const metadataStore = { addVersion: sinon.stub().resolves() };
+      const metadataStore = {
+        getAllComponents: sinon.stub().resolves([]),
+        addVersion: sinon.stub().resolves()
+      };
 
       const result = await backfillMetadataRows(metadataStore, [
         { name: 'hello-world', version: '1.0.0', publishDate: 123 },
@@ -55,28 +58,79 @@ describe('registry : domain : metadata-migration', () => {
       ]);
     });
 
-    it('should treat existing metadata rows as skipped', async () => {
+    it('should prefilter existing metadata rows', async () => {
+      const existingRow = {
+        name: 'hello-world',
+        version: '1.0.0',
+        publishDate: 100
+      };
+      const missingRow = {
+        name: 'hello-world',
+        version: '1.0.1',
+        publishDate: 124
+      };
       const metadataStore = {
-        addVersion: sinon
-          .stub()
-          .onFirstCall()
-          .resolves()
-          .onSecondCall()
-          .rejects({ code: 'VERSION_ALREADY_EXISTS' })
+        getAllComponents: sinon.stub().resolves([existingRow]),
+        addVersion: sinon.stub().resolves()
       };
 
       const result = await backfillMetadataRows(metadataStore, [
-        { name: 'hello-world', version: '1.0.0', publishDate: 123 },
-        { name: 'hello-world', version: '1.0.1', publishDate: 124 }
+        { ...existingRow, publishDate: 123 },
+        missingRow
       ]);
 
       expect(result).to.eql({ scanned: 2, inserted: 1, skipped: 1 });
+      expect(metadataStore.getAllComponents.calledOnce).to.be.true;
+      expect(metadataStore.addVersion.calledOnceWith(missingRow)).to.be.true;
+    });
+
+    it('should skip all rows when they already exist', async () => {
+      const rows = [
+        { name: 'hello-world', version: '1.0.0', publishDate: 123 },
+        { name: 'welcome', version: '2.0.0', publishDate: 125 }
+      ];
+      const metadataStore = {
+        getAllComponents: sinon.stub().resolves(rows),
+        addVersion: sinon.stub().resolves()
+      };
+
+      const result = await backfillMetadataRows(metadataStore, rows);
+
+      expect(result).to.eql({ scanned: 2, inserted: 0, skipped: 2 });
+      expect(metadataStore.addVersion.notCalled).to.be.true;
+    });
+
+    it('should avoid metadata reads and writes when there are no rows', async () => {
+      const metadataStore = {
+        getAllComponents: sinon.stub().resolves([]),
+        addVersion: sinon.stub().resolves()
+      };
+
+      const result = await backfillMetadataRows(metadataStore, []);
+
+      expect(result).to.eql({ scanned: 0, inserted: 0, skipped: 0 });
+      expect(metadataStore.getAllComponents.notCalled).to.be.true;
+      expect(metadataStore.addVersion.notCalled).to.be.true;
+    });
+
+    it('should treat metadata rows inserted after the prefetch as skipped', async () => {
+      const metadataStore = {
+        getAllComponents: sinon.stub().resolves([]),
+        addVersion: sinon.stub().rejects({ code: 'VERSION_ALREADY_EXISTS' })
+      };
+
+      const result = await backfillMetadataRows(metadataStore, [
+        { name: 'hello-world', version: '1.0.0', publishDate: 123 }
+      ]);
+
+      expect(result).to.eql({ scanned: 1, inserted: 0, skipped: 1 });
     });
 
     it('should insert rows concurrently with a bounded limit', async () => {
       let active = 0;
       let maxActive = 0;
       const metadataStore = {
+        getAllComponents: sinon.stub().resolves([]),
         addVersion: sinon.stub().callsFake(
           () =>
             new Promise((resolve) => {
@@ -103,6 +157,7 @@ describe('registry : domain : metadata-migration', () => {
 
     it('should treat active metadata reservations as skipped', async () => {
       const metadataStore = {
+        getAllComponents: sinon.stub().resolves([]),
         addVersion: sinon.stub().rejects({ code: 'VERSION_PUBLISH_IN_PROGRESS' })
       };
 
@@ -113,9 +168,32 @@ describe('registry : domain : metadata-migration', () => {
       expect(result).to.eql({ scanned: 1, inserted: 0, skipped: 1 });
     });
 
+    it('should propagate metadata prefetch errors without inserting rows', async () => {
+      const error = new Error('database unavailable');
+      const metadataStore = {
+        getAllComponents: sinon.stub().rejects(error),
+        addVersion: sinon.stub().resolves()
+      };
+      let thrown;
+
+      try {
+        await backfillMetadataRows(metadataStore, [
+          { name: 'hello-world', version: '1.0.0', publishDate: 123 }
+        ]);
+      } catch (err) {
+        thrown = err;
+      }
+
+      expect(thrown).to.equal(error);
+      expect(metadataStore.addVersion.notCalled).to.be.true;
+    });
+
     it('should rethrow non-idempotent metadata insert errors', async () => {
       const error = new Error('database unavailable');
-      const metadataStore = { addVersion: sinon.stub().rejects(error) };
+      const metadataStore = {
+        getAllComponents: sinon.stub().resolves([]),
+        addVersion: sinon.stub().rejects(error)
+      };
       let thrown;
 
       try {
@@ -132,7 +210,10 @@ describe('registry : domain : metadata-migration', () => {
 
   describe('backfillMetadataFromComponentsDetails()', () => {
     it('should backfill rows from components details', async () => {
-      const metadataStore = { addVersion: sinon.stub().resolves() };
+      const metadataStore = {
+        getAllComponents: sinon.stub().resolves([]),
+        addVersion: sinon.stub().resolves()
+      };
 
       const result = await backfillMetadataFromComponentsDetails(
         metadataStore,
@@ -240,7 +321,10 @@ describe('registry : domain : metadata-migration', () => {
 
   describe('backfillMetadataFromStorageDetails()', () => {
     it('should read components-details.json from storage and backfill rows', async () => {
-      const metadataStore = { addVersion: sinon.stub().resolves() };
+      const metadataStore = {
+        getAllComponents: sinon.stub().resolves([]),
+        addVersion: sinon.stub().resolves()
+      };
       const cdn = { getJson: sinon.stub().resolves(componentsDetails) };
 
       const result = await backfillMetadataFromStorageDetails({
@@ -255,7 +339,10 @@ describe('registry : domain : metadata-migration', () => {
     });
 
     it('should scan storage directories when components-details.json is missing', async () => {
-      const metadataStore = { addVersion: sinon.stub().resolves() };
+      const metadataStore = {
+        getAllComponents: sinon.stub().resolves([]),
+        addVersion: sinon.stub().resolves()
+      };
       const cdn = {
         listSubDirectories: sinon.stub(),
         getJson: sinon.stub(),

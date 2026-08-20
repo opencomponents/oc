@@ -52,6 +52,7 @@ describe('cli : facade : registry : migrate-metadata', () => {
       adapterType: 'test-metadata',
       isValid: sinon.stub().returns(true),
       initialise: sinon.stub().resolves(),
+      getAllComponents: sinon.stub().resolves([]),
       addVersion: sinon.stub().resolves(),
       close: sinon.stub().resolves()
     };
@@ -105,6 +106,25 @@ describe('cli : facade : registry : migrate-metadata', () => {
       'Metadata migration completed: 1 scanned, 1 inserted, 0 skipped'
     );
     expect(metadataStore.close.calledOnce).to.be.true;
+  });
+
+  it('should report existing metadata rows as skipped', async () => {
+    metadataStore.getAllComponents.resolves([
+      {
+        name: 'hello-world',
+        version: '1.0.0',
+        publishDate: 100
+      }
+    ]);
+    const registryMigrateMetadata = RegistryMigrateMetadata({ logger });
+
+    const result = await execute(registryMigrateMetadata, { configPath });
+
+    expect(result).to.eql({ scanned: 1, inserted: 0, skipped: 1 });
+    expect(metadataStore.addVersion.notCalled).to.be.true;
+    expect(logger.ok.args[0][0]).to.equal(
+      'Metadata migration completed: 1 scanned, 0 inserted, 1 skipped'
+    );
   });
 
   it('should load native ESM registry config modules', async () => {
