@@ -14,6 +14,7 @@ Generated on 2026-07-23 and extended on 2026-08-17. Each numbered plan is intend
 | 006 | Keep the successful render path synchronous and allocation-light | P1 | M | 005 | TODO |
 | 007 | Compile component parameter schemas and add an empty-schema fast lane | P2 | M | 006 | TODO |
 | 008 | Enforce one storage concurrency budget during legacy reconciliation | P1 | M | 003 | TODO |
+| 009 | Prefilter existing metadata rows before reconciliation inserts | P1 | M | 003 | DONE |
 
 Status values: TODO | IN PROGRESS | DONE | BLOCKED (with reason) | REJECTED (with rationale)
 
@@ -25,8 +26,9 @@ Status values: TODO | IN PROGRESS | DONE | BLOCKED (with reason) | REJECTED (wit
 - 006 follows 005 to avoid concurrent edits to render-helper cache ownership and to measure the synchronous lane on the intended steady-state architecture.
 - 007 follows 006 because both touch render orchestration, and its schema cache should be measured after the larger promise/allocation wins land.
 - 008 depends only on 003 and can be developed/reviewed in parallel with 004–007 after the benchmark PR lands; it touches the legacy reconciliation path, not rendering.
+- 009 depends only on 003 and can be developed/reviewed independently of 008 after the benchmark PR lands; it reduces duplicate metadata insert/conflict work but deliberately leaves storage enumeration and cache hydration unchanged.
 
-Recommended PR landing sequence: **003 → 004 → 005 → 006 → 007**, with **008** independently after 003.
+Recommended PR landing sequence: **003 → 004 → 005 → 006 → 007**, with **008** and **009** independently after 003.
 
 ## Findings Considered And Rejected Or Deferred
 

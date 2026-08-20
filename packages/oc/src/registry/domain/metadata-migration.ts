@@ -32,6 +32,9 @@ const isNotFoundError = (err: any, code: string) =>
 const getTemplateSize = (component: Component): number | undefined =>
   component.oc.files.template.size;
 
+const getMetadataRowKey = (row: ComponentRow): string =>
+  JSON.stringify([row.name, row.version]);
+
 export const getComponentRowsFromComponentsDetails = (
   componentsDetails: ComponentsDetails
 ): ComponentRow[] => {
@@ -67,10 +70,22 @@ export const backfillMetadataRows = async (
     inserted: 0,
     skipped: 0
   };
+
+  if (rows.length === 0) {
+    return result;
+  }
+
+  const existingRowKeys = new Set(
+    (await metadataStore.getAllComponents()).map(getMetadataRowKey)
+  );
+  const pendingRows = rows.filter(
+    (row) => !existingRowKeys.has(getMetadataRowKey(row))
+  );
+  result.skipped = rows.length - pendingRows.length;
   const limit = pLimit(10);
 
   await Promise.all(
-    rows.map((row) =>
+    pendingRows.map((row) =>
       limit(async () => {
         try {
           await metadataStore.addVersion(row);
