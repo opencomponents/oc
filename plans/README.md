@@ -6,35 +6,25 @@ Generated on 2026-07-23 and extended on 2026-08-17. Each numbered plan is intend
 
 | Plan | Title | Priority | Effort | Depends on | Status |
 |------|-------|----------|--------|------------|--------|
-| 001 | Improve high-traffic component route performance without long-lived metadata caching | P1 | L | - | DONE |
-| 002 | Prove/disprove Plan 001's burst and batch wins with targeted benchmark scenarios | P2 | M | 001 | DONE |
-| 003 | Make repository work counts a performance regression gate | P1 | M | - | DONE |
-| 004 | Replace `nice-cache` with a bounded registry-scoped artifact cache | P1 | L | 003 | DONE |
-| 005 | Cache component `package.json` after version resolution | P1 | L | 004 | DONE |
-| 006 | Keep the successful render path synchronous and allocation-light | P1 | M | 005 | TODO |
+| 006 | Keep the successful render path synchronous and allocation-light | P1 | M | - | TODO |
 | 007 | Compile component parameter schemas and add an empty-schema fast lane | P2 | M | 006 | TODO |
-| 008 | Enforce one storage concurrency budget during legacy reconciliation | P1 | M | 003 | TODO |
-| 009 | Prefilter existing metadata rows before reconciliation inserts | P1 | M | 003 | DONE |
+| 008 | Enforce one storage concurrency budget during legacy reconciliation | P1 | M | - | TODO |
 
 Status values: TODO | IN PROGRESS | DONE | BLOCKED (with reason) | REJECTED (with rationale)
 
 ## Dependency Notes
 
-- 003 lands first because later cache and hot-path PRs need deterministic manifest/artifact work counts; timing alone cannot prove equivalent work.
-- 004 deliberately removes `nice-cache` before adding manifest caching. It establishes bounded, registry-owned cache semantics and shared GET/batch single-flight state.
-- 005 depends on 004 so manifests never enter the current global unbounded singleton. It also removes known manifest mutations before reference reuse.
-- 006 follows 005 to avoid concurrent edits to render-helper cache ownership and to measure the synchronous lane on the intended steady-state architecture.
+- 006 can proceed now that the registry artifact and manifest cache work has landed; it should measure the synchronous lane on the intended steady-state architecture.
 - 007 follows 006 because both touch render orchestration, and its schema cache should be measured after the larger promise/allocation wins land.
-- 008 depends only on 003 and can be developed/reviewed in parallel with 004–007 after the benchmark PR lands; it touches the legacy reconciliation path, not rendering.
-- 009 depends only on 003 and can be developed/reviewed independently of 008 after the benchmark PR lands; it reduces duplicate metadata insert/conflict work but deliberately leaves storage enumeration and cache hydration unchanged.
+- 008 can be developed/reviewed independently of 006–007; it touches the legacy reconciliation path, not rendering.
 
-Recommended PR landing sequence: **003 → 004 → 005 → 006 → 007**, with **008** and **009** independently after 003.
+Recommended PR landing sequence: **006 → 007**, with **008** independently.
 
 ## Findings Considered And Rejected Or Deferred
 
-- The previous rejection of a full component `package.json` cache is superseded by Plans 004–005: the new design is registry-scoped, bounded, mutation-safe, and benchmarked. Adding manifests to the existing `nice-cache` singleton remains rejected.
-- Registry-wide batch/nested render scheduler: deferred. Plan 002 measured a real trade-off (about 10% lower RPS but better p95/p99 and half the storage concurrency) for the current per-request cap. A global fair limit needs production capacity requirements and tuning before it is safe to specify.
-- Replacing `pLimit` with a callback-aware batch pump: deferred until scheduler scope is decided; promise allocation should be profiled again after Plans 004–007.
+- The previous rejection of a full component `package.json` cache is superseded by the registry-scoped, bounded, mutation-safe, and benchmarked cache design. Adding manifests to the existing `nice-cache` singleton remains rejected.
+- Registry-wide batch/nested render scheduler: deferred. Burst and batch benchmarks measured a real trade-off (about 10% lower RPS but better p95/p99 and half the storage concurrency) for the current per-request cap. A global fair limit needs production capacity requirements and tuning before it is safe to specify.
+- Replacing `pLimit` with a callback-aware batch pump: deferred until scheduler scope is decided; promise allocation should be profiled again after Plans 006–007.
 - Parallel cold env/provider reads: rejected for this sequence because an env failure currently prevents the provider read; starting both would report lower success-path latency by doing extra work on an error path, violating the equal-work benchmark rule.
 - Serving valid legacy metadata before startup reconciliation: deferred because it changes readiness/consistency semantics for registries modified outside OC.
 - Coalescing legacy publish refreshes and reusing metadata snapshots for legacy exports: valid follow-ups for publish-heavy or metadata-export deployments, but lower leverage than the selected request-path work.
