@@ -1,5 +1,11 @@
 ## Change Log
 
+## 0.50.63
+
+### Patch Changes
+
+- fc64c56: Reduce registry startup metadata reconciliation requests by skipping versions already present in metadata storage.
+
 ## 0.50.62
 
 ### Patch Changes
