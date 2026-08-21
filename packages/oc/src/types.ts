@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import type { MetadataStore as MetadataStoreType } from 'oc-metadata-adapters-utils';
-import type { StorageAdapter } from 'oc-storage-adapters-utils';
+import type { MetadataStoreInput } from 'oc-metadata-adapters-utils';
+import type { StorageAdapterInput } from 'oc-storage-adapters-utils';
 import type { PackageJson } from 'type-fest';
 import type {
   HttpServerAdapterFactory,
@@ -82,7 +82,7 @@ export interface MetadataConfig<T = any> {
    * Factory for the metadata store. It must be side-effect free because config
    * validation may instantiate a throwaway store before registry startup.
    */
-  adapter: (options: T) => MetadataStoreType;
+  adapter: (options: T) => MetadataStoreInput;
   options: T;
   /**
    * Controls whether OC asks the metadata adapter to manage its schema/table.
@@ -478,7 +478,7 @@ export interface Config<
    * Low-level storage adapter used by the registry.
    */
   storage: {
-    adapter: (options: T) => StorageAdapter;
+    adapter: (options: T) => StorageAdapterInput;
     options: T & { componentsDir: string };
   };
   /**

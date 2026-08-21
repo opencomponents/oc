@@ -87,6 +87,17 @@ describe('oc-azure-sql-metadata-adapter', () => {
     });
   });
 
+  it('should support the legacy callback form', (done) => {
+    const { adapter } = createAdapter();
+    const store = adapter({ server: 'localhost', database: 'oc' });
+
+    store.getAllComponents((error, rows) => {
+      expect(error).to.equal(null);
+      expect(rows).to.eql([]);
+      done();
+    });
+  });
+
   describe('initialise()', () => {
     it('should create the schema by default', async () => {
       const { adapter, pools, queryStub } = createAdapter();

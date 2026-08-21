@@ -3,10 +3,11 @@ import sql from 'mssql';
 import {
   type ComponentRow,
   type MetadataStatus,
-  type MetadataStore,
+  type MetadataStoreWithCallbacks,
   VERSION_ALREADY_EXISTS,
   VERSION_PUBLISH_IN_PROGRESS,
-  type VersionAlreadyExistsError
+  type VersionAlreadyExistsError,
+  withCallbacks
 } from 'oc-metadata-adapters-utils';
 
 export type { ComponentRow, MetadataStore } from 'oc-metadata-adapters-utils';
@@ -189,7 +190,7 @@ const addComponentRowInputs = (
 
 export default function azureSqlMetadataAdapter(
   options?: AzureSqlMetadataAdapterOptions
-): MetadataStore {
+): MetadataStoreWithCallbacks {
   const adapterType = 'azure-sql';
   const metadataOptions = options || ({} as AzureSqlMetadataAdapterOptions);
   const manageSchema = metadataOptions.manageSchema !== false;
@@ -315,7 +316,8 @@ export default function azureSqlMetadataAdapter(
       `);
   };
 
-  return {
+  const adapter = {
+    adapterApi: 'promise' as const,
     adapterType,
 
     isValid(): boolean {
@@ -485,4 +487,37 @@ export default function azureSqlMetadataAdapter(
       }
     }
   };
+
+  return {
+    ...adapter,
+    initialise: withCallbacks(
+      adapter.initialise,
+      'oc-azure-sql-metadata-adapter'
+    ),
+    getAllComponents: withCallbacks(
+      adapter.getAllComponents,
+      'oc-azure-sql-metadata-adapter'
+    ),
+    addVersion: withCallbacks(
+      adapter.addVersion,
+      'oc-azure-sql-metadata-adapter'
+    ),
+    reserveVersion: withCallbacks(
+      adapter.reserveVersion,
+      'oc-azure-sql-metadata-adapter'
+    ),
+    commitVersion: withCallbacks(
+      adapter.commitVersion,
+      'oc-azure-sql-metadata-adapter'
+    ),
+    abortVersion: withCallbacks(
+      adapter.abortVersion,
+      'oc-azure-sql-metadata-adapter'
+    ),
+    getChangeToken: withCallbacks(
+      adapter.getChangeToken,
+      'oc-azure-sql-metadata-adapter'
+    ),
+    close: withCallbacks(adapter.close, 'oc-azure-sql-metadata-adapter')
+  } as MetadataStoreWithCallbacks;
 }

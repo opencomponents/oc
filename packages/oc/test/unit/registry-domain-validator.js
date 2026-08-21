@@ -521,6 +521,27 @@ describe('registry : domain : validator', () => {
         });
       });
 
+      it('should accept a callback metadata adapter without invoking operations', () => {
+        const adapter = sinon.stub().returns({
+          adapterApi: 'callback',
+          adapterType: 'legacy-metadata',
+          isValid: () => true,
+          initialise: (callback) => callback(null),
+          getAllComponents: (callback) => callback(null, []),
+          addVersion: (_row, callback) => callback(null),
+          reserveVersion: (_row, callback) =>
+            callback(null, { token: 'token' }),
+          commitVersion: (_name, _version, _token, callback) => callback(null),
+          abortVersion: (_name, _version, _token, callback) => callback(null)
+        });
+        const conf = {
+          s3: baseS3Conf,
+          metadata: { adapter, options: {} }
+        };
+
+        expect(validate(conf).isValid).to.be.true;
+      });
+
       it('should pass top-level manageSchema to the metadata adapter', () => {
         const adapter = sinon.stub().returns({
           adapterType: 'test-metadata',

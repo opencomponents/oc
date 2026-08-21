@@ -41,6 +41,16 @@ test('should expose the correct methods', () => {
   });
 });
 
+test('should support the legacy callback form', (done) => {
+  const client = azure(validOptions);
+
+  client.getFile('path/test.txt', (error, value) => {
+    expect(error).toBeNull();
+    expect(value).toBe('Hello!');
+    done();
+  });
+});
+
 test('validate valid conf without credentials', () => {
   const options = {
     accountName: 'name',
@@ -119,7 +129,7 @@ test('validate missing name', () => {
   test(`test getFile ${scenario.src}`, async () => {
     const client = azure(validOptions);
     const operation = () =>
-      client[scenario.src.match(/\.json$/) ? 'getJson' : 'getFile'](
+      (client as any)[scenario.src.match(/\.json$/) ? 'getJson' : 'getFile'](
         scenario.src,
         false
       );

@@ -2,96 +2,147 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 const injectr = require('injectr');
 
-function mockAdapter() {
+function mockPromiseAdapter() {
   return {
-    getFile: sinon.stub().resolves(),
-    getJson: sinon.stub().resolves(),
-    listSubDirectories: sinon.stub().resolves(),
-    putDir: sinon.stub().resolves(),
-    putFile: sinon.stub().resolves(),
-    putFileContent: sinon.stub().resolves(),
+    adapterApi: 'promise',
+    getFile: sinon.stub().resolves('file content'),
+    getJson: sinon.stub().resolves({ ok: true }),
+    listSubDirectories: sinon.stub().resolves(['1.0.0']),
+    putDir: sinon.stub().resolves(['uploaded']),
+    putFile: sinon.stub().resolves('uploaded'),
+    putFileContent: sinon.stub().resolves('uploaded'),
+    removeDir: sinon.stub().resolves(),
+    removeFile: sinon.stub().resolves(),
     getUrl: sinon.stub().returns(''),
+    isValid: sinon.stub().returns(true),
     maxConcurrentRequests: 20,
     adapterType: 's3'
   };
 }
 
-function mockLegacyAdapter() {
+function mockLegacyAdapter(adapterType = 's3') {
   return {
-    getFile: sinon.stub().yields(),
-    getJson: sinon.stub().yields(),
-    listSubDirectories: sinon.stub().yields(),
-    putDir: sinon.stub().yields(),
-    putFile: sinon.stub().yields(),
-    putFileContent: sinon.stub().yields(),
+    adapterApi: 'callback',
+    getFile: sinon.stub().callsFake((filePath, callback) =>
+      callback(null, `file:${filePath}`)
+    ),
+    getJson: sinon.stub().callsFake((_filePath, callback) =>
+      callback(null, { ok: true })
+    ),
+    listSubDirectories: sinon.stub().yields(null, ['1.0.0']),
+    putDir: sinon.stub().yields(null, ['uploaded']),
+    putFile: sinon.stub().yields(null, 'uploaded'),
+    putFileContent: sinon.stub().yields(null, 'uploaded'),
+    removeDir: sinon.stub().yields(null),
+    removeFile: sinon.stub().yields(null),
     getUrl: sinon.stub().returns(''),
+    isValid: sinon.stub().returns(true),
     maxConcurrentRequests: 20,
-    adapterType: 's3'
+    adapterType
   };
 }
 
-let process;
+function getParser() {
+  const emitWarning = sinon.stub();
+  const originalEmitWarning = process.emitWarning;
+  process.emitWarning = emitWarning;
+  const parser = injectr('../../dist/registry/domain/storage-adapter.js').default;
 
-function initialise(adapter) {
-  process = { emitWarning: sinon.stub() };
-  const adapterParser = injectr(
-    '../../dist/registry/domain/storage-adapter.js',
-    { universalify: { fromCallback: sinon.stub().returns('promisified') } },
-    { process }
-  ).default;
-
-  return adapterParser(adapter);
+  // Restore the process hook after each parser invocation in the test process.
+  const restore = () => {
+    process.emitWarning = originalEmitWarning;
+  };
+  return { parser, emitWarning, restore };
 }
 
-describe('registry : domain : adapter', () => {
-  describe('when is not a legacy adapter', () => {
-    const adapter = mockAdapter();
-    const parsed = initialise(adapter);
+describe('registry : domain : storage adapter', () => {
+  it('returns a native promise adapter unchanged', () => {
+    const { parser, emitWarning, restore } = getParser();
+    const adapter = mockPromiseAdapter();
 
-    it('returns the same adapter', () => {
-      expect(parsed).to.be.equal(adapter);
+    expect(parser(adapter)).to.equal(adapter);
+    expect(emitWarning.called).to.be.false;
+    restore();
+  });
+
+  it('does not misclassify an unmarked promise adapter with optional arguments', async () => {
+    const { parser, emitWarning, restore } = getParser();
+    const adapter = mockPromiseAdapter();
+    delete adapter.adapterApi;
+    adapter.getFile = (filePath, _force = false) =>
+      Promise.resolve(`file:${filePath}`);
+
+    expect(await parser(adapter).getFile('path')).to.equal('file:path');
+    expect(emitWarning.called).to.be.false;
+    restore();
+  });
+
+  it('converts a callback adapter and preserves all adapter properties', async () => {
+    const { parser, emitWarning, restore } = getParser();
+    const adapter = mockLegacyAdapter('azure-blob-storage');
+    const parsed = parser(adapter);
+
+    expect(parsed).not.to.equal(adapter);
+    expect(parsed.adapterType).to.equal('azure-blob-storage');
+    expect(parsed.maxConcurrentRequests).to.equal(20);
+    expect(parsed.isValid()).to.be.true;
+    expect(await parsed.getFile('path')).to.equal('file:path');
+    expect(await parsed.getJson('path')).to.eql({ ok: true });
+    await parsed.removeDir('components');
+    await parsed.removeFile('components/file', true);
+    expect(adapter.removeDir.calledOnce).to.be.true;
+    expect(adapter.removeFile.calledOnce).to.be.true;
+    expect(emitWarning.calledOnce).to.be.true;
+    restore();
+  });
+
+  it('supports callback compatibility on converted methods', (done) => {
+    const { parser, restore } = getParser();
+    const adapter = mockLegacyAdapter('gs');
+    const parsed = parser(adapter);
+
+    parsed.getFile('path', (error, value) => {
+      expect(error).to.equal(null);
+      expect(value).to.equal('file:path');
+      restore();
+      done();
     });
   });
 
-  describe('when is a legacy adapter', () => {
-    describe('when is an official adapter', () => {
-      it('Shows a deprecation warning asking to upgrade', () => {
-        initialise(mockLegacyAdapter());
+  it('passes callback adapter errors through unchanged', (done) => {
+    const { parser, restore } = getParser();
+    const error = { code: 'STORAGE_ERROR', message: 'backend failed' };
+    const adapter = mockLegacyAdapter('gs');
+    adapter.getFile.callsFake((_path, callback) => callback(error));
 
-        expect(process.emitWarning.called).to.be.true;
-        expect(process.emitWarning.args[0][0]).to.contain(
-          'oc-s3-storage-adapter'
-        );
-        expect(process.emitWarning.args[0][0]).to.contain('1.2.0');
-        expect(process.emitWarning.args[0][1]).to.contain('DeprecationWarning');
-      });
-    });
-
-    describe('when is not an official adapter', () => {
-      it('Shows a deprecation warning about callbacks', () => {
-        initialise({
-          ...mockLegacyAdapter(),
-          adapterType: 'non-official-adapter'
-        });
-        expect(process.emitWarning.called).to.be.true;
-        expect(process.emitWarning.args[0][0]).to.contain(
-          'Your adapter is using the old interface of working with callbacks. Consider upgrading it to work with promises, as the previous one will be deprecated.'
-        );
-        expect(process.emitWarning.args[0][1]).to.contain('DeprecationWarning');
-      });
-    });
-
-    it('returns a universalified adapter', () => {
-      const adapter = mockLegacyAdapter();
-      const parsed = initialise(adapter);
-
-      expect(parsed).not.to.be.equal(adapter);
-      expect(parsed.getFile).to.be.equal('promisified');
-      expect(parsed.getJson).to.be.equal('promisified');
-      expect(parsed.listSubDirectories).to.be.equal('promisified');
-      expect(parsed.putDir).to.be.equal('promisified');
-      expect(parsed.putFile).to.be.equal('promisified');
-      expect(parsed.putFileContent).to.be.equal('promisified');
+    parser(adapter).getFile('path').catch((actualError) => {
+      expect(actualError).to.equal(error);
+      restore();
+      done();
     });
   });
+
+  it('warns once per adapter category', () => {
+    const { parser, emitWarning, restore } = getParser();
+
+    parser(mockLegacyAdapter());
+    parser(mockLegacyAdapter());
+    expect(emitWarning.calledOnce).to.be.true;
+    expect(emitWarning.args[0][0]).to.contain('oc-s3-storage-adapter');
+    expect(emitWarning.args[0][0]).to.contain('1.2.0');
+    expect(emitWarning.args[0][1]).to.equal('DeprecationWarning');
+    restore();
+  });
+
+  it('warns once for custom callback adapters', () => {
+    const { parser, emitWarning, restore } = getParser();
+
+    parser(mockLegacyAdapter('custom'));
+    parser(mockLegacyAdapter('custom'));
+
+    expect(emitWarning.calledOnce).to.be.true;
+    expect(emitWarning.args[0][0]).to.contain('Callback-based storage adapters');
+    restore();
+  });
+
 });

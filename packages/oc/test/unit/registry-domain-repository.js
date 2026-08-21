@@ -508,6 +508,22 @@ describe('registry : domain : repository', () => {
               }
             });
 
+          const getCallbackMetadataStore = () => ({
+            adapterApi: 'callback',
+            adapterType: 'legacy-metadata',
+            isValid: () => true,
+            initialise: (callback) => callback(null),
+            getAllComponents: (callback) => callback(null, []),
+            addVersion: (_row, callback) => callback(null),
+            reserveVersion: (_row, callback) =>
+              callback(null, { token: 'publish-token' }),
+            commitVersion: (_name, _version, _token, callback) =>
+              callback(null),
+            abortVersion: (_name, _version, _token, callback) =>
+              callback(null),
+            close: (callback) => callback(null)
+          });
+
           const resetMetadataMocks = () => {
             metadataStoreMock.initialise = sinon.stub().resolves();
             metadataStoreMock.getAllComponents = sinon.stub().resolves([]);
@@ -549,6 +565,28 @@ describe('registry : domain : repository', () => {
 
             expect(metadataStoreMock.initialise.calledOnce).to.be.true;
             expect(componentsCacheMock.load.calledOnce).to.be.true;
+          });
+
+          it('should support callback metadata adapters through repository operations', async () => {
+            resetMetadataMocks();
+            const callbackStore = getCallbackMetadataStore();
+            const repository = Repository({
+              ...cdnConfiguration,
+              metadata: {
+                adapter: () => callbackStore,
+                options: {}
+              }
+            });
+
+            await repository.init();
+            await repository.publishComponent({
+              componentName: 'hello-world',
+              componentVersion: '1.0.1',
+              pkgDetails: getPkg()
+            });
+            await repository.close();
+
+            expect(s3Mock.putDir.calledOnce).to.be.true;
           });
 
           it('should pass top-level manageSchema to the metadata adapter', () => {

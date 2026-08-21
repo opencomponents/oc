@@ -13,9 +13,10 @@ import Cache from 'nice-cache';
 import nodeDir, { type PathsResult } from 'node-dir';
 import {
   getFileInfo,
-  type StorageAdapter,
   type StorageAdapterBaseConfig,
-  strings
+  type StorageAdapterWithCallbacks,
+  strings,
+  withCallbacks
 } from 'oc-storage-adapters-utils';
 
 const getPaths: (path: string) => Promise<PathsResult> = promisify(
@@ -66,7 +67,9 @@ export interface AzureConfig extends StorageAdapterBaseConfig {
     | TokenCredential;
 }
 
-export default function azureAdapter(conf: AzureConfig): StorageAdapter {
+export default function azureAdapter(
+  conf: AzureConfig
+): StorageAdapterWithCallbacks {
   const isValid = () => {
     if (
       !conf.publicContainerName ||
@@ -291,19 +294,44 @@ export default function azureAdapter(conf: AzureConfig): StorageAdapter {
   };
 
   return {
-    getFile,
-    getJson,
+    adapterApi: 'promise',
+    getFile: withCallbacks(
+      getFile,
+      'oc-azure-storage-adapter'
+    ) as StorageAdapterWithCallbacks['getFile'],
+    getJson: withCallbacks(
+      getJson,
+      'oc-azure-storage-adapter'
+    ) as StorageAdapterWithCallbacks['getJson'],
     getUrl,
-    listSubDirectories,
+    listSubDirectories: withCallbacks(
+      listSubDirectories,
+      'oc-azure-storage-adapter'
+    ) as StorageAdapterWithCallbacks['listSubDirectories'],
     maxConcurrentRequests: 20,
-    putDir,
-    putFile,
-    putFileContent,
-    removeFile,
-    removeDir,
+    putDir: withCallbacks(
+      putDir,
+      'oc-azure-storage-adapter'
+    ) as StorageAdapterWithCallbacks['putDir'],
+    putFile: withCallbacks(
+      putFile,
+      'oc-azure-storage-adapter'
+    ) as StorageAdapterWithCallbacks['putFile'],
+    putFileContent: withCallbacks(
+      putFileContent,
+      'oc-azure-storage-adapter'
+    ) as StorageAdapterWithCallbacks['putFileContent'],
+    removeFile: withCallbacks(
+      removeFile,
+      'oc-azure-storage-adapter'
+    ) as StorageAdapterWithCallbacks['removeFile'],
+    removeDir: withCallbacks(
+      removeDir,
+      'oc-azure-storage-adapter'
+    ) as StorageAdapterWithCallbacks['removeDir'],
     adapterType: 'azure-blob-storage',
     isValid
-  };
+  } as StorageAdapterWithCallbacks;
 }
 
 module.exports = azureAdapter;
