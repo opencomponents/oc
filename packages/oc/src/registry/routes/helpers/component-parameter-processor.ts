@@ -15,6 +15,7 @@ export interface CompiledParameterSchema {
   defaults: Array<[string, string | number | boolean]>;
   mandatory: string[];
   types: Record<string, string>;
+  coercions: Record<string, 'boolean' | 'number' | 'string'>;
   enums: Record<string, ReadonlyArray<string | number | boolean>>;
 }
 
@@ -23,6 +24,7 @@ const emptyCompiledSchema: CompiledParameterSchema = {
   defaults: [],
   mandatory: [],
   types: Object.create(null),
+  coercions: Object.create(null),
   enums: Object.create(null)
 };
 
@@ -45,6 +47,8 @@ export function compileParameterSchema(
   const defaults: Array<[string, string | number | boolean]> = [];
   const mandatory: string[] = [];
   const types: Record<string, string> = Object.create(null);
+  const coercions: Record<string, 'boolean' | 'number' | 'string'> =
+    Object.create(null);
   const enums: Record<
     string,
     ReadonlyArray<string | number | boolean>
@@ -56,13 +60,16 @@ export function compileParameterSchema(
     }
     const param = (expectedParameters as Record<string, OcParameter>)[name];
     if (!param || typeof param !== 'object') {
-      continue;
+      throw new TypeError(`Invalid parameter schema for "${name}"`);
     }
 
     const rawType = (param as OcParameter).type as unknown as string;
     const normalizedType =
       typeof rawType === 'string' ? rawType.toLowerCase() : '';
     types[name] = normalizedType;
+    if (rawType === 'boolean' || rawType === 'number' || rawType === 'string') {
+      coercions[name] = rawType;
+    }
 
     const enumValues = (param as OcParameter).enum;
     if (typeof enumValues !== 'undefined') {
@@ -81,6 +88,7 @@ export function compileParameterSchema(
     defaults,
     mandatory,
     types,
+    coercions,
     enums
   };
 }
@@ -129,11 +137,7 @@ export function processParameters(
   }
 
   let source: Record<string, any>;
-  if (
-    requestParameters == null ||
-    typeof requestParameters !== 'object' ||
-    Array.isArray(requestParameters)
-  ) {
+  if (requestParameters == null || typeof requestParameters !== 'object') {
     source = {};
   } else {
     source = requestParameters as Record<string, any>;
@@ -156,6 +160,7 @@ export function processParameters(
   let isValid = true;
 
   const types = compiled.types;
+  const coercions = compiled.coercions;
   const enums = compiled.enums;
 
   for (const key in source) {
@@ -166,9 +171,10 @@ export function processParameters(
     if (isDeclared) {
       const rawVal = source[key] as string | number | boolean;
       const type = types[key]!;
+      const coercion = coercions[key];
       let sanitised: string | number | boolean;
 
-      if (type === 'boolean') {
+      if (coercion === 'boolean') {
         if (typeof rawVal === 'string') {
           if (rawVal === 'true') {
             sanitised = true;
@@ -180,9 +186,9 @@ export function processParameters(
         } else {
           sanitised = rawVal;
         }
-      } else if (type === 'number') {
+      } else if (coercion === 'number') {
         sanitised = Number(rawVal as any);
-      } else if (type === 'string') {
+      } else if (coercion === 'string') {
         sanitised = rawVal == null ? '' : (rawVal as any);
       } else {
         sanitised = rawVal;
@@ -268,5 +274,3 @@ export function processParameters(
 
   return { params, validation };
 }
-
-export const __emptyCompiledSchema = emptyCompiledSchema;

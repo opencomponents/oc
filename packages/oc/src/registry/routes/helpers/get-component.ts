@@ -193,6 +193,10 @@ export default function getComponent(
       return compiled;
     }
     if (Object.keys(expectedParameters).length === 0) {
+      parameterSchemaCache.set(
+        expectedParameters as object,
+        emptyParameterSchema
+      );
       return emptyParameterSchema;
     }
     compiled = compileParameterSchema(expectedParameters);

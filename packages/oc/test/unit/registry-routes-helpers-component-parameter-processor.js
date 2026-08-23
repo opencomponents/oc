@@ -46,6 +46,11 @@ describe('registry : routes : helpers : component-parameter-processor', () => {
         exp: {}
       },
       {
+        name: 'array-shaped request parameters',
+        req: ['hello'],
+        exp: { 0: { type: 'string', mandatory: true } }
+      },
+      {
         name: 'optional defaults for string',
         req: {},
         exp: {
@@ -93,6 +98,15 @@ describe('registry : routes : helpers : component-parameter-processor', () => {
           a: { type: 'boolean', mandatory: false },
           b: { type: 'number', mandatory: false },
           c: { type: 'string', mandatory: false }
+        }
+      },
+      {
+        name: 'mixed-case types validate without enabling coercion',
+        req: { a: 'true', b: '123', c: null },
+        exp: {
+          a: { type: 'BoOlEaN', mandatory: false },
+          b: { type: 'NUMBER', mandatory: false },
+          c: { type: 'String', mandatory: false }
         }
       },
       {
@@ -191,6 +205,7 @@ describe('registry : routes : helpers : component-parameter-processor', () => {
         const cloneReqForOrig = (() => {
           if (req === undefined) return undefined;
           if (req === null) return null;
+          if (Array.isArray(req)) return req.slice();
           const c = {};
           for (const k in req) {
             if (Object.prototype.hasOwnProperty.call(req, k)) c[k] = req[k];
@@ -209,6 +224,7 @@ describe('registry : routes : helpers : component-parameter-processor', () => {
         const cloneReqForNew = (() => {
           if (req === undefined) return undefined;
           if (req === null) return null;
+          if (Array.isArray(req)) return req.slice();
           const c = {};
           for (const k in req) {
             if (Object.prototype.hasOwnProperty.call(req, k)) c[k] = req[k];
@@ -287,6 +303,13 @@ describe('registry : routes : helpers : component-parameter-processor', () => {
       expect(c1).to.equal(c3);
       expect(c1).to.equal(c4);
       expect(c1.isEmpty).to.be.true;
+    });
+
+    it('should reject malformed parameter descriptors', () => {
+      expect(() => compileParameterSchema({ token: null })).to.throw(
+        TypeError,
+        'Invalid parameter schema for "token"'
+      );
     });
 
     it('should compile non-empty schema with ordered defaults/mandatory/types', () => {
