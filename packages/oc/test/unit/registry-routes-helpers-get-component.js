@@ -19,7 +19,8 @@ describe('registry : routes : helpers : get-component', () => {
       {
         '../../domain/events-handler': {
           on: () => {},
-          fire: fireStub
+          fire: fireStub,
+          hasListeners: () => true
         },
         'oc-client': () => {
           const client = Client();
@@ -33,7 +34,7 @@ describe('registry : routes : helpers : get-component', () => {
           };
         }
       },
-      { console, Buffer, clearTimeout, setTimeout }
+      { console, Buffer, clearTimeout, setTimeout, process }
     ).default;
 
     mockedRepository = {

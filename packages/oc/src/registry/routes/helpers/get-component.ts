@@ -23,7 +23,6 @@ import { validateTemplateOcVersion } from '../../domain/validators';
 import applyDefaultValues from './apply-default-values';
 import { processStackTrace } from './format-error-stack';
 import * as getComponentFallback from './get-component-fallback';
-import GetComponentRetrievingInfo from './get-component-retrieving-info';
 
 export interface RendererOptions {
   action?: string;
@@ -58,6 +57,7 @@ export interface GetComponentResult {
       message: string;
       stack: string;
       originalError: unknown;
+      frame?: string;
     };
     missingPlugins?: string[];
     missingDependencies?: string[];
@@ -183,29 +183,68 @@ export default function getComponent(
     return promise;
   };
 
-  const getEnv = async (
-    component: Component
-  ): Promise<Record<string, string>> => {
+  type EnvLookupCallback = (err: unknown, env?: Record<string, string>) => void;
+
+  const lookupEnv = (component: Component, cb: EnvLookupCallback): void => {
     const cacheKey = `${component.name}/${component.version}/.env`;
     const cached = cache.get<Record<string, string>>('file-contents', cacheKey);
 
-    if (cached !== undefined) return cached;
+    if (cached !== undefined) {
+      cb(null, cached);
+      return;
+    }
 
-    return singleFlight(cacheKey, async () => {
+    singleFlight(cacheKey, async () => {
       const env = component.oc.files.env
         ? await repository.getEnv(component.name, component.version)
         : {};
       cache.set('file-contents', cacheKey, env);
       return env;
-    });
+    }).then((env) => cb(null, env), cb);
   };
 
-  const renderer = async (
+  const enrichLocalErrorStack = async (
+    component: Component,
+    err: any,
+    response: GetComponentResult
+  ): Promise<void> => {
+    try {
+      const { content } = await repository
+        .getDataProvider(component.name, component.version)
+        .catch(() => ({ content: null }));
+      if (!content || !err.stack || !response.response.details) {
+        return;
+      }
+
+      const processedStack = await processStackTrace({
+        stackTrace: err.stack,
+        code: content
+      }).catch(() => null);
+      if (!processedStack) {
+        return;
+      }
+
+      response.response.details.stack = processedStack.stack;
+      response.response.details.frame = processedStack.frame;
+
+      console.log(
+        `Error rendering component ${component.name} ${component.version}`
+      );
+      console.log(processedStack.stack);
+      console.log(processedStack.frame);
+    } catch {
+      // keep the original error stack when local diagnostics fail
+    }
+  };
+
+  const renderer = (
     options: RendererOptions,
     cb: (result: GetComponentResult) => void
-  ) => {
-    const nestedRenderer = NestedRenderer(renderer, options.conf);
-    const retrievingInfo = GetComponentRetrievingInfo(options);
+  ): void => {
+    const retrievalStart = process.hrtime.bigint();
+    let retrievedHref: string | undefined;
+    let retrievedVersion: string | undefined;
+    let retrievedRenderMode: string | undefined;
     let responseHeaders: Record<string, string> | undefined;
     const responseCookies: Array<{
       name: string;
@@ -219,22 +258,46 @@ export default function getComponent(
       return paramOverride || options.headers['accept-language'];
     };
 
+    const fireComponentRetrievedEvent = (result: GetComponentResult): void => {
+      if (!eventsHandler.hasListeners('component-retrieved')) {
+        return;
+      }
+
+      const eventData: Record<string, unknown> = {
+        headers: options.headers,
+        name: options.name,
+        parameters: options.parameters,
+        requestVersion: options.version || ''
+      };
+
+      if (retrievedHref !== undefined) {
+        eventData['href'] = retrievedHref;
+        eventData['version'] = retrievedVersion;
+        eventData['renderMode'] = retrievedRenderMode;
+      }
+
+      if (result.response.error) {
+        Object.assign(eventData, result.response);
+      }
+
+      eventData['status'] = result.status;
+      eventData['duration'] =
+        Number(process.hrtime.bigint() - retrievalStart) / 1e3;
+
+      eventsHandler.fire('component-retrieved', eventData as any);
+    };
+
     const callback = (result: GetComponentResult) => {
       if (responseCookies.length > 0 && !result.cookies) {
         result.cookies = responseCookies;
       }
-      if (result.response.error) {
-        retrievingInfo.extend(result.response);
-      }
-
-      retrievingInfo.extend({ status: result.status });
 
       Object.assign(result.response, {
         name: options.name,
         requestVersion: options.version || ''
       });
 
-      eventsHandler.fire('component-retrieved', retrievingInfo.getData());
+      fireComponentRetrievedEvent(result);
       return cb(result);
     };
 
@@ -247,7 +310,7 @@ export default function getComponent(
       parameters: options.parameters
     };
 
-    fromPromise(repository.getComponent)(
+    getComponentCb(
       requestedComponent.name,
       requestedComponent.version,
       (err, component) => {
@@ -389,7 +452,7 @@ export default function getComponent(
           return filteredHeaders;
         };
 
-        const returnComponent = async (err: any, data: any) => {
+        const returnComponent = (err: any, data: any) => {
           if (componentCallbackDone) {
             return;
           }
@@ -437,11 +500,9 @@ export default function getComponent(
             }
           }
 
-          retrievingInfo.extend({
-            href: componentHref,
-            version: component.version,
-            renderMode
-          });
+          retrievedHref = componentHref;
+          retrievedVersion = component.version;
+          retrievedRenderMode = renderMode;
 
           if (err || !data) {
             err =
@@ -475,25 +536,10 @@ export default function getComponent(
             };
 
             if (conf.local && err.stack) {
-              const { content } = await repository
-                .getDataProvider(component.name, component.version)
-                .catch(() => ({ content: null }));
-              if (content) {
-                const processedStack = await processStackTrace({
-                  stackTrace: err.stack,
-                  code: content
-                }).catch(() => null);
-                if (processedStack) {
-                  response.response.details.stack = processedStack.stack;
-                  response.response.details.frame = processedStack.frame;
-
-                  console.log(
-                    `Error rendering component ${component.name} ${component.version}`
-                  );
-                  console.log(processedStack.stack);
-                  console.log(processedStack.frame);
-                }
-              }
+              enrichLocalErrorStack(component, err, response)
+                .catch(() => {})
+                .then(() => callback(response));
+              return;
             }
 
             return callback(response);
@@ -630,7 +676,7 @@ export default function getComponent(
 
           returnComponent(null, { component: { props } });
         } else {
-          fromPromise(getEnv)(component, (err, env) => {
+          lookupEnv(component, (err, env) => {
             if (err) {
               componentCallbackDone = true;
 
@@ -663,14 +709,14 @@ export default function getComponent(
                 return parsedAcceptLanguage;
               },
               baseUrl: conf.baseUrl,
-              env: { ...conf.env, ...env },
+              env: { ...conf.env, ...(env || {}) },
               params,
               plugins: convertPlugins({
                 name: component.name,
                 version: component.version
               }),
-              renderComponent: fromPromise(nestedRenderer.renderComponent),
-              renderComponents: fromPromise(nestedRenderer.renderComponents),
+              renderComponent: nestedRenderComponent,
+              renderComponents: nestedRenderComponents,
               requestHeaders: options.headers,
               requestIp: options.ip,
               setEmptyResponse,
@@ -825,6 +871,11 @@ export default function getComponent(
       }
     );
   };
+
+  const nestedRenderer = NestedRenderer(renderer, conf);
+  const nestedRenderComponent = fromPromise(nestedRenderer.renderComponent);
+  const nestedRenderComponents = fromPromise(nestedRenderer.renderComponents);
+  const getComponentCb = fromPromise(repository.getComponent);
 
   return renderer;
 }
