@@ -7,7 +7,7 @@ Generated on 2026-07-23 and extended on 2026-08-17. Each numbered plan is intend
 | Plan | Title | Priority | Effort | Depends on | Status |
 |------|-------|----------|--------|------------|--------|
 | 006 | Keep the successful render path synchronous and allocation-light | P1 | M | - | DONE |
-| 007 | Compile component parameter schemas and add an empty-schema fast lane | P2 | M | 006 | TODO |
+| 007 | Compile component parameter schemas and add an empty-schema fast lane | P2 | M | 006 | DONE |
 | 008 | Enforce one storage concurrency budget during legacy reconciliation | P1 | M | - | TODO |
 
 Status values: TODO | IN PROGRESS | DONE | BLOCKED (with reason) | REJECTED (with rationale)
