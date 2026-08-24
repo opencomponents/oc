@@ -2,7 +2,7 @@ import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import semver from 'semver';
 import type { ComponentsList, Config } from '../../../types';
-import pLimit from '../../../utils/pLimit';
+import mapWithConcurrency from '../../../utils/map-with-concurrency';
 import eventsHandler from '../events-handler';
 
 export default function componentsList(conf: Config, cdn: StorageAdapter) {
@@ -31,61 +31,88 @@ export default function componentsList(conf: Config, cdn: StorageAdapter) {
           .catch(() => false);
       };
 
-      const getVersionsForComponent = async (
-        componentName: string
-      ): Promise<string[]> => {
-        const allVersions = await cdn.listSubDirectories(
-          `${conf.storage.options.componentsDir}/${componentName}`
-        );
-        const unCheckedVersions = allVersions.filter(
-          (version) => !jsonList?.components[componentName]?.includes(version)
-        );
-        const limit = pLimit(cdn.maxConcurrentRequests);
-        const invalidVersions = (
-          await Promise.all(
-            unCheckedVersions.map((unCheckedVersion) =>
-              limit(async () => {
-                const isValid = await validateComponentVersion(
-                  componentName,
-                  unCheckedVersion
-                );
-
-                return isValid ? null : unCheckedVersion;
-              })
-            )
-          )
-        ).filter((x): x is string => typeof x === 'string');
-
-        if (invalidVersions.length > 0) {
-          eventsHandler.fire('error', {
-            code: 'corrupted_version',
-            message: `Couldn't validate the integrity of the component ${componentName} on the following versions: ${invalidVersions.join(
-              ', '
-            )}.`
-          });
-        }
-
-        const validVersions = allVersions.filter(
-          (version) => !invalidVersions.includes(version)
-        );
-
-        return validVersions.sort(semver.compare);
-      };
-
       try {
         const components = await cdn.listSubDirectories(
           conf.storage.options.componentsDir
         );
-        const limit = pLimit(cdn.maxConcurrentRequests);
 
-        const versions = await Promise.all(
-          components.map((component) =>
-            limit(() => getVersionsForComponent(component))
-          )
+        // Phase 1: fetch per-component version directories with a shared budget
+        const allVersionsList = await mapWithConcurrency(
+          components,
+          cdn.maxConcurrentRequests,
+          (componentName) =>
+            cdn.listSubDirectories(
+              `${conf.storage.options.componentsDir}/${componentName}`
+            )
         );
 
+        // Derive compact unchecked descriptors after version-list slots are released
+        type Descriptor = {
+          componentName: string;
+          version: string;
+          componentIndex: number;
+        };
+        const descriptors: Descriptor[] = [];
+        for (let i = 0; i < components.length; i++) {
+          const componentName = components[i] as string;
+          const allVersions = allVersionsList[i] as string[];
+          const unchecked = allVersions.filter(
+            (version) => !jsonList?.components[componentName]?.includes(version)
+          );
+          for (const version of unchecked) {
+            descriptors.push({ componentName, version, componentIndex: i });
+          }
+        }
+
+        // Phase 2: validate package integrity with the same shared budget
+        const validationResults =
+          descriptors.length > 0
+            ? await mapWithConcurrency(
+                descriptors,
+                cdn.maxConcurrentRequests,
+                async (desc) => {
+                  const isValid = await validateComponentVersion(
+                    desc.componentName,
+                    desc.version
+                  );
+                  return { ...desc, isValid };
+                }
+              )
+            : [];
+
+        const invalidByComponent = new Map<number, string[]>();
+        for (const result of validationResults) {
+          if (!result.isValid) {
+            const list = invalidByComponent.get(result.componentIndex);
+            if (list) {
+              list.push(result.version);
+            } else {
+              invalidByComponent.set(result.componentIndex, [result.version]);
+            }
+          }
+        }
+
+        const versions: string[][] = [];
+        for (let i = 0; i < components.length; i++) {
+          const componentName = components[i] as string;
+          const allVersions = allVersionsList[i] as string[];
+          const invalidVersions = invalidByComponent.get(i) ?? [];
+          if (invalidVersions.length > 0) {
+            eventsHandler.fire('error', {
+              code: 'corrupted_version',
+              message: `Couldn't validate the integrity of the component ${componentName} on the following versions: ${invalidVersions.join(
+                ', '
+              )}.`
+            });
+          }
+          const validVersions = allVersions.filter(
+            (version) => !invalidVersions.includes(version)
+          );
+          versions[i] = validVersions.sort(semver.compare);
+        }
+
         components.forEach((component, i) => {
-          componentsInfo[component] = versions[i];
+          componentsInfo[component] = versions[i] as string[];
         });
 
         return {

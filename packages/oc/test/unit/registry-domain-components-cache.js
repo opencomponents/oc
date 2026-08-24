@@ -451,6 +451,306 @@ describe('registry : domain : components-cache', () => {
   });
 });
 
+describe('registry : domain : components-cache : global concurrency', () => {
+  const getTimestamp = () => 12345678;
+
+  const createTrackedCdn = ({
+    components,
+    versionsMap,
+    maxConcurrentRequests,
+    delayMs = 5,
+    corruptVersions = new Set(),
+    failingComponentDirs = new Set(),
+    failingVersions = new Set()
+  }) => {
+    let active = 0;
+    let maxActive = 0;
+    let listCalls = 0;
+    let jsonCalls = 0;
+
+    const inc = () => {
+      active++;
+      if (active > maxActive) maxActive = active;
+    };
+    const dec = () => {
+      active--;
+    };
+
+    const cdn = {
+      maxConcurrentRequests,
+      listSubDirectories: sinon.stub().callsFake(async (path) => {
+        inc();
+        listCalls++;
+        try {
+          await new Promise((r) => setTimeout(r, delayMs));
+          if (failingComponentDirs.has(path)) {
+            const err = new Error('dir error');
+            err.code = 'dir_error';
+            throw err;
+          }
+          if (path === 'component') {
+            return [...components];
+          }
+          // component path like component/comp-a
+          const comp = path.split('/').pop();
+          if (versionsMap[comp]) return [...versionsMap[comp]];
+          return [];
+        } finally {
+          dec();
+        }
+      }),
+      getJson: sinon.stub().callsFake(async (path) => {
+        inc();
+        jsonCalls++;
+        try {
+          await new Promise((r) => setTimeout(r, delayMs));
+          // path like component/comp-a/1.0.1/package.json
+          const match = path.match(/component\/([^\/]+)\/([^\/]+)\/package\.json/);
+          if (match) {
+            const comp = match[1];
+            const ver = match[2];
+            const key = `${comp}/${ver}`;
+            if (failingVersions.has(key)) {
+              throw new Error('getJson failure');
+            }
+            if (corruptVersions.has(key)) {
+              throw new Error('corrupt');
+            }
+          }
+          return {};
+        } finally {
+          dec();
+        }
+      }),
+      putFileContent: sinon.stub().resolves('ok'),
+      _getActive: () => active,
+      _getMaxActive: () => maxActive,
+      _getListCalls: () => listCalls,
+      _getJsonCalls: () => jsonCalls
+    };
+    return cdn;
+  };
+
+  const loadComponentsList = (cdn, jsonList) => {
+    const eventsHandlerStub = { fire: sinon.stub() };
+    const ComponentsList = injectr(
+      '../../dist/registry/domain/components-cache/components-list.js',
+      {
+        'oc-get-unix-utc-timestamp': getTimestamp,
+        '../events-handler': eventsHandlerStub
+      }
+    ).default;
+    const conf = {
+      storage: { options: { componentsDir: 'component' } }
+    };
+    const list = ComponentsList(conf, cdn);
+    return { list, eventsHandlerStub };
+  };
+
+  it('shares one budget across directory listings and integrity reads', async () => {
+    const components = ['comp-a', 'comp-b', 'comp-c'];
+    const versionsMap = {
+      'comp-a': ['1.0.0', '1.0.1', '1.0.2', '2.0.0'],
+      'comp-b': ['1.0.0', '1.0.1', '1.0.2', '2.0.0'],
+      'comp-c': ['1.0.0', '1.0.1', '1.0.2', '2.0.0']
+    };
+    const jsonList = {
+      lastEdit: 1,
+      components: {
+        'comp-a': ['1.0.0'],
+        'comp-b': ['1.0.0'],
+        'comp-c': ['1.0.0']
+      }
+    };
+    const cdn = createTrackedCdn({
+      components,
+      versionsMap,
+      maxConcurrentRequests: 2,
+      delayMs: 5
+    });
+    const { list, eventsHandlerStub } = loadComponentsList(cdn, jsonList);
+
+    const result = await list.getFromDirectories(jsonList);
+
+    expect(result.components).to.eql({
+      'comp-a': ['1.0.0', '1.0.1', '1.0.2', '2.0.0'],
+      'comp-b': ['1.0.0', '1.0.1', '1.0.2', '2.0.0'],
+      'comp-c': ['1.0.0', '1.0.1', '1.0.2', '2.0.0']
+    });
+    expect(cdn._getMaxActive()).to.equal(2);
+    expect(cdn._getMaxActive()).to.be.at.most(2);
+    expect(cdn._getActive()).to.equal(0);
+    expect(cdn._getListCalls()).to.equal(4); // root + 3 components
+    expect(cdn._getJsonCalls()).to.equal(9); // 3 unchecked per 3 components
+    expect(eventsHandlerStub.fire.called).to.be.false;
+  });
+
+  it('caps concurrency at 1 when configured', async () => {
+    const components = ['comp-a', 'comp-b'];
+    const versionsMap = {
+      'comp-a': ['1.0.0', '1.0.1'],
+      'comp-b': ['1.0.0', '1.0.1']
+    };
+    const jsonList = {
+      lastEdit: 1,
+      components: { 'comp-a': ['1.0.0'], 'comp-b': ['1.0.0'] }
+    };
+    const cdn = createTrackedCdn({
+      components,
+      versionsMap,
+      maxConcurrentRequests: 1,
+      delayMs: 5
+    });
+    const { list } = loadComponentsList(cdn, jsonList);
+    const result = await list.getFromDirectories(jsonList);
+    expect(result.components).to.eql({
+      'comp-a': ['1.0.0', '1.0.1'],
+      'comp-b': ['1.0.0', '1.0.1']
+    });
+    expect(cdn._getMaxActive()).to.equal(1);
+    expect(cdn._getActive()).to.equal(0);
+  });
+
+  it('completes with capacity larger than total work', async () => {
+    const components = ['comp-a'];
+    const versionsMap = { 'comp-a': ['1.0.0', '1.0.1'] };
+    const jsonList = { lastEdit: 1, components: { 'comp-a': ['1.0.0'] } };
+    const cdn = createTrackedCdn({
+      components,
+      versionsMap,
+      maxConcurrentRequests: 10,
+      delayMs: 5
+    });
+    const { list } = loadComponentsList(cdn, jsonList);
+    const result = await list.getFromDirectories(jsonList);
+    expect(result.components).to.eql({ 'comp-a': ['1.0.0', '1.0.1'] });
+    expect(cdn._getMaxActive()).to.be.at.most(2); // only 1 component + 1 unchecked, so max 1-2
+    expect(cdn._getActive()).to.equal(0);
+  });
+
+  it('marks only the failing version invalid on getJson rejection', async () => {
+    const components = ['comp-a'];
+    const versionsMap = { 'comp-a': ['1.0.0', '1.0.1', '1.0.2'] };
+    const jsonList = { lastEdit: 1, components: { 'comp-a': ['1.0.0'] } };
+    const cdn = createTrackedCdn({
+      components,
+      versionsMap,
+      maxConcurrentRequests: 2,
+      delayMs: 5,
+      corruptVersions: new Set(['comp-a/1.0.1'])
+    });
+    const { list, eventsHandlerStub } = loadComponentsList(cdn, jsonList);
+    const result = await list.getFromDirectories(jsonList);
+    expect(result.components).to.eql({ 'comp-a': ['1.0.0', '1.0.2'] });
+    expect(eventsHandlerStub.fire.calledOnce).to.be.true;
+    expect(eventsHandlerStub.fire.args[0][1].message).to.contain('1.0.1');
+    expect(cdn._getActive()).to.equal(0);
+  });
+
+  it('propagates component directory-list rejection', async () => {
+    const components = ['comp-a', 'comp-b'];
+    const versionsMap = {
+      'comp-a': ['1.0.0'],
+      'comp-b': ['1.0.0']
+    };
+    const jsonList = { lastEdit: 1, components: {} };
+    const cdn = createTrackedCdn({
+      components,
+      versionsMap,
+      maxConcurrentRequests: 2,
+      delayMs: 5,
+      failingComponentDirs: new Set(['component/comp-b'])
+    });
+    const { list } = loadComponentsList(cdn, jsonList);
+    let err;
+    try {
+      await list.getFromDirectories(jsonList);
+    } catch (e) {
+      err = e;
+    }
+    expect(err).to.exist;
+    expect(err.code).to.equal('dir_error');
+    expect(cdn._getActive()).to.equal(0);
+  });
+
+  it('handles empty registry and components with no unchecked versions without extra reads', async () => {
+    const cdnEmpty = createTrackedCdn({
+      components: [],
+      versionsMap: {},
+      maxConcurrentRequests: 2,
+      delayMs: 5
+    });
+    const { list: listEmpty } = loadComponentsList(cdnEmpty, null);
+    // Need to stub root list to return [] and not throw
+    // createTrackedCdn already returns [] for unknown path, but for 'component' it returns components []
+    const resEmpty = await listEmpty.getFromDirectories(null);
+    expect(resEmpty.components).to.eql({});
+    expect(cdnEmpty._getListCalls()).to.equal(1); // only root
+    expect(cdnEmpty._getJsonCalls()).to.equal(0);
+    expect(cdnEmpty._getActive()).to.equal(0);
+
+    const components = ['comp-a'];
+    const versionsMap = { 'comp-a': ['1.0.0'] };
+    const jsonList = { lastEdit: 1, components: { 'comp-a': ['1.0.0'] } };
+    const cdnNoUnchecked = createTrackedCdn({
+      components,
+      versionsMap,
+      maxConcurrentRequests: 2,
+      delayMs: 5
+    });
+    const { list } = loadComponentsList(cdnNoUnchecked, jsonList);
+    const res = await list.getFromDirectories(jsonList);
+    expect(res.components).to.eql({ 'comp-a': ['1.0.0'] });
+    expect(cdnNoUnchecked._getJsonCalls()).to.equal(0);
+    expect(cdnNoUnchecked._getActive()).to.equal(0);
+  });
+
+  it('leaves no queued work after rejection', async () => {
+    const components = ['comp-a', 'comp-b', 'comp-c', 'comp-d'];
+    const versionsMap = {
+      'comp-a': ['1.0.0'],
+      'comp-b': ['1.0.0'],
+      'comp-c': ['1.0.0'],
+      'comp-d': ['1.0.0']
+    };
+    const jsonList = { lastEdit: 1, components: {} };
+    const cdn = createTrackedCdn({
+      components,
+      versionsMap,
+      maxConcurrentRequests: 2,
+      delayMs: 5,
+      failingComponentDirs: new Set(['component/comp-b'])
+    });
+    const { list } = loadComponentsList(cdn, jsonList);
+    let err;
+    try {
+      await list.getFromDirectories(jsonList);
+    } catch (e) {
+      err = e;
+    }
+    expect(err).to.exist;
+    // Give any queued timers a chance to run
+    await new Promise((r) => setTimeout(r, 20));
+    expect(cdn._getActive()).to.equal(0);
+    // No unhandled rejection should have occurred; test would have failed otherwise
+  });
+
+  it('preserves semver ordering of valid versions', async () => {
+    const components = ['comp-a'];
+    const versionsMap = { 'comp-a': ['2.0.0', '1.0.10', '1.0.2'] };
+    const jsonList = { lastEdit: 1, components: { 'comp-a': [] } };
+    const cdn = createTrackedCdn({
+      components,
+      versionsMap,
+      maxConcurrentRequests: 2,
+      delayMs: 5
+    });
+    const { list } = loadComponentsList(cdn, jsonList);
+    const result = await list.getFromDirectories(jsonList);
+    expect(result.components['comp-a']).to.eql(['1.0.2', '1.0.10', '2.0.0']);
+  });
+});
+
 describe('registry : domain : metadata-index', () => {
   const { createMetadataIndex } = require('../../dist/registry/domain/metadata-index');
 
