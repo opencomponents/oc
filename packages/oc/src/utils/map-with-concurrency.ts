@@ -20,6 +20,7 @@ export default function mapWithConcurrency<Input, Output>(
   const results = new Array<Output>(items.length);
   let nextIndex = 0;
   let failed = false;
+  let hasFirstError = false;
   let firstError: unknown;
 
   const numWorkers = Math.min(concurrency, items.length);
@@ -37,8 +38,11 @@ export default function mapWithConcurrency<Input, Output>(
         const value = await worker(items[current] as Input, current);
         results[current] = value;
       } catch (err) {
+        if (!hasFirstError) {
+          hasFirstError = true;
+          firstError = err;
+        }
         failed = true;
-        firstError = err;
         throw err;
       }
     }
@@ -52,10 +56,10 @@ export default function mapWithConcurrency<Input, Output>(
   return Promise.all(workers).then(
     () => results,
     (err) => {
-      // Ensure we reject with the first error; other workers may still be pending
-      // but their rejections will be handled via Promise.all settlement.
-      // No unhandled rejections because all worker promises are aggregated.
-      throw err ?? firstError;
+      if (hasFirstError) {
+        throw firstError;
+      }
+      throw err;
     }
   );
 }
