@@ -8,7 +8,13 @@ import emptyResponseHandler from 'oc-empty-response-handler';
 import { fromPromise } from 'universalify';
 import strings from '../../../resources';
 import settings from '../../../resources/settings';
-import type { Component, Config, PluginContext, Plugins } from '../../../types';
+import type {
+  Component,
+  Config,
+  OcParameter,
+  PluginContext,
+  Plugins
+} from '../../../types';
 import BoundedCache from '../../../utils/bounded-cache';
 import isTemplateLegacy from '../../../utils/is-template-legacy';
 import eventsHandler from '../../domain/events-handler';
@@ -16,11 +22,13 @@ import type { CookieOptions } from '../../domain/http-server/types';
 import NestedRenderer from '../../domain/nested-renderer';
 import type { Repository } from '../../domain/repository';
 import RequireWrapper from '../../domain/require-wrapper';
-import * as sanitiser from '../../domain/sanitiser';
 import * as urlBuilder from '../../domain/url-builder';
 import * as validator from '../../domain/validators';
 import { validateTemplateOcVersion } from '../../domain/validators';
-import applyDefaultValues from './apply-default-values';
+import {
+  compileParameterSchema,
+  processParameters
+} from './component-parameter-processor';
 import { processStackTrace } from './format-error-stack';
 import * as getComponentFallback from './get-component-fallback';
 
@@ -169,6 +177,32 @@ export default function getComponent(
     return names;
   };
   const inFlight = new Map<string, Promise<unknown>>();
+  const parameterSchemaCache = new WeakMap<
+    object,
+    ReturnType<typeof compileParameterSchema>
+  >();
+  const emptyParameterSchema = compileParameterSchema(undefined);
+  const getCompiledParameterSchema = (
+    expectedParameters: Record<string, OcParameter> | undefined
+  ) => {
+    if (!expectedParameters || typeof expectedParameters !== 'object') {
+      return emptyParameterSchema;
+    }
+    let compiled = parameterSchemaCache.get(expectedParameters as object);
+    if (compiled) {
+      return compiled;
+    }
+    if (Object.keys(expectedParameters).length === 0) {
+      parameterSchemaCache.set(
+        expectedParameters as object,
+        emptyParameterSchema
+      );
+      return emptyParameterSchema;
+    }
+    compiled = compileParameterSchema(expectedParameters);
+    parameterSchemaCache.set(expectedParameters as object, compiled);
+    return compiled;
+  };
 
   const singleFlight = <T>(key: string, operation: () => Promise<T>) => {
     const pending = inFlight.get(key) as Promise<T> | undefined;
@@ -366,18 +400,16 @@ export default function getComponent(
           });
         }
 
-        // sanitise and check params
-        const appliedParams = applyDefaultValues(
-          requestedComponent.parameters,
-          component.oc.parameters
+        // sanitise and check params (compiled schema + single scan)
+        const compiledParameterSchema = getCompiledParameterSchema(
+          component.oc.parameters as unknown as Record<string, OcParameter>
         );
-        const params = sanitiser.sanitiseComponentParameters(
-          appliedParams,
-          component.oc.parameters
-        );
-        const validationResult = validator.validateComponentParameters(
-          params,
-          component.oc.parameters
+        const { params, validation: validationResult } = processParameters(
+          requestedComponent.parameters as unknown as Record<
+            string,
+            string | number | boolean
+          >,
+          compiledParameterSchema
         );
 
         if (!options.action && !validationResult.isValid) {
