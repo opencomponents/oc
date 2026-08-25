@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import adapter from '../src';
 
-test('put directory recognizes server.js and .env to be private', async () => {
+test('put directory uses the supplied privacy classifier', async () => {
   const client = adapter({
     publicContainerName: 'pubcon',
     privateContainerName: 'privcon',
@@ -11,7 +11,9 @@ test('put directory recognizes server.js and .env to be private', async () => {
     componentsDir: 'components'
   });
 
-  const mockResult = (await client.putDir('.', '.')) as Array<{
+  const mockResult = (await client.putDir('.', '.', (filePath) =>
+    filePath.endsWith('template.js')
+  )) as Array<{
     fileName: string;
     container: string;
   }>;
@@ -20,8 +22,8 @@ test('put directory recognizes server.js and .env to be private', async () => {
   const packageMock = mockResult.find((x) => x.fileName === './package.json')!;
   const templateMock = mockResult.find((x) => x.fileName === './template.js')!;
 
-  expect(serverMock.container).toBe('privcon');
-  expect(envMock.container).toBe('privcon');
+  expect(serverMock.container).toBe('pubcon');
+  expect(envMock.container).toBe('pubcon');
   expect(packageMock.container).toBe('pubcon');
-  expect(templateMock.container).toBe('pubcon');
+  expect(templateMock.container).toBe('privcon');
 });

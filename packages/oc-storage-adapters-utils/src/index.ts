@@ -29,6 +29,9 @@ export interface StorageAdapterBaseConfig {
   refreshInterval?: number;
 }
 
+/** Classifies a path relative to the directory passed to `putDir`. */
+export type IsPrivateFile = (filePath: string) => boolean;
+
 export interface StorageAdapter {
   adapterType: string;
   getFile(filePath: string, force?: boolean): Promise<string>;
@@ -36,7 +39,11 @@ export interface StorageAdapter {
   getUrl: (componentName: string, version: string, fileName: string) => string;
   listSubDirectories(dir: string): Promise<string[]>;
   maxConcurrentRequests: number;
-  putDir(folderPath: string, filePath: string): Promise<unknown>;
+  putDir(
+    folderPath: string,
+    filePath: string,
+    isPrivateFile?: IsPrivateFile
+  ): Promise<unknown>;
   putFile(
     filePath: string,
     fileName: string,

@@ -28,7 +28,9 @@ import {
   reconcileMetadataFromStorage
 } from './metadata-migration';
 import registerTemplates from './register-templates';
-import getPromiseBasedAdapter from './storage-adapter';
+import getPromiseBasedAdapter, {
+  isPrivateComponentFile
+} from './storage-adapter';
 import * as validator from './validators';
 import * as versionHandler from './version-handler';
 
@@ -602,7 +604,8 @@ export default function repository(conf: Config) {
         try {
           await cdn.putDir(
             pkgDetails.outputFolder,
-            `${options!.componentsDir}/${componentName}/${componentVersion}`
+            `${options!.componentsDir}/${componentName}/${componentVersion}`,
+            isPrivateComponentFile
           );
           await metadataStore.commitVersion(
             componentName,
@@ -622,7 +625,8 @@ export default function repository(conf: Config) {
 
       await cdn.putDir(
         pkgDetails.outputFolder,
-        `${options!.componentsDir}/${componentName}/${componentVersion}`
+        `${options!.componentsDir}/${componentName}/${componentVersion}`,
+        isPrivateComponentFile
       );
 
       invalidateComponentInfo(componentName, componentVersion);
