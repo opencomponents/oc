@@ -195,6 +195,35 @@ test('listSubDirectories follows pageToken across pages', async () => {
   expect(data).toEqual(['1.0.0', '2.0.0']);
 });
 
+test('listSubDirectories preserves provider errors', () => {
+  const client = gs({ ...validOptions, bucket: 'failing-bucket' });
+
+  return expect(client.listSubDirectories('components/a')).rejects.toEqual({
+    code: 503,
+    message: 'Service unavailable'
+  });
+});
+
+test('listSubDirectories preserves missing bucket errors', () => {
+  const client = gs({ ...validOptions, bucket: 'missing-bucket' });
+
+  return expect(client.listSubDirectories('components/a')).rejects.toEqual({
+    code: 404,
+    message: 'Bucket not found'
+  });
+});
+
+test('listSubDirectories preserves unchanged pageToken errors', () => {
+  const client = gs({
+    ...validOptions,
+    bucket: 'unchanged-page-token-bucket'
+  });
+
+  return expect(client.listSubDirectories('components/a')).rejects.toThrow(
+    'GCS getFiles returned an unchanged pageToken; aborting to avoid an infinite loop'
+  );
+});
+
 test('removeDir follows pageToken across pages and deletes all files', async () => {
   const client = gs({ ...validOptions, bucket: 'paginated-bucket' });
 

@@ -119,62 +119,58 @@ export default function gsAdapter(conf: GsConfig): StorageAdapter {
         ? dir
         : dir + '/';
 
-    try {
-      const collected: { name: string }[] = [];
-      let pageToken: string | undefined;
+    const collected: { name: string }[] = [];
+    let pageToken: string | undefined;
 
-      do {
-        const requestPageToken = pageToken;
-        const options: {
-          prefix: string;
-          autoPaginate: false;
-          pageToken?: string;
-        } = {
-          prefix: normalisedPath,
-          autoPaginate: false
-        };
-        if (requestPageToken) {
-          options.pageToken = requestPageToken;
-        }
-
-        const results = await getClient().bucket(bucketName).getFiles(options);
-        const files = results[0] ?? [];
-        const nextQuery = results[1] as { pageToken?: string } | undefined;
-
-        for (const file of files) {
-          collected.push(file);
-        }
-
-        const nextPageToken = nextQuery?.pageToken;
-        if (nextPageToken && nextPageToken === requestPageToken) {
-          throw new Error(
-            'GCS getFiles returned an unchanged pageToken; aborting to avoid an infinite loop'
-          );
-        }
-        pageToken = nextPageToken;
-      } while (pageToken);
-
-      if (collected.length === 0) {
-        throw 'no files';
+    do {
+      const requestPageToken = pageToken;
+      const options: {
+        prefix: string;
+        autoPaginate: false;
+        pageToken?: string;
+      } = {
+        prefix: normalisedPath,
+        autoPaginate: false
+      };
+      if (requestPageToken) {
+        options.pageToken = requestPageToken;
       }
 
-      const result = collected
-        //remove prefix
-        .map((file) => file.name.replace(normalisedPath, ''))
-        // only get files that aren't in root directory
-        .filter((file) => file.split('/').length > 1)
-        //get directory names
-        .map((file) => file.split('/')[0])
-        // reduce to unique directories
-        .filter((item, i, ar) => ar.indexOf(item) === i);
+      const results = await getClient().bucket(bucketName).getFiles(options);
+      const files = results[0] ?? [];
+      const nextQuery = results[1] as { pageToken?: string } | undefined;
 
-      return result;
-    } catch (_err) {
+      for (const file of files) {
+        collected.push(file);
+      }
+
+      const nextPageToken = nextQuery?.pageToken;
+      if (nextPageToken && nextPageToken === requestPageToken) {
+        throw new Error(
+          'GCS getFiles returned an unchanged pageToken; aborting to avoid an infinite loop'
+        );
+      }
+      pageToken = nextPageToken;
+    } while (pageToken);
+
+    if (collected.length === 0) {
       throw {
         code: strings.errors.STORAGE.DIR_NOT_FOUND_CODE,
         msg: strings.errors.STORAGE.DIR_NOT_FOUND(dir)
       };
     }
+
+    const result = collected
+      //remove prefix
+      .map((file) => file.name.replace(normalisedPath, ''))
+      // only get files that aren't in root directory
+      .filter((file) => file.split('/').length > 1)
+      //get directory names
+      .map((file) => file.split('/')[0])
+      // reduce to unique directories
+      .filter((item, i, ar) => ar.indexOf(item) === i);
+
+    return result;
   };
 
   const putDir = async (

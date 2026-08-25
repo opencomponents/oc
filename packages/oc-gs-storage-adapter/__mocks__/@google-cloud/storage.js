@@ -18,6 +18,21 @@ const _Storage = class {
           return Promise.resolve([]);
         }
 
+        if (bucket === 'failing-bucket') {
+          return Promise.reject({ code: 503, message: 'Service unavailable' });
+        }
+
+        if (bucket === 'missing-bucket') {
+          return Promise.reject({ code: 404, message: 'Bucket not found' });
+        }
+
+        if (bucket === 'unchanged-page-token-bucket') {
+          return Promise.resolve([
+            [{ name: 'components/a/1.0.0/app.js' }],
+            { pageToken: 'unchanged-token' }
+          ]);
+        }
+
         if (bucket === 'paginated-bucket') {
           const makeFile = (name) => ({
             name,
