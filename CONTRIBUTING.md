@@ -12,8 +12,6 @@ If you want to send a Pull Request, ensure you join the conversation first on th
 
 When preparing a pull request, ensure all the tests pass locally running `npm test`. If you have write/admin access, do it on a new branch on the upstream opencomponents repo. This allows all the test to run smoothly.
 
-Pull requests should not include release/versioning changes (changesets, version bumps, publish steps) unless explicitly requested by the maintainer.
-
 ### Monorepo workflow
 
 - Run repo-level commands from the repository root (`npm run lint`, `npm run build`, `npm run test`).
