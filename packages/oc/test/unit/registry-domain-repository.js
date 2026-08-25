@@ -481,6 +481,10 @@ describe('registry : domain : repository', () => {
             expect(s3Mock.putDir.args[0][1]).to.equal(
               'components/hello-world/1.0.1'
             );
+            const isPrivateFile = s3Mock.putDir.args[0][2];
+            expect(isPrivateFile('/server.js')).to.be.true;
+            expect(isPrivateFile('/.env')).to.be.true;
+            expect(isPrivateFile('/template.js')).to.be.false;
           });
         });
 

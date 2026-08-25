@@ -32,18 +32,37 @@ function mockLegacyAdapter() {
 
 let process;
 
-function initialise(adapter) {
+function initialiseModule(fromCallback = sinon.stub().returns('promisified')) {
   process = { emitWarning: sinon.stub() };
-  const adapterParser = injectr(
+  return injectr(
     '../../dist/registry/domain/storage-adapter.js',
-    { universalify: { fromCallback: sinon.stub().returns('promisified') } },
+    { universalify: { fromCallback } },
     { process }
-  ).default;
+  );
+}
 
-  return adapterParser(adapter);
+function initialise(adapter) {
+  return initialiseModule().default(adapter);
 }
 
 describe('registry : domain : adapter', () => {
+  describe('component file privacy', () => {
+    const isPrivateComponentFile =
+      initialiseModule().isPrivateComponentFile;
+
+    it('keeps server.js and dot-files private on any platform', () => {
+      expect(isPrivateComponentFile('/server.js')).to.be.true;
+      expect(isPrivateComponentFile('\\nested\\server.js')).to.be.true;
+      expect(isPrivateComponentFile('/.env')).to.be.true;
+      expect(isPrivateComponentFile('\\nested\\.secret')).to.be.true;
+    });
+
+    it('keeps other component files public', () => {
+      expect(isPrivateComponentFile('/package.json')).to.be.false;
+      expect(isPrivateComponentFile('/template.js')).to.be.false;
+    });
+  });
+
   describe('when is not a legacy adapter', () => {
     const adapter = mockAdapter();
     const parsed = initialise(adapter);
@@ -89,9 +108,26 @@ describe('registry : domain : adapter', () => {
       expect(parsed.getFile).to.be.equal('promisified');
       expect(parsed.getJson).to.be.equal('promisified');
       expect(parsed.listSubDirectories).to.be.equal('promisified');
-      expect(parsed.putDir).to.be.equal('promisified');
+      expect(parsed.putDir).to.be.a('function');
       expect(parsed.putFile).to.be.equal('promisified');
       expect(parsed.putFileContent).to.be.equal('promisified');
+    });
+
+    it('keeps the optional classifier out of the legacy callback slot', async () => {
+      const adapter = mockLegacyAdapter();
+      const classifier = sinon.stub().returns(true);
+      const fromCallback = (fn) =>
+        (...args) =>
+          new Promise((resolve, reject) => {
+            fn(...args, (err, result) => (err ? reject(err) : resolve(result)));
+          });
+      const parsed = initialiseModule(fromCallback).default(adapter);
+
+      await parsed.putDir('source', 'destination', classifier);
+
+      expect(adapter.putDir.calledOnce).to.be.true;
+      expect(adapter.putDir.args[0]).to.have.length(3);
+      expect(adapter.putDir.args[0][2]).not.to.equal(classifier);
     });
   });
 });

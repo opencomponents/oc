@@ -1,6 +1,12 @@
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import { fromCallback } from 'universalify';
 
+const privateComponentFilePatterns = [/(\\|\/)server\.js/, /(\\|\/)\..+/];
+
+export function isPrivateComponentFile(filePath: string): boolean {
+  return privateComponentFilePatterns.some((pattern) => pattern.test(filePath));
+}
+
 type RemovePromiseOverload<T> = T extends {
   (...args: infer B): void;
   (...args: any[]): Promise<any>;
@@ -48,11 +54,16 @@ function isLegacyAdapter(
 }
 
 function convertLegacyAdapter(adapter: LegacyStorageAdapter): StorageAdapter {
+  const putDir = fromCallback(adapter.putDir as any);
+
   return {
     getFile: fromCallback(adapter.getFile as any),
     getJson: fromCallback(adapter.getJson as any),
     listSubDirectories: fromCallback(adapter.listSubDirectories as any),
-    putDir: fromCallback(adapter.putDir as any),
+    // Legacy callback adapters use their third argument for the callback and
+    // already own their directory privacy behaviour.
+    putDir: (folderPath: string, filePath: string) =>
+      putDir(folderPath, filePath),
     putFile: fromCallback(adapter.putFile as any),
     putFileContent: fromCallback(adapter.putFileContent as any),
     getUrl: adapter.getUrl,
