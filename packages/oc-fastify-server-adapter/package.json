@@ -48,7 +48,7 @@
 		"@fastify/formbody": "^8.0.2",
 		"@fastify/multipart": "^10.0.0",
 		"fastify": "^5.10.0",
-		"qs": "^6.15.3"
+		"qs": "^6.16.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.0",
