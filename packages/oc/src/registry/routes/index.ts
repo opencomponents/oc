@@ -4,6 +4,11 @@ import parseAuthor from 'parse-author';
 
 import dateStringified from '../../utils/date-stringify';
 import indexView from '../views';
+import {
+  DiscoveryResponseCache,
+  getDiscoveryCacheKey,
+  getDiscoveryVariant
+} from './discovery-cache';
 import getAvailableDependencies from './helpers/get-available-dependencies';
 
 import urlBuilder = require('../domain/url-builder');
@@ -11,7 +16,7 @@ import urlBuilder = require('../domain/url-builder');
 import type { IncomingHttpHeaders } from 'node:http';
 import type { PackageJson } from 'type-fest';
 import type { Author, Component, ParsedComponent } from '../../types';
-import type { OcHandler } from '../domain/http-server/types';
+import type { OcHandler, OcResponse } from '../domain/http-server/types';
 import type { Repository } from '../domain/repository';
 
 const packageInfo: PackageJson = fs.readJsonSync(
@@ -39,8 +44,69 @@ const isHtmlRequest = (headers: IncomingHttpHeaders) =>
 
 const excludedMeta = ['dependencies', 'devDependencies'];
 
+const setDiscoveryCacheControl = (res: OcResponse): void => {
+  const pollingInterval = res.conf.pollingInterval;
+  if (
+    typeof pollingInterval === 'number' &&
+    Number.isFinite(pollingInterval) &&
+    pollingInterval >= 0
+  ) {
+    res.set('Cache-Control', `public, max-age=${Math.floor(pollingInterval)}`);
+  }
+};
+
 export default function (repository: Repository): OcHandler {
+  // Per-registry-instance cache of built discovery responses. Entries are
+  // keyed by `componentsList.lastEdit` (via `getComponentsDetails`, which
+  // advances on every publish/poll update) plus the query variant, so a
+  // repeat `GET /` skips the O(registry) `getComponent` fan-out and the
+  // index view re-render. A cache hit still costs a single cheap
+  // `getComponentsDetails()` read to learn the current `lastEdit`; every
+  // other repository call is skipped.
+  const cache = new DiscoveryResponseCache();
+
   return async (req, res): Promise<void> => {
+    const wantsHtml = isHtmlRequest(req.headers) && res.conf.discovery.ui;
+
+    let lastEdit: number | undefined;
+    if (typeof repository.getComponentsDetails === 'function') {
+      try {
+        const details = await repository.getComponentsDetails();
+        if (details && typeof details.lastEdit === 'number') {
+          lastEdit = details.lastEdit;
+        }
+      } catch {
+        lastEdit = undefined;
+      }
+    }
+
+    // HTML-with-query responses embed the per-request search string, so they
+    // bypass the cache (unbounded query cardinality); everything else is
+    // keyed by its variant.
+    const htmlQuery = wantsHtml ? (req.query['q'] as string) || '' : '';
+    const variant = getDiscoveryVariant(
+      req,
+      res.conf.baseUrl,
+      res.conf.local,
+      res.conf.discovery.api,
+      res.conf.discovery.experimental,
+      wantsHtml ? 'html' : 'json'
+    );
+    const cacheKey = getDiscoveryCacheKey(variant);
+
+    if (lastEdit !== undefined && htmlQuery === '') {
+      const cached = cache.get(lastEdit, cacheKey);
+      if (cached !== undefined) {
+        if (wantsHtml) {
+          res.send(cached);
+        } else {
+          setDiscoveryCacheControl(res);
+          res.status(200).json(cached);
+        }
+        return;
+      }
+    }
+
     let componentNames: string[];
     try {
       componentNames = await repository.getComponents();
@@ -91,25 +157,29 @@ export default function (repository: Repository): OcHandler {
 
       const userTheme = req.cookies?.['oc-theme'] || 'dark';
 
-      res.send(
-        indexView(
-          // @ts-expect-error existing code relies on runtime merging
-          Object.assign(baseResponse, {
-            availableDependencies: getAvailableDependencies(
-              res.conf.dependencies
-            ),
-            availablePlugins: res.conf.plugins,
-            components: processedComponents,
-            componentsReleases: totalReleases,
-            componentsList,
-            q: req.query['q'] || '',
-            stateCounts,
-            templates: repository.getTemplatesInfo(),
-            title: 'OpenComponents Registry',
-            theme: userTheme
-          })
-        )
+      const html = indexView(
+        // @ts-expect-error existing code relies on runtime merging
+        Object.assign(baseResponse, {
+          availableDependencies: getAvailableDependencies(
+            res.conf.dependencies
+          ),
+          availablePlugins: res.conf.plugins,
+          components: processedComponents,
+          componentsReleases: totalReleases,
+          componentsList,
+          q: req.query['q'] || '',
+          stateCounts,
+          templates: repository.getTemplatesInfo(),
+          title: 'OpenComponents Registry',
+          theme: userTheme
+        })
       );
+
+      if (lastEdit !== undefined && htmlQuery === '') {
+        cache.set(lastEdit, cacheKey, html);
+      }
+
+      res.send(html);
     } else {
       const requestedState = (req.query['state'] as string) || '';
       const includeMetadata =
@@ -173,10 +243,17 @@ export default function (repository: Repository): OcHandler {
         return componentUrl;
       });
 
-      res.status(200).json({
+      const body = {
         ...baseResponse,
         components: componentResponses
-      });
+      };
+
+      if (lastEdit !== undefined) {
+        cache.set(lastEdit, cacheKey, body);
+      }
+
+      setDiscoveryCacheControl(res);
+      res.status(200).json(body);
     }
   };
 }
