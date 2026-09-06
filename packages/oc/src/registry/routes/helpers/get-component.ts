@@ -19,6 +19,7 @@ import BoundedCache from '../../../utils/bounded-cache';
 import isTemplateLegacy from '../../../utils/is-template-legacy';
 import eventsHandler from '../../domain/events-handler';
 import type { CookieOptions } from '../../domain/http-server/types';
+import withLinkedTemplateCache from '../../domain/linked-template-cache';
 import NestedRenderer from '../../domain/nested-renderer';
 import type { Repository } from '../../domain/repository';
 import RequireWrapper from '../../domain/require-wrapper';
@@ -152,7 +153,18 @@ export default function getComponent(
   conf: Config,
   repository: Repository
 ): RenderComponent {
-  const client = Client({ templates: conf.templates });
+  const handlebarsTemplate = repository.getTemplate('oc-template-handlebars');
+  const clientTemplates = [...(conf.templates ?? [])];
+  if (handlebarsTemplate) {
+    // Defensive: oc-template-handlebars' internal linked-template cache never
+    // hits (its cache.set omits the value), so every render re-runs the
+    // validator + handlebars.template() link step. Serve oc-client a wrapper
+    // that links once per template key instead. Appended after user templates
+    // so custom templates keep precedence over it, while oc-client's own base
+    // copy loses to it via first-seen uniq.
+    clientTemplates.push(withLinkedTemplateCache(handlebarsTemplate));
+  }
+  const client = Client({ templates: clientTemplates });
   const cache = new BoundedCache(MAX_ARTIFACT_CACHE_ENTRIES);
   const convertPlugins = pluginConverter(conf.plugins);
   const customHeadersByConfig = new WeakMap<Config, Set<string> | undefined>();
