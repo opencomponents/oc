@@ -163,6 +163,10 @@ export default function optionsSanitiser<
     options.pollingInterval = 5;
   }
 
+  if (typeof options.compression === 'undefined') {
+    options.compression = false;
+  }
+
   if (!options.templates) {
     options.templates = [];
   }

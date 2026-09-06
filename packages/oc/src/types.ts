@@ -259,6 +259,17 @@ export interface Config<
     dev: string;
   };
   /**
+   * Enables gzip/deflate response compression for JSON API responses
+   * (batch `POST /`, discovery, component renders).
+   *
+   * Opt-in so deployments that terminate compression at a CDN or load
+   * balancer don't pay double CPU. Leave it off when a reverse proxy
+   * already compresses responses.
+   *
+   * @default false
+   */
+  compression: boolean;
+  /**
    * Dynamically compute the `baseUrl` for the incoming request.
    * If provided, it overrides the static `baseUrl`.
    */

@@ -45,6 +45,9 @@ export const bind = (
   });
   adapter.enableCookies();
   adapter.enableBodyParser({ limit: options.postRequestPayloadSize });
+  if (options.compression) {
+    adapter.enableCompression?.();
+  }
   adapter.use(cors);
   if (!options.local) {
     adapter.enableFileUploads({
