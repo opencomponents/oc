@@ -38,4 +38,10 @@ describe('registry : domain : http-server : express-adapter', () => {
       });
     });
   });
+
+  it('uses weak ETags (Express default)', () => {
+    const adapter = createAdapter();
+
+    expect(adapter.native().get('etag')).to.equal('weak');
+  });
 });
