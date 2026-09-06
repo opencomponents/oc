@@ -231,6 +231,33 @@ describe('registry : domain : linked-template-cache', () => {
     });
   });
 
+  describe('when wrapping an exotic template shape', () => {
+    it('passes modules without getInfo/render through unwrapped', () => {
+      const exotic = { getCompiledTemplate: (s) => () => s };
+      expect(withLinkedTemplateCache(exotic)).to.equal(exotic);
+      expect(withLinkedTemplateCache(exotic)).to.equal(exotic);
+    });
+
+    it('passes modules with getInfo but no render through unwrapped', () => {
+      const exotic = {
+        getInfo: () => ({ type: 'exotic', version: '0.0.1', externals: [] })
+      };
+      expect(withLinkedTemplateCache(exotic)).to.equal(exotic);
+    });
+
+    it('still wraps a fully-shaped module after exotic passthroughs', async () => {
+      const { upstream, renderCalls } = makeUpstream();
+      const { link, linkCalls } = makeLink();
+      const template = withLinkedTemplateCache(upstream, { link });
+      const options = { key: 'k', template: { id: 'v' }, model: { n: 1 } };
+
+      expect(await renderAsync(template, options)).to.equal('upstream-html');
+      expect(await renderAsync(template, options)).to.equal('linked:v:1');
+      expect(renderCalls.length).to.equal(1);
+      expect(linkCalls.length).to.equal(1);
+    });
+  });
+
   describe('when using the default handlebars link', () => {
     it('links a real precompiled spec once for repeated renders', async () => {
       const { upstream, renderCalls } = makeUpstream();

@@ -54,6 +54,18 @@ export default function withLinkedTemplateCache(
   template: Template,
   options: LinkedTemplateCacheOptions = {}
 ): Template {
+  // Fail open for exotic template shapes (e.g. test doubles or partial
+  // custom modules): without getInfo/render the wrapper cannot satisfy the
+  // Template contract (oc-client's uniqTemplates reads getInfo().type), so
+  // pass the module through unwrapped instead of breaking registration.
+  // Checked before the WeakMap lookup, which would throw on non-object keys.
+  if (
+    typeof template?.getInfo !== 'function' ||
+    typeof template?.render !== 'function'
+  ) {
+    return template;
+  }
+
   const alreadyWrapped = wrappedTemplates.get(template);
   if (alreadyWrapped) {
     return alreadyWrapped;

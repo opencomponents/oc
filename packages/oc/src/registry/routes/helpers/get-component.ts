@@ -161,8 +161,13 @@ export default function getComponent(
     // validator + handlebars.template() link step. Serve oc-client a wrapper
     // that links once per template key instead. Appended after user templates
     // so custom templates keep precedence over it, while oc-client's own base
-    // copy loses to it via first-seen uniq.
-    clientTemplates.push(withLinkedTemplateCache(handlebarsTemplate));
+    // copy loses to it via first-seen uniq. Skipped unless the module
+    // satisfies oc-client's template contract (exotic doubles used in tests
+    // may expose only getCompiledTemplate).
+    const linkedTemplate = withLinkedTemplateCache(handlebarsTemplate);
+    if (typeof linkedTemplate.getInfo === 'function') {
+      clientTemplates.push(linkedTemplate);
+    }
   }
   const client = Client({ templates: clientTemplates });
   const cache = new BoundedCache(MAX_ARTIFACT_CACHE_ENTRIES);
