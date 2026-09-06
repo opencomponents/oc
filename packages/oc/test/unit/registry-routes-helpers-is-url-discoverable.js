@@ -160,6 +160,26 @@ describe('registry : routes : helpers : is-url-discoverable', () => {
       expect(calls).to.equal(3);
     });
 
+    it('evicts the least-recently-used entry beyond max capacity', async () => {
+      let calls = 0;
+      const helper = loadHelper(() => {
+        calls++;
+        return Promise.resolve({
+          headers: { 'content-type': 'text/html; charset=utf-8' }
+        });
+      });
+
+      const first = 'https://memo-evict-first.company.com/';
+      await helper.default(first);
+      expect(calls).to.equal(1);
+      for (let i = 0; i < 100; i++) {
+        await helper.default(`https://memo-evict-${i}.company.com/`);
+      }
+      expect(calls).to.equal(101);
+      await helper.default(first);
+      expect(calls).to.equal(102);
+    });
+
     it('OC_DISCOVERABILITY_NO_CACHE=1 forces a re-probe every call', async () => {
       let calls = 0;
       const helper = loadHelper(() => {
