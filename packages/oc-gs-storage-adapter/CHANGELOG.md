@@ -1,5 +1,14 @@
 # oc-gs-storage-adapter
 
+## 2.2.4
+
+### Patch Changes
+
+- 388498e: Preserve provider listing failures instead of reporting them as missing directories.
+- 9f7ccdf: Move OC component privacy classification out of the storage adapters.
+- Updated dependencies [9f7ccdf]
+  - oc-storage-adapters-utils@2.1.3
+
 ## 2.2.3
 
 ### Patch Changes

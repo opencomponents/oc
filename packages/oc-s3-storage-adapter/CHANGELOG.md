@@ -1,5 +1,13 @@
 # oc-s3-storage-adapter
 
+## 2.2.5
+
+### Patch Changes
+
+- 9f7ccdf: Move OC component privacy classification out of the storage adapters.
+- Updated dependencies [9f7ccdf]
+  - oc-storage-adapters-utils@2.1.3
+
 ## 2.2.4
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # oc-azure-storage-adapter
 
+## 1.3.4
+
+### Patch Changes
+
+- 9f7ccdf: Move OC component privacy classification out of the storage adapters.
+- Updated dependencies [9f7ccdf]
+  - oc-storage-adapters-utils@2.1.3
+
 ## 1.3.3
 
 ### Patch Changes
