@@ -71,6 +71,9 @@ function componentInfo(
         ? component.repository
         : (component.repository?.url ?? null);
 
+    // isUrlDiscoverable is memoized per baseUrl (bounded LRU, see
+    // helpers/is-url-discoverable), so this self-probe costs one HTTP
+    // request per baseUrl no matter how often the info page is rendered.
     fromPromise(isUrlDiscoverable)(href, (_err, result) => {
       if (!result.isDiscoverable) {
         href = `//${req.headers.host}${res.conf.prefix}`;
