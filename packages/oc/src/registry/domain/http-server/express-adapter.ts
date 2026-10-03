@@ -1,4 +1,5 @@
 import http from 'node:http';
+import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import errorhandler from 'errorhandler';
 import express, { type Express, type Request, type Response } from 'express';
@@ -99,6 +100,10 @@ class ExpressHttpServerAdapter
 
   enableCookies(): void {
     this.app.use(cookieParser());
+  }
+
+  enableCompression(): void {
+    this.app.use(compression());
   }
 
   enableFileUploads(opts: {

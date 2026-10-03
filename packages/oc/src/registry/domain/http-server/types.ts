@@ -119,6 +119,7 @@ interface HttpServerAdapterBase<TNative> {
   name: string;
   enableBodyParser(opts: { limit?: number | string }): void;
   enableCookies(): void;
+  enableCompression?(): void;
   enableFileUploads(opts: {
     tempDir: string;
     filename: (originalName: string) => string;
