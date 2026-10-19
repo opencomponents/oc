@@ -848,7 +848,14 @@ export default function getComponent(
                     exports: {} as Record<string, (...args: any[]) => any>
                   },
                   exports: {} as Record<string, (...args: any[]) => any>,
-                  console: conf.local ? console : noopConsole,
+                  console:
+                    (typeof conf.componentConsole === 'function'
+                      ? conf.componentConsole({
+                          name: component.name,
+                          version: component.version
+                        })
+                      : conf.componentConsole) ??
+                    (conf.local ? console : noopConsole),
                   setTimeout,
                   clearTimeout,
                   Buffer,
