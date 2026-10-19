@@ -849,7 +849,12 @@ export default function getComponent(
                   },
                   exports: {} as Record<string, (...args: any[]) => any>,
                   console:
-                    conf.componentConsole ??
+                    (typeof conf.componentConsole === 'function'
+                      ? conf.componentConsole({
+                          name: component.name,
+                          version: component.version
+                        })
+                      : conf.componentConsole) ??
                     (conf.local ? console : noopConsole),
                   setTimeout,
                   clearTimeout,
