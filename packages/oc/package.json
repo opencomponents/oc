@@ -63,7 +63,7 @@
 		"fs-extra": "^11.3.5",
 		"lru-cache": "^10.4.3",
 		"multer": "^2.2.0",
-		"oc-client": "^4.0.3",
+		"oc-client": "^4.0.4",
 		"oc-client-browser": "^2.1.12",
 		"oc-empty-response-handler": "^1.0.2",
 		"oc-metadata-adapters-utils": "^0.1.1",
