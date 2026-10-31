@@ -43,7 +43,10 @@
 		"!packages/oc-gs-storage-adapter/node_modules/**/*",
 		"packages/oc-riak-storage-adapter/**/*",
 		"!packages/oc-riak-storage-adapter/dist/**/*",
-		"!packages/oc-riak-storage-adapter/node_modules/**/*"
+		"!packages/oc-riak-storage-adapter/node_modules/**/*",
+		"packages/cli/**/*",
+		"!packages/cli/dist/**/*",
+		"!packages/cli/node_modules/**/*"
 	]
 	},
 	"formatter": {
