@@ -1,21 +1,47 @@
+const { execFileSync } = require('node:child_process');
+const path = require('node:path');
 const expect = require('chai').expect;
+const injectr = require('injectr');
 const sinon = require('sinon');
+const yargs = require('yargs');
 
-const createProgram = require('../../dist/cli/program').default;
-const commands = require('../../dist/cli/commands').default;
-const validateCommand = require('../../dist/cli/validate-command').default;
-
-describe('cli : program', () => {
-  const program = createProgram({
-    usage: commands.usage,
-    commands: commands.commands,
-    epilogue: 'Hint: Run -h with any command to show the help',
-    version: '1.2.3',
-    validate: validateCommand
-  });
-
+describe('cli : index', () => {
   const run = (args) => {
     const result = { output: [] };
+    const cli = yargs(args)
+      .scriptName('oc')
+      .exitProcess(false)
+      .fail((message) => {
+        result.output.push(message);
+        throw Object.assign(new Error(message), { exitCode: 1 });
+      });
+    const mocks = {
+      yargs: cli,
+      './domain/local': () => ({}),
+      './domain/registry': () => ({})
+    };
+    for (const name of [
+      'clean',
+      'dev',
+      'init',
+      'mock',
+      'package',
+      'preview',
+      'publish',
+      'registry',
+      'registry-add',
+      'registry-ls',
+      'registry-migrate-metadata',
+      'registry-remove',
+      'validate'
+    ]) {
+      mocks[`./facade/${name}`] = () => (options) => {
+        const { $0, ...argv } = options;
+        result.command = name;
+        result.argv = argv;
+        return Promise.resolve();
+      };
+    }
     const log = sinon.stub(console, 'log').callsFake((x) => result.output.push(x));
     const error = sinon
       .stub(console, 'error')
@@ -24,11 +50,9 @@ describe('cli : program', () => {
       throw Object.assign(new Error('exit'), { exitCode: code });
     });
     try {
-      program(args, (commandPath, argv) => {
-        result.command = commandPath.join('-');
-        result.argv = argv;
-      });
+      injectr('../../dist/cli/index.js', mocks, { process });
     } catch (err) {
+      if (err.exitCode === undefined) throw err;
       result.exitCode = err.exitCode;
     } finally {
       log.restore();
@@ -165,6 +189,28 @@ describe('cli : program', () => {
     );
   });
 
+  it('should consume every registry after an equals-style array option', () => {
+    const result = run([
+      'publish',
+      'comp/',
+      '--registries=http://a/',
+      'http://b/'
+    ]);
+    expect(result.argv.registries).to.deep.equal(['http://a/', 'http://b/']);
+  });
+
+  it('should not interpret equals-style array values as dev positionals', () => {
+    const result = run([
+      'dev',
+      'components',
+      '--components=header',
+      'footer'
+    ]);
+    expect(result.argv.components).to.deep.equal(['header', 'footer']);
+    expect(result.argv.port).to.be.undefined;
+    expect(result.argv.baseUrl).to.be.undefined;
+  });
+
   it('should fail on unknown commands', () => {
     const result = run(['nope']);
     expect(result.exitCode).to.equal(1);
@@ -184,7 +230,12 @@ describe('cli : program', () => {
   });
 
   it('should show the version', () => {
-    expect(run(['--version']).output).to.deep.equal(['1.2.3']);
+    const output = execFileSync(
+      process.execPath,
+      [path.resolve(__dirname, '../../dist/oc-cli.js'), '--version'],
+      { encoding: 'utf8' }
+    );
+    expect(output.trim()).to.equal(require('../../package.json').version);
   });
 
   it('should list completions for subcommands', () => {
@@ -192,6 +243,6 @@ describe('cli : program', () => {
     process.env.SHELL = '/bin/bash';
     const result = run(['--get-yargs-completions', 'oc', 'registry', '']);
     process.env.SHELL = shell;
-    expect(result.output).to.deep.equal(['add\nls\nmigrate-metadata\nremove']);
+    expect(result.output.join('\n')).to.equal('add\nls\nmigrate-metadata\nremove');
   });
 });

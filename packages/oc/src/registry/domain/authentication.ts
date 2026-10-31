@@ -1,47 +1,8 @@
-import crypto from 'node:crypto';
-import http from 'node:http';
+import basicAuth from 'basic-auth-connect';
 import type { RequestHandler } from 'express';
 
 import strings from '../../resources/';
 import type { Authentication, PublishAuthConfig } from '../../types';
-
-const sha256 = (value: string) =>
-  crypto.createHash('sha256').update(value).digest();
-const safeEqual = (expected: string, actual: string) =>
-  typeof expected === 'string' &&
-  crypto.timingSafeEqual(sha256(expected), sha256(actual));
-
-const httpError = (status: number) =>
-  Object.assign(new Error(http.STATUS_CODES[status]), { status });
-
-function basicAuth(
-  isValid: (user: string, pass: string) => boolean
-): RequestHandler {
-  return (req: any, res, next) => {
-    const authorization: string | undefined = req.headers.authorization;
-
-    if (req.user) return next();
-    if (authorization) {
-      const parts = authorization.split(' ');
-      if (parts.length !== 2) return next(httpError(400));
-
-      const [scheme, encoded] = parts;
-      const credentials = Buffer.from(encoded, 'base64').toString();
-      const index = credentials.indexOf(':');
-      if (scheme !== 'Basic' || index < 0) return next(httpError(400));
-
-      const user = credentials.slice(0, index);
-      if (isValid(user, credentials.slice(index + 1))) {
-        req.user = req.remoteUser = user;
-        return next();
-      }
-    }
-
-    res.statusCode = 401;
-    res.setHeader('WWW-Authenticate', 'Basic realm="Authorization Required"');
-    res.end('Unauthorized');
-  };
-}
 
 const basicAuthentication: Authentication<
   | {
@@ -69,10 +30,7 @@ const basicAuthentication: Authentication<
     const logins = 'logins' in authConfig ? authConfig.logins : [authConfig];
 
     return basicAuth((user, pass) =>
-      logins.some(
-        (login) =>
-          safeEqual(login.username, user) && safeEqual(login.password, pass)
-      )
+      logins.some((login) => login.username === user && login.password === pass)
     );
   }
 };

@@ -1,14 +1,17 @@
 import path from 'node:path';
+import { promisify } from 'node:util';
 import fs from 'fs-extra';
+import readCb from 'read';
 import strings from '../../resources/index';
 import type { Component } from '../../types';
 import colors from '../../utils/colors';
-import read from '../../utils/prompt';
 import { fromPromise } from '../../utils/universalify';
 import handleDependencies from '../domain/handle-dependencies';
 import type { Local } from '../domain/local';
 import type { RegistryCli } from '../domain/registry';
 import type { Logger } from '../logger';
+
+const read = promisify(readCb);
 
 const publish = ({
   logger,

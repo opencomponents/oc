@@ -1,4 +1,5 @@
 import semver from 'semver';
+import cli from 'yargs';
 import strings from '../resources';
 import commands from './commands';
 import Local from './domain/local';
@@ -17,7 +18,6 @@ import registryMigrateMetadata from './facade/registry-migrate-metadata';
 import registryRemove from './facade/registry-remove';
 import validate from './facade/validate';
 import logger from './logger';
-import createProgram from './program';
 import validateCommand from './validate-command';
 
 const cliFunctions = {
@@ -53,22 +53,93 @@ const dependencies = {
   registry: Registry()
 };
 
-const program = createProgram({
-  usage: commands.usage,
-  commands: commands.commands,
-  epilogue: strings.messages.cli.HELP_HINT,
-  version: require('../../package.json').version,
-  validate: validateCommand
-});
+type Command = {
+  cmd?: string;
+  description: string;
+  usage: string;
+  example?: {
+    description?: string;
+    cmd: string;
+  };
+  options?: any;
+  commands?: Record<string, Command>;
+};
 
-program(process.argv.slice(2), (commandPath, options) => {
+function processCommand(
+  command: Command,
+  commandName: string,
+  cli: cli.Argv,
+  lvl?: number,
+  prefix = ''
+) {
+  const level = (lvl || 0) + 1;
   const facade =
-    cliFunctions[commandPath.join('-') as keyof typeof cliFunctions](
+    cliFunctions[`${prefix}${commandName}` as keyof typeof cliFunctions](
       dependencies
     );
 
-  // @ts-expect-error not callable
-  facade(options).catch(() => {
-    process.exit(1);
-  });
-});
+  cli.command(
+    command.cmd || commandName,
+    command.description,
+    (yargs) => {
+      yargs.usage(command.usage);
+
+      if (command.options) {
+        yargs.options(command.options);
+      }
+
+      if (command.commands) {
+        yargs
+          .check((argv) => validateCommand(argv, level))
+          .epilogue(strings.messages.cli.HELP_HINT);
+
+        const newPrefix = (prefix ? prefix + '-' : '') + commandName + '-';
+
+        for (const [commandName, commandConfiguration] of Object.entries(
+          command.commands
+        )) {
+          processCommand(
+            commandConfiguration,
+            commandName,
+            yargs,
+            level,
+            newPrefix
+          );
+        }
+      }
+
+      if (command.example) {
+        yargs.example(
+          command.example.cmd,
+          command.example.description || command.description
+        );
+      }
+
+      return yargs;
+    },
+    (options) => {
+      // @ts-expect-error not callable
+      facade(options).catch(() => {
+        process.exit(1);
+      });
+    }
+  );
+}
+
+for (const [commandName, command] of Object.entries(commands.commands)) {
+  processCommand(command, commandName, cli);
+}
+
+const argv = cli
+  .completion()
+  .check((argv) => validateCommand(argv, 0))
+  .usage(commands.usage)
+  .epilogue(strings.messages.cli.HELP_HINT)
+  .help('h')
+  .alias('h', 'help')
+  .version()
+  .wrap(cli.terminalWidth()).argv;
+
+if ((argv as Awaited<typeof argv>)._.length === 0) {
+  cli.showHelp();
+}

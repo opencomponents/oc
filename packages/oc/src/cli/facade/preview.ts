@@ -1,5 +1,5 @@
+import open from 'open';
 import strings from '../../resources/index';
-import openUrl from '../../utils/open-url';
 import { fromPromise } from '../../utils/universalify';
 import type { RegistryCli } from '../domain/registry';
 import type { Logger } from '../logger';
@@ -16,7 +16,7 @@ const preview = ({
       const href = await registry.getComponentPreviewUrlByUrl(
         opts.componentHref
       );
-      await openUrl(href);
+      await open(href);
       return href;
     } catch {
       logger.err(strings.errors.cli.COMPONENT_HREF_NOT_FOUND);

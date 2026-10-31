@@ -1,21 +1,6 @@
-import { type SpawnOptions, spawn } from 'node:child_process';
 import path from 'node:path';
+import spawn from 'cross-spawn';
 import stripVersion from './strip-version';
-
-const escapeWindowsArg = (arg: string) =>
-  `"${arg.replace(/(\\*)"/g, '$1$1\\"').replace(/(\\*)$/, '$1$1')}"`.replace(
-    /([()\][%!^"`<>&|;, *?])/g,
-    '^$1'
-  );
-
-const spawnNpm = (args: string[], options: SpawnOptions) =>
-  process.platform === 'win32'
-    ? spawn(
-        process.env['comspec'] || 'cmd.exe',
-        ['/d', '/s', '/c', `"npm ${args.map(escapeWindowsArg).join(' ')}"`],
-        { ...options, windowsVerbatimArguments: true }
-      )
-    : spawn('npm', args, options);
 
 const buildInstallCommand = (options: {
   installPath: string;
@@ -47,7 +32,7 @@ const executeCommand = (options: {
   path: string;
   silent?: boolean;
 }) => {
-  const cmd = spawnNpm([...options.command, '--no-package-lock'], {
+  const cmd = spawn('npm', [...options.command, '--no-package-lock'], {
     cwd: options.path,
     stdio: options.silent ? 'ignore' : 'inherit'
   });

@@ -1,15 +1,12 @@
 import http from 'node:http';
-import express, {
-  type ErrorRequestHandler,
-  type Express,
-  type Request,
-  type Response
-} from 'express';
+import cookieParser from 'cookie-parser';
+import errorhandler from 'errorhandler';
+import express, { type Express, type Request, type Response } from 'express';
+import morgan from 'morgan';
 import multer from 'multer';
+import responseTime from 'response-time';
 
 import deprecate from '../../../utils/deprecate';
-import onHeaders from '../../../utils/on-headers';
-import parseCookies from '../../../utils/parse-cookies';
 import type {
   ExpressMiddleware,
   HttpServerAdapter,
@@ -101,16 +98,7 @@ class ExpressHttpServerAdapter
   }
 
   enableCookies(): void {
-    this.app.use((req, _res, next) => {
-      if (!req.cookies) {
-        Object.assign(req, {
-          secret: undefined,
-          cookies: parseCookies(req.headers.cookie),
-          signedCookies: Object.create(null)
-        });
-      }
-      next();
-    });
+    this.app.use(cookieParser());
   }
 
   enableFileUploads(opts: {
@@ -139,79 +127,26 @@ class ExpressHttpServerAdapter
   enableRequestTiming(
     onDone: (req: OcRequest, res: OcResponse, ms: number) => void
   ): void {
-    this.app.use((req, res, next) => {
-      const start = process.hrtime.bigint();
-      onHeaders(res, () => {
-        const time = Number(process.hrtime.bigint() - start) / 1e6;
+    this.app.use(
+      responseTime((req: Request, res: Response, time) => {
         onDone(this.toOcRequest(req), this.toOcResponse(res), time);
-      });
-      next();
-    });
+      })
+    );
   }
 
   enableLogging(opts: {
     skip: (req: OcRequest, res: OcResponse) => boolean;
   }): void {
-    this.app.use((req, res, next) => {
-      const start = process.hrtime.bigint();
-      let responseTime = '-';
-      onHeaders(res, () => {
-        responseTime = (Number(process.hrtime.bigint() - start) / 1e6).toFixed(
-          3
-        );
-      });
-
-      let logged = false;
-      const log = () => {
-        if (logged) return;
-        logged = true;
-        if (opts.skip(this.toOcRequest(req), this.toOcResponse(res))) return;
-
-        const status = res.headersSent ? res.statusCode : 0;
-        const color =
-          status >= 500
-            ? 31
-            : status >= 400
-              ? 33
-              : status >= 300
-                ? 36
-                : status >= 200
-                  ? 32
-                  : 0;
-        const length = res.headersSent ? res.getHeader('content-length') : '';
-        process.stdout.write(
-          `\x1b[0m${req.method} ${req.originalUrl || req.url} \x1b[${color}m${
-            status || '-'
-          }\x1b[0m ${responseTime} ms - ${length || '-'}\x1b[0m\n`
-        );
-      };
-      res.once('finish', log);
-      res.once('close', log);
-      next();
-    });
+    this.app.use(
+      morgan('dev', {
+        skip: (req, res) =>
+          opts.skip(this.toOcRequest(req), this.toOcResponse(res))
+      })
+    );
   }
 
   enableErrorHandler(): void {
-    const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
-      const status = err?.status ?? err?.statusCode;
-      const message = err?.stack || String(err);
-
-      if (process.env['NODE_ENV'] !== 'test') console.error(message);
-      if (res.headersSent) {
-        req.socket.destroy();
-        return;
-      }
-
-      res.status(status >= 400 ? status : 500);
-      if (req.accepts(['html', 'json', 'text']) === 'json') {
-        res.json({
-          error: { ...err, message: err?.message, stack: err?.stack }
-        });
-      } else {
-        res.type('text/plain').send(message);
-      }
-    };
-    this.app.use(errorHandler);
+    this.app.use(errorhandler());
   }
 
   use(handler: OcHandler): void {

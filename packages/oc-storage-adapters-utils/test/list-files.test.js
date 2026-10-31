@@ -26,3 +26,24 @@ test('should recursively list all files with their full path', async () => {
   );
   fs.rmSync(dir, { recursive: true, force: true });
 });
+
+test('should include symlinked files and files in symlinked directories', async (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'list-files-symlinks-'));
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  const source = path.join(dir, 'source');
+  const upload = path.join(dir, 'upload');
+  fs.mkdirSync(source);
+  fs.mkdirSync(upload);
+  fs.writeFileSync(path.join(source, 'asset.js'), 'asset');
+  fs.symlinkSync(
+    path.join(source, 'asset.js'),
+    path.join(upload, 'linked.js'),
+    'file'
+  );
+  fs.symlinkSync(source, path.join(upload, 'assets'), 'junction');
+
+  assert.deepEqual((await listFiles(upload)).sort(), [
+    path.join(upload, 'assets', 'asset.js'),
+    path.join(upload, 'linked.js')
+  ]);
+});
