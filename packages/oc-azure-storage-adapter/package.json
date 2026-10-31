@@ -40,7 +40,7 @@
 		"testEnvironment": "node"
 	},
 	"dependencies": {
-		"@azure/identity": "^4.2.1",
+		"@azure/identity": "^4.14.1",
 		"@azure/storage-blob": "12.24.0",
 		"fs-extra": "8.1.0",
 		"lodash": "^4.17.4",
