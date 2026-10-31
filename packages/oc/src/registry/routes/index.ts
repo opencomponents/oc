@@ -1,8 +1,7 @@
 import path from 'node:path';
 import fs from 'fs-extra';
-import parseAuthor from 'parse-author';
-
 import dateStringified from '../../utils/date-stringify';
+import parseAuthor from '../../utils/parse-author';
 import indexView from '../views';
 import getAvailableDependencies from './helpers/get-available-dependencies';
 

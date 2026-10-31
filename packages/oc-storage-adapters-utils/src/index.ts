@@ -1,6 +1,7 @@
 export { getFileInfo } from './get-file-info';
 export { getMimeType } from './get-mime-type';
 export { getNextYear } from './get-next-year';
+export { listFiles } from './list-files';
 export * as strings from './strings';
 
 export interface StorageAdapterBaseConfig {

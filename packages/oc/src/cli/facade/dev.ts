@@ -1,13 +1,13 @@
 import path from 'node:path';
 import { promisify } from 'node:util';
-import getPortCb from 'getport';
-import livereload from 'livereload';
-import { fromPromise } from 'universalify';
 import * as oc from '../../index';
 import strings from '../../resources/index';
 import colors from '../../utils/colors';
+import getPort from '../../utils/get-port';
+import { fromPromise } from '../../utils/universalify';
 import getMockedPlugins from '../domain/get-mocked-plugins';
 import handleDependencies from '../domain/handle-dependencies';
+import createLiveReloadServer from '../domain/live-reload';
 import type { Local } from '../domain/local';
 import { getOcConfig } from '../domain/ocConfig';
 import watch from '../domain/watch';
@@ -19,8 +19,6 @@ const cliMessages = strings.messages.cli;
 const cliErrors = strings.errors.cli;
 
 const delay = (time = 0) => new Promise((res) => setTimeout(res, time));
-const getPort = promisify(getPortCb);
-
 const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
   fromPromise(
     async (opts: {
@@ -182,10 +180,8 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
           return Promise.reject(err);
         });
 
-        const liveReloadServer = livereload.createServer({
-          port: otherPort
-        });
-        const refresher = () => liveReloadServer.refresh('/');
+        const liveReloadServer = createLiveReloadServer(otherPort);
+        const refresher = () => liveReloadServer.refresh();
         liveReload = { refresher, port: otherPort };
       }
 

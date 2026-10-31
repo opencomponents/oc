@@ -1,4 +1,4 @@
-const coreModules = require('builtin-modules');
+const coreModules = require('../../dist/utils/core-modules').default;
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');

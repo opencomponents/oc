@@ -5,10 +5,14 @@ const sinon = require('sinon');
 describe('utils : npm-utils', () => {
   const crossSpawnStub = sinon.stub();
 
-  const npmUtils = injectr('../../dist/utils/npm-utils.js', {
-    'cross-spawn': crossSpawnStub,
-    'node:path': { join: (...items) => items.join('/') }
-  });
+  const npmUtils = injectr(
+    '../../dist/utils/npm-utils.js',
+    {
+      'node:child_process': { spawn: crossSpawnStub },
+      'node:path': { join: (...items) => items.join('/') }
+    },
+    { process: { platform: 'linux', env: {} } }
+  );
 
   const installPath = 'path/to/component';
   const initPath = installPath;
@@ -282,5 +286,44 @@ describe('utils : npm-utils', () => {
         });
       });
     }
+  });
+
+  describe('when running on Windows', () => {
+    const spawnStub = sinon.stub();
+    const winNpmUtils = injectr(
+      '../../dist/utils/npm-utils.js',
+      {
+        'node:child_process': { spawn: spawnStub },
+        'node:path': { join: (...items) => items.join('/') }
+      },
+      { process: { platform: 'win32', env: { comspec: 'C:\\cmd.exe' } } }
+    );
+
+    beforeEach(() => {
+      const onStub = sinon.stub();
+      spawnStub.returns({ on: onStub });
+      winNpmUtils.installDependency({
+        dependency: 'oc-template-es6-compiler@^1.0.0',
+        installPath: 'C:\\my path\\component',
+        silent: true,
+        usePrefix: true
+      });
+      onStub.args[1][1](0);
+    });
+
+    it('should spawn npm through cmd.exe with escaped arguments', () => {
+      expect(spawnStub.args[0][0]).to.equal('C:\\cmd.exe');
+      expect(spawnStub.args[0][1]).to.deep.equal([
+        '/d',
+        '/s',
+        '/c',
+        '"npm ^"install^" ^"--prefix^" ^"C:\\my^ path\\component^" ^"--no-save^" ^"oc-template-es6-compiler@^^1.0.0^" ^"--no-package-lock^""'
+      ]);
+      expect(spawnStub.args[0][2]).to.deep.equal({
+        cwd: 'C:\\my path\\component',
+        stdio: 'ignore',
+        windowsVerbatimArguments: true
+      });
+    });
   });
 });

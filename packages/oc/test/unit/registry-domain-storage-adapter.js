@@ -36,7 +36,7 @@ function initialiseModule(fromCallback = sinon.stub().returns('promisified')) {
   process = { emitWarning: sinon.stub() };
   return injectr(
     '../../dist/registry/domain/storage-adapter.js',
-    { universalify: { fromCallback } },
+    { '../../utils/universalify': { fromCallback } },
     { process }
   );
 }

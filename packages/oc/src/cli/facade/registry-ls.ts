@@ -1,6 +1,5 @@
-import { fromPromise } from 'universalify';
-
 import strings from '../../resources/index';
+import { fromPromise } from '../../utils/universalify';
 import type { RegistryCli } from '../domain/registry';
 import type { Logger } from '../logger';
 

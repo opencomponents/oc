@@ -1,8 +1,7 @@
 import path from 'node:path';
-import { promisify } from 'node:util';
-import targz from 'targz';
 
 import type { Component } from '../../types';
+import { decompress } from '../../utils/targz';
 import getPackageJsonFromTempDir from './get-package-json-from-temp-dir';
 import type { UploadedFile } from './http-server/types';
 
@@ -28,16 +27,7 @@ export default async function extractPackage(
   );
   const packageOutput = path.resolve(packageUntarOutput, '_package');
 
-  const decompress = promisify(targz.decompress);
-
-  await decompress({
-    src: packagePath,
-    dest: packageUntarOutput,
-    tar: {
-      dmode: tarExtractMode,
-      fmode: tarExtractMode
-    }
-  });
+  await decompress(packagePath, packageUntarOutput, tarExtractMode);
 
   const packageJson = await getPackageJsonFromTempDir(packageOutput);
 

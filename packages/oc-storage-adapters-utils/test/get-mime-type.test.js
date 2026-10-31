@@ -1,4 +1,6 @@
-import { getMimeType } from '../src/get-mime-type';
+const assert = require('node:assert/strict');
+const { test } = require('node:test');
+const { getMimeType } = require('../dist');
 
 const scenarios = [
   { ext: '.js', mime: 'application/javascript' },
@@ -12,8 +14,8 @@ const scenarios = [
   { ext: '.heisenberg', mime: undefined }
 ];
 
-scenarios.forEach((scenario) => {
+for (const scenario of scenarios) {
   test(`test ${scenario.ext} extension`, () => {
-    expect(getMimeType(scenario.ext)).toBe(scenario.mime);
+    assert.equal(getMimeType(scenario.ext), scenario.mime);
   });
-});
+}

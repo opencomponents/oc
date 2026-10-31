@@ -1,5 +1,5 @@
 import path from 'node:path';
-import tryRequire from 'try-require';
+import tryRequire from './try-require';
 
 export default function moduleExists(moduleName: string): boolean {
   const packageModulePath = path.join(moduleName, 'package.json');

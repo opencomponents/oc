@@ -10,7 +10,7 @@ describe('cli : facade : publish', () => {
   const registry = Registry();
   const Local = require('../../dist/cli/domain/local').default;
   const local = Local();
-  const readStub = sinon.stub().yields(null, 'test');
+  const readStub = sinon.stub().resolves('test');
   const mockComponent = {
     name: 'hello-world',
     version: '1.0.0'
@@ -33,7 +33,7 @@ describe('cli : facade : publish', () => {
     );
     const PublishFacade = injectr('../../dist/cli/facade/publish.js', {
       'fs-extra': fsMock,
-      read: readStub
+      '../../utils/prompt': readStub
     }).default;
     const publishFacade = PublishFacade({
       registry,

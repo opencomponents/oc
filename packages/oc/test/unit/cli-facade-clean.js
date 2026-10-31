@@ -11,7 +11,7 @@ describe('cli : facade : clean', () => {
     logSpy.err = sinon.spy();
     logSpy.warn = sinon.spy();
 
-    readMock = sinon.mock().yields(null, options.prompt || 'yes');
+    readMock = sinon.stub().resolves(options.prompt || 'yes');
 
     const local = {
       clean: {
@@ -21,7 +21,7 @@ describe('cli : facade : clean', () => {
     };
 
     const CleanFacade = injectr('../../dist/cli/facade/clean.js', {
-      read: readMock
+      '../../utils/prompt': readMock
     }).default;
 
     const cleanFacade = CleanFacade({ local, logger: logSpy });

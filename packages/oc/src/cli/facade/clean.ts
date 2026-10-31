@@ -1,11 +1,8 @@
-import { promisify } from 'node:util';
-import readCb from 'read';
-import { fromPromise } from 'universalify';
 import strings from '../../resources/index';
+import read from '../../utils/prompt';
+import { fromPromise } from '../../utils/universalify';
 import type { Local } from '../domain/local';
 import type { Logger } from '../logger';
-
-const read = promisify(readCb);
 
 const clean = ({
   local: {

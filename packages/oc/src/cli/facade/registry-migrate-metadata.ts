@@ -1,6 +1,5 @@
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { fromPromise } from 'universalify';
 import getMetadataAdapterOptions from '../../registry/domain/metadata-adapter-options';
 import { backfillMetadataFromStorageDetails } from '../../registry/domain/metadata-migration';
 import sanitiseOptions, {
@@ -8,6 +7,7 @@ import sanitiseOptions, {
 } from '../../registry/domain/options-sanitiser';
 import getPromiseBasedAdapter from '../../registry/domain/storage-adapter';
 import * as validator from '../../registry/domain/validators';
+import { fromPromise } from '../../utils/universalify';
 import type { Logger } from '../logger';
 
 const dynamicImport = new Function('specifier', 'return import(specifier)') as (

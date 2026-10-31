@@ -2,16 +2,13 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawn } = require('node:child_process');
-const { promisify } = require('node:util');
-const getPort = require('getport');
+const getPort = require('../../dist/utils/get-port').default;
 
 const {
   applyBenchmarkAssertions
 } = require('./benchmark-assertions');
 const createStorageAdapter = require('./storage-adapter');
 const oc = require('../../dist');
-
-const getPortAsync = promisify(getPort);
 
 const DEFAULT_OUT_DIR = path.resolve('test/results/benchmarks');
 const DEFAULT_REPETITIONS = 5;
@@ -566,7 +563,7 @@ const createPlugin = () => ({
 });
 
 const startRegistry = async (scenario, options) => {
-  const port = await getPortAsync();
+  const port = await getPort();
   const baseUrl = `http://127.0.0.1:${port}/`;
 
   const commonOptions = {

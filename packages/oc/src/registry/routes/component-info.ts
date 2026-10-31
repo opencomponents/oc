@@ -1,6 +1,6 @@
-import parseAuthor from 'parse-author';
-import { fromPromise } from 'universalify';
 import type { Component, ComponentDetail, Config } from '../../types';
+import parseAuthor from '../../utils/parse-author';
+import { fromPromise } from '../../utils/universalify';
 import type {
   OcHandler,
   OcRequest,

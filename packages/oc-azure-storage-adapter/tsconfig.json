@@ -5,7 +5,7 @@
 		"target": "ES2022",
 		"module": "commonjs",
 		"moduleResolution": "bundler",
-		"types": ["node", "jest"],
+		"types": ["node"],
 		"declaration": true,
 		"rootDir": "./src",
 		"outDir": "./dist",
