@@ -4,8 +4,8 @@ const injectr = require('injectr');
 const path = require('node:path');
 const sinon = require('sinon');
 
-const BoundedCache = require('../../dist/utils/bounded-cache').default;
-const versionHandler = require('../../dist/registry/domain/version-handler');
+const BoundedCache = require('../../../core/dist/utils/bounded-cache').default;
+const versionHandler = require('../../../registry/dist/domain/version-handler');
 
 describe('registry : domain : repository : component info cache', () => {
   const componentInfo = (name = 'hello-world', version = '1.0.0') => ({
@@ -104,17 +104,16 @@ describe('registry : domain : repository : component info cache', () => {
       ? { ...versionHandler, validateNewVersion }
       : versionHandler;
     const Repository = injectr(
-      '../../dist/registry/domain/repository.js',
-      {
-        'fs-extra': injectedFs,
-        '../../utils/bounded-cache': TrackedBoundedCache,
+      '../../../registry/dist/domain/repository.js',
+      { '@oc-framework/core': { ...require('../../../core/dist/index.js'), getPromiseBasedAdapter: () => cdn, BoundedCache: TrackedBoundedCache }, 'fs-extra': injectedFs,
+        
         './components-cache': () => componentsCache,
         './components-details': () => componentsDetails,
-        './storage-adapter': () => cdn,
+        
         './version-handler': injectedVersionHandler
       },
       {
-        __dirname: path.resolve(__dirname, '../../dist/registry/domain'),
+        __dirname: path.resolve(__dirname, '../../../registry/dist/domain'),
         Map: TrackedMap
       }
     ).default;

@@ -3,10 +3,10 @@ const sinon = require('sinon');
 
 describe('cli : facade : registry : remove', () => {
   const logSpy = {};
-  const Registry = require('../../dist/cli/domain/registry').default;
+  const Registry = require('../../../cli/dist/cli/domain/registry').default;
   const registry = Registry();
   const RegistryFacade =
-    require('../../dist/cli/facade/registry-remove').default;
+    require('../../../cli/dist/cli/facade/registry-remove').default;
   const registryFacade = RegistryFacade({ registry: registry, logger: logSpy });
 
   const execute = (done) => {

@@ -46,7 +46,14 @@
 		"!packages/oc-riak-storage-adapter/node_modules/**/*",
 		"packages/cli/**/*",
 		"!packages/cli/dist/**/*",
-		"!packages/cli/node_modules/**/*"
+		"!packages/cli/node_modules/**/*",
+		"packages/core/**/*",
+		"!packages/core/dist/**/*",
+		"!packages/core/node_modules/**/*",
+		"packages/registry/**/*",
+		"!packages/registry/dist/**/*",
+		"!packages/registry/node_modules/**/*",
+		"!packages/registry/src/components/oc-client/**/*"
 	]
 	},
 	"formatter": {

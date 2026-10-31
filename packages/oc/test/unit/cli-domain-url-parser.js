@@ -3,7 +3,7 @@ const expect = require('chai').expect;
 describe('cli : domain : url-parser', () => {
   let parsed;
   const execute = (url, returnVersion) => {
-    const urlParser = require('../../dist/cli/domain/url-parser');
+    const urlParser = require('../../../cli/dist/cli/domain/url-parser');
 
     parsed = urlParser.parse({
       href: url,

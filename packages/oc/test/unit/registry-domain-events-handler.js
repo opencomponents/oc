@@ -3,7 +3,7 @@ const sinon = require('sinon');
 
 describe('registry : domain : events-handler', () => {
   const eventsHandler =
-    require('../../dist/registry/domain/events-handler').default;
+    require('../../../registry/dist/domain/events-handler').default;
 
   describe('when requiring it multiple times', () => {
     const spy = sinon.spy();
@@ -11,7 +11,7 @@ describe('registry : domain : events-handler', () => {
 
     before(() => {
       eventsHandler.on('eventName', spy);
-      handler2 = require('../../dist/registry/domain/events-handler').default;
+      handler2 = require('../../../registry/dist/domain/events-handler').default;
       handler2.fire('eventName', { a: 1234 });
     });
 

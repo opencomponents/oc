@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
-const { create } = require('../../dist/registry/router');
+const { create } = require('../../../registry/dist/router');
 const mockedComponents = require('../fixtures/mocked-components');
 
 const waitFor = (value) =>

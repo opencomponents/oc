@@ -1,12 +1,12 @@
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
-const ComponentRoute = require('../../dist/registry/routes/component').default;
+const ComponentRoute = require('../../../registry/dist/routes/component').default;
 const ComponentInfoRoute =
-  require('../../dist/registry/routes/component-info').default;
+  require('../../../registry/dist/routes/component-info').default;
 const ComponentPreviewRoute =
-  require('../../dist/registry/routes/component-preview').default;
-const IndexRoute = require('../../dist/registry/routes/index').default;
+  require('../../../registry/dist/routes/component-preview').default;
+const IndexRoute = require('../../../registry/dist/routes/index').default;
 const mockedComponents = require('../fixtures/mocked-components');
 
 describe('registry : routes : component info mutation isolation', () => {

@@ -7,7 +7,7 @@ describe('registry : domain : components-details', () => {
   const setTimeoutStub = sinon.stub();
   const clearTimeoutStub = sinon.stub();
   const ComponentsDetails = injectr(
-    '../../dist/registry/domain/components-details.js',
+    '../../../registry/dist/domain/components-details.js',
     {
       './events-handler': { fire: fireStub },
       'oc-get-unix-utc-timestamp': () => 1234567890

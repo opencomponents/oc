@@ -17,7 +17,7 @@ describe('registry : routes : helpers : get-component-fallback', () => {
     });
 
     const getComponentFallback = injectr(
-      '../../dist/registry/routes/helpers/get-component-fallback.js',
+      '../../../registry/dist/routes/helpers/get-component-fallback.js',
       {
         undici: {
           request: requestStub

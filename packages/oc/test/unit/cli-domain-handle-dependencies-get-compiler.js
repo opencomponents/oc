@@ -22,10 +22,9 @@ describe('cli : domain : handle-dependencies : get-compiler', () => {
     };
 
     const getCompiler = injectr(
-      '../../dist/cli/domain/handle-dependencies/get-compiler.js',
-      {
-        'node:path': { join: (...args) => args.join('/') },
-        '../../../utils/clean-require': cleanRequireStub,
+      '../../../cli/dist/cli/domain/handle-dependencies/get-compiler.js',
+      { '@oc-framework/core': { ...require('../../../core/dist/index.js'), cleanRequire: cleanRequireStub }, 'node:path': { join: (...args) => args.join('/') },
+        
         './install-compiler': installCompilerStub
       }
     ).default;

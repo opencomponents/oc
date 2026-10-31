@@ -60,4 +60,7 @@ packages/oc-fastify-server-adapter/dist/
 packages/oc/test-components/
 packages/oc-client-browser/playwright-report/
 packages/oc-client-browser/test-results/
-.turbo/packages/cli/dist/
+.turbo/
+packages/cli/dist/
+packages/core/dist/
+packages/registry/dist/

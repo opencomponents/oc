@@ -3,7 +3,7 @@ const sinon = require('sinon');
 
 describe('registry : routes : helpers : nested-renderer', () => {
   const NestedRenderer =
-    require('../../dist/registry/domain/nested-renderer').default;
+    require('../../../registry/dist/domain/nested-renderer').default;
 
   let nestedRenderer;
   let renderer;

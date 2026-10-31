@@ -11,8 +11,8 @@ const {
   assertRegressionThresholds,
   assertSuccessRates,
   calculateRegressionPercent
-} = require('../../tasks/benchmarks/benchmark-assertions');
-const createStorageAdapter = require('../../tasks/benchmarks/storage-adapter');
+} = require('../../../registry/tasks/benchmarks/benchmark-assertions');
+const createStorageAdapter = require('../../../registry/tasks/benchmarks/storage-adapter');
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
 
@@ -255,7 +255,7 @@ describe('tasks : benchmark assertions', () => {
 describe('tasks : server benchmark verify CLI', () => {
   const serverBenchmarkPath = path.resolve(
     __dirname,
-    '../../tasks/benchmarks/server-benchmark.js'
+    '../../../registry/tasks/benchmarks/server-benchmark.js'
   );
   let tempDir;
 

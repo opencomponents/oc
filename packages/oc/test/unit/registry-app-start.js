@@ -5,13 +5,13 @@ const path = require('node:path');
 
 const getAppStart = (mockedRepository, options, callback) => {
   const appStart = injectr(
-    '../../dist/registry/app-start.js',
+    '../../../registry/dist/app-start.js',
     {
       'fs-extra': { readJsonSync: sinon.stub().returns({ version: '1.2.3' }) }
     },
     {
       console: { log: sinon.stub() },
-      __dirname: path.resolve(__dirname, '../../dist/registry')
+      __dirname: path.resolve(__dirname, '../../../registry/dist')
     }
   ).default;
 

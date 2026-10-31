@@ -6,13 +6,8 @@ const initialise = () => {
   const deprecate = sinon.stub();
   const initTemplate = sinon.stub().resolves({ ok: true });
   const Local = injectr(
-    '../../dist/cli/domain/local.js',
-    {
-      '../../registry/domain/validators': {
-        validateComponentName: sinon.stub().returns(true)
-      },
-      '../../utils/deprecate': { __esModule: true, default: deprecate },
-      './clean': {},
+    '../../../cli/dist/cli/domain/local.js',
+    { '@oc-framework/core': { ...require('../../../core/dist/index.js'), validateComponentName: sinon.stub().returns(true), deprecate: deprecate }, './clean': {},
       './get-components-by-dir': () => ({}),
       './init-template': initTemplate,
       './mock': () => ({}),

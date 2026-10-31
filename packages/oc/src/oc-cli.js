@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require('./cli');
+require('@oc-framework/cli/dist/oc-cli');

@@ -6,7 +6,7 @@ const {
   getComponentsListFromRows,
   getComponentsDetailsFromRows,
   getComponentRow
-} = require('../../dist/registry/domain/metadata-index');
+} = require('../../../core/dist/metadata-index');
 
 const rows = [
   { name: 'hello-world', version: '1.0.0', publishDate: 123, templateSize: 10 },

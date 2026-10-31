@@ -29,13 +29,11 @@ describe('cli : domain : handle-dependencies - get-missing-dependencies', () => 
       const pathResolveSpy = sinon.spy();
       const moduleExistsSpy = sinon.spy();
       const getMissingDependencies = injectr(
-        '../../dist/cli/domain/handle-dependencies/get-missing-dependencies.js',
-        {
-          '../../../utils/module-exists': (name) => {
+        '../../../cli/dist/cli/domain/handle-dependencies/get-missing-dependencies.js',
+        { '@oc-framework/core': { ...require('../../../core/dist/index.js'), moduleExists: (name) => {
             moduleExistsSpy(name);
             return installed[name];
-          },
-          'node:path': {
+          } }, 'node:path': {
             resolve: (...args) => {
               pathResolveSpy(...args);
               return args[args.length - 1];

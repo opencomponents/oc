@@ -41,7 +41,7 @@ describe('registry : routes : publish', () => {
       statusStub = sinon.stub().returns({ json: sinon.stub() });
 
       publishRoute = injectr(
-        '../../dist/registry/routes/publish.js',
+        '../../../registry/dist/routes/publish.js',
         {
           '../domain/extract-package': {
             __esModule: true,

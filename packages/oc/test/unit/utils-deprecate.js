@@ -5,7 +5,7 @@ const sinon = require('sinon');
 const initialise = () => {
   const emitWarning = sinon.stub();
   const deprecate = injectr(
-    '../../dist/utils/deprecate.js',
+    '../../../core/dist/utils/deprecate.js',
     {},
     { process: { emitWarning } }
   ).default;

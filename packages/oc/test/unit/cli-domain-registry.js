@@ -6,16 +6,15 @@ const getRegistry = (dependencies, opts) => {
   dependencies.fs = dependencies.fs || {};
   dependencies.fs.readJsonSync = sinon.stub().returns({ version: '1.2.3' });
   const Registry = injectr(
-    '../../dist/cli/domain/registry.js',
-    {
-      undici: dependencies.undici,
-      'fs-extra': dependencies.fs || {},
-      '../../utils/put': dependencies.put,
-      '../domain/url-parser': dependencies.urlParser,
-      './ocConfig': dependencies.ocConfig || {
+    '../../../cli/dist/cli/domain/registry.js',
+    { '@oc-framework/core': { ...require('../../../core/dist/index.js'), put: dependencies.put, ...(dependencies.ocConfig || {
         getOcConfig: sinon.stub(),
         setOcConfig: sinon.stub()
-      },
+      }) }, undici: dependencies.undici,
+      'fs-extra': dependencies.fs || {},
+      
+      '../domain/url-parser': dependencies.urlParser,
+      
       'node:path': {
         join: sinon.stub().returns('/hello/world')
       }

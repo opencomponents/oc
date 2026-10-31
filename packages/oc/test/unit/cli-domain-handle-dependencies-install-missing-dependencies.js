@@ -13,12 +13,9 @@ describe('cli : domain : handle-dependencies : install-missing-dependencies', ()
       warn: sinon.spy()
     };
     const installMissingDependencies = injectr(
-      '../../dist/cli/domain/handle-dependencies/install-missing-dependencies.js',
-      {
-        './get-missing-dependencies': stubs.getMissingDependencies,
-        '../../../utils/npm-utils': {
-          installDependencies: stubs.installDependencies
-        },
+      '../../../cli/dist/cli/domain/handle-dependencies/install-missing-dependencies.js',
+      { '@oc-framework/core': { ...require('../../../core/dist/index.js'), installDependencies: stubs.installDependencies }, './get-missing-dependencies': stubs.getMissingDependencies,
+        
         'node:path': { resolve: () => '/path/to/oc-running' }
       }
     ).default;

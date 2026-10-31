@@ -3,9 +3,9 @@ const sinon = require('sinon');
 
 describe('cli : facade : registry : add', () => {
   const logSpy = {};
-  const Registry = require('../../dist/cli/domain/registry').default;
+  const Registry = require('../../../cli/dist/cli/domain/registry').default;
   const registry = Registry();
-  const RegistryFacade = require('../../dist/cli/facade/registry-add').default;
+  const RegistryFacade = require('../../../cli/dist/cli/facade/registry-add').default;
   const registryFacade = RegistryFacade({ registry: registry, logger: logSpy });
 
   const execute = (done) => {

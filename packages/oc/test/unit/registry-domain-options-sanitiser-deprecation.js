@@ -5,10 +5,8 @@ const sinon = require('sinon');
 const initialise = () => {
   const deprecate = sinon.stub();
   const sanitise = injectr(
-    '../../dist/registry/domain/options-sanitiser.js',
-    {
-      '../../utils/deprecate': { __esModule: true, default: deprecate }
-    },
+    '../../../registry/dist/domain/options-sanitiser.js',
+    { '@oc-framework/core': { ...require('../../../core/dist/index.js'), deprecate: deprecate }, },
     { process, console }
   ).default;
 

@@ -5,7 +5,7 @@ const sinon = require('sinon');
 describe('cli : domain : clean', () => {
   const initialize = (options) => {
     options = options || {};
-    return injectr('../../dist/cli/domain/clean.js', {
+    return injectr('../../../cli/dist/cli/domain/clean.js', {
       './get-components-by-dir': () => () =>
         options.getComponentsByDirError
           ? Promise.reject(options.getComponentsByDirError)

@@ -7,7 +7,7 @@ import type {
   OcHandler,
   OcRequest,
   OcResponse
-} from '../../src/registry/domain/http-server/types';
+} from '@oc-framework/core';
 
 type CallbackOnlyAdapter = {
   name: string;

@@ -1,4 +1,4 @@
-import type { RegistryType } from '../../src/registry';
+import type { RegistryType } from '@oc-framework/registry';
 
 declare const registry: RegistryType;
 

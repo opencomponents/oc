@@ -4,7 +4,7 @@ const fs = require('fs-extra');
 const injectr = require('injectr');
 
 describe('cli : facade : validate', () => {
-  const ValidateFacade = injectr('../../dist/cli/facade/validate.js', {
+  const ValidateFacade = injectr('../../../cli/dist/cli/facade/validate.js', {
     '../domain/handle-dependencies': sinon.stub().resolves()
   }).default;
   let local;

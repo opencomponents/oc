@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
 
 describe('resources : settings', () => {
-  const settings = require('../../dist/resources/settings').default;
+  const settings = require('../../../core/dist/resources/settings').default;
 
   describe('files to watch ignore regex', () => {
     const execute = (fileName) => {

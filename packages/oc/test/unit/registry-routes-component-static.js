@@ -2,7 +2,7 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 describe('registry : routes : component-static', () => {
-  const ComponentStaticRoute = require('../../dist/registry/routes/component-static').default;
+  const ComponentStaticRoute = require('../../../registry/dist/routes/component-static').default;
 
   const makeRes = () => {
     const jsonStub = sinon.stub();
@@ -293,7 +293,7 @@ describe('registry : routes : component-static', () => {
   });
 
   describe('when registered on the router', () => {
-    const { create } = require('../../dist/registry/router');
+    const { create } = require('../../../registry/dist/router');
 
     const collectRoutes = (conf) => {
       const seen = [];

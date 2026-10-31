@@ -1,0 +1,92 @@
+import { Readable } from 'node:stream';
+import type { Config, CookieOptions, OcHandler } from '@oc-framework/core';
+import { strings } from '@oc-framework/core';
+import { encode } from '@rdevis/turbo-stream';
+import { serializeError } from 'serialize-error';
+import type { Repository } from '../domain/repository';
+import GetComponentHelper, {
+  type RenderComponent,
+  stream
+} from './helpers/get-component';
+
+export default function component(
+  conf: Config,
+  repository: Repository,
+  getComponent: RenderComponent = GetComponentHelper(conf, repository)
+): OcHandler {
+  return (req, res): void => {
+    let parameters = req.query as Record<string, string>;
+    if (req.method === 'POST') {
+      parameters = {
+        ...parameters,
+        ...(req.body as Record<string, string>)
+      };
+    }
+
+    getComponent(
+      {
+        action: req.params['action'],
+        conf: res.conf,
+        headers: req.headers,
+        ip: req.ip!,
+        name: req.params['componentName'],
+        parameters,
+        version: req.params['componentVersion']
+      },
+      (result) => {
+        if (result.response.error) {
+          if (
+            Object.prototype.toString.call(result.response.error) ===
+            '[object Error]'
+          ) {
+            result.response.error = serializeError(result.response.error);
+          }
+          res.errorCode = result.response.code;
+          res.errorDetails = result.response.error as any;
+        }
+
+        try {
+          if (result.headers && Object.keys(result.headers).length) {
+            res.set(result.headers);
+          }
+
+          if (Array.isArray(result.cookies) && result.cookies.length > 0) {
+            for (const cookie of result.cookies) {
+              const opts: CookieOptions = (cookie.options ??
+                {}) as CookieOptions;
+              res.cookie(cookie.name, cookie.value as any, opts);
+            }
+          }
+
+          const streamEnabled =
+            !!result.response.data?.component?.props?.[stream];
+          if (streamEnabled) {
+            delete result.response.data.component.props[stream];
+            const webStream = encode({ ...result.response });
+
+            const nodeStream = Readable.from(webStream);
+
+            res.status(result.status);
+            nodeStream.on('error', (err) => {
+              res.status(500).end(String(err));
+            });
+
+            res.set('Content-Type', 'x-text/stream');
+
+            res.stream(nodeStream);
+          } else {
+            res.status(result.status).json(result.response);
+          }
+        } catch (e) {
+          res.status(500).json({
+            code: 'RENDER_ERROR',
+            error: strings.errors.registry.RENDER_ERROR(
+              `${result.response.name}@${result.response.version}`,
+              String(e)
+            )
+          });
+        }
+      }
+    );
+  };
+}

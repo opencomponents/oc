@@ -3,7 +3,7 @@ const fs = require('fs-extra');
 const path = require('node:path');
 const sinon = require('sinon');
 
-const RegistryMigrateMetadata = require('../../dist/cli/facade/registry-migrate-metadata').default;
+const RegistryMigrateMetadata = require('../../../cli/dist/cli/facade/registry-migrate-metadata').default;
 
 const configPath = path.join(
   __dirname,

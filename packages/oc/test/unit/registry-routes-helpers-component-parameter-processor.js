@@ -4,11 +4,11 @@ const injectr = require('injectr');
 
 describe('registry : routes : helpers : component-parameter-processor', () => {
   const applyDefaultValues =
-    require('../../dist/registry/routes/helpers/apply-default-values').default;
-  const sanitiser = require('../../dist/registry/domain/sanitiser');
+    require('../../../registry/dist/routes/helpers/apply-default-values').default;
+  const sanitiser = require('../../../registry/dist/domain/sanitiser');
   const validator =
-    require('../../dist/registry/domain/validators').validateComponentParameters;
-  const processor = require('../../dist/registry/routes/helpers/component-parameter-processor');
+    require('../../../registry/dist/domain/validators').validateComponentParameters;
+  const processor = require('../../../registry/dist/routes/helpers/component-parameter-processor');
   const { compileParameterSchema, processParameters } = processor;
 
   const originalPipeline = (reqParams, expected) => {
@@ -435,8 +435,8 @@ describe('registry : routes : helpers : component-parameter-processor', () => {
   });
 
   describe('compilation caching via get-component WeakMap', () => {
-    const getProcessorPath = '../../dist/registry/routes/helpers/component-parameter-processor';
-    const getComponentPath = '../../dist/registry/routes/helpers/get-component.js';
+    const getProcessorPath = '../../../registry/dist/routes/helpers/component-parameter-processor';
+    const getComponentPath = '../../../registry/dist/routes/helpers/get-component.js';
 
     it('should compile same schema object once across repeated renders', (done) => {
       const processor = require(getProcessorPath);

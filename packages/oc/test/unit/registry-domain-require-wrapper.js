@@ -5,7 +5,7 @@ const vm = require('node:vm');
 
 describe('registry : domain : require-wrapper', () => {
   const RequireWrapper =
-    require('../../dist/registry/domain/require-wrapper').default;
+    require('../../../registry/dist/domain/require-wrapper').default;
 
   describe('when using the require wrapper in a clear context', () => {
     let result;
@@ -119,7 +119,7 @@ describe('registry : domain : require-wrapper', () => {
         tryRequireStub.onCall(1).returns({ esmFallback: true });
 
         const InjectedRequireWrapper = injectr(
-          '../../dist/registry/domain/require-wrapper.js',
+          '../../../registry/dist/domain/require-wrapper.js',
           {
             'try-require': tryRequireStub
           }
@@ -157,7 +157,7 @@ describe('registry : domain : require-wrapper', () => {
         tryRequireStub.withArgs('url').returns({ isCoreModule: true });
 
         const InjectedRequireWrapper = injectr(
-          '../../dist/registry/domain/require-wrapper.js',
+          '../../../registry/dist/domain/require-wrapper.js',
           {
             'try-require': tryRequireStub
           }

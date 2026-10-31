@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 
-const BoundedCache = require('../../dist/utils/bounded-cache').default;
+const BoundedCache = require('../../../core/dist/utils/bounded-cache').default;
 
 describe('utils : bounded cache', () => {
   it('rejects invalid capacities', () => {

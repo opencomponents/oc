@@ -15,7 +15,7 @@ describe('cli : programmatic-api', () => {
     './facade/registry-remove': sinon.stub().returns(() => {})
   };
   const programmaticApi = injectr(
-    '../../dist/cli/programmatic-api.js',
+    '../../../cli/dist/cli/programmatic-api.js',
     deps
   ).default;
 

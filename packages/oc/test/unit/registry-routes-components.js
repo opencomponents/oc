@@ -1,10 +1,10 @@
 const expect = require('chai').expect;
 const sinon = require('sinon');
-const settings = require('../../dist/resources/settings').default;
+const settings = require('../../../core/dist/resources/settings').default;
 
 describe('registry : routes : components', () => {
   const ComponentsRoute =
-    require('../../dist/registry/routes/components').default;
+    require('../../../registry/dist/routes/components').default;
   const mockedComponents = require('../fixtures/mocked-components');
 
   let mockedRepository;

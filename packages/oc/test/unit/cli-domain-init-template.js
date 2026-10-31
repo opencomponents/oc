@@ -6,17 +6,14 @@ describe('cli : domain : init-template', () => {
   let error;
   const initialise = (stubs) => (cb) => {
     const initTemplate = injectr(
-      '../../dist/cli/domain/init-template/index.js',
-      {
-        'fs-extra': {
+      '../../../cli/dist/cli/domain/init-template/index.js',
+      { '@oc-framework/core': { ...require('../../../core/dist/index.js'), init: stubs.npmStub,
+          installDependencies: stubs.npmStub }, 'fs-extra': {
           ensureDir: stubs.fsExtraStub
         },
         'node:path': { join: (...args) => args.join('/') },
         './install-template': stubs.installTemplateStub,
-        '../../../utils/npm-utils': {
-          init: stubs.npmStub,
-          installDependencies: stubs.npmStub
-        },
+        
         './scaffold': stubs.scaffoldStub
       }
     ).default;

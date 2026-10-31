@@ -1,0 +1,23 @@
+import { strings } from '@oc-framework/core';
+import { fromPromise } from 'universalify';
+import type { RegistryCli } from '../domain/registry';
+import type { Logger } from '../logger';
+
+const registryRemove = ({
+  registry,
+  logger
+}: {
+  logger: Logger;
+  registry: RegistryCli;
+}) =>
+  fromPromise(async (opts: { registryUrl: string }): Promise<void> => {
+    try {
+      await registry.remove(opts.registryUrl);
+      logger.ok(strings.messages.cli.REGISTRY_REMOVED);
+    } catch (err) {
+      logger.err(String(err));
+      throw err;
+    }
+  });
+
+export default registryRemove;

@@ -4,7 +4,7 @@ const sinon = require('sinon');
 
 describe('cli : domain : watch', () => {
   const execute = (fileChanged, separator, cb) => {
-    const watch = injectr('../../dist/cli/domain/watch.js', {
+    const watch = injectr('../../../cli/dist/cli/domain/watch.js', {
       'node:path': {
         resolve: (x) => x,
         sep: separator

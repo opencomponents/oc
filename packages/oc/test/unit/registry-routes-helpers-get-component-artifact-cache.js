@@ -2,7 +2,7 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 const GetComponent =
-  require('../../dist/registry/routes/helpers/get-component').default;
+  require('../../../registry/dist/routes/helpers/get-component').default;
 
 const TEMPLATE_HASH = 'registry-artifact-cache-template';
 

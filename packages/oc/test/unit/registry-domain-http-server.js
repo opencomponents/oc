@@ -3,7 +3,7 @@ const sinon = require('sinon');
 
 describe('registry : domain : http-server : express-adapter', () => {
   const createAdapter =
-    require('../../dist/registry/domain/http-server/express-adapter').default;
+    require('../../../registry/dist/domain/http-server/express-adapter').default;
 
   const options = { port: 0, timeout: 120000 };
 

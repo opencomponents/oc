@@ -1,0 +1,101 @@
+import type {
+  Component,
+  Config,
+  OcHandler,
+  OcRequest,
+  OcResponse,
+  TemplateInfo
+} from '@oc-framework/core';
+import * as urlBuilder from '@oc-framework/core';
+import { getOcConfig } from '@oc-framework/core';
+import { fromPromise } from 'universalify';
+import type { Repository } from '../domain/repository';
+import previewView from '../views/preview';
+import * as getComponentFallback from './helpers/get-component-fallback';
+
+function componentPreview(
+  err: any,
+  req: OcRequest,
+  res: OcResponse,
+  component: Component,
+  templates: TemplateInfo[]
+) {
+  if (err) {
+    res.errorDetails = err.registryError || err;
+    res.errorCode = 'NOT_FOUND';
+    res.status(404).json(err);
+    return;
+  }
+
+  let liveReload = '';
+  if (res.conf.liveReloadPort) {
+    liveReload = `<script src="http://localhost:${res.conf.liveReloadPort}/livereload.js?snipver=1"></script>`;
+  }
+
+  const isHtmlRequest =
+    !!req.headers.accept && req.headers.accept.indexOf('text/html') >= 0;
+
+  if (isHtmlRequest) {
+    res.send(
+      previewView({
+        robots: res.conf.discovery.robots,
+        component,
+        imports:
+          getOcConfig(res.conf.path)?.development?.importmap?.imports ||
+          res.conf.compiledClient?.imports,
+        fallbackClient: res.conf.fallbackClient
+          ? `${res.conf.fallbackRegistryUrl.replace(/\/$/, '')}/oc-client/client.dev.js`
+          : undefined,
+        href: res.conf.baseUrl,
+        liveReload,
+        preload: res.conf.preload,
+        qs: urlBuilder.queryString(req.query as any),
+        templates
+      })
+    );
+  } else {
+    res.status(200).json({
+      ...component,
+      requestVersion: req.params['componentVersion'] || ''
+    });
+  }
+}
+
+export default function componentPreviewRoute(
+  conf: Config,
+  repository: Repository
+): OcHandler {
+  return (req, res): void => {
+    fromPromise(repository.getComponent)(
+      req.params['componentName'],
+      req.params['componentVersion'],
+      (registryError: any, component) => {
+        if (registryError && conf.fallbackRegistryUrl) {
+          return getComponentFallback.getComponentPreview(
+            conf,
+            req,
+            res,
+            registryError,
+            (fallbackError, fallbackComponent) => {
+              componentPreview(
+                fallbackError,
+                req,
+                res,
+                fallbackComponent,
+                repository.getTemplatesInfo()
+              );
+            }
+          );
+        }
+
+        componentPreview(
+          registryError,
+          req,
+          res,
+          component,
+          repository.getTemplatesInfo()
+        );
+      }
+    );
+  };
+}

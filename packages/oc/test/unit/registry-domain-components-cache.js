@@ -36,12 +36,12 @@ describe('registry : domain : components-cache', () => {
     setTimeoutStub = sinon.stub();
     eventsHandlerStub = { fire: sinon.stub() };
     const ComponentsCache = injectr(
-      '../../dist/registry/domain/components-cache/index.js',
+      '../../../registry/dist/domain/components-cache/index.js',
       {
         'oc-get-unix-utc-timestamp': getTimestamp,
         '../events-handler': eventsHandlerStub,
         './components-list': injectr(
-          '../../dist/registry/domain/components-cache/components-list.js',
+          '../../../registry/dist/domain/components-cache/components-list.js',
           {
             'oc-get-unix-utc-timestamp': getTimestamp,
             '../events-handler': eventsHandlerStub
@@ -452,7 +452,7 @@ describe('registry : domain : components-cache', () => {
 });
 
 describe('registry : domain : metadata-index', () => {
-  const { createMetadataIndex } = require('../../dist/registry/domain/metadata-index');
+  const { createMetadataIndex } = require('../../../core/dist/metadata-index');
 
   it('should reuse the hydrated snapshot until refreshed', async () => {
     const metadataStore = {

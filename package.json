@@ -10,7 +10,7 @@
     "test": "turbo run test",
     "test-silent": "turbo run test-silent",
     "lint": "turbo run lint",
-    "preview": "turbo run preview --filter=oc",
+    "preview": "turbo run preview --filter=@oc-framework/registry",
     "changeset:add": "changeset add",
     "changeset:version": "changeset version",
     "release:prepare": "npm run test-silent && npm run changeset:version",

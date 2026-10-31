@@ -16,7 +16,7 @@ const initialise = () => {
   };
 
   const GetComponentsByDir = injectr(
-    '../../dist/cli/domain/get-components-by-dir.js',
+    '../../../cli/dist/cli/domain/get-components-by-dir.js',
     {
       'fs-extra': fsMock,
       'node:path': pathMock

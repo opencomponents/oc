@@ -29,22 +29,19 @@ describe('cli : domain : get-mocked-plugins', () => {
     const fakePathFunc = (...args) =>
       args.map((x) => x.replace(/\.\//g, '')).join('');
 
-    getMockedPlugins = injectr('../../dist/cli/domain/get-mocked-plugins.js', {
-      'fs-extra': fsMock,
-      'node:path': {
-        join: pathJoin || fakePathFunc,
-        resolve: fakePathFunc
-      },
-      './ocConfig': {
-        getOcConfig:
+    getMockedPlugins = injectr('../../../cli/dist/cli/domain/get-mocked-plugins.js', { '@oc-framework/core': { ...require('../../../core/dist/index.js'), getOcConfig:
           getOcConfig ||
           sinon.stub().returns({
             registries: [],
             mocks: {
               plugins: {}
             }
-          })
+          }) }, 'fs-extra': fsMock,
+      'node:path': {
+        join: pathJoin || fakePathFunc,
+        resolve: fakePathFunc
       },
+      
       '/root/components/dynamic-object-plugin.js': dynamicObjectPluginModule,
       '/root/components/dynamic-plugin.js': dynamicPluginModule,
       '/root/components/not-a-function.js': notAFunctionModule

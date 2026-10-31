@@ -1,4 +1,4 @@
-const colors = require('../../dist/utils/colors').default;
+const colors = require('../../../core/dist/utils/colors').default;
 const expect = require('chai').expect;
 const injectr = require('injectr');
 const path = require('node:path');
@@ -6,9 +6,9 @@ const sinon = require('sinon');
 
 describe('cli : facade : publish', () => {
   const logSpy = {};
-  const Registry = require('../../dist/cli/domain/registry').default;
+  const Registry = require('../../../cli/dist/cli/domain/registry').default;
   const registry = Registry();
-  const Local = require('../../dist/cli/domain/local').default;
+  const Local = require('../../../cli/dist/cli/domain/local').default;
   const local = Local();
   const readStub = sinon.stub().yields(null, 'test');
   const mockComponent = {
@@ -31,7 +31,7 @@ describe('cli : facade : publish', () => {
       },
       fs
     );
-    const PublishFacade = injectr('../../dist/cli/facade/publish.js', {
+    const PublishFacade = injectr('../../../cli/dist/cli/facade/publish.js', {
       'fs-extra': fsMock,
       read: readStub
     }).default;

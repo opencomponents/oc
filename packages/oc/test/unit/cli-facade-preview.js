@@ -16,7 +16,7 @@ describe('cli : facade : preview', () => {
     };
     logSpy = { err: sinon.spy() };
 
-    const PreviewFacade = injectr('../../dist/cli/facade/preview.js', {
+    const PreviewFacade = injectr('../../../cli/dist/cli/facade/preview.js', {
       open: openSpy
     }).default;
     const previewFacade = PreviewFacade({

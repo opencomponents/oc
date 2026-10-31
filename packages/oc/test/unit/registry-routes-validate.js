@@ -2,7 +2,7 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 describe('registry : routes : validate', () => {
-  const ValidateRoute = require('../../dist/registry/routes/validate').default;
+  const ValidateRoute = require('../../../registry/dist/routes/validate').default;
   let resJsonStub;
   let statusStub;
   let validateRoute;

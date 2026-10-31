@@ -63,14 +63,14 @@ describe('registry : domain : repository', () => {
     };
 
     const Repository = injectr(
-      '../../dist/registry/domain/repository.js',
+      '../../../registry/dist/domain/repository.js',
       {
         'fs-extra': fsMock,
         './components-cache': () => componentsCacheMock,
         './components-details': () => componentsDetailsMock
       },
       {
-        __dirname: path.resolve(__dirname, '../../dist/registry/domain'),
+        __dirname: path.resolve(__dirname, '../../../registry/dist/domain'),
         // Resolve timers lazily so sinon fake timers (installed per-test) apply.
         setTimeout: (...args) => setTimeout(...args),
         clearTimeout: (...args) => clearTimeout(...args)
@@ -1042,7 +1042,7 @@ describe('registry : domain : repository', () => {
   });
 
   describe('when on local configuration', () => {
-    const Repository = require('../../dist/registry/domain/repository').default;
+    const Repository = require('../../../registry/dist/domain/repository').default;
 
     const localConfiguration = {
       local: true,

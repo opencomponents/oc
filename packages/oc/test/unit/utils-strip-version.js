@@ -2,7 +2,7 @@ const expect = require('chai').expect;
 const path = require('node:path');
 
 describe('utils : stripVersion', () => {
-  const stripVersion = require('../../dist/utils/strip-version').default;
+  const stripVersion = require('../../../core/dist/utils/strip-version').default;
 
   describe('when a non scoped dependency is provided', () => {
     const dependency = '/path/to/dependency';

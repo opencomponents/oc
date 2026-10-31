@@ -1,7 +1,7 @@
 {
 	"name": "@oc-framework/cli",
-	"version": "0.1.0",
-	"description": "CLI for OpenComponents — develop, package, publish and validate components",
+	"version": "0.50.64",
+	"description": "CLI for OpenComponents \u2014 develop, package, publish and validate components",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"bin": {
@@ -16,10 +16,16 @@
 		"url": "https://github.com/opencomponents/oc/issues"
 	},
 	"homepage": "https://github.com/opencomponents/oc/tree/master/packages/cli#readme",
-	"keywords": ["oc", "opencomponents", "cli"],
+	"keywords": [
+		"oc",
+		"opencomponents",
+		"cli"
+	],
 	"author": "Matteo Figus",
 	"license": "MIT",
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"scripts": {
 		"prebuild": "rimraf dist",
 		"build": "npm run lint && tsc",
@@ -29,15 +35,30 @@
 		"test-silent": "npm run test --silent"
 	},
 	"dependencies": {
-		"yargs": "^17.7.2",
-		"semver": "^7.8.4"
+		"@oc-framework/core": "^0.1.0",
+		"builtin-modules": "^3.3.0",
+		"chokidar": "^4.0.3",
+		"fs-extra": "^11.3.5",
+		"getport": "^0.1.0",
+		"livereload": "^0.10.3",
+		"open": "^10.2.0",
+		"read": "^1.0.7",
+		"semver": "^7.8.4",
+		"targz": "^1.0.1",
+		"try-require": "^1.2.1",
+		"undici": "^8.9.0",
+		"universalify": "^2.0.1",
+		"yargs": "^17.7.2"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.0",
+		"@types/fs-extra": "^11.0.4",
 		"@types/node": "^25.9.3",
 		"@types/semver": "^7.7.1",
 		"@types/yargs": "^17.0.35",
 		"rimraf": "^6.1.3",
-		"typescript": "^6.0.3"
+		"typescript": "^6.0.3",
+		"@types/livereload": "^0.9.5",
+		"@types/read": "^0.0.32"
 	}
 }

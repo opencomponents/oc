@@ -6,7 +6,7 @@ describe('registry : routes : helpers : is-url-discoverable', () => {
     let result;
     before((done) => {
       const isDiscoverable = injectr(
-        '../../dist/registry/routes/helpers/is-url-discoverable.js',
+        '../../../registry/dist/routes/helpers/is-url-discoverable.js',
         {
           undici: {
             request: () =>
@@ -35,7 +35,7 @@ describe('registry : routes : helpers : is-url-discoverable', () => {
     let result;
     before((done) => {
       const isDiscoverable = injectr(
-        '../../dist/registry/routes/helpers/is-url-discoverable.js',
+        '../../../registry/dist/routes/helpers/is-url-discoverable.js',
         {
           undici: {
             request: () =>

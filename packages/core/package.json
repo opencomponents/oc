@@ -1,0 +1,57 @@
+{
+	"name": "@oc-framework/core",
+	"version": "0.1.0",
+	"description": "Shared domain primitives, types and utilities for OpenComponents",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/opencomponents/oc.git",
+		"directory": "packages/core"
+	},
+	"bugs": {
+		"url": "https://github.com/opencomponents/oc/issues"
+	},
+	"homepage": "https://github.com/opencomponents/oc/tree/master/packages/core#readme",
+	"keywords": [
+		"oc",
+		"opencomponents"
+	],
+	"author": "Matteo Figus",
+	"license": "MIT",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"prebuild": "rimraf dist",
+		"build": "npm run lint && tsc",
+		"lint": "npx @biomejs/biome check src",
+		"lint:apply": "npx @biomejs/biome check --write src",
+		"test": "echo \"no tests yet\" && exit 0",
+		"test-silent": "npm run test --silent"
+	},
+	"dependencies": {
+		"cross-spawn": "^7.0.6",
+		"form-data": "^4.0.6",
+		"fs-extra": "^11.3.5",
+		"lru-cache": "^10.4.3",
+		"oc-metadata-adapters-utils": "^0.1.1",
+		"oc-storage-adapters-utils": "^2.1.3",
+		"picocolors": "^1.1.1",
+		"semver": "^7.8.4",
+		"try-require": "^1.2.1",
+		"undici": "^8.9.0",
+		"universalify": "^2.0.1"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.5.0",
+		"@types/express": "^5.0.6",
+		"@types/fs-extra": "^11.0.4",
+		"@types/node": "^25.9.3",
+		"@types/semver": "^7.7.1",
+		"rimraf": "^6.1.3",
+		"type-fest": "^2.19.0",
+		"typescript": "^6.0.3",
+		"@types/cross-spawn": "^6.0.6"
+	}
+}

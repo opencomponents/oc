@@ -9,12 +9,8 @@ describe('cli : domain : handle-dependencies : require-template', () => {
     error = null;
     result = null;
     const requireTemplate = injectr(
-      '../../dist/cli/domain/handle-dependencies/require-template.js',
-      {
-        '../../../utils/clean-require': options.requireMock,
-        '../../../utils/is-template-valid':
-          options.isTemplateValidMock || sinon.stub().returns(true),
-        'node:path': {
+      '../../../cli/dist/cli/domain/handle-dependencies/require-template.js',
+      { '@oc-framework/core': { ...require('../../../core/dist/index.js'), cleanRequire: options.requireMock, isTemplateValid: options.isTemplateValidMock || sinon.stub().returns(true) }, 'node:path': {
           join: (...args) => args.join('/').replace(/\/\//gi, '/'),
           resolve: (...args) =>
             ['path/to/oc-cli'].concat(args.slice(1)).join('/')

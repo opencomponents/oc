@@ -23,13 +23,10 @@ const initialise = () => {
   const deprecate = sinon.stub();
 
   const ocConfig = injectr(
-    '../../dist/cli/domain/ocConfig.js',
-    {
-      'node:fs': fsMock,
-      'node:path': pathMock,
-      '../../resources/settings': settingsMock,
-      '../../utils/deprecate': { __esModule: true, default: deprecate }
-    },
+    '../../../core/dist/oc-config.js',
+    { './resources/settings': settingsMock,
+      './utils/deprecate': { __esModule: true, default: deprecate }, 'node:fs': fsMock,
+      'node:path': pathMock},
     { __dirname: '' }
   );
 

@@ -1,0 +1,130 @@
+import type { ComponentsList, Config, MetadataIndex } from '@oc-framework/core';
+import isEqual from 'lodash.isequal';
+import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
+import { type StorageAdapter, strings } from 'oc-storage-adapters-utils';
+import eventsHandler from '../events-handler';
+import getComponentsList from './components-list';
+
+export default function componentsCache(
+  conf: Config,
+  cdn: StorageAdapter,
+  metadataIndex?: MetadataIndex
+) {
+  let cachedComponentsList: ComponentsList;
+  let refreshLoop: NodeJS.Timeout;
+  let closed = false;
+
+  const componentsList = getComponentsList(conf, cdn);
+
+  const getFromMetadataIndex = async (): Promise<ComponentsList> =>
+    (await metadataIndex!.refresh()).componentsList;
+
+  const poll = () => {
+    return setTimeout(async () => {
+      try {
+        const data = metadataIndex
+          ? await getFromMetadataIndex()
+          : await componentsList.getFromJson();
+
+        eventsHandler.fire('cache-poll', getUnixUTCTimestamp());
+
+        if (data.lastEdit > cachedComponentsList.lastEdit) {
+          cachedComponentsList = data;
+        }
+      } catch (err: any) {
+        eventsHandler.fire('error', {
+          code: 'components_list_get',
+          message: err?.message || String(err)
+        });
+      }
+      if (!closed) {
+        refreshLoop = poll();
+      }
+    }, conf.pollingInterval * 1000);
+  };
+
+  const cacheDataAndStartPolling = (data: ComponentsList) => {
+    cachedComponentsList = data;
+    if (!closed) {
+      refreshLoop = poll();
+    }
+
+    return data;
+  };
+
+  const throwError = (code: string, message: any) => {
+    eventsHandler.fire('error', { code, message: message?.message ?? message });
+    throw code;
+  };
+
+  return {
+    get(): ComponentsList {
+      const metadataSnapshot = metadataIndex?.get();
+      if (metadataSnapshot) {
+        cachedComponentsList = metadataSnapshot.componentsList;
+      }
+
+      if (!cachedComponentsList) {
+        return throwError(
+          'components_cache_empty',
+          `The component's cache was empty`
+        );
+      }
+
+      return cachedComponentsList;
+    },
+
+    async load(): Promise<ComponentsList> {
+      if (metadataIndex) {
+        const components = await getFromMetadataIndex().catch((err) =>
+          throwError('components_list_get', err)
+        );
+        cacheDataAndStartPolling(components);
+
+        return components;
+      }
+
+      const jsonComponents = await componentsList.getFromJson().catch((err) => {
+        if (err?.code === strings.errors.STORAGE.FILE_NOT_FOUND_CODE)
+          return null;
+
+        return Promise.reject(err);
+      });
+      const dirComponents = await componentsList
+        .getFromDirectories(jsonComponents)
+        .catch((err) => throwError('components_list_get', err));
+
+      if (
+        !jsonComponents ||
+        !isEqual(dirComponents.components, jsonComponents.components)
+      ) {
+        await componentsList
+          .save(dirComponents)
+          .catch((err) => throwError('components_list_save', err));
+      }
+      cacheDataAndStartPolling(dirComponents);
+
+      return dirComponents;
+    },
+
+    async refresh(): Promise<ComponentsList> {
+      clearTimeout(refreshLoop);
+      try {
+        // Passing components that we know are fine, so it doesn't refresh invalid components
+        const components = metadataIndex
+          ? await getFromMetadataIndex()
+          : await componentsList.refresh(cachedComponentsList);
+        cacheDataAndStartPolling(components);
+
+        return components;
+      } catch (err) {
+        return throwError('components_cache_refresh', err);
+      }
+    },
+
+    close(): void {
+      closed = true;
+      clearTimeout(refreshLoop);
+    }
+  };
+}

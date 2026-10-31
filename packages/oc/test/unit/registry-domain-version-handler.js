@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
 
 describe('registry : domain : version-handler', () => {
-  const versionHandler = require('../../dist/registry/domain/version-handler');
+  const versionHandler = require('../../../registry/dist/domain/version-handler');
 
   describe('when getting component', () => {
     const get = (a, b) => versionHandler.getAvailableVersion(a, b);

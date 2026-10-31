@@ -3,7 +3,7 @@ const injectr = require('injectr');
 const sinon = require('sinon');
 
 describe('registry : domain : validator', () => {
-  const validator = require('../../dist/registry/domain/validators');
+  const validator = require('../../../registry/dist/domain/validators');
   const baseS3Conf = {
     bucket: 'oc-components',
     key: 's3-key',
@@ -1498,10 +1498,10 @@ describe('registry : domain : validator', () => {
 
   describe('when validating CLI OC version in request headers', () => {
     const validator = injectr(
-      '../../dist/registry/domain/validators/index.js',
+      '../../../registry/dist/domain/validators/index.js',
       {
         './oc-cli-version': injectr(
-          '../../dist/registry/domain/validators/oc-cli-version.js',
+          '../../../registry/dist/domain/validators/oc-cli-version.js',
           {
             'fs-extra': {
               readJsonSync: () => ({ version: '0.50.47' })
@@ -1591,10 +1591,10 @@ describe('registry : domain : validator', () => {
 
   describe('when validating node engine version in request headers', () => {
     const validator = injectr(
-      '../../dist/registry/domain/validators/index.js',
+      '../../../registry/dist/domain/validators/index.js',
       {
         './node-version': injectr(
-          '../../dist/registry/domain/validators/node-version.js',
+          '../../../registry/dist/domain/validators/node-version.js',
           {
             'fs-extra': {
               readJsonSync: () => ({ engines: { node: '>=0.10.35' } })

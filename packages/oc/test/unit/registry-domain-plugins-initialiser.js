@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
 
 describe('registry : domain : plugins-initialiser', () => {
-  const pluginsInitialiser = require('../../dist/registry/domain/plugins-initialiser');
+  const pluginsInitialiser = require('../../../registry/dist/domain/plugins-initialiser');
 
   describe('when initialising not valid plugins', () => {
     describe('when plugin not registered correctly', () => {

@@ -4,7 +4,7 @@ const os = require('node:os');
 const path = require('node:path');
 const expect = require('chai').expect;
 
-const put = require('../../dist/utils/put').default;
+const put = require('../../../core/dist/utils/put').default;
 
 // Self-signed cert (CN=localhost, valid until 2126) used only by this test so
 // it can stand up a real TLS server that negotiates HTTP/2 via ALPN.

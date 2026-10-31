@@ -3,7 +3,7 @@ const sinon = require('sinon');
 
 describe('registry : domain : server-adapter', () => {
   const getHttpServerAdapter =
-    require('../../dist/registry/domain/server-adapter').default;
+    require('../../../registry/dist/domain/server-adapter').default;
 
   const createAdapter = () => ({
     native: sinon.stub(),

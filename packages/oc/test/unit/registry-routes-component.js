@@ -3,7 +3,7 @@ const sinon = require('sinon');
 
 describe('registry : routes : component', () => {
   const ComponentRoute =
-    require('../../dist/registry/routes/component').default;
+    require('../../../registry/dist/routes/component').default;
   const mockedComponents = require('../fixtures/mocked-components');
   let mockedRepository;
   let resJsonStub;

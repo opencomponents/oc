@@ -19,12 +19,9 @@ const initialise = () => {
   };
 
   const Local = injectr(
-    '../../dist/cli/domain/mock.js',
-    {
-      'fs-extra': fsMock,
-      path: pathMock,
-      './ocConfig': ocConfigMock
-    },
+    '../../../cli/dist/cli/domain/mock.js',
+    { '@oc-framework/core': { ...require('../../../core/dist/index.js'), ...ocConfigMock }, 'fs-extra': fsMock,
+      path: pathMock},
     { __dirname: '' }
   ).default;
 

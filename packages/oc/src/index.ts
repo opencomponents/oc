@@ -1,10 +1,8 @@
-export { default as Client } from 'oc-client';
-export { default as cli } from './cli/programmatic-api';
-export type { RegistryType } from './registry';
-export { default as Registry, RegistryOptions } from './registry';
-
+export { default as cli } from '@oc-framework/cli';
 export type {
   CookieOptions,
+  CorsConfig,
+  CorsOptions,
   ExpressMiddleware,
   HttpServerAdapter,
   HttpServerAdapterFactory,
@@ -14,13 +12,15 @@ export type {
   OcHandler,
   OcRequest,
   OcResponse,
-  PromiseHttpServerAdapter,
-  UploadedFile
-} from './registry/domain/http-server/types';
-export type {
-  CorsConfig,
-  CorsOptions,
   Plugin,
   PluginContext,
-  RegistryErrorEvent
-} from './types';
+  PromiseHttpServerAdapter,
+  RegistryErrorEvent,
+  UploadedFile
+} from '@oc-framework/core';
+export type { RegistryType } from '@oc-framework/registry';
+export {
+  default as Registry,
+  RegistryOptions
+} from '@oc-framework/registry';
+export { default as Client } from 'oc-client';

@@ -126,7 +126,7 @@ describe('registry : routes : helpers : get-component timing', () => {
     }
 
     GetComponent = injectr(
-      '../../dist/registry/routes/helpers/get-component.js',
+      '../../../registry/dist/routes/helpers/get-component.js',
       injections,
       { console: sandboxConsole, Buffer, clearTimeout, setTimeout, process }
     ).default;
@@ -516,7 +516,7 @@ describe('registry : routes : helpers : get-component timing', () => {
 
   describe('dynamic listener semantics with the real events handler', () => {
     const eventsHandler =
-      require('../../dist/registry/domain/events-handler').default;
+      require('../../../registry/dist/domain/events-handler').default;
     let listener;
     let pendingResolution;
 

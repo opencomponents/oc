@@ -1,4 +1,4 @@
-import type { RegistryOptions } from '../../src/registry';
+import type { RegistryOptions } from '@oc-framework/registry';
 
 const options: RegistryOptions = {
   baseUrl: 'https://components.example.com/',

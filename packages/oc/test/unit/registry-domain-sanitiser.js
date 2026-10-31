@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
 
 describe('registry : domain : sanitiser', () => {
-  const sanitiser = require('../../dist/registry/domain/sanitiser');
+  const sanitiser = require('../../../registry/dist/domain/sanitiser');
 
   describe("when sanitising component's request parameters", () => {
     const sanitise = (a, b) => sanitiser.sanitiseComponentParameters(a, b);

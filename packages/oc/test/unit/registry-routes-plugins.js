@@ -2,7 +2,7 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 describe('registry : routes : plugins', () => {
-  const PluginsRoute = require('../../dist/registry/routes/plugins').default;
+  const PluginsRoute = require('../../../registry/dist/routes/plugins').default;
   let resJsonStub;
   let statusStub;
   let pluginsRoute;

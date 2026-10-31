@@ -15,7 +15,7 @@ describe('registry : routes : helpers : get-component', () => {
   const initialise = (params) => {
     fireStub = sinon.stub();
     GetComponent = injectr(
-      '../../dist/registry/routes/helpers/get-component.js',
+      '../../../registry/dist/routes/helpers/get-component.js',
       {
         '../../domain/events-handler': {
           on: () => {},

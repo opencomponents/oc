@@ -3,7 +3,7 @@ const injectr = require('injectr');
 
 describe('registry : routes : helpers : get-available-dependencies', () => {
   const getAvailableDependencies = injectr(
-    '../../dist/registry/routes/helpers/get-available-dependencies.js',
+    '../../../registry/dist/routes/helpers/get-available-dependencies.js',
     {
       'builtin-modules': ['url'],
       '../../domain/require-wrapper': () => (pathToPackageJson) => ({

@@ -7,7 +7,7 @@ describe('registry : domain : extract-package', () => {
   const pathResolveStub = sinon.stub();
 
   const extractPackage = injectr(
-    '../../dist/registry/domain/extract-package.js',
+    '../../../registry/dist/domain/extract-package.js',
     {
       targz: { decompress: decompressStub },
       'node:path': { resolve: pathResolveStub },

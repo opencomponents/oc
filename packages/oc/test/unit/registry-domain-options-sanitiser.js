@@ -2,7 +2,7 @@ const expect = require('chai').expect;
 
 describe('registry : domain : options-sanitiser', () => {
   const sanitise =
-    require('../../dist/registry/domain/options-sanitiser').default;
+    require('../../../registry/dist/domain/options-sanitiser').default;
 
   describe('when options is empty', () => {
     const options = { baseUrl: 'http://my-registry.com' };
@@ -31,7 +31,7 @@ describe('registry : domain : options-sanitiser', () => {
 
     it('should default to the Express HTTP server adapter', () => {
       expect(sanitise(options).server.adapter).to.equal(
-        require('../../dist/registry/domain/http-server/express-adapter').default
+        require('../../../registry/dist/domain/http-server/express-adapter').default
       );
       expect(sanitise(options).server.options).to.eql({ port: 3000 });
     });
@@ -60,7 +60,7 @@ describe('registry : domain : options-sanitiser', () => {
 
       it('should default to the Express HTTP server adapter', () => {
         expect(sanitise(options).server.adapter).to.equal(
-          require('../../dist/registry/domain/http-server/express-adapter')
+          require('../../../registry/dist/domain/http-server/express-adapter')
             .default
         );
       });

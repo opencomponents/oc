@@ -2,10 +2,10 @@ const expect = require('chai').expect;
 const http = require('node:http');
 
 const createExpressAdapter =
-  require('../../dist/registry/domain/http-server/express-adapter').default;
+  require('../../../registry/dist/domain/http-server/express-adapter').default;
 const sanitise =
-  require('../../dist/registry/domain/options-sanitiser').default;
-const middleware = require('../../dist/registry/middleware');
+  require('../../../registry/dist/domain/options-sanitiser').default;
+const middleware = require('../../../registry/dist/middleware');
 
 const DEFAULT_ALLOWED_HEADERS =
   'Origin, X-Requested-With, Content-Type, Accept, traceparent';

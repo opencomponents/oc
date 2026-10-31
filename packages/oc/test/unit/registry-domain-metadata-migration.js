@@ -8,7 +8,7 @@ const {
   exportLegacyMetadataFiles,
   getComponentRowsFromComponentsDetails,
   getComponentRowsFromStorageDirectories
-} = require('../../dist/registry/domain/metadata-migration');
+} = require('../../../core/dist/metadata-migration');
 
 const componentsDetails = {
   lastEdit: 123,

@@ -6,11 +6,8 @@ describe('cli : domain : init-template : install-template', () => {
   const npmUtils = { installDependency: sinon.stub() };
   const isTemplateValid = sinon.stub();
   const installTemplate = injectr(
-    '../../dist/cli/domain/init-template/install-template.js',
-    {
-      '../../../utils/npm-utils': npmUtils,
-      '../../../utils/is-template-valid': isTemplateValid,
-      'try-require': sinon.stub().returns({
+    '../../../cli/dist/cli/domain/init-template/install-template.js',
+    { '@oc-framework/core': { ...require('../../../core/dist/index.js'), ...npmUtils, isTemplateValid: isTemplateValid }, 'try-require': sinon.stub().returns({
         getInfo: () => ({ version: '1.2.3' })
       })
     }
