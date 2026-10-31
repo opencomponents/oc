@@ -1,5 +1,3 @@
-import isEqual from 'lodash.isequal';
-import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import type {
   Component,
@@ -8,7 +6,9 @@ import type {
   ComponentsList,
   Config
 } from '../../types';
+import isEqual from '../../utils/is-equal';
 import pLimit from '../../utils/pLimit';
+import getUnixUTCTimestamp from '../../utils/unix-utc-timestamp';
 import eventsHandler from './events-handler';
 import type { MetadataIndex } from './metadata-index';
 

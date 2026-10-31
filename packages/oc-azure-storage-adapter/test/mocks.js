@@ -1,31 +1,7 @@
-const azure = {};
+const fs = require('node:fs');
 const stream = require('node:stream');
-
-jest.mock('fs-extra', () => {
-  return {
-    createReadStream: jest.fn(() => 'this is a stream'),
-    readFile: jest.fn((cb) => cb(null, 'file content!'))
-  };
-});
-
-jest.mock('node-dir', () => {
-  return {
-    paths: jest.fn((pathToDir, cb) => {
-      cb(null, {
-        files: [
-          `${pathToDir}\\package.json`,
-          `${pathToDir}\\server.js`,
-          `${pathToDir}\\.env`,
-          `${pathToDir}\\template.js`,
-          `${pathToDir}/package.json`,
-          `${pathToDir}/server.js`,
-          `${pathToDir}/.env`,
-          `${pathToDir}/template.js`
-        ]
-      });
-    })
-  };
-});
+const utils = require('oc-storage-adapters-utils');
+const requireWithMocks = require('../../../test-helpers/require-with-mocks');
 
 let cachedTxt = 0;
 let cachedJson = 0;
@@ -101,9 +77,7 @@ const blobServiceClient = {
               ]
             };
 
-            const blobs = entries[prefix] || [];
-
-            for (const entry of blobs) {
+            for (const entry of entries[prefix] || []) {
               yield entry;
             }
           }
@@ -113,13 +87,45 @@ const blobServiceClient = {
   }
 };
 
-azure.StorageSharedKeyCredential = jest.fn((account, key) => ({
-  account,
-  key
-}));
-azure.BlobServiceClient = jest.fn((url, credentials) => ({
-  _credentials: credentials,
-  _url: url,
-  ...blobServiceClient
-}));
-module.exports = azure;
+function StorageSharedKeyCredential(account, key) {
+  return { account, key };
+}
+
+function BlobServiceClient(url, credentials) {
+  return { _credentials: credentials, _url: url, ...blobServiceClient };
+}
+
+class DefaultAzureCredential {
+  async getToken() {
+    return { token: 'token', expiresOnTimestamp: Date.now() + 3600000 };
+  }
+}
+
+const azure = requireWithMocks(require.resolve('../dist'), {
+  '@azure/identity': { DefaultAzureCredential },
+  '@azure/storage-blob': { BlobServiceClient, StorageSharedKeyCredential },
+  'node:fs': { ...fs, createReadStream: () => 'this is a stream' },
+  'oc-storage-adapters-utils': {
+    ...utils,
+    listFiles: async (pathToDir) => [
+      `${pathToDir}\\package.json`,
+      `${pathToDir}\\server.js`,
+      `${pathToDir}\\.env`,
+      `${pathToDir}\\template.js`,
+      `${pathToDir}/package.json`,
+      `${pathToDir}/server.js`,
+      `${pathToDir}/.env`,
+      `${pathToDir}/template.js`
+    ]
+  }
+});
+
+const rejection = (promise) =>
+  promise.then(
+    () => {
+      throw new Error('Expected promise to reject');
+    },
+    (err) => err
+  );
+
+module.exports = { azure, rejection };

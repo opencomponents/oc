@@ -1,10 +1,9 @@
-import { promisify } from 'node:util';
 import fs from 'fs-extra';
-import targz from 'targz';
 
 import * as validator from '../../registry/domain/validators';
 import deprecate from '../../utils/deprecate';
 import isTemplateLegacy from '../../utils/is-template-legacy';
+import * as targz from '../../utils/targz';
 import type { Logger } from '../logger';
 import * as clean from './clean';
 import getComponentsByDir from './get-components-by-dir';
@@ -19,16 +18,7 @@ export default function local() {
       return fs.unlink(compressedPackagePath);
     },
     compress(input: string, output: string): Promise<void> {
-      return promisify(targz.compress)({
-        src: input,
-        dest: output,
-        tar: {
-          map: (file) =>
-            Object.assign(file, {
-              name: `_package/${file.name}`
-            })
-        }
-      });
+      return targz.compress(input, output, '_package');
     },
     getComponentsByDir: getComponentsByDir(),
     async init(options: {

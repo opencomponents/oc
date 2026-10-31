@@ -1,4 +1,4 @@
-const fs = require('fs-extra');
+const fs = require('node:fs/promises');
 const path = require('node:path');
 const { compile } = require('./compile');
 
@@ -6,7 +6,7 @@ async function build() {
   const distPath = '../dist/';
   const compiled = await compile();
 
-  await fs.ensureDir(path.join(__dirname, distPath));
+  await fs.mkdir(path.join(__dirname, distPath), { recursive: true });
   await fs.writeFile(
     path.join(__dirname, distPath, 'oc-client.min.map'),
     compiled.map,

@@ -1,9 +1,8 @@
 import path from 'node:path';
-import coreModules from 'builtin-modules';
 import fs from 'fs-extra';
-
 import strings from '../../../resources';
 import type { Component, Template } from '../../../types';
+import coreModules from '../../../utils/core-modules';
 import isTemplateLegacy from '../../../utils/is-template-legacy';
 import type { Logger } from '../../logger';
 import ensureCompilerIsDeclaredAsDevDependency from './ensure-compiler-is-declared-as-devDependency';

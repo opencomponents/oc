@@ -10,7 +10,7 @@ describe('cli : domain : init-template : install-template', () => {
     {
       '../../../utils/npm-utils': npmUtils,
       '../../../utils/is-template-valid': isTemplateValid,
-      'try-require': sinon.stub().returns({
+      '../../../utils/try-require': sinon.stub().returns({
         getInfo: () => ({ version: '1.2.3' })
       })
     }

@@ -1,21 +1,15 @@
+import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
-import { promisify } from 'node:util';
 import { Storage, type UploadOptions } from '@google-cloud/storage';
-import fs from 'fs-extra';
-import Cache from 'nice-cache';
-import nodeDir, { type PathsResult } from 'node-dir';
 import {
   getFileInfo,
   type IsPrivateFile,
+  listFiles,
   type StorageAdapter,
   type StorageAdapterBaseConfig,
   strings
 } from 'oc-storage-adapters-utils';
-import tmp from 'tmp';
-
-const getPaths: (path: string) => Promise<PathsResult> = promisify(
-  nodeDir.paths
-);
 
 export interface GsConfig extends StorageAdapterBaseConfig {
   /**
@@ -53,10 +47,7 @@ export default function gsAdapter(conf: GsConfig): StorageAdapter {
   };
 
   const bucketName = conf.bucket;
-  const cache = new Cache({
-    verbose: !!conf.verbosity,
-    refreshInterval: conf.refreshInterval
-  });
+  const cache = new Map<string, string>();
 
   const getFile = async (filePath: string, force = false) => {
     const getFromGs = async () => {
@@ -85,14 +76,13 @@ export default function gsAdapter(conf: GsConfig): StorageAdapter {
       return getFromGs();
     }
 
-    const cached = cache.get('gs-file', filePath);
+    const cached = cache.get(filePath);
     if (cached) {
       return cached;
     }
 
     const result = await getFromGs();
-    cache.set('gs-file', filePath, result);
-    cache.sub('gs-file', filePath, getFromGs);
+    cache.set(filePath, result);
 
     return result;
   };
@@ -178,9 +168,10 @@ export default function gsAdapter(conf: GsConfig): StorageAdapter {
     dirOutput: string,
     isPrivateFile: IsPrivateFile = () => false
   ) => {
-    const paths = await getPaths(dirInput);
     const packageJsonFile = path.join(dirInput, 'package.json');
-    const files = paths.files.filter((file) => file !== packageJsonFile);
+    const files = (await listFiles(dirInput)).filter(
+      (file) => file !== packageJsonFile
+    );
     const client = getClient();
 
     const filesResults = await Promise.all(
@@ -209,15 +200,16 @@ export default function gsAdapter(conf: GsConfig): StorageAdapter {
     isPrivate: boolean,
     client: Storage
   ) => {
-    const tmpobj = tmp.fileSync();
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'oc-gs-'));
+    const tmpFile = path.join(tmpDir, 'content');
 
-    fs.writeFileSync(tmpobj.name, fileContent);
+    fs.writeFileSync(tmpFile, fileContent);
 
     try {
-      const result = await putFile(tmpobj.name, fileName, isPrivate, client);
+      const result = await putFile(tmpFile, fileName, isPrivate, client);
       return result;
     } finally {
-      tmpobj.removeCallback();
+      fs.rmSync(tmpDir, { recursive: true, force: true });
     }
   };
 

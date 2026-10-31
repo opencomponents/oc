@@ -1,9 +1,11 @@
 import path from 'node:path';
-import coreModules from 'builtin-modules';
-import requirePackageName from 'require-package-name';
-import tryRequire from 'try-require';
 
 import strings from '../../resources';
+import coreModules from '../../utils/core-modules';
+import tryRequire from '../../utils/try-require';
+
+const requirePackageName = (requirePath: string) =>
+  requirePath.split('/', requirePath.startsWith('@') ? 2 : 1).join('/');
 
 const allCoreModules = [...coreModules, ...coreModules.map((m) => `node:${m}`)];
 

@@ -1,40 +1,32 @@
-import { mkdtemp, readFile, rm } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import path from 'node:path';
-import { Readable } from 'node:stream';
-import { gzipSync } from 'node:zlib';
-import type { FastifyInstance } from 'fastify';
-import type { PromiseHttpServerAdapter } from '../src';
-import createFastifyAdapter from '../src';
+const assert = require('node:assert/strict');
+const { mkdtemp, readFile, rm } = require('node:fs/promises');
+const { tmpdir } = require('node:os');
+const path = require('node:path');
+const { Readable } = require('node:stream');
+const { test } = require('node:test');
+const { gzipSync } = require('node:zlib');
+const createFastifyAdapter = require('../dist');
 
-const asFastify = (adapter: PromiseHttpServerAdapter): FastifyInstance =>
-  adapter.native() as FastifyInstance;
+const asFastify = (adapter) => adapter.native();
 
-const closeAdapter = (adapter: PromiseHttpServerAdapter): Promise<void> =>
-  adapter.close();
+const closeAdapter = (adapter) => adapter.close();
 
-const listen = (
-  adapter: PromiseHttpServerAdapter,
-  port: number | string = 0
-): Promise<void> => adapter.listen({ port, timeout: 120000 });
+const listen = (adapter, port = 0) => adapter.listen({ port, timeout: 120000 });
 
-test('preserves callback-based listen and close with a deprecation warning', (done) => {
-  const emitWarning = jest
-    .spyOn(process, 'emitWarning')
-    .mockImplementation(() => true);
+test('preserves callback-based listen and close with a deprecation warning', (t, done) => {
+  const emitWarning = t.mock.method(process, 'emitWarning', () => true);
   const adapter = createFastifyAdapter();
 
   adapter.listen({ port: 0, timeout: 120000 }, (listenError) => {
-    expect(listenError).toBeUndefined();
+    assert.equal(listenError, undefined);
 
     adapter.close((closeError) => {
-      expect(closeError).toBeUndefined();
-      expect(emitWarning).toHaveBeenCalledTimes(1);
-      expect(emitWarning).toHaveBeenCalledWith(
-        expect.stringContaining('HTTP server adapter callback API'),
-        'DeprecationWarning'
-      );
-      emitWarning.mockRestore();
+      assert.equal(closeError, undefined);
+      assert.equal(emitWarning.mock.callCount(), 1);
+      const [message, type] = emitWarning.mock.calls[0].arguments;
+      assert.ok(message.includes('HTTP server adapter callback API'));
+      assert.equal(type, 'DeprecationWarning');
+      emitWarning.mock.restore();
       done();
     });
   });
@@ -55,18 +47,18 @@ test('returns strong etags and honours conditional requests', async () => {
   const first = await app.inject('/component');
   const etag = first.headers.etag;
 
-  expect(first.statusCode).toBe(200);
-  expect(first.json()).toEqual({ ok: true });
-  expect(etag).toMatch(/^"/);
-  expect(etag).not.toMatch(/^W\//);
+  assert.equal(first.statusCode, 200);
+  assert.deepEqual(first.json(), { ok: true });
+  assert.match(etag, /^"/);
+  assert.doesNotMatch(etag, /^W\//);
 
   const second = await app.inject({
     headers: { 'if-none-match': String(etag) },
     url: '/component'
   });
 
-  expect(second.statusCode).toBe(304);
-  expect(second.body).toBe('');
+  assert.equal(second.statusCode, 304);
+  assert.equal(second.body, '');
 
   await closeAdapter(adapter);
 });
@@ -95,9 +87,9 @@ test('runs neutral middleware for OPTIONS and exposes an Express-like allow head
 
   const response = await app.inject({ method: 'OPTIONS', url: '/component' });
 
-  expect(response.statusCode).toBe(200);
-  expect(response.headers['access-control-allow-origin']).toBe('*');
-  expect(response.headers.allow).toBe('GET, HEAD, POST, OPTIONS');
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.headers['access-control-allow-origin'], '*');
+  assert.equal(response.headers.allow, 'GET, HEAD, POST, OPTIONS');
 
   await closeAdapter(adapter);
 });
@@ -122,8 +114,8 @@ test('uses qs semantics for urlencoded request bodies', async () => {
     url: '/submit'
   });
 
-  expect(response.statusCode).toBe(200);
-  expect(response.json()).toEqual({
+  assert.equal(response.statusCode, 200);
+  assert.deepEqual(response.json(), {
     items: ['one', 'two'],
     user: { name: 'Ada' }
   });
@@ -157,12 +149,12 @@ test('normalises cookies, wildcard params, connect middleware, and streams', asy
     url: '/assets/path/to/file.js'
   });
 
-  expect(response.statusCode).toBe(200);
-  expect(response.headers['content-type']).toBe('text/plain');
-  expect(response.headers['x-route-id']).toBe('asset');
-  expect(response.headers['x-cookie-session']).toBe('abc123');
-  expect(response.headers['x-user']).toBe('publisher');
-  expect(response.body).toBe('path/to/file.js');
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.headers['content-type'], 'text/plain');
+  assert.equal(response.headers['x-route-id'], 'asset');
+  assert.equal(response.headers['x-cookie-session'], 'abc123');
+  assert.equal(response.headers['x-user'], 'publisher');
+  assert.equal(response.body, 'path/to/file.js');
 
   await closeAdapter(adapter);
 });
@@ -184,12 +176,12 @@ test('translates Express cookie options to Fastify cookie options', async () => 
   const response = await app.inject('/cookies');
   const setCookie = String(response.headers['set-cookie']);
 
-  expect(response.statusCode).toBe(200);
-  expect(setCookie).toContain('session=abc');
-  expect(setCookie).toContain('Max-Age=60');
-  expect(setCookie).toContain('Path=/');
-  expect(setCookie).toContain('SameSite=Lax');
-  expect(setCookie).not.toContain('Max-Age=60000');
+  assert.equal(response.statusCode, 200);
+  assert.ok(setCookie.includes('session=abc'));
+  assert.ok(setCookie.includes('Max-Age=60'));
+  assert.ok(setCookie.includes('Path=/'));
+  assert.ok(setCookie.includes('SameSite=Lax'));
+  assert.ok(!setCookie.includes('Max-Age=60000'));
 
   await closeAdapter(adapter);
 });
@@ -217,8 +209,8 @@ test('inflates compressed JSON request bodies', async () => {
     url: '/json'
   });
 
-  expect(response.statusCode).toBe(200);
-  expect(response.json()).toEqual({ ok: true });
+  assert.equal(response.statusCode, 200);
+  assert.deepEqual(response.json(), { ok: true });
 
   await closeAdapter(adapter);
 });
@@ -229,24 +221,23 @@ test('defaults listen host to all interfaces', async () => {
   await listen(adapter);
 
   const address = adapter.httpServer().address();
-  expect(address && typeof address !== 'string' ? address.address : '').toBe(
+  assert.equal(
+    address && typeof address !== 'string' ? address.address : '',
     '0.0.0.0'
   );
 
   await closeAdapter(adapter);
 });
 
-test('listens on Azure named pipes', async () => {
+test('listens on Azure named pipes', async (t) => {
   const adapter = createFastifyAdapter();
   const app = asFastify(adapter);
   const pipe = String.raw`\\.\pipe\cdfd043b-d3a4-4c5d-bb08-c17a644a30ab`;
-  const listenSpy = jest
-    .spyOn(app, 'listen')
-    .mockImplementation((() => Promise.resolve()) as never);
+  const listenSpy = t.mock.method(app, 'listen', () => Promise.resolve());
 
   await listen(adapter, pipe);
 
-  expect(listenSpy).toHaveBeenCalledWith({ path: pipe });
+  assert.deepEqual(listenSpy.mock.calls[0].arguments, [{ path: pipe }]);
 });
 
 test('ignores trailing slashes like Express strict routing off', async () => {
@@ -273,12 +264,12 @@ test('ignores trailing slashes like Express strict routing off', async () => {
     '/registry/a11y-widget/4.0.66/~preview/?userId=1'
   );
 
-  expect(withoutSlash.statusCode).toBe(200);
-  expect(withoutSlash.json()).toEqual({
+  assert.equal(withoutSlash.statusCode, 200);
+  assert.deepEqual(withoutSlash.json(), {
     params: { componentName: 'a11y-widget', componentVersion: '4.0.66' }
   });
-  expect(withSlash.statusCode).toBe(200);
-  expect(withSlash.json()).toEqual({
+  assert.equal(withSlash.statusCode, 200);
+  assert.deepEqual(withSlash.json(), {
     params: { componentName: 'a11y-widget', componentVersion: '4.0.66' }
   });
 
@@ -305,10 +296,10 @@ test('deduplicates trailing-slash variants to avoid Fastify duplicate route erro
   const withoutSlash = await app.inject('/components');
   const withSlash = await app.inject('/components/');
 
-  expect(withoutSlash.statusCode).toBe(200);
-  expect(withSlash.statusCode).toBe(200);
-  expect(withoutSlash.body).toBe('index');
-  expect(withSlash.body).toBe('index');
+  assert.equal(withoutSlash.statusCode, 200);
+  assert.equal(withSlash.statusCode, 200);
+  assert.equal(withoutSlash.body, 'index');
+  assert.equal(withSlash.body, 'index');
 
   await closeAdapter(adapter);
 });
@@ -341,19 +332,19 @@ test('returns 404 for empty handler arrays and scopes allow headers to matching 
     url: '/post-only'
   });
 
-  expect(empty.statusCode).toBe(404);
-  expect(empty.headers['content-type']).toBeUndefined();
-  expect(getOnlyOptions.headers.allow).toBe('GET, HEAD, OPTIONS');
-  expect(postOnlyOptions.headers.allow).toBe('POST, OPTIONS');
+  assert.equal(empty.statusCode, 404);
+  assert.equal(empty.headers['content-type'], undefined);
+  assert.equal(getOnlyOptions.headers.allow, 'GET, HEAD, OPTIONS');
+  assert.equal(postOnlyOptions.headers.allow, 'POST, OPTIONS');
 
   await closeAdapter(adapter);
 });
 
-test('skips multipart parsing for non-publish methods', async () => {
+test('skips multipart parsing for non-publish methods', async (t) => {
   const adapter = createFastifyAdapter();
   const app = asFastify(adapter);
   const tempDir = await mkdtemp(path.join(tmpdir(), 'oc-fastify-adapter-'));
-  const filename = jest.fn((originalName: string) => originalName);
+  const filename = t.mock.fn((originalName) => originalName);
 
   adapter.enableFileUploads({ filename, tempDir });
   adapter.route('post', '/components', 'components', [
@@ -368,8 +359,8 @@ test('skips multipart parsing for non-publish methods', async () => {
     url: '/components'
   });
 
-  expect(response.statusCode).toBe(200);
-  expect(filename).not.toHaveBeenCalled();
+  assert.equal(response.statusCode, 200);
+  assert.equal(filename.mock.callCount(), 0);
 
   await closeAdapter(adapter);
   await rm(tempDir, { force: true, recursive: true });
@@ -431,8 +422,8 @@ test('normalises multipart uploads into OC files and body fields', async () => {
     url: '/publish/hello-world/1.0.0'
   });
 
-  expect(response.statusCode).toBe(200);
-  expect(response.json()).toEqual({
+  assert.equal(response.statusCode, 200);
+  assert.deepEqual(response.json(), {
     body: { description: 'demo' },
     file: {
       destination: tempDir,

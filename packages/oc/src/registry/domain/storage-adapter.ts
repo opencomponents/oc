@@ -1,5 +1,5 @@
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
-import { fromCallback } from 'universalify';
+import { fromCallback } from '../../utils/universalify';
 
 const privateComponentFilePatterns = [/(\\|\/)server\.js/, /(\\|\/)\..+/];
 
