@@ -1,4 +1,6 @@
-import { getFileInfo } from '../src/get-file-info';
+const assert = require('node:assert/strict');
+const { test } = require('node:test');
+const { getFileInfo } = require('../dist');
 
 const scenarios = [
   {
@@ -22,11 +24,11 @@ const scenarios = [
   }
 ];
 
-scenarios.forEach((scenario) => {
+for (const scenario of scenarios) {
   test(`test ${scenario.ext} extension`, () => {
     const fileInfo = getFileInfo(scenario.path);
-    expect(fileInfo.gzip).toBe(scenario.gzip);
-    expect(fileInfo.extname).toBe(scenario.ext);
-    expect(fileInfo.mimeType).toBe(scenario.mime);
+    assert.equal(fileInfo.gzip, scenario.gzip);
+    assert.equal(fileInfo.extname, scenario.ext);
+    assert.equal(fileInfo.mimeType, scenario.mime);
   });
-});
+}

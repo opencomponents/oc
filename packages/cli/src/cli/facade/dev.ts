@@ -1,6 +1,12 @@
 import path from 'node:path';
 import { promisify } from 'node:util';
-import { colors, getOcConfig, strings } from '@oc-framework/core';
+import {
+  colors,
+  fromPromise,
+  getOcConfig,
+  getPort,
+  strings
+} from '@oc-framework/core';
 
 type DevRegistry = {
   register(plugin: unknown): Promise<void>;
@@ -32,9 +38,7 @@ const loadRegistry = async (): Promise<{
   }
 };
 
-import getPortCb from 'getport';
 import livereload from 'livereload';
-import { fromPromise } from 'universalify';
 import getMockedPlugins from '../domain/get-mocked-plugins';
 import handleDependencies from '../domain/handle-dependencies';
 import type { Local } from '../domain/local';
@@ -47,7 +51,6 @@ const cliMessages = strings.messages.cli;
 const cliErrors = strings.errors.cli;
 
 const delay = (time = 0) => new Promise((res) => setTimeout(res, time));
-const getPort = promisify(getPortCb);
 
 const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
   fromPromise(

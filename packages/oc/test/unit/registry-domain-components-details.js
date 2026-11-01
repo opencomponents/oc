@@ -10,7 +10,10 @@ describe('registry : domain : components-details', () => {
     '../../../registry/dist/domain/components-details.js',
     {
       './events-handler': { fire: fireStub },
-      'oc-get-unix-utc-timestamp': () => 1234567890
+      '@oc-framework/core': {
+        ...require('../../../core/dist/index.js'),
+        getUnixUtcTimestamp: () => 1234567890
+      }
     },
     {
       setTimeout: setTimeoutStub,

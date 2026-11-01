@@ -1,5 +1,4 @@
-import { strings } from '@oc-framework/core';
-import { fromPromise } from 'universalify';
+import { fromPromise, strings } from '@oc-framework/core';
 import type { RegistryCli } from '../domain/registry';
 import type { Logger } from '../logger';
 

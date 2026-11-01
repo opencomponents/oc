@@ -1,8 +1,8 @@
 import path from 'node:path';
-import { strings } from '@oc-framework/core';
-import coreModules from 'builtin-modules';
-import requirePackageName from 'require-package-name';
-import tryRequire from 'try-require';
+import { coreModules, strings, tryRequire } from '@oc-framework/core';
+
+const requirePackageName = (requirePath: string) =>
+  requirePath.split('/', requirePath.startsWith('@') ? 2 : 1).join('/');
 
 const allCoreModules = [...coreModules, ...coreModules.map((m) => `node:${m}`)];
 

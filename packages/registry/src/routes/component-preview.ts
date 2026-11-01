@@ -7,8 +7,7 @@ import type {
   TemplateInfo
 } from '@oc-framework/core';
 import * as urlBuilder from '@oc-framework/core';
-import { getOcConfig } from '@oc-framework/core';
-import { fromPromise } from 'universalify';
+import { fromPromise, getOcConfig } from '@oc-framework/core';
 import type { Repository } from '../domain/repository';
 import previewView from '../views/preview';
 import * as getComponentFallback from './helpers/get-component-fallback';

@@ -1,5 +1,5 @@
+import fs from 'node:fs';
 import path from 'node:path';
-import { promisify } from 'node:util';
 import { DefaultAzureCredential, type TokenCredential } from '@azure/identity';
 import {
   type AnonymousCredential,
@@ -8,20 +8,14 @@ import {
   type ContainerClient,
   StorageSharedKeyCredential
 } from '@azure/storage-blob';
-import fs from 'fs-extra';
-import Cache from 'nice-cache';
-import nodeDir, { type PathsResult } from 'node-dir';
 import {
   getFileInfo,
   type IsPrivateFile,
+  listFiles,
   type StorageAdapter,
   type StorageAdapterBaseConfig,
   strings
 } from 'oc-storage-adapters-utils';
-
-const getPaths: (path: string) => Promise<PathsResult> = promisify(
-  nodeDir.paths
-);
 
 // [Node.js only] A helper method used to read a Node.js readable stream into a Buffer
 async function streamToBuffer(readableStream: NodeJS.ReadableStream) {
@@ -79,10 +73,7 @@ export default function azureAdapter(conf: AzureConfig): StorageAdapter {
     return true;
   };
 
-  const cache = new Cache({
-    verbose: !!conf.verbosity,
-    refreshInterval: conf.refreshInterval
-  });
+  const cache = new Map<string, string>();
 
   let privateClient: ContainerClient | undefined;
   let publicClient: ContainerClient | undefined;
@@ -131,15 +122,14 @@ export default function azureAdapter(conf: AzureConfig): StorageAdapter {
       return getFromAzure();
     }
 
-    const cached = cache.get('azure-file', filePath);
+    const cached = cache.get(filePath);
 
     if (cached) {
       return cached;
     }
 
     const result = await getFromAzure();
-    cache.set('azure-file', filePath, result);
-    cache.sub('azure-file', filePath, getFromAzure);
+    cache.set(filePath, result);
 
     return result;
   };
@@ -189,9 +179,10 @@ export default function azureAdapter(conf: AzureConfig): StorageAdapter {
     dirOutput: string,
     isPrivateFile: IsPrivateFile = () => false
   ) => {
-    const paths = await getPaths(dirInput);
     const packageJsonFile = path.join(dirInput, 'package.json');
-    const files = paths.files.filter((file) => file !== packageJsonFile);
+    const files = (await listFiles(dirInput)).filter(
+      (file) => file !== packageJsonFile
+    );
 
     const filesResults = await Promise.all(
       files.map((file: string) => {

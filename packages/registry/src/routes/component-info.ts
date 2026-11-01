@@ -7,8 +7,7 @@ import type {
   OcResponse
 } from '@oc-framework/core';
 import * as urlBuilder from '@oc-framework/core';
-import parseAuthor from 'parse-author';
-import { fromPromise } from 'universalify';
+import { fromPromise, parseAuthor } from '@oc-framework/core';
 import type { Repository } from '../domain/repository';
 import infoView from '../views/info';
 import * as getComponentFallback from './helpers/get-component-fallback';

@@ -1,7 +1,9 @@
 import path from 'node:path';
-import { dateStringify as dateStringified } from '@oc-framework/core';
+import {
+  dateStringify as dateStringified,
+  parseAuthor
+} from '@oc-framework/core';
 import fs from 'fs-extra';
-import parseAuthor from 'parse-author';
 import indexView from '../views';
 import getAvailableDependencies from './helpers/get-available-dependencies';
 

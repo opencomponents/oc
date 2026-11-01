@@ -1,6 +1,5 @@
 import * as npm from '@oc-framework/core';
-import { isTemplateValid, strings } from '@oc-framework/core';
-import tryRequire from 'try-require';
+import { isTemplateValid, strings, tryRequire } from '@oc-framework/core';
 import type { Logger } from '../../logger';
 
 interface Options {

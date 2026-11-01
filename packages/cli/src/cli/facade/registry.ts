@@ -1,4 +1,4 @@
-import { fromPromise } from 'universalify';
+import { fromPromise } from '@oc-framework/core';
 
 const registry = () =>
   fromPromise((_opts: unknown): Promise<void> => {

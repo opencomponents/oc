@@ -1,6 +1,5 @@
 import path from 'node:path';
-import { strings } from '@oc-framework/core';
-import { fromPromise } from 'universalify';
+import { fromPromise, strings } from '@oc-framework/core';
 import type { Local } from '../domain/local';
 import type { Logger } from '../logger';
 

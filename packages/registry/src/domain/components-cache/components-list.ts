@@ -1,6 +1,8 @@
 import type { ComponentsList, Config } from '@oc-framework/core';
-import { pLimit } from '@oc-framework/core';
-import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
+import {
+  getUnixUtcTimestamp as getUnixUTCTimestamp,
+  pLimit
+} from '@oc-framework/core';
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import semver from 'semver';
 import eventsHandler from '../events-handler';

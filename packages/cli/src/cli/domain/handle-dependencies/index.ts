@@ -1,7 +1,6 @@
 import path from 'node:path';
 import type { Component, Template } from '@oc-framework/core';
-import { isTemplateLegacy, strings } from '@oc-framework/core';
-import coreModules from 'builtin-modules';
+import { coreModules, isTemplateLegacy, strings } from '@oc-framework/core';
 import fs from 'fs-extra';
 import type { Logger } from '../../logger';
 import ensureCompilerIsDeclaredAsDevDependency from './ensure-compiler-is-declared-as-devDependency';

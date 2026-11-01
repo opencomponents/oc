@@ -36,18 +36,13 @@
 	},
 	"dependencies": {
 		"@oc-framework/core": "^0.1.0",
-		"builtin-modules": "^3.3.0",
 		"chokidar": "^4.0.3",
 		"fs-extra": "^11.3.5",
-		"getport": "^0.1.0",
 		"livereload": "^0.10.3",
 		"open": "^10.2.0",
 		"read": "^1.0.7",
 		"semver": "^7.8.4",
-		"targz": "^1.0.1",
-		"try-require": "^1.2.1",
 		"undici": "^8.9.0",
-		"universalify": "^2.0.1",
 		"yargs": "^17.7.2"
 	},
 	"devDependencies": {

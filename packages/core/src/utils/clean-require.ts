@@ -1,4 +1,4 @@
-import tryRequire from 'try-require';
+import tryRequire from './try-require';
 
 export default function cleanRequire(
   path: string,
@@ -26,10 +26,8 @@ export default function cleanRequire(
     delete require.cache[path];
   }
 
-  let action = shouldThrow ? require : tryRequire;
-  if (resolve) {
-    action = action.resolve;
-  }
+  const requirer = shouldThrow ? require : tryRequire;
+  const action: (id: string) => unknown = resolve ? requirer.resolve : requirer;
 
   return action(path);
 }

@@ -13,6 +13,7 @@ import {
   getComponentRow,
   getMetadataAdapterOptions,
   getPromiseBasedAdapter,
+  getUnixUtcTimestamp,
   isPrivateComponentFile,
   reconcileMetadataFromStorage,
   settings,
@@ -20,7 +21,6 @@ import {
 } from '@oc-framework/core';
 import dotenv from 'dotenv';
 import fs from 'fs-extra';
-import getUnixUtcTimestamp from 'oc-get-unix-utc-timestamp';
 import {
   VERSION_ALREADY_EXISTS,
   VERSION_PUBLISH_IN_PROGRESS

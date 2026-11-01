@@ -1,8 +1,7 @@
 import path from 'node:path';
 import type { Component } from '@oc-framework/core';
-import { colors, strings } from '@oc-framework/core';
+import { colors, fromPromise, strings } from '@oc-framework/core';
 import fs from 'fs-extra';
-import { fromPromise } from 'universalify';
 import handleDependencies from '../domain/handle-dependencies';
 import type { Local } from '../domain/local';
 import type { RegistryCli } from '../domain/registry';

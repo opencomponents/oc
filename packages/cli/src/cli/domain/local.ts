@@ -1,11 +1,10 @@
-import { promisify } from 'node:util';
 import {
+  compress as compressTar,
   deprecate,
   isTemplateLegacy,
   validateComponentName
 } from '@oc-framework/core';
 import fs from 'fs-extra';
-import targz from 'targz';
 import type { Logger } from '../logger';
 import * as clean from './clean';
 import getComponentsByDir from './get-components-by-dir';
@@ -20,16 +19,7 @@ export default function local() {
       return fs.unlink(compressedPackagePath);
     },
     compress(input: string, output: string): Promise<void> {
-      return promisify(targz.compress)({
-        src: input,
-        dest: output,
-        tar: {
-          map: (file) =>
-            Object.assign(file, {
-              name: `_package/${file.name}`
-            })
-        }
-      });
+      return compressTar(input, output, '_package');
     },
     getComponentsByDir: getComponentsByDir(),
     async init(options: {

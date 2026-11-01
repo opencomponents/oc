@@ -1,8 +1,7 @@
 import { Readable } from 'node:stream';
 import type { Config, CookieOptions, OcHandler } from '@oc-framework/core';
-import { strings } from '@oc-framework/core';
+import { serializeError, strings } from '@oc-framework/core';
 import { encode } from '@rdevis/turbo-stream';
-import { serializeError } from 'serialize-error';
 import type { Repository } from '../domain/repository';
 import GetComponentHelper, {
   type RenderComponent,

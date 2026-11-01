@@ -121,7 +121,10 @@ describe('registry : domain : require-wrapper', () => {
         const InjectedRequireWrapper = injectr(
           '../../../registry/dist/domain/require-wrapper.js',
           {
-            'try-require': tryRequireStub
+            '@oc-framework/core': {
+              ...require('../../../core/dist/index.js'),
+              tryRequire: tryRequireStub
+            }
           }
         ).default;
 
@@ -159,7 +162,10 @@ describe('registry : domain : require-wrapper', () => {
         const InjectedRequireWrapper = injectr(
           '../../../registry/dist/domain/require-wrapper.js',
           {
-            'try-require': tryRequireStub
+            '@oc-framework/core': {
+              ...require('../../../core/dist/index.js'),
+              tryRequire: tryRequireStub
+            }
           }
         ).default;
 

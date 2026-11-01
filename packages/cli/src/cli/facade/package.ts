@@ -1,7 +1,6 @@
 import path from 'node:path';
 import type { Component } from '@oc-framework/core';
-import { strings } from '@oc-framework/core';
-import { fromPromise } from 'universalify';
+import { fromPromise, strings } from '@oc-framework/core';
 import handleDependencies from '../domain/handle-dependencies';
 import type { Local } from '../domain/local';
 import type { Logger } from '../logger';

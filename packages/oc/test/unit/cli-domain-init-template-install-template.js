@@ -7,9 +7,15 @@ describe('cli : domain : init-template : install-template', () => {
   const isTemplateValid = sinon.stub();
   const installTemplate = injectr(
     '../../../cli/dist/cli/domain/init-template/install-template.js',
-    { '@oc-framework/core': { ...require('../../../core/dist/index.js'), ...npmUtils, isTemplateValid: isTemplateValid }, 'try-require': sinon.stub().returns({
-        getInfo: () => ({ version: '1.2.3' })
-      })
+    {
+      '@oc-framework/core': {
+        ...require('../../../core/dist/index.js'),
+        ...npmUtils,
+        isTemplateValid: isTemplateValid,
+        tryRequire: sinon.stub().returns({
+          getInfo: () => ({ version: '1.2.3' })
+        })
+      }
     }
   ).default;
 

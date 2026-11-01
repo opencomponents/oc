@@ -1,28 +1,21 @@
+import fs from 'node:fs';
 import type { Agent as httpAgent } from 'node:http';
 import type { Agent as httpsAgent } from 'node:https';
 import path from 'node:path';
-import { promisify } from 'node:util';
 import { S3, type S3ClientConfig } from '@aws-sdk/client-s3';
 import {
   NodeHttpHandler,
   type NodeHttpHandlerOptions
 } from '@smithy/node-http-handler';
-import fs from 'fs-extra';
-import _ from 'lodash';
-import Cache from 'nice-cache';
-import nodeDir, { type PathsResult } from 'node-dir';
 import {
   getFileInfo,
   getNextYear,
   type IsPrivateFile,
+  listFiles,
   type StorageAdapter,
   type StorageAdapterBaseConfig,
   strings
 } from 'oc-storage-adapters-utils';
-
-const getPaths: (path: string) => Promise<PathsResult> = promisify(
-  nodeDir.paths
-);
 
 type RequireAllOrNone<ObjectType, KeysType extends keyof ObjectType = never> = (
   | Required<Pick<ObjectType, KeysType>> // Require all of the given keys.
@@ -58,7 +51,7 @@ export type S3Config = StorageAdapterBaseConfig &
   >;
 
 const streamToString = (stream: NodeJS.ReadableStream) =>
-  new Promise((resolve, reject) => {
+  new Promise<string>((resolve, reject) => {
     const chunks: Buffer[] = [];
     stream.on('data', (chunk) => chunks.push(chunk));
     stream.on('error', reject);
@@ -86,10 +79,7 @@ export default function s3Adapter(conf: S3Config): StorageAdapter {
   const sslEnabled = conf.sslEnabled !== false;
   const s3ForcePathStyle = !!conf.s3ForcePathStyle;
 
-  const cache = new Cache({
-    verbose: !!conf.verbosity,
-    refreshInterval: conf.refreshInterval
-  });
+  const cache = new Map<string, string>();
 
   let requestHandler: NodeHttpHandler | undefined;
   if (conf.agentProxy) {
@@ -150,14 +140,13 @@ export default function s3Adapter(conf: S3Config): StorageAdapter {
       return getFromAws();
     }
 
-    const cached = cache.get('s3-file', filePath);
+    const cached = cache.get(filePath);
     if (cached) {
       return cached;
     }
 
     const result = await getFromAws();
-    cache.set('s3-file', filePath, result);
-    cache.sub('s3-file', filePath, getFromAws);
+    cache.set(filePath, result);
 
     return result;
   };
@@ -226,7 +215,7 @@ export default function s3Adapter(conf: S3Config): StorageAdapter {
       };
     }
 
-    const result = _.map(prefixes, (prefix) =>
+    const result = prefixes.map((prefix) =>
       prefix.substr(
         normalisedPath.length,
         prefix.length - normalisedPath.length - 1
@@ -241,9 +230,10 @@ export default function s3Adapter(conf: S3Config): StorageAdapter {
     dirOutput: string,
     isPrivateFile: IsPrivateFile = () => false
   ) => {
-    const paths = await getPaths(dirInput);
     const packageJsonFile = path.join(dirInput, 'package.json');
-    const files = paths.files.filter((file) => file !== packageJsonFile);
+    const files = (await listFiles(dirInput)).filter(
+      (file) => file !== packageJsonFile
+    );
     const client = getClient();
 
     const filesResults = await Promise.all(

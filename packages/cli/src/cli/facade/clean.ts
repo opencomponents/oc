@@ -1,7 +1,6 @@
 import { promisify } from 'node:util';
-import { strings } from '@oc-framework/core';
+import { fromPromise, strings } from '@oc-framework/core';
 import readCb from 'read';
-import { fromPromise } from 'universalify';
 import type { Local } from '../domain/local';
 import type { Logger } from '../logger';
 

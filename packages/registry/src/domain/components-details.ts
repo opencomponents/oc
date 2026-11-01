@@ -6,9 +6,11 @@ import type {
   Config,
   MetadataIndex
 } from '@oc-framework/core';
-import { pLimit } from '@oc-framework/core';
-import isEqual from 'lodash.isequal';
-import getUnixUTCTimestamp from 'oc-get-unix-utc-timestamp';
+import {
+  getUnixUtcTimestamp as getUnixUTCTimestamp,
+  isEqual,
+  pLimit
+} from '@oc-framework/core';
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import eventsHandler from './events-handler';
 

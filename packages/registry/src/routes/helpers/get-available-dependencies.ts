@@ -1,4 +1,4 @@
-import coreModules from 'builtin-modules';
+import { coreModules } from '@oc-framework/core';
 
 import RequireWrapper from '../../domain/require-wrapper';
 

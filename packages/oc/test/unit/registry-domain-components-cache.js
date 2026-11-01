@@ -38,12 +38,18 @@ describe('registry : domain : components-cache', () => {
     const ComponentsCache = injectr(
       '../../../registry/dist/domain/components-cache/index.js',
       {
-        'oc-get-unix-utc-timestamp': getTimestamp,
+        '@oc-framework/core': {
+          ...require('../../../core/dist/index.js'),
+          getUnixUtcTimestamp: getTimestamp
+        },
         '../events-handler': eventsHandlerStub,
         './components-list': injectr(
           '../../../registry/dist/domain/components-cache/components-list.js',
           {
-            'oc-get-unix-utc-timestamp': getTimestamp,
+            '@oc-framework/core': {
+              ...require('../../../core/dist/index.js'),
+              getUnixUtcTimestamp: getTimestamp
+            },
             '../events-handler': eventsHandlerStub
           }
         ).default

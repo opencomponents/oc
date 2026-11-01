@@ -2,6 +2,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import {
   backfillMetadataFromStorageDetails,
+  fromPromise,
   getMetadataAdapterOptions,
   getPromiseBasedAdapter
 } from '@oc-framework/core';
@@ -41,7 +42,6 @@ const loadRegistryRuntime = async (): Promise<{
   }
 };
 
-import { fromPromise } from 'universalify';
 import type { Logger } from '../logger';
 
 const dynamicImport = new Function('specifier', 'return import(specifier)') as (
