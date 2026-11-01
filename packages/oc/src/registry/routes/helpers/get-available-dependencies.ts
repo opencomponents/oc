@@ -1,4 +1,4 @@
-import coreModules from 'builtin-modules';
+import coreModules from '../../../utils/core-modules';
 
 import RequireWrapper from '../../domain/require-wrapper';
 

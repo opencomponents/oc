@@ -5,7 +5,7 @@ describe('registry : routes : helpers : get-available-dependencies', () => {
   const getAvailableDependencies = injectr(
     '../../dist/registry/routes/helpers/get-available-dependencies.js',
     {
-      'builtin-modules': ['url'],
+      '../../../utils/core-modules': ['url'],
       '../../domain/require-wrapper': () => (pathToPackageJson) => ({
         version: '1.2.3',
         homepage: `https://${pathToPackageJson.split('/')[0]}.com/`

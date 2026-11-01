@@ -1,8 +1,8 @@
 import { Readable } from 'node:stream';
 import { encode } from '@rdevis/turbo-stream';
-import { serializeError } from 'serialize-error';
 import strings from '../../resources';
 import type { Config } from '../../types';
+import serializeError from '../../utils/serialize-error';
 import type { CookieOptions, OcHandler } from '../domain/http-server/types';
 import type { Repository } from '../domain/repository';
 import GetComponentHelper, {

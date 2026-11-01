@@ -1,6 +1,6 @@
-import { fromPromise } from 'universalify';
 import { getOcConfig } from '../../cli/domain/ocConfig';
 import type { Component, Config, TemplateInfo } from '../../types';
+import { fromPromise } from '../../utils/universalify';
 import type {
   OcHandler,
   OcRequest,

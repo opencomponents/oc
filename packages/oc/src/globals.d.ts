@@ -1,5 +1,4 @@
 declare module 'oc-client';
-declare module 'try-require';
 declare module 'basic-auth-connect' {
   import type { IncomingMessage, ServerResponse } from 'node:http';
 
@@ -26,68 +25,4 @@ declare module 'basic-auth-connect' {
   function basicAuth(callback: AsyncCallback): Middleware;
 
   export = basicAuth;
-}
-
-declare module 'universalify' {
-  export function fromCallback<
-    Arguments extends readonly unknown[],
-    ErrorValue,
-    ReturnValue
-  >(
-    fn: (
-      ...arguments_: [
-        ...Arguments,
-        (error: ErrorValue, value: ReturnValue) => void
-      ]
-    ) => void
-  ): {
-    (...arguments_: Arguments): Promise<ReturnValue>;
-    (
-      ...arguments_: [
-        ...Arguments,
-        (error: ErrorValue, value: ReturnValue) => void
-      ]
-    ): void;
-  };
-
-  export function fromPromise<
-    Arguments extends readonly unknown[],
-    ReturnValue
-  >(
-    fn: (...arguments_: [...Arguments]) => Promise<ReturnValue>
-  ): {
-    (...arguments_: Arguments): Promise<ReturnValue>;
-    (
-      ...arguments_: [
-        ...Arguments,
-        (error: unknown, value: ReturnValue) => void
-      ]
-    ): void;
-  };
-}
-
-declare module 'semver-extra' {
-  interface SemverExtra {
-    max(versions: string[]): string;
-    maxStable(versions: string[]): string;
-    maxPrerelase(versions: string[], preRelease?: string): string;
-  }
-
-  const semverExtra: SemverExtra;
-
-  export = semverExtra;
-}
-
-declare module 'require-package-name' {
-  function requirePackageName(name: string): string;
-
-  export = requirePackageName;
-}
-declare module 'getport' {
-  function getPort(
-    start: number,
-    cb: (err: unknown, data: number) => void
-  ): void;
-
-  export = getPort;
 }

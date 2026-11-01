@@ -2,10 +2,8 @@ import { randomUUID } from 'node:crypto';
 import Domain from 'node:domain';
 import type { IncomingHttpHeaders } from 'node:http';
 import vm from 'node:vm';
-import acceptLanguageParser from 'accept-language-parser';
 import Client from 'oc-client';
 import emptyResponseHandler from 'oc-empty-response-handler';
-import { fromPromise } from 'universalify';
 import strings from '../../../resources';
 import settings from '../../../resources/settings';
 import type {
@@ -15,8 +13,10 @@ import type {
   PluginContext,
   Plugins
 } from '../../../types';
+import { parseAcceptLanguage } from '../../../utils/accept-language';
 import BoundedCache from '../../../utils/bounded-cache';
 import isTemplateLegacy from '../../../utils/is-template-legacy';
+import { fromPromise } from '../../../utils/universalify';
 import eventsHandler from '../../domain/events-handler';
 import type { CookieOptions } from '../../domain/http-server/types';
 import NestedRenderer from '../../domain/nested-renderer';
@@ -730,14 +730,12 @@ export default function getComponent(
             const setEmptyResponse =
               emptyResponseHandler.contextDecorator(returnComponent);
             let parsedAcceptLanguage:
-              | ReturnType<typeof acceptLanguageParser.parse>
+              | ReturnType<typeof parseAcceptLanguage>
               | undefined;
             const contextObj = {
               action: options.action,
               get acceptLanguage() {
-                parsedAcceptLanguage ??= acceptLanguageParser.parse(
-                  getLanguage()!
-                );
+                parsedAcceptLanguage ??= parseAcceptLanguage(getLanguage()!);
                 return parsedAcceptLanguage;
               },
               baseUrl: conf.baseUrl,

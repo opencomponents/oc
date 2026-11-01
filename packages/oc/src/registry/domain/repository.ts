@@ -1,12 +1,10 @@
 import path from 'node:path';
 import dotenv from 'dotenv';
 import fs from 'fs-extra';
-import getUnixUtcTimestamp from 'oc-get-unix-utc-timestamp';
 import {
   VERSION_ALREADY_EXISTS,
   VERSION_PUBLISH_IN_PROGRESS
 } from 'oc-metadata-adapters-utils';
-
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
 import strings from '../../resources';
 import settings from '../../resources/settings';
@@ -18,6 +16,7 @@ import type {
 } from '../../types';
 import BoundedCache from '../../utils/bounded-cache';
 import errorToString from '../../utils/error-to-string';
+import getUnixUtcTimestamp from '../../utils/unix-utc-timestamp';
 import ComponentsCache from './components-cache';
 import getComponentsDetails from './components-details';
 import eventsHandler from './events-handler';

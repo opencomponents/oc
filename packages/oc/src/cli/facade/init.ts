@@ -1,7 +1,6 @@
 import path from 'node:path';
-import { fromPromise } from 'universalify';
-
 import strings from '../../resources/index';
+import { fromPromise } from '../../utils/universalify';
 import type { Local } from '../domain/local';
 import type { Logger } from '../logger';
 

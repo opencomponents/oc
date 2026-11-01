@@ -121,7 +121,7 @@ describe('registry : domain : require-wrapper', () => {
         const InjectedRequireWrapper = injectr(
           '../../dist/registry/domain/require-wrapper.js',
           {
-            'try-require': tryRequireStub
+            '../../utils/try-require': tryRequireStub
           }
         ).default;
 
@@ -159,7 +159,7 @@ describe('registry : domain : require-wrapper', () => {
         const InjectedRequireWrapper = injectr(
           '../../dist/registry/domain/require-wrapper.js',
           {
-            'try-require': tryRequireStub
+            '../../utils/try-require': tryRequireStub
           }
         ).default;
 

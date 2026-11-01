@@ -1,18 +1,15 @@
-jest.mock('fs-extra', () => {
-  return {
-    createReadStream: jest.fn(() => 'this is a stream'),
-    readFile: jest.fn((cb) => cb(null, 'file content!')),
-    writeFileSync: jest.fn()
-  };
-});
+const fs = require('node:fs');
+const utils = require('oc-storage-adapters-utils');
+const requireWithMocks = require('../../../test-helpers/require-with-mocks');
 
 let mockCachedTxt = 0;
 let mockCachedJson = 0;
-const googleStorage = {};
 
-const _Storage = class {
-  constructor() {
-    this.bucket = jest.fn((bucket) => ({
+const deletableFile = (name) => ({ name, delete: () => Promise.resolve() });
+
+class Storage {
+  bucket(bucket) {
+    return {
       getFiles: (options = {}) => {
         if (bucket === 'my-empty-bucket') {
           return Promise.resolve([]);
@@ -34,56 +31,32 @@ const _Storage = class {
         }
 
         if (bucket === 'paginated-bucket') {
-          const makeFile = (name) => ({
-            name,
-            delete: jest.fn(() => Promise.resolve())
-          });
-
           if (!options.pageToken) {
             return Promise.resolve([
               [
-                makeFile('components/a/1.0.0/app.js'),
-                makeFile('components/a/1.0.0/server.js')
+                deletableFile('components/a/1.0.0/app.js'),
+                deletableFile('components/a/1.0.0/server.js')
               ],
               { pageToken: 'page-2' }
             ]);
           }
 
           return Promise.resolve([
-            [makeFile('components/a/2.0.0/app.js')],
+            [deletableFile('components/a/2.0.0/app.js')],
             null
           ]);
         }
 
-        const files = [
+        return Promise.resolve([
           [
-            {
-              name: 'components/image/1.0.0/app.js',
-              delete: jest.fn(() => Promise.resolve())
-            },
-            {
-              name: 'components/image/1.0.0/server.js',
-              delete: jest.fn(() => Promise.resolve())
-            },
-            {
-              name: 'components/image/1.0.0/.env',
-              delete: jest.fn(() => Promise.resolve())
-            },
-            {
-              name: 'components/image/1.0.1/new-server.js',
-              delete: jest.fn(() => Promise.resolve())
-            },
-            {
-              name: 'components/image/1.0.1/new-.env',
-              delete: jest.fn(() => Promise.resolve())
-            },
-            {
-              name: 'components/image/1.0.1/new-app.js',
-              delete: jest.fn(() => Promise.resolve())
-            }
+            deletableFile('components/image/1.0.0/app.js'),
+            deletableFile('components/image/1.0.0/server.js'),
+            deletableFile('components/image/1.0.0/.env'),
+            deletableFile('components/image/1.0.1/new-server.js'),
+            deletableFile('components/image/1.0.1/new-.env'),
+            deletableFile('components/image/1.0.1/new-app.js')
           ]
-        ];
-        return Promise.resolve(files);
+        ]);
       },
       upload: (_filePath, { destination }) => {
         if (destination.match('-error')) {
@@ -115,14 +88,31 @@ const _Storage = class {
           const content = contents[file];
           if (content.error) {
             return Promise.reject(content.error);
-          } else {
-            return Promise.resolve(content);
           }
+          return Promise.resolve(content);
         }
       })
-    }));
+    };
   }
-};
+}
 
-googleStorage.Storage = _Storage;
-module.exports = googleStorage;
+const loadGs = (listFiles) =>
+  requireWithMocks(require.resolve('../dist'), {
+    '@google-cloud/storage': { Storage },
+    'node:fs': {
+      ...fs,
+      createReadStream: () => 'this is a stream',
+      writeFileSync: () => {}
+    },
+    'oc-storage-adapters-utils': { ...utils, listFiles }
+  });
+
+const rejection = (promise) =>
+  promise.then(
+    () => {
+      throw new Error('Expected promise to reject');
+    },
+    (err) => err
+  );
+
+module.exports = { loadGs, rejection };

@@ -9,7 +9,7 @@ describe('registry : domain : extract-package', () => {
   const extractPackage = injectr(
     '../../dist/registry/domain/extract-package.js',
     {
-      targz: { decompress: decompressStub },
+      '../../utils/targz': { decompress: decompressStub },
       'node:path': { resolve: pathResolveStub },
       './get-package-json-from-temp-dir': sinon
         .stub()
@@ -32,7 +32,7 @@ describe('registry : domain : extract-package', () => {
         .onCall(2)
         .returns('/some-path/registry/temp/1478279453422/_package/');
 
-      decompressStub.yields();
+      decompressStub.resolves();
 
       extractPackage(
         [
@@ -50,14 +50,11 @@ describe('registry : domain : extract-package', () => {
     });
 
     it('should decompress tar.gz file', () => {
-      expect(decompressStub.args[0][0]).to.eql({
-        src: '/some-path/registry/temp/1478279453422.tar.gz',
-        dest: '/some-path/registry/temp/1478279453422/',
-        tar: {
-          dmode: 766,
-          fmode: 766
-        }
-      });
+      expect(decompressStub.args[0]).to.eql([
+        '/some-path/registry/temp/1478279453422.tar.gz',
+        '/some-path/registry/temp/1478279453422/',
+        766
+      ]);
     });
 
     it('should respond', () => {
@@ -85,7 +82,7 @@ describe('registry : domain : extract-package', () => {
         .onCall(2)
         .returns('/some-path/registry/temp/1478279453422/_package/');
 
-      decompressStub.yields('error!');
+      decompressStub.callsFake(() => Promise.reject('error!'));
 
       extractPackage(
         [

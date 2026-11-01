@@ -1,4 +1,3 @@
-import { DepGraph } from 'dependency-graph';
 import strings from '../../resources';
 import type { Plugin, Plugins } from '../../types';
 import deprecate from '../../utils/deprecate';
@@ -25,11 +24,9 @@ function validatePlugins(plugins: unknown[]): asserts plugins is Plugin[] {
 }
 
 function checkDependencies(plugins: Plugin[]) {
-  const graph = new DepGraph();
-
-  for (const plugin of plugins) {
-    graph.addNode(plugin.name);
-  }
+  const graph = new Map<string, string[]>(
+    plugins.map((plugin) => [plugin.name, []])
+  );
 
   for (const p of plugins) {
     if (!p.register.dependencies) {
@@ -37,15 +34,30 @@ function checkDependencies(plugins: Plugin[]) {
     }
 
     for (const d of p.register.dependencies) {
-      try {
-        graph.addDependency(p.name, d);
-      } catch {
+      if (!graph.has(d)) {
         throw new Error(`unknown plugin dependency: ${d}`);
       }
+      graph.get(p.name)!.push(d);
     }
   }
 
-  return graph.overallOrder();
+  const visited = new Set<string>();
+  const visit = (node: string, path: string[]) => {
+    if (visited.has(node)) return;
+    if (path.includes(node)) {
+      throw new Error(
+        `Dependency Cycle Found: ${[...path, node].join(' -> ')}`
+      );
+    }
+    for (const dependency of graph.get(node)!) {
+      visit(dependency, [...path, node]);
+    }
+    visited.add(node);
+  };
+
+  for (const node of graph.keys()) {
+    visit(node, []);
+  }
 }
 
 const isPromiseLike = (value: unknown): value is PromiseLike<void> =>

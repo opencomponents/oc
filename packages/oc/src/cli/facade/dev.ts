@@ -1,11 +1,11 @@
 import path from 'node:path';
 import { promisify } from 'node:util';
-import getPortCb from 'getport';
 import livereload from 'livereload';
-import { fromPromise } from 'universalify';
 import * as oc from '../../index';
 import strings from '../../resources/index';
 import colors from '../../utils/colors';
+import getPort from '../../utils/get-port';
+import { fromPromise } from '../../utils/universalify';
 import getMockedPlugins from '../domain/get-mocked-plugins';
 import handleDependencies from '../domain/handle-dependencies';
 import type { Local } from '../domain/local';
@@ -19,8 +19,6 @@ const cliMessages = strings.messages.cli;
 const cliErrors = strings.errors.cli;
 
 const delay = (time = 0) => new Promise((res) => setTimeout(res, time));
-const getPort = promisify(getPortCb);
-
 const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
   fromPromise(
     async (opts: {

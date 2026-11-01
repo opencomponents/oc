@@ -1,52 +1,33 @@
 const expect = require('chai').expect;
 const fs = require('fs-extra');
 const path = require('node:path');
-const targz = require('targz');
+const targz = require('../../dist/utils/targz');
 
-describe('The targz dependency', () => {
+describe('The targz utility', () => {
   describe('when compressing a folder with targz', () => {
     const file = path.resolve(__dirname, '../fixtures/test.tar.gz');
 
-    beforeEach((done) => {
+    beforeEach(() => {
       const from = path.resolve(
         __dirname,
         '../fixtures/components/hello-world'
       );
-      targz.compress(
-        {
-          src: from,
-          dest: file,
-          tar: {
-            map: (fileName) => ({
-              ...fileName,
-              name: 'hello-world/' + fileName.name
-            })
-          }
-        },
-        done
-      );
+      return targz.compress(from, file, 'hello-world');
     });
 
     it('should create the file', () => {
-      expect(fs.existsSync(file));
+      expect(fs.existsSync(file)).to.be.true;
     });
 
     describe('when decompressing the created file', () => {
       let error;
       const to = path.resolve(__dirname, '../fixtures/targz-test');
 
-      beforeEach((done) => {
-        targz.decompress(
-          {
-            src: file,
-            dest: to
-          },
-          (err) => {
-            error = err;
-            done();
-          }
-        );
-      });
+      beforeEach(() =>
+        targz.decompress(file, to).catch((err) => {
+          error = err;
+        })
+      );
 
       it('should throw no error', () => {
         expect(!!error).to.be.false;

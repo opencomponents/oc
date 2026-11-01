@@ -13,7 +13,6 @@ import type http from 'node:http';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { promisify } from 'node:util';
 import type { FastifyInstance } from 'fastify';
 import type { RegistryOptions } from '../../oc/dist/registry';
 import type { HttpServerAdapterFactory } from '../../oc/dist/registry/domain/http-server/types';
@@ -33,13 +32,11 @@ const fixturePath = path.resolve(
   __dirname,
   '../../../oc/test/fixtures/components'
 );
-const targz = require('targz') as {
-  compress(
-    opts: { src: string; dest: string },
-    cb: (err?: Error | string) => void
-  ): void;
+const { compress } = require(
+  path.resolve(__dirname, '../../../oc/dist/utils/targz')
+) as {
+  compress(src: string, dest: string, prefix: string): Promise<void>;
 };
-const compress = promisify(targz.compress);
 
 type FileStorageOptions = {
   componentsDir: string;
@@ -155,7 +152,7 @@ const createPublishArchive = async (): Promise<{
     path.join(packageDir, 'template.js'),
     'module.exports = "ok";'
   );
-  await compress({ src: sourceDir, dest: archivePath });
+  await compress(sourceDir, archivePath, '');
 
   return { archivePath, tempDir };
 };

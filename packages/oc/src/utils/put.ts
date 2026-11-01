@@ -1,7 +1,6 @@
+import { openAsBlob } from 'node:fs';
 import path from 'node:path';
-import FormData from 'form-data';
-import fs from 'fs-extra';
-import { Agent, request } from 'undici';
+import { Agent, FormData, request } from 'undici';
 
 // undici v8 enables HTTP/2 by default when the TLS server negotiates it via
 // ALPN. Some gateways/proxies reset large multipart uploads over h2, surfacing
@@ -21,11 +20,15 @@ async function put(
 
   for (const file of files) {
     const fileName = path.basename(file);
-    form.append(fileName, fs.createReadStream(file));
+    form.append(
+      fileName,
+      await openAsBlob(file, { type: 'application/gzip' }),
+      fileName
+    );
   }
 
   const res = await request(urlPath, {
-    headers: { ...headers, ...form.getHeaders() },
+    headers,
     method: 'PUT',
     body: form,
     dispatcher

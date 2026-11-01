@@ -1,5 +1,4 @@
 import semver from 'semver';
-import semverExtra from 'semver-extra';
 
 export function getAvailableVersion(
   requestedVersion: string | undefined,
@@ -8,7 +7,7 @@ export function getAvailableVersion(
   if (!requestedVersion) {
     return (
       semver.maxSatisfying(availableVersions, '') ||
-      semverExtra.max(availableVersions) ||
+      [...availableVersions].sort(semver.rcompare)[0] ||
       undefined
     );
   }

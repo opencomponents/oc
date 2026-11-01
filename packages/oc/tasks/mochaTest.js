@@ -1,22 +1,15 @@
 const fs = require('fs-extra');
-const glob = require('glob');
 const log = require('./logger');
 const Mocha = require('mocha');
-const minimist = require('minimist');
 const oc = require('../dist');
 const path = require('node:path');
-const { promisify } = require('node:util');
 
 const mocha = new Mocha({ timeout: 20000 });
-const argv = minimist(process.argv.slice(2), { boolean: 'silent' });
+const silent = process.argv.includes('--silent');
 const componentsFixturesPath = './test/fixtures/components';
-const testDirs = [
-  'test/unit/**/*.js',
-  'test/integration/**/*.js',
-  'test/acceptance/**/*.js'
-];
+const testDirs = ['test/unit', 'test/integration', 'test/acceptance'];
 
-if (argv.silent) {
+if (silent) {
   mocha.reporter('progress');
 }
 
@@ -35,12 +28,14 @@ const packageComponent = (componentName) =>
     );
   });
 
-const globAsync = promisify(glob);
-
-const addTestSuite = async (dir) => {
-  const files = await globAsync(path.join(__dirname, '..', dir));
+const addTestSuite = (dir) => {
+  const root = path.join(__dirname, '..', dir);
+  const files = fs
+    .readdirSync(root, { recursive: true })
+    .filter((file) => file.endsWith('.js'))
+    .sort();
   for (const file of files) {
-    mocha.addFile(file);
+    mocha.addFile(path.join(root, file));
   }
 };
 
@@ -51,7 +46,7 @@ const addTestSuite = async (dir) => {
     }
     log.complete('Test components packaged');
 
-    await Promise.all(testDirs.map(addTestSuite));
+    testDirs.forEach(addTestSuite);
     mocha.run((err) => process.on('exit', () => process.exit(err)));
   } catch (err) {
     log.error(`Error during test components packaging: ${err}`);
