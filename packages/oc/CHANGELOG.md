@@ -1,5 +1,16 @@
 ## Change Log
 
+## 0.50.64
+
+### Patch Changes
+
+- Add hosted semver static redirect route that resolves `:componentVersion` with the same version-handler used for rendering and 302-redirects `:name/:version/static/*` to the CDN file.
+- 9f7ccdf: Move OC component privacy classification out of the storage adapters.
+- a51a876: Keep the warm component render path synchronous and allocation-light: cached environment lookups no longer suspend through a promise, nested-renderer and repository callback adapters are created once per registry instead of per render, and `component-retrieved` telemetry payloads are built only when a listener exists at completion.
+- Updated dependencies [9f7ccdf]
+  - oc-s3-storage-adapter@2.2.5
+  - oc-storage-adapters-utils@2.1.3
+
 ## 0.50.63
 
 ### Patch Changes

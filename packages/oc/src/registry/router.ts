@@ -11,6 +11,7 @@ import IndexRoute from './routes';
 import ComponentRoute from './routes/component';
 import ComponentInfoRoute from './routes/component-info';
 import ComponentPreviewRoute from './routes/component-preview';
+import ComponentStaticRoute from './routes/component-static';
 import ComponentsRoute from './routes/components';
 import DependenciesRoute from './routes/dependencies';
 import GetComponentHelper from './routes/helpers/get-component';
@@ -37,6 +38,7 @@ export function create(
     components: ComponentsRoute(conf, repository, renderComponent),
     componentInfo: ComponentInfoRoute(conf, repository),
     componentPreview: ComponentPreviewRoute(conf, repository),
+    componentStatic: ComponentStaticRoute(repository),
     index: IndexRoute(repository),
     publish: PublishRoute(repository),
     staticRedirector: {
@@ -104,6 +106,12 @@ export function create(
       routes.staticRedirector.localStatic
     );
   } else {
+    route(
+      'get',
+      `${prefix}:componentName/:componentVersion/${settings.registry.localStaticRedirectorPath}*splat`,
+      'component-static',
+      routes.componentStatic
+    );
     route(
       'put',
       `${prefix}:componentName/:componentVersion`,
