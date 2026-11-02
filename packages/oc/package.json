@@ -38,9 +38,9 @@
 		"oc"
 	],
 	"devDependencies": {
-		"@biomejs/biome": "^2.5.0",
+		"@biomejs/biome": "^2.6.4",
 		"@kitajs/ts-html-plugin": "^4.1.4",
-		"@types/bun": "^1.3.14",
+		"@types/bun": "^1.4.4",
 		"@types/cookie-parser": "^1.4.10",
 		"@types/cross-spawn": "^6.0.6",
 		"@types/errorhandler": "^1.5.3",
@@ -48,16 +48,16 @@
 		"@types/fs-extra": "^11.0.4",
 		"@types/livereload": "^0.9.5",
 		"@types/morgan": "^1.9.10",
-		"@types/multer": "^2.1.0",
-		"@types/node": "^25.9.3",
+		"@types/multer": "^2.3.0",
+		"@types/node": "^25.9.9",
 		"@types/read": "^0.0.32",
 		"@types/response-time": "^2.3.9",
-		"@types/semver": "^7.7.1",
+		"@types/semver": "^7.8.0",
 		"@types/yargs": "^17.0.35",
-		"chai": "^6.2.2",
+		"chai": "^6.3.0",
 		"injectr": "^0.5.1",
 		"lodash.isequal": "^4.5.0",
-		"mocha": "^11.7.6",
+		"mocha": "^11.8.0",
 		"sinon": "^21.0.0",
 		"type-fest": "^2.19.0",
 		"typescript": "^6.0.3"
@@ -71,8 +71,8 @@
 		"cross-spawn": "^7.0.6",
 		"dotenv": "^17.4.2",
 		"errorhandler": "^1.5.2",
-		"express": "^5.2.1",
-		"fs-extra": "^11.3.5",
+		"express": "^5.3.0",
+		"fs-extra": "^11.4.1",
 		"livereload": "^0.10.3",
 		"lru-cache": "^10.4.3",
 		"morgan": "^1.12.1",
@@ -93,10 +93,10 @@
 		"picocolors": "^1.1.1",
 		"read": "^1.0.7",
 		"response-time": "^2.3.4",
-		"semver": "^7.8.4",
+		"semver": "^7.8.5",
 		"source-map": "^0.7.6",
 		"tar": "^7.5.22",
-		"undici": "^8.9.0",
-		"yargs": "^17.7.2"
+		"undici": "^8.12.3",
+		"yargs": "^17.7.3"
 	}
 }
