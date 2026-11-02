@@ -1,6 +1,6 @@
 {
 	"name": "oc-gs-storage-adapter",
-	"version": "2.2.4",
+	"version": "2.2.5",
 	"description": "Google storage adapter for OC",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
@@ -37,7 +37,7 @@
 	},
 	"dependencies": {
 		"@google-cloud/storage": "^7.21.0",
-		"oc-storage-adapters-utils": "^2.1.3"
+		"oc-storage-adapters-utils": "^2.2.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.0",
