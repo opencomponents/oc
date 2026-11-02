@@ -34,8 +34,8 @@
 		"test-silent": "node --test --test-reporter=dot \"test/*.test.js\""
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.5.0",
-		"@types/node": "^25.9.3",
+		"@biomejs/biome": "^2.6.4",
+		"@types/node": "^25.9.9",
 		"typescript": "^6.0.3"
 	}
 }

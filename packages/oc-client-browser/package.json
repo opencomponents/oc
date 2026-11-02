@@ -37,12 +37,12 @@
 		"lint": "npx @biomejs/biome check src tasks"
 	},
 	"devDependencies": {
-		"@playwright/test": "^1.50.1",
+		"@playwright/test": "^1.64.1",
 		"serve": "^14.2.4"
 	},
 	"dependencies": {
 		"@rdevis/turbo-stream": "^2.4.1",
-		"esbuild": "^0.28.1",
+		"esbuild": "^0.28.2",
 		"uglify-js": "^3.14.2"
 	}
 }
