@@ -17,6 +17,10 @@ describe('registry : routes : helpers : get-component timing', () => {
       '"use strict";module.exports.data=function(){throw new Error("sync boom");};',
     syncErrorCallback:
       '"use strict";module.exports.data=function(ctx,cb){cb(new Error("boom"));};',
+    statusCodeError:
+      '"use strict";module.exports.data=function(ctx,cb){cb(Object.assign(new Error("denied"),{statusCode:401}));};',
+    statusError:
+      '"use strict";module.exports.data=function(ctx,cb){cb(Object.assign(new Error("denied"),{status:403,statusCode:401}));};',
     asyncErrorCallback:
       '"use strict";module.exports.data=function(ctx,cb){setTimeout(function(){cb(new Error("async boom"));},0);};',
     doubleCallback:
@@ -277,6 +281,23 @@ describe('registry : routes : helpers : get-component timing', () => {
       expect(retrievedEvents()).to.have.lengthOf(1);
       expect(retrievedEvents()[0].args[1].status).to.equal(500);
       sinon.assert.callOrder(retrievedSpy, callback);
+    });
+
+    it('uses the statusCode of the error (as set by oc-server ServerError)', async () => {
+      initialise(makeComponentParams({ data: PROVIDERS.statusCodeError }));
+      const callback = await completeOnce(baseOptions());
+
+      const result = callback.firstCall.args[0];
+      expect(result.status).to.equal(401);
+      expect(result.response.details.originalError.message).to.equal('denied');
+      expect(retrievedEvents()[0].args[1].status).to.equal(401);
+    });
+
+    it('prefers the status of the error over its statusCode', async () => {
+      initialise(makeComponentParams({ data: PROVIDERS.statusError }));
+      const callback = await completeOnce(baseOptions());
+
+      expect(callback.firstCall.args[0].status).to.equal(403);
     });
 
     it('produces exactly one result for an asynchronously succeeding provider', async () => {

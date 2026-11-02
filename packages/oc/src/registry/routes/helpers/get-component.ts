@@ -540,7 +540,8 @@ export default function getComponent(
             err =
               err ||
               new Error(strings.errors.registry.DATA_OBJECT_IS_UNDEFINED);
-            const status = Number(err.status) || 500;
+            // `statusCode` is what oc-server's ServerError sets.
+            const status = Number(err.status ?? err.statusCode) || 500;
 
             eventsHandler.fire('data-provider-error', {
               status,
