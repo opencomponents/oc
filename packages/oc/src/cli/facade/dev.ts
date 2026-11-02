@@ -194,7 +194,7 @@ const dev = ({ local, logger }: { logger: Logger; local: Local }) =>
           prefix: opts.prefix || '',
           dependencies: dependencies.modules,
           compileClient: true,
-          discovery: true,
+          discovery: { api: true, ui: true },
           env: { name: 'local' },
           fallbackRegistryUrl,
           fallbackClient,

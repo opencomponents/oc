@@ -51,7 +51,7 @@ describe('registry : domain : require-wrapper', () => {
 
     describe('when requiring a core dependency', () => {
       before(() => {
-        const script = `var url = require('url'); result = url.parse('www.google.com').href;`;
+        const script = `var url = require('url'); result = new url.URL('http://www.google.com').hostname;`;
         execute(['url'], script);
       });
 
@@ -73,7 +73,7 @@ describe('registry : domain : require-wrapper', () => {
 
     describe('when requiring an unvetted core dependency', () => {
       before(() => {
-        const script = `var url = require('url'); result = url.parse('www.google.com').href;`;
+        const script = `var url = require('url'); result = new url.URL('http://www.google.com').hostname;`;
         execute(['querystring'], script);
       });
 

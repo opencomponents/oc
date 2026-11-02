@@ -1,4 +1,5 @@
 const expect = require('chai').expect;
+const sinon = require('sinon');
 
 describe('registry : domain : plugins-initialiser', () => {
   const pluginsInitialiser = require('../../dist/registry/domain/plugins-initialiser');
@@ -101,6 +102,30 @@ describe('registry : domain : plugins-initialiser', () => {
           'Error: Plugin doSomething is not valid'
         );
       });
+    });
+  });
+
+  describe('when using the legacy callback registration API', () => {
+    it('emits a deprecation warning', async () => {
+      const emitWarning = sinon.stub(process, 'emitWarning');
+
+      try {
+        await pluginsInitialiser.init([
+          {
+            name: 'legacyPlugin',
+            register: {
+              register: (_options, _dependencies, next) => next(),
+              execute: () => {}
+            }
+          }
+        ]);
+      } finally {
+        emitWarning.restore();
+      }
+
+      expect(emitWarning.calledOnce).to.be.true;
+      expect(emitWarning.args[0][0]).to.contain('Plugin register callbacks');
+      expect(emitWarning.args[0][1]).to.equal('DeprecationWarning');
     });
   });
 

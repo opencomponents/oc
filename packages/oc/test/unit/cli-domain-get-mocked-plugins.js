@@ -8,7 +8,7 @@ describe('cli : domain : get-mocked-plugins', () => {
   const dynamicPluginModule = (a) => (a ? 'blarg' : 'flarg');
   const notAFunctionModule = { foo: 'bar' };
   const dynamicObjectPluginModule = {
-    register: (opts, deps, next) => next(),
+    register: async () => {},
     execute: () => 'result'
   };
 

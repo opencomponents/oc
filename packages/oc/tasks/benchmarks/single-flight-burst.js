@@ -176,12 +176,12 @@ const runWorker = async (n) => {
     local: false,
     plugins: {},
     pollingInterval: 3600,
-    refreshInterval: 0,
     storage: {
       adapter: () => storageAdapter,
       options: {
         componentsDir: 'components',
-        path: '//benchmark.invalid/'
+        path: '//benchmark.invalid/',
+        refreshInterval: 0
       }
     },
     templates: [],

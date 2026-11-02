@@ -1,10 +1,10 @@
 const fs = require('fs-extra');
+const injectr = require('injectr');
 const http2 = require('node:http2');
 const os = require('node:os');
 const path = require('node:path');
+const { Agent, FormData, request } = require('undici');
 const expect = require('chai').expect;
-
-const put = require('../../dist/utils/put').default;
 
 // Self-signed cert (CN=localhost, valid until 2126) used only by this test so
 // it can stand up a real TLS server that negotiates HTTP/2 via ALPN.
@@ -66,12 +66,21 @@ describe('utils : put', () => {
     let tempFile;
     let registryUrl;
     let protocols;
-    let previousTlsReject;
+    let dispatcher;
+    let put;
 
     before((done) => {
-      previousTlsReject = process.env.NODE_TLS_REJECT_UNAUTHORIZED;
-      // The test server uses a self-signed cert; let undici connect to it.
-      process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+      put = injectr('../../dist/utils/put.js', {
+        undici: {
+          Agent: function (options) {
+            // Trust the test certificate without overriding production ALPN options.
+            dispatcher = new Agent({ ...options, connect: { ca: CERT } });
+            return dispatcher;
+          },
+          FormData,
+          request
+        }
+      }).default;
 
       tempFile = path.join(
         fs.mkdtempSync(path.join(os.tmpdir(), 'oc-put-')),
@@ -105,13 +114,8 @@ describe('utils : put', () => {
     });
 
     after((done) => {
-      if (previousTlsReject === undefined) {
-        delete process.env.NODE_TLS_REJECT_UNAUTHORIZED;
-      } else {
-        process.env.NODE_TLS_REJECT_UNAUTHORIZED = previousTlsReject;
-      }
       fs.removeSync(path.dirname(tempFile));
-      server.close(done);
+      dispatcher.close().then(() => server.close(done), done);
     });
 
     it('uploads successfully by falling back to HTTP/1.1', async () => {

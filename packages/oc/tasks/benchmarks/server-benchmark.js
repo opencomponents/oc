@@ -557,7 +557,7 @@ const createPlugin = () => ({
   name: 'appendSuffix',
   description: 'Benchmark plugin used to emulate plugin execution in requests',
   register: {
-    register: (_options, _deps, done) => done(),
+    register: async () => {},
     execute: (value, suffix) => `${value}${suffix}`
   }
 });
@@ -570,7 +570,7 @@ const startRegistry = async (scenario, options) => {
     baseUrl,
     port,
     prefix: '/',
-    discovery: false,
+    discovery: { ui: false },
     verbosity: 0
   };
 

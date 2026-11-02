@@ -1,10 +1,31 @@
 import querystring from 'node:querystring';
-import url from 'node:url';
 
 type Component = {
   name: string;
   version?: string;
   parameters?: Record<string, string>;
+};
+
+const resolveUrl = (baseUrl: string, path: string): string => {
+  const hasProtocol = /^[a-z][a-z\d+.-]*:/i;
+  if (hasProtocol.test(baseUrl)) {
+    return new URL(path, baseUrl).toString();
+  }
+
+  // WHATWG URLs need an absolute base; discard the synthetic origin afterward.
+  const base = new URL(baseUrl, 'http://relative.invalid/');
+  const resolved = new URL(path, base);
+  if (hasProtocol.test(path)) {
+    return resolved.toString();
+  }
+  if (baseUrl.startsWith('//') || path.startsWith('//')) {
+    return resolved.toString().slice(resolved.protocol.length);
+  }
+
+  const relative = resolved.pathname + resolved.search + resolved.hash;
+  return baseUrl.startsWith('/') || path.startsWith('/')
+    ? relative
+    : relative.slice(1);
 };
 
 function componentForType(
@@ -16,7 +37,7 @@ function componentForType(
     component = { name: component };
   }
 
-  let href = url.resolve(baseUrl, component.name) + '/';
+  let href = resolveUrl(baseUrl, component.name) + '/';
 
   if (component.version) {
     href += component.version + '/';
@@ -35,7 +56,7 @@ export function component(
     component = { name: component };
   }
 
-  let componentUrl = url.resolve(baseUrl, component.name);
+  let componentUrl = resolveUrl(baseUrl, component.name);
 
   if (component.version) {
     componentUrl += '/' + component.version;

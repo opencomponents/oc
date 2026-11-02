@@ -1,5 +1,4 @@
 import querystring from 'node:querystring';
-import url from 'node:url';
 
 const removeFinalSlashes = (s: string) => {
   while (s.slice(-1) === '/') {
@@ -21,8 +20,8 @@ export function parse(parsed: {
   href: string;
 }): UrlParsed {
   const requestedVersion = parsed.requestVersion;
-  const href = url.parse(parsed.href);
-  const relativePath = removeFinalSlashes(href.pathname || '');
+  const href = new URL(parsed.href);
+  const relativePath = removeFinalSlashes(href.pathname);
   const withoutVersion = removeFinalSlashes(
     relativePath.replace(requestedVersion, '')
   );
@@ -37,7 +36,7 @@ export function parse(parsed: {
   return {
     clientHref: registryUrl + 'oc-client/client.js',
     name: componentName,
-    parameters: querystring.parse(href.query || ''),
+    parameters: querystring.parse(href.search.slice(1)),
     registryUrl: registryUrl,
     version: requestedVersion
   };

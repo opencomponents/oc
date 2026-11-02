@@ -36,13 +36,7 @@ const isMockValid = (
   return isFunction || isValidObject;
 };
 
-const defaultRegister = (
-  _options: unknown,
-  _dependencies: unknown,
-  next: () => void
-) => {
-  next();
-};
+const defaultRegister = async () => {};
 
 const registerStaticMocks = (
   mocks: Record<string, string>,

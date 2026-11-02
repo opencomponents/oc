@@ -5,6 +5,39 @@ describe('registry : domain : url-builder', () => {
 
   let builtUrl;
 
+  describe('when the registry base URL is relative', () => {
+    for (const baseUrl of [
+      '//registry.example.com/components/',
+      '/components/',
+      'components/'
+    ]) {
+      const component = { name: 'hello-world', version: '1.0.0' };
+
+      it(`builds component URLs with base ${baseUrl}`, () => {
+        expect(urlBuilder.component(component, baseUrl)).to.equal(
+          `${baseUrl}hello-world/1.0.0`
+        );
+      });
+
+      it(`builds info URLs with base ${baseUrl}`, () => {
+        expect(urlBuilder.componentInfo(component, baseUrl)).to.equal(
+          `${baseUrl}hello-world/1.0.0/~info`
+        );
+      });
+
+      it(`builds preview URLs with base ${baseUrl}`, () => {
+        expect(
+          urlBuilder.componentPreview(
+            { ...component, parameters: { greeting: 'hello world' } },
+            baseUrl
+          )
+        ).to.equal(
+          `${baseUrl}hello-world/1.0.0/~preview/?greeting=hello%20world`
+        );
+      });
+    }
+  });
+
   describe('when building component url', () => {
     const execute = (component, baseUrl) => {
       builtUrl = urlBuilder.component(component, baseUrl);

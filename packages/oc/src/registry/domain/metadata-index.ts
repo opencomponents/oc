@@ -14,7 +14,7 @@ import type {
 // published) so the poll's `data.lastEdit > cached.lastEdit` guard works and
 // the exported legacy `components.json` reflects the real last edit.
 const getLastEditFromRows = (rows: ComponentRow[]): number =>
-  rows.reduce((max, row) => (row.publishDate > max ? row.publishDate : max), 0);
+  rows.reduce((max, row) => Math.max(row.publishDate, max), 0);
 
 export const getComponentsListFromRows = (
   rows: ComponentRow[]

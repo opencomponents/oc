@@ -29,7 +29,7 @@ describe('registry (ui interface)', () => {
     env: { name: 'local' },
     verbosity: 0,
     dependencies: ['lodash.isequal'],
-    discovery: true
+    discovery: { api: true, ui: true }
   };
 
   const initializeRegistry = (configuration, cb) => {

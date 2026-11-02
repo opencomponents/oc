@@ -1,4 +1,15 @@
 const expect = require('chai').expect;
+const sinon = require('sinon');
+
+const captureWarnings = (run) => {
+  const emitWarning = sinon.stub(process, 'emitWarning');
+  try {
+    const result = run();
+    return { result, warnings: emitWarning.args };
+  } finally {
+    emitWarning.restore();
+  }
+};
 
 describe('registry : domain : options-sanitiser', () => {
   const sanitise =
@@ -268,10 +279,16 @@ describe('registry : domain : options-sanitiser', () => {
       describe('is provided', () => {
         const options = { s3: { some: 'data' }, baseUrl: 'dummy' };
         it('should create a storage.adapter configuration accordingly', () => {
-          expect(sanitise(options).storage.options).to.deep.equal({
+          const { result, warnings } = captureWarnings(() =>
+            sanitise(options)
+          );
+
+          expect(warnings.length).to.equal(1);
+          expect(warnings[0][0]).to.contain('s3');
+          expect(result.storage.options).to.deep.equal({
             some: 'data'
           });
-          expect(sanitise(options).storage.adapter).to.equal(
+          expect(result.storage.adapter).to.equal(
             require('oc-s3-storage-adapter')
           );
         });
@@ -296,9 +313,13 @@ describe('registry : domain : options-sanitiser', () => {
           baseUrl: 'dummy'
         };
         it('should pass the refreshInterval to the storage options', () => {
-          expect(sanitise(options).storage.options.refreshInterval).to.equal(
-            666
+          const { result, warnings } = captureWarnings(() =>
+            sanitise(options)
           );
+
+          expect(warnings.length).to.equal(1);
+          expect(warnings[0][0]).to.contain('refreshInterval');
+          expect(result.storage.options.refreshInterval).to.equal(666);
         });
       });
     });
