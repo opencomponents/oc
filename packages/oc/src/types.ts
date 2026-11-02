@@ -395,6 +395,13 @@ export interface Config<
    */
   local: boolean;
   /**
+   * Console exposed to components' server-side code. Pass `console`, or a
+   * console-like object that forwards logs to a monitoring provider.
+   *
+   * @default console when `local` is true, otherwise a no-op console
+   */
+  componentConsole?: Partial<Console>;
+  /**
    * File and directory mode (octal) applied when extracting tarballs during
    * publishing.
    *
