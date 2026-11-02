@@ -1,52 +1,10 @@
-import type { IncomingHttpHeaders } from 'node:http';
-import type { Component, RegistryErrorEvent } from '@oc-framework/core';
+import type { RegistryEvents as Events } from '@oc-framework/core';
 import { strings } from '@oc-framework/core';
+
+export type { RegistryRequestData as RequestData } from '@oc-framework/core';
 
 type Subscription<T = any> = (data: T) => void;
 let subscriptions: Record<string, Array<Subscription>> = {};
-
-export interface RequestData {
-  body: unknown;
-  duration: number;
-  headers: IncomingHttpHeaders;
-  method: string;
-  path: string;
-  relativeUrl: string;
-  query: Record<string, unknown>;
-  url: string;
-  statusCode: number;
-  errorDetails?: string;
-  errorCode?: string;
-}
-
-type Events = {
-  error: RegistryErrorEvent;
-  start: unknown;
-  'cache-poll': number;
-  request: RequestData;
-  'component-retrieved': {
-    headers: IncomingHttpHeaders;
-    name: string;
-    parameters: IncomingHttpHeaders;
-    requestVersion: string;
-    duration: number;
-  };
-  'data-provider-error': {
-    name: string;
-    version: string;
-    parameters: Record<string, string | boolean | number>;
-    requestVersion: string;
-    status: number;
-    error: Error;
-  };
-  'component-published': {
-    componentName: string;
-    componentVersion: string;
-    packageJson: Component;
-    componentFolder: string;
-    user?: string;
-  };
-};
 
 type EventsHandler = {
   fire<T extends keyof Events>(eventName: T, data: Events[T]): void;

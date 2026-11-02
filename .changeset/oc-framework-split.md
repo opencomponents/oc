@@ -11,3 +11,7 @@ behaviour: `@oc-framework/core` (shared domain, types, utils),
 `@oc-framework/registry` (registry runtime). The `oc` package is now a
 thin shim re-exporting both, so `npx oc <command>` and
 `require('oc')` keep working unchanged.
+
+Keep template compilers in the CLI rather than the registry runtime,
+preserve the full `cli.dev` registry type through shared core types,
+and cover isolated CLI installs and the relocated benchmark tooling.

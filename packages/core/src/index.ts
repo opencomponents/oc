@@ -26,6 +26,11 @@ export {
 } from './metadata-migration';
 export type { OpenComponentsConfig } from './oc-config';
 export { getOcConfig, setOcConfig } from './oc-config';
+export type {
+  RegistryEvents,
+  RegistryRequestData,
+  RegistryType
+} from './registry-types';
 export { default as strings } from './resources';
 export { default as settings } from './resources/settings';
 export {

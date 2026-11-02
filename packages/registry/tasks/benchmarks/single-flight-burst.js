@@ -79,9 +79,8 @@ const runWorker = async (n) => {
   }
 
   const GetComponentHelper =
-    require('../../dist/registry/routes/helpers/get-component.js').default;
-  const Repository =
-    require('../../dist/registry/domain/repository.js').default;
+    require('../../dist/routes/helpers/get-component.js').default;
+  const Repository = require('../../dist/domain/repository.js').default;
   const componentName = 'single-flight-burst-component';
   const componentVersion = '1.0.0';
   const templateHash = 'single-flight-burst-template';

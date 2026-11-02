@@ -6,6 +6,7 @@ import {
   getMetadataAdapterOptions,
   getPromiseBasedAdapter
 } from '@oc-framework/core';
+import type { Logger } from '../logger';
 
 // TODO: share the registry input-options type from @oc-framework/core once
 // options-sanitiser is decomposed. Kept structural here so the CLI does not
@@ -31,8 +32,11 @@ const loadRegistryRuntime = async (): Promise<{
     return await dynamicImport('@oc-framework/registry');
   } catch (err: any) {
     if (
-      err?.code === 'MODULE_NOT_FOUND' &&
-      String(err?.message ?? '').includes('@oc-framework/registry')
+      (err?.code === 'ERR_MODULE_NOT_FOUND' ||
+        err?.code === 'MODULE_NOT_FOUND') &&
+      /Cannot find (?:package|module) ['"]@oc-framework\/registry['"]/.test(
+        String(err?.message ?? '')
+      )
     ) {
       throw new Error(
         'The registry migrate-metadata command requires the registry runtime. Install the "oc" package for the full experience.'
@@ -41,8 +45,6 @@ const loadRegistryRuntime = async (): Promise<{
     throw err;
   }
 };
-
-import type { Logger } from '../logger';
 
 const dynamicImport = new Function('specifier', 'return import(specifier)') as (
   specifier: string

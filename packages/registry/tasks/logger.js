@@ -1,16 +1,13 @@
-const chalk = require('chalk');
-const nodeEmoji = require('node-emoji');
+const { colors } = require('@oc-framework/core');
 
-const log = (col, style, emoji) => (msg) => {
-  console.log(
-    chalk[style][col](msg) + (emoji ? ` ${nodeEmoji.get(emoji)}` : '')
-  );
+const log = (col) => (msg) => {
+  console.log(colors[col](msg));
 };
 
 module.exports = {
-  complete: log('green', 'reset', '+1'),
-  error: log('red', 'reset', 'no_good_man'),
-  fatal: log('red', 'underline', 'no_good_man'),
-  ok: log('gray', 'reset'),
-  start: log('green', 'reset')
+  complete: log('green'),
+  error: log('red'),
+  fatal: log('red'),
+  ok: log('gray'),
+  start: log('green')
 };

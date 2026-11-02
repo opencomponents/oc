@@ -3,7 +3,8 @@ import type {
   HttpServerAdapterFactory,
   HttpServerListenOptions,
   NativeApp,
-  Plugin
+  Plugin,
+  RegistryType
 } from '@oc-framework/core';
 import { colors, deprecate } from '@oc-framework/core';
 import appStart from './app-start';
@@ -16,27 +17,12 @@ import * as validator from './domain/validators';
 import * as middleware from './middleware';
 import { create as createRouter } from './router';
 
+export type { RegistryType } from '@oc-framework/core';
 export { RegistryOptions };
 
 type RegistryStartResult<TApp> = { app: TApp; server: http.Server };
 type RegistryCallback<T> = (err: unknown, data?: T) => void;
 const SERVER_ERROR_CODE = 'SERVER_ERROR';
-
-export interface RegistryType<TApp = NativeApp<HttpServerAdapterFactory>> {
-  close(): Promise<void>;
-  close(callback: (err?: Error | string) => void): Promise<void>;
-  on: typeof eventsHandler.on;
-  register<T = any>(plugin: Plugin<T>): Promise<void>;
-  register<T = any>(
-    plugin: Plugin<T>,
-    callback?: (...args: any[]) => void
-  ): Promise<void>;
-  start(): Promise<RegistryStartResult<TApp>>;
-  start(
-    callback: RegistryCallback<RegistryStartResult<TApp>>
-  ): Promise<RegistryStartResult<TApp>>;
-  app: TApp;
-}
 
 const warnAboutCallback = () =>
   deprecate({

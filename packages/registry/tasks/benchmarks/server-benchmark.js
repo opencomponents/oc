@@ -2,13 +2,15 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawn } = require('node:child_process');
+const { default: cli } = require('@oc-framework/cli');
 const { getPort } = require('@oc-framework/core');
 
 const { applyBenchmarkAssertions } = require('./benchmark-assertions');
 const createStorageAdapter = require('./storage-adapter');
-const oc = require('../../dist');
+const { default: Registry } = require('../../dist');
 
-const DEFAULT_OUT_DIR = path.resolve('test/results/benchmarks');
+const TEST_DIR = path.resolve(__dirname, '../../../oc/test');
+const DEFAULT_OUT_DIR = path.join(TEST_DIR, 'results/benchmarks');
 const DEFAULT_REPETITIONS = 5;
 const DEFAULT_HEADERS = ['Accept: application/json'];
 const BATCH_SOURCE_COMPONENTS = [
@@ -136,7 +138,7 @@ const ensurePackaged = async (componentPath) => {
     await fs.promises.access(packagePath);
   } catch {
     await new Promise((resolve, reject) => {
-      oc.cli.package({ componentPath, compress: false }, (error) => {
+      cli.package({ componentPath, compress: false }, (error) => {
         if (error) return reject(error);
         resolve();
       });
@@ -305,15 +307,16 @@ const prepareStorageFixtures = async () => {
 
   const batchSources = new Map();
   for (const name of BATCH_SOURCE_COMPONENTS) {
-    const componentPath = path.resolve('test/fixtures/components', name);
+    const componentPath = path.join(TEST_DIR, 'fixtures/components', name);
     batchSources.set(name, await ensurePackaged(componentPath));
   }
 
   const componentsToCopy = [
     {
       name: 'welcome-with-plugin',
-      source: path.resolve(
-        'test/fixtures/benchmark-components/welcome-with-plugin/_package'
+      source: path.join(
+        TEST_DIR,
+        'fixtures/benchmark-components/welcome-with-plugin/_package'
       )
     },
     ...BATCH_COMPONENT_NAMES.map((name) => {
@@ -324,7 +327,10 @@ const prepareStorageFixtures = async () => {
     }),
     {
       name: 'oc-client',
-      source: path.resolve('dist/components/oc-client/_package')
+      source: path.resolve(
+        __dirname,
+        '../../dist/components/oc-client/_package'
+      )
     }
   ];
 
@@ -414,7 +420,7 @@ const runBombardier = ({ url, options }) =>
       let parsed;
       try {
         parsed = JSON.parse(trimmed);
-      } catch (error) {
+      } catch {
         return reject(
           new Error(`failed to parse bombardier JSON output: ${trimmed}`)
         );
@@ -624,7 +630,7 @@ const startRegistry = async (scenario, options) => {
       ...commonOptions,
       local: true,
       hotReloading: false,
-      path: path.resolve('test/fixtures/components')
+      path: path.join(TEST_DIR, 'fixtures/components')
     };
   } else if (
     scenario === 'storage-simulated' ||
@@ -663,7 +669,7 @@ const startRegistry = async (scenario, options) => {
 
   let registry;
   try {
-    registry = oc.Registry(registryOptions);
+    registry = Registry(registryOptions);
     registry.register(createPlugin());
 
     await new Promise((resolve, reject) => {
@@ -1172,7 +1178,11 @@ const main = async () => {
   process.exit(0);
 };
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}
+
+module.exports = { ensurePackaged, startRegistry };

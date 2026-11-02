@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { promisify } from 'node:util';
+import type { RegistryType as Registry } from '@oc-framework/core';
 import {
   colors,
   fromPromise,
@@ -7,28 +8,29 @@ import {
   getPort,
   strings
 } from '@oc-framework/core';
-
-type DevRegistry = {
-  register(plugin: unknown): Promise<void>;
-  on(event: string, callback: (data: any) => void): void;
-  start(): Promise<unknown>;
-  start(callback?: (err: unknown, data?: unknown) => void): Promise<unknown>;
-  close(): Promise<void>;
-};
+import livereload from 'livereload';
+import getMockedPlugins from '../domain/get-mocked-plugins';
+import handleDependencies from '../domain/handle-dependencies';
+import type { Local } from '../domain/local';
+import watch from '../domain/watch';
+import type { Logger } from '../logger';
 
 const dynamicImport = new Function('specifier', 'return import(specifier)') as (
   specifier: string
 ) => Promise<any>;
 
 const loadRegistry = async (): Promise<{
-  default: (options: Record<string, any>) => DevRegistry;
+  default: (options: Record<string, any>) => Registry;
 }> => {
   try {
     return await dynamicImport('@oc-framework/registry');
   } catch (err: any) {
     if (
-      err?.code === 'MODULE_NOT_FOUND' &&
-      String(err?.message ?? '').includes('@oc-framework/registry')
+      (err?.code === 'ERR_MODULE_NOT_FOUND' ||
+        err?.code === 'MODULE_NOT_FOUND') &&
+      /Cannot find (?:package|module) ['"]@oc-framework\/registry['"]/.test(
+        String(err?.message ?? '')
+      )
     ) {
       throw new Error(
         'The dev command requires the registry runtime. Install the "oc" package for the full experience.'
@@ -37,15 +39,6 @@ const loadRegistry = async (): Promise<{
     throw err;
   }
 };
-
-import livereload from 'livereload';
-import getMockedPlugins from '../domain/get-mocked-plugins';
-import handleDependencies from '../domain/handle-dependencies';
-import type { Local } from '../domain/local';
-import watch from '../domain/watch';
-import type { Logger } from '../logger';
-
-type Registry = DevRegistry;
 
 const cliMessages = strings.messages.cli;
 const cliErrors = strings.errors.cli;
