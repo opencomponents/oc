@@ -40,7 +40,7 @@
 		"@fastify/etag": "^6.1.0",
 		"@fastify/formbody": "^8.0.2",
 		"@fastify/multipart": "^10.0.0",
-		"fastify": "^5.10.0",
+		"fastify": "^5.12.6",
 		"qs": "^6.16.0"
 	},
 	"devDependencies": {
