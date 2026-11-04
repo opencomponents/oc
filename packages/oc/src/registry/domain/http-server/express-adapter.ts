@@ -79,7 +79,9 @@ class ExpressHttpServerAdapter
       this.app.set('port', port);
     }
     this.app.set('json spaces', 0);
-    this.app.set('etag', 'strong');
+    // Weak ETag (Express default): keeps conditional-request support with
+    // W/ prefix and weak comparison; no consumer relies on strong ETags.
+    this.app.set('etag', 'weak');
   }
 
   enableBodyParser(opts: { limit?: number | string }): void {
