@@ -1,5 +1,11 @@
 # oc-fastify-server-adapter
 
+## 0.2.0
+
+### Minor Changes
+
+- 9ed339e: Require patched Fastify and multipart dependency versions. Numeric `trustProxy` values are rejected because Fastify no longer trusts hop counts.
+
 ## 0.1.7
 
 ### Patch Changes
