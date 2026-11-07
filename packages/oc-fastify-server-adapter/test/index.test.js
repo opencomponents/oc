@@ -13,6 +13,13 @@ const closeAdapter = (adapter) => adapter.close();
 
 const listen = (adapter, port = 0) => adapter.listen({ port, timeout: 120000 });
 
+test('rejects numeric trustProxy values', () => {
+  assert.throws(
+    () => createFastifyAdapter({ trustProxy: 1 }),
+    /Numeric trustProxy is not supported/
+  );
+});
+
 test('preserves callback-based listen and close with a deprecation warning', (t, done) => {
   const emitWarning = t.mock.method(process, 'emitWarning', () => true);
   const adapter = createFastifyAdapter();
