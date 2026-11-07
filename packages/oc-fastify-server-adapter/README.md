@@ -31,6 +31,8 @@ const registry = oc.Registry({
 
 `options.host` defaults to `0.0.0.0`, matching Node/Express `server.listen(port)` behavior. Set it to `127.0.0.1` or another interface to bind more narrowly.
 
+`trustProxy` accepts booleans, IP/CIDR strings, or string arrays. Numeric hop-count values are rejected because Fastify no longer trusts them; configure trusted proxy addresses instead.
+
 ## Opt-in contract and differences from Express
 
 - `registry.start()` returns a Fastify instance as `app`, not an Express application. Code that reaches into `app` must use Fastify APIs.

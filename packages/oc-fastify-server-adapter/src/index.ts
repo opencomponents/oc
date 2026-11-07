@@ -150,7 +150,7 @@ export type HttpServerAdapter<TNative = unknown> =
 export interface FastifyServerAdapterOptions {
   host?: string;
   port?: number | string;
-  trustProxy?: boolean | string | string[] | number;
+  trustProxy?: boolean | string | string[];
 }
 
 const ocRequestSym = Symbol('ocRequest');
@@ -225,7 +225,7 @@ class FastifyHttpServerAdapter
 
   constructor(options: FastifyServerAdapterOptions = {}) {
     this.host = options.host;
-    this.app = fastify({
+    this.app = fastify<http.Server>({
       bodyLimit: this.bodyLimit,
       exposeHeadRoutes: true,
       logger: false,
@@ -830,6 +830,17 @@ function toFastifyAdapterOptions(
     return { port: options };
   }
 
+  if (
+    options !== null &&
+    typeof options === 'object' &&
+    'trustProxy' in options &&
+    typeof options.trustProxy === 'number'
+  ) {
+    throw new Error(
+      'Numeric trustProxy is not supported; use trusted proxy addresses instead'
+    );
+  }
+
   if (isFastifyAdapterOptions(options)) {
     return options;
   }
@@ -857,7 +868,6 @@ function isFastifyAdapterOptions(
     (typeof trustProxy === 'undefined' ||
       typeof trustProxy === 'boolean' ||
       typeof trustProxy === 'string' ||
-      typeof trustProxy === 'number' ||
       (Array.isArray(trustProxy) &&
         trustProxy.every((item) => typeof item === 'string')))
   );

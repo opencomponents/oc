@@ -39,8 +39,8 @@
 		"@fastify/cookie": "^11.0.2",
 		"@fastify/etag": "^6.1.0",
 		"@fastify/formbody": "^8.0.2",
-		"@fastify/multipart": "^10.0.0",
-		"fastify": "^5.10.0",
+		"@fastify/multipart": "^10.1.7",
+		"fastify": "^5.12.8",
 		"qs": "^6.16.0"
 	},
 	"devDependencies": {
