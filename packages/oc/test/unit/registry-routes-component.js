@@ -836,4 +836,122 @@ describe('registry : routes : component', () => {
       expect(resJsonStub.args[0][0].html).to.be.undefined;
     });
   });
+
+  describe('when the registry has an onComponentRequest hook', () => {
+    const simple = mockedComponents['simple-component'];
+    const requestComponent = (onComponentRequest, componentVersion) =>
+      new Promise((resolve) => {
+        initialise({
+          ...simple,
+          package: {
+            ...simple.package,
+            allVersions: ['1.0.0', '2.0.0', '2.1.0', '3.0.0-beta.1']
+          }
+        });
+        componentRoute = ComponentRoute({}, mockedRepository);
+        componentRoute(
+          {
+            headers: { 'user-agent': 'test' },
+            params: { componentName: 'simple-component', componentVersion },
+            query: { hello: 'world' }
+          },
+          {
+            conf: { baseUrl: 'http://component.com/', onComponentRequest },
+            status: (code) => ({ json: (json) => resolve({ code, json }) }),
+            set: sinon.stub()
+          }
+        );
+      });
+
+    it('should pass the resolved request context to the hook', async () => {
+      const hook = sinon.stub().returns(undefined);
+      await requestComponent(hook, '1.X.X');
+
+      const ctx = hook.args[0][0];
+      expect(ctx.name).to.equal('simple-component');
+      expect(ctx.requestedVersion).to.equal('1.X.X');
+      expect(ctx.version).to.equal('1.0.0');
+      expect(ctx.latestVersion).to.equal('2.1.0');
+      expect(ctx.component.oc.files.template.type).to.equal('jade');
+      expect(ctx.headers['user-agent']).to.equal('test');
+      expect(ctx.parameters).to.eql({ hello: 'world' });
+    });
+
+    it('should render the component when the hook returns nothing', async () => {
+      const response = await requestComponent(() => undefined, '1.0.0');
+
+      expect(response.code).to.equal(200);
+      expect(response.json.html).to.contain('hello');
+    });
+
+    it('should respond with the rejection returned by the hook without rendering', async () => {
+      const response = await requestComponent(
+        ({ version, latestVersion }) =>
+          version !== latestVersion
+            ? { status: 410, code: 'VERSION_TOO_OLD', error: 'Upgrade' }
+            : undefined,
+        '1.0.0'
+      );
+
+      expect(response.code).to.equal(410);
+      expect(response.json.code).to.equal('VERSION_TOO_OLD');
+      expect(response.json.error).to.equal('Upgrade');
+      expect(response.json.name).to.equal('simple-component');
+      expect(response.json.requestVersion).to.equal('1.0.0');
+      expect(mockedRepository.getCompiledView.called).to.be.false;
+    });
+
+    it('should apply default rejection values for an async hook', async () => {
+      const response = await requestComponent(async () => ({}), '1.0.0');
+
+      expect(response.code).to.equal(403);
+      expect(response.json.code).to.equal('COMPONENT_REQUEST_REJECTED');
+      expect(response.json.error).to.equal(
+        'Component request rejected by the registry'
+      );
+    });
+
+    it('should respond with 500 when the hook throws', async () => {
+      const response = await requestComponent(() => {
+        throw new Error('boom');
+      }, '1.0.0');
+
+      expect(response.code).to.equal(500);
+      expect(response.json.code).to.equal('COMPONENT_REQUEST_HOOK_FAILED');
+      expect(response.json.error).to.equal(
+        'onComponentRequest hook failed: Error: boom'
+      );
+    });
+
+    it('should respond with 500 when the async hook rejects', async () => {
+      const response = await requestComponent(
+        () => Promise.reject(new Error('async boom')),
+        '1.0.0'
+      );
+
+      expect(response.code).to.equal(500);
+      expect(response.json.code).to.equal('COMPONENT_REQUEST_HOOK_FAILED');
+    });
+
+    it('should apply the hook to component info requests', async () => {
+      initialise(simple);
+      const response = await new Promise((resolve) => {
+        ComponentRoute({}, mockedRepository)(
+          {
+            headers: { accept: 'application/vnd.oc.info+json' },
+            params: { componentName: 'simple-component' }
+          },
+          {
+            conf: {
+              baseUrl: 'http://component.com/',
+              onComponentRequest: () => ({ status: 410 })
+            },
+            status: (code) => ({ json: (json) => resolve({ code, json }) })
+          }
+        );
+      });
+
+      expect(response.code).to.equal(410);
+    });
+  });
 });

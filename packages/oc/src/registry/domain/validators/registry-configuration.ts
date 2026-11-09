@@ -189,5 +189,15 @@ export default function registryConfiguration(
     }
   }
 
+  if (
+    conf.onComponentRequest !== undefined &&
+    typeof conf.onComponentRequest !== 'function'
+  ) {
+    return returnError(
+      strings.errors.registry
+        .CONFIGURATION_ON_COMPONENT_REQUEST_MUST_BE_FUNCTION
+    );
+  }
+
   return { isValid: true };
 }

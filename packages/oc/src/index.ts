@@ -18,6 +18,9 @@ export type {
   UploadedFile
 } from './registry/domain/http-server/types';
 export type {
+  ComponentRequestContext,
+  ComponentRequestHook,
+  ComponentRequestRejection,
   CorsConfig,
   CorsOptions,
   Plugin,

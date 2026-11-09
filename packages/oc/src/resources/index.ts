@@ -100,6 +100,9 @@ export default {
         'context.setHeader parameters must be strings',
       COMPONENT_SET_COOKIE_PARAMETERS_NOT_VALID:
         'context.setCookie parameters are not valid',
+      COMPONENT_REQUEST_HOOK_FAILED: (message: string): string =>
+        `onComponentRequest hook failed: ${message}`,
+      COMPONENT_REQUEST_REJECTED: 'Component request rejected by the registry',
       CONFIGURATION_DEPENDENCIES_MUST_BE_ARRAY:
         'Registry configuration is not valid: dependencies must be an array',
       CONFIGURATION_CORS_MUST_BE_OBJECT:
@@ -145,6 +148,8 @@ export default {
         `Registry configuration is not valid: ${storage} configuration is not valid`,
       CONFIGURATION_HEADERS_TO_SKIP_MUST_BE_STRING_ARRAY:
         'Registry configuration is not valid: customHeadersToSkipOnWeakVersion must be an array of strings',
+      CONFIGURATION_ON_COMPONENT_REQUEST_MUST_BE_FUNCTION:
+        'Registry configuration is not valid: onComponentRequest must be a function',
       DATA_OBJECT_IS_UNDEFINED: 'data object is undefined',
       DEPENDENCY_NOT_FOUND: (dependencies: string): string =>
         `Component is trying to use unavailable dependencies: ${dependencies}`,
