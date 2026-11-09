@@ -640,7 +640,7 @@ export default function getComponent(
               response: {
                 code: 'GENERIC_ERROR',
                 error: strings.errors.registry.COMPONENT_EXECUTION_ERROR(
-                  err.message || ''
+                  err.message || (typeof err === 'string' ? err : '')
                 ),
                 details: {
                   message: err.message,

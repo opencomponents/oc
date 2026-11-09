@@ -224,6 +224,7 @@ describe('registry', () => {
       it('should apply the hook to nested components', () => {
         expect(requestedNames).to.include('no-containers');
         expect(status).to.equal(500);
+        expect(result.error).to.equal('Component execution error: Upgrade');
       });
     });
   });
