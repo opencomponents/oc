@@ -1,5 +1,11 @@
 ## Change Log
 
+## 0.50.66
+
+### Patch Changes
+
+- 737a1c4: Add an `onComponentRequest` registry option. It runs for every component request once the version has been resolved, receives the request context and the component's package.json (including `allVersions` and `latestVersion`), and can reject the request by returning `{ status, code, error }`.
+
 ## 0.50.65
 
 ### Patch Changes
