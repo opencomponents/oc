@@ -5,6 +5,9 @@ describe('registry : routes : component', () => {
   const ComponentRoute =
     require('../../dist/registry/routes/component').default;
   const mockedComponents = require('../fixtures/mocked-components');
+  const {
+    getLatestVersion
+  } = require('../../dist/registry/domain/version-handler');
   let mockedRepository;
   let resJsonStub;
   let resSetStub;
@@ -24,6 +27,9 @@ describe('registry : routes : component', () => {
     mockedRepository = {
       getCompiledView: sinon.stub().resolves(params.view),
       getComponent: sinon.stub().resolves(params.package),
+      getLatestVersion: sinon
+        .stub()
+        .callsFake((component) => getLatestVersion(component.allVersions)),
       getDataProvider: sinon
         .stub()
         .resolves({ content: params.data, filePath: '/path/to/server.js' }),

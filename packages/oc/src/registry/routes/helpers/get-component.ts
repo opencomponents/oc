@@ -27,7 +27,6 @@ import RequireWrapper from '../../domain/require-wrapper';
 import * as urlBuilder from '../../domain/url-builder';
 import * as validator from '../../domain/validators';
 import { validateTemplateOcVersion } from '../../domain/validators';
-import { getAvailableVersion } from '../../domain/version-handler';
 import {
   compileParameterSchema,
   processParameters
@@ -331,10 +330,7 @@ export default function getComponent(
           requestedVersion: version,
           version: component.version,
           get latestVersion() {
-            return (
-              getAvailableVersion(undefined, component.allVersions) ||
-              component.version
-            );
+            return repository.getLatestVersion(component);
           },
           component,
           headers: options.headers,

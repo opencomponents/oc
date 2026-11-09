@@ -222,6 +222,20 @@ describe('registry : domain : repository : component info cache', () => {
     expect(storage.getJson.calledOnce).to.be.true;
   });
 
+  it('resolves the latest version from the cached version list, not the per-request copy', async () => {
+    const versions = { 'hello-world': ['1.0.0', '2.0.0', '3.0.0-beta.1'] };
+    const { repository } = createRepository({ versions });
+
+    const component = await repository.getComponent('hello-world', '1.0.0');
+    component.allVersions.push('9.0.0');
+
+    expect(repository.getLatestVersion(component)).to.equal('2.0.0');
+
+    versions['hello-world'] = ['1.0.0', '2.0.0', '2.1.0'];
+    const refreshed = await repository.getComponent('hello-world', '1.0.0');
+    expect(repository.getLatestVersion(refreshed)).to.equal('2.1.0');
+  });
+
   it('bounds component info at 1000 entries and evicts the true LRU key', async () => {
     const versions = {};
     for (let index = 0; index <= 1000; index++) {
