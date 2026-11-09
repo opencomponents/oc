@@ -153,6 +153,82 @@ describe('registry', () => {
     });
   });
 
+  describe('with an onComponentRequest hook rejecting some components', () => {
+    const requestedNames = [];
+    const rejectComponents = ({ name }) => {
+      requestedNames.push(name);
+      return ['hello-world', 'no-containers'].includes(name)
+        ? { status: 410, code: 'VERSION_TOO_OLD', error: 'Upgrade' }
+        : undefined;
+    };
+
+    before((done) => {
+      registry.close(() => {
+        initializeRegistry(
+          {
+            ...getDefaultTestConfiguration(),
+            onComponentRequest: rejectComponents
+          },
+          done
+        );
+      });
+    });
+
+    after((done) => {
+      registry.close(() => {
+        initializeRegistry(getDefaultTestConfiguration(), done);
+      });
+    });
+
+    describe('GET /hello-world', () => {
+      before((done) => {
+        next(request('http://localhost:3030/hello-world'), done);
+      });
+
+      it('should respond with the rejection', () => {
+        expect(status).to.equal(410);
+        expect(result.code).to.equal('VERSION_TOO_OLD');
+        expect(result.error).to.equal('Upgrade');
+      });
+    });
+
+    describe('POST / with an allowed and a rejected component', () => {
+      before((done) => {
+        next(
+          request('http://localhost:3030', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              components: [
+                { name: 'hello-world' },
+                { name: 'hello-world-custom-headers' }
+              ]
+            })
+          }),
+          done
+        );
+      });
+
+      it('should reject only the matching component', () => {
+        expect(result[0].status).to.equal(410);
+        expect(result[0].response.code).to.equal('VERSION_TOO_OLD');
+        expect(result[1].status).to.equal(200);
+      });
+    });
+
+    describe('GET /container-with-nested', () => {
+      before((done) => {
+        next(request('http://localhost:3030/container-with-nested'), done);
+      });
+
+      it('should apply the hook to nested components', () => {
+        expect(requestedNames).to.include('no-containers');
+        expect(status).to.equal(500);
+        expect(result.error).to.equal('Component execution error: Upgrade');
+      });
+    });
+  });
+
   describe('GET /hello-world-custom-cookies', () => {
     describe('with the default configuration and strong version 1.0.0', () => {
       before((done) => {

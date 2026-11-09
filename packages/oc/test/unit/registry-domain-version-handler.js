@@ -114,6 +114,33 @@ describe('registry : domain : version-handler', () => {
     });
   });
 
+  describe('when getting the latest version', () => {
+    it('should ignore pre-releases when a release is available', () => {
+      expect(
+        versionHandler.getLatestVersion(['1.0.0', '2.0.0', '3.0.0-beta.1'])
+      ).to.equal('2.0.0');
+    });
+
+    it('should fall back to the highest pre-release', () => {
+      expect(
+        versionHandler.getLatestVersion(['1.0.0-beta.1', '1.0.0-beta.2'])
+      ).to.equal('1.0.0-beta.2');
+    });
+
+    it('should return the same result for repeated calls on the same list', () => {
+      const versions = ['1.0.0', '1.1.0'];
+      expect(versionHandler.getLatestVersion(versions)).to.equal('1.1.0');
+      expect(versionHandler.getLatestVersion(versions)).to.equal('1.1.0');
+      expect(versionHandler.getLatestVersion(['1.0.0', '1.2.0'])).to.equal(
+        '1.2.0'
+      );
+    });
+
+    it('should return undefined when there are no versions', () => {
+      expect(versionHandler.getLatestVersion([])).to.be.undefined;
+    });
+  });
+
   describe('when publishing component', () => {
     const existingVersions = ['1.0.0', '1.0.1', '1.0.3', '1.1.0', '2.0.0'];
     const validate = (a, b) => versionHandler.validateNewVersion(a, b);

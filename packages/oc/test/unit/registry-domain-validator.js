@@ -598,6 +598,31 @@ describe('registry : domain : validator', () => {
       });
     });
 
+    describe('onComponentRequest', () => {
+      it('should not be valid when it is not a function', () => {
+        const result = validate({
+          onComponentRequest: 'nope',
+          publishAuth: false,
+          s3: baseS3Conf
+        });
+
+        expect(result.isValid).to.be.false;
+        expect(result.message).to.equal(
+          'Registry configuration is not valid: onComponentRequest must be a function'
+        );
+      });
+
+      it('should be valid when it is a function', () => {
+        expect(
+          validate({
+            onComponentRequest: () => undefined,
+            publishAuth: false,
+            s3: baseS3Conf
+          }).isValid
+        ).to.be.true;
+      });
+    });
+
     describe('customHeadersToSkipOnWeakVersion', () => {
       describe('when customHeadersToSkipOnWeakVersion is not an array', () => {
         const conf = {

@@ -1,3 +1,4 @@
+import type { IncomingHttpHeaders } from 'node:http';
 import type { NextFunction, Request, Response } from 'express';
 import type { MetadataStore as MetadataStoreType } from 'oc-metadata-adapters-utils';
 import type { StorageAdapter } from 'oc-storage-adapters-utils';
@@ -172,6 +173,38 @@ export interface Component extends PackageJson {
   oc: OcConfiguration;
   version: string;
 }
+
+export interface ComponentRequestContext {
+  /** Name of the requested component. */
+  name: string;
+  /** Version requested by the consumer (exact, semver range or empty for latest). */
+  requestedVersion: string;
+  /** Version the registry resolved the request to and is about to serve. */
+  version: string;
+  /** Latest published version of the component, as resolved for an unversioned request. */
+  latestVersion: string;
+  /** package.json of the resolved component, including `allVersions`. */
+  component: Readonly<Component>;
+  headers: IncomingHttpHeaders;
+  parameters: Record<string, string>;
+  /** Name of the action being invoked, if any. */
+  action?: string;
+}
+
+export interface ComponentRequestRejection {
+  /** @default 403 */
+  status?: number;
+  /** @default "COMPONENT_REQUEST_REJECTED" */
+  code?: string;
+  error?: string;
+}
+
+export type ComponentRequestHook = (
+  context: ComponentRequestContext
+) =>
+  | ComponentRequestRejection
+  | undefined
+  | Promise<ComponentRequestRejection | undefined>;
 
 export interface ParsedComponent extends Omit<Component, 'author'> {
   author: Author;
@@ -451,6 +484,21 @@ export interface Config<
         error?: string;
       }
     | boolean;
+  /**
+   * Hook executed for every component request once the requested version has
+   * been resolved, before the component is rendered or its info returned.
+   * Return (or resolve to) a {@link ComponentRequestRejection} to reject the
+   * request, or nothing to let it through. Throwing or rejecting responds with
+   * a 500 error.
+   *
+   * @example
+   * onComponentRequest: ({ version, latestVersion }) => {
+   *   if (semver.major(version) < semver.major(latestVersion)) {
+   *     return { status: 410, code: 'VERSION_TOO_OLD', error: `Use ${latestVersion}` };
+   *   }
+   * }
+   */
+  onComponentRequest?: ComponentRequestHook;
   /**
    * Seconds between each refresh of the internal component list cache.
    */

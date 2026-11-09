@@ -8,6 +8,7 @@ import strings from '../../../resources';
 import settings from '../../../resources/settings';
 import type {
   Component,
+  ComponentRequestRejection,
   Config,
   OcParameter,
   PluginContext,
@@ -15,6 +16,7 @@ import type {
 } from '../../../types';
 import { parseAcceptLanguage } from '../../../utils/accept-language';
 import BoundedCache from '../../../utils/bounded-cache';
+import errorToString from '../../../utils/error-to-string';
 import isTemplateLegacy from '../../../utils/is-template-legacy';
 import { fromPromise } from '../../../utils/universalify';
 import eventsHandler from '../../domain/events-handler';
@@ -76,6 +78,10 @@ export type RenderComponent = (
   options: RendererOptions,
   cb: (result: GetComponentResult) => void
 ) => void;
+
+class ComponentRequestRejected {
+  constructor(readonly result: GetComponentResult) {}
+}
 
 export const stream = Symbol('stream');
 const MAX_ARTIFACT_CACHE_ENTRIES = 1000;
@@ -271,6 +277,78 @@ export default function getComponent(
     }
   };
 
+  const resolveComponent = (
+    name: string,
+    version: string,
+    options: RendererOptions,
+    cb: (err: unknown, component: Component) => void
+  ): void => {
+    getComponentCb(name, version, (err, component) => {
+      const hook = options.conf.onComponentRequest;
+      if (err || !hook) {
+        return cb(err, component);
+      }
+
+      const decide = (rejection: ComponentRequestRejection | undefined) =>
+        rejection
+          ? cb(
+              new ComponentRequestRejected({
+                status: rejection.status ?? 403,
+                response: {
+                  code: rejection.code ?? 'COMPONENT_REQUEST_REJECTED',
+                  error:
+                    rejection.error ??
+                    strings.errors.registry.COMPONENT_REQUEST_REJECTED
+                }
+              }),
+              component
+            )
+          : cb(null, component);
+      const fail = (hookErr: unknown) => {
+        const message = errorToString(hookErr);
+        eventsHandler.fire('error', {
+          code: 'COMPONENT_REQUEST_HOOK_FAILED',
+          message
+        });
+        cb(
+          new ComponentRequestRejected({
+            status: 500,
+            response: {
+              code: 'COMPONENT_REQUEST_HOOK_FAILED',
+              error:
+                strings.errors.registry.COMPONENT_REQUEST_HOOK_FAILED(message)
+            }
+          }),
+          component
+        );
+      };
+
+      let decision: ReturnType<typeof hook>;
+      try {
+        decision = hook({
+          name,
+          requestedVersion: version,
+          version: component.version,
+          get latestVersion() {
+            return repository.getLatestVersion(component);
+          },
+          component,
+          headers: options.headers,
+          parameters: options.parameters,
+          action: options.action
+        });
+      } catch (hookErr) {
+        return fail(hookErr);
+      }
+
+      if (decision instanceof Promise) {
+        decision.then(decide, fail);
+      } else {
+        decide(decision);
+      }
+    });
+  };
+
   const renderer = (
     options: RendererOptions,
     cb: (result: GetComponentResult) => void
@@ -344,10 +422,15 @@ export default function getComponent(
       parameters: options.parameters
     };
 
-    getComponentCb(
+    resolveComponent(
       requestedComponent.name,
       requestedComponent.version,
+      options,
       (err, component) => {
+        if (err instanceof ComponentRequestRejected) {
+          return callback(err.result);
+        }
+
         // check route exist for component and version
         if (err) {
           if (conf.fallbackRegistryUrl) {
@@ -557,7 +640,7 @@ export default function getComponent(
               response: {
                 code: 'GENERIC_ERROR',
                 error: strings.errors.registry.COMPONENT_EXECUTION_ERROR(
-                  err.message || ''
+                  err.message || (typeof err === 'string' ? err : '')
                 ),
                 details: {
                   message: err.message,

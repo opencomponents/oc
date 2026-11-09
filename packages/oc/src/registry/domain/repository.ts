@@ -74,6 +74,7 @@ export default function repository(conf: Config) {
   const componentInfoLoads = new Map<string, ComponentInfoLoad>();
   const localVersions = new Map<string, string>();
   const localVersionLoads = new Map<string, Promise<string[]>>();
+  const componentSourceVersions = new WeakMap<Component, readonly string[]>();
   let exportLegacyFilesLoop: NodeJS.Timeout | undefined;
   let closed = false;
 
@@ -359,7 +360,17 @@ export default function repository(conf: Config) {
         }
       }
 
-      return { ...component, allVersions: [...allVersions] };
+      const result = { ...component, allVersions: [...allVersions] };
+      componentSourceVersions.set(result, allVersions);
+
+      return result;
+    },
+    getLatestVersion(component: Component): string {
+      return (
+        versionHandler.getLatestVersion(
+          componentSourceVersions.get(component) ?? component.allVersions
+        ) ?? component.version
+      );
     },
     getComponentInfo(
       componentName: string,
