@@ -1,5 +1,11 @@
 ## Change Log
 
+## 0.50.67
+
+### Patch Changes
+
+- d0e9cbc: Upgrade undici to 8.12.4 to remediate the current security advisories.
+
 ## 0.50.66
 
 ### Patch Changes
