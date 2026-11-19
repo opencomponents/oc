@@ -105,6 +105,7 @@ export default {
       COMPONENT_REQUEST_REJECTED: 'Component request rejected by the registry',
       TRANSFORM_INFO_FAILED: (message: string): string =>
         `discovery.transformInfo failed: ${message}`,
+      DISCOVERY_API_DISABLED: 'The discovery API is disabled on this registry',
       CONFIGURATION_DEPENDENCIES_MUST_BE_ARRAY:
         'Registry configuration is not valid: dependencies must be an array',
       CONFIGURATION_CORS_MUST_BE_OBJECT:

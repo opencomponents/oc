@@ -1,4 +1,5 @@
 import { getOcConfig } from '../../cli/domain/ocConfig';
+import strings from '../../resources';
 import type { Component, Config, TemplateInfo } from '../../types';
 import { fromPromise } from '../../utils/universalify';
 import type {
@@ -10,6 +11,10 @@ import type { Repository } from '../domain/repository';
 import * as urlBuilder from '../domain/url-builder';
 import previewView from '../views/preview';
 import * as getComponentFallback from './helpers/get-component-fallback';
+import {
+  sendTransformInfoError,
+  transformInfo
+} from './helpers/transform-info';
 
 function componentPreview(
   err: any,
@@ -17,7 +22,7 @@ function componentPreview(
   res: OcResponse,
   component: Component,
   templates: TemplateInfo[]
-) {
+): void | Promise<void> {
   if (err) {
     res.errorDetails = err.registryError || err;
     res.errorCode = 'NOT_FOUND';
@@ -51,10 +56,19 @@ function componentPreview(
         templates
       })
     );
+  } else if (res.conf.discovery.api) {
+    return transformInfo(res.conf, component).then(
+      (info) =>
+        res.status(200).json({
+          ...info,
+          requestVersion: req.params['componentVersion'] || ''
+        }),
+      (transformErr) => sendTransformInfoError(res, transformErr)
+    );
   } else {
-    res.status(200).json({
-      ...component,
-      requestVersion: req.params['componentVersion'] || ''
+    res.status(401).json({
+      code: 'DISCOVERY_API_DISABLED',
+      error: strings.errors.registry.DISCOVERY_API_DISABLED
     });
   }
 }
