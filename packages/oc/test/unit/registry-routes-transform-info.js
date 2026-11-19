@@ -3,7 +3,10 @@ const sinon = require('sinon');
 
 const ComponentInfoRoute =
   require('../../dist/registry/routes/component-info').default;
+const ComponentPreviewRoute =
+  require('../../dist/registry/routes/component-preview').default;
 const IndexRoute = require('../../dist/registry/routes/index').default;
+const PreviewView = require('../../dist/registry/views/preview').default;
 const eventsHandler =
   require('../../dist/registry/domain/events-handler').default;
 
@@ -112,6 +115,71 @@ describe('registry : routes : discovery.transformInfo', () => {
         expect(res.response.status).to.equal(500);
         expect(res.response.body.code).to.equal('TRANSFORM_INFO_FAILED');
       });
+    });
+  });
+
+  describe('~preview', () => {
+    const requestPreview = (transformInfo, discovery = { api: true }) => {
+      const repository = {
+        getComponent: sinon.stub().resolves(component()),
+        getTemplatesInfo: sinon.stub().returns([])
+      };
+      const res = makeRes(transformInfo);
+      res.conf.discovery = { ...discovery, transformInfo };
+
+      return new Promise((resolve) => {
+        res.status = (status) => ({
+          json: (body) => resolve({ status, body })
+        });
+        ComponentPreviewRoute({}, repository)(
+          {
+            headers: { accept: 'application/json' },
+            params: { componentName: 'hello-world', componentVersion: '1.x.x' },
+            query: {}
+          },
+          res
+        );
+      });
+    };
+
+    it('returns the transformed info with requestVersion', async () => {
+      const response = await requestPreview(stripPrivate);
+
+      expect(response.status).to.equal(200);
+      expect(response.body).to.not.have.property('author');
+      expect(response.body).to.not.have.property('owners');
+      expect(response.body.team).to.equal('payments');
+      expect(response.body.requestVersion).to.equal('1.x.x');
+    });
+
+    it('responds with a 500 when the transform fails', async () => {
+      const response = await requestPreview(() => {
+        throw new Error('boom');
+      });
+
+      expect(response.status).to.equal(500);
+      expect(response.body.code).to.equal('TRANSFORM_INFO_FAILED');
+    });
+
+    it('responds with a 401 when the discovery API is disabled', async () => {
+      const response = await requestPreview(undefined, { api: false });
+
+      expect(response.status).to.equal(401);
+      expect(response.body.code).to.equal('DISCOVERY_API_DISABLED');
+    });
+
+    it('renders the HTML preview from info without oc', () => {
+      const { oc, ...info } = component();
+      const html = PreviewView({
+        href: 'http://registry.test/',
+        component: info,
+        qs: '',
+        liveReload: '',
+        templates: [],
+        robots: true
+      });
+
+      expect(html).to.contain('hello-world/1.0.0/');
     });
   });
 

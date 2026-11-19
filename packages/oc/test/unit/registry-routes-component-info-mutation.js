@@ -134,7 +134,7 @@ describe('registry : routes : component info mutation isolation', () => {
           query: {}
         },
         {
-          conf: {},
+          conf: { discovery: { api: true } },
           status: (status) => ({
             json: (body) => resolve({ body, status })
           })
