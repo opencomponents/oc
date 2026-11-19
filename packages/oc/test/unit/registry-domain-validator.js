@@ -623,6 +623,31 @@ describe('registry : domain : validator', () => {
       });
     });
 
+    describe('discovery.transformInfo', () => {
+      it('should not be valid when it is not a function', () => {
+        const result = validate({
+          discovery: { transformInfo: 'nope' },
+          publishAuth: false,
+          s3: baseS3Conf
+        });
+
+        expect(result.isValid).to.be.false;
+        expect(result.message).to.equal(
+          'Registry configuration is not valid: discovery.transformInfo must be a function'
+        );
+      });
+
+      it('should be valid when it is a function', () => {
+        expect(
+          validate({
+            discovery: { transformInfo: (info) => info },
+            publishAuth: false,
+            s3: baseS3Conf
+          }).isValid
+        ).to.be.true;
+      });
+    });
+
     describe('customHeadersToSkipOnWeakVersion', () => {
       describe('when customHeadersToSkipOnWeakVersion is not an array', () => {
         const conf = {

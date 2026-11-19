@@ -11,6 +11,10 @@ import * as urlBuilder from '../domain/url-builder';
 import infoView from '../views/info';
 import * as getComponentFallback from './helpers/get-component-fallback';
 import isUrlDiscoverable from './helpers/is-url-discoverable';
+import {
+  sendTransformInfoError,
+  transformInfo
+} from './helpers/transform-info';
 
 function getParams(component: Component) {
   let params: Record<string, string> = {};
@@ -51,7 +55,7 @@ function componentInfo(
   res: OcResponse,
   component?: Component,
   componentDetail?: ComponentDetail
-): void {
+): void | Promise<void> {
   if (!component || err) {
     res.errorDetails = (err as any).registryError || err;
     res.status(404).json(err);
@@ -95,10 +99,14 @@ function componentInfo(
       );
     });
   } else if (res.conf.discovery.api) {
-    res.status(200).json({
-      ...component,
-      requestVersion: req.params['componentVersion'] || ''
-    });
+    return transformInfo(res.conf, component).then(
+      (info) =>
+        res.status(200).json({
+          ...info,
+          requestVersion: req.params['componentVersion'] || ''
+        }),
+      (transformErr) => sendTransformInfoError(res, transformErr)
+    );
   } else {
     res.status(401);
   }
@@ -118,7 +126,7 @@ export default function componentInfoRoute(
         req.params['componentName'],
         req.params['componentVersion']
       );
-      componentInfo(null, req, res, component, componentDetail);
+      await componentInfo(null, req, res, component, componentDetail);
     } catch (registryError) {
       if (conf.fallbackRegistryUrl) {
         return getComponentFallback.getComponentInfo(

@@ -65,6 +65,64 @@ describe('registry : routes : component-static', () => {
     });
   });
 
+  describe('when requesting a package.json inside a folder', () => {
+    let redirectStub;
+
+    before(async () => {
+      const route = ComponentStaticRoute(makeRepository(['1.0.0']));
+      const made = makeRes();
+      redirectStub = made.redirectStub;
+
+      await route(
+        {
+          params: {
+            componentName: 'hello-world',
+            componentVersion: '1.0.0',
+            splat: 'public/package.json'
+          }
+        },
+        made.res
+      );
+    });
+
+    it('should redirect to the CDN file', () => {
+      expect(redirectStub.args[0][0]).to.equal(
+        'https://cdn.invalid/components/hello-world/1.0.0/public/package.json'
+      );
+    });
+  });
+
+  describe('when the decoded path contains URL syntax', () => {
+    const cases = {
+      'package.json?bypass': 'package.json%3Fbypass',
+      'package.json#bypass': 'package.json%23bypass',
+      'package%2Ejson': 'package%252Ejson',
+      'public/my file.js': 'public/my%20file.js'
+    };
+
+    for (const [splat, expected] of Object.entries(cases)) {
+      it(`should encode "${splat}" so it can't reach another file`, async () => {
+        const route = ComponentStaticRoute(makeRepository(['1.0.0']));
+        const made = makeRes();
+
+        await route(
+          {
+            params: {
+              componentName: 'hello-world',
+              componentVersion: '1.0.0',
+              splat
+            }
+          },
+          made.res
+        );
+
+        expect(made.redirectStub.args[0][0]).to.equal(
+          `https://cdn.invalid/components/hello-world/1.0.0/${expected}`
+        );
+      });
+    }
+  });
+
   describe('when requesting a semver range', () => {
     let repository;
     let redirectStub;
@@ -210,7 +268,11 @@ describe('registry : routes : component-static', () => {
       'server.js',
       '.env',
       'public/server.js',
-      'public/.env'
+      'public/.env',
+      'package.json',
+      '/package.json',
+      'public/../package.json',
+      'PACKAGE.JSON'
     ];
 
     for (const splat of privateFiles) {
