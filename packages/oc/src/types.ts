@@ -174,6 +174,13 @@ export interface Component extends PackageJson {
   version: string;
 }
 
+/** package.json of a published component, as stored by the registry. */
+export type ComponentInfo = Component;
+
+export type TransformInfo = (
+  info: Readonly<ComponentInfo>
+) => Record<string, unknown> | Promise<Record<string, unknown>>;
+
 export interface ComponentRequestContext {
   /** Name of the requested component. */
   name: string;
@@ -363,6 +370,17 @@ export interface Config<
      * @default true
      */
     experimental: boolean;
+    /**
+     * Transforms the component info returned by the discovery API
+     * (`GET /:name/~info` as JSON and `GET /?meta=...`). The returned object
+     * is what gets sent, so fields can be removed or added. It does not apply
+     * to the HTML UI nor to internal consumers like the `component-published`
+     * event. Throwing or rejecting responds with a 500 error.
+     *
+     * @example
+     * transformInfo: ({ author, owners, ...info }) => info
+     */
+    transformInfo?: TransformInfo;
   };
   /**
    * Function invoked to decide whether discovery should be enabled for the

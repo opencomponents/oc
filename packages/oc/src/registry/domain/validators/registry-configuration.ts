@@ -7,7 +7,7 @@ import getMetadataAdapterOptions from '../metadata-adapter-options';
 type ValidationResult = { isValid: true } | { isValid: false; message: string };
 type RegistryConfiguration = Partial<
   Omit<Config, 'dataProvider' | 'discovery' | 'cors'>
-> & { cors?: CorsOptions };
+> & { cors?: CorsOptions; discovery?: boolean | { transformInfo?: unknown } };
 
 export default function registryConfiguration(
   conf: RegistryConfiguration
@@ -196,6 +196,16 @@ export default function registryConfiguration(
     return returnError(
       strings.errors.registry
         .CONFIGURATION_ON_COMPONENT_REQUEST_MUST_BE_FUNCTION
+    );
+  }
+
+  const transformInfo =
+    typeof conf.discovery === 'object'
+      ? conf.discovery?.transformInfo
+      : undefined;
+  if (transformInfo !== undefined && typeof transformInfo !== 'function') {
+    return returnError(
+      strings.errors.registry.CONFIGURATION_TRANSFORM_INFO_MUST_BE_FUNCTION
     );
   }
 

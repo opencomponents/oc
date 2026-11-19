@@ -4,6 +4,10 @@ import dateStringified from '../../utils/date-stringify';
 import parseAuthor from '../../utils/parse-author';
 import indexView from '../views';
 import getAvailableDependencies from './helpers/get-available-dependencies';
+import {
+  sendTransformInfoError,
+  transformInfo
+} from './helpers/transform-info';
 
 import urlBuilder = require('../domain/url-builder');
 
@@ -131,46 +135,57 @@ export default function (repository: Repository): OcHandler {
       }
 
       // Build component responses
-      const componentResponses = filteredComponents.map((component) => {
-        const componentUrl = urlBuilder.component(
-          component.name,
-          res.conf.baseUrl
+      let componentResponses: unknown[];
+      try {
+        componentResponses = await Promise.all(
+          filteredComponents.map(async (component) => {
+            const componentUrl = urlBuilder.component(
+              component.name,
+              res.conf.baseUrl
+            );
+
+            if (!includeMetadata) {
+              return componentUrl;
+            }
+
+            const info = await transformInfo(res.conf, component);
+            const metaQuery = req.query['meta'] as string;
+
+            // Return all metadata fields
+            if (metaQuery === 'true') {
+              return {
+                href: componentUrl,
+                name: info.name,
+                version: info.version,
+                author: info.author,
+                description: info.description,
+                state: info.oc?.state,
+                keywords: info.keywords || [],
+                publishDate: info.oc?.date
+                  ? new Date(info.oc.date).toISOString()
+                  : undefined
+              };
+            }
+
+            const requestedFields = metaQuery
+              .split(',')
+              .filter((field) => !excludedMeta.includes(field));
+            const responseData = requestedFields.reduce(
+              (acc, field) => {
+                acc[field] = info[field];
+                return acc;
+              },
+              {} as Record<string, any>
+            );
+            responseData['href'] = componentUrl;
+
+            return responseData;
+          })
         );
-
-        if (includeMetadata) {
-          const metaQuery = req.query['meta'] as string;
-
-          // Return all metadata fields
-          if (metaQuery === 'true') {
-            return {
-              href: componentUrl,
-              name: component.name,
-              version: component.version,
-              author: component.author,
-              description: component.description,
-              state: component.oc.state,
-              keywords: component.keywords || [],
-              publishDate: new Date(component.oc.date).toISOString()
-            };
-          }
-
-          const requestedFields = metaQuery
-            .split(',')
-            .filter((field) => !excludedMeta.includes(field));
-          const responseData = requestedFields.reduce(
-            (acc, field) => {
-              acc[field] = component[field as keyof Component];
-              return acc;
-            },
-            {} as Record<string, any>
-          );
-          responseData['href'] = componentUrl;
-
-          return responseData;
-        }
-
-        return componentUrl;
-      });
+      } catch (err) {
+        sendTransformInfoError(res, err);
+        return;
+      }
 
       res.status(200).json({
         ...baseResponse,

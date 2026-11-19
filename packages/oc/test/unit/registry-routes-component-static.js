@@ -65,6 +65,33 @@ describe('registry : routes : component-static', () => {
     });
   });
 
+  describe('when requesting a package.json inside a folder', () => {
+    let redirectStub;
+
+    before(async () => {
+      const route = ComponentStaticRoute(makeRepository(['1.0.0']));
+      const made = makeRes();
+      redirectStub = made.redirectStub;
+
+      await route(
+        {
+          params: {
+            componentName: 'hello-world',
+            componentVersion: '1.0.0',
+            splat: 'public/package.json'
+          }
+        },
+        made.res
+      );
+    });
+
+    it('should redirect to the CDN file', () => {
+      expect(redirectStub.args[0][0]).to.equal(
+        'https://cdn.invalid/components/hello-world/1.0.0/public/package.json'
+      );
+    });
+  });
+
   describe('when requesting a semver range', () => {
     let repository;
     let redirectStub;
@@ -210,7 +237,11 @@ describe('registry : routes : component-static', () => {
       'server.js',
       '.env',
       'public/server.js',
-      'public/.env'
+      'public/.env',
+      'package.json',
+      '/package.json',
+      'public/../package.json',
+      'PACKAGE.JSON'
     ];
 
     for (const splat of privateFiles) {

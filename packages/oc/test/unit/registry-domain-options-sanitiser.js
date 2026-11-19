@@ -65,6 +65,28 @@ describe('registry : domain : options-sanitiser', () => {
     });
   });
 
+  describe('discovery.transformInfo', () => {
+    it('should keep the function', () => {
+      const transformInfo = (info) => info;
+      const options = {
+        baseUrl: 'http://my-registry.com',
+        discovery: { ui: false, transformInfo }
+      };
+
+      expect(sanitise(options).discovery.transformInfo).to.equal(
+        transformInfo
+      );
+    });
+
+    it('should not add the key when it is not provided', () => {
+      const options = { baseUrl: 'http://my-registry.com', discovery: {} };
+
+      expect(sanitise(options).discovery).to.not.have.property(
+        'transformInfo'
+      );
+    });
+  });
+
   describe('server adapter configuration', () => {
     describe('when no server adapter is provided', () => {
       const options = { server: {}, port: 1234, baseUrl: 'dummy' };

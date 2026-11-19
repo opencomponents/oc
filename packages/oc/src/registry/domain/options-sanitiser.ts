@@ -49,6 +49,7 @@ export interface RegistryOptions<
         api?: boolean;
         validate?: boolean;
         robots?: boolean;
+        transformInfo?: Config['discovery']['transformInfo'];
       }
     | boolean;
   /**
@@ -150,13 +151,18 @@ export default function optionsSanitiser<
       ? // We keep previous default behavior for backward compatibility
         false
       : (options.discovery?.validate ?? false);
+  const transformInfo =
+    typeof options.discovery === 'boolean'
+      ? undefined
+      : options.discovery?.transformInfo;
 
   options.discovery = {
     ui: showUI,
     experimental: showExperimental,
     api: showApi,
     validate: showValidation,
-    robots: showRobots
+    robots: showRobots,
+    ...(transformInfo && { transformInfo })
   };
 
   if (typeof options.pollingInterval === 'undefined') {

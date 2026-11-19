@@ -103,6 +103,8 @@ export default {
       COMPONENT_REQUEST_HOOK_FAILED: (message: string): string =>
         `onComponentRequest hook failed: ${message}`,
       COMPONENT_REQUEST_REJECTED: 'Component request rejected by the registry',
+      TRANSFORM_INFO_FAILED: (message: string): string =>
+        `discovery.transformInfo failed: ${message}`,
       CONFIGURATION_DEPENDENCIES_MUST_BE_ARRAY:
         'Registry configuration is not valid: dependencies must be an array',
       CONFIGURATION_CORS_MUST_BE_OBJECT:
@@ -150,6 +152,8 @@ export default {
         'Registry configuration is not valid: customHeadersToSkipOnWeakVersion must be an array of strings',
       CONFIGURATION_ON_COMPONENT_REQUEST_MUST_BE_FUNCTION:
         'Registry configuration is not valid: onComponentRequest must be a function',
+      CONFIGURATION_TRANSFORM_INFO_MUST_BE_FUNCTION:
+        'Registry configuration is not valid: discovery.transformInfo must be a function',
       DATA_OBJECT_IS_UNDEFINED: 'data object is undefined',
       DEPENDENCY_NOT_FOUND: (dependencies: string): string =>
         `Component is trying to use unavailable dependencies: ${dependencies}`,
