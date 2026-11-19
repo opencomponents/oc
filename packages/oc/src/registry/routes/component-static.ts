@@ -57,8 +57,16 @@ export default function componentStatic(repository: Repository): OcHandler {
       return;
     }
 
+    const encodedFilePath = filePath
+      .split('/')
+      .map(encodeURIComponent)
+      .join('/');
     res.redirect(
-      repository.getStaticFilePath(componentName, resolvedVersion, filePath)
+      repository.getStaticFilePath(
+        componentName,
+        resolvedVersion,
+        encodedFilePath
+      )
     );
   };
 }

@@ -179,7 +179,7 @@ export type ComponentInfo = Component;
 
 export type TransformInfo = (
   info: Readonly<ComponentInfo>
-) => Record<string, unknown> | Promise<Record<string, unknown>>;
+) => object | Promise<object>;
 
 export interface ComponentRequestContext {
   /** Name of the requested component. */

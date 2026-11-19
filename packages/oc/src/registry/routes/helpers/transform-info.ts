@@ -18,7 +18,7 @@ export async function transformInfo(
     throw new Error('it must return an object');
   }
 
-  return info;
+  return info as TransformedInfo;
 }
 
 export function sendTransformInfoError(res: OcResponse, err: unknown): void {
