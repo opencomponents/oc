@@ -108,6 +108,36 @@ describe('registry : routes : helpers : get-component', () => {
     });
   });
 
+  describe('when a componentConsole is configured', () => {
+    const componentConsole = { log: sinon.spy() };
+
+    before((done) => {
+      const component = mockedComponents['another-response-headers-component'];
+      initialise({
+        ...component,
+        data: '"use strict";module.exports.data = function(ctx, cb){console.log("hi from component"); cb(null, {done:true});};'
+      });
+      const getComponent = GetComponent({}, mockedRepository);
+
+      getComponent(
+        {
+          name: 'another-response-headers-component',
+          headers: {},
+          parameters: {},
+          version: '1.X.X',
+          conf: { baseUrl: 'http://components.com/', componentConsole }
+        },
+        () => done()
+      );
+    });
+
+    it('should expose it to the component server code', () => {
+      expect(componentConsole.log.calledWith('hi from component')).to.equal(
+        true
+      );
+    });
+  });
+
   describe('when getting a component with success', () => {
     before((done) => {
       initialise(mockedComponents['async-error2-component']);
