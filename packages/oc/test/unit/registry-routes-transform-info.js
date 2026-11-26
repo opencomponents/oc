@@ -248,6 +248,80 @@ describe('registry : routes : discovery.transformInfo', () => {
       ]);
     });
 
+    it('caches the transform per component version across requests', async () => {
+      const transformInfo = sinon.spy(stripPrivate);
+      await requestList(transformInfo, { meta: 'true' });
+      const response = await requestList(transformInfo, { meta: 'team' });
+
+      expect(transformInfo.calledOnce).to.be.true;
+      expect(response.body.components).to.eql([
+        { href: 'http://registry.test/hello-world', team: 'payments' }
+      ]);
+    });
+
+    it('runs the transform again when the component versions change', async () => {
+      const transformInfo = sinon.spy(stripPrivate);
+      await requestList(transformInfo, { meta: 'true' });
+
+      const repository = {
+        getComponent: sinon
+          .stub()
+          .resolves({ ...component(), allVersions: ['1.0.0', '1.0.1'] }),
+        getComponents: sinon.stub().resolves(['hello-world'])
+      };
+      const res = makeRes(transformInfo);
+      await IndexRoute(repository)(
+        { headers: {}, query: { meta: 'true' } },
+        res
+      );
+
+      expect(transformInfo.calledTwice).to.be.true;
+    });
+
+    it('shares in-flight transforms between concurrent requests', async () => {
+      const transformInfo = sinon.spy(async (info) => stripPrivate(info));
+      await Promise.all([
+        requestList(transformInfo, { meta: 'true' }),
+        requestList(transformInfo, { meta: 'true' })
+      ]);
+
+      expect(transformInfo.calledOnce).to.be.true;
+    });
+
+    it('does not cache failures', async () => {
+      const transformInfo = sinon.stub();
+      transformInfo.onFirstCall().rejects(new Error('boom'));
+      transformInfo.onSecondCall().callsFake(stripPrivate);
+
+      const failed = await requestList(transformInfo, { meta: 'true' });
+      const response = await requestList(transformInfo, { meta: 'team' });
+
+      expect(failed.status).to.equal(500);
+      expect(response.status).to.equal(200);
+      expect(response.body.components[0].team).to.equal('payments');
+    });
+
+    it('does not cache when hot reloading locally', async () => {
+      const transformInfo = sinon.spy(stripPrivate);
+      const request = () => {
+        const repository = {
+          getComponent: sinon.stub().resolves(component()),
+          getComponents: sinon.stub().resolves(['hello-world'])
+        };
+        const res = makeRes(transformInfo);
+        res.conf.local = true;
+        res.conf.hotReloading = true;
+        return IndexRoute(repository)(
+          { headers: {}, query: { meta: 'true' } },
+          res
+        );
+      };
+      await request();
+      await request();
+
+      expect(transformInfo.calledTwice).to.be.true;
+    });
+
     it('responds with a 500 when the transform rejects', async () => {
       const response = await requestList(
         () => Promise.reject(new Error('boom')),
