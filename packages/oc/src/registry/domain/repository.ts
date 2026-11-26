@@ -11,6 +11,7 @@ import settings from '../../resources/settings';
 import type {
   Component,
   ComponentsDetails,
+  ComponentsList,
   Config,
   TemplateInfo
 } from '../../types';
@@ -416,6 +417,9 @@ export default function repository(conf: Config) {
 
       const { components } = await componentsCache.get();
       return Object.keys(components);
+    },
+    getComponentsList(): ComponentsList | undefined {
+      return conf.local ? undefined : componentsCache.get();
     },
     getComponentsDetails(): Promise<ComponentsDetails> {
       if (conf.local) {

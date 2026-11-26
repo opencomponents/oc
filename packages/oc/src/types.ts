@@ -377,6 +377,9 @@ export interface Config<
      * to the HTML UI nor to internal consumers like the `component-published`
      * event. Throwing or rejecting responds with a 500 error.
      *
+     * `GET /` JSON responses are cached until the components list changes, so
+     * the transform should be deterministic for a given component.
+     *
      * @example
      * transformInfo: ({ author, owners, ...info }) => info
      */
