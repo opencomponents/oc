@@ -377,10 +377,8 @@ export interface Config<
      * to the HTML UI nor to internal consumers like the `component-published`
      * event. Throwing or rejecting responds with a 500 error.
      *
-     * Results are cached in memory (LRU) per component name, version and
-     * published versions, so the transform should be deterministic for a
-     * given component. Failures are not cached. The cache is bypassed when
-     * running locally with hot reloading.
+     * `GET /` JSON responses are cached until the components list changes, so
+     * the transform should be deterministic for a given component.
      *
      * @example
      * transformInfo: ({ author, owners, ...info }) => info

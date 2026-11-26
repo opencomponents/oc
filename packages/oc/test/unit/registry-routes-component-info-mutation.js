@@ -61,6 +61,7 @@ describe('registry : routes : component info mutation isolation', () => {
     const repository = {
       getComponent: sinon.stub().resolves(component),
       getComponents: sinon.stub().resolves(['hello-world']),
+      getComponentsList: sinon.stub().returns(undefined),
       getTemplatesInfo: sinon.stub().returns([])
     };
     const route = IndexRoute(repository);
